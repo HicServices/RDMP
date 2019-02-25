@@ -59,8 +59,7 @@ namespace CohortManager.SubComponents
     /// <para>Once you have configured your sets / set operations click 'Start All Tasks' to launch the SQL queries in parallel to the server.  If a set or container fails you can right click
     /// it to view the SQL error message or just look at the SQL the system has generated and run that manually (e.g. in Sql Management Studio). </para>
     /// 
-    /// <para>Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See QueryCachingServerSelector for how this is 
-    /// implemented).</para>
+    /// <para>Once some of your sets are executing correctly you can improve performance by caching the identifier lists 'Cache Selected' (See Menu for how to do this).</para>
     /// 
     /// <para>You will see an Identifier Count for each set, this is the number of unique patient identifiers amongst all records returned by the query.</para>
     /// 
@@ -88,14 +87,14 @@ namespace CohortManager.SubComponents
     {
         private CohortAggregateContainer _root;
         private CohortIdentificationConfiguration _cic;
-        private CohortCompiler Compiler = new CohortCompiler(null);
+        public CohortCompiler Compiler { get; private set; }
         private ExternalDatabaseServer _queryCachingServer;
-
-        private int _timeout = 3000;
 
         private ISqlParameter[] _globals;
         
         CancellationTokenSource _cancelGlobalOperations;
+
+        readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout() { Timeout = 3000 };
 
         /// <summary>
         /// Occurs when the user selects something in the ObjectListView, object is the thing selected
@@ -109,9 +108,12 @@ namespace CohortManager.SubComponents
             if(VisualStudioDesignMode)
                 return;
 
+            Compiler = new CohortCompiler(null);
+
             tlvConfiguration.CanExpandGetter += CanExpandGetter;
             tlvConfiguration.ChildrenGetter += ChildrenGetter;
             olvAggregate.ImageGetter += ImageGetter;
+            olvAggregate.AspectGetter += ToString_AspectGetter;
             tlvConfiguration.RowFormatter += RowFormatter;
             olvIdentifierCount.AspectGetter += RowCountAspectGetter;
             refreshThreadCountPeriodically.Start();
@@ -123,6 +125,18 @@ namespace CohortManager.SubComponents
             _cohortExceptImage = CatalogueIcons.EXCEPTCohortAggregate;
 
             AssociatedCollection = RDMPCollection.Cohort;
+            
+        }
+
+        private object ToString_AspectGetter(object rowObject)
+        {
+            if (rowObject == null)
+                return null;
+
+            if (rowObject is JoinableCollectionNode)
+                return rowObject + " (Counts are of returned rows)";
+            
+            return rowObject.ToString();
         }
 
         #region Layout, Children Getting, Appearance etc
@@ -175,7 +189,7 @@ namespace CohortManager.SubComponents
 
             var joinable = rowObject as JoinableTask;
             if (joinable != null)
-                return joinable.IsUnused ? CatalogueIcons.Warning : CatalogueIcons.CohortAggregate;
+                return CatalogueIcons.PatientIndexTable;
 
             return null;
         }
@@ -268,20 +282,6 @@ namespace CohortManager.SubComponents
             return null;
         }
 
-        private void tbTimeout_TextChanged(object sender, EventArgs e)
-        {
-            try
-            {
-                _timeout = int.Parse(tbTimeout.Text);
-                tbTimeout.ForeColor = Color.Black;
-            }
-            catch (Exception)
-            {
-                _timeout = 30;
-                tbTimeout.ForeColor = Color.Red;
-            }
-        }
-
 
         #endregion
 
@@ -300,6 +300,9 @@ namespace CohortManager.SubComponents
                 activator.RefreshBus.Subscribe(this);
                 _haveSubscribed = true;
             }
+
+            foreach (var c in _timeoutControls.GetControls())
+                Add(c);
 
             _queryCachingServer = _cic.QueryCachingServer;
             Compiler.CohortIdentificationConfiguration = _cic;
@@ -374,7 +377,7 @@ namespace CohortManager.SubComponents
             task = Compiler.AddTask(configOrContainer, _globals);
 
             //Task is now in state NotScheduled so we can start it
-            Compiler.LaunchSingleTask(task, _timeout,true);
+            Compiler.LaunchSingleTask(task, _timeoutControls.Timeout,true);
         }
 
         public void CancelAll()
@@ -396,7 +399,7 @@ namespace CohortManager.SubComponents
             _cancelGlobalOperations = new CancellationTokenSource();
 
 
-            _runner = new CohortCompilerRunner(Compiler,_timeout);
+            _runner = new CohortCompilerRunner(Compiler, _timeoutControls.Timeout);
             _runner.PhaseChanged += RunnerOnPhaseChanged;
             new Task(() =>
             {
@@ -471,11 +474,6 @@ namespace CohortManager.SubComponents
             RecreateAllTasks();
         }
 
-        private void cbIncludeCumulative_CheckedChanged(object sender, EventArgs e)
-        {
-            Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
-        }
-        
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (Compiler != null)

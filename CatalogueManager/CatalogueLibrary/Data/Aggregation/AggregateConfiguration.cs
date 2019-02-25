@@ -6,23 +6,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Common;
-using System.Data.SqlClient;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Net.Configuration;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
-using MapsDirectlyToDatabaseTable.Revertable;
-
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
@@ -47,7 +40,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>,IDisableable
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>,IDisableable,IKnowWhatIAm
     {
         #region Database Properties
         private string _countSQL;
@@ -723,6 +716,25 @@ namespace CatalogueLibrary.Data.Aggregation
                 dependers.Add(cic);
 
             return dependers.ToArray();
+        }
+
+        /// <summary>
+        /// Returns a description of the role of the <see cref="AggregateConfiguration"/> based on whether it is set up as a cohort, patient index table or cohort identification aggregate.
+        /// </summary>
+        /// <returns></returns>
+        public string WhatIsThis()
+        {
+            if (IsJoinablePatientIndexTable())
+                return
+                    @"This is an AggregateConfiguration running as a 'Joinable PatientIndex Table'.  It's role is to produce a patient identifier fact table for joining to other Cohort Aggregates during cohort building (See JoinableCohortAggregateConfiguration)";
+
+            if (IsCohortIdentificationAggregate)
+                return
+                    @"This is an AggregateConfiguration running as a 'Cohort Aggregate'.  It's role is to produce a list of unique patient identifiers from a single dataset (e.g. 'all patients with HBA1c test code > 50 in biochemistry')";
+
+            return
+                @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  It's role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
+
         }
     }
 }

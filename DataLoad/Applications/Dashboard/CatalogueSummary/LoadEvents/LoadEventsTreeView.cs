@@ -9,19 +9,15 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.LogViewer;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
@@ -44,8 +40,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
     public partial class LoadEventsTreeView : LoadEventsTreeView_Design
     {
         private LoadMetadata _loadMetadata;
-        public bool IsTestServerInterrogation { get; set; }
-
+        
         private BackgroundWorker _populateLoadHistory = new BackgroundWorker();
         private ArchivalDataLoadInfo[] _populateLoadHistoryResults = new ArchivalDataLoadInfo[0];
         private CancellationTokenSource _populateLoadHistoryCancel;
@@ -62,6 +57,14 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 PopulateLoadHistory();
             }
         }
+
+        readonly ToolStripTextBox _tbFilterBox = new ToolStripTextBox();
+        readonly ToolStripButton _btnApplyFilter = new ToolStripButton("Apply");
+        readonly ToolStripTextBox _tbToFetch = new ToolStripTextBox() { Text = "1000" };
+        readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
+
+        private int _toFetch = 1000;
+
 
         //constructor
         public LoadEventsTreeView()
@@ -85,7 +88,24 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             treeView1.CopySelectionOnControlC = false;
 
             AssociatedCollection = RDMPCollection.DataLoad;
+            _btnApplyFilter.Click += (s, e) => ApplyFilter(_tbFilterBox.Text);
+            _tbToFetch.TextChanged += TbToFetchTextChanged;
+            _btnFetch.Click += (s,e)=>PopulateLoadHistory();
         }
+        
+        void TbToFetchTextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                _toFetch = Int32.Parse(_tbToFetch.Text);
+                _tbToFetch.ForeColor = Color.Black;
+            }
+            catch (Exception)
+            {
+                _tbToFetch.ForeColor = Color.Red;
+            }
+        }
+
 
         private object olvDescription_AspectGetter(object rowObject)
         {
@@ -153,8 +173,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             //if it is a data load info thing
             if (dli != null)
-                if (dli.Errors.Any())
-                    e.Item.ForeColor = dli.HasUnresolvedErrors ? Color.Red : Color.DarkOrange;
+                if (dli.HasErrors)
+                    e.Item.ForeColor = Color.DarkOrange;
                 else if (dli.EndTime == null) //did not end
                     e.Item.ForeColor = Color.Purple;
                 else
@@ -204,27 +224,17 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 AssociatedTable = associatedTable;
             }
 
-            public bool IsTopXSampleOnly()
-            {
-                return Children.Length == ArchivalDataLoadInfo.MaxChildrenToFetch;
-            }
             public override string ToString()
             {
-                if(IsTopXSampleOnly())
-                    return string.Format(_name + " (Top " + ArchivalDataLoadInfo.MaxChildrenToFetch +")", Children.Length);
-
                 return string.Format(_name + " ({0})",Children.Length);
             }
         }
 
         private bool CanExpandGetter(object model)
         {
-            var dli = model as ArchivalDataLoadInfo;
-
-            if (dli != null)
-                return dli.Errors.Any() || dli.Progress.Any() || dli.TableLoadInfos.Any();
-
-
+            if (model is ArchivalDataLoadInfo)
+                return true;
+            
             if (model is LoadEventsTreeView_Category)
                 return true;
 
@@ -268,10 +278,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 try
                 {
                     _logManager = new LogManager(_loadMetadata.GetDistinctLoggingDatabase());
-                    results = _logManager.GetArchivalLoadInfoFor(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token).ToArray();
-
-                    if(results.Length == ArchivalDataLoadInfo.MaxChildrenToFetch)
-                        ragSmiley1.Warning(new Exception("Only showing " + ArchivalDataLoadInfo.MaxChildrenToFetch + " most recent records"));
+                    results = _logManager.GetArchivalDataLoadInfos(_loadMetadata.GetDistinctLoggingTask(), _populateLoadHistoryCancel.Token,null, _toFetch).ToArray();
                 }
                 catch (OperationCanceledException)//user cancels
                 {
@@ -418,13 +425,23 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 
             }
         }
-
+        
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
             ragSmiley1.Reset();
 
             LoadMetadata = databaseObject;
+
+            Add(new ToolStripLabel("Filter:"));
+            Add(_tbFilterBox);
+            Add(_btnApplyFilter);
+
+            Add(new ToolStripSeparator());
+            Add(new ToolStripLabel("Fetch:"));
+            Add(_tbToFetch);
+            Add(_btnFetch);
+
         }
     }
 

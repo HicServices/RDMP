@@ -9,13 +9,15 @@ using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using CatalogueLibrary;
+using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Repositories;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
 {
     /// <summary>
-    /// Allows you to either create a new HICProjectDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading, 
+    /// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading, 
     /// Executables etc.  In almost all cases you want to have a different directory for each load, this prevents simultaneous loads tripping over one another.
     /// 
     /// <para>To create a new directory with all the appropriate folders and example configuration files enter the path to an empty folder.  If the folder does not exist yet it will be created
@@ -26,18 +28,22 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
     /// to confirm that it is has an intact structure and then use it for your load.</para>
     /// 
     /// </summary>
-    public partial class ChooseHICProjectDialog : Form
+    public partial class ChooseLoadDirectoryUI : Form
     {
         /// <summary>
         /// The users final choice of project directory, also check DialogResult for Ok / Cancel
         /// </summary>
-        public HICProjectDirectory Result { get; private set; }
+        public LoadDirectory Result { get; private set; }
 
         Regex _endsWithDataFolder = new Regex(@"[/\\]Data[/\\ ]*$", RegexOptions.IgnoreCase);
 
-        public ChooseHICProjectDialog()
+        public ChooseLoadDirectoryUI(ILoadMetadata loadMetadata)
         {
             InitializeComponent();
+            
+            var help = ((CatalogueRepository)loadMetadata.Repository).CommentStore.GetDocumentationIfExists("ILoadMetadata.LocationOfFlatFiles",false,true);
+            
+            helpIcon1.SetHelpText("Location Of Flat Files",help);
         }
 
         private void rb_CheckedChanged(object sender, EventArgs e)
@@ -58,7 +64,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             ragSmiley1.Visible = true;
             try
             {
-                new HICProjectDirectory(tbUseExisting.Text);
+                new LoadDirectory(tbUseExisting.Text);
                 ragSmiley1.Reset();
             }
             catch (Exception ex)
@@ -79,7 +85,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
                     if(!dir.Exists)
                         dir.Create();
 
-                    Result = HICProjectDirectory.CreateDirectoryStructure(dir.Parent,dir.Name);
+                    Result = LoadDirectory.CreateDirectoryStructure(dir.Parent,dir.Name);
 
                     DialogResult = DialogResult.OK;
                     this.Close();
@@ -94,7 +100,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
             {
                 try
                 {
-                    Result = new HICProjectDirectory(tbUseExisting.Text);
+                    Result = new LoadDirectory(tbUseExisting.Text);
                     DialogResult = DialogResult.OK;
                     this.Close();
                 }

@@ -77,6 +77,8 @@ namespace DataExportLibrary.Data.DataTables
         public static int ExtractionDirectory_MaxLength = -1;
 
         #region Relationships
+
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<IDataUser> DataUsers
         {
@@ -99,6 +101,7 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public IDataExportRepository DataExportRepository
         {
@@ -152,11 +155,19 @@ namespace DataExportLibrary.Data.DataTables
             ProjectNumber = ObjectToNullableInt(r["ProjectNumber"]);
         }
 
+        /// <summary>
+        /// Returns <see cref="Name"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
         }
 
+        /// <summary>
+        /// Returns <see cref="ProjectNumber"/> (if any), <see cref="Name"/> and <see cref="MasterTicket"/>
+        /// </summary>
+        /// <returns></returns>
         public string GetSearchString()
         {
             if (ProjectNumber == null)
@@ -164,42 +175,47 @@ namespace DataExportLibrary.Data.DataTables
 
             return ProjectNumber + "_" + Name + "_" + MasterTicket;
         }
-
-        #region Stuff for updating our internal database records
-
-        public int CountCohorts()
-        {
-            //get those which have cohorts and get the unique cohort ids amongsth them
-            return ExtractionConfigurations.Where(config => config.Cohort_ID != null).Select(c => c.Cohort_ID).Distinct().Count();
-        }
-        #endregion
-
+        
+        /// <summary>
+        /// Returns all <see cref="CohortIdentificationConfiguration"/> which are associated with the <see cref="IProject"/> (usually because
+        /// they have been used to create <see cref="ExtractableCohort"/> used by the <see cref="IProject"/>).
+        /// </summary>
+        /// <returns></returns>
         public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
         {
             var associations = Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
             return associations.Select(a => a.CohortIdentificationConfiguration).ToArray();
         }
 
+        /// <summary>
+        /// Associates the <paramref name="cic"/> with the <see cref="IProject"/>.  This is usually done after generating an <see cref="IExtractableCohort"/>.
+        /// You can associate a <see cref="CohortIdentificationConfiguration"/> with multiple <see cref="IProject"/> (M to M relationship).
+        /// </summary>
+        /// <param name="cic"></param>
+        /// <returns></returns>
         public ProjectCohortIdentificationConfigurationAssociation AssociateWithCohortIdentification(CohortIdentificationConfiguration cic)
         {
             return new ProjectCohortIdentificationConfigurationAssociation((IDataExportRepository) Repository, this, cic);
         }
 
+        /// <inheritdoc/>
         public ICatalogue[] GetAllProjectCatalogues()
         {
             return Repository.GetAllObjectsWithParent<ExtractableDataSet>(this).Select(eds => eds.Catalogue).ToArray();
         }
 
+        /// <inheritdoc/>
         public ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory c)
         {
             return GetAllProjectCatalogues().SelectMany(pc => pc.GetAllExtractionInformation(c)).ToArray();
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new IHasDependencies[0];
         }
-
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return ExtractionConfigurations;

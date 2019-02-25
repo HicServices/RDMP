@@ -8,15 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
@@ -26,6 +22,12 @@ namespace CatalogueLibrary.Data.Cohort
     /// Cohort identification is achieved by identifying Sets of patients and performing set operations on them e.g. you might identify "all patients who have been prescribed Diazepam"
     /// and then EXCEPT "patients who have been prescribed Diazepam before 2000".  This is gives you DISTINCT patients who were FIRST prescribed Diazepam AFTER 2000.  A CohortAggregateContainer
     /// is a collection of sets (actually implemented as an AggregateConfiguration) (and optionally subcontainers) which are all separated with the given SetOperation.
+    /// 
+    /// <para>There are three SET operations:</para>
+    /// <para>UNION - Match all patients in any of the child containers/aggregates</para>
+    /// <para>INTERSECT - Match patients only if they appear in ALL child containers/aggregates</para>
+    /// <para>EXCEPT - Take patients in the first child container/aggregate and discard any appearing in subsequent child containers/aggregates</para>
+    /// 
     /// </summary>
     public class CohortAggregateContainer : DatabaseEntity, IOrderable,INamed,IDisableable
     {

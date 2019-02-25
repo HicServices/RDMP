@@ -8,11 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Threading;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
 using HIC.Logging.PastEvents;
+using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
 namespace HIC.Logging
@@ -96,7 +97,6 @@ namespace HIC.Logging
         
         private DataTable GetAsTable(string sql)
         {
-            
             DataTable dt = new DataTable();
 
             using (var con = Server.GetConnection())
@@ -111,7 +111,6 @@ namespace HIC.Logging
                 return dt;
             }
         }
-
 
         public string[] ListDataSets()
         {
@@ -131,20 +130,84 @@ namespace HIC.Logging
                 return tasks.ToArray();
             }
         }
-
-        public DateTime? GetDateOfLastLoadAttemptForTask(string nameOfTask, bool onlyIfSuccessful)
+        
+        /// <summary>
+        /// Returns data load audit objects which describe runs of over arching task <paramref name="dataTask"/>
+        /// </summary>
+        /// <param name="dataTask"></param>
+        /// <param name="token"></param>
+        /// <param name="specificDataLoadRunIDOnly"></param>
+        /// <returns></returns>
+        public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null, int? topX = null)
         {
-            var mostRecent = ArchivalDataLoadInfo.GetLoadHistoryForTask(nameOfTask, Server, true).SingleOrDefault();
-
-            //never been loaded
-            if (mostRecent == null)
-                return null;
+            var db = Server.GetCurrentDatabase();
+            var run = db.ExpectTable("DataLoadRun");
             
-            //has unresolved errors
-            if (mostRecent.HasUnresolvedErrors && onlyIfSuccessful)
-                return null;
+            using (var con = Server.GetConnection())
+            {
+                con.Open();
 
-            return mostRecent.EndTime?? mostRecent.StartTime;
+                var dataTaskId = GetDataTaskId(dataTask,Server, con);
+
+                string where = "";
+                string top = "";
+                
+                var cmd = Server.GetCommand("", con);
+
+                if (topX != null)
+                    top = "TOP " + topX.Value;
+
+                if (specificDataLoadRunIDOnly != null)
+                    where = "WHERE ID=" + specificDataLoadRunIDOnly.Value;
+                else
+                {
+                    where = "WHERE dataLoadTaskID = @dataTaskId";
+                    var p = cmd.CreateParameter();
+                    p.ParameterName = "@dataTaskId";
+                    p.Value = dataTaskId;
+                    cmd.Parameters.Add(p);
+                }
+
+                string sql = "SELECT " + top + " *, (select top 1 1 from FatalError where dataLoadRunID = DataLoadRun.ID) hasErrors FROM " + run.GetFullyQualifiedName() +" " + where + " ORDER BY ID desc";
+
+                cmd.CommandText = sql;
+
+                DbDataReader r;
+                if (token == null)
+                    r = cmd.ExecuteReader();
+                else
+                {
+                    Task<DbDataReader> rTask = cmd.ExecuteReaderAsync(token.Value);
+                    rTask.Wait(token.Value);
+
+                    if (rTask.IsCompleted)
+                        r = rTask.Result;
+                    else
+                    {
+                        cmd.Cancel();
+                        
+                        if (rTask.IsFaulted && rTask.Exception != null)
+                            throw rTask.Exception.GetExceptionIfExists<Exception>() ?? rTask.Exception;
+
+                        yield break;
+                    }
+                }
+
+                while (r.Read())
+                    yield return new ArchivalDataLoadInfo(r, db);
+            }
+        }
+
+        private int GetDataTaskId(string dataTask, DiscoveredServer server, DbConnection con)
+        {
+            var cmd = server.GetCommand("SELECT id FROM DataLoadTask WHERE name = @name", con);
+
+            var p = cmd.CreateParameter();
+            p.ParameterName = "@name";
+            p.Value = dataTask;
+            cmd.Parameters.Add(p);
+
+            return Convert.ToInt32(cmd.ExecuteScalar());
         }
 
         public event DataLoadInfoHandler DataLoadInfoCreated;
@@ -163,51 +226,6 @@ namespace HIC.Logging
 
         }
 
-        ///// <summary>
-        ///// Added so calling code is not dependent on the RowErrorLogging singleton, which could later be factored into an injectable service
-        ///// </summary>
-        //public void LogRowError(ITableLoadInfo tableLoadInfo, RowErrorLogging.RowErrorType typeOfError, string description, string locationOfRow, bool requiresReloading, string columnName = null)
-        //{
-        //    _rowErrorLogging.LogRowError(tableLoadInfo, typeOfError, description, locationOfRow, requiresReloading, columnName);
-        //}
-
-        public ArchivalDataLoadInfo GetLoadStatusOf(PastEventType mostRecent, string newLoggingDataTask)
-        {
-            return ArchivalDataLoadInfo.GetLoadStatusOf(mostRecent, newLoggingDataTask, Server);
-        }
-
-        public ArchivalDataLoadInfo GetLoadStatusOf(int dataLoadInfoID)
-        {
-            return ArchivalDataLoadInfo.GetLoadHistoryForTask(null,Server,false,null,dataLoadInfoID).SingleOrDefault();
-        }
-
-        public Dictionary<string, int?> GetIDOfLatestDataLoadRunForTasks()
-        {
-            var toReturn = new Dictionary<string, int?>();
-            using (var con = Server.GetConnection())
-            {
-                con.Open();
-
-                var r = Server.GetCommand(@"
- SELECT 
-t.name,
-max(r.ID) latestRunID
-FROM
-[DataLoadTask] t
-left join
-DataLoadRun  r on t.ID = r.dataLoadTaskID
-group by
-t.name", con).ExecuteReader();
-                while (r.Read())
-                    toReturn.Add(r["name"].ToString(), ObjectToNullableInt(r["latestRunID"]));
-            }
-            return toReturn;
-        }
-
-        public IEnumerable<ArchivalDataLoadInfo> GetArchivalLoadInfoFor(string task, CancellationToken token)
-        {
-            return ArchivalDataLoadInfo.GetLoadHistoryForTask(task, Server,false,token);
-        }
         /// <summary>
         /// Creates a new data load task for the given dataset (datasetID which is the name of the dataset).  The loading task will be called the same as the dataset is called.
         /// </summary>
@@ -282,7 +300,6 @@ t.name", con).ExecuteReader();
             }
         }
 
-
         public void ResolveFatalErrors(int[] ids, DataLoadInfo.FatalErrorStates newState, string newExplanation)
         {
             using (var conn = Server.GetConnection())
@@ -304,97 +321,5 @@ t.name", con).ExecuteReader();
             }
         }
 
-
-        public void GetProgressMessageIDs(int message, out int task, out int run)
-        {
-            var dt = GetAsTable(@"select 
-task.ID taskID,
-run.ID runID
-  FROM ProgressLog msg
-  left join DataLoadRun run on run.ID = msg.dataLoadRunID
-  left join DataLoadTask task on task.ID = run.dataLoadTaskID
-  where msg.ID = " + message);
-
-            if (dt.Rows.Count != 1)
-                throw new Exception("Found " + dt.Rows.Count + " rows of IDs matching ProgressLog " + message);
-
-            task = (int)dt.Rows[0]["taskID"];
-            run = (int)dt.Rows[0]["runID"];
-        }
-        public void GetErrorIDs(int error, out int task, out int run)
-        {
-            var dt = GetAsTable(@"select 
-task.ID taskID,
-run.ID runID
-  FROM FatalError err
-  left join DataLoadRun run on run.ID = err.dataLoadRunID
-  left join DataLoadTask task on task.ID = run.dataLoadTaskID
-  where err.ID = " + error);
-
-            if (dt.Rows.Count != 1)
-                throw new Exception("Found " + dt.Rows.Count + " rows of IDs matching FatalError " + error);
-
-            task = (int)dt.Rows[0]["taskID"];
-            run = (int)dt.Rows[0]["runID"];
-        }
-
-        public void GetRunIDs(int run, out int task)
-        {
-            var dt = GetAsTable(@"select 
-dataLoadTaskID  
-FROM  DataLoadRun 
-  where DataLoadRun.ID = " + run);
-
-            if (dt.Rows.Count != 1)
-                throw new Exception("Found " + dt.Rows.Count + " rows of IDs matching DataLoadRun " + run);
-
-            task = (int)dt.Rows[0]["dataLoadTaskID"];
-
-        }
-
-        public void GetTableIDs(int table, out int task, out int run)
-        {
-                    var dt = GetAsTable(@"select 
-task.ID taskID,
-run.ID runID
-  FROM TableLoadRun tbl
-  left join DataLoadRun run on run.ID = tbl.dataLoadRunID
-  left join DataLoadTask task on task.ID = run.dataLoadTaskID
-  where tbl.ID = " + table);
-
-            if(dt.Rows.Count != 1)
-                throw new Exception("Found " + dt.Rows.Count + " rows of IDs matching TableLoadRun " + table);
-
-            task = (int) dt.Rows[0]["taskID"];
-            run = (int)dt.Rows[0]["runID"];
-        
-        }
-        public void GetDataSourceIDs(int dataSource, out int task,out int run, out int table)
-        {
-            var dt = GetAsTable(@"select 
-task.ID taskID,
-run.ID runID,
-tbl.ID tableID
-  FROM [DataSource] ds
-  left join TableLoadRun tbl on ds.tableLoadRunID = tbl.ID
-  left join DataLoadRun run on run.ID = tbl.dataLoadRunID
-  left join DataLoadTask task on task.ID = run.dataLoadTaskID
-  where ds.ID = " + dataSource);
-
-            if(dt.Rows.Count != 1)
-                throw new Exception("Found " + dt.Rows.Count + " rows of IDs matching DataSource " + dataSource);
-
-            task = (int) dt.Rows[0]["taskID"];
-            run = (int)dt.Rows[0]["runID"];
-            table = (int)dt.Rows[0]["tableID"];
-        }
-
-        public int? ObjectToNullableInt(object o)
-        {
-            if (o == null || o == DBNull.Value)
-                return null;
-
-            return int.Parse(o.ToString());
-        }
     }
 }

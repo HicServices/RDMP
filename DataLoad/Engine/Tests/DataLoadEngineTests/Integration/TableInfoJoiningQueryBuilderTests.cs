@@ -38,7 +38,7 @@ namespace DataLoadEngineTests.Integration
             queryBuilder.AddColumn(icol1);
 
             TableInfo primary;
-            var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary);
+            var tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary,null);
             
             Assert.AreEqual(1,tablesUsed.Count);
             Assert.AreEqual(head,tablesUsed[0]);
@@ -51,7 +51,7 @@ namespace DataLoadEngineTests.Integration
             icol4.Order = 2;
             queryBuilder.AddColumn(icol4);
 
-            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary);
+            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
             
             Assert.AreEqual(2, tablesUsed.Count);
             Assert.AreEqual(head, tablesUsed[0]);
@@ -75,7 +75,7 @@ FROM
             queryBuilder.AddColumn(new ColumnInfoToIColumn(col1));
 
             //without the filter
-            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary);
+            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);
             Assert.AreEqual(1, tablesUsed.Count);
             
             //set the filter
@@ -86,7 +86,7 @@ FROM
             queryBuilder.ParameterManager.ClearNonGlobals();
 
             //with the filter
-            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary);
+            tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary,null);
             Assert.AreEqual(2, tablesUsed.Count);
 
             

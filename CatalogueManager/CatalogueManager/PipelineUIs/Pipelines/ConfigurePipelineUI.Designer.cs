@@ -34,18 +34,17 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         {
             this.label5 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
-            this.btnOk = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
+            this.panelWorkArea = new System.Windows.Forms.Panel();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.btnRetryPreview = new System.Windows.Forms.Button();
-            this.lblPreviewStatus = new System.Windows.Forms.Label();
+            this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(9, 13);
+            this.label5.Location = new System.Drawing.Point(6, 6);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(78, 13);
             this.label5.TabIndex = 5;
@@ -53,28 +52,16 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             // 
             // tbName
             // 
-            this.tbName.Location = new System.Drawing.Point(93, 10);
+            this.tbName.Location = new System.Drawing.Point(90, 3);
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(396, 20);
             this.tbName.TabIndex = 0;
             this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
-            // btnOk
-            // 
-            this.btnOk.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOk.Location = new System.Drawing.Point(477, 926);
-            this.btnOk.Name = "btnOk";
-            this.btnOk.Size = new System.Drawing.Size(295, 23);
-            this.btnOk.TabIndex = 2;
-            this.btnOk.Text = "Save and Close";
-            this.btnOk.UseVisualStyleBackColor = true;
-            this.btnOk.Click += new System.EventHandler(this.btnOk_Click);
-            // 
             // label7
             // 
             this.label7.AutoSize = true;
-            this.label7.Location = new System.Drawing.Point(24, 35);
+            this.label7.Location = new System.Drawing.Point(21, 28);
             this.label7.Name = "label7";
             this.label7.Size = new System.Drawing.Size(63, 13);
             this.label7.TabIndex = 5;
@@ -82,63 +69,50 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             // 
             // tbDescription
             // 
-            this.tbDescription.Location = new System.Drawing.Point(93, 32);
+            this.tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDescription.Location = new System.Drawing.Point(90, 25);
             this.tbDescription.Multiline = true;
             this.tbDescription.Name = "tbDescription";
-            this.tbDescription.Size = new System.Drawing.Size(1158, 67);
+            this.tbDescription.Size = new System.Drawing.Size(980, 67);
             this.tbDescription.TabIndex = 1;
             this.tbDescription.TextChanged += new System.EventHandler(this.tbDescription_TextChanged);
             // 
-            // panel1
+            // panelWorkArea
             // 
-            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            this.panelWorkArea.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.panel1.Location = new System.Drawing.Point(12, 105);
+            this.panelWorkArea.Location = new System.Drawing.Point(3, 98);
+            this.panelWorkArea.Name = "panelWorkArea";
+            this.panelWorkArea.Size = new System.Drawing.Size(1067, 546);
+            this.panelWorkArea.TabIndex = 11;
+            // 
+            // panel1
+            // 
+            this.panel1.Controls.Add(this.tbName);
+            this.panel1.Controls.Add(this.panelWorkArea);
+            this.panel1.Controls.Add(this.label5);
+            this.panel1.Controls.Add(this.tbDescription);
+            this.panel1.Controls.Add(this.label7);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(1239, 815);
-            this.panel1.TabIndex = 11;
-            // 
-            // btnRetryPreview
-            // 
-            this.btnRetryPreview.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRetryPreview.Location = new System.Drawing.Point(1153, 3);
-            this.btnRetryPreview.Name = "btnRetryPreview";
-            this.btnRetryPreview.Size = new System.Drawing.Size(98, 23);
-            this.btnRetryPreview.TabIndex = 12;
-            this.btnRetryPreview.Text = "Retry Preview";
-            this.btnRetryPreview.UseVisualStyleBackColor = true;
-            this.btnRetryPreview.Click += new System.EventHandler(this.btnRetryPreview_Click);
-            // 
-            // lblPreviewStatus
-            // 
-            this.lblPreviewStatus.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblPreviewStatus.AutoSize = true;
-            this.lblPreviewStatus.ForeColor = System.Drawing.Color.Red;
-            this.lblPreviewStatus.Location = new System.Drawing.Point(997, 8);
-            this.lblPreviewStatus.Name = "lblPreviewStatus";
-            this.lblPreviewStatus.Size = new System.Drawing.Size(131, 13);
-            this.lblPreviewStatus.TabIndex = 13;
-            this.lblPreviewStatus.Text = "Preview Generation Failed";
+            this.panel1.Size = new System.Drawing.Size(1073, 647);
+            this.panel1.TabIndex = 14;
             // 
             // ConfigurePipelineUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(1263, 951);
-            this.Controls.Add(this.lblPreviewStatus);
-            this.Controls.Add(this.btnRetryPreview);
+            this.ClientSize = new System.Drawing.Size(1073, 647);
             this.Controls.Add(this.panel1);
-            this.Controls.Add(this.tbDescription);
-            this.Controls.Add(this.btnOk);
-            this.Controls.Add(this.tbName);
-            this.Controls.Add(this.label7);
-            this.Controls.Add(this.label5);
             this.Name = "ConfigurePipelineUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
             this.Text = "ConfigurePipelineUI";
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
@@ -146,11 +120,9 @@ namespace CatalogueManager.PipelineUIs.Pipelines
 
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.TextBox tbName;
-        private System.Windows.Forms.Button btnOk;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbDescription;
+        private Panel panelWorkArea;
         private Panel panel1;
-        private Button btnRetryPreview;
-        private Label lblPreviewStatus;
     }
 }

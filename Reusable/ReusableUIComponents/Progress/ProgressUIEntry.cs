@@ -5,11 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ReusableLibraryCode.Progress;
 
 namespace ReusableUIComponents.Progress
@@ -40,6 +35,25 @@ namespace ReusableUIComponents.Progress
                 return "Unknown";
             
             return sender as string ?? sender.GetType().Name;
+        }
+
+        public WideMessageBoxTheme GetTheme()
+        {
+            switch (ProgressEventType)
+            {
+                case ProgressEventType.Trace:
+                    return WideMessageBoxTheme.Help;
+                case ProgressEventType.Debug:
+                    return WideMessageBoxTheme.Help;
+                case ProgressEventType.Information:
+                    return WideMessageBoxTheme.Help;
+                case ProgressEventType.Warning:
+                    return WideMessageBoxTheme.Warning;
+                case ProgressEventType.Error:
+                    return WideMessageBoxTheme.Exception;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
     }
 }

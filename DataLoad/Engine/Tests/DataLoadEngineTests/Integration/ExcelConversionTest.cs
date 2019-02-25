@@ -44,11 +44,11 @@ namespace DataLoadEngineTests.Integration
                 _dirsToCleanUp.Pop().Delete(true);
         }
 
-        private HICProjectDirectory CreateHICProjectDirectoryForTest(string directoryName)
+        private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
         {
-            var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(_parentDir, directoryName);
-            _dirsToCleanUp.Push(hicProjectDirectory.RootPath);
-            return hicProjectDirectory;
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName);
+            _dirsToCleanUp.Push(loadDirectory.RootPath);
+            return loadDirectory;
         }
 
         [Test]
@@ -57,16 +57,16 @@ namespace DataLoadEngineTests.Integration
             if (!officeInstalled)
                 Assert.Inconclusive();
 
-            var hicProjectDirectory = CreateHICProjectDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
+            var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
 
             //clean up anything in the test project folders forloading directory
-            foreach (FileInfo fileInfo in hicProjectDirectory.ForLoading.GetFiles())
+            foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
                 fileInfo.Delete();
 
-            string targetFile = Path.Combine(hicProjectDirectory.ForLoading.FullName, "Test.xlsx");
+            string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xlsx");
             File.WriteAllBytes(targetFile, Resource1.TestExcelFile1);
 
-            TestConversionFor(targetFile, "*.xlsx", 5, hicProjectDirectory);
+            TestConversionFor(targetFile, "*.xlsx", 5, LoadDirectory);
         }
 
         [Test]
@@ -75,16 +75,16 @@ namespace DataLoadEngineTests.Integration
             if (!officeInstalled)
                 Assert.Inconclusive();
 
-            var hicProjectDirectory = CreateHICProjectDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
+            var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
 
             //clean up anything in the test project folders forloading directory
-            foreach (FileInfo fileInfo in hicProjectDirectory.ForLoading.GetFiles())
+            foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
                 fileInfo.Delete();
 
-            string targetFile = Path.Combine(hicProjectDirectory.ForLoading.FullName, "Test.xml");
+            string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
             File.WriteAllText(targetFile, Resource1.TestExcelFile2);
 
-            var ex = Assert.Throws<Exception>(()=>TestConversionFor(targetFile, "*.fish", 1, hicProjectDirectory));
+            var ex = Assert.Throws<Exception>(()=>TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
 
             Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
         }
@@ -96,21 +96,21 @@ namespace DataLoadEngineTests.Integration
             if (!officeInstalled)
                 Assert.Inconclusive();
 
-            var hicProjectDirectory = CreateHICProjectDirectoryForTest("TestExcelFunctionality_OnExcelXml");
+            var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnExcelXml");
 
             //clean up anything in the test project folders forloading directory
-            foreach (FileInfo fileInfo in hicProjectDirectory.ForLoading.GetFiles())
+            foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
                 fileInfo.Delete();
 
 
-            string targetFile = Path.Combine(hicProjectDirectory.ForLoading.FullName, "Test.xml");
+            string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
             File.WriteAllText(targetFile, Resource1.TestExcelFile2);
 
-            TestConversionFor(targetFile, "*.xml", 1, hicProjectDirectory);
+            TestConversionFor(targetFile, "*.xml", 1, LoadDirectory);
 
         }
 
-        private void TestConversionFor(string targetFile,string fileExtensionToConvert, int expectedNumberOfSheets, HICProjectDirectory hicProjectDirectory)
+        private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
         {
             FileInfo f = new FileInfo(targetFile);
 
@@ -122,12 +122,12 @@ namespace DataLoadEngineTests.Integration
                 ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
 
                 var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning =  true, WriteToConsole =  true});
-                job.HICProjectDirectory = hicProjectDirectory;
+                job.LoadDirectory = directory;
 
                 converter.ExcelFilePattern = fileExtensionToConvert;
                 converter.Fetch(job, new GracefulCancellationToken());
 
-                FileInfo[] filesCreated = hicProjectDirectory.ForLoading.GetFiles("*.csv");
+                FileInfo[] filesCreated = directory.ForLoading.GetFiles("*.csv");
 
                 Assert.AreEqual(expectedNumberOfSheets,filesCreated.Length);
 

@@ -31,12 +31,12 @@ namespace DataLoadEngineTests.Unit
         {
             var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             var testDir = workingDir.CreateSubdirectory("MDFAttacherTests");
-            var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException",true);
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException",true);
 
             try
             {
                 var attacher = new MDFAttacher();
-                attacher.Initialize(hicProjectDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
                 Assert.Throws<FileNotFoundException>(() => attacher.Attach(null, new GracefulCancellationToken()));
             }
             finally
@@ -125,7 +125,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void ConnectToServer()
         {
-            var hicProjDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"MDFAttacherTest", true);
+            var hicProjDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"MDFAttacherTest", true);
 
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("MyImaginaryDB_RAW");
             Assert.IsFalse(db.Exists());
@@ -203,12 +203,12 @@ namespace DataLoadEngineTests.Unit
                 throw new NotImplementedException();
             }
 
-            public IHICProjectDirectory HICProjectDirectory { get; set; }
+            public ILoadDirectory LoadDirectory { get; set; }
 
             public string DatabaseServer { get; private set; }
             public string DatabaseName { get; private set; }
             public bool RequestsExternalDatabaseCreation { get; private set; }
-            public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+            public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
             {
                 
             }
@@ -257,13 +257,13 @@ namespace DataLoadEngineTests.Unit
         {
             var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
             var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
-            var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, "TestFactory",true);
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 
             try
             {
                 
                 var attacher = CatalogueRepository.MEF.FactoryCreateA<IAttacher>(typeof(MDFAttacher).FullName);
-                attacher.Initialize(hicProjectDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
 
                 Assert.IsNotNull(attacher);
                 Assert.IsInstanceOf<MDFAttacher>(attacher);

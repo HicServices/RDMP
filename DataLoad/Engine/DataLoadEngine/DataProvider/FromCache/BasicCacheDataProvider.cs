@@ -17,7 +17,7 @@ namespace DataLoadEngine.DataProvider.FromCache
     /// </summary>
     public class BasicCacheDataProvider : CachedFileRetriever
     {
-        public override void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

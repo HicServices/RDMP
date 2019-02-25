@@ -56,12 +56,12 @@ namespace LoadModules.GenericUIs.LoadProgressUpdating
         }
 
         public ICatalogueRepository CatalogueRepository { get; set; }
-        public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value, DataTable previewIfAvailable)
+        public void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value)
         {
-            SetUnderlyingObjectTo((DataLoadProgressUpdateInfo)value,previewIfAvailable);
+            SetUnderlyingObjectTo((DataLoadProgressUpdateInfo)value);
         }
 
-        public void SetUnderlyingObjectTo(DataLoadProgressUpdateInfo value, DataTable previewIfAvailable)
+        public void SetUnderlyingObjectTo(DataLoadProgressUpdateInfo value)
         {
             if (value == null)
                 return;

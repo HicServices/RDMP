@@ -45,13 +45,13 @@ namespace DataLoadEngineTests.Integration.PipelineTests
             var dataLoadInfo = MockRepository.GenerateStub<IDataLoadInfo>();
             dataLoadInfo.Stub(info => info.ID).Return(1);
 
-            var hicProjectDirectory = MockRepository.GenerateStub<IHICProjectDirectory>();
-            hicProjectDirectory.Stub(d => d.ForArchiving).Return(forArchiving);
-            hicProjectDirectory.Stub(d => d.ForLoading).Return(forLoading);
+            var LoadDirectory = MockRepository.GenerateStub<ILoadDirectory>();
+            LoadDirectory.Stub(d => d.ForArchiving).Return(forArchiving);
+            LoadDirectory.Stub(d => d.ForLoading).Return(forLoading);
 
             var job = MockRepository.GenerateStub<IDataLoadJob>();
             job.Stub(j => j.DataLoadInfo).Return(dataLoadInfo);
-            job.HICProjectDirectory = hicProjectDirectory;
+            job.LoadDirectory = LoadDirectory;
 
             try
             {
@@ -93,20 +93,20 @@ namespace DataLoadEngineTests.Integration.PipelineTests
             var testDir = directoryHelper.Directory.CreateSubdirectory("CreateArchiveWithNoFiles_ShouldThrow");
             
             var archiveFiles = new ArchiveFiles(new HICLoadConfigurationFlags());
-            var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, "dataset");
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "dataset");
             
             var job = MockRepository.GenerateStub<IDataLoadJob>();
             job.Stub(j => j.DataLoadInfo).Return(MockRepository.GenerateStub<IDataLoadInfo>());
-            job.HICProjectDirectory = hicProjectDirectory;
+            job.LoadDirectory = loadDirectory;
 
             try
             {
                 archiveFiles.Run(job, new GracefulCancellationToken());
 
-                foreach (FileInfo fileInfo in hicProjectDirectory.ForArchiving.GetFiles("*.zip"))
+                foreach (FileInfo fileInfo in loadDirectory.ForArchiving.GetFiles("*.zip"))
                     Console.WriteLine("About to throw up because of zip file:" + fileInfo.FullName);
 
-                Assert.IsFalse(hicProjectDirectory.ForArchiving.GetFiles("*.zip").Any(),"There should not be any zip files in the archive directory!");
+                Assert.IsFalse(loadDirectory.ForArchiving.GetFiles("*.zip").Any(),"There should not be any zip files in the archive directory!");
             }
             finally
             {

@@ -53,6 +53,8 @@ namespace CatalogueManager.DataViewing
         ToolStripButton btnExecuteSql = new ToolStripButton("Run");
         ToolStripButton btnResetSql = new ToolStripButton("Restore Original SQL");
 
+        readonly ToolStripTimeout _timeoutControls = new ToolStripTimeout();
+
         public ViewSQLAndResultsWithDataGridUI()
         {
             InitializeComponent();
@@ -66,6 +68,8 @@ namespace CatalogueManager.DataViewing
 
             btnExecuteSql.Click += (s,e) => RunQuery();
             btnResetSql.Click += btnResetSql_Click;
+
+
         }
 
         private void ScintillaOnKeyUp(object sender, KeyEventArgs keyEventArgs)
@@ -84,11 +88,11 @@ namespace CatalogueManager.DataViewing
                         ParentForm.Close();
         }
 
-        private bool _menuInitialized = false;
-        
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             _collection = (IViewSQLAndResultsCollection) collection;
+
+            ClearToolStrip();
 
             btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
 
@@ -106,13 +110,11 @@ namespace CatalogueManager.DataViewing
 
             SetItemActivator(activator);
             
-            if (!_menuInitialized)
-            {
-                Add(btnExecuteSql);
-                Add(btnResetSql);
+            Add(btnExecuteSql);
+            Add(btnResetSql);
 
-                _menuInitialized = true;
-            }
+            foreach (var c in _timeoutControls.GetControls())
+                Add(c);
 
             foreach (DatabaseEntity d in _collection.GetToolStripObjects())
                 AddToMenu(new ExecuteCommandShow(activator, d, 0,true));
@@ -127,12 +129,12 @@ namespace CatalogueManager.DataViewing
                 _server = DataAccessPortal.GetInstance()
                     .ExpectServer(_collection.GetDataAccessPoint(), DataAccessContext.InternalDataProcessing);
 
-                _server.TestConnection();
-
                 string sql = _collection.GetSql();
                 _originalSql = sql;
                 //update the editor to show the user the SQL
                 _scintilla.Text = sql;
+                
+                _server.TestConnection();
 
                 LoadDataTableAsync(_server, sql);
             }
@@ -141,7 +143,7 @@ namespace CatalogueManager.DataViewing
                 ragSmiley1.SetVisible(true);
                 ragSmiley1.Fatal(ex);
             }
-            catch (SqlException ex)
+            catch (Exception ex)
             {
                 ragSmiley1.SetVisible(true);
                 ragSmiley1.Fatal(ex);
@@ -181,9 +183,10 @@ namespace CatalogueManager.DataViewing
                         con.Open();
 
                         _cmd = server.GetCommand(sql, con);
+                        _cmd.CommandTimeout = _timeoutControls.Timeout;
 
                         DbDataAdapter a = server.GetDataAdapter(_cmd);
-
+                        
                         DataTable dt = new DataTable();
 
                         a.Fill(dt);

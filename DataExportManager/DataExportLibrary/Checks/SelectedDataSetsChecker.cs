@@ -17,6 +17,7 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data;
+using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
@@ -41,8 +42,19 @@ namespace DataExportLibrary.Checks
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly bool _checkGlobals;
         private readonly IPipeline _alsoCheckPipeline;
+
+        /// <summary>
+        /// The selected dataset being checked
+        /// </summary>
         public ISelectedDataSets SelectedDataSet { get; private set; }
         
+        /// <summary>
+        /// prepares to check the dataset as it is selected in an <see cref="ExtractionConfiguration"/>.  Optionally checks an extraction <see cref="Pipeline"/> and globals
+        /// </summary>
+        /// <param name="selectedDataSet"></param>
+        /// <param name="repositoryLocator"></param>
+        /// <param name="checkGlobals"></param>
+        /// <param name="alsoCheckPipeline"></param>
         public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
         {
             _repositoryLocator = repositoryLocator;
@@ -51,6 +63,10 @@ namespace DataExportLibrary.Checks
             SelectedDataSet = selectedDataSet;
         }
 
+        /// <summary>
+        /// Checks the <see cref="SelectedDataSet"/> and reports success/failures to the <paramref name="notifier"/>
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             var ds = SelectedDataSet.ExtractableDataSet;

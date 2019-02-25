@@ -48,7 +48,7 @@ namespace DataLoadEngineTests.Integration
             }
 
             public void Create(CatalogueRepository repository, DiscoveredDatabase database,
-                IHICProjectDirectory hicProjectDirectory)
+                ILoadDirectory directory)
             {
                 TableInfo = new TableInfo(repository, "TestData")
                 {
@@ -71,7 +71,7 @@ namespace DataLoadEngineTests.Integration
 
                 LoadMetadata = new LoadMetadata(repository, "HICLoadPipelineTests")
                 {
-                    LocationOfFlatFiles = hicProjectDirectory.RootPath.FullName
+                    LocationOfFlatFiles = directory.RootPath.FullName
                 };
                 LoadMetadata.SaveToDatabase();
 
@@ -228,14 +228,14 @@ namespace DataLoadEngineTests.Integration
             try
             {
                 // Set up the dataset's project directory and add the CSV file to ForLoading
-                var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(testDir, "TestDataset");
-                File.WriteAllText(Path.Combine(hicProjectDirectory.ForLoading.FullName, "1.csv"),
+                var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestDataset");
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "1.csv"),
                     "Col1\r\n1\r\n2\r\n3\r\n4");
 
                 databaseHelper.SetUp(server);
 
                 // Create the Catalogue entities for the dataset
-                catalogueEntities.Create(CatalogueRepository, databaseHelper.DatabaseToLoad, hicProjectDirectory);
+                catalogueEntities.Create(CatalogueRepository, databaseHelper.DatabaseToLoad, loadDirectory);
                 
                 if (overrideRAW)
                 {
@@ -276,9 +276,9 @@ namespace DataLoadEngineTests.Integration
                     runner.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
 
 
-                var archiveFile = hicProjectDirectory.ForArchiving.EnumerateFiles("*.zip").OrderByDescending(f=>f.FullName).FirstOrDefault();
+                var archiveFile = loadDirectory.ForArchiving.EnumerateFiles("*.zip").OrderByDescending(f=>f.FullName).FirstOrDefault();
                 Assert.NotNull(archiveFile,"Archive file has not been created by the load.");
-                Assert.IsFalse(hicProjectDirectory.ForLoading.EnumerateFileSystemInfos().Any());
+                Assert.IsFalse(loadDirectory.ForLoading.EnumerateFileSystemInfos().Any());
 
             }
             finally
@@ -299,19 +299,19 @@ namespace DataLoadEngineTests.Integration
 
     public class TestCacheFileRetriever : CachedFileRetriever
     {
-        public override void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }
 
         public override ExitCodeType Fetch(IDataLoadJob dataLoadJob, GracefulCancellationToken cancellationToken)
         {
-            var hicProjectDirectory = dataLoadJob.HICProjectDirectory;
-            var fileToMove = hicProjectDirectory.Cache.EnumerateFiles("*.csv").FirstOrDefault();
+            var LoadDirectory = dataLoadJob.LoadDirectory;
+            var fileToMove = LoadDirectory.Cache.EnumerateFiles("*.csv").FirstOrDefault();
             if (fileToMove == null)
                 return ExitCodeType.OperationNotRequired;
 
-            File.Move(fileToMove.FullName, Path.Combine(hicProjectDirectory.ForLoading.FullName, "1.csv"));
+            File.Move(fileToMove.FullName, Path.Combine(LoadDirectory.ForLoading.FullName, "1.csv"));
             return ExitCodeType.Success;
         }
     }

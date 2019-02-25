@@ -64,13 +64,13 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             patternArgument.SaveToDatabase();
 
             
-            var hicProjectDirectory = new HICProjectDirectory(lmd.LocationOfFlatFiles);
+            var LoadDirectory = new LoadDirectory(lmd.LocationOfFlatFiles);
 
             //take the forLoading file
-            var csvFile = hicProjectDirectory.ForLoading.GetFiles().Single();
+            var csvFile = LoadDirectory.ForLoading.GetFiles().Single();
 
             //and move it to the cache and give it a date in the range we expect for the cached data
-            csvFile.MoveTo(Path.Combine(hicProjectDirectory.Cache.FullName,"2001-01-09.csv"));
+            csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName,"2001-01-09.csv"));
                        
             setup.RecordPreExecutionState();
 
@@ -79,11 +79,11 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
             Assert.AreEqual(10,newRows);
 
-            Assert.AreEqual(0,hicProjectDirectory.Cache.GetFiles().Count());
-            Assert.AreEqual(0, hicProjectDirectory.ForLoading.GetFiles().Count());
-            Assert.AreEqual(1, hicProjectDirectory.ForArchiving.GetFiles().Count());
+            Assert.AreEqual(0,LoadDirectory.Cache.GetFiles().Count());
+            Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Count());
+            Assert.AreEqual(1, LoadDirectory.ForArchiving.GetFiles().Count());
             
-            var archiveFile = hicProjectDirectory.ForArchiving.GetFiles()[0];
+            var archiveFile = LoadDirectory.ForArchiving.GetFiles()[0];
             Assert.AreEqual(".zip",archiveFile.Extension);
 
 

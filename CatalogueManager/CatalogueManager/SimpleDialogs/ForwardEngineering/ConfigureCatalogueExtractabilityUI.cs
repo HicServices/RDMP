@@ -163,13 +163,15 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             {
                 SelectProject(projectSpecificIfAny);
                 pbProject.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Project);
-                helpIconProjectSpecific.SetHelpText("Project Specific Catalogues", "A Catalogue can be isolated to a single extraction Project (for example if you are importing researchers questionnaire data etc).  This will mean the Catalogue only shows up under that Project and can only be extracted with that Project.");
             }
 
             ddIsExtractionIdentifier.Items.Add("<<None>>");
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
 
             rdmpUserControlPanel.SetItemActivator(_activator);
+            rdmpUserControlPanel.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
+            
+            objectSaverButton1.SetupFor(rdmpUserControlPanel,_catalogue,_activator.RefreshBus);
         }
 
 
@@ -460,7 +462,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             stage3.SetNext(stage4);
 
             _workflow.RootStage = stage1;
-            _workflow.Start();
 
             helpIcon1.SetHelpText("Configure Extractability", "Click for tutorial", _workflow);
         }

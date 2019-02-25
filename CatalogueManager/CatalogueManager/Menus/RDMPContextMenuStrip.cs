@@ -155,6 +155,7 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandExpandAllNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);
                 Add(new ExecuteCommandCollapseChildNodes(_activator, commonFunctionality, _args.Model), Keys.None, treeMenuItem);
             }
+            treeMenuItem.Enabled = treeMenuItem.HasDropDown;
         }
 
         private void PopulateInspectionMenu(RDMPCollectionCommonFunctionality commonFunctionality, ToolStripMenuItem inspectionMenuItem)
@@ -174,6 +175,8 @@ namespace CatalogueManager.Menus
 
             if(databaseEntity != null)
                 Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()), Keys.None, inspectionMenuItem);
+
+            inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown;
         }
 
         protected void Activate(DatabaseEntity o)

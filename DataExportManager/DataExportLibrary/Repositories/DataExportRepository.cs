@@ -35,6 +35,10 @@ namespace DataExportLibrary.Repositories
     /// </summary>
     public class DataExportRepository : TableRepository, IDataExportRepository
     {
+        /// <summary>
+        /// The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).  Some objects in this database
+        /// contain references to objects in the CatalogueRepository.
+        /// </summary>
         public CatalogueRepository CatalogueRepository { get; private set; }
 
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
@@ -91,6 +95,19 @@ namespace DataExportLibrary.Repositories
                 return new CatalogueExtractabilityStatus(false, false);
 
             return eds.GetCatalogueExtractabilityStatus();
+        }
+
+        public SelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+        {
+            return SelectAll<SelectedDataSets>(@"
+
+SELECT ID  FROM SelectedDataSets sds
+where not exists (
+select 1 FROM ExtractableColumn ec where 
+ec.ExtractableDataSet_ID = sds.ExtractableDataSet_ID
+AND
+ec.IsExtractionIdentifier = 1
+)","ID").ToArray();
         }
     }
 }

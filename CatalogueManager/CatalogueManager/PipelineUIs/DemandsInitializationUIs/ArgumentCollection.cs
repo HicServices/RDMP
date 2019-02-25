@@ -6,20 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics.Contracts;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
-using System.Security.Cryptography;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -50,9 +41,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
         {
             InitializeComponent();
         }
-
-        public DataTable Preview { get; set; }
-
+        
         /// <summary>
         /// Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of DemandsInitialization
         /// properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is ProcessTaskArgument then your underlying type could
@@ -165,7 +154,6 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             args.InitialValue = argument.GetValueAsSystemType();
             args.Type = argument.GetSystemType();
             args.Required = required;
-            args.PreviewIfAny = Preview;
             args.CatalogueRepository = (CatalogueRepository) argument.Repository;
             args.Setter = (v) =>
             {

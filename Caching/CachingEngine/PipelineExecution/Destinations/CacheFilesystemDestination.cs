@@ -39,18 +39,18 @@ namespace CachingEngine.PipelineExecution.Destinations
     /// </summary>
     public abstract class CacheFilesystemDestination : ICacheFileSystemDestination, IPluginDataFlowComponent<ICacheChunk>, IDataFlowDestination<ICacheChunk>
     {
-        [DemandsInitialization("Root directory for the cache. This overrides the default HICProjectDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.",DemandType.Unspecified,null)]
+        [DemandsInitialization("Root directory for the cache. This overrides the default LoadDirectory cache location. This might be needed if you are caching a very large data set which needs its own dedicated storage resource, for example.",DemandType.Unspecified,null)]
         public DirectoryInfo CacheDirectory { get; set; }
         
         public abstract ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken);
         
-        public void PreInitialize(IHICProjectDirectory value, IDataLoadEventListener listener)
+        public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
         {
-            // CacheDirectory overrides HICProjectDirectory, so only set CacheDirectory if it is null (i.e. no alternative cache location has been configured in the destination component)
+            // CacheDirectory overrides LoadDirectory, so only set CacheDirectory if it is null (i.e. no alternative cache location has been configured in the destination component)
             if (CacheDirectory == null)
             {
                 if (value.Cache == null)
-                    throw new Exception("For some reason the HICProjectDirectory does not have a Cache specified and the FilesystemDestination component does not have an override CacheDirectory specified");
+                    throw new Exception("For some reason the LoadDirectory does not have a Cache specified and the FilesystemDestination component does not have an override CacheDirectory specified");
 
                 CacheDirectory = value.Cache;
             }

@@ -10,6 +10,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.Exceptions;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -143,7 +144,7 @@ namespace DataExportLibrary.ExtractionTime
             IProject project = configuration.Project;
 
             if (project.ProjectNumber == null)
-                throw new Exception("Project number has not been entered, cannot create constant paramaters");
+                throw new ProjectNumberException("Project number has not been entered, cannot create constant paramaters");
             
             if(extractableCohort == null)
                 throw new Exception("Cohort has not been selected, cannot create constant parameters");

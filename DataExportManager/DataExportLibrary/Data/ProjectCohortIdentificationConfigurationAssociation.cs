@@ -11,6 +11,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
@@ -30,11 +31,18 @@ namespace DataExportLibrary.Data
         private int _cohortIdentificationConfiguration_ID;
         #endregion
 
+        /// <summary>
+        /// The <see cref="IProject"/> to which the <see cref="CohortIdentificationConfiguration_ID"/> is associated with.
+        /// </summary>
         public int Project_ID
         {
             get { return _project_ID; }
             set { SetField(ref _project_ID, value); }
         }
+
+        /// <summary>
+        /// The <see cref="CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
+        /// </summary>
         public int CohortIdentificationConfiguration_ID
         {
             get { return _cohortIdentificationConfiguration_ID; }
@@ -43,15 +51,25 @@ namespace DataExportLibrary.Data
 
 
         #region Relationships
+
+
+        /// <inheritdoc cref="Project_ID"/>
         [NoMappingToDatabase]
         public Project Project { get { return Repository.GetObjectByID<Project>(Project_ID); } }
-        
+
+        /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
         [NoMappingToDatabase]
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get { return ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID); } }
 
         #endregion
 
-
+        /// <summary>
+        /// Declares in the <paramref name="repository"/> database that the given <paramref name="cic"/> cohort query is associated with the supplied <paramref name="project"/>.
+        /// This is usually done after using the query to build an <see cref="IExtractableCohort"/> (But it can be done manually by the user too).
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="project"></param>
+        /// <param name="cic"></param>
         public ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, Project project, CohortIdentificationConfiguration cic)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
@@ -71,21 +89,32 @@ namespace DataExportLibrary.Data
         }
 
         private CohortIdentificationConfiguration _cachedCic = null;
+        
+        /// <summary>
+        /// Returns the associated <see cref="CohortIdentificationConfiguration_ID"/> Name
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return GetCohortIdentificationConfigurationCached().Name;
         }
 
+        /// <inheritdoc/>
         public string GetDeleteMessage()
         {
             return "disassociate this CohortIdentificationConfiguration from the Project";
         }
 
+        /// <summary>
+        /// Returns the <see cref="CohortIdentificationConfiguration_ID"/>
+        /// </summary>
+        /// <returns></returns>
         public object MasqueradingAs()
         {
             return GetCohortIdentificationConfigurationCached();
         }
 
+        /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
         public CohortIdentificationConfiguration GetCohortIdentificationConfigurationCached()
         {
             //if we never knew it or it changed
@@ -95,6 +124,11 @@ namespace DataExportLibrary.Data
             return _cachedCic;
         }
 
+        /// <summary>
+        /// Informs the class of the known value of <see cref="CohortIdentificationConfiguration_ID"/> (so that it doesn't have
+        /// to be fetched by database queries later on).
+        /// </summary>
+        /// <param name="cic"></param>
         public void InjectKnownCohortIdentificationConfiguration(CohortIdentificationConfiguration cic)
         {
             _cachedCic = cic;

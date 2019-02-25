@@ -58,7 +58,7 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
                 notifier.OnCheckPerformed(new CheckEventArgs("Argument ExcelFilePattern has not been specified", CheckResult.Fail));
         }
 
-        public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }
@@ -76,7 +76,7 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
 
             bool foundAtLeastOne = false;
 
-            foreach (FileInfo f in job.HICProjectDirectory.ForLoading.GetFiles(ExcelFilePattern))
+            foreach (FileInfo f in job.LoadDirectory.ForLoading.GetFiles(ExcelFilePattern))
             {
                 foundAtLeastOne = true;
                 job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to process file " + f.Name));
@@ -84,7 +84,7 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
             }
 
             if(!foundAtLeastOne)
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Did not find any files matching Pattern '" + ExcelFilePattern+"' in directory '" + job.HICProjectDirectory.ForLoading.FullName+"'"));
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Did not find any files matching Pattern '" + ExcelFilePattern+"' in directory '" + job.LoadDirectory.ForLoading.FullName+"'"));
 
             excelApp.DisplayAlerts = false;
             excelApp.Quit();
@@ -110,7 +110,7 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
                     //make it sensible
                     newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
 
-                    string savePath = Path.Combine(job.HICProjectDirectory.ForLoading.FullName, newName);
+                    string savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
 
                     w.SaveAs(savePath, XlFileFormat.xlCSVWindows);
                     

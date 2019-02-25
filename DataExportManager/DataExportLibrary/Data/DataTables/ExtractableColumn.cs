@@ -42,16 +42,33 @@ namespace DataExportLibrary.Data.DataTables
         private int _extractionConfiguration_ID;
         private int? _catalogueExtractionInformation_ID;
         
+        /// <summary>
+        /// The dataset to which this column belongs.  This is used with <see cref="ExtractionConfiguration_ID"/> to specify which dataset in which extraction 
+        /// this line of SELECT sql is used.
+        /// </summary>
         public int ExtractableDataSet_ID
         {
             get { return _extractableDataSet_ID; }
             set { SetField(ref _extractableDataSet_ID, value); }
         }
+
+        /// <summary>
+        /// The configuration to which this column belongs.  This is used with <see cref="ExtractableDataSet_ID"/> to specify which dataset in which extraction 
+        /// this line of SELECT sql is used.
+        /// </summary>
         public int ExtractionConfiguration_ID
         {
             get { return _extractionConfiguration_ID; }
             set { SetField(ref _extractionConfiguration_ID, value); }
         }
+
+        /// <summary>
+        /// The original master column definition this object was cloned from.  When you add a dataset to an <see cref="ExtractionConfiguration"/> all the column
+        /// definitions are copied to ensure the configuration is preserved going forwards.  This enables old extractions to be rerun regardless of changes in 
+        /// the original dataset.  
+        /// 
+        /// <para>May be null if the parent catalogue <see cref="ExtractionInformation"/> has been deleted</para>
+        /// </summary>
         public int? CatalogueExtractionInformation_ID
         {
             get { return _catalogueExtractionInformation_ID; }
@@ -78,6 +95,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         [CanBeNull]
         [NoMappingToDatabase]
         public override ColumnInfo ColumnInfo
@@ -90,6 +108,16 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
+        /// <summary>
+        /// Creates a new line of SELECT Sql for the given <paramref name="dataset"/> as it is extracted in the provided <paramref name="configuration"/>.  The new object will
+        /// be created in the <paramref name="repository"/> database.
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="dataset"></param>
+        /// <param name="configuration"></param>
+        /// <param name="extractionInformation"></param>
+        /// <param name="order"></param>
+        /// <param name="selectSQL"></param>
         public ExtractableColumn(IDataExportRepository repository, IExtractableDataSet dataset, ExtractionConfiguration configuration, ExtractionInformation extractionInformation, int order, string selectSQL)
         {
             Repository = repository;
@@ -131,15 +159,19 @@ namespace DataExportLibrary.Data.DataTables
         private Lazy<ColumnInfo> _knownColumnInfo;
         private Lazy<ExtractionInformation> _knownExtractionInformation;
 
+        /// <inheritdoc/>
         public void InjectKnown(CatalogueItem instance)
         {
             _knownCatalogueItem = new Lazy<CatalogueItem>(()=>instance);
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(ColumnInfo instance)
         {
             _knownColumnInfo = new Lazy<ColumnInfo>(()=>instance);
         }
+
+        /// <inheritdoc/>
         public void InjectKnown(ExtractionInformation extractionInformation)
         {
             //_knownExtractionInformation = new Lazy<ExtractionInformation>(() => extractionInformation);
@@ -156,6 +188,7 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _knownCatalogueItem = new Lazy<CatalogueItem>(FetchCatalogueItem);
@@ -164,6 +197,10 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion 
 
+        /// <summary>
+        /// Returns the <see cref="ConcreteColumn.SelectSQL"/> or <see cref="ConcreteColumn.Alias"/> of the column (if it has one)
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             if(!string.IsNullOrWhiteSpace(Alias))
@@ -171,15 +208,11 @@ namespace DataExportLibrary.Data.DataTables
 
             return SelectSQL;
         }
-
-        public int CompareTo(object obj)
-        {
-            if (obj is ExtractableColumn)
-                return this.Order - (obj as ExtractableColumn).Order;
-
-            throw new NotSupportedException("ExtractableColumn can only be compared with other ExtractableColumns");
-        }
         
+        /// <summary>
+        /// Returns true if the underlying column (<see cref="ColumnInfo"/>) referenced by this class has disapeared since it's creation.
+        /// </summary>
+        /// <returns></returns>
         public bool HasOriginalExtractionInformationVanished()
         {
             return ColumnInfo == null;

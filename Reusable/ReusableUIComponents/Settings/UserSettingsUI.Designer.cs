@@ -37,6 +37,8 @@
             this.cbThemeMenus = new System.Windows.Forms.CheckBox();
             this.ddTheme = new System.Windows.Forms.ComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label4 = new System.Windows.Forms.Label();
+            this.ddWordWrap = new System.Windows.Forms.ComboBox();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -132,11 +134,32 @@
             this.label3.TabIndex = 3;
             this.label3.Text = "*Requires restart";
             // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(2, 231);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(83, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "Sql Word Wrap:";
+            // 
+            // ddWordWrap
+            // 
+            this.ddWordWrap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
+            this.ddWordWrap.FormattingEnabled = true;
+            this.ddWordWrap.Location = new System.Drawing.Point(91, 228);
+            this.ddWordWrap.Name = "ddWordWrap";
+            this.ddWordWrap.Size = new System.Drawing.Size(124, 21);
+            this.ddWordWrap.TabIndex = 7;
+            this.ddWordWrap.SelectedIndexChanged += new System.EventHandler(this.ddWordWrap_SelectedIndexChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 565);
+            this.Controls.Add(this.ddWordWrap);
+            this.Controls.Add(this.label4);
             this.Controls.Add(this.ddTheme);
             this.Controls.Add(this.cbThemeMenus);
             this.Controls.Add(this.label3);
@@ -164,5 +187,7 @@
         private System.Windows.Forms.CheckBox cbThemeMenus;
         private System.Windows.Forms.ComboBox ddTheme;
         private System.Windows.Forms.Label label3;
+        private System.Windows.Forms.Label label4;
+        private System.Windows.Forms.ComboBox ddWordWrap;
     }
 }

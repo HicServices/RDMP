@@ -47,7 +47,7 @@ namespace DataLoadEngine.LoadExecution.Components.Arguments
             return
                 new StageArgs(loadStage,
                 _dbDeployInfo[loadStage.ToLoadBubble()]
-                , new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles.TrimEnd(new[] { '\\' })));
+                , new LoadDirectory(_loadMetadata.LocationOfFlatFiles.TrimEnd(new[] { '\\' })));
         }
     }
 }

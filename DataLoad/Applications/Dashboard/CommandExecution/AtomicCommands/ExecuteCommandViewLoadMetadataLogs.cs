@@ -50,7 +50,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<AllLoadEventsUI, LoadMetadata>(_loadmetadata);
+            Activator.Activate<LoadEventsTreeView, LoadMetadata>(_loadmetadata);
         }
     }
 }

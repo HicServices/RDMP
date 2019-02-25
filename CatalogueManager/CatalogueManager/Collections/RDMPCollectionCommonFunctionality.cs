@@ -9,13 +9,9 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
@@ -30,9 +26,9 @@ using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
@@ -83,6 +79,17 @@ namespace CatalogueManager.Collections
         public Type[] MaintainRootObjects { get; set; }
         
         public RDMPCollectionCommonFunctionalitySettings Settings { get; private set; }
+         
+        private static readonly Dictionary<RDMPCollection,Guid> TreeGuids = new Dictionary<RDMPCollection, Guid>()
+        {
+            {RDMPCollection.Tables,new Guid("8f24d624-acad-45dd-862b-01b18dfdd9a2")},
+            {RDMPCollection.Catalogue,new Guid("d0f72b03-63f1-487e-9afa-51c03afa7819")},
+            {RDMPCollection.DataExport,new Guid("9fb651f6-3e4f-4629-b64e-f61551ae009e")},
+            {RDMPCollection.SavedCohorts,new Guid("6d0e4560-9357-4ee1-91b6-a182a57f7a6f")},
+            {RDMPCollection.Cohort,new Guid("5c7cceb3-4202-47b1-b271-e2eed869d9ef")},
+            {RDMPCollection.Favourites,new Guid("39d37439-ac7a-4346-8c79-9867384db92e")},
+            {RDMPCollection.DataLoad,new Guid("600aad33-df6c-4013-ad92-65de19d494cf")},
+        };
 
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI with the default settings
@@ -130,7 +137,7 @@ namespace CatalogueManager.Collections
                 Tree.ItemActivate += CommonItemActivation;
 
             Tree.CellRightClick += CommonRightClick;
-            Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
+            Tree.SelectedIndexChanged += (s,e)=>RefreshContextMenuStrip();
             
             if(iconColumn != null)
                 iconColumn.ImageGetter += ImageGetter;
@@ -197,6 +204,29 @@ namespace CatalogueManager.Collections
             
             Tree.FormatRow += Tree_FormatRow;
             Tree.CellToolTipGetter += Tree_CellToolTipGetter;
+
+            //persist user sort orders
+            if (TreeGuids.ContainsKey(_collection))
+            {
+                //if we know the sort order fo this collection last time
+                var lastSort = UserSettings.GetLastColumnSortForCollection(TreeGuids[_collection]);
+
+                //reestablish that sort order
+                if (lastSort != null && Tree.AllColumns.Any(c => c.Text == lastSort.Item1))
+                {
+                    Tree.PrimarySortColumn = Tree.GetColumn(lastSort.Item1);
+                    Tree.PrimarySortOrder = lastSort.Item2 ? SortOrder.Ascending : SortOrder.Descending;
+                }
+
+                //and track changes to the sort order
+                Tree.AfterSorting += TreeOnAfterSorting;
+            }
+        }
+
+        private void TreeOnAfterSorting(object sender, AfterSortingEventArgs e)
+        {
+            if (TreeGuids.ContainsKey(_collection))
+                UserSettings.SetLastColumnSortForCollection(TreeGuids[_collection], e.ColumnToSort == null ? null:e.ColumnToSort.Text, e.SortOrder == SortOrder.Ascending);
         }
 
         private void CreateColorIndicator(TreeListView tree, RDMPCollection collection)

@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using DataExportLibrary.Interfaces.Data.DataTables;
+
 namespace DataExportLibrary.Interfaces.Data
 {
     /// <summary>
@@ -11,6 +13,11 @@ namespace DataExportLibrary.Interfaces.Data
     /// </summary>
     public interface IHICProjectSalt
     {
+        /// <summary>
+        /// Returns a salt for hashing.  If you want reproducible extraction outputs then this should be based on an attribute of 
+        /// the <see cref="IProject"/> being extracted (or the <see cref="IExtractionConfiguration"/>).
+        /// </summary>
+        /// <returns></returns>
         string GetSalt();
     }
 }

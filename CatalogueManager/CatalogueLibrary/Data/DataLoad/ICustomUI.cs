@@ -17,8 +17,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// Loads the current value into the user interface
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="previewIfAvailable"></param>
-        void SetUnderlyingObjectTo(T value, System.Data.DataTable previewIfAvailable);
+        void SetUnderlyingObjectTo(T value);
     }
 
     /// <summary>
@@ -37,8 +36,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// When implementing this just cast value to T and call the overload in ICustomUI&lt;T&gt;
         /// </summary>
         /// <param name="value"></param>
-        /// <param name="previewIfAvailable"></param>
-        void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value, System.Data.DataTable previewIfAvailable);
+        void SetGenericUnderlyingObjectTo(ICustomUIDrivenClass value);
 
         /// <summary>
         /// Fetches the final state of the object being show in the user interface (e.g. after closing the form)

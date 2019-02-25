@@ -26,7 +26,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         private readonly LoadMetadata _loadMetadata;
         private readonly LoadStage _loadStage;
         private Bitmap _image;
-        private HICProjectDirectory _hicProjectDirectory;
+        private LoadDirectory _LoadDirectory;
         private FileInfo _file;
 
         public ExecuteCommandCreateNewProcessTask(IActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file=null) : base(activator)
@@ -37,11 +37,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             try
             {
-                _hicProjectDirectory = new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles);
+                _LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
             }
             catch (Exception)
             {
-                SetImpossible("Could not construct HICProjectDirectory");
+                SetImpossible("Could not construct LoadDirectory");
             }
             
             if(taskType == ProcessTaskType.SQLFile)
@@ -72,7 +72,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                         var dialog = new TypeTextOrCancelDialog("Enter a name for the SQL file", "File name", 100, "myscript.sql");
                         if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.ResultText))
                         {
-                            var target = Path.Combine(_hicProjectDirectory.ExecutablesPath.FullName, dialog.ResultText);
+                            var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, dialog.ResultText);
 
                             if (!target.EndsWith(".sql"))
                                 target += ".sql";

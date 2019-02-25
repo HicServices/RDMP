@@ -29,7 +29,7 @@ namespace CohortManager.SubComponents.EmptyLineElements
 
         public override string ToString()
         {
-            return "Cohort Identification Criteria";
+            return "Cohort Query Results (Counts are unique people)";
         }
 
         public string FinalRowCount()

@@ -21,8 +21,8 @@ namespace DataLoadEngine.LoadExecution.Components.Arguments
     {
         public static string CreateArgString(string name, object value)
         {
-            if (value is HICProjectDirectory)
-                value = ((HICProjectDirectory) value).RootPath.FullName;
+            if (value is LoadDirectory)
+                value = ((LoadDirectory) value).RootPath.FullName;
 
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("The argument 'name' parameter is empty");

@@ -52,13 +52,13 @@ namespace DataLoadEngineTests.Integration
             try
             {
                 // Different file in ForLoading than exists in cache
-                var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
-                var cachedFilePath = Path.Combine(hicProjectDirectory.Cache.FullName, "2016-01-02.zip");
+                var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
+                var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-02.zip");
                 File.WriteAllText(cachedFilePath, "");
-                File.WriteAllText(Path.Combine(hicProjectDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
 
                 // Set up retriever
-                var cacheLayout = new ZipCacheLayoutOnePerDay(hicProjectDirectory.Cache,new NoSubdirectoriesCachePathResolver());
+                var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
                 
                 var retriever = new TestCachedFileRetriever()
                 {
@@ -68,7 +68,7 @@ namespace DataLoadEngineTests.Integration
                 };
                 
                 // Set up job
-                var job = CreateTestJob(hicProjectDirectory); 
+                var job = CreateTestJob(loadDirectory); 
                 job.DatesToRetrieve = new List<DateTime>
                 {
                     new DateTime(2016, 01, 02)
@@ -93,14 +93,14 @@ namespace DataLoadEngineTests.Integration
             try
             {
                 // File in cache is the same file as in ForLoading (20160101.zip)
-                var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
-                var cachedFilePath = Path.Combine(hicProjectDirectory.Cache.FullName, "2016-01-01.zip");
+                var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
+                var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-01.zip");
                 File.WriteAllText(cachedFilePath, "");
-                File.WriteAllText(Path.Combine(hicProjectDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
 
 
                 // Set up retriever
-                var cacheLayout = new ZipCacheLayoutOnePerDay(hicProjectDirectory.Cache, new NoSubdirectoriesCachePathResolver());
+                var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
                 var retriever = new TestCachedFileRetriever()
                 {
@@ -111,7 +111,7 @@ namespace DataLoadEngineTests.Integration
                 };
                 
                 // Set up job
-                var job = CreateTestJob(hicProjectDirectory); 
+                var job = CreateTestJob(loadDirectory); 
                 job.DatesToRetrieve = new List<DateTime>
                 {
                     new DateTime(2016, 01, 01)
@@ -121,7 +121,7 @@ namespace DataLoadEngineTests.Integration
                 retriever.Fetch(job, new GracefulCancellationToken());
 
                 // And ForLoading should still have the file in it (i.e. it hasn't mysteriously disappeared)
-                Assert.IsTrue(File.Exists(Path.Combine(hicProjectDirectory.ForLoading.FullName, "2016-01-01.zip")));
+                Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
             }
             finally
             {
@@ -138,13 +138,13 @@ namespace DataLoadEngineTests.Integration
             try
             {
                 // File in cache only, no files in ForLoading
-                var hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
-                var cachedFilePath = Path.Combine(hicProjectDirectory.Cache.FullName, "2016-01-01.zip");
+                var loadDirectory = LoadDirectory.CreateDirectoryStructure(tempDir, "CachedFileRetriever");
+                var cachedFilePath = Path.Combine(loadDirectory.Cache.FullName, "2016-01-01.zip");
                 File.WriteAllText(cachedFilePath, "");
 
 
                 // Set up retriever
-                var cacheLayout = new ZipCacheLayoutOnePerDay(hicProjectDirectory.Cache, new NoSubdirectoriesCachePathResolver());
+                var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
                 var retriever = new TestCachedFileRetriever()
                 {
@@ -155,7 +155,7 @@ namespace DataLoadEngineTests.Integration
                 };
 
                 // Set up job
-                var job = CreateTestJob(hicProjectDirectory);
+                var job = CreateTestJob(loadDirectory);
                 job.DatesToRetrieve = new List<DateTime>
                 {
                     new DateTime(2016, 01, 01)
@@ -165,7 +165,7 @@ namespace DataLoadEngineTests.Integration
                 retriever.Fetch(job, new GracefulCancellationToken());
 
                 // And the retriever should have copied the cached archive file into ForLoading
-                Assert.IsTrue(File.Exists(Path.Combine(hicProjectDirectory.ForLoading.FullName, "2016-01-01.zip")));
+                Assert.IsTrue(File.Exists(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip")));
             }
             finally
             {
@@ -173,7 +173,7 @@ namespace DataLoadEngineTests.Integration
             }
         }
 
-        private ScheduledDataLoadJob CreateTestJob(IHICProjectDirectory hicProjectDirectory)
+        private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
         {
             var catalogue = MockRepository.GenerateStub<ICatalogue>();
             catalogue.Stub(c => c.GetTableInfoList(Arg<bool>.Is.Anything)).Return(new TableInfo[0]);
@@ -184,7 +184,7 @@ namespace DataLoadEngineTests.Integration
             var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
             loadMetadata.Stub(lm => lm.GetAllCatalogues()).Return(new[] { catalogue });
 
-            var j =  new ScheduledDataLoadJob(RepositoryLocator,"Test job", logManager, loadMetadata, hicProjectDirectory, new ThrowImmediatelyDataLoadEventListener(),null);
+            var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null);
             j.LoadProgress = _lpMock;
             return j;
         }
@@ -194,7 +194,7 @@ namespace DataLoadEngineTests.Integration
     {
         public ICacheLayout Layout;
 
-        public override void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public override void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }

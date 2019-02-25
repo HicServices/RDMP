@@ -6,21 +6,18 @@
 
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
-using ADOX;
 using DataExportLibrary.Interfaces.Data;
 
 namespace DataExportLibrary.Data
 {
-    /// <summary>
-    /// Information that is not held in RDMP about an ExtractableCohort but which must be fetched at runtime from the cohort database (ExternalCohortTable)
-    /// 
-    /// <para>Because RDMP is designed to support a wide range of cohort/release identifier allocation systems,  it takes a very hands-off approach to cohort tables. 
-    /// Things like Cohort Version, Description and even ProjectNumber are not imported into RDMP because they may be part of an existing cohort management system
-    /// and thus cannot be moved (creating cached/synchronized copies would just be a further pain).  </para>
-    /// </summary>
+    /// <inheritdoc/>
     public class ExternalCohortDefinitionData : IExternalCohortDefinitionData
     {
+        /// <summary>
+        /// Reads the externally held cohort descriptive data into memory from the <paramref name="r"/>
+        /// </summary>
+        /// <param name="r"></param>
+        /// <param name="tableName"></param>
         public ExternalCohortDefinitionData(DbDataReader r, string tableName)
         {
             ExternalProjectNumber = Convert.ToInt32(r["projectNumber"]);
@@ -30,12 +27,26 @@ namespace DataExportLibrary.Data
             ExternalCohortCreationDate = ObjectToNullableDateTime(r["dtCreated"]);
         }
 
+        /// <inheritdoc/>
         public int ExternalProjectNumber { get; set; }
+
+        /// <inheritdoc/>
         public string ExternalDescription { get; set; }
+
+        /// <inheritdoc/>
         public int ExternalVersion { get; set; }
+
+        /// <inheritdoc/>
         public string ExternalCohortTableName { get; set; }
+
+        /// <inheritdoc/>
         public DateTime? ExternalCohortCreationDate { get; set; }
 
+        /// <summary>
+        /// Returns null for null or DBNull.Value otherwise the <see cref="DateTime"/> held in <paramref name="o"/>
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
         public DateTime? ObjectToNullableDateTime(object o)
         {
             if (o == null || o == DBNull.Value)

@@ -58,7 +58,7 @@ namespace Diagnostics
 
         LoadMetadata _loadMetaData;
         
-        HICProjectDirectory _hicProjectDirectory;
+        LoadDirectory _LoadDirectory;
         private bool implementAnonymisationIntoTestConfiguration = false;
 
         Dictionary<DiscoveredDatabase,string> externalDatabaseNamesDictionary = new Dictionary<DiscoveredDatabase, string>();
@@ -138,7 +138,7 @@ namespace Diagnostics
                                                 if (ConfigureAnANOColumn(notifier))
                                                     if (SetupLogging(notifier))
                                                         if (CreateLoadMetadata(notifier))
-                                                            if (CreateHICProjectDirectory(notifier))
+                                                            if (CreateLoadDirectory(notifier))
                                                                 if (SetupTestLoadProcessAndArgumentsForCSVAttacher(notifier))
                                                                     if (AddDuplicateResolutionMutilator(notifier))
                                                                         if (CreateTestCSVFileInForLoading(notifier))
@@ -699,31 +699,31 @@ namespace Diagnostics
         {
             try
             {
-                StreamWriter sw = new StreamWriter(Path.Combine(_hicProjectDirectory.ForLoading.FullName,CSVTestFileName));
+                StreamWriter sw = new StreamWriter(Path.Combine(_LoadDirectory.ForLoading.FullName,CSVTestFileName));
                 _testDemography.CreateTestCSVFile(sw);
                 sw.Flush();
                 sw.Close();
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Created test CSV file at " + _hicProjectDirectory.ForLoading.FullName +
+                    "Created test CSV file at " + _LoadDirectory.ForLoading.FullName +
                     " (contains duplication and some blank lines for fun)", CheckResult.Success, null));
             }
             catch (Exception e)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Failed to create test CSV file at " + _hicProjectDirectory.ForLoading.FullName, CheckResult.Fail, e));
+                    "Failed to create test CSV file at " + _LoadDirectory.ForLoading.FullName, CheckResult.Fail, e));
                 return false;
             }
 
 
             try
             {
-                _loadMetaData.LocationOfFlatFiles = _hicProjectDirectory.RootPath.FullName;
+                _loadMetaData.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
                 _loadMetaData.SaveToDatabase();
-                notifier.OnCheckPerformed(new CheckEventArgs("Set LoadMetadata Root folder to HICProjectDirectory:" + _hicProjectDirectory.RootPath.FullName,CheckResult.Success, null));
+                notifier.OnCheckPerformed(new CheckEventArgs("Set LoadMetadata Root folder to LoadDirectory:" + _LoadDirectory.RootPath.FullName,CheckResult.Success, null));
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to set LoadMetadata Root folder to HICProjectDirectory",CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to set LoadMetadata Root folder to LoadDirectory",CheckResult.Fail, e));
             }
 
 
@@ -856,7 +856,7 @@ namespace Diagnostics
             }
         }
 
-        private bool CreateHICProjectDirectory(ICheckNotifier notifier)
+        private bool CreateLoadDirectory(ICheckNotifier notifier)
         {
             //Decide where the project/dataset folder should be (with the root folder)
             DirectoryInfo projectFolder = new DirectoryInfo(Path.Combine(_datasetFolderPath,CatalogueName));
@@ -865,7 +865,7 @@ namespace Diagnostics
             if(projectFolder.Exists)
             {
                 //tell user it exists
-                bool nukeProjectFolder = notifier.OnCheckPerformed(new CheckEventArgs("HICProjectDirectory dataset folder " + projectFolder.FullName+ " already exists", CheckResult.Warning, null,"Delete and recreate folder '" + projectFolder.FullName +"'"));
+                bool nukeProjectFolder = notifier.OnCheckPerformed(new CheckEventArgs("LoadDirectory dataset folder " + projectFolder.FullName+ " already exists", CheckResult.Warning, null,"Delete and recreate folder '" + projectFolder.FullName +"'"));
 
                 if (nukeProjectFolder)
                     try
@@ -883,13 +883,13 @@ namespace Diagnostics
             try
             {
                 //folder does not exist so try to create it
-                _hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(projectFolder.Parent, CatalogueName);
-                notifier.OnCheckPerformed(new CheckEventArgs("successfully created HICProjectDirectory with RootPath:'" + _hicProjectDirectory.RootPath.FullName +"' ", CheckResult.Success, null));
+                _LoadDirectory = LoadDirectory.CreateDirectoryStructure(projectFolder.Parent, CatalogueName);
+                notifier.OnCheckPerformed(new CheckEventArgs("successfully created LoadDirectory with RootPath:'" + _LoadDirectory.RootPath.FullName +"' ", CheckResult.Success, null));
                 return true;
             }
             catch (Exception e)
             {
-                notifier.OnCheckPerformed(new CheckEventArgs("Failed to create HICProjectDirectory in folder:'" + projectFolder.Parent + "' ", CheckResult.Fail, e));
+                notifier.OnCheckPerformed(new CheckEventArgs("Failed to create LoadDirectory in folder:'" + projectFolder.Parent + "' ", CheckResult.Fail, e));
                 return false;
             }
         }

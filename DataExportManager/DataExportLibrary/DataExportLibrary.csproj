@@ -227,6 +227,7 @@
     <Compile Include="Checks\SupportingSQLTableChecker.cs" />
     <Compile Include="CohortCreationPipeline\CohortCreationRequest.cs" />
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
+    <Compile Include="Exceptions\ProjectNumberException.cs" />
     <Compile Include="CohortCreationPipeline\UseCases\CreateTableFromAggregateUseCase.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\GuidReleaseIdentifierAllocator.cs" />
@@ -301,7 +302,6 @@
     <Compile Include="Data\ExternalCohortDefinitionData.cs" />
     <Compile Include="Data\HICProjectSalt.cs" />
     <Compile Include="Data\LinkCreators\SelectedDataSets.cs" />
-    <Compile Include="Data\SqlDataReaderHelper.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Destinations\IExecuteDatasetExtractionDestination.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecuteCrossServerDatasetExtractionSource.cs" />
     <Compile Include="ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs" />

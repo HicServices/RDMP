@@ -243,7 +243,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                     suggestedNewFileContents.Add(file, sbSuggestedText.ToString());
             }
 
-            Assert.IsEmpty(suggestedNewFileContents);
+            Assert.AreEqual(0,suggestedNewFileContents.Count,"The following files did not contain copyright:" + Environment.NewLine + string.Join(Environment.NewLine,suggestedNewFileContents.Keys.Select(Path.GetFileName)));
 
             //drag your debugger stack pointer to here to mess up all your files to match the suggestedNewFileContents :)
             foreach (KeyValuePair<string, string> suggestedNewFileContent in suggestedNewFileContents)

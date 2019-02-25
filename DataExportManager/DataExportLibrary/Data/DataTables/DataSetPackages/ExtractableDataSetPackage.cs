@@ -27,6 +27,9 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
         private string _creator;
         private DateTime _creationDate;
 
+        /// <summary>
+        /// Name for the collection of datasets (e.g. 'Core Datasets').
+        /// </summary>
         [NotNull]
         [Unique]
         public string Name
@@ -34,11 +37,19 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
             get { return _name; }
             set { SetField(ref _name, value); }
         }
+
+        /// <summary>
+        /// Environment.UserName of the person who created the <see cref="ExtractableDataSetPackage"/>
+        /// </summary>
         public string Creator
         {
             get { return _creator; }
             set { SetField(ref _creator, value); }
         }
+
+        /// <summary>
+        /// When the <see cref="ExtractableDataSetPackage"/> was created
+        /// </summary>
         public DateTime CreationDate
         {
             get { return _creationDate; }
@@ -48,6 +59,11 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
         #endregion
 
 
+        /// <summary>
+        /// Reads an <see cref="ExtractableDataSetPackage"/> out of the data export database
+        /// </summary>
+        /// <param name="dataExportRepository"></param>
+        /// <param name="r"></param>
         public ExtractableDataSetPackage(IDataExportRepository dataExportRepository, DbDataReader r)
             : base(dataExportRepository, r)
         {
@@ -56,6 +72,12 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
             CreationDate = Convert.ToDateTime(r["CreationDate"]);
         }
 
+
+        /// <summary>
+        /// Creates a new <see cref="ExtractableDataSetPackage"/> in the data export database with the supplied <paramref name="name"/>
+        /// </summary>
+        /// <param name="dataExportRepository"></param>
+        /// <param name="name"></param>
         public ExtractableDataSetPackage(IDataExportRepository dataExportRepository, string name)
         {
             dataExportRepository.InsertAndHydrate(this,new Dictionary<string, object>()
@@ -66,6 +88,10 @@ namespace DataExportLibrary.Data.DataTables.DataSetPackages
             });
         }
 
+        /// <summary>
+        /// Returns <see cref="Name"/>
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;

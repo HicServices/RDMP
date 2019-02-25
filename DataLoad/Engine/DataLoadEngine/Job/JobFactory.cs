@@ -31,8 +31,8 @@ namespace DataLoadEngine.Job
         public IDataLoadJob Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, HICDatabaseConfiguration configuration)
         {
             var description = _loadMetadata.Name;
-            var hicProjectDirectory = new HICProjectDirectory(_loadMetadata.LocationOfFlatFiles);
-            return new DataLoadJob(repositoryLocator,description, _logManager, _loadMetadata, hicProjectDirectory, listener,configuration);
+            var LoadDirectory = new LoadDirectory(_loadMetadata.LocationOfFlatFiles);
+            return new DataLoadJob(repositoryLocator,description, _logManager, _loadMetadata, LoadDirectory, listener,configuration);
         }
     }
 }

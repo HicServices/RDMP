@@ -295,6 +295,8 @@
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
+    <Compile Include="Data\Referencing\IReferenceOtherObjectWithPersist.cs" />
+    <Compile Include="Exceptions\AmbiguousDatabaseTypeException.cs" />
     <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
     <Compile Include="Data\ContainerHelper.cs" />
@@ -384,6 +386,7 @@
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllFreeCohortIdentificationConfigurationsNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllProjectCohortIdentificationConfigurationsNode.cs" />
+    <Compile Include="Nodes\CohortNodes\QueryCacheUsedByCohortIdentificationNode.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\OverrideRawServerNode.cs" />
     <Compile Include="Nodes\PipelineNodes\AllPipelinesNode.cs" />
     <Compile Include="Nodes\PipelineNodes\OtherPipelinesNode.cs" />
@@ -403,7 +406,7 @@
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />
-    <Compile Include="IHICProjectDirectory.cs" />
+    <Compile Include="ILoadDirectory.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\IDirectoryInfoNode.cs" />
     <Compile Include="Nodes\AggregatesNode.cs" />
     <Compile Include="Nodes\AllExternalServersNode.cs" />
@@ -422,7 +425,7 @@
     <Compile Include="Nodes\AllServersNode.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\AllProcessTasksUsedByLoadMetadataNode.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\CatalogueUsedByLoadMetadataNode.cs" />
-    <Compile Include="Nodes\LoadMetadataNodes\HICProjectDirectoryNode.cs" />
+    <Compile Include="Nodes\LoadMetadataNodes\LoadDirectoryNode.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\AllCataloguesUsedByLoadMetadataNode.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\LoadMetadataScheduleNode.cs" />
     <Compile Include="Nodes\LoadMetadataNodes\LoadStageNode.cs" />
@@ -557,7 +560,7 @@
     <Compile Include="ExitCodeType.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPatcher.cs" />
     <Compile Include="ForwardEngineerCatalogue.cs" />
-    <Compile Include="HICProjectDirectory.cs" />
+    <Compile Include="LoadDirectory.cs" />
     <Compile Include="ExternalDatabaseServerPatching\DataQualityEnginePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\LoggingDatabasePatcher.cs" />
     <Compile Include="QueryBuilding\AggregateBuilder.cs" />
@@ -643,7 +646,6 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
-    <Folder Include="Exceptions\" />
     <Folder Include="Remoting\" />
   </ItemGroup>
   <ItemGroup>

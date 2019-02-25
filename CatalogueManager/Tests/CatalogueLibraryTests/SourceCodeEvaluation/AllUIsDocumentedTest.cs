@@ -106,7 +106,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         private string[] _exemptNamespaces = new string[]
         {
             "System.ComponentModel.Design",
-            "System.Windows.Forms"
+            "System.Windows.Forms",
+            "ReusableUIComponents.ScintillaHelper"
         };
 
         private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)

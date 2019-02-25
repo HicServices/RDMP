@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
@@ -62,12 +63,16 @@ namespace CatalogueLibrary.Providers
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }
 
+        CatalogueItemIssue[] AllCatalogueItemIssues { get; }
+
         AllGovernanceNode AllGovernanceNode { get; }
         GovernancePeriod[] AllGovernancePeriods { get; }
         GovernanceDocument[] AllGovernanceDocuments { get;}
 
         /// <inheritdoc cref="GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods"/>
         Dictionary<int, HashSet<int>> GovernanceCoverage { get;}
+
+        JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
 
         void GetPluginChildren(HashSet<object> objectsToAskAbout = null);
 

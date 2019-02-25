@@ -184,6 +184,7 @@
     <Compile Include="CustomData\CustomDataImportingTests.cs" />
     <Compile Include="DataAccess\PackageContentsTests.cs" />
     <Compile Include="DataAccess\SelectedColumnsTests.cs" />
+    <Compile Include="DataExportRepositoryTests.cs" />
     <Compile Include="DataExtraction\EmptyDataExtractionTests.cs" />
     <Compile Include="DataExtraction\ExecuteCrossServerDatasetExtractionSourceTest.cs" />
     <Compile Include="DataExtraction\ExecuteFullExtractionToDatabaseMSSqlChecksTests.cs" />

@@ -59,7 +59,7 @@ namespace LoadModules.Generic.Attachers
         {
             //The location of .mdf files from the perspective of the database server
             var databaseDirectory = FindDefaultSQLServerDatabaseDirectory();
-            _locations = new MdfFileAttachLocations(HICProjectDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);
+            _locations = new MdfFileAttachLocations(LoadDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);
 
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Identified the MDF file:" +_locations.OriginLocationMdf + " and corresponding LDF file:" + _locations.OriginLocationLdf));
 

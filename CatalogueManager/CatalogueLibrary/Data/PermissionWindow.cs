@@ -130,7 +130,8 @@ namespace CatalogueLibrary.Data
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
-                {"PermissionPeriodConfig", DBNull.Value}
+                {"PermissionPeriodConfig", DBNull.Value},
+                {"Name","New PermissionWindow" + Guid.NewGuid()}
             });
         }
 

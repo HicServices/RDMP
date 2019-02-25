@@ -14,11 +14,20 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
     /// </summary>
     public class GuidReleaseIdentifierAllocator : IAllocateReleaseIdentifiers
     {
+        /// <summary>
+        /// Generates a new unique identifier as a string (does not do any form of lookup - every call is a new guid)
+        /// </summary>
+        /// <param name="privateIdentifier"></param>
+        /// <returns></returns>
         public object AllocateReleaseIdentifier(object privateIdentifier)
         {
             return Guid.NewGuid().ToString();
         }
 
+        /// <summary>
+        /// Does nothing
+        /// </summary>
+        /// <param name="request"></param>
         public void Initialize(ICohortCreationRequest request)
         {
             

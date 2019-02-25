@@ -42,14 +42,14 @@ namespace LoadModules.Generic.FileOperations
 
         readonly List<FileInfo> _entriesUnzipped = new List<FileInfo>();
 
-        public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }
 
         public ExitCodeType Fetch(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
-            foreach (FileInfo fileInfo in job.HICProjectDirectory.ForLoading.GetFiles("*.zip"))
+            foreach (FileInfo fileInfo in job.LoadDirectory.ForLoading.GetFiles("*.zip"))
             {
                 //do it as regex rather than in GetFiles above because that method probably doesn't do regex
                 if (ZipArchivePattern == null || string.IsNullOrWhiteSpace(ZipArchivePattern.ToString()) || ZipArchivePattern.IsMatch(fileInfo.Name))
@@ -68,12 +68,12 @@ namespace LoadModules.Generic.FileOperations
                             if (ZipEntryPattern == null || string.IsNullOrWhiteSpace(ZipEntryPattern.ToString()) || ZipEntryPattern.IsMatch(entry.Name))
                             {
                                 //extract it
-                                FileInfo existingFile = job.HICProjectDirectory.ForLoading.GetFiles(entry.Name).FirstOrDefault();
+                                FileInfo existingFile = job.LoadDirectory.ForLoading.GetFiles(entry.Name).FirstOrDefault();
                         
                                 if(existingFile != null && existingFile.Length == entry.Length)
                                     continue;
 
-                                UnzipWithEvents(entry, job.HICProjectDirectory,job);
+                                UnzipWithEvents(entry, job.LoadDirectory,job);
                             }
                         }
                     }
@@ -82,7 +82,7 @@ namespace LoadModules.Generic.FileOperations
             return ExitCodeType.Success;
         }
 
-        private void UnzipWithEvents(ZipArchiveEntry entry, IHICProjectDirectory destination, IDataLoadJob job)
+        private void UnzipWithEvents(ZipArchiveEntry entry, ILoadDirectory destination, IDataLoadJob job)
         {
             //create a task 
             string entryDestination = Path.Combine(destination.ForLoading.FullName, entry.Name);

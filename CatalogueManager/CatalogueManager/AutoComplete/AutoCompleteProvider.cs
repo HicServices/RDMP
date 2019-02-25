@@ -36,6 +36,7 @@ namespace CatalogueManager.AutoComplete
             _activator = activator;
             _imageList = _activator.CoreIconProvider.GetImageList(true);
             _autocomplete.ImageList = _imageList;
+            _autocomplete.SearchPattern = @"[\w@\.]";
         }
 
 
@@ -231,7 +232,8 @@ namespace CatalogueManager.AutoComplete
             DiscoveredColumn[] columns = null;
             try
             {
-                columns = discoveredTable.DiscoverColumns();
+                if (discoveredTable.Exists())
+                    columns = discoveredTable.DiscoverColumns();
             }
             catch (Exception)
             {

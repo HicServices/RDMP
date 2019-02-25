@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.ComponentModel.Composition;
+using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.Pipeline;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
@@ -16,7 +17,18 @@ namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAlloca
     [InheritedExport(typeof(IAllocateReleaseIdentifiers))]
     public interface IAllocateReleaseIdentifiers
     {
+        /// <summary>
+        /// Return a new (or existing) anonymous mapping for the provided <paramref name="privateIdentifier"/>.  This will be called for
+        /// novel identifiers only in a given batch being processed so you do not need to track your return values.
+        /// </summary>
+        /// <param name="privateIdentifier"></param>
+        /// <returns></returns>
         object AllocateReleaseIdentifier(object privateIdentifier);
+        
+        /// <summary>
+        /// Called before any allocation, lets you know what <see cref="IProject"/> etc is involved in the cohort creation attempt.
+        /// </summary>
+        /// <param name="request"></param>
         void Initialize(ICohortCreationRequest request);
     }
 }

@@ -107,6 +107,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.ragSmiley1.AlwaysShowHandCursor = false;
             this.ragSmiley1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.ragSmiley1.BackColor = System.Drawing.Color.Transparent;
+            this.ragSmiley1.Cursor = System.Windows.Forms.Cursors.Arrow;
             this.ragSmiley1.Location = new System.Drawing.Point(678, 3);
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);

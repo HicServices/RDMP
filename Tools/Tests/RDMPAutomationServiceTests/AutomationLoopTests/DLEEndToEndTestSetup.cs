@@ -7,6 +7,7 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
@@ -83,7 +84,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             //also shouldn't be any logged errors
             var lm = new LogManager(_testCatalogue.LiveLoggingServer);
 
-            var log = lm.GetLoadStatusOf(PastEventType.MostRecent, _testCatalogue.LoggingDataTask);
+            var log = lm.GetArchivalDataLoadInfos(_testCatalogue.LoggingDataTask).FirstOrDefault();
 
             if(log == null)
                 throw new Exception("No log messages found for logging task " + _testCatalogue.LoggingDataTask);

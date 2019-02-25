@@ -40,10 +40,27 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         /// </summary>
         IExtractionConfiguration[] ExtractionConfigurations { get; }
 
+        /// <summary>
+        /// Available to document who the recipients of extractions are (not really used for anything in RDMP)
+        /// </summary>
         IEnumerable<IDataUser> DataUsers { get; }
         
+        /// <summary>
+        /// The database in which the object is persisted
+        /// </summary>
         IDataExportRepository DataExportRepository { get; }
+
+        /// <summary>
+        /// Returns all datasets which are selected in any <see cref="ExtractionConfigurations"/> in the project
+        /// </summary>
+        /// <returns></returns>
         ICatalogue[] GetAllProjectCatalogues();
+
+        /// <summary>
+        /// Returns all <see cref="ExtractionInformation"/> in all <see cref="Catalogue"/> which are marked as project specific (for this <see cref="IProject"/>)
+        /// </summary>
+        /// <param name="any"></param>
+        /// <returns></returns>
         ExtractionInformation[] GetAllProjectCatalogueColumns(ExtractionCategory any);
     }
 }

@@ -63,6 +63,9 @@ namespace DataExportLibrary.Data.DataTables
         #endregion
         #region Relationships
 
+        /// <summary>
+        /// Returns all parameters declared against this filter (does not include other parameters in scope e.g. globals)
+        /// </summary>
         [NoMappingToDatabase]
         public DeployedExtractionFilterParameter[] ExtractionFilterParameters
         {
@@ -120,6 +123,15 @@ namespace DataExportLibrary.Data.DataTables
         ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
         public static int Description_MaxLength = -1;
 
+        /// <summary>
+        /// Creates a new empty WHERE filter in the given <paramref name="container"/> that will be used when 
+        /// extracting the dataset.
+        /// 
+        /// <para>This object is created into the data export metadata database</para>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="name"></param>
+        /// <param name="container"></param>
         public DeployedExtractionFilter(IDataExportRepository repository, string name, FilterContainer container)
         {
             Repository = repository;
@@ -130,6 +142,11 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
+        /// <summary>
+        /// Read an existing WHERE filter out of the database
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
         internal DeployedExtractionFilter(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -146,12 +163,20 @@ namespace DataExportLibrary.Data.DataTables
             ClonedFromExtractionFilter_ID = ObjectToNullableInt(r["ClonedFromExtractionFilter_ID"]);
         }
 
+        /// <summary>
+        /// Returns Name of filters
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Name;
         }
 
         
+        /// <summary>
+        /// Checks the filter is properly defined (e.g. not blank).
+        /// </summary>
+        /// <param name="notifier"></param>
         public override void Check(ICheckNotifier notifier)
         {
             base.Check(notifier);
@@ -160,6 +185,13 @@ namespace DataExportLibrary.Data.DataTables
             checker.Check(notifier);
         }
 
+        /// <summary>
+        /// Returns the configuration and dataset (<see cref="ISelectedDataSets"/>) in which the filter is declared.  This involves traversing
+        /// up any nested <see cref="FilterContainer"/>s to the root.
+        /// 
+        /// <para>Returns null if the filter is an orphan (not in a container or part of an orphan container tree)</para>
+        /// </summary>
+        /// <returns></returns>
         public SelectedDataSets GetDataset()
         {
             if (FilterContainer_ID == null)

@@ -14,33 +14,27 @@ namespace CatalogueLibrary.Data.Referencing
     /// <summary>
     /// Abstract base class for all database objects that reference a single other arbitrary database object e.g. <see cref="Favourite"/>.
     /// </summary>
-    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObject
+    public abstract class ReferenceOtherObjectDatabaseEntity : DatabaseEntity, IReferenceOtherObjectWithPersist
     {
         private string _referencedObjectType;
         private int _referencedObjectID;
         private string _referencedObjectRepositoryType;
 
-        /// <summary>
-        /// The Type of object that was referred to (e.g. <see cref="Catalogue"/>).  Must be an <see cref="IMapsDirectlyToDatabaseTable"/> object
-        /// </summary>
+        /// <inheritdoc/>
         public string ReferencedObjectType
         {
             get { return _referencedObjectType; }
             set { SetField(ref _referencedObjectType, value); }
         }
 
-        /// <summary>
-        /// The ID of the object being refered to by this class
-        /// </summary>
+        /// <inheritdoc/>
         public int ReferencedObjectID
         {
             get { return _referencedObjectID; }
             set { SetField(ref _referencedObjectID, value); }
         }
 
-        /// <summary>
-        /// The platform database which is storing the object being referred to (e.g. DataExport or Catalogue)
-        /// </summary>
+        /// <inheritdoc/>
         public string ReferencedObjectRepositoryType
         {
             get { return _referencedObjectRepositoryType; }

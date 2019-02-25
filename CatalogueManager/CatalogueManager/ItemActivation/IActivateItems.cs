@@ -145,7 +145,6 @@ namespace CatalogueManager.ItemActivation
         void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
 
         void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);
-        void ActivateViewLog(ExternalDatabaseServer loggingServer, int dataLoadRunID);
         void ActivateViewLog(LoadMetadata loadMetadata);
 
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);

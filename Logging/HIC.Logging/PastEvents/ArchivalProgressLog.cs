@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data.Common;
 
 namespace HIC.Logging.PastEvents
 {
@@ -18,19 +19,12 @@ namespace HIC.Logging.PastEvents
         public string EventType { get; internal set; }
         public string Description { get; internal set; }
 
-        public ArchivalProgressLog(int id, DateTime date,string eventType,string description)
+        public ArchivalProgressLog(DbDataReader r)
         {
-            ID = id;
-            Date = date;
-            EventType = eventType;
-            Description = description;
-        }
-        public string ToShortString()
-        {
-            var s = ToString();
-            if (s.Length > ArchivalDataLoadInfo.MaxDescriptionLength)
-                return s.Substring(0, ArchivalDataLoadInfo.MaxDescriptionLength) + "...";
-            return s;
+            ID = (int)r["ID"];
+            Date = Convert.ToDateTime(r["time"]);
+            EventType = r["eventType"] as string;
+            Description = r["description"] as string;
         }
         public override string ToString()
         {

@@ -214,7 +214,7 @@ namespace CatalogueLibrary.QueryBuilding
             Filters = SqlQueryBuilderHelper.GetAllFiltersUsedInContainerTreeRecursively(RootFilterContainer);
            
             TableInfo primary;
-            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary);
+            TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary, _forceJoinsToTheseTables);
 
             //force join to any TableInfos that would not be normally joined to but the user wants to anyway e.g. if theres WHERE sql that references them but no columns
             if (_forceJoinsToTheseTables != null)

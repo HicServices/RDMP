@@ -416,7 +416,7 @@ namespace DataExportManager.ProjectUI
         {
             dataGridView1.Visible = false;
             lblExtractions.Visible = false;
-            this.Height = 160;
+            this.Height = 140;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

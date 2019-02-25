@@ -108,8 +108,27 @@ namespace DataExportLibrary.ExtractionTime
             if (!Cohort.GetReleaseIdentifier().ToLower().Contains("prochi"))
                 SetTableCell(table,0, 4,"Prefix:N/A");
             else
-                SetTableCell(table,0, 4, "Prefix:"+Cohort.GetFirstProCHIPrefix());
+                SetTableCell(table,0, 4, "Prefix:"+ GetFirstProCHIPrefix());
             
+        }
+
+        /// <summary>
+        /// Returns the first 3 digits of the first release identifier in the cohort (this is very hic specific).
+        /// </summary>
+        /// <returns></returns>
+        private string GetFirstProCHIPrefix()
+        {
+            var ect = Cohort.ExternalCohortTable;
+
+            var db = ect.Discover();
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+
+                string sql = "SELECT  TOP 1 LEFT(" + Cohort.GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " + Cohort.WhereSQL();
+
+                return (string)db.Server.GetCommand(sql, con).ExecuteScalar();
+            }
         }
 
         private void CreateCohortDetailsTable(DocX document)

@@ -43,7 +43,6 @@ namespace RDMPAutomationService.Runners
 
         ExtractGlobalsCommand _globalsCommand;
         private Pipeline _pipeline;
-        private DataLoadInfo _dataLoadInfo;
         private LogManager _logManager;
 
         object _oLock = new object();

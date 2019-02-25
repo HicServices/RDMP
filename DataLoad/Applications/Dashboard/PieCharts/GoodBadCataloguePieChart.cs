@@ -59,7 +59,7 @@ namespace Dashboard.PieCharts
         {
             chart1.Visible = false;
             lblNoIssues.Visible = false;
-            pbLoading.Visible = true;
+            
             switch (_collection.PieChartType)
             {
                 case CataloguePieChartType.Issues:
@@ -69,7 +69,7 @@ namespace Dashboard.PieCharts
                     else
                         gbWhatThisIs.Text = "All Issues";
 
-                    PopulateAsIssueChartAsync();
+                    PopulateAsIssueChart();
                     break;
                 case CataloguePieChartType.EmptyDescriptions:
 
@@ -78,94 +78,71 @@ namespace Dashboard.PieCharts
                     else
                         gbWhatThisIs.Text = "Column Descriptions";
 
-                    PopulateAsEmptyDescriptionsChartAsync();
+                    PopulateAsEmptyDescriptionsChart();
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("pieType");
             }
         }
         
-        private void PopulateAsEmptyDescriptionsChartAsync()
+        private void PopulateAsEmptyDescriptionsChart()
         {
-            Thread t = new Thread(() =>
+            try
             {
-                try
+                ExtractionInformation[] allExtractionInformation;
+
+                if (!_collection.IsSingleCatalogueMode)
                 {
-                    ExtractionInformation[] allExtractionInformation;
-                    if (!_collection.IsSingleCatalogueMode)
-                    {
-                        //get the active (non depricated etc) Catalogues
-                        var activeCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(ShouldHaveDescription).ToArray();
+                    //get the active (non depricated etc) Catalogues
+                    var activeCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(ShouldHaveDescription).ToArray();
                         
-                        //if there are some
-                        if(activeCatalogues.Any())
-                            allExtractionInformation = activeCatalogues.SelectMany(c=>c.GetAllExtractionInformation(ExtractionCategory.Any)).ToArray();//get the extractable columns
-                        else
-                            allExtractionInformation = new ExtractionInformation[0];//there weren't any so Catalogues so wont be any ExtractionInformationsEither
-                    }
+                    //if there are some
+                    if(activeCatalogues.Any())
+                        allExtractionInformation = activeCatalogues.SelectMany(c=>c.GetAllExtractionInformation(ExtractionCategory.Any)).ToArray();//get the extractable columns
                     else
-                        allExtractionInformation = _collection.GetSingleCatalogueModeCatalogue().GetAllExtractionInformation(ExtractionCategory.Any);
-
-                    if (!allExtractionInformation.Any())
-                    {
-                        //form was closed while we were loading data
-                        if (IsDisposed || !IsHandleCreated)
-                            return;
-
-                        this.Invoke(new MethodInvoker(() =>
-                        {
-                            chart1.DataSource = null;
-                            chart1.Visible = false;
-                            lblNoIssues.Visible = true;
-                            pbLoading.Visible = false;
-                        }));
-                    
-                        return;
-                    }
-
-                    int countPopulated = 0;
-                    int countNotPopulated = 0;
-                    
-                    foreach (ExtractionInformation information in allExtractionInformation)
-                        if (string.IsNullOrWhiteSpace(information.CatalogueItem.Description))
-                            countNotPopulated++;
-                        else
-                            countPopulated++;
-
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("Count");
-                    dt.Columns.Add("State");
-
-
-                    dt.Rows.Add(new object[] { countNotPopulated, "Missing (" + countNotPopulated + ")" });
-                    dt.Rows.Add(new object[] { countPopulated, "Populated (" + countPopulated + ")" });
-
-
-                    if (IsDisposed || !IsHandleCreated)
-                        return;
-                    this.Invoke(new MethodInvoker(() =>
-                    {
-                        if (IsDisposed || !IsHandleCreated)
-                            return;
-
-                        chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
-                        chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
-
-                        chart1.DataSource = dt;
-                        chart1.DataBind();
-                        chart1.Visible = true;
-                        lblNoIssues.Visible = false;
-                        pbLoading.Visible = false;
-                    }));
+                        allExtractionInformation = new ExtractionInformation[0];//there weren't any so Catalogues so wont be any ExtractionInformationsEither
                 }
-                catch (Exception e)
+                else
+                    allExtractionInformation = _collection.GetSingleCatalogueModeCatalogue().GetAllExtractionInformation(ExtractionCategory.Any);
+
+                if (!allExtractionInformation.Any())
                 {
-                    ExceptionViewer.Show(this.GetType().Name + " failed to load data", e);
+                    chart1.DataSource = null;
+                    chart1.Visible = false;
+                    lblNoIssues.Visible = true;
+                    
+                    return;
                 }
-            });
 
-            t.Start();
-          
+                int countPopulated = 0;
+                int countNotPopulated = 0;
+                    
+                foreach (ExtractionInformation information in allExtractionInformation)
+                    if (string.IsNullOrWhiteSpace(information.CatalogueItem.Description))
+                        countNotPopulated++;
+                    else
+                        countPopulated++;
+
+                DataTable dt = new DataTable();
+                dt.Columns.Add("Count");
+                dt.Columns.Add("State");
+
+
+                dt.Rows.Add(new object[] { countNotPopulated, "Missing (" + countNotPopulated + ")" });
+                dt.Rows.Add(new object[] { countPopulated, "Populated (" + countPopulated + ")" });
+                
+                chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
+                chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
+
+                chart1.DataSource = dt;
+                chart1.DataBind();
+                chart1.Visible = true;
+                lblNoIssues.Visible = false;
+            }
+            catch (Exception e)
+            {
+                ExceptionViewer.Show(this.GetType().Name + " failed to load data", e);
+            }
         }
 
         public bool ShouldHaveDescription(Catalogue c)
@@ -173,75 +150,50 @@ namespace Dashboard.PieCharts
             return !c.IsColdStorageDataset && !c.IsInternalDataset && !c.IsDeprecated && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository);
         }
 
-        private void PopulateAsIssueChartAsync()
+        private void PopulateAsIssueChart()
         {
-            Thread t = new Thread(() =>
+            try
             {
-                try
+                CatalogueItemIssue[] Issues;
+
+                if (!_collection.IsSingleCatalogueMode)
+                    Issues = _activator.CoreChildProvider.AllCatalogueItemIssues;
+                else
+                    Issues = _collection.GetSingleCatalogueModeCatalogue().GetAllIssues();
+
+                if (Issues.Any())
                 {
-                    CatalogueItemIssue[] Issues;
+                    DataTable dt = new DataTable();
+                    dt.Columns.Add("Count");
+                    dt.Columns.Add("State");
 
-                    if (!_collection.IsSingleCatalogueMode)
-                    {
-                        var cataRepo = _activator.RepositoryLocator.CatalogueRepository;
-                        Issues = cataRepo.GetAllObjects<CatalogueItemIssue>().ToArray();
+                    int countOutstanding = Issues.Count(i => i.Status != IssueStatus.Resolved);
+                    int countResolved = Issues.Count(i => i.Status == IssueStatus.Resolved);
+
+
+                    dt.Rows.Add(new object[] {countOutstanding, "Outstanding (" + countOutstanding + ")"});
+                    dt.Rows.Add(new object[] {countResolved, "Resolved (" + countResolved + ")"});
+
+                    chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
+                    chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
                         
-                    }
-                    else
-                        Issues = _collection.GetSingleCatalogueModeCatalogue().GetAllIssues();
+                    chart1.DataSource = dt;
+                    chart1.DataBind();
+                    chart1.Visible = true;
+                    lblNoIssues.Visible = false;
 
-                    if (Issues.Any())
-                    {
-                        DataTable dt = new DataTable();
-                        dt.Columns.Add("Count");
-                        dt.Columns.Add("State");
-
-                        int countOutstanding = Issues.Count(i => i.Status != IssueStatus.Resolved);
-                        int countResolved = Issues.Count(i => i.Status == IssueStatus.Resolved);
-
-
-                        dt.Rows.Add(new object[] {countOutstanding, "Outstanding (" + countOutstanding + ")"});
-                        dt.Rows.Add(new object[] {countResolved, "Resolved (" + countResolved + ")"});
-
-                        if (IsDisposed || !IsHandleCreated)
-                            return;
-
-                        this.Invoke(new MethodInvoker(() =>
-                        {
-
-                            chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
-                            chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
-                        
-                            chart1.DataSource = dt;
-                            chart1.DataBind();
-                            chart1.Visible = true;
-                            lblNoIssues.Visible = false;
-                            pbLoading.Visible = false;
-                        }));
-
-                    }
-                    else
-                    {
-                        if (IsDisposed || !IsHandleCreated)
-                            return;
-
-                        this.Invoke(new MethodInvoker(() =>
-                        {
-                            chart1.DataSource = null;
-                            chart1.Visible = false;
-                            lblNoIssues.Visible = true;
-                            pbLoading.Visible = false;
-                        }));
-                    }
                 }
-                catch (Exception e)
+                else
                 {
-                    ExceptionViewer.Show(this.GetType().Name + " failed to load data", e);
+                    chart1.DataSource = null;
+                    chart1.Visible = false;
+                    lblNoIssues.Visible = true;
                 }
-                
-            });
-
-            t.Start();
+            }
+            catch (Exception e)
+            {
+                ExceptionViewer.Show(this.GetType().Name + " failed to load data", e);
+            }
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

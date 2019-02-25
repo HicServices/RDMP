@@ -17,11 +17,19 @@ namespace DataExportLibrary.Checks
     {
         private readonly SupportingSQLTable _table;
 
+        /// <summary>
+        /// Sets up checking of the supplied
+        /// </summary>
+        /// <param name="table"></param>
         public SupportingSQLTableChecker(SupportingSQLTable table)
         {
             _table = table;
         }
 
+        /// <summary>
+        /// Checks that the table can be reached on it's listed server and that at least one row can be read from it.
+        /// </summary>
+        /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
             try
@@ -54,7 +62,6 @@ namespace DataExportLibrary.Checks
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Checking of SupportingSQLTable " + _table + " failed with Exception", CheckResult.Fail, e));
             }
-
         }
     }
 }

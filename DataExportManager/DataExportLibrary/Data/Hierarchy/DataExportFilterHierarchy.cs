@@ -7,12 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 
 namespace DataExportLibrary.Data.Hierarchy
 {
@@ -23,13 +21,20 @@ namespace DataExportLibrary.Data.Hierarchy
     /// </summary>
     public class DataExportFilterHierarchy
     {
-        public Dictionary<int,FilterContainer> AllContainers;
-        private DeployedExtractionFilter[] _allFilters;
-        public DeployedExtractionFilterParameter[] _allParameters;
+        /// <summary>
+        /// All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container (for rapid random access)
+        /// </summary>
+        public readonly Dictionary<int, FilterContainer> AllContainers;
+        private readonly DeployedExtractionFilter[] _allFilters;
+        private readonly DeployedExtractionFilterParameter[] _allParameters;
 
         readonly Dictionary<int, List<FilterContainer>> _subcontainers = new Dictionary<int, List<FilterContainer>>();
         
-
+        /// <summary>
+        /// Fetches all containers and filters out of the <paramref name="repository"/> and sets the class up to provide
+        /// fast access to them.
+        /// </summary>
+        /// <param name="repository"></param>
         public DataExportFilterHierarchy(IDataExportRepository repository)
         {
             var repo = (TableRepository) repository;
@@ -64,12 +69,22 @@ namespace DataExportLibrary.Data.Hierarchy
             return CatalogueChildProvider.UseCaching ? repository.GetAllObjectsCached<T>():repository.GetAllObjects<T>();
         }
 
+        /// <summary>
+        /// Returns all filters found in the data export database (cached during class construction)
+        /// </summary>
+        /// <param name="filterContainer"></param>
+        /// <returns></returns>
         public IEnumerable<DeployedExtractionFilter> GetFilters(FilterContainer filterContainer)
         {
             return _allFilters.Where(f => f.FilterContainer_ID == filterContainer.ID);
         }
-        
 
+
+        /// <summary>
+        /// Returns all subcontainers found in the <paramref name="filterContainer"/> (results are returned from the cache created during class construction)
+        /// </summary>
+        /// <param name="filterContainer"></param>
+        /// <returns></returns>
         public IEnumerable<FilterContainer> GetSubcontainers(FilterContainer filterContainer)
         {
             if (!_subcontainers.ContainsKey(filterContainer.ID))
@@ -78,6 +93,11 @@ namespace DataExportLibrary.Data.Hierarchy
             return _subcontainers[filterContainer.ID];
         }
 
+        /// <summary>
+        /// Returns all parameters declared against the <paramref name="filter"/> (results are returned from the cache created during class construction)
+        /// </summary>
+        /// <param name="filter"></param>
+        /// <returns></returns>
         public IEnumerable<DeployedExtractionFilterParameter> GetParameters(DeployedExtractionFilter filter)
         {
             return _allParameters.Where(p => p.ExtractionFilter_ID == filter.ID);

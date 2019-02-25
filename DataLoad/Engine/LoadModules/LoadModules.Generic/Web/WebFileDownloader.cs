@@ -36,7 +36,7 @@ namespace LoadModules.Generic.Web
         [DemandsInitialization("Optional Username/password to use for network Websense challenges, these will be provided to the WebRequest as a NetworkCredential")]
         public DataAccessCredentials WebsenseCredentials { get; set; }
 
-        public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }
@@ -45,7 +45,7 @@ namespace LoadModules.Generic.Web
         {
             Stopwatch t = new Stopwatch();
 
-            FileInfo destinationFile = new FileInfo(Path.Combine(job.HICProjectDirectory.ForLoading.FullName, Path.GetFileName(UriToFile.LocalPath)));
+            FileInfo destinationFile = new FileInfo(Path.Combine(job.LoadDirectory.ForLoading.FullName, Path.GetFileName(UriToFile.LocalPath)));
 
             DownloadFileWhilstPretendingToBeFirefox(t, destinationFile,job);
 
@@ -192,7 +192,7 @@ namespace LoadModules.Generic.Web
             throw new System.NotImplementedException();
         }
 
-        public bool Validate(IHICProjectDirectory destination)
+        public bool Validate(ILoadDirectory destination)
         {
             if (UriToFile == null || string.IsNullOrWhiteSpace(UriToFile.PathAndQuery))
                 throw new MissingFieldException("PathToFile is null or whitespace - should be populated externally as a parameter");

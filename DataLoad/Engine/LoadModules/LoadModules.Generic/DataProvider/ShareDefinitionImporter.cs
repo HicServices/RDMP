@@ -32,7 +32,7 @@ namespace LoadModules.Generic.DataProvider
             
         }
 
-        public void Initialize(IHICProjectDirectory hicProjectDirectory, DiscoveredDatabase dbInfo)
+        public void Initialize(ILoadDirectory directory, DiscoveredDatabase dbInfo)
         {
             
         }
@@ -44,7 +44,7 @@ namespace LoadModules.Generic.DataProvider
             {
                 var shareManager = new ShareManager(job.RepositoryLocator);
 
-                foreach (var shareDefinitionFile in job.HICProjectDirectory.ForLoading.EnumerateFiles("*.sd"))
+                foreach (var shareDefinitionFile in job.LoadDirectory.ForLoading.EnumerateFiles("*.sd"))
                 {
                     job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found '" + shareDefinitionFile.Name + "'"));
                     using (var stream = File.Open(shareDefinitionFile.FullName, FileMode.Open))

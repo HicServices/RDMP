@@ -5,25 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data;
+using FAnsi;
 
-namespace DataExportLibrary.Data
+namespace CatalogueLibrary.Exceptions
 {
-    class SqlDataReaderHelper
+    /// <summary>
+    /// Thrown when a piece of code needs to know what <see cref="DatabaseType"/> is being targetted but no determination
+    /// can be made either because there are no objects of a known <see cref="DatabaseType"/> or because there are objects
+    /// of multiple different <see cref="DatabaseType"/>.
+    /// </summary>
+    public class AmbiguousDatabaseTypeException : Exception
     {
-        public static bool HasColumn( IDataRecord dr, string columnName, out string fixedCaps)
+        public AmbiguousDatabaseTypeException(string s):base(s)
         {
-            for (int i = 0; i < dr.FieldCount; i++)
-            {
-                if (dr.GetName(i).Equals(columnName, StringComparison.InvariantCultureIgnoreCase))
-                {
-                    fixedCaps = dr.GetName(i);
-                    return true;
-                }
-                    
-            }
-            fixedCaps = null;
-            return false;
+            
         }
     }
 }

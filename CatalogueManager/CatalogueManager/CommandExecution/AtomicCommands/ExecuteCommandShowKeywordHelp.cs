@@ -11,9 +11,9 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
@@ -46,28 +46,46 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
             
-            var modelType = _args.Model.GetType();
-
+            string title = null;
+            string docs = null;
+            
+            //get docs from masquerader if it has any
             if (_args.Masquerader != null)
             {
-                var masqueradingAs = _args.Masquerader.MasqueradingAs();
-
-                if(MessageBox.Show("Node is '" + MEF.GetCSharpNameForType(_args.Masquerader.GetType()) + "'.  Show help for '" +
-                    MEF.GetCSharpNameForType(masqueradingAs.GetType()) + "'?", "Show Help", MessageBoxButtons.YesNo) == DialogResult.No)
-                    return;
-
-                modelType = masqueradingAs.GetType();
+                title = GetTypeName(_args.Masquerader.GetType());
+                docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Masquerader.GetType());
             }
+            
+            //if not get them from the actual class
+            if(docs == null)
+            {
+                title = GetTypeName(_args.Model.GetType());
 
-            var docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(modelType);
-
-            if (!string.IsNullOrWhiteSpace(_args.ExtraKeywordHelpText))
-                docs += Environment.NewLine + _args.ExtraKeywordHelpText;
-
+                var knows = _args.Model as IKnowWhatIAm;
+                //does the class have state dependent alternative to xmldoc?
+                if (knows != null)
+                    docs = knows.WhatIsThis(); //yes
+                else
+                    docs = Activator.RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(_args.Model.GetType());
+            }
+            
+            //if we have docs show them otherwise just the Type name
             if (docs != null)
-                WideMessageBox.ShowKeywordHelp(modelType.Name, docs);
+                WideMessageBox.ShowKeywordHelp(title, docs);
             else
-                MessageBox.Show(MEF.GetCSharpNameForType(modelType));
+                MessageBox.Show(title);
+        }
+
+        private string GetTypeName(Type t)
+        {
+            try
+            {
+                return MEF.GetCSharpNameForType(t);
+            }
+            catch (NotSupportedException)
+            {
+                return t.Name;
+            }
         }
     }
 }

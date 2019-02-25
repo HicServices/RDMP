@@ -5,27 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.Eventing.Reader;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
-using CatalogueLibrary.Spontaneous;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using Google.Protobuf.WellKnownTypes;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
 using ReusableUIComponents;
-using ScintillaNET;
 using Enum = System.Enum;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
@@ -55,6 +44,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
     {
         public ParameterCollectionUIOptions Options { get; private set; }
         
+        ToolStripMenuItem miAddNewParameter = new ToolStripMenuItem("New Parameter...");
+        ToolStripMenuItem miOverrideParameter = new ToolStripMenuItem("Override Parameter");
+
         public ParameterCollectionUI()
         {
             InitializeComponent();
@@ -71,6 +63,14 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             parameterEditorScintillaControl1.ParameterSelected += (s, e) => olvParameters.SelectObject(e);
             parameterEditorScintillaControl1.ParameterChanged += (s, e) => olvParameters.RefreshObject(e);
             parameterEditorScintillaControl1.ProblemObjectsFound += RefreshProblemObjects;
+
+            olvParameters.ContextMenuStrip = new ContextMenuStrip();
+            olvParameters.ContextMenuStrip.Items.Add(miAddNewParameter);
+            olvParameters.ContextMenuStrip.Items.Add(miOverrideParameter);
+
+            miAddNewParameter.Click += miAddParameter_Click;
+            miOverrideParameter.Click += miOverride_Click;
+
         }
 
         private object ParameterName_AspectGetter(object rowObject)
@@ -120,7 +120,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
         public void RefreshParametersFromDatabase()
         {
-            btnAddParameter.Enabled = Options.CanNewParameters();
+            miAddNewParameter.Enabled = Options.CanNewParameters();
 
             olvParameters.ClearObjects();
             
@@ -136,6 +136,18 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
             DisableRelevantObjects();
             parameterEditorScintillaControl1.RegenerateSQL();
+
+            UpdateTabVisibility();
+
+        }
+
+        private void UpdateTabVisibility()
+        {
+            if (parameterEditorScintillaControl1.IsBroken)
+                tabControl1.TabPages.Remove(tpSql);
+            else
+                if (!tabControl1.TabPages.Contains(tpSql))
+                    tabControl1.TabPages.Add(tpSql);
         }
 
         private void DisableRelevantObjects()
@@ -197,7 +209,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             RefreshParametersFromDatabase();
         }
 
-        private void btnAddParameter_Click(object sender, EventArgs e)
+        private void miAddParameter_Click(object sender, EventArgs e)
         {
             Random r = new Random();
 
@@ -234,6 +246,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 
                         DisableRelevantObjects();
                         parameterEditorScintillaControl1.RegenerateSQL();
+                        UpdateTabVisibility();
                     }
                 }
             }
@@ -291,6 +304,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
                 var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;
                 DisableRelevantObjects();
                 parameterEditorScintillaControl1.RegenerateSQL();
+                UpdateTabVisibility();
 
                 //might not be a problem anymore so refresh the icons on them (and everything else)
                 olvParameters.RefreshObjects(problemsBefore.ToList());
@@ -384,10 +398,10 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         {
             var param = olvParameters.SelectedObject as ISqlParameter;
 
-            btnOverride.Enabled = false;
+            miOverrideParameter.Enabled = false;
 
             if(CanOverride(param))
-                btnOverride.Enabled = true;
+                miOverrideParameter.Enabled = true;
         }
 
         private bool CanOverride(ISqlParameter sqlParameter)
@@ -402,14 +416,14 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             return false;
         }
 
-        private void btnOverride_Click(object sender, EventArgs e)
+        private void miOverride_Click(object sender, EventArgs e)
         {
             var param = olvParameters.SelectedObject as ISqlParameter;
 
             if (!CanOverride(param) || param == null)
                 return;
 
-            var newParameter = Options.CreateNewParameter();
+            var newParameter = Options.CreateNewParameter(param.ParameterName);
 
             newParameter.ParameterSQL = param.ParameterSQL;
             newParameter.Value = param.Value;

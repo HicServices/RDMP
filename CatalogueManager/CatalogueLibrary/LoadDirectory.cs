@@ -11,9 +11,9 @@ using System.Linq;
 namespace CatalogueLibrary
 {
     /// <summary>
-    /// Basic implementation of IHICProjectDirectory including support for creating new templates on the file system.
+    /// Basic implementation of ILoadDirectory including support for creating new templates on the file system.
     /// </summary>
-    public class HICProjectDirectory : IHICProjectDirectory
+    public class LoadDirectory : ILoadDirectory
     {
         /// <inheritdoc/>
         public DirectoryInfo ForLoading { get; private set; }
@@ -45,20 +45,20 @@ namespace CatalogueLibrary
         /// <para>Use static method <see cref="CreateDirectoryStructure"/> if you want to create a new folder hierarchy on disk</para>
         /// </summary>
         /// <param name="rootPath"></param>
-        public HICProjectDirectory(string rootPath)
+        public LoadDirectory(string rootPath)
         {
             if (string.IsNullOrWhiteSpace(rootPath))
-                throw new Exception("Root path was blank, there is no HICProjectDirectory path specified?");
+                throw new Exception("Root path was blank, there is no LoadDirectory path specified?");
 
             RootPath = new DirectoryInfo(rootPath);
 
             if (RootPath.Name.Equals("Data", StringComparison.CurrentCultureIgnoreCase))
-                throw new ArgumentException("HICProjectDirectory should be passed the root folder, not the Data folder");
+                throw new ArgumentException("LoadDirectory should be passed the root folder, not the Data folder");
 
             DataPath = new DirectoryInfo(Path.Combine(RootPath.FullName, "Data"));
 
             if (!DataPath.Exists)
-                throw new DirectoryNotFoundException("Could not find directory '" + DataPath.FullName + "', every HICProjectDirectory must have a Data folder, the root folder was:" + RootPath);
+                throw new DirectoryNotFoundException("Could not find directory '" + DataPath.FullName + "', every LoadDirectory must have a Data folder, the root folder was:" + RootPath);
 
             ForLoading = FindFolderInPathOrThrow(DataPath, "ForLoading");
             ForArchiving = FindFolderInPathOrThrow(DataPath, "ForArchiving");
@@ -82,13 +82,13 @@ namespace CatalogueLibrary
         }
 
         /// <summary>
-        /// Creates a new directory on disk compatible with <see cref="HICProjectDirectory"/>.
+        /// Creates a new directory on disk compatible with <see cref="LoadDirectory"/>.
         /// </summary>
         /// <param name="parentDir">Parent folder to create the tree in e.g. c:\temp</param>
         /// <param name="dirName">Root folder name for the DLE e.g. LoadingBiochem</param>
         /// <param name="overrideExistsCheck">Determines behaviour if the folder already exists and contains files.  True to carry on, False to throw an Exception</param>
         /// <returns></returns>
-        public static HICProjectDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
+        public static LoadDirectory CreateDirectoryStructure(DirectoryInfo parentDir, string dirName, bool overrideExistsCheck = false)
         {
             if (!parentDir.Exists)
                 throw new Exception("Cannot create directory structure in " + parentDir.FullName + " (it doesn't exist)");
@@ -112,7 +112,7 @@ namespace CatalogueLibrary
 
             projectDir.CreateSubdirectory("Executables");
 
-            return new HICProjectDirectory(projectDir.FullName);
+            return new LoadDirectory(projectDir.FullName);
         }
     }
 }

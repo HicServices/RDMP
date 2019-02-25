@@ -4,34 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections;
-using System.Diagnostics;
-using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
-using CatalogueManager.Copying;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
 
 namespace CatalogueManager.Collections
 {
@@ -47,7 +29,7 @@ namespace CatalogueManager.Collections
     /// 
     /// <para>A data load takes place across 3 stages (RAW, STAGING, LIVE - see UserManual.docx).  Each stage can have 0 or more tasks associated with it (See PluginProcessTaskUI).  The minimum requirement
     /// for a data load is to have an Attacher (class which populates RAW) e.g. AnySeparatorFileAttacher for comma separated files.  This supposes that your project folder loading directory 
-    /// already has the files you are trying to load (See ChooseHICProjectDialog).  If you want to build an elegant automated solution then you may choose to use a GetFiles process such as 
+    /// already has the files you are trying to load (See <see cref="ILoadDirectory"/>).  If you want to build an elegant automated solution then you may choose to use a GetFiles process such as 
     /// FTPDownloader to fetch new files directly off a data providers server.  After this you may need to write some bespoke SQL/Python scripts etc to deal with unclean/unloadable data or 
     /// just to iron out idiosyncrasies in the data.</para>
     ///  

@@ -21,6 +21,7 @@ using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Nodes.CohortNodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
@@ -29,6 +30,7 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Providers
 {
@@ -95,7 +97,7 @@ namespace CatalogueLibrary.Providers
 
         public StandardRegex[] AllStandardRegexes { get; set; }
 
-        private CatalogueItemIssue[] _allCatalogueItemIssues;
+        public CatalogueItemIssue[] AllCatalogueItemIssues { get; private set; }
 
         //TableInfo side of things
         public AllANOTablesNode AllANOTablesNode { get; private set; }
@@ -153,9 +155,15 @@ namespace CatalogueLibrary.Providers
         public GovernancePeriod[] AllGovernancePeriods { get; private set; }
         public GovernanceDocument[] AllGovernanceDocuments { get; private set; }
         public Dictionary<int, HashSet<int>> GovernanceCoverage { get; private set; }
+        
+        private CommentStore _commentStore;
+
+        public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
 
         public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
+            _commentStore = repository.CommentStore;
+
             PluginChildProviders = pluginChildProviders;
             _errorsCheckNotifier = errorsCheckNotifier;
             
@@ -202,6 +210,7 @@ namespace CatalogueLibrary.Providers
             AllSupportingSQL = GetAllObjects<SupportingSQLTable>(repository);
 
             AllCohortIdentificationConfigurations = GetAllObjects<CohortIdentificationConfiguration>(repository);
+            AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
             AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
@@ -228,7 +237,7 @@ namespace CatalogueLibrary.Providers
                 ei.InjectKnown(ci);
             }
 
-            _allCatalogueItemIssues = GetAllObjects<CatalogueItemIssue>(repository);
+            AllCatalogueItemIssues = GetAllObjects<CatalogueItemIssue>(repository);
 
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             
@@ -406,7 +415,7 @@ namespace CatalogueLibrary.Providers
 
             foreach (var useCase in useCases)
             {
-                var node = new StandardPipelineUseCaseNode(useCase.Key,useCase.Value);
+                var node = new StandardPipelineUseCaseNode(useCase.Key, useCase.Value, _commentStore);
 
                 foreach (Pipeline pipeline in AddChildren(node, descendancy.Add(node)))
                     unknownPipelines.Remove(pipeline);
@@ -549,7 +558,7 @@ namespace CatalogueLibrary.Providers
             AddChildren(processTasksNode, descendancy.Add(processTasksNode));
             childObjects.Add(processTasksNode);
 
-            childObjects.Add(new HICProjectDirectoryNode(lmd));
+            childObjects.Add(new LoadDirectoryNode(lmd));
 
             AddToDictionaries(new HashSet<object>(childObjects), descendancy);
         }
@@ -781,7 +790,7 @@ namespace CatalogueLibrary.Providers
             if (ci.ColumnInfo_ID.HasValue)
                 childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
 
-            childObjects.AddRange(_allCatalogueItemIssues.Where(i => i.CatalogueItem_ID == ci.ID));
+            childObjects.AddRange(AllCatalogueItemIssues.Where(i => i.CatalogueItem_ID == ci.ID));
 
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
         }
@@ -830,6 +839,10 @@ namespace CatalogueLibrary.Providers
         {
             HashSet<object> children = new HashSet<object>();
 
+            //it has an associated query cache
+            if (cic.QueryCachingServer_ID != null)
+                children.Add(new QueryCacheUsedByCohortIdentificationNode(cic, AllExternalServers.Single(s => s.ID == cic.QueryCachingServer_ID)));
+            
             var parameters = AllAnyTableParameters.Where(p => p.IsReferenceTo(cic)).Cast<ISqlParameter>().ToArray();
             var node = new ParametersNode(cic, parameters);
 
@@ -842,7 +855,8 @@ namespace CatalogueLibrary.Providers
                 AddChildren(container, new DescendancyList(cic, container).SetBetterRouteExists());
                 children.Add(container);
             }
-            
+
+
             //get the patient index tables
             var joinableNode = new JoinableCollectionNode(cic, _cohortContainerChildProvider.AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
             AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());

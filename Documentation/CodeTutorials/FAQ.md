@@ -149,11 +149,11 @@ RDMP supports files delimited by any character (tab separated, pipe separated, c
 
 <a name="skipColumns"></a>
 ### When loading data can I skip some columns?
-The data load engine first loads all data to the temporary unconstrained RAW database then migrates it to STAGING and finally merges it with LIVE (See [UserManual.docx](../UserManual.docx) for more info).  It is designed to make it easy to identify common issues such as data providers renaming columns, adding new columns etc.
+The data load engine first loads all data to the [temporary unconstrained RAW database](#data-load-engine) then migrates it to STAGING and finally merges it with LIVE (See [UserManual.docx](../UserManual.docx) for more info).  It is designed to make it easy to identify common issues such as data providers renaming columns, adding new columns etc.
 
 ![ReOrdering](Images/FAQ/ColumnNameChanged.png)
 
-The above message shows the case where there is a new column appearing for the first time in input files for the data load (Belta) and an unmatched column in your RAW database (delta).  This could be a renamed column or it could be a new column with a new meaning.  Once you have identified the nature of the new column (new or renamed) then there are many ways to respond.  You could handle the name change in the DLE (e.g. using ForceHeaders or a Find and Replace script).  Or you could send an email to data provider rejecting the input file.
+The above message shows the case where there is a new column appearing for the first time in input files for the data load (Agenda) and an unmatched column in your RAW database (Schedule).  This could be a renamed column or it could be a new column with a new meaning.  Once you have identified the nature of the new column (new or renamed) then there are many ways to respond.  You could handle the name change in the DLE (e.g. using ForceHeaders or a Find and Replace script).  Or you could send an email to data provider rejecting the input file.
 
 In order for this to work the DLE RAW Attachers enforce the following rules:
 

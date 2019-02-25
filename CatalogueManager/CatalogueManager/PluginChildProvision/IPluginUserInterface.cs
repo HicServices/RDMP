@@ -38,7 +38,7 @@ namespace CatalogueManager.PluginChildProvision
         
         /// <summary>
         /// Return a list of commands that should be exposed on the given user interface tab control (<paramref name="control"/>) when displaying the
-        /// given <see cref="databaseEntity"/> object.  These will be shown as buttons on the control (where the control invokes
+        /// given <paramref name="databaseEntity"/> object.  These will be shown as buttons on the control (where the control invokes
         ///  <see cref="RDMPSingleDatabaseObjectControl{T}.AddPluginCommands"/>)
         /// </summary>
         /// <param name="control"></param>

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data.Common;
 using System.Security.Policy;
 
 namespace HIC.Logging.PastEvents
@@ -20,13 +21,13 @@ namespace HIC.Logging.PastEvents
         public string Description { get; internal set; }
         public string Explanation { get; set; }
 
-        public ArchivalFatalError(int id, DateTime date,string source, string description, string explanation)
+        public ArchivalFatalError(DbDataReader r)
         {
-            ID = id;
-            Date = date;
-            Source = source;
-            Description = description;
-            Explanation = explanation;
+            ID = Convert.ToInt32(r["id"]);
+            Date = Convert.ToDateTime(r["time"]);
+            Source = r["source"] as string;
+            Description = r["description"] as string;
+            Explanation = r["explanation"] as string;
         }
         public string ToShortString()
         {

@@ -11,9 +11,6 @@ namespace CatalogueManager.Menus
 {
     class FilterContainerMenu : ContainerMenu
     {
-        private readonly FilterContainer _filterContainer;
-        private ExtractionFilter[] _importableFilters;
-
         public FilterContainerMenu(RDMPContextMenuStripArgs args, FilterContainer filterContainer)
             : base(
             new DeployedExtractionFilterFactory(args.ItemActivator.RepositoryLocator.DataExportRepository),

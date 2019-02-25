@@ -150,6 +150,7 @@ namespace CatalogueLibrary.Data
         
         /// <inheritdoc/>
         [Unique]
+        [DoNotImportDescriptions(AllowOverwriteIfBlank = true)]
         public string Acronym
         {
             get { return _acronym; }
@@ -162,6 +163,7 @@ namespace CatalogueLibrary.Data
         /// </summary>
         [Unique]
         [NotNull]
+        [DoNotImportDescriptions]
         public string Name
         {
             get { return _name; }
@@ -172,6 +174,7 @@ namespace CatalogueLibrary.Data
         /// A user defined hierarchical category which designates the role of the dataset e.g. '\datasets\extractable\labdata\'
         /// <para>Should always start and end with a '\' even if it is the root (i.e. '\')</para>
         /// </summary>
+        [DoNotImportDescriptions]
         public CatalogueFolder Folder
         {
             get { return _folder; }
@@ -508,6 +511,7 @@ namespace CatalogueLibrary.Data
 
         /// <inheritdoc/>
         [DoNotExtractProperty]
+        [DoNotImportDescriptions]
         public bool IsDeprecated
         {
             get { return _isDeprecated; }
@@ -516,6 +520,7 @@ namespace CatalogueLibrary.Data
 
         /// <inheritdoc/>
         [DoNotExtractProperty]
+        [DoNotImportDescriptions]
         public bool IsInternalDataset
         {
             get { return _isInternalDataset; }
@@ -524,6 +529,7 @@ namespace CatalogueLibrary.Data
 
         /// <inheritdoc/>
         [DoNotExtractProperty]
+        [DoNotImportDescriptions]
         public bool IsColdStorageDataset
         {
             get { return _isColdStorageDataset; }

@@ -10,11 +10,11 @@ using CatalogueLibrary.Data.DataLoad;
 
 namespace CatalogueLibrary.Nodes.LoadMetadataNodes
 {
-    public class HICProjectDirectoryNode: IDirectoryInfoNode, IOrderable
+    public class LoadDirectoryNode: IDirectoryInfoNode, IOrderable
     {
         public LoadMetadata LoadMetadata { get; set; }
 
-        public HICProjectDirectoryNode(LoadMetadata loadMetadata)
+        public LoadDirectoryNode(LoadMetadata loadMetadata)
         {
             LoadMetadata = loadMetadata;
         }
@@ -35,7 +35,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             return new DirectoryInfo(LoadMetadata.LocationOfFlatFiles);
         }
 
-        protected bool Equals(HICProjectDirectoryNode other)
+        protected bool Equals(LoadDirectoryNode other)
         {
             return Equals(LoadMetadata, other.LoadMetadata);
         }
@@ -45,7 +45,7 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
             if (ReferenceEquals(null, obj)) return false;
             if (ReferenceEquals(this, obj)) return true;
             if (obj.GetType() != this.GetType()) return false;
-            return Equals((HICProjectDirectoryNode) obj);
+            return Equals((LoadDirectoryNode) obj);
         }
 
         public override int GetHashCode()

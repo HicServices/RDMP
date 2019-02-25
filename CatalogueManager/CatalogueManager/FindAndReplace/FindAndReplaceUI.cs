@@ -72,7 +72,9 @@ namespace CatalogueManager.FindAndReplace
                 foreach (PropertyInfo propertyInfo in _sqlPropertyFinder.GetProperties(o))
                     _sqlNodes.Add(new FindAndReplaceNode(o, propertyInfo));
 
+            olvAllObjects.BeginUpdate();
             olvAllObjects.AddObjects(_locationNodes);
+            olvAllObjects.EndUpdate();
         }
 
         private void GetAllObjects(IActivateItems activator)
@@ -91,7 +93,7 @@ namespace CatalogueManager.FindAndReplace
             var dxmChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
 
             if (dxmChildProvider != null)
-                foreach (var o in dxmChildProvider.AllExtractableColumns)
+                foreach (var o in dxmChildProvider.GetAllExtractableColumns(_activator.RepositoryLocator.DataExportRepository))
                     _allObjects.Add(o);
 
             foreach (var o in g.GetAllObjectsInAllDatabases())
@@ -130,6 +132,7 @@ namespace CatalogueManager.FindAndReplace
         {
             var cb = (RadioButton)sender;
 
+            olvAllObjects.BeginUpdate();
             if(cb.Checked)
             {
                 olvAllObjects.ClearObjects();
@@ -142,6 +145,7 @@ namespace CatalogueManager.FindAndReplace
 
                 olvAllObjects.ResumeLayout();
             }
+            olvAllObjects.EndUpdate();
         }
         
         private void btnReplaceAll_Click(object sender, EventArgs e)

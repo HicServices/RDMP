@@ -60,7 +60,7 @@ namespace CachingEngineTests.Integration
             pipeline.Stub(p => p.Destination).Return(destinationComponent);
             pipeline.Stub(p => p.PipelineComponents).Return(Enumerable.Empty<IPipelineComponent>().OrderBy(p => p).ToList());
 
-            var projDir = HICProjectDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme",true);
+            var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme",true);
 
             var lmd = MockRepository.GenerateStub<ILoadMetadata>();
             lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
@@ -185,8 +185,8 @@ namespace CachingEngineTests.Integration
         {
         }
 
-        private IHICProjectDirectory project;
-        public void PreInitialize(IHICProjectDirectory value, IDataLoadEventListener listener)
+        private ILoadDirectory project;
+        public void PreInitialize(ILoadDirectory value, IDataLoadEventListener listener)
         {
             project = value;
         }

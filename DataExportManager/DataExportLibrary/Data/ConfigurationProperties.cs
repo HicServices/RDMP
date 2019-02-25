@@ -6,6 +6,8 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
+using CatalogueLibrary.Data;
+using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
@@ -19,9 +21,19 @@ namespace DataExportLibrary.Data
     /// </summary>
     public class ConfigurationProperties
     {
+        /// <summary>
+        /// List of all Keys that can be stored in the <see cref="ConfigurationProperties"/> table of the data export database
+        /// </summary>
         public enum ExpectedProperties
         {
+            /// <summary>
+            /// What to do in order to produce a 'Hash' when an <see cref="ExtractableColumn"/> is marked <see cref="ConcreteColumn.HashOnDataRelease"/>
+            /// </summary>
             HashingAlgorithmPattern,
+
+            /// <summary>
+            /// What text to write into the release document when releasing datasets
+            /// </summary>
             ReleaseDocumentDisclaimer
         }
 
@@ -30,12 +42,23 @@ namespace DataExportLibrary.Data
         private bool _cacheOutOfDate = true;
         private readonly Dictionary<string,string> _cacheDictionary = new Dictionary<string, string>();
 
+        /// <summary>
+        /// Creates a new instance ready to read values out of the <paramref name="repository"/> database
+        /// </summary>
+        /// <param name="allowCaching"></param>
+        /// <param name="repository"></param>
         public ConfigurationProperties(bool allowCaching, IRepository repository)
         {
             _allowCaching = allowCaching;
             _repository = repository;
         }
 
+        /// <summary>
+        /// Returns the currently persisted value for the given key (See <see cref="ExpectedProperties"/>)
+        /// </summary>
+        /// <param name="property"></param>
+        ///  <returns></returns>
+        /// <exception cref="KeyNotFoundException"></exception>
         public string GetValue(string property)
         {
 
@@ -48,13 +71,14 @@ namespace DataExportLibrary.Data
 
             throw new KeyNotFoundException("Could not find property called " + property + " in ConfigurationProperties table in Data Export database");
         }
-        //overload
+        
+        /// <inheritdoc cref="GetValue(string)"/>
         public string GetValue(ExpectedProperties property)
         {
             return GetValue(property.ToString());
         }
 
-        //wrapped in exception
+        /// <inheritdoc cref="GetValue(string)"/>
         public string TryGetValue(string property)
         {
             try
@@ -67,7 +91,7 @@ namespace DataExportLibrary.Data
             }
         }
 
-        //overload
+        /// <inheritdoc cref="GetValue(string)"/>
         public string TryGetValue(ExpectedProperties property)
         {
             string value = TryGetValue(property.ToString());
@@ -79,12 +103,17 @@ namespace DataExportLibrary.Data
         }
 
       
-        //overload
+        /// <summary>
+        /// Stores a new <paramref name="value"/> for the given <see cref="property"/> (and saves to the database)
+        /// </summary>
+        /// <param name="property"></param>
+        /// <param name="value"></param>
         public void SetValue(ExpectedProperties property, string value)
         {
             SetValue(property.ToString(), value);
         }
 
+        /// <inheritdoc cref="SetValue(DataExportLibrary.Data.ConfigurationProperties.ExpectedProperties,string)"/>
         public void SetValue(string property, string value)
         {
             if(_cacheOutOfDate)
@@ -99,6 +128,11 @@ namespace DataExportLibrary.Data
             _cacheOutOfDate = true;
         }
 
+        /// <summary>
+        /// Deletes the currently stored value of the given <paramref name="property"/>
+        /// </summary>
+        /// <param name="property"></param>
+        /// <returns></returns>
         public int DeleteValue(string property)
         {
             return IssueDeleteCommand(property);

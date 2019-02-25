@@ -37,6 +37,11 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
+        /// <summary>
+        /// Creates a new instance with the given <paramref name="operation"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="operation"></param>
         public FilterContainer(IDataExportRepository repository, FilterContainerOperation operation = FilterContainerOperation.AND)
         {
             Repository = repository;
@@ -54,12 +59,14 @@ namespace DataExportLibrary.Data.DataTables
                 Operation = op;
         }
 
+        /// <inheritdoc/>
         public IContainer GetParentContainerIfAny()
         {
             return  Repository.SelectAll<FilterContainer>(
                 "SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID=" + ID,
                 "FilterContainer_ParentID").SingleOrDefault();
         }
+        /// <inheritdoc/>
         public IContainer[] GetSubContainers()
         {
             var subcontainers = Repository.SelectAll<FilterContainer>(
@@ -69,13 +76,14 @@ namespace DataExportLibrary.Data.DataTables
             return subcontainers.Cast<IContainer>().ToArray();
         }
 
+        /// <inheritdoc/>
         public IFilter[] GetFilters()
         {
             var filters = Repository.GetAllObjects<DeployedExtractionFilter>("WHERE FilterContainer_ID=" + ID);
             return filters.Cast<IFilter>().ToArray();
         }
         
-
+        /// <inheritdoc/>
         public void AddChild(IContainer child)
         {
             if (!(child is FilterContainer))
@@ -87,7 +95,7 @@ namespace DataExportLibrary.Data.DataTables
                 {"FilterContainerChildID", child.ID}
             });
         }
-
+        /// <inheritdoc/>
         public void AddChild(IFilter filter)
         {
             if (filter.FilterContainer_ID.HasValue)
@@ -99,7 +107,7 @@ namespace DataExportLibrary.Data.DataTables
             filter.FilterContainer_ID = ID;
             filter.SaveToDatabase();
         }
-
+        /// <inheritdoc/>
         public void MakeIntoAnOrphan()
         {
             Repository.Delete("DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID", new Dictionary<string, object>
@@ -107,33 +115,42 @@ namespace DataExportLibrary.Data.DataTables
                 {"FilterContainerChildID", ID}
             });
         }
-
+        /// <inheritdoc/>
         public IContainer GetRootContainerOrSelf()
         {
             return new ContainerHelper().GetRootContainerOrSelf(this);
         }
-
+        /// <inheritdoc/>
         public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
         {
             return new ContainerHelper().GetAllFiltersIncludingInSubContainersRecursively(this);
         }
-
+        /// <inheritdoc/>
         public Catalogue GetCatalogueIfAny()
         {
             var sel = GetSelectedDataSetIfAny();
             return  sel != null?(Catalogue)sel.ExtractableDataSet.Catalogue:null;
         }
-
+        /// <inheritdoc/>
         public List<IContainer> GetAllSubContainersRecursively()
         {
             return new ContainerHelper().GetAllSubContainersRecursively(this);
         }
-
+        /// <summary>
+        /// Returns the <see cref="Operation"/> "AND" or "OR"
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return Operation.ToString();
         }
 
+        /// <summary>
+        /// Returns the root filter container (if any) for the given <paramref name="dataSet"/> as it is extracted in the <paramref name="configuration"/>
+        /// </summary>
+        /// <param name="configuration"></param>
+        /// <param name="dataSet"></param>
+        /// <returns></returns>
         public FilterContainer GetFilterContainerFor(IExtractionConfiguration configuration, IExtractableDataSet dataSet)
         {
             var objects = Repository.SelectAllWhere<FilterContainer>(
@@ -148,20 +165,7 @@ namespace DataExportLibrary.Data.DataTables
             return objects.Any() ? objects.Single() : null;
         }
         
-        public int CreateNewEmptyFilterContainerInDatabase()
-        {
-            return Repository.InsertAndReturnID<FilterContainer>(new Dictionary<string, object>
-            {
-                {"Operation", FilterContainerOperation.AND}
-            });
-        }
-
-        
-        public FilterContainer GetFilterContainerWithID(int id)
-        {
-            return Repository.GetObjectByID<FilterContainer>(id);
-        }
-
+        /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
             var children = GetAllFiltersIncludingInSubContainersRecursively();
@@ -181,6 +185,11 @@ namespace DataExportLibrary.Data.DataTables
             base.DeleteInDatabase();
         }
         
+        /// <summary>
+        /// Creates a deep copy of the current container, all filters and subcontainers (recursively).  These objects will all have new IDs and be new objects
+        /// in the repository database.
+        /// </summary>
+        /// <returns></returns>
         public FilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
@@ -219,6 +228,11 @@ namespace DataExportLibrary.Data.DataTables
             return clonedFilterContainer;
         }
 
+        /// <summary>
+        /// If this container is a top level root container (as opposed to a subcontainer) this will return which <see cref="SelectedDataSets"/> (which dataset in which configuration)
+        /// in which it applies.
+        /// </summary>
+        /// <returns></returns>
         public SelectedDataSets GetSelectedDataSetIfAny()
         {
             var root = GetRootContainerOrSelf();
@@ -229,6 +243,15 @@ namespace DataExportLibrary.Data.DataTables
             return Repository.GetAllObjects<SelectedDataSets>("WHERE RootFilterContainer_ID=" + root.ID).SingleOrDefault();
         }
 
+
+        /// <summary>
+        /// /// <summary>
+        /// Return which <see cref="SelectedDataSets"/> (which dataset in which configuration) this container resides in (or null if it is an orphan).  This
+        /// involves multiple database queries as the container hierarchy is recursively traversed up.
+        /// </summary>
+        /// <returns></returns>
+        /// </summary>
+        /// <returns></returns>
         public SelectedDataSets GetSelectedDataSetsRecursively()
         {
             //if it is a root

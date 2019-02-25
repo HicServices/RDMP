@@ -32,7 +32,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ParameterCollectionUI));
-            this.btnAddParameter = new System.Windows.Forms.Button();
             this.olvParameters = new BrightIdeasSoftware.ObjectListView();
             this.olvParameterName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvParameterSQL = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -40,28 +39,16 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvComment = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvOwner = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
-            this.btnOverride = new System.Windows.Forms.Button();
             this.tabControl1 = new System.Windows.Forms.TabControl();
-            this.tabPage1 = new System.Windows.Forms.TabPage();
-            this.tabPage2 = new System.Windows.Forms.TabPage();
+            this.tpDesign = new System.Windows.Forms.TabPage();
+            this.tpSql = new System.Windows.Forms.TabPage();
             this.hiParameters = new ReusableUIComponents.HelpIcon();
             this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControl();
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).BeginInit();
             this.tabControl1.SuspendLayout();
-            this.tabPage1.SuspendLayout();
-            this.tabPage2.SuspendLayout();
+            this.tpDesign.SuspendLayout();
+            this.tpSql.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // btnAddParameter
-            // 
-            this.btnAddParameter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnAddParameter.Location = new System.Drawing.Point(971, 549);
-            this.btnAddParameter.Name = "btnAddParameter";
-            this.btnAddParameter.Size = new System.Drawing.Size(129, 23);
-            this.btnAddParameter.TabIndex = 10;
-            this.btnAddParameter.Text = "Add Parameter";
-            this.btnAddParameter.UseVisualStyleBackColor = true;
-            this.btnAddParameter.Click += new System.EventHandler(this.btnAddParameter_Click);
             // 
             // olvParameters
             // 
@@ -71,9 +58,6 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvParameters.AllColumns.Add(this.olvComment);
             this.olvParameters.AllColumns.Add(this.olvOwner);
             this.olvParameters.AlternateRowBackColor = System.Drawing.Color.FromArgb(((int)(((byte)(210)))), ((int)(((byte)(255)))), ((int)(((byte)(255)))));
-            this.olvParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
             this.olvParameters.CellEditActivation = BrightIdeasSoftware.ObjectListView.CellEditActivateMode.SingleClickAlways;
             this.olvParameters.CellEditUseWholeCell = false;
             this.olvParameters.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -83,12 +67,13 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvComment,
             this.olvOwner});
             this.olvParameters.Cursor = System.Windows.Forms.Cursors.Default;
+            this.olvParameters.Dock = System.Windows.Forms.DockStyle.Fill;
             this.olvParameters.FullRowSelect = true;
             this.olvParameters.GroupImageList = this.imageList1;
             this.olvParameters.HideSelection = false;
-            this.olvParameters.Location = new System.Drawing.Point(0, 0);
+            this.olvParameters.Location = new System.Drawing.Point(3, 3);
             this.olvParameters.Name = "olvParameters";
-            this.olvParameters.Size = new System.Drawing.Size(1235, 543);
+            this.olvParameters.Size = new System.Drawing.Size(1236, 572);
             this.olvParameters.SmallImageList = this.imageList1;
             this.olvParameters.TabIndex = 11;
             this.olvParameters.UseCompatibleStateImageBehavior = false;
@@ -144,60 +129,46 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.imageList1.Images.SetKeyName(1, "Overridden.png");
             this.imageList1.Images.SetKeyName(2, "Warning.png");
             // 
-            // btnOverride
-            // 
-            this.btnOverride.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnOverride.Enabled = false;
-            this.btnOverride.Location = new System.Drawing.Point(1106, 549);
-            this.btnOverride.Name = "btnOverride";
-            this.btnOverride.Size = new System.Drawing.Size(123, 23);
-            this.btnOverride.TabIndex = 10;
-            this.btnOverride.Text = "Override Selected";
-            this.btnOverride.UseVisualStyleBackColor = true;
-            this.btnOverride.Click += new System.EventHandler(this.btnOverride_Click);
-            // 
             // tabControl1
             // 
             this.tabControl1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
             | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.tabControl1.Controls.Add(this.tabPage1);
-            this.tabControl1.Controls.Add(this.tabPage2);
+            this.tabControl1.Controls.Add(this.tpDesign);
+            this.tabControl1.Controls.Add(this.tpSql);
             this.tabControl1.Location = new System.Drawing.Point(1, 3);
             this.tabControl1.Name = "tabControl1";
             this.tabControl1.SelectedIndex = 0;
-            this.tabControl1.Size = new System.Drawing.Size(1243, 604);
+            this.tabControl1.Size = new System.Drawing.Size(1250, 604);
             this.tabControl1.TabIndex = 1;
             // 
-            // tabPage1
+            // tpDesign
             // 
-            this.tabPage1.Controls.Add(this.parameterEditorScintillaControl1);
-            this.tabPage1.Location = new System.Drawing.Point(4, 22);
-            this.tabPage1.Name = "tabPage1";
-            this.tabPage1.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage1.Size = new System.Drawing.Size(1235, 578);
-            this.tabPage1.TabIndex = 0;
-            this.tabPage1.Text = "SQL";
-            this.tabPage1.UseVisualStyleBackColor = true;
+            this.tpDesign.Controls.Add(this.olvParameters);
+            this.tpDesign.Location = new System.Drawing.Point(4, 22);
+            this.tpDesign.Name = "tpDesign";
+            this.tpDesign.Padding = new System.Windows.Forms.Padding(3);
+            this.tpDesign.Size = new System.Drawing.Size(1242, 578);
+            this.tpDesign.TabIndex = 1;
+            this.tpDesign.Text = "Designer";
+            this.tpDesign.UseVisualStyleBackColor = true;
             // 
-            // tabPage2
+            // tpSql
             // 
-            this.tabPage2.Controls.Add(this.btnOverride);
-            this.tabPage2.Controls.Add(this.olvParameters);
-            this.tabPage2.Controls.Add(this.btnAddParameter);
-            this.tabPage2.Location = new System.Drawing.Point(4, 22);
-            this.tabPage2.Name = "tabPage2";
-            this.tabPage2.Padding = new System.Windows.Forms.Padding(3);
-            this.tabPage2.Size = new System.Drawing.Size(1235, 578);
-            this.tabPage2.TabIndex = 1;
-            this.tabPage2.Text = "Designer";
-            this.tabPage2.UseVisualStyleBackColor = true;
+            this.tpSql.Controls.Add(this.parameterEditorScintillaControl1);
+            this.tpSql.Location = new System.Drawing.Point(4, 22);
+            this.tpSql.Name = "tpSql";
+            this.tpSql.Padding = new System.Windows.Forms.Padding(3);
+            this.tpSql.Size = new System.Drawing.Size(1242, 578);
+            this.tpSql.TabIndex = 0;
+            this.tpSql.Text = "SQL";
+            this.tpSql.UseVisualStyleBackColor = true;
             // 
             // hiParameters
             // 
             this.hiParameters.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.hiParameters.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("hiParameters.BackgroundImage")));
-            this.hiParameters.Location = new System.Drawing.Point(1246, 3);
+            this.hiParameters.Location = new System.Drawing.Point(1251, 23);
             this.hiParameters.Name = "hiParameters";
             this.hiParameters.Size = new System.Drawing.Size(19, 19);
             this.hiParameters.TabIndex = 2;
@@ -208,7 +179,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.parameterEditorScintillaControl1.Location = new System.Drawing.Point(3, 3);
             this.parameterEditorScintillaControl1.Name = "parameterEditorScintillaControl1";
             this.parameterEditorScintillaControl1.Options = null;
-            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(1229, 572);
+            this.parameterEditorScintillaControl1.Size = new System.Drawing.Size(1236, 572);
             this.parameterEditorScintillaControl1.TabIndex = 0;
             // 
             // ParameterCollectionUI
@@ -221,15 +192,14 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.Size = new System.Drawing.Size(1271, 610);
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).EndInit();
             this.tabControl1.ResumeLayout(false);
-            this.tabPage1.ResumeLayout(false);
-            this.tabPage2.ResumeLayout(false);
+            this.tpDesign.ResumeLayout(false);
+            this.tpSql.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
 
         #endregion
 
-        private System.Windows.Forms.Button btnAddParameter;
         private ObjectListView olvParameters;
         private OLVColumn olvParameterName;
         private OLVColumn olvParameterSQL;
@@ -238,10 +208,9 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         private System.Windows.Forms.ImageList imageList1;
         private ParameterEditorScintillaControl parameterEditorScintillaControl1;
         private OLVColumn olvOwner;
-        private System.Windows.Forms.Button btnOverride;
         private System.Windows.Forms.TabControl tabControl1;
-        private System.Windows.Forms.TabPage tabPage1;
-        private System.Windows.Forms.TabPage tabPage2;
+        private System.Windows.Forms.TabPage tpSql;
+        private System.Windows.Forms.TabPage tpDesign;
         private ReusableUIComponents.HelpIcon hiParameters;
     }
 }

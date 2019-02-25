@@ -46,10 +46,8 @@ namespace CohortManager.SubComponents
             this.olvTime = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvCachedQueryUseCount = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.label1 = new System.Windows.Forms.Label();
-            this.tbTimeout = new System.Windows.Forms.TextBox();
             this.refreshThreadCountPeriodically = new System.Windows.Forms.Timer(this.components);
             this.lblThreadCount = new System.Windows.Forms.Label();
-            this.cbIncludeCumulative = new System.Windows.Forms.CheckBox();
             this.lblExecuteAllPhase = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.tlvConfiguration)).BeginInit();
             this.SuspendLayout();
@@ -93,7 +91,7 @@ namespace CohortManager.SubComponents
             // 
             // olvAggregate
             // 
-            this.olvAggregate.AspectName = "ToString";
+            this.olvAggregate.AspectName = "";
             this.olvAggregate.FillsFreeSpace = true;
             this.olvAggregate.Sortable = false;
             this.olvAggregate.Text = "Aggregate";
@@ -109,7 +107,7 @@ namespace CohortManager.SubComponents
             // 
             this.olvIdentifierCount.AspectName = "";
             this.olvIdentifierCount.Sortable = false;
-            this.olvIdentifierCount.Text = "Identifier Count";
+            this.olvIdentifierCount.Text = "Count";
             this.olvIdentifierCount.Width = 90;
             // 
             // olvCumulativeTotal
@@ -145,23 +143,10 @@ namespace CohortManager.SubComponents
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(246, 612);
+            this.label1.Location = new System.Drawing.Point(0, 0);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(59, 13);
-            this.label1.TabIndex = 5;
-            this.label1.Text = "Timeout(s):";
-            // 
-            // tbTimeout
-            // 
-            this.tbTimeout.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.tbTimeout.Location = new System.Drawing.Point(306, 609);
-            this.tbTimeout.Name = "tbTimeout";
-            this.tbTimeout.Size = new System.Drawing.Size(94, 20);
-            this.tbTimeout.TabIndex = 6;
-            this.tbTimeout.Text = "3000";
-            this.tbTimeout.TextChanged += new System.EventHandler(this.tbTimeout_TextChanged);
+            this.label1.Size = new System.Drawing.Size(100, 23);
+            this.label1.TabIndex = 0;
             // 
             // refreshThreadCountPeriodically
             // 
@@ -177,18 +162,6 @@ namespace CohortManager.SubComponents
             this.lblThreadCount.Size = new System.Drawing.Size(81, 13);
             this.lblThreadCount.TabIndex = 8;
             this.lblThreadCount.Text = "Thread Count:0";
-            // 
-            // cbIncludeCumulative
-            // 
-            this.cbIncludeCumulative.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.cbIncludeCumulative.AutoSize = true;
-            this.cbIncludeCumulative.Location = new System.Drawing.Point(98, 611);
-            this.cbIncludeCumulative.Name = "cbIncludeCumulative";
-            this.cbIncludeCumulative.Size = new System.Drawing.Size(148, 17);
-            this.cbIncludeCumulative.TabIndex = 11;
-            this.cbIncludeCumulative.Text = "Include Cumulative Totals";
-            this.cbIncludeCumulative.UseVisualStyleBackColor = true;
-            this.cbIncludeCumulative.CheckedChanged += new System.EventHandler(this.cbIncludeCumulative_CheckedChanged);
             // 
             // lblExecuteAllPhase
             // 
@@ -206,9 +179,6 @@ namespace CohortManager.SubComponents
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.lblExecuteAllPhase);
             this.Controls.Add(this.lblThreadCount);
-            this.Controls.Add(this.cbIncludeCumulative);
-            this.Controls.Add(this.tbTimeout);
-            this.Controls.Add(this.label1);
             this.Controls.Add(this.tlvConfiguration);
             this.Name = "CohortCompilerUI";
             this.Size = new System.Drawing.Size(540, 632);
@@ -225,7 +195,6 @@ namespace CohortManager.SubComponents
         private OLVColumn olvIdentifierCount;
         private OLVColumn olvWorking;
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.TextBox tbTimeout;
         private System.Windows.Forms.Timer refreshThreadCountPeriodically;
         private System.Windows.Forms.Label lblThreadCount;
         private OLVColumn olvCatalogue;
@@ -233,7 +202,6 @@ namespace CohortManager.SubComponents
         private OLVColumn olvTime;
         private OLVColumn olvCachedQueryUseCount;
         private OLVColumn olvCumulativeTotal;
-        private System.Windows.Forms.CheckBox cbIncludeCumulative;
         private System.Windows.Forms.Label lblExecuteAllPhase;
     }
 }

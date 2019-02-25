@@ -4,30 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
 {
     public class UnplannedTable:IHasLoadDiagramState
     {
-        private readonly DiscoveredTable _table;
+        public DiscoveredTable Table { get; private set; }
         public readonly DiscoveredColumn[] Columns;
         public LoadDiagramState State { get{return LoadDiagramState.New;}}
 
         public UnplannedTable(DiscoveredTable table)
         {
-            _table = table;
+            Table = table;
             Columns = table.DiscoverColumns();
         }
 
         public override string ToString()
         {
-            return _table.GetRuntimeName();
+            return Table.GetRuntimeName();
         }
     }
 }

@@ -354,12 +354,6 @@
     <Compile Include="AggregationUIs\AggregateGraph.Designer.cs">
       <DependentUpon>AggregateGraph.cs</DependentUpon>
     </Compile>
-    <Compile Include="AggregationUIs\QueryCachingServerSelector.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="AggregationUIs\QueryCachingServerSelector.Designer.cs">
-      <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
-    </Compile>
     <Compile Include="ANOEngineeringUIs\ANOTableUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -449,6 +443,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowCacheFetchFailures.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowXmlDoc.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
@@ -909,11 +904,11 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.Designer.cs">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.cs">
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.Designer.cs">
-      <DependentUpon>ChooseHICProjectDialog.cs</DependentUpon>
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.Designer.cs">
+      <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagram.cs">
       <SubType>UserControl</SubType>
@@ -1173,6 +1168,7 @@
     </Compile>
     <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
     <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
+    <Compile Include="SimpleControls\ExecutionEventArgs.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
     <Compile Include="SimpleControls\ObjectSaverButton.cs" />
     <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
@@ -1755,9 +1751,6 @@
       <DependentUpon>AggregateGraph.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\QueryCachingServerSelector.resx">
-      <DependentUpon>QueryCachingServerSelector.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="ANOEngineeringUIs\ANOTableUI.resx">
       <DependentUpon>ANOTableUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -1906,8 +1899,8 @@
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.resx">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ChooseHICProjectDialog.resx">
-      <DependentUpon>ChooseHICProjectDialog.cs</DependentUpon>
+    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.resx">
+      <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagram.resx">
       <DependentUpon>LoadDiagram.cs</DependentUpon>

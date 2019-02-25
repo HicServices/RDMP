@@ -405,18 +405,19 @@ namespace CatalogueLibrary.Data.ImportExport
         /// </summary>
         /// <param name="o"></param>
         /// <param name="shareDefinition"></param>
-        /// <param name="skipName">True to step over the Name property of <paramref name="o"/> during import (avoids renaming)</param>
-        public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition,bool skipName)
+        public void ImportPropertiesOnly(IMapsDirectlyToDatabaseTable o, ShareDefinition shareDefinition)
         {
             if (shareDefinition.Type != o.GetType())
                 throw new Exception("Share Definition is not for a " + o.GetType());
 
             AttributePropertyFinder<RelationshipAttribute> relationshipPropertyFinder = new AttributePropertyFinder<RelationshipAttribute>(o);
+            AttributePropertyFinder<DoNotImportDescriptionsAttribute> skipPropertyFinder = new AttributePropertyFinder<DoNotImportDescriptionsAttribute>(o);
+
 
             //for each property that isn't [NoMappingToDatabase]
             foreach (var kvp in shareDefinition.GetDictionaryForImport())
             {
-                if(kvp.Key == "Name" && skipName)
+                if(kvp.Key == "Name")
                     continue;
 
                 var prop = o.GetType().GetProperty(kvp.Key);
@@ -424,7 +425,24 @@ namespace CatalogueLibrary.Data.ImportExport
                 //If the property is a relationship e.g. _ID skip it
                 if(relationshipPropertyFinder.GetAttribute(prop) != null)
                     continue;
-                
+
+                //do we skip this property?
+                var skip = skipPropertyFinder.GetAttribute(prop);
+                if (skip != null)
+                {
+                    //yes but only if blank
+                    if (skip.AllowOverwriteIfBlank)
+                    {
+                        //is it currently not null? (if so skip)
+                        var oldVal = prop.GetValue(o);
+
+                        if(!(oldVal == DBNull.Value || oldVal == null || string.IsNullOrWhiteSpace(oldVal.ToString())))
+                            continue;
+                    }
+                    else
+                        continue; //always skip
+                }
+
                 RepositoryLocator.CatalogueRepository.SetValue(prop,kvp.Value,o);   
             }
         }

@@ -37,6 +37,12 @@ namespace CatalogueManager.SimpleControls
         public bool ChecksPassed { get; private set; }
         public bool IsExecuting { get { return _runningTask != null && !_runningTask.IsCompleted; } }
 
+        /// <summary>
+        /// Called every time the execution of the runner completes (does not get called if the runner was detached - running 
+        /// in a seperate process).
+        /// </summary>
+        public event EventHandler<ExecutionEventArgs> ExecutionFinished;
+
         private RunnerFactory _factory;
         private IActivateItems _activator;
 
@@ -92,6 +98,7 @@ namespace CatalogueManager.SimpleControls
 
         private GracefulCancellationTokenSource _cancellationTokenSource;
         private Task _runningTask;
+        
         
         private void btnRunChecks_Click(object sender, EventArgs e)
         {
@@ -193,6 +200,9 @@ namespace CatalogueManager.SimpleControls
 
                     if (exitCode != 0)
                         loadProgressUI1.SetFatal();
+
+                    if(ExecutionFinished != null)
+                        ExecutionFinished(this, new ExecutionEventArgs(exitCode));
                     
                     //adjust the buttons accordingly
                     SetButtonStates();

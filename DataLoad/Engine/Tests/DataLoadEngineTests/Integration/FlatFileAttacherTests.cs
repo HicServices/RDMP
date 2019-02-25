@@ -28,7 +28,7 @@ namespace DataLoadEngineTests.Integration
 {
     public class FlatFileAttacherTests : DatabaseTests
     {
-        private HICProjectDirectory hicProjectDirectory;
+        private LoadDirectory LoadDirectory;
         DirectoryInfo parentDir;
         private DiscoveredDatabase _database;
         private DiscoveredTable _table;
@@ -43,7 +43,7 @@ namespace DataLoadEngineTests.Integration
             if(toCleanup != null)
                 toCleanup.Delete(true);
 
-            hicProjectDirectory = HICProjectDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
+            LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
             
             // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
             _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
@@ -67,7 +67,7 @@ namespace DataLoadEngineTests.Integration
         public void Test_CSV_Attachment(string separator, bool overrideHeaders)
         {
             
-            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
             var sw = new StreamWriter(filename);
 
             sw.WriteLine("name,name2");
@@ -79,7 +79,7 @@ namespace DataLoadEngineTests.Integration
             sw.Dispose();
 
 
-            string filename2 = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob2.csv");
+            string filename2 = Path.Combine(LoadDirectory.ForLoading.FullName, "bob2.csv");
             var sw2 = new StreamWriter(filename2);
 
             sw2.WriteLine("name,name2");
@@ -90,7 +90,7 @@ namespace DataLoadEngineTests.Integration
             sw2.Dispose();
 
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Initialize(LoadDirectory, _database);
             attacher.Separator = separator;
             attacher.FilePattern = "bob*";
             attacher.TableName = "Bob";
@@ -147,7 +147,7 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void TabTestWithOverrideHeaders()
         {
-            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
             var sw = new StreamWriter(filename);
 
             sw.WriteLine("Face\tBasher");
@@ -158,7 +158,7 @@ namespace DataLoadEngineTests.Integration
             sw.Dispose();
 
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Initialize(LoadDirectory, _database);
             attacher.Separator = "\\t";
             attacher.FilePattern = "bob*";
             attacher.TableName = "Bob";
@@ -192,7 +192,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(false)]
         public void TabTestWithOverrideHeaders_IncludePath(bool columnExistsInRaw)
         {
-            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
             var sw = new StreamWriter(filename);
 
             sw.WriteLine("Face\tBasher");
@@ -206,7 +206,7 @@ namespace DataLoadEngineTests.Integration
                 _table.AddColumn("FilePath",new DatabaseTypeRequest(typeof(string),500),true,30);
 
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Initialize(LoadDirectory, _database);
             attacher.Separator = "\\t";
             attacher.FilePattern = "bob*";
             attacher.TableName = "Bob";
@@ -251,7 +251,7 @@ namespace DataLoadEngineTests.Integration
         [TestCase(false)]
         public void TestTableInfo(bool usenamer)
         {
-            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
             var sw = new StreamWriter(filename);
 
             sw.WriteLine("name,name2");
@@ -267,7 +267,7 @@ namespace DataLoadEngineTests.Integration
             Import(_table, out ti, out cols);
 
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Initialize(LoadDirectory, _database);
             attacher.Separator = ",";
             attacher.FilePattern = "bob*";
             attacher.TableToLoad = ti;
@@ -309,7 +309,7 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void Test_FlatFileAttcher_IgnoreColumns()
         {
-            string filename = Path.Combine(hicProjectDirectory.ForLoading.FullName, "bob.csv");
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
             var sw = new StreamWriter(filename);
 
             sw.WriteLine("name,name2,address");
@@ -325,7 +325,7 @@ namespace DataLoadEngineTests.Integration
             Import(_table, out ti, out cols);
 
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(hicProjectDirectory, _database);
+            attacher.Initialize(LoadDirectory, _database);
             attacher.Separator = ",";
             attacher.FilePattern = "bob*";
             attacher.TableToLoad = ti;

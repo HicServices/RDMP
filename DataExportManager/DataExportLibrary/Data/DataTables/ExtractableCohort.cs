@@ -11,66 +11,57 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.Data.DataTables
 {
 
-    /// <summary>
-    /// While actual patient identifiers are stored in an external database (referenced by a ExternalCohortTable), the RDMP still needs to have a reference to each cohort for extaction.
-    /// The ExtractableCohort object is a record that documents the location and ID of a cohort in your ExternalCohortTable.  This record means that the RDMP can record which cohorts
-    /// are part of which ExtractionConfiguration in a Project without ever having to move the identifiers into the RDMP application database.
-    /// 
-    /// <para>The most important field in ExtractableCohort is the OriginID, this field represents the id of the cohort in the CohortDefinition table of the ExternalCohortTable.  Effectively
-    /// this number is the id of the cohort in your cohort database while the ID property of the ExtractableCohort (as opposed to OriginID) is the RDMP ID assigned to the cohort.  This
-    /// allows you to have two different cohort sources both of which have a cohort id 10 but the RDMP software is able to tell the difference.  In addition it allows for the unfortunate
-    /// situation in which you delete a cohort in your cohort database and leave the ExtractableCohort orphaned - under such circumstances you will at least still have your RDMP configuration
-    /// and know the location of the original cohort even if it doesn't exist anymore. </para>
-    /// </summary>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>, IHasDependencies, ICustomSearchString
+    /// <inheritdoc/>
+    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>,  ICustomSearchString
     {
+        /// <summary>
+        /// Logging entry in the RDMP central relational log under which to record all activities that relate to creating cohorts
+        /// </summary>
+        public const string CohortLoggingTask = "CohortManagement";
+
         #region Database Properties
         private int _externalCohortTable_ID;
         private string _overrideReleaseIdentifierSQL;
         private string _auditLog;
         private bool _isDeprecated;
 
+        /// <inheritdoc/>
         public int ExternalCohortTable_ID
         {
             get { return _externalCohortTable_ID; }
             set { SetField(ref _externalCohortTable_ID, value); }
         }
+
+        /// <inheritdoc/>
         public string OverrideReleaseIdentifierSQL
         {
             get { return _overrideReleaseIdentifierSQL; }
             set { SetField(ref _overrideReleaseIdentifierSQL, value); }
         }
+
+        /// <inheritdoc/>
         public string AuditLog
         {
             get { return _auditLog; }
             set { SetField(ref _auditLog, value); }
         }
 
-        /// <summary>
-        /// The cohortDefinition_id used to identify this cohort in the external cohort server/database that this ExtractableCohort comes from.
-        /// 
-        /// <para>Because there can be multiple Cohort sources there can be overlap in these i.e. cohort 1 from source 1 is not the same as cohort 1 from source 2</para>
-        /// 
-        /// <para>Therefore this is completely different from the ID of this ExtractableCohort - which is unique within the DataExportManager database</para>
-        /// </summary>
+        /// <inheritdoc/>
         public int OriginID
         {
             get { return _originID; }
@@ -88,12 +79,12 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
-        public const string CohortLoggingTask = "CohortManagement";
 
         
         private int _count = -1;
 
 
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public int Count
         {
@@ -110,6 +101,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         private int _countDistinct = -1;
+        /// <inheritdoc/>
         [NoMappingToDatabase]
         public int CountDistinct
         {
@@ -140,10 +132,16 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
+        /// <summary>
+        /// Alias field, returns <see cref="IExternalCohortTable.Name"/>
+        /// </summary>
         [NoMappingToDatabase]
         [UsefulProperty(DisplayName = "Source")]
         public string Source { get { return ExternalCohortTable.Name; } }
 
+        /// <summary>
+        /// Fetches and returns the project number listed in the remote cohort database for this cohort (results are cached)
+        /// </summary>
         [NoMappingToDatabase]
         [UsefulProperty(DisplayName = "P")]
         public int ExternalProjectNumber
@@ -151,6 +149,9 @@ namespace DataExportLibrary.Data.DataTables
             get { return (int?)GetFromCacheData(x => x.ExternalProjectNumber) ?? -1; }
         }
 
+        /// <summary>
+        /// Fetches and returns the version number listed in the remote cohort database for this cohort (results are cached)
+        /// </summary>
         [NoMappingToDatabase]
         [UsefulProperty(DisplayName = "V")]
         public int ExternalVersion
@@ -189,9 +190,27 @@ namespace DataExportLibrary.Data.DataTables
             ClearAllInjections();
         }
 
+        /// <summary>
+        /// Fetches and returns project number, version etc listed in the remote cohort database for this cohort
+        /// </summary>
         public IExternalCohortDefinitionData GetExternalData()
         {
-            return ExternalCohortTable.GetExternalData(this);
+            string sql = @"select projectNumber, description,version,dtCreated from " + ExternalCohortTable.DefinitionTableName + " where id = " + OriginID;
+
+            var db = ExternalCohortTable.Discover();
+
+            using (var con = db.Server.GetConnection())
+            {
+                con.Open();
+                var getDescription = db.Server.GetCommand(sql, con);
+
+                var r = getDescription.ExecuteReader();
+
+                if (!r.Read())
+                    throw new Exception("No records returned for Cohort OriginID " + OriginID);
+
+                return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
+            }
         }
 
         
@@ -199,6 +218,13 @@ namespace DataExportLibrary.Data.DataTables
         private Lazy<IExternalCohortTable> _knownExternalCohortTable;
         private int _originID;
 
+        /// <summary>
+        /// Creates a new cohort reference in the data export database.  This must resolve (via <paramref name="originalId"/>) to 
+        /// a row in the external cohort database (<paramref name="externalSource"/>).
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="externalSource"></param>
+        /// <param name="originalId"></param>
         public ExtractableCohort(IDataExportRepository repository, ExternalCohortTable externalSource, int originalId)
         {
             Repository = repository;
@@ -215,11 +241,17 @@ namespace DataExportLibrary.Data.DataTables
             ClearAllInjections();
         }
 
+        /// <summary>
+        /// Returns the external description of the cohort (held in the remote cohort database <see cref="ExternalCohortTable"/>) or
+        /// "Broken Cohort" if that database is unreachable
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return GetFromCacheData(x => x.ExternalDescription) as string ?? "Broken Cohort";
         }
 
+        /// <inheritdoc/>
         public string GetSearchString()
         {
             return ToString() + " " + ExternalProjectNumber + " " + ExternalVersion;
@@ -227,6 +259,7 @@ namespace DataExportLibrary.Data.DataTables
 
         private IQuerySyntaxHelper _cachedQuerySyntaxHelper;
         
+        /// <inheritdoc/>
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             if (_cachedQuerySyntaxHelper == null)
@@ -237,6 +270,7 @@ namespace DataExportLibrary.Data.DataTables
 
         #region Stuff for executing the actual queries described by this class (generating cohorts etc)
         
+        /// <inheritdoc/>
         public DataTable FetchEntireCohort()
         {
             var ect = ExternalCohortTable;
@@ -245,7 +279,7 @@ namespace DataExportLibrary.Data.DataTables
             using (var con = db.Server.GetConnection())
             {
                 con.Open();
-                string sql = "SELECT * FROM " + ect.TableName + " WHERE " + this.WhereSQL();
+                string sql = "SELECT DISTINCT * FROM " + ect.TableName + " WHERE " + this.WhereSQL();
 
                 var da = db.Server.GetDataAdapter(sql, con);
                 var dtReturn = new DataTable();
@@ -256,38 +290,8 @@ namespace DataExportLibrary.Data.DataTables
                 return dtReturn;
             }
         }
-
-        [Obsolete("Use FetchEntireCohort instea")]
-        public DataTable GetReleaseIdentifierMap(IDataLoadEventListener listener)
-        {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to fetch release map as data table"));
-            DataTable toReturn = new DataTable();
-
-            var db = ExternalCohortTable.Discover();
-            using (var con = db.Server.GetConnection())
-            {
-                con.Open();
-
-                string sql =
-                    string.Format(
-                        "SELECT {0},{1} FROM {2} where " + ExternalCohortTable.DefinitionTableForeignKeyField + "=" +
-                        OriginID
-                        , GetPrivateIdentifier()
-                        , GetReleaseIdentifier()
-                        , ExternalCohortTable.TableName);
-
-                var da = db.Server.GetDataAdapter(sql, con);
-                da.Fill(toReturn);
-            }
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Release map data table fetched, it has " + toReturn.Rows.Count + " rows"));
-            return toReturn;
-        }
-
-        /// <summary>
-        /// Gets the comparison check to use as part of a Where query, this does not include the WHERE section so that you can nest it deep inside giaganot OR AND trees if you feel like it
-        /// </summary>
-        /// <returns></returns>
+        
+        /// <inheritdoc/>
         public string WhereSQL()
         {
             var ect = ExternalCohortTable;
@@ -326,20 +330,14 @@ namespace DataExportLibrary.Data.DataTables
                 return db.Server.GetCommand(sql, con).ExecuteScalar();
             }
         }
-
-        [Obsolete("This is super HIC specific, the first 3 digits of every release identifier is a project code")]
-        public string GetFirstProCHIPrefix()
-        {
-            var ect = ExternalCohortTable;
-
-            if (ect.DatabaseType != DatabaseType.MicrosoftSQLServer)
-                return "";
-
-            return (string)ExecuteScalar("SELECT  TOP 1 LEFT(" + GetReleaseIdentifier() + ",3) FROM " + ect.TableName + " WHERE " +WhereSQL());
-        }
         
         #endregion
         
+        /// <summary>
+        /// Returns details of all cohorts held in <paramref name="externalSource"/> (that have at least one identifier mapping).
+        /// </summary>
+        /// <param name="externalSource"></param>
+        /// <returns></returns>
         public static IEnumerable<CohortDefinition> GetImportableCohortDefinitions(ExternalCohortTable externalSource)
         {
             string displayMemberName, valueMemberName, versionMemberName,projectNumberMemberName;
@@ -357,6 +355,15 @@ namespace DataExportLibrary.Data.DataTables
            }
         }
 
+        /// <summary>
+        /// Returns the remote DataTable row held in <paramref name="externalSource"/> that describes all cohorts held in it (that have at least one identifier mapping).
+        /// </summary>
+        /// <param name="externalSource"></param>
+        /// <param name="displayMemberName"></param>
+        /// <param name="valueMemberName"></param>
+        /// <param name="versionMemberName"></param>
+        /// <param name="projectNumberMemberName"></param>
+        /// <returns></returns>
         public static DataTable GetImportableCohortDefinitionsTable(ExternalCohortTable externalSource, out string displayMemberName, out string valueMemberName, out string versionMemberName, out string projectNumberMemberName)
         {
             var server = externalSource.Discover().Server;
@@ -383,22 +390,34 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
         
+        /// <inheritdoc/>
         public string GetReleaseIdentifier(bool runtimeName = false)
         {
-            var fullName = ExternalCohortTable.GetReleaseIdentifier(this);
+            //respect override
+            string toReturn = string.IsNullOrWhiteSpace(OverrideReleaseIdentifierSQL)
+                ? ExternalCohortTable.ReleaseIdentifierField
+                : OverrideReleaseIdentifierSQL;
 
-            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(fullName) : fullName;
+            if (toReturn.Equals(ExternalCohortTable.PrivateIdentifierField))
+                throw new Exception("ReleaseIdentifier for cohort " + ID +
+                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
+
+            var syntaxHelper = GetQuerySyntaxHelper();
+
+            if (syntaxHelper.GetRuntimeName(toReturn).Equals(syntaxHelper.GetRuntimeName(ExternalCohortTable.PrivateIdentifierField)))
+                throw new Exception("ReleaseIdentifier for cohort " + ID +
+                                    " is the same as the PrivateIdentifierSQL, this is forbidden");
+
+            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(toReturn) : toReturn;
         }
 
+        /// <inheritdoc/>
         public string GetPrivateIdentifier(bool runtimeName = false)
         {
-            //cannot be overwritten by ExtractableCohort but for ease we can return the value from the cached (during constructor) version of this entity
-            var fullName = ExternalCohortTable.PrivateIdentifierField;
-
-            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(fullName) : fullName;
-
+            return runtimeName ? GetQuerySyntaxHelper().GetRuntimeName(ExternalCohortTable.PrivateIdentifierField) : ExternalCohortTable.PrivateIdentifierField;
         }
 
+        /// <inheritdoc/>
         public string GetPrivateIdentifierDataType()
         {
             DiscoveredTable table = ExternalCohortTable.Discover().ExpectTable(ExternalCohortTable.TableName);
@@ -409,6 +428,7 @@ namespace DataExportLibrary.Data.DataTables
             
         }
 
+        /// <inheritdoc/>
         public string GetReleaseIdentifierDataType()
         {
             DiscoveredTable table = ExternalCohortTable.Discover().ExpectTable(ExternalCohortTable.TableName);
@@ -418,6 +438,8 @@ namespace DataExportLibrary.Data.DataTables
                 .DataType.SQLType; //and return it's datatype
         }
         
+
+        /// <inheritdoc/>
         public DiscoveredDatabase GetDatabaseServer()
         {
             return ExternalCohortTable.Discover();
@@ -432,7 +454,7 @@ namespace DataExportLibrary.Data.DataTables
         /// </summary>
         private bool _broken;
 
-
+        /// <inheritdoc/>
         public void ReverseAnonymiseDataTable(DataTable toProcess, IDataLoadEventListener listener,bool allowCaching)
         {
             int haveWarnedAboutTop1AlreadyCount = 10;
@@ -528,6 +550,10 @@ namespace DataExportLibrary.Data.DataTables
         
         }
 
+        /// <summary>
+        /// Appends the <paramref name="s"/> to the <see cref="AuditLog"/> prefixed by the DateTime and Username of the caller and then saves to database
+        /// </summary>
+        /// <param name="s"></param>
         public void AppendToAuditLog(string s)
         {
             if (AuditLog == null)
@@ -537,6 +563,7 @@ namespace DataExportLibrary.Data.DataTables
             SaveToDatabase();
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(IExternalCohortDefinitionData instance)
         {
             if (instance == null)
@@ -545,33 +572,29 @@ namespace DataExportLibrary.Data.DataTables
             _cacheData = new Lazy<IExternalCohortDefinitionData>(() => instance);
         }
 
+        /// <inheritdoc/>
         public void InjectKnown(ExternalCohortTable instance)
         {
             _knownExternalCohortTable = new Lazy<IExternalCohortTable>(() => instance);
         }
-
+        /// <inheritdoc/>
         public void ClearAllInjections()
         {
             _cacheData = new Lazy<IExternalCohortDefinitionData>(GetExternalData);
             _knownExternalCohortTable = new Lazy<IExternalCohortTable>(()=>Repository.GetObjectByID<ExternalCohortTable>(ExternalCohortTable_ID));
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return new[] { ExternalCohortTable };
         }
 
+        /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return Repository.GetAllObjects<ExtractionConfiguration>("WHERE Cohort_ID = " + ID);
         }
-    }
-
-    public enum OneToMErrorResolutionStrategy
-    {
-        TriggerFatalCrash,
-        Top1,
-        ExhaustivelyRecordDuplication
     }
 }
 
