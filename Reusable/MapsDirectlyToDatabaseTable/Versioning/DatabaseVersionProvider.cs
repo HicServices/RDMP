@@ -32,7 +32,12 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
                 try
                 {
-                    version = new Version(cmd.ExecuteScalar().ToString());
+                    var o = cmd.ExecuteScalar();
+
+                    if(o == DBNull.Value)
+                        return new Version(0,0,0,0);
+
+                    version = new Version(o.ToString());
                 }
                 catch (DbException e)
                 {

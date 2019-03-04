@@ -27,6 +27,7 @@ namespace ReusableUIComponents.Settings
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
             cbUseCaching.Checked = UserSettings.UseCaching;
+            cbFindShouldPin.Checked = UserSettings.FindShouldPin;
             cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
 
             ddTheme.DataSource = new []
@@ -65,6 +66,9 @@ namespace ReusableUIComponents.Settings
 
             if (cb == cbThemeMenus)
                 UserSettings.ApplyThemeToMenus = cb.Checked;
+
+            if(cb == cbFindShouldPin)
+                UserSettings.FindShouldPin = cbFindShouldPin.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)

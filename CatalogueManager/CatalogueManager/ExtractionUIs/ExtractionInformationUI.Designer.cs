@@ -118,7 +118,7 @@ namespace CatalogueManager.ExtractionUIs
             // cbIsExtractionIdentifier
             // 
             this.cbIsExtractionIdentifier.AutoSize = true;
-            this.cbIsExtractionIdentifier.Location = new System.Drawing.Point(358, 32);
+            this.cbIsExtractionIdentifier.Location = new System.Drawing.Point(389, 32);
             this.cbIsExtractionIdentifier.Name = "cbIsExtractionIdentifier";
             this.cbIsExtractionIdentifier.Size = new System.Drawing.Size(127, 17);
             this.cbIsExtractionIdentifier.TabIndex = 6;
@@ -128,7 +128,7 @@ namespace CatalogueManager.ExtractionUIs
             // cbIsPrimaryKey
             // 
             this.cbIsPrimaryKey.AutoSize = true;
-            this.cbIsPrimaryKey.Location = new System.Drawing.Point(491, 32);
+            this.cbIsPrimaryKey.Location = new System.Drawing.Point(545, 32);
             this.cbIsPrimaryKey.Name = "cbIsPrimaryKey";
             this.cbIsPrimaryKey.Size = new System.Drawing.Size(92, 17);
             this.cbIsPrimaryKey.TabIndex = 7;

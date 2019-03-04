@@ -638,6 +638,19 @@ namespace DataExportManager.ProjectUI.Datasets
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
+            //if an ExtractionInformation is being refreshed
+            var ei = e.Object as ExtractionInformation;
+            if (ei != null)
+            {
+                //We should clear any old cached values for this ExtractionInformation amongst selected column
+                foreach (var c in olvSelected.Objects.OfType<ExtractableColumn>().ToArray())
+                    if(c.CatalogueExtractionInformation_ID == ei.ID)
+                    {
+                        c.InjectKnown(ei); 
+                        olvSelected.RefreshObject(c);
+                    }
+            }
+
             UpdateJoins();
         }
     }

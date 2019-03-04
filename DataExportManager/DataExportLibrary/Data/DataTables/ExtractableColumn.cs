@@ -174,8 +174,6 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public void InjectKnown(ExtractionInformation extractionInformation)
         {
-            //_knownExtractionInformation = new Lazy<ExtractionInformation>(() => extractionInformation);
-
             if (extractionInformation == null)
             {
                 InjectKnown((CatalogueItem)null);
@@ -186,6 +184,8 @@ namespace DataExportLibrary.Data.DataTables
                 InjectKnown(extractionInformation.CatalogueItem);
                 InjectKnown(extractionInformation.ColumnInfo);
             }
+
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(() => extractionInformation);
         }
 
         /// <inheritdoc/>

@@ -93,7 +93,7 @@ namespace CatalogueManager.Collections
             this.gbColdStorage.Location = new System.Drawing.Point(0, 414);
             this.gbColdStorage.Name = "gbColdStorage";
             this.gbColdStorage.Size = new System.Drawing.Size(500, 65);
-            this.gbColdStorage.TabIndex = 174;
+            this.gbColdStorage.TabIndex = 1;
             this.gbColdStorage.TabStop = false;
             this.gbColdStorage.Text = "Show";
             // 
@@ -108,7 +108,7 @@ namespace CatalogueManager.Collections
             this.flowLayoutPanel1.Location = new System.Drawing.Point(3, 16);
             this.flowLayoutPanel1.Name = "flowLayoutPanel1";
             this.flowLayoutPanel1.Size = new System.Drawing.Size(494, 46);
-            this.flowLayoutPanel1.TabIndex = 159;
+            this.flowLayoutPanel1.TabIndex = 0;
             // 
             // cbShowColdStorage
             // 
@@ -116,7 +116,7 @@ namespace CatalogueManager.Collections
             this.cbShowColdStorage.Location = new System.Drawing.Point(3, 3);
             this.cbShowColdStorage.Name = "cbShowColdStorage";
             this.cbShowColdStorage.Size = new System.Drawing.Size(87, 17);
-            this.cbShowColdStorage.TabIndex = 157;
+            this.cbShowColdStorage.TabIndex = 0;
             this.cbShowColdStorage.Text = "Cold Storage";
             this.cbShowColdStorage.UseVisualStyleBackColor = true;
             this.cbShowColdStorage.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
@@ -127,7 +127,7 @@ namespace CatalogueManager.Collections
             this.cbShowDeprecated.Location = new System.Drawing.Point(96, 3);
             this.cbShowDeprecated.Name = "cbShowDeprecated";
             this.cbShowDeprecated.Size = new System.Drawing.Size(82, 17);
-            this.cbShowDeprecated.TabIndex = 157;
+            this.cbShowDeprecated.TabIndex = 1;
             this.cbShowDeprecated.Text = "Deprecated";
             this.cbShowDeprecated.UseVisualStyleBackColor = true;
             this.cbShowDeprecated.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
@@ -138,7 +138,7 @@ namespace CatalogueManager.Collections
             this.cbShowInternal.Location = new System.Drawing.Point(184, 3);
             this.cbShowInternal.Name = "cbShowInternal";
             this.cbShowInternal.Size = new System.Drawing.Size(61, 17);
-            this.cbShowInternal.TabIndex = 157;
+            this.cbShowInternal.TabIndex = 2;
             this.cbShowInternal.Text = "Internal";
             this.cbShowInternal.UseVisualStyleBackColor = true;
             this.cbShowInternal.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
@@ -149,7 +149,7 @@ namespace CatalogueManager.Collections
             this.cbProjectSpecific.Location = new System.Drawing.Point(251, 3);
             this.cbProjectSpecific.Name = "cbProjectSpecific";
             this.cbProjectSpecific.Size = new System.Drawing.Size(100, 17);
-            this.cbProjectSpecific.TabIndex = 157;
+            this.cbProjectSpecific.TabIndex = 3;
             this.cbProjectSpecific.Text = "Project Specific";
             this.cbProjectSpecific.UseVisualStyleBackColor = true;
             this.cbProjectSpecific.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
@@ -160,7 +160,7 @@ namespace CatalogueManager.Collections
             this.cbShowNonExtractable.Location = new System.Drawing.Point(357, 3);
             this.cbShowNonExtractable.Name = "cbShowNonExtractable";
             this.cbShowNonExtractable.Size = new System.Drawing.Size(102, 17);
-            this.cbShowNonExtractable.TabIndex = 158;
+            this.cbShowNonExtractable.TabIndex = 4;
             this.cbShowNonExtractable.Text = "Non Extractable";
             this.cbShowNonExtractable.UseVisualStyleBackColor = true;
             this.cbShowNonExtractable.CheckedChanged += new System.EventHandler(this.rbFlag_CheckedChanged);
@@ -175,7 +175,7 @@ namespace CatalogueManager.Collections
             this.panel1.Margin = new System.Windows.Forms.Padding(0);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(500, 405);
-            this.panel1.TabIndex = 175;
+            this.panel1.TabIndex = 0;
             // 
             // CatalogueCollectionUI
             // 

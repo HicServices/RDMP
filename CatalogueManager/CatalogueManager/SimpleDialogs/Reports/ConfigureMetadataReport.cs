@@ -18,6 +18,7 @@ using CatalogueManager.AggregationUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataQualityEngine;
+using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -163,6 +164,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
         private void rbAllCatalogues_CheckedChanged(object sender, EventArgs e)
         {
             cbxCatalogues.Enabled = false;
+            btnPick.Enabled = false;
 
             cbIncludeDeprecated.Enabled = true;
             cbIncludeInternal.Enabled = true;
@@ -171,9 +173,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
         private void rbSpecificCatalogue_CheckedChanged(object sender, EventArgs e)
         {
             cbxCatalogues.Enabled = true;
+            btnPick.Enabled = true;
 
             cbIncludeDeprecated.Enabled = false;
             cbIncludeInternal.Enabled = false;
+            
         }
 
 
@@ -195,6 +199,14 @@ namespace CatalogueManager.SimpleDialogs.Reports
         private void cbIncludeDistinctIdentifiers_CheckedChanged(object sender, EventArgs e)
         {
 
+        }
+
+        private void btnPick_Click(object sender, EventArgs e)
+        {
+            var available = cbxCatalogues.Items.OfType<Catalogue>();
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
+            if (dialog.ShowDialog() == DialogResult.OK)
+                cbxCatalogues.SelectedItem = dialog.Selected;
         }
     }
 }

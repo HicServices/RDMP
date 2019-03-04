@@ -37,6 +37,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.btnStop = new System.Windows.Forms.Button();
             this.cbxCatalogues = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.btnPick = new System.Windows.Forms.Button();
             this.rbSpecificCatalogue = new System.Windows.Forms.RadioButton();
             this.rbAllCatalogues = new System.Windows.Forms.RadioButton();
             this.label2 = new System.Windows.Forms.Label();
@@ -111,11 +112,12 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.cbxCatalogues.FormattingEnabled = true;
             this.cbxCatalogues.Location = new System.Drawing.Point(48, 79);
             this.cbxCatalogues.Name = "cbxCatalogues";
-            this.cbxCatalogues.Size = new System.Drawing.Size(568, 21);
+            this.cbxCatalogues.Size = new System.Drawing.Size(530, 21);
             this.cbxCatalogues.TabIndex = 4;
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.btnPick);
             this.groupBox1.Controls.Add(this.rbSpecificCatalogue);
             this.groupBox1.Controls.Add(this.rbAllCatalogues);
             this.groupBox1.Controls.Add(this.cbxCatalogues);
@@ -127,6 +129,17 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Catalogue";
+            // 
+            // btnPick
+            // 
+            this.btnPick.Enabled = false;
+            this.btnPick.Location = new System.Drawing.Point(584, 79);
+            this.btnPick.Name = "btnPick";
+            this.btnPick.Size = new System.Drawing.Size(32, 21);
+            this.btnPick.TabIndex = 5;
+            this.btnPick.Text = "...";
+            this.btnPick.UseVisualStyleBackColor = true;
+            this.btnPick.Click += new System.EventHandler(this.btnPick_Click);
             // 
             // rbSpecificCatalogue
             // 
@@ -303,5 +316,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
         private System.Windows.Forms.NumericUpDown nMaxLookupRows;
         private System.Windows.Forms.Label label3;
         private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;
+        private System.Windows.Forms.Button btnPick;
     }
 }

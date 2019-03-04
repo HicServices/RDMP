@@ -84,7 +84,10 @@ namespace CatalogueLibrary.Reports
                 else
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Microsoft Word " + version + " installed"));
 
-                var f = GetUniqueFilenameInWorkArea("MetadataReport");
+                //if theres only one catalogue call it 'prescribing.docx' etc
+                string filename = _catalogues.Length == 1 ? _catalogues[0].Name : "MetadataReport";
+
+                var f = GetUniqueFilenameInWorkArea(filename);
 
                 using (DocX document = DocX.Create(f.FullName))
                 {
@@ -241,7 +244,7 @@ namespace CatalogueLibrary.Reports
                 //move to next line
                 tableLine++;
 
-                int maxLineCountDowner = MaxLookupRows+2;//2, 1 for the headers and 1 for the ... row
+                int maxLineCountDowner = MaxLookupRows+1;//1 for the headers and 1 for the ... row
                 
                 //see if it has any lookups
                 foreach (DataRow row in dt.Rows)
@@ -253,7 +256,7 @@ namespace CatalogueLibrary.Reports
                     tableLine++;
                     maxLineCountDowner--;
 
-                    if (maxLineCountDowner == 0)
+                    if (maxLineCountDowner == 1)
                     {
                         for (int i = 0; i < dt.Columns.Count; i++)
                             SetTableCell(table,tableLine, i, "...");
