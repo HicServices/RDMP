@@ -84,7 +84,10 @@ namespace CatalogueLibrary.Reports
                 else
                     listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Microsoft Word " + version + " installed"));
 
-                var f = GetUniqueFilenameInWorkArea("MetadataReport");
+                //if theres only one catalogue call it 'prescribing.docx' etc
+                string filename = _catalogues.Length == 1 ? _catalogues[0].Name : "MetadataReport";
+
+                var f = GetUniqueFilenameInWorkArea(filename);
 
                 using (DocX document = DocX.Create(f.FullName))
                 {

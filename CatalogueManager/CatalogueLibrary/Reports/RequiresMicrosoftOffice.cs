@@ -87,7 +87,7 @@ namespace CatalogueLibrary.Reports
             var root = GetTempPath();
 
 
-            var f = new FileInfo(Path.Combine(root.FullName, desiredName + extension));
+            var f = new FileInfo(Path.Combine(root.FullName,UsefulStuff.RemoveIllegalFilenameCharacters(desiredName) + extension));
             int i = 1;
 
             //file name is taken
