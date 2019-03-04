@@ -175,9 +175,6 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Content Include="RDMPAutomationService.exe.config">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
     <Reference Include="System.Runtime">
       <SpecificVersion>False</SpecificVersion>
     </Reference>

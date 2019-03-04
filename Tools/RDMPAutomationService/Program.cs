@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.IO;
 using CatalogueLibrary.DataFlowPipeline;
 using CommandLine;
 using FAnsi.Implementation;
@@ -25,28 +26,31 @@ namespace RDMPAutomationService
     {
         public static int Main(string[] args)
         {
-           try
-           {
-               var returnCode =
-                   UsefulStuff.GetParser()
-                       .ParseArguments<DleOptions, DqeOptions, CacheOptions, ListOptions, ExtractionOptions, ReleaseOptions, CohortCreationOptions>(args)
-                       .MapResult(
-                           //Add new verbs as options here and invoke relevant runner
-                           (DleOptions opts) => Run(opts),
-                           (DqeOptions opts) => Run(opts),
-                           (CacheOptions opts) => Run(opts),
-                           (ListOptions opts) => Run(opts),
-                           (ExtractionOptions opts) => Run(opts),
-                           (ReleaseOptions opts) => Run(opts),
-                           (CohortCreationOptions opts) => Run(opts),
-                           errs => 1);
+            if (!File.Exists(AppDomain.CurrentDomain.GetData("APP_CONFIG_FILE").ToString()))
+                AppConfig.Change(Path.GetFullPath("ResearchDataManagementPlatform.exe.config"));
 
-               NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
+            try
+            {
+                var returnCode =
+                    UsefulStuff.GetParser()
+                        .ParseArguments<DleOptions, DqeOptions, CacheOptions, ListOptions, ExtractionOptions, ReleaseOptions, CohortCreationOptions>(args)
+                        .MapResult(
+                    //Add new verbs as options here and invoke relevant runner
+                            (DleOptions opts) => Run(opts),
+                            (DqeOptions opts) => Run(opts),
+                            (CacheOptions opts) => Run(opts),
+                            (ListOptions opts) => Run(opts),
+                            (ExtractionOptions opts) => Run(opts),
+                            (ReleaseOptions opts) => Run(opts),
+                            (CohortCreationOptions opts) => Run(opts),
+                            errs => 1);
+
+                NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
                 return returnCode;
             }
             catch (Exception e)
             {
-                NLog.LogManager.GetCurrentClassLogger().Info(e,"Fatal error occurred so returning -1");
+                NLog.LogManager.GetCurrentClassLogger().Info(e, "Fatal error occurred so returning -1");
                 return -1;
             }
         }

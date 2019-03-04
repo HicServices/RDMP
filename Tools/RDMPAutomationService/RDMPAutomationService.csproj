@@ -147,7 +147,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <None Include="App.config" />
+    <None Include="..\..\App.config">
+      <Link>App.config</Link>
+    </None>
     <None Include="Automation.cd" />
     <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
