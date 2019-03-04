@@ -124,6 +124,7 @@ namespace CatalogueManager.Collections
             Tree = tree;
             Tree.FullRowSelect = true;
             Tree.HideSelection = false;
+            Tree.KeyPress += Tree_KeyPress;
 
             Tree.RevealAfterExpand = true;
 
@@ -221,6 +222,13 @@ namespace CatalogueManager.Collections
                 //and track changes to the sort order
                 Tree.AfterSorting += TreeOnAfterSorting;
             }
+        }
+
+        void Tree_KeyPress(object sender, KeyPressEventArgs e)
+        {
+            //Prevents keyboard 'bong' sound occuring when using Enter to activate an object
+            if (e.KeyChar == (char)Keys.Enter)
+                e.Handled = true;
         }
 
         private void TreeOnAfterSorting(object sender, AfterSortingEventArgs e)
