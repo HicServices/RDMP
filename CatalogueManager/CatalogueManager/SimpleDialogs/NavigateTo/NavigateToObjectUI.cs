@@ -32,6 +32,7 @@ using DataExportLibrary.Providers.Nodes;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 using IContainer = CatalogueLibrary.Data.IContainer;
@@ -331,10 +332,9 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void Emphasise(IMapsDirectlyToDatabaseTable o)
         {
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = true });
+            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = UserSettings.FindShouldPin });
         }
-
-
+        
         protected override void OnMouseMove(MouseEventArgs e)
         {
             base.OnMouseMove(e);

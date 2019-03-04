@@ -80,6 +80,12 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("Theme", value); }
         }
 
+        public static bool FindShouldPin
+        {
+            get { return AppSettings.GetValueOrDefault("FindShouldPin", true); }
+            set { AppSettings.AddOrUpdateValue("FindShouldPin", value); }
+        }
+
         #region Catalogue flag visibility settings
         public static bool ShowInternalCatalogues
         {

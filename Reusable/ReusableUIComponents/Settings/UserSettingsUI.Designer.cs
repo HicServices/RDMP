@@ -39,6 +39,7 @@
             this.label3 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.ddWordWrap = new System.Windows.Forms.ComboBox();
+            this.cbFindShouldPin = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -86,7 +87,7 @@
             // cbUseCaching
             // 
             this.cbUseCaching.AutoSize = true;
-            this.cbUseCaching.Location = new System.Drawing.Point(39, 120);
+            this.cbUseCaching.Location = new System.Drawing.Point(39, 141);
             this.cbUseCaching.Name = "cbUseCaching";
             this.cbUseCaching.Size = new System.Drawing.Size(87, 17);
             this.cbUseCaching.TabIndex = 2;
@@ -97,7 +98,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 160);
+            this.label2.Location = new System.Drawing.Point(24, 181);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 3;
@@ -106,7 +107,7 @@
             // cbThemeMenus
             // 
             this.cbThemeMenus.AutoSize = true;
-            this.cbThemeMenus.Location = new System.Drawing.Point(76, 184);
+            this.cbThemeMenus.Location = new System.Drawing.Point(76, 205);
             this.cbThemeMenus.Name = "cbThemeMenus";
             this.cbThemeMenus.Size = new System.Drawing.Size(139, 17);
             this.cbThemeMenus.TabIndex = 4;
@@ -118,7 +119,7 @@
             // 
             this.ddTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddTheme.FormattingEnabled = true;
-            this.ddTheme.Location = new System.Drawing.Point(76, 157);
+            this.ddTheme.Location = new System.Drawing.Point(76, 178);
             this.ddTheme.Name = "ddTheme";
             this.ddTheme.Size = new System.Drawing.Size(371, 21);
             this.ddTheme.TabIndex = 5;
@@ -137,7 +138,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(2, 231);
+            this.label4.Location = new System.Drawing.Point(2, 252);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(83, 13);
             this.label4.TabIndex = 6;
@@ -147,11 +148,22 @@
             // 
             this.ddWordWrap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddWordWrap.FormattingEnabled = true;
-            this.ddWordWrap.Location = new System.Drawing.Point(91, 228);
+            this.ddWordWrap.Location = new System.Drawing.Point(91, 249);
             this.ddWordWrap.Name = "ddWordWrap";
             this.ddWordWrap.Size = new System.Drawing.Size(124, 21);
             this.ddWordWrap.TabIndex = 7;
             this.ddWordWrap.SelectedIndexChanged += new System.EventHandler(this.ddWordWrap_SelectedIndexChanged);
+            // 
+            // cbFindShouldPin
+            // 
+            this.cbFindShouldPin.AutoSize = true;
+            this.cbFindShouldPin.Location = new System.Drawing.Point(39, 118);
+            this.cbFindShouldPin.Name = "cbFindShouldPin";
+            this.cbFindShouldPin.Size = new System.Drawing.Size(134, 17);
+            this.cbFindShouldPin.TabIndex = 2;
+            this.cbFindShouldPin.Text = "Find (Ctrl+F) should Pin";
+            this.cbFindShouldPin.UseVisualStyleBackColor = true;
+            this.cbFindShouldPin.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // UserSettingsFileUI
             // 
@@ -165,6 +177,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbUseCaching);
+            this.Controls.Add(this.cbFindShouldPin);
             this.Controls.Add(this.cbConfirmExit);
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
             this.Controls.Add(this.label1);
@@ -189,5 +202,6 @@
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox ddWordWrap;
+        private System.Windows.Forms.CheckBox cbFindShouldPin;
     }
 }
