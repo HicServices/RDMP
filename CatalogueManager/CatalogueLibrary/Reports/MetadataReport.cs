@@ -241,7 +241,7 @@ namespace CatalogueLibrary.Reports
                 //move to next line
                 tableLine++;
 
-                int maxLineCountDowner = MaxLookupRows+2;//2, 1 for the headers and 1 for the ... row
+                int maxLineCountDowner = MaxLookupRows+1;//1 for the headers and 1 for the ... row
                 
                 //see if it has any lookups
                 foreach (DataRow row in dt.Rows)
@@ -253,7 +253,7 @@ namespace CatalogueLibrary.Reports
                     tableLine++;
                     maxLineCountDowner--;
 
-                    if (maxLineCountDowner == 0)
+                    if (maxLineCountDowner == 1)
                     {
                         for (int i = 0; i < dt.Columns.Count; i++)
                             SetTableCell(table,tableLine, i, "...");
