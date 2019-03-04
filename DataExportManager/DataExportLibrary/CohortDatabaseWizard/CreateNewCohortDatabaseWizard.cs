@@ -109,7 +109,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
 
                 
                 notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
-                var pointer = new ExternalCohortTable(_dataExportRepository, "",_targetDatabase.Server.DatabaseType)
+                var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort", _targetDatabase.Server.DatabaseType)
                 {
                     Server = _targetDatabase.Server.Name,
                     Database = _targetDatabase.GetRuntimeName(),

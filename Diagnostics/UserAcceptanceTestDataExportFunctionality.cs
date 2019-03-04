@@ -541,7 +541,7 @@ GO
 
             try
             {
-                _externalCohortTable = new ExternalCohortTable(repository, "",DatabaseType.MicrosoftSQLServer)
+                _externalCohortTable = new ExternalCohortTable(repository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
                 {
                     Server = _liveDataServer.Name,
                     Database = _cohortDatabaseName,
