@@ -584,7 +584,7 @@
     <Compile Include="Reports\GovernanceReport.cs" />
     <Compile Include="Reports\IDetermineDatasetTimespan.cs" />
     <Compile Include="Reports\MetadataReport.cs" />
-    <Compile Include="Reports\RequiresMicrosoftOffice.cs" />
+    <Compile Include="Reports\DocXHelper.cs" />
     <Compile Include="Reports\DocumentationReportMapsDirectlyToDatabaseOfficeBit.cs" />
     <Compile Include="Repositories\MEF.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedAggregateTopX.cs" />

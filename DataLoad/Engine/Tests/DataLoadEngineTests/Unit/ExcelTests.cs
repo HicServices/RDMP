@@ -30,7 +30,6 @@ namespace DataLoadEngineTests.Unit
         public const string TestFile = "Book1.xlsx";
         public const string FreakyTestFile = "FreakyBook1.xlsx";
 
-        private bool officeInstalled = false;
         private Dictionary<string, FileInfo> _fileLocations = new Dictionary<string, FileInfo>();
         public static FileInfo TestFileInfo;
         public static FileInfo FreakyTestFileInfo;
@@ -38,9 +37,6 @@ namespace DataLoadEngineTests.Unit
         [OneTimeSetUp]
         public void SprayToDisk()
         {
-            
-            officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
-
             _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.WorkDirectory));
             _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.WorkDirectory));
         }
@@ -49,9 +45,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestFilesExists()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             Assert.IsTrue(_fileLocations[TestFile].Exists);
             Assert.IsTrue(_fileLocations[FreakyTestFile].Exists);
         }
@@ -71,9 +64,6 @@ namespace DataLoadEngineTests.Unit
         [TestCase(FreakyTestFile)]
         public void NormalBook_FirstRowCorrect(string versionOfTestFile)
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
@@ -99,9 +89,6 @@ namespace DataLoadEngineTests.Unit
         [TestCase(FreakyTestFile)]
         public void NormalBook_FirstRowCorrect_AddFilenameColumnNamed(string versionOfTestFile)
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
             source.AddFilenameColumnNamed = "Path";
 
@@ -137,9 +124,6 @@ namespace DataLoadEngineTests.Unit
             01/01/2002 11:30	0.22	0.1
             01/01/2003 01:30	0.10	0.51
             */
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var listener = new ToMemoryDataLoadEventListener(true);
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
@@ -171,9 +155,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void NormalBook_NoEmptyRowsRead()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             var listener = new ToMemoryDataLoadEventListener(true);
@@ -187,9 +168,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void FreakyTestFile_WarningsCorrect()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var messages = new ToMemoryDataLoadEventListener(true);
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
@@ -207,9 +185,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void BlankFirstLineFile()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@".\Resources\BlankLineBook.xlsx"));
@@ -231,9 +206,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void BlankWorkbook()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             
@@ -250,9 +222,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void Checks_ValidFileExtension_Pass()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
             source.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
@@ -266,39 +235,10 @@ namespace DataLoadEngineTests.Unit
             Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex.Message);
         }
 
-        [Test]
-        public void Checks_ExcelInstalled()
-        {
-            ExcelDataFlowSource source = new ExcelDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
-            try
-            {
-                //check it
-                source.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
-                
-                //checking did not throw fail so it must be the case that office is installed
-                Assert.IsTrue(officeInstalled);
-            }
-            catch (Exception e)//it threw on checking
-            {
-                if (!officeInstalled)
-                    Assert.IsTrue(
-                        e.Message.Contains("Microsoft Office was not detected on the PC")
-                        ||
-                        e.Message.Contains("Could not find installed Microsoft Excel application")
-                        ,"Expected the error message to be about office not being installed");
-                else
-                    throw;
-            }
-        }
-
         [TestCase(true)]
         [TestCase(false)]
         public void TestToCSVConverter(bool prefixWithWorkbookName)
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var loc = _fileLocations[TestFile];
 
             ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();

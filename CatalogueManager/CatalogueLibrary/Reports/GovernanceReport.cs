@@ -20,7 +20,7 @@ namespace CatalogueLibrary.Reports
     /// Processes all GovernancePeriod and Catalogues into a CSV report about which datasets are covered by which governance periods, which periods have expired (and there
     /// is no corresponding follow on GovernancePeriod) and which Catalogues are not covered by any governance.
     /// </summary>
-    public class GovernanceReport:RequiresMicrosoftOffice
+    public class GovernanceReport:DocXHelper
     {
         private readonly IDetermineDatasetTimespan _timespanCalculator;
         private readonly CatalogueRepository _repository;

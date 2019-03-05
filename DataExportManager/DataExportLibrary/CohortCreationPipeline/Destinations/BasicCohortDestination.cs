@@ -16,7 +16,6 @@ using DataExportLibrary.Interfaces.Pipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations
 {

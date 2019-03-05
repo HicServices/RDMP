@@ -28,7 +28,7 @@ namespace DataExportLibrary.ExtractionTime
     /// Generates a Microsoft Word docx file containing information about a researchers extract including the file generated, the number of rows, distinct patients, the
     /// filters used in the extraction query, any parameters etc.  Optionally includes a validation table which counts the number of rows extracted that passed ValidationXML 
     /// </summary>
-    public class WordDataWriter : RequiresMicrosoftOffice
+    public class WordDataWriter : DocXHelper
     {
         public ExtractionPipelineUseCase Executer { get; set; }
 

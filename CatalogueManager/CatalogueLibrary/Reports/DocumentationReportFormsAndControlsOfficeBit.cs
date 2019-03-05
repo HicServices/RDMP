@@ -31,7 +31,7 @@ namespace CatalogueLibrary.Reports
     /// includes writing out the headers and images of the controls.  Note RequestTypeImagesHandler delegate is used to generate the actual interface images.  This is done
     /// normally by launching the UI control and programatically screencapturing it (See DocumentationReportFormsAndControlsUI)
     /// </summary>
-    public class DocumentationReportFormsAndControlsOfficeBit:RequiresMicrosoftOffice
+    public class DocumentationReportFormsAndControlsOfficeBit:DocXHelper
     {
         public void GenerateReport(CommentStore commentStore,ICheckNotifier notifier, Dictionary<string, List<Type>> formsAndControlsByApplication, RequestTypeImagesHandler imageFetcher, Dictionary<string, Bitmap> wordImageDictionary, Dictionary<string, Bitmap> icons)
         {

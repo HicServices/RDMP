@@ -17,7 +17,6 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using ExcelNumberFormat;
 using FAnsi.Discovery;
-using LoadModules.Generic.Checks;
 using LoadModules.Generic.Exceptions;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
@@ -317,9 +316,6 @@ namespace LoadModules.Generic.DataFlowSources
                     new CheckEventArgs(
                         "FlatFileToLoad (Pipeline Requirement) was not met (we weren't initialized with a file)",
                         CheckResult.Warning));
-
-            var excelChecks = new ExcelInstalledChecker();
-            excelChecks.Check(notifier);
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)

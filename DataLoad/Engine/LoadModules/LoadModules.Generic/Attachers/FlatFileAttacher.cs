@@ -19,8 +19,6 @@ using FAnsi.Discovery;
 using LoadModules.Generic.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
-
 
 namespace LoadModules.Generic.Attachers
 {

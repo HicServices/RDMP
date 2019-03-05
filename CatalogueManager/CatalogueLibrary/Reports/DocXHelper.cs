@@ -20,7 +20,7 @@ namespace CatalogueLibrary.Reports
     /// 
     /// <para>Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.</para>
     /// </summary>
-    public class RequiresMicrosoftOffice
+    public class DocXHelper
     {
         protected void InsertParagraph(DocX document, string ptext, int textFontSize = -1)
         {

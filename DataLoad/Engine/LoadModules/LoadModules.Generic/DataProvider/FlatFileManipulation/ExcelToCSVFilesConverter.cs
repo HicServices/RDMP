@@ -15,7 +15,6 @@ using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
 using FAnsi.Discovery;
 using Fansi.Implementations.MicrosoftSQL;
-using LoadModules.Generic.Checks;
 using LoadModules.Generic.DataFlowSources;
 using NPOI.XSSF.UserModel;
 using ReusableLibraryCode.Checks;
@@ -46,9 +45,6 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
 
         public void Check(ICheckNotifier notifier)
         {
-            var excelChecks = new ExcelInstalledChecker();
-            excelChecks.Check(notifier);
-
             if (string.IsNullOrWhiteSpace(ExcelFilePattern))
                 notifier.OnCheckPerformed(new CheckEventArgs("Argument ExcelFilePattern has not been specified", CheckResult.Fail));
         }

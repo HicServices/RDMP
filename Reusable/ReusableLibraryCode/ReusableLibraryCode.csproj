@@ -296,7 +296,6 @@
     <Compile Include="ExceptionHelper.cs" />
     <Compile Include="IHasDependencies.cs" />
     <Compile Include="IKnowWhatIAm.cs" />
-    <Compile Include="OfficeVersionFinder.cs" />
     <Compile Include="Performance\ComprehensiveQueryPerformanceCounter.cs" />
     <Compile Include="Performance\QueryPerformed.cs" />
     <Compile Include="Progress\ForkDataLoadEventListener.cs" />
