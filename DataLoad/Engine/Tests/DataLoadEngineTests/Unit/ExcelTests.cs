@@ -131,6 +131,8 @@ namespace DataLoadEngineTests.Unit
             source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), listener);
             DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
 
+            Assert.AreEqual(5,dt.Rows.Count);
+
             Assert.AreEqual("2001-01-01", dt.Rows[0][3]);
             Assert.AreEqual("0.1", dt.Rows[0][4]);
             Assert.AreEqual("10:30:00", dt.Rows[0][5]);

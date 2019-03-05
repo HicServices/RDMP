@@ -15,6 +15,7 @@
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
    1. [How does RDMP deal with Csv/text files?](#csv)
+   1. [Can RDMP read Excel files?](#excel)
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
    1. [When loading data can I skip some columns?](#skipColumns)
    1. [Can I run SQL Scripts during a load?](#sqlScripts)
@@ -142,6 +143,10 @@ Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload
 <a name="csv"></a>
 ### How does RDMP deal with Csv/text files?
 RDMP supports files delimited by any character (tab separated, pipe separated, comma separated etc).  Since [invalid formatting is a common problem with ETL of CSV files RDMP has several fault tolerance features](./CSVHandling.md).
+
+<a name="excel"></a>
+### Can RDMP read Excel files?]
+Yes, Support for Excel is described in the [Excel Handling page](./ExcelHandling.md)
 
 <a name="typetranslation"></a>
 ### How does RDMP handle / translate untyped, C# and Database Types?

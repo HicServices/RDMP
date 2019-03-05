@@ -155,6 +155,8 @@ namespace LoadModules.Generic.DataFlowSources
                 //the rest of the rows
                 var r = toReturn.Rows.Add();
 
+                bool gotAtLeastOneGoodValue = false;
+
                 foreach (var cell in row.Cells)
                 {
                     var value = GetCellValue(cell);
@@ -171,7 +173,12 @@ namespace LoadModules.Generic.DataFlowSources
                     }
 
                     r[nonBlankColumns[cell.ColumnIndex]] = value.ToString();
+                    gotAtLeastOneGoodValue = true;
                 }
+
+                //if we didn't get any values at all for the row throw it away
+                if(!gotAtLeastOneGoodValue)
+                    toReturn.Rows.Remove(r);
             }
             
             return toReturn;
