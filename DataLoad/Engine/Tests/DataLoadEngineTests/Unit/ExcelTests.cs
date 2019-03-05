@@ -29,16 +29,20 @@ namespace DataLoadEngineTests.Unit
     {
         public const string TestFile = "Book1.xlsx";
         public const string FreakyTestFile = "FreakyBook1.xlsx";
+        public const string OddFormatsFile = "OddFormats.xls";
 
         private Dictionary<string, FileInfo> _fileLocations = new Dictionary<string, FileInfo>();
         public static FileInfo TestFileInfo;
         public static FileInfo FreakyTestFileInfo;
+        public static FileInfo OddFormatsFileInfo;
 
         [OneTimeSetUp]
         public void SprayToDisk()
         {
             _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.WorkDirectory));
             _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.WorkDirectory));
+
+            _fileLocations.Add(OddFormatsFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + OddFormatsFile, OddFormatsFile, TestContext.CurrentContext.WorkDirectory));
         }
 
 
@@ -153,6 +157,40 @@ namespace DataLoadEngineTests.Unit
             Assert.AreEqual("15:09:00", dt.Rows[4][4]);
             Assert.AreEqual("00:03:56", dt.Rows[4][5]);
         }
+
+        [Test]
+        public void TestOddFormats()
+        {
+            var listener = new ToMemoryDataLoadEventListener(true);
+
+            ExcelDataFlowSource source = new ExcelDataFlowSource();
+            source.WorkSheetName = "MySheet";
+
+            source.PreInitialize(new FlatFileToLoad(_fileLocations[OddFormatsFile]), listener);
+            DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
+
+            Assert.AreEqual(2,dt.Rows.Count);
+            Assert.AreEqual(5, dt.Columns.Count);
+            
+            Assert.AreEqual("Name", dt.Columns[0].ColumnName);
+            Assert.AreEqual("Category", dt.Columns[1].ColumnName);
+            Assert.AreEqual("Age", dt.Columns[2].ColumnName);
+            Assert.AreEqual("Wage", dt.Columns[3].ColumnName);
+            Assert.AreEqual("Invisibre", dt.Columns[4].ColumnName); //this column is hidden in the spreadsheet but we still load it
+
+            Assert.AreEqual("Frank", dt.Rows[0][0]);
+            Assert.AreEqual("Upper, Left", dt.Rows[0][1]);
+            Assert.AreEqual("30", dt.Rows[0][2]);
+            Assert.AreEqual("£11.00", dt.Rows[0][3]);
+            Assert.AreEqual("0.1", dt.Rows[0][4]);
+
+            Assert.AreEqual("Castello", dt.Rows[1][0]);
+            Assert.AreEqual("Lower, Back", dt.Rows[1][1]);
+            Assert.AreEqual("31", dt.Rows[1][2]);
+            Assert.AreEqual("50.00%", dt.Rows[1][3]);
+            Assert.AreEqual("0.2", dt.Rows[1][4]);
+        }
+
 
         [Test]
         public void NormalBook_NoEmptyRowsRead()

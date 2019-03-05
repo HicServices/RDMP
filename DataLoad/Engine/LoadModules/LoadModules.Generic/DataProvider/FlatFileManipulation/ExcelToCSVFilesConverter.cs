@@ -16,6 +16,8 @@ using DataLoadEngine.Job;
 using FAnsi.Discovery;
 using Fansi.Implementations.MicrosoftSQL;
 using LoadModules.Generic.DataFlowSources;
+using NPOI.HSSF.UserModel;
+using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Extensions;
@@ -76,48 +78,57 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
 
         private void ProcessFile(FileInfo fileInfo, IDataLoadJob job)
         {
-            var wb = new XSSFWorkbook(fileInfo.FullName);
-
-            try
+            using (var fs = new FileStream(fileInfo.FullName, FileMode.Open))
             {
-                var source = new ExcelDataFlowSource();
-                source.PreInitialize(new FlatFileToLoad(fileInfo), job);
-
-                for (int i = 0; i < wb.NumberOfSheets; i++)
+                IWorkbook wb;
+                if (fileInfo.Extension == ".xls")
+                    wb = new HSSFWorkbook(fs);
+                else
+                    wb = new XSSFWorkbook(fs);
+                
+                try
                 {
-                    var sheet = wb.GetSheetAt(i);
+                    var source = new ExcelDataFlowSource();
+                    source.PreInitialize(new FlatFileToLoad(fileInfo), job);
 
-                    if (IsWorksheetNameMatch(sheet.SheetName))
+                    for (int i = 0; i < wb.NumberOfSheets; i++)
                     {
-                        job.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information,
-                                "Started processing worksheet:" + sheet.SheetName));
-                        
-                        string newName = PrefixWithWorkbookName
-                            ? Path.GetFileNameWithoutExtension(fileInfo.FullName) + "_" + sheet.SheetName
-                            : sheet.SheetName;
+                        var sheet = wb.GetSheetAt(i);
 
-                        //make it sensible
-                        newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
+                        if (IsWorksheetNameMatch(sheet.SheetName))
+                        {
+                            job.OnNotify(this,
+                                new NotifyEventArgs(ProgressEventType.Information,
+                                    "Started processing worksheet:" + sheet.SheetName));
 
-                        string savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
-                        var dt = source.GetAllData(sheet, job);
-                        dt.SaveAsCsv(savePath);
+                            string newName = PrefixWithWorkbookName
+                                ? Path.GetFileNameWithoutExtension(fileInfo.FullName) + "_" + sheet.SheetName
+                                : sheet.SheetName;
 
-                        job.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, "Saved worksheet as " + newName));
+                            //make it sensible
+                            newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
 
+                            string savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
+                            var dt = source.GetAllData(sheet, job);
+                            dt.SaveAsCsv(savePath);
+
+                            job.OnNotify(this,
+                                new NotifyEventArgs(ProgressEventType.Information, "Saved worksheet as " + newName));
+
+                        }
+                        else
+                            job.OnNotify(this,
+                                new NotifyEventArgs(ProgressEventType.Information, "Ignoring worksheet:" + sheet.SheetName));
                     }
-                    else
-                        job.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, "Ignoring worksheet:" + sheet.SheetName));
-                }
 
+                }
+                finally
+                {
+                    wb.Close();
+                }
+                
             }
-            finally
-            {
-                wb.Close();
-            }
+            
         }
 
         private bool IsWorksheetNameMatch(string name)

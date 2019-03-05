@@ -18,6 +18,7 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using ExcelNumberFormat;
 using FAnsi.Discovery;
 using LoadModules.Generic.Exceptions;
+using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
 using ReusableLibraryCode.Checks;
@@ -74,39 +75,47 @@ namespace LoadModules.Generic.DataFlowSources
 
             if (!IsAcceptableFileExtension())
                 throw new Exception("FileToLoad (" + _fileToLoad.File.FullName + ") extension was not XLS or XLSX, dubious");
-            
-            var wb = new XSSFWorkbook(_fileToLoad.File.FullName);
-            DataTable toReturn;
-            
-            try
+
+            using (var fs = new FileStream(_fileToLoad.File.FullName, FileMode.Open))
             {
-                ISheet worksheet;
-                     
-                //if the user hasn't picked one, use the first
-                worksheet = string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName);
+                IWorkbook wb;
+                if (_fileToLoad.File.Extension == ".xls")
+                    wb = new HSSFWorkbook(fs);
+                else
+                    wb = new XSSFWorkbook(fs);
 
-                toReturn = GetAllData(worksheet, listener);
+                DataTable toReturn;
 
-                //set the table name the file name
-                toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSane(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
-
-                if (toReturn.Columns.Count == 0)
-                    throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' in workbook '{1}' is empty",worksheet.SheetName,_fileToLoad.File.Name));
-            
-                //if the user wants a column in the DataTable storing the filename loaded add it
-                if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
+                try
                 {
-                    toReturn.Columns.Add(AddFilenameColumnNamed);
-                    foreach (DataRow dataRow in toReturn.Rows)
-                        dataRow[AddFilenameColumnNamed] = _fileToLoad.File.FullName;
+                    ISheet worksheet;
+
+                    //if the user hasn't picked one, use the first
+                    worksheet = string.IsNullOrWhiteSpace(WorkSheetName) ? wb.GetSheetAt(0) : wb.GetSheet(WorkSheetName);
+
+                    toReturn = GetAllData(worksheet, listener);
+
+                    //set the table name the file name
+                    toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSane(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+
+                    if (toReturn.Columns.Count == 0)
+                        throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' in workbook '{1}' is empty", worksheet.SheetName, _fileToLoad.File.Name));
+
+                    //if the user wants a column in the DataTable storing the filename loaded add it
+                    if (!string.IsNullOrWhiteSpace(AddFilenameColumnNamed))
+                    {
+                        toReturn.Columns.Add(AddFilenameColumnNamed);
+                        foreach (DataRow dataRow in toReturn.Rows)
+                            dataRow[AddFilenameColumnNamed] = _fileToLoad.File.FullName;
+                    }
                 }
+                finally
+                {
+                    wb.Close();
+                }
+
+                return toReturn;
             }
-            finally
-            {
-                wb.Close();
-            }
-            
-            return toReturn;
         }
         
         /// <summary>
@@ -184,13 +193,24 @@ namespace LoadModules.Generic.DataFlowSources
             return toReturn;
         }
 
-
-        private object GetCellValue(ICell cell)
+        /// <summary>
+        /// Retruns the C# value that best represents the contents of the cell.
+        /// </summary>
+        /// <param name="cell">The cell whose value you want to retrieve</param>
+        /// <param name="treatAs">Leave blank, used in recursion for dealing with Formula cells</param>
+        /// <returns></returns>
+        private object GetCellValue(ICell cell, CellType treatAs = CellType.Unknown)
         {
             if (cell == null)
                 return null;
+
+            if (treatAs == CellType.Formula)
+                throw new Exception("Cannot treat the cell contents as a Formula");
+
+            if (treatAs == CellType.Unknown)
+                treatAs = cell.CellType;
             
-            switch (cell.CellType)
+            switch (treatAs)
             {
                 case CellType.Unknown:
                     return cell.ToString();
@@ -220,7 +240,7 @@ namespace LoadModules.Generic.DataFlowSources
                 case CellType.String:
                     return cell.StringCellValue;
                 case CellType.Formula:
-                    throw new Exception("Forumals are not supported by Excel Data Flow Source");
+                    return GetCellValue(cell, cell.CachedFormulaResultType);
                 case CellType.Blank:
                     return null;
                 case CellType.Boolean:

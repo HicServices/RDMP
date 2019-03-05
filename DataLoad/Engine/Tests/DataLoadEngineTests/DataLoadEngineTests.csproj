@@ -395,6 +395,7 @@
     </None>
     <EmbeddedResource Include="Unit\TestFile\Book1.xlsx" />
     <EmbeddedResource Include="Unit\TestFile\FreakyBook1.xlsx" />
+    <EmbeddedResource Include="Unit\TestFile\OddFormats.xls" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj">
