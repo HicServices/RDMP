@@ -274,6 +274,7 @@
     <Compile Include="DataAccess\IDataAccessPoint.cs" />
     <Compile Include="DataAccess\IEncryptedPasswordHost.cs" />
     <Compile Include="DatabaseCommandHelper.cs" />
+    <Compile Include="Extensions\DataTableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="DirectoryInfoComparer.cs" />
     <Compile Include="DoNotExtractProperty.cs" />

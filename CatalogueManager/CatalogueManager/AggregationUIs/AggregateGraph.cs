@@ -32,6 +32,7 @@ using QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Extensions;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
@@ -620,22 +621,7 @@ namespace CatalogueManager.AggregationUIs
             try
             {
                 var dt = (DataTable) dataGridView1.DataSource;
-
-                using (CsvWriter csvWriter = new CsvWriter(new StreamWriter(dataSavePath)))
-                {
-                    foreach (DataColumn column in dt.Columns)
-                        csvWriter.WriteField(column.ColumnName);
-
-                    csvWriter.NextRecord();
-
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        for (var i = 0; i < dt.Columns.Count; i++)
-                            csvWriter.WriteField(row[i]);
-
-                        csvWriter.NextRecord();
-                    }
-                }
+                dt.SaveAsCsv(dataSavePath);
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Saved chart data to " + dataSavePath, CheckResult.Success));
             }

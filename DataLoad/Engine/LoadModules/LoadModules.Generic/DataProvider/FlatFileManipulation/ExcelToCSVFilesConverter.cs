@@ -4,27 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataLoadEngine.DataProvider;
 using DataLoadEngine.Job;
 using FAnsi.Discovery;
 using Fansi.Implementations.MicrosoftSQL;
 using LoadModules.Generic.Checks;
-using Microsoft.Office.Interop.Excel;
-using ReusableLibraryCode;
+using LoadModules.Generic.DataFlowSources;
+using NPOI.XSSF.UserModel;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
 
 namespace LoadModules.Generic.DataProvider.FlatFileManipulation
@@ -67,12 +62,6 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
         {
             Stopwatch s = new Stopwatch();
             s.Start();
-            
-            Application excelApp = new Application();
-            excelApp.Visible = false;
-            excelApp.Interactive = false;
-            excelApp.ScreenUpdating = false;
-            excelApp.DisplayAlerts = false;
 
             bool foundAtLeastOne = false;
 
@@ -80,48 +69,59 @@ namespace LoadModules.Generic.DataProvider.FlatFileManipulation
             {
                 foundAtLeastOne = true;
                 job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "About to process file " + f.Name));
-                ProcessFile(f,job,excelApp);
+                ProcessFile(f,job);
             }
 
             if(!foundAtLeastOne)
                 job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Did not find any files matching Pattern '" + ExcelFilePattern+"' in directory '" + job.LoadDirectory.ForLoading.FullName+"'"));
 
-            excelApp.DisplayAlerts = false;
-            excelApp.Quit();
-            
             return ExitCodeType.Success;
         }
 
-        private void ProcessFile(FileInfo fileInfo, IDataLoadJob job, Application excelApp)
+        private void ProcessFile(FileInfo fileInfo, IDataLoadJob job)
         {
-            Workbook wb = excelApp.Workbooks.Open(fileInfo.FullName);
-          
-            foreach (Worksheet w in wb.Worksheets.Cast<Worksheet>())
+            var wb = new XSSFWorkbook(fileInfo.FullName);
+
+            try
             {
-                if (IsWorksheetNameMatch(w.Name))
+                var source = new ExcelDataFlowSource();
+                source.PreInitialize(new FlatFileToLoad(fileInfo), job);
+
+                for (int i = 0; i < wb.NumberOfSheets; i++)
                 {
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Started processing worksheet:" + w.Name));
+                    var sheet = wb.GetSheetAt(i);
 
+                    if (IsWorksheetNameMatch(sheet.SheetName))
+                    {
+                        job.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Information,
+                                "Started processing worksheet:" + sheet.SheetName));
+                        
+                        string newName = PrefixWithWorkbookName
+                            ? Path.GetFileNameWithoutExtension(fileInfo.FullName) + "_" + sheet.SheetName
+                            : sheet.SheetName;
 
-                    string newName = PrefixWithWorkbookName
-                        ? Path.GetFileNameWithoutExtension(fileInfo.FullName) + "_" + w.Name
-                        : w.Name;
+                        //make it sensible
+                        newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
 
-                    //make it sensible
-                    newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
+                        string savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
+                        var dt = source.GetAllData(sheet, job);
+                        dt.SaveAsCsv(savePath);
 
-                    string savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
+                        job.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Information, "Saved worksheet as " + newName));
 
-                    w.SaveAs(savePath, XlFileFormat.xlCSVWindows);
-                    
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Saved worksheet as "  + newName));
-
+                    }
+                    else
+                        job.OnNotify(this,
+                            new NotifyEventArgs(ProgressEventType.Information, "Ignoring worksheet:" + sheet.SheetName));
                 }
-                else
-                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Ignoring worksheet:" + w.Name));
-            }
 
-            wb.Close(false);
+            }
+            finally
+            {
+                wb.Close();
+            }
         }
 
         private bool IsWorksheetNameMatch(string name)
