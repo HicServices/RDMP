@@ -147,24 +147,24 @@ namespace DataLoadEngineTests.Unit
             source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), listener);
             DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-            Assert.AreEqual("01/01/2001 00:00:00", dt.Rows[0][3]);
+            Assert.AreEqual("2001-01-01", dt.Rows[0][3]);
             Assert.AreEqual("0.1", dt.Rows[0][4]);
             Assert.AreEqual("10:30:00", dt.Rows[0][5]);
 
-            Assert.AreEqual("01/01/2001 10:30:00", dt.Rows[1][3]);
+            Assert.AreEqual("2001-01-01 10:30:00", dt.Rows[1][3]);
             Assert.AreEqual("0.51", dt.Rows[1][4]);
             Assert.AreEqual("11:30:00", dt.Rows[1][5]);
 
-            Assert.AreEqual("01/01/2002 11:30:00", dt.Rows[2][3]);
-            Assert.AreEqual("0.223", dt.Rows[2][4]);
+            Assert.AreEqual("2002-01-01 11:30:00", dt.Rows[2][3]);
+            Assert.AreEqual("0.22", dt.Rows[2][4]);
             Assert.AreEqual("0.1", dt.Rows[2][5]);
 
-            Assert.AreEqual("01/01/2003 01:30:00", dt.Rows[3][3]);
-            Assert.AreEqual("0.1", dt.Rows[3][4]);
+            Assert.AreEqual("2003-01-01 01:30:00", dt.Rows[3][3]);
+            Assert.AreEqual("0.10", dt.Rows[3][4]);
             Assert.AreEqual("0.51", dt.Rows[3][5]);
 
-            Assert.AreEqual("18/09/2015 00:00:00", dt.Rows[4][3]);
-            Assert.AreEqual("15:09", dt.Rows[4][4]);
+            Assert.AreEqual("2015-09-18", dt.Rows[4][3]);
+            Assert.AreEqual("15:09:00", dt.Rows[4][4]);
             Assert.AreEqual("00:03:56", dt.Rows[4][5]);
         }
 
@@ -200,10 +200,6 @@ namespace DataLoadEngineTests.Unit
             var args = messages.EventsReceivedBySender[source];
 
             Console.Write(messages.ToString());
-
-
-            Assert.IsTrue(args.Any(a => a.Message.Contains("Column 1 did not have a header and so was not loaded") && a.ProgressEventType == ProgressEventType.Warning));
-            Assert.IsTrue(args.Any(a => a.Message.Contains("Column 8 did not have a header and so was not loaded") && a.ProgressEventType == ProgressEventType.Warning));
 
             Assert.IsTrue(args.Any(a => a.Message.Contains("Discarded the following data (that was found in unamed columns):RowCount:5") && a.ProgressEventType == ProgressEventType.Warning));
         }
