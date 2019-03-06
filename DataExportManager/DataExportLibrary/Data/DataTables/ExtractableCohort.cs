@@ -21,7 +21,6 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.Data.DataTables
 {

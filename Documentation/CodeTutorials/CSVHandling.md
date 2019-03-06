@@ -31,10 +31,10 @@ CSV files usually end in the extension `.csv`.  Sometimes an alternate separator
 The class that handles processing delimited files (CSV, TSV etc) is `DelimitedFlatFileDataFlowSource`.  This class is responsible for turning the CSV file into a series of `System.DataTable` chunks for upload to the database.
 
 ## Scalability
-CSV processing is done iteratively and streamed into the database in chunks.  This has been tested with datasets of 800 million records without issue.  Chunk size is determined by `MaxBatchSize`, optionally the initial batch can be larger `StronglyTypeInputBatchSize` to streamline [Type descisions](./TypeTranslation.md) e.g. when sending data to a `DataTableUploadDestination`. 
+CSV processing is done iteratively and streamed into the database in chunks.  This has been tested with datasets of 800 million records without issue.  Chunk size is determined by `MaxBatchSize`, optionally the initial batch can be larger `StronglyTypeInputBatchSize` to streamline [Type descisions](https://github.com/HicServices/FAnsiSql/blob/master/Documentation/TypeTranslation.md) e.g. when sending data to a `DataTableUploadDestination`. 
 
 ## Type Determination
-Type decisions [are handled seperately](./TypeTranslation.md) after the `System.DataTable` has been produced in memory from the CSV file.
+Type decisions [are handled seperately](https://github.com/HicServices/FAnsiSql/blob/master/Documentation/TypeTranslation.md) after the `System.DataTable` has been produced in memory from the CSV file.
 
 ## Corrupt Files
 RDMP is able to detect and cope with some common problems with delimited (e.g. CSV) files.  These situations can be classified as 'Resolved Automatically', 'Resolved Accordly' and 'Unresolveable'

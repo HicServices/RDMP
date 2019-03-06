@@ -25,13 +25,10 @@ namespace DataLoadEngineTests.Integration
     {
         private readonly Stack<DirectoryInfo> _dirsToCleanUp = new Stack<DirectoryInfo>();
         private DirectoryInfo _parentDir;
-        bool officeInstalled = false;
-
+        
         [OneTimeSetUp]
         public void SetUp()
         {
-            officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
-
             var testDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
             _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
             _dirsToCleanUp.Push(_parentDir);
@@ -46,7 +43,7 @@ namespace DataLoadEngineTests.Integration
 
         private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
         {
-            var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName);
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName,true);
             _dirsToCleanUp.Push(loadDirectory.RootPath);
             return loadDirectory;
         }
@@ -54,9 +51,6 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void TestExcelFunctionality_OnSimpleXlsx()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
 
             //clean up anything in the test project folders forloading directory
@@ -72,9 +66,6 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void TestExcelFunctionality_DodgyFileExtension()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
 
             //clean up anything in the test project folders forloading directory
@@ -88,28 +79,7 @@ namespace DataLoadEngineTests.Integration
 
             Assert.IsTrue(ex.Message.StartsWith("Did not find any files matching Pattern '*.fish' in directory"));
         }
-
-
-        [Test]
-        public void TestExcelFunctionality_OnExcelXml()
-        {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
-            var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnExcelXml");
-
-            //clean up anything in the test project folders forloading directory
-            foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
-                fileInfo.Delete();
-
-
-            string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
-            File.WriteAllText(targetFile, Resource1.TestExcelFile2);
-
-            TestConversionFor(targetFile, "*.xml", 1, LoadDirectory);
-
-        }
-
+        
         private void TestConversionFor(string targetFile, string fileExtensionToConvert, int expectedNumberOfSheets, LoadDirectory directory)
         {
             FileInfo f = new FileInfo(targetFile);

@@ -174,6 +174,10 @@
       <HintPath>..\..\..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
       <Private>True</Private>
     </Reference>
+    <Reference Include="ExcelNumberFormat, Version=1.0.3.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\ExcelNumberFormat.1.0.3\lib\net20\ExcelNumberFormat.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
     <Reference Include="FAnsi, Version=0.9.0.5, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
@@ -195,14 +199,29 @@
       <HintPath>..\..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="Microsoft.Office.Interop.Excel, Version=15.0.0.0, Culture=neutral, PublicKeyToken=71e9bce111e9429c, processorArchitecture=MSIL">
-      <EmbedInteropTypes>True</EmbedInteropTypes>
-      <HintPath>..\..\..\..\packages\Microsoft.Office.Interop.Excel.15.0.4795.1000\lib\net20\Microsoft.Office.Interop.Excel.dll</HintPath>
+    <Reference Include="ICSharpCode.SharpZipLib, Version=1.0.0.999, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\SharpZipLib.1.0.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OOXML, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.OOXML.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXml4Net, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="NPOI.OpenXmlFormats, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
@@ -239,7 +258,6 @@
     <Compile Include="Attachers\ExcelAttacher.cs" />
     <Compile Include="Attachers\KVPAttacherPipelineUseCase.cs" />
     <Compile Include="Attachers\RemoteDatabaseAttacher.cs" />
-    <Compile Include="Checks\ExcelInstalledChecker.cs" />
     <Compile Include="DataFlowDestinations\DoNothingCacheDestination.cs" />
     <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasException.cs" />
     <Compile Include="DataFlowOperations\Aliases\AliasHandler.cs" />

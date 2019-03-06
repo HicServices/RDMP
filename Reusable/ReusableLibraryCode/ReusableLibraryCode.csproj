@@ -274,6 +274,7 @@
     <Compile Include="DataAccess\IDataAccessPoint.cs" />
     <Compile Include="DataAccess\IEncryptedPasswordHost.cs" />
     <Compile Include="DatabaseCommandHelper.cs" />
+    <Compile Include="Extensions\DataTableExtensions.cs" />
     <Compile Include="Extensions\StringExtensions.cs" />
     <Compile Include="DirectoryInfoComparer.cs" />
     <Compile Include="DoNotExtractProperty.cs" />
@@ -295,7 +296,6 @@
     <Compile Include="ExceptionHelper.cs" />
     <Compile Include="IHasDependencies.cs" />
     <Compile Include="IKnowWhatIAm.cs" />
-    <Compile Include="OfficeVersionFinder.cs" />
     <Compile Include="Performance\ComprehensiveQueryPerformanceCounter.cs" />
     <Compile Include="Performance\QueryPerformed.cs" />
     <Compile Include="Progress\ForkDataLoadEventListener.cs" />

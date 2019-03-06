@@ -35,7 +35,6 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 {

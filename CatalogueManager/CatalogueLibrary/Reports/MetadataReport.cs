@@ -33,7 +33,7 @@ namespace CatalogueLibrary.Reports
     /// of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration graphs will be run and screen captured and added to 
     /// the report (including heatmap if a dynamic pivot is included in the graph).
     /// </summary>
-    public class MetadataReport:RequiresMicrosoftOffice
+    public class MetadataReport:DocXHelper
     {
         public IDetermineDatasetTimespan TimespanCalculator { get; set; }
         private readonly CatalogueRepository _repository;
@@ -76,13 +76,6 @@ namespace CatalogueLibrary.Reports
         {
             try
             {
-
-                int version = OfficeVersionFinder.GetMajorVersion(OfficeVersionFinder.OfficeComponent.Word);
-
-                if (version == 0)
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Microsoft Word not found, is it installed?"));
-                else
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Microsoft Word " + version + " installed"));
 
                 //if theres only one catalogue call it 'prescribing.docx' etc
                 string filename = _catalogues.Length == 1 ? _catalogues[0].Name : "MetadataReport";

@@ -24,7 +24,7 @@ namespace DataExportLibrary.ExtractionTime
     /// row counts and unique patient counts as well as the number of patients in the original cohort (not all patients will appear in all datasets).  Also
     /// included are the tickets for the project, the cohort ID number etc
     /// </summary>
-    public class WordDataReleaseFileGenerator : RequiresMicrosoftOffice
+    public class WordDataReleaseFileGenerator : DocXHelper
     {
         private readonly IRepository _repository;
         public IExtractionConfiguration Configuration { get; set; }
