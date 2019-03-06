@@ -9,6 +9,7 @@ using System.Drawing;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using HIC.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -31,6 +32,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandCheck(IActivateItems activator, DatabaseEntity checkable,Action<ICheckable,CheckResult> reportWorst): this(activator,checkable)
         {
             _reportWorstTo = reportWorst;
+        }
+
+        public ExecuteCommandCheck(IActivateItems activator, ICheckable checkable) : base(activator)
+        {
+            _checkable = checkable;
         }
 
         public override void Execute()
