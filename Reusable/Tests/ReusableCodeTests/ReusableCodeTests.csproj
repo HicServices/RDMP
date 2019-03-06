@@ -86,6 +86,7 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
+    <Compile Include="DataTableExtensionsTests.cs" />
     <Compile Include="ExpectedIdenticalStringsExceptionTests.cs" />
     <Compile Include="RecentHistoryOfControlsTests.cs" />
     <Compile Include="UsefulStuffTests.cs" />
