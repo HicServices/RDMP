@@ -138,7 +138,7 @@ namespace LoadModules.Generic.DataFlowSources
                 var row = (IRow)rowEnumerator.Current;
 
                 //if all the cells in the current row are blank skip it (eliminates top of file whitespace)
-                if (row.Cells.All(c => String.IsNullOrWhiteSpace(c.StringCellValue)))
+                if (row.Cells.All(c => String.IsNullOrWhiteSpace(c.ToString())))
                     continue;
 
                 //first row (that has any data in it) - makes headers
@@ -238,6 +238,13 @@ namespace LoadModules.Generic.DataFlowSources
 
                     return cell.NumericCellValue;
                 case CellType.String:
+                    
+                    var v = cell.StringCellValue;
+
+                    //if it is blank or 'null' then leave it null
+                    if (string.IsNullOrWhiteSpace(v) || v.Trim().Equals("NULL", StringComparison.CurrentCultureIgnoreCase))
+                        return null;
+
                     return cell.StringCellValue;
                 case CellType.Formula:
                     return GetCellValue(cell, cell.CachedFormulaResultType);
