@@ -35,9 +35,6 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataSource), Keys.None, viewLogs);
                 Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.ProgressLog), Keys.None, viewLogs);
 
-                if (server.WasCreatedByDatabaseAssembly(typeof (HIC.Logging.Database.Class1).Assembly))
-                    Add(new ExecuteCommandCheck(_activator, new LoggingDatabaseChecker(server)){OverrideCommandName = "Run Logging Database Checks"});
-
                 viewLogs.DropDownItems.Add(new ToolStripSeparator());
 
                 viewLogs.DropDownItems.Add(new ToolStripMenuItem("Query with SQL", CatalogueIcons.SQL, ExecuteSqlOnLoggingDatabase));

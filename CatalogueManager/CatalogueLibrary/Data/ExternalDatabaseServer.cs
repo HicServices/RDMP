@@ -17,6 +17,7 @@ using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
@@ -235,7 +236,12 @@ namespace CatalogueLibrary.Data
             catch (Exception exception)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Failed to connect to server", CheckResult.Fail, exception));
+                return;
             }
+
+            //if it's a logging server run logging checks
+            if (WasCreatedByDatabaseAssembly(typeof(HIC.Logging.Database.Class1).Assembly))
+                new LoggingDatabaseChecker(this).Check(notifier);
         }
 
         /// <inheritdoc/>

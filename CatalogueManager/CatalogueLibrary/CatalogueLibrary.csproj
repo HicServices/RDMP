@@ -631,6 +631,10 @@
     <None Include="Triggers\Triggers.cd" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
+      <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>
+      <Name>HIC.Logging.Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
       <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
       <Name>HIC.Logging</Name>
