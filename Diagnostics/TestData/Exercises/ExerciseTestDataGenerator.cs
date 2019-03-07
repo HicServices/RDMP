@@ -52,5 +52,38 @@ namespace Diagnostics.TestData.Exercises
 
         protected abstract object[] GenerateTestDataRow(TestPerson p);
         protected abstract void WriteHeaders(StreamWriter sw);
+
+
+        public static void WriteLookups(DirectoryInfo dir)
+        {
+            File.WriteAllText(Path.Combine(dir.FullName, "z_Healthboards.csv"),
+@"A,Ayrshire and Arran
+B,Borders
+C,Argyle and Clyde
+D,State Hospital
+E,England
+F,Fife
+G,Greater Glasgow
+H,Highland
+I,Inverness
+J,Junderland
+K,Krief
+L,Lanarkshire
+M,Metropolitan Area
+N,Grampian
+O,Orkney
+P,Pitlochry
+Q,Queensferry
+R,Retired
+S,Lothian
+T,Tayside
+U,Unknown
+V,Forth Valley
+W,Western Isles
+X,Common Service Agency
+Y,Dumfries and Galloway
+Z,Shetland");
+        }
+
     }
 }

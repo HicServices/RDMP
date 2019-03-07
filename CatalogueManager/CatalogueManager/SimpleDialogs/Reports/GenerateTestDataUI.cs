@@ -168,6 +168,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 ExerciseTestIdentifiers identifiers = new ExerciseTestIdentifiers();
                 identifiers.GeneratePeople(populationSize);
 
+                if(cbLookups.Checked)
+                    ExerciseTestDataGenerator.WriteLookups(_extractDirectory);
+
                 foreach (ExerciseTestDataGeneratorUI ui in pDatasets.Controls)
                 {
                     Executing.Add(ui);
