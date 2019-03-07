@@ -25,10 +25,10 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// semi real and exhibit peculiarities common to medical records.  The slider is exponential so if you drag it all the way to the top expect to wait for a weekend for it to generate
     /// all the data.
     /// </summary>
-    public partial class TestDataGenerator : UserControl, IDataLoadEventListener
+    public partial class ExerciseTestDataGeneratorUI : UserControl, IDataLoadEventListener
     {
 
-        public TestDataGenerator()
+        public ExerciseTestDataGeneratorUI()
         {
             InitializeComponent();
             trackBar1.LargeChange = 1;

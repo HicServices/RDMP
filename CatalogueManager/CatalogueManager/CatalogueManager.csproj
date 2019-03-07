@@ -1262,11 +1262,11 @@
     <Compile Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolution.Designer.cs">
       <DependentUpon>ConfigurePrimaryKeyCollisionResolution.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\TestDataGenerator.cs">
+    <Compile Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\TestDataGenerator.Designer.cs">
-      <DependentUpon>TestDataGenerator.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.Designer.cs">
+      <DependentUpon>ExerciseTestDataGeneratorUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Reports\GenerateTestDataUI.cs">
       <SubType>Form</SubType>
@@ -2036,8 +2036,8 @@
     <EmbeddedResource Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolution.resx">
       <DependentUpon>ConfigurePrimaryKeyCollisionResolution.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\TestDataGenerator.resx">
-      <DependentUpon>TestDataGenerator.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.resx">
+      <DependentUpon>ExerciseTestDataGeneratorUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Reports\GenerateTestDataUI.resx">
       <DependentUpon>GenerateTestDataUI.cs</DependentUpon>

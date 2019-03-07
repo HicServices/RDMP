@@ -57,7 +57,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
                 var instance = (IExerciseTestDataGenerator)constructor.Construct(generator);
 
-                var ui = new TestDataGenerator();
+                var ui = new ExerciseTestDataGeneratorUI();
                 ui.Generator = instance;
                 ui.Location = new Point(0,yLoc);
                 yLoc += ui.Height;
@@ -149,7 +149,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         private bool started = false;
         
-        private List<TestDataGenerator> Executing = new List<TestDataGenerator>();
+        private List<ExerciseTestDataGeneratorUI> Executing = new List<ExerciseTestDataGeneratorUI>();
         private DirectoryInfo _extractDirectory;
 
         private void btnGenerate_Click(object sender, EventArgs e)
@@ -168,11 +168,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 ExerciseTestIdentifiers identifiers = new ExerciseTestIdentifiers();
                 identifiers.GeneratePeople(populationSize);
 
-                foreach (TestDataGenerator ui in pDatasets.Controls)
+                foreach (ExerciseTestDataGeneratorUI ui in pDatasets.Controls)
                 {
                     Executing.Add(ui);
                     ui.BeginGeneration(identifiers, _extractDirectory);
-                    TestDataGenerator ui1 = ui;
+                    ExerciseTestDataGeneratorUI ui1 = ui;
                     ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
                 }
                 

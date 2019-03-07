@@ -2,7 +2,7 @@
 
 namespace CatalogueManager.SimpleDialogs.Reports
 {
-    partial class TestDataGenerator : IDataLoadEventListener
+    partial class ExerciseTestDataGeneratorUI : IDataLoadEventListener
     {
         /// <summary> 
         /// Required designer variable.
