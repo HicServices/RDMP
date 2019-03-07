@@ -10,6 +10,7 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Tutorials;
 using Diagnostics.TestData.Exercises;
@@ -45,14 +46,24 @@ namespace CatalogueManager.SimpleDialogs.Reports
             _activator = activator;
             InitializeComponent();
 
-            PrescribingExerciseTestData prescribing = new PrescribingExerciseTestData();
-            sizePrescribing.Generator = prescribing;
+            ObjectConstructor constructor = new ObjectConstructor();
 
-            BiochemistryExerciseTestData biochemistry = new BiochemistryExerciseTestData();
-            sizeBiochemistry.Generator = biochemistry;
+            int yLoc = 0;
 
-            DemographyExerciseTestData demography = new DemographyExerciseTestData();
-            sizeDemography.Generator = demography;
+            foreach (Type generator in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<IExerciseTestDataGenerator>())
+            {
+                if(generator.IsAbstract || generator.IsInterface)
+                    continue;
+
+                var instance = (IExerciseTestDataGenerator)constructor.Construct(generator);
+
+                var ui = new TestDataGenerator();
+                ui.Generator = instance;
+                ui.Location = new Point(0,yLoc);
+                yLoc += ui.Height;
+                pDatasets.Controls.Add(ui);
+            }
+            
 
             lblDirectory.Visible = false;
 
@@ -69,16 +80,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
             
             HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(_activator));
 
-            var bio =
-                new HelpStage(gbBiochemistry,
-                    "This control will allow you to create 3 flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in the biochemistry dataset e.g. 1,000,000");
-            
-            var pres =
-                new HelpStage(gbPrescribing, "Now do the same for Prescriptions");
-
-            var demog =
-                new HelpStage(gbDemography,"Now do the same for Demography.  This dataset is 'known addresses' for patients.  So will have multiple records per person");
-
+            var ds =
+                new HelpStage(pDatasets,
+                    "This control will allow you to create flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in each dataset e.g. 1,000,000");
             var pop =
                 new HelpStage(pPopulationSize, "Now choose how many unique identifiers you want generated.  If your population pool is smaller than the number of records per dataset there will be a large overlap of patients between datasets while if it is larger the crossover will be sparser.");
 
@@ -86,13 +90,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             var execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
 
-            bio.SetOption(">>", pres);
-            pres.SetOption(">>", demog);
-            demog.SetOption(">>", pop);
+            ds.SetOption(">>", pop);
             pop.SetOption(">>", location);
             location.SetOption(">>", execute);
 
-            HelpWorkflow.RootStage = bio;
+            HelpWorkflow.RootStage = ds;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -166,23 +168,15 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 ExerciseTestIdentifiers identifiers = new ExerciseTestIdentifiers();
                 identifiers.GeneratePeople(populationSize);
 
-                string biochem = Path.Combine(_extractDirectory.FullName, "biochemistry.csv");
-                string prescribing = Path.Combine(_extractDirectory.FullName, "prescribing.csv");
-                string demography = Path.Combine(_extractDirectory.FullName, "demography.csv");
-
-                Executing.Add(sizeBiochemistry);
-                Executing.Add(sizePrescribing);
-                Executing.Add(sizeDemography);
-
-                sizeBiochemistry.BeginGeneration(identifiers, new FileInfo(biochem));
-                sizePrescribing.BeginGeneration(identifiers, new FileInfo(prescribing));
-                sizeDemography.BeginGeneration(identifiers, new FileInfo(demography));
-
+                foreach (TestDataGenerator ui in pDatasets.Controls)
+                {
+                    Executing.Add(ui);
+                    ui.BeginGeneration(identifiers, _extractDirectory);
+                    TestDataGenerator ui1 = ui;
+                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
+                }
+                
                 UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_extractDirectory);
-
-                sizeBiochemistry.Completed += () => { Executing.Remove(sizeBiochemistry); AnnounceIfComplete(); };
-                sizePrescribing.Completed += () => { Executing.Remove(sizePrescribing); AnnounceIfComplete(); };
-                sizeDemography.Completed += () => { Executing.Remove(sizeDemography); AnnounceIfComplete(); };
 
             }
             catch (Exception exception)
@@ -207,27 +201,13 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 return;
 
             //warn them and cancel if any of them are still generating data
-            if (Executing.Contains(sizeBiochemistry))
-            {
-                MessageBox.Show("Biochemistry is still generating data");
-                e.Cancel = true;
-                return;
-            }
+            var stillRunning = Executing.FirstOrDefault();
 
-            if (Executing.Contains(sizePrescribing))
+            if (stillRunning != null)
             {
-                MessageBox.Show("Prescribing is still generating data");
+                MessageBox.Show(stillRunning.Generator.GetName() + " is still generating data");
                 e.Cancel = true;
-                return;
             }
-
-            if (Executing.Contains(sizeDemography))
-            {
-                MessageBox.Show("Demography is still generating data");
-                e.Cancel = true;
-                return;
-            }
-
         }
         
         private void btnBrowse_Click(object sender, EventArgs e)

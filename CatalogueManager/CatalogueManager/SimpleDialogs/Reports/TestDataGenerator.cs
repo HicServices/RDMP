@@ -34,7 +34,15 @@ namespace CatalogueManager.SimpleDialogs.Reports
             trackBar1.LargeChange = 1;
         }
 
-        public IExerciseTestDataGenerator Generator { get; set; }
+        public IExerciseTestDataGenerator Generator
+        {
+            get { return _generator; }
+            set
+            {
+                _generator = value;
+                lblName.Text = value != null ? value.GetName():"";
+            }
+        }
 
         public int GetSize()
         {
@@ -43,10 +51,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         int sizeAtBeginGeneration = -1;
         public Thread Thread;
+        private IExerciseTestDataGenerator _generator;
         public event Action TrackBarMouseUp;
         public event Action Completed;
 
-        public void BeginGeneration(IExerciseTestIdentifiers cohort, FileInfo target)
+        public void BeginGeneration(IExerciseTestIdentifiers cohort, DirectoryInfo target)
         {
             //already running
             if(sizeAtBeginGeneration != -1)
@@ -54,7 +63,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             sizeAtBeginGeneration = GetSize();
 
-            Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, target, sizeAtBeginGeneration, this));
+            var fi = new FileInfo(Path.Combine(target.FullName, Generator.GetName() + ".csv"));
+
+            Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration, this));
             Thread.Start();
 
         }

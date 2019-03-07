@@ -12,6 +12,11 @@ namespace Diagnostics.TestData.Exercises
 {
     public class DemographyExerciseTestData : ExerciseTestDataGenerator
     {
+        public override string GetName()
+        {
+            return "Demography";
+        }
+
         protected override object[] GenerateTestDataRow(TestPerson person)
         {
             //leave off data load run ID 

@@ -5,12 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using ReusableLibraryCode.Progress;
 
 namespace Diagnostics.TestData.Exercises
 {
+    [InheritedExport(typeof(IExerciseTestDataGenerator))]
     public abstract class ExerciseTestDataGenerator : IExerciseTestDataGenerator
     {
         public void GenerateTestDataFile(IExerciseTestIdentifiers cohort, FileInfo target, int numberOfRecords,
@@ -45,6 +47,8 @@ namespace Diagnostics.TestData.Exercises
             stopwatch.Stop();
             sw.Close();
         }
+
+        public abstract string GetName();
 
         protected abstract object[] GenerateTestDataRow(TestPerson p);
         protected abstract void WriteHeaders(StreamWriter sw);

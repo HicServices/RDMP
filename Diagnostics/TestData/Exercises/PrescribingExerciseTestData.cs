@@ -14,6 +14,11 @@ namespace Diagnostics.TestData.Exercises
     {
         Random r = new Random();
 
+        public override string GetName()
+        {
+            return "Prescribing";
+        }
+
         protected override object[] GenerateTestDataRow(TestPerson p)
         {
             object[] values = new object[11];
