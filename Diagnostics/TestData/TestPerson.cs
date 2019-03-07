@@ -31,13 +31,14 @@ namespace Diagnostics.TestData
         public DateTime DateOfBirth = new DateTime();
         public DateTime? DateOfDeath;
         public char Gender { get; set; }
-
-
+        
         public TestAddress Address { get; set; }
         public TestAddress PreviousAddress { get; set; }
 
         static HashSet<string> AlreadyGeneratedCHIs = new HashSet<string>();
         static HashSet<string> AlreadyGeneratedANOCHIs = new HashSet<string>();
+
+        private readonly List<TestAppointment> _appointments = new List<TestAppointment>();
         
         public TestPerson(Random r)
         {
@@ -71,6 +72,10 @@ namespace Diagnostics.TestData
             //one in 10 people doesn't have a previous address
             if(r.Next(10) != 0)
                 PreviousAddress = new TestAddress(r);
+
+            //person has up to 30 random appointments (this generates a curve where less appointments are more likely)
+            for(int i=0; i<r.Next(1,30);i++)
+                _appointments.Add(new TestAppointment(this,r));
 
         }
         public string GetRandomForename(Random r)
@@ -522,6 +527,15 @@ namespace Diagnostics.TestData
             "Saunders"
         };
 
-
+        /// <summary>
+        /// Returns a guid representing one of the (random number) of appointments the person has made in thier lifetime.  This can be used to group
+        /// events to a particular person e.g. hospitalisation record to a blood pressure measurement without crossing into other patients.
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        public TestAppointment GetRandomAppointment(Random r)
+        {
+            return _appointments[r.Next(0, _appointments.Count)];
+        }
     }
 }

@@ -184,6 +184,7 @@
     <Compile Include="CohortConfigurationChecker.cs" />
     <Compile Include="TestData\BulkTestsData.cs" />
     <Compile Include="TestData\Exercises\BiochemistryExerciseTestData.cs" />
+    <Compile Include="TestData\Exercises\BloodPressureExerciseTestData.cs" />
     <Compile Include="TestData\Exercises\DemographyExerciseTestData.cs" />
     <Compile Include="TestData\Exercises\ExerciseTestDataGenerator.cs" />
     <Compile Include="TestData\Exercises\IExerciseTestDataGenerator.cs" />
@@ -197,6 +198,7 @@
     <Compile Include="TestData\Relational\CIATestInformant.cs" />
     <Compile Include="TestData\Relational\CIATestReport.cs" />
     <Compile Include="TestData\Relational\RelationalBulkTestData.cs" />
+    <Compile Include="TestData\TestAppointment.cs" />
     <Compile Include="TestData\TestBiochemistrySample.cs" />
     <Compile Include="TestData\Postcode.cs" />
     <Compile Include="TestData\TestAddress.cs" />

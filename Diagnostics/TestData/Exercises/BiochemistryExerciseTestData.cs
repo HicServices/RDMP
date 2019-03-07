@@ -12,10 +12,6 @@ namespace Diagnostics.TestData.Exercises
     public class BiochemistryExerciseTestData : ExerciseTestDataGenerator
     {
         private Random r = new Random();
-        public override string GetName()
-        {
-            return "Biochemistry";
-        }
 
         protected override object[] GenerateTestDataRow(TestPerson p)
         {

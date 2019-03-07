@@ -6,18 +6,12 @@
 
 using System;
 using System.IO;
-using ReusableLibraryCode.Progress;
 
 namespace Diagnostics.TestData.Exercises
 {
     public class PrescribingExerciseTestData : ExerciseTestDataGenerator
     {
         Random r = new Random();
-
-        public override string GetName()
-        {
-            return "Prescribing";
-        }
 
         protected override object[] GenerateTestDataRow(TestPerson p)
         {
