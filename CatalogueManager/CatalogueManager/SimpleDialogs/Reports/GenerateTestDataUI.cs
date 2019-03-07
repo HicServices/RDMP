@@ -6,24 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using Diagnostics.TestData.Exercises;
-using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
@@ -69,6 +60,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             if(command != null)
                 BuildHelpWorkflow(command);
+
+            helpIcon1.SetHelpText("Tutorial","Click for tutorial",HelpWorkflow);
         }
 
         private void BuildHelpWorkflow(ICommandExecution command)
@@ -76,43 +69,30 @@ namespace CatalogueManager.SimpleDialogs.Reports
             
             HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(_activator));
 
-            var _bio =
+            var bio =
                 new HelpStage(gbBiochemistry,
                     "This control will allow you to create 3 flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in the biochemistry dataset e.g. 1,000,000");
-            var _pres =
+            
+            var pres =
                 new HelpStage(gbPrescribing, "Now do the same for Prescriptions");
 
-            var _demog =
+            var demog =
                 new HelpStage(gbDemography,"Now do the same for Demography.  This dataset is 'known addresses' for patients.  So will have multiple records per person");
 
-            var _pop =
+            var pop =
                 new HelpStage(pPopulationSize, "Now choose how many unique identifiers you want generated.  If your population pool is smaller than the number of records per dataset there will be a large overlap of patients between datasets while if it is larger the crossover will be sparser.");
 
-            var _location = new HelpStage(pOutputDirectory,@"Click browse to select a directory to create the 3 files in");
+            var location = new HelpStage(pOutputDirectory,@"Click browse to select a directory to create the 3 files in");
 
-            var _execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
+            var execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
 
-            HelpWorkflow.RootStage = _bio;
+            bio.SetOption(">>", pres);
+            pres.SetOption(">>", demog);
+            demog.SetOption(">>", pop);
+            pop.SetOption(">>", location);
+            location.SetOption(">>", execute);
 
-            sizeBiochemistry.TrackBarMouseUp += ()=>HelpWorkflow.ShowStage(_pres);
-            sizePrescribing.TrackBarMouseUp += () => HelpWorkflow.ShowStage(_demog);
-            sizeDemography.TrackBarMouseUp += () => tbPopulationSize.Focus();
-
-            tbPopulationSize.GotFocus += (s, e) => HelpWorkflow.ShowStage(_pop);
-            tbPopulationSize.LostFocus += (s, e) =>
-            {
-                if (!ragSmileyPopulation.IsFatal())
-                    btnBrowse.Focus();
-            };
-
-            btnBrowse.GotFocus += (s, e) => HelpWorkflow.ShowStage(_location);
-            btnBrowse.LostFocus += (s, e) =>
-            {
-                if (ragSmileyDirectory.Visible)
-                {
-                    HelpWorkflow.ShowStage(_execute);
-                }
-            };
+            HelpWorkflow.RootStage = bio;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -121,9 +101,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             ragSmileyPopulation.Visible = false;
             ragSmileyDirectory.Visible = false;
-
-            if (HelpWorkflow != null)
-                HelpWorkflow.Start();
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
@@ -175,10 +152,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
-
-            //we are done
-            HelpWorkflow.Abandon();
-
+            
             try
             {
                 if (started)

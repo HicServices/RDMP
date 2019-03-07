@@ -28,6 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(GenerateTestDataUI));
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.pOutputDirectory = new System.Windows.Forms.Panel();
             this.btnBrowse = new System.Windows.Forms.Button();
@@ -35,16 +36,17 @@
             this.label5 = new System.Windows.Forms.Label();
             this.ragSmileyDirectory = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.gbDemography = new System.Windows.Forms.GroupBox();
+            this.sizeDemography = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
             this.gbPrescribing = new System.Windows.Forms.GroupBox();
+            this.sizePrescribing = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
             this.gbBiochemistry = new System.Windows.Forms.GroupBox();
+            this.sizeBiochemistry = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
             this.pPopulationSize = new System.Windows.Forms.Panel();
             this.tbPopulationSize = new System.Windows.Forms.TextBox();
             this.label7 = new System.Windows.Forms.Label();
             this.ragSmileyPopulation = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnGenerate = new System.Windows.Forms.Button();
-            this.sizeDemography = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
-            this.sizePrescribing = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
-            this.sizeBiochemistry = new CatalogueManager.SimpleDialogs.Reports.TestDataGenerator();
+            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.groupBox1.SuspendLayout();
             this.pOutputDirectory.SuspendLayout();
             this.gbDemography.SuspendLayout();
@@ -57,6 +59,7 @@
             // 
             this.groupBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
+            this.groupBox1.Controls.Add(this.helpIcon1);
             this.groupBox1.Controls.Add(this.pOutputDirectory);
             this.groupBox1.Controls.Add(this.gbDemography);
             this.groupBox1.Controls.Add(this.gbPrescribing);
@@ -131,6 +134,15 @@
             this.gbDemography.TabStop = false;
             this.gbDemography.Text = "Demography";
             // 
+            // sizeDemography
+            // 
+            this.sizeDemography.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sizeDemography.Generator = null;
+            this.sizeDemography.Location = new System.Drawing.Point(3, 16);
+            this.sizeDemography.Name = "sizeDemography";
+            this.sizeDemography.Size = new System.Drawing.Size(827, 101);
+            this.sizeDemography.TabIndex = 2;
+            // 
             // gbPrescribing
             // 
             this.gbPrescribing.Controls.Add(this.sizePrescribing);
@@ -141,6 +153,15 @@
             this.gbPrescribing.TabStop = false;
             this.gbPrescribing.Text = "Prescribing";
             // 
+            // sizePrescribing
+            // 
+            this.sizePrescribing.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sizePrescribing.Generator = null;
+            this.sizePrescribing.Location = new System.Drawing.Point(3, 16);
+            this.sizePrescribing.Name = "sizePrescribing";
+            this.sizePrescribing.Size = new System.Drawing.Size(827, 99);
+            this.sizePrescribing.TabIndex = 1;
+            // 
             // gbBiochemistry
             // 
             this.gbBiochemistry.Controls.Add(this.sizeBiochemistry);
@@ -150,6 +171,15 @@
             this.gbBiochemistry.TabIndex = 0;
             this.gbBiochemistry.TabStop = false;
             this.gbBiochemistry.Text = "Biochemistry";
+            // 
+            // sizeBiochemistry
+            // 
+            this.sizeBiochemistry.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.sizeBiochemistry.Generator = null;
+            this.sizeBiochemistry.Location = new System.Drawing.Point(3, 16);
+            this.sizeBiochemistry.Name = "sizeBiochemistry";
+            this.sizeBiochemistry.Size = new System.Drawing.Size(827, 99);
+            this.sizeBiochemistry.TabIndex = 0;
             // 
             // pPopulationSize
             // 
@@ -202,32 +232,13 @@
             this.btnGenerate.UseVisualStyleBackColor = true;
             this.btnGenerate.Click += new System.EventHandler(this.btnGenerate_Click);
             // 
-            // sizeDemography
+            // helpIcon1
             // 
-            this.sizeDemography.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sizeDemography.Generator = null;
-            this.sizeDemography.Location = new System.Drawing.Point(3, 16);
-            this.sizeDemography.Name = "sizeDemography";
-            this.sizeDemography.Size = new System.Drawing.Size(827, 101);
-            this.sizeDemography.TabIndex = 2;
-            // 
-            // sizePrescribing
-            // 
-            this.sizePrescribing.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sizePrescribing.Generator = null;
-            this.sizePrescribing.Location = new System.Drawing.Point(3, 16);
-            this.sizePrescribing.Name = "sizePrescribing";
-            this.sizePrescribing.Size = new System.Drawing.Size(827, 99);
-            this.sizePrescribing.TabIndex = 1;
-            // 
-            // sizeBiochemistry
-            // 
-            this.sizeBiochemistry.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.sizeBiochemistry.Generator = null;
-            this.sizeBiochemistry.Location = new System.Drawing.Point(3, 16);
-            this.sizeBiochemistry.Name = "sizeBiochemistry";
-            this.sizeBiochemistry.Size = new System.Drawing.Size(827, 99);
-            this.sizeBiochemistry.TabIndex = 0;
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.Location = new System.Drawing.Point(838, 8);
+            this.helpIcon1.Name = "helpIcon1";
+            this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.TabIndex = 6;
             // 
             // GenerateTestDataUI
             // 
@@ -269,5 +280,6 @@
         private System.Windows.Forms.Panel pOutputDirectory;
         private System.Windows.Forms.Label lblDirectory;
         private System.Windows.Forms.Button btnBrowse;
+        private ReusableUIComponents.HelpIcon helpIcon1;
     }
 }
