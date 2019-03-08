@@ -58,7 +58,7 @@ namespace CatalogueManager.Menus
             Items.Add(addPermission);
 
             Items.Add(new ToolStripSeparator());
-            Items.Add("View Extract", null, (s,e)=> _activator.ViewDataSample(new ViewTableInfoExtractUICollection(tableInfo,ViewType.TOP_100)));
+            Add(new ExecuteCommandViewData(_activator, tableInfo));
 
             Add(new ExecuteCommandScriptTable(_activator, tableInfo));
 

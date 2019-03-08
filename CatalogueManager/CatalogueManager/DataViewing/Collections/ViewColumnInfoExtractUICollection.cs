@@ -13,6 +13,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
+using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -70,13 +71,16 @@ namespace CatalogueManager.DataViewing.Collections
 
         public string GetSql()
         {
-            var qb = new QueryBuilder(null, null);
+            var qb = new QueryBuilder(null, null,new []{ColumnInfo.TableInfo});
 
             if (ViewType == ViewType.TOP_100)
                 qb.TopX = 100;
 
-            qb.AddColumn(new ColumnInfoToIColumn(ColumnInfo));
-            
+            if (ViewType == ViewType.Distribution)
+                AddDistributionColumns(qb);
+            else
+                qb.AddColumn(new ColumnInfoToIColumn(ColumnInfo));
+
             var filter = GetFilterIfAny();
             if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
                 qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null, new[] { filter }, FilterContainerOperation.AND);
@@ -90,6 +94,33 @@ namespace CatalogueManager.DataViewing.Collections
                 sql += " GROUP BY " + ColumnInfo;
 
             return sql;
+        }
+
+        private void AddDistributionColumns(QueryBuilder qb)
+        {
+
+            qb.AddColumn(new SpontaneouslyInventedColumn("CountTotal", "count(1)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn("CountNull", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " IS NULL THEN 1 ELSE 0  END)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn("CountZero", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " = 0 THEN 1  ELSE 0 END)"));
+
+            qb.AddColumn(new SpontaneouslyInventedColumn("Max", "max(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn("Min", "min(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+
+            switch (ColumnInfo.GetQuerySyntaxHelper().DatabaseType)
+            {
+                case DatabaseType.MicrosoftSQLServer:
+                    qb.AddColumn(new SpontaneouslyInventedColumn("stdev ", "stdev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+                    break;
+                case DatabaseType.MySql:
+                case DatabaseType.Oracle:
+                    qb.AddColumn(new SpontaneouslyInventedColumn("stddev ", "stddev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
+            qb.AddColumn(new SpontaneouslyInventedColumn("avg", "avg(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+
         }
 
         public string GetTabName()

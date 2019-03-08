@@ -547,6 +547,7 @@
     <Compile Include="Menus\ContainerMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditLoadMetadataDescription.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDisableOrEnable.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewData.cs" />
     <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
     <Compile Include="Menus\FilterContainerMenu.cs" />
     <Compile Include="Menus\GovernancePeriodMenu.cs" />

@@ -550,5 +550,25 @@ namespace CatalogueLibrary.Data
         {
             _knownTableInfo = new Lazy<TableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));
         }
+
+        /// <summary>
+        /// Returns true if the Data_type is numerical (decimal or int) according to the DBMS it resides in.  Returns
+        /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything 
+        /// else goes wrong resolving the Type.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsNumerical()
+        {
+            try
+            {
+                //is it numerical?
+                var cSharpType = GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(Data_type);
+                return (cSharpType == typeof (decimal) || cSharpType == typeof (int));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
     }
 }
