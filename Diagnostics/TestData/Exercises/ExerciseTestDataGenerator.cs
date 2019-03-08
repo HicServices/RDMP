@@ -10,6 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Text;
 using CsvHelper;
+using MathNet.Numerics.Distributions;
 using ReusableLibraryCode.Progress;
 
 namespace Diagnostics.TestData.Exercises
@@ -73,7 +74,7 @@ namespace Diagnostics.TestData.Exercises
 
         protected abstract object[] GenerateTestDataRow(TestPerson p);
         protected abstract void WriteHeaders(StreamWriter sw);
-
+        readonly Normal _normalDist = new Normal(0, 0.3);
 
         /// <summary>
         /// Concatenates between <paramref name="min"/> and <paramref name="max"/> calls to the <paramref name="generator"/>
@@ -94,6 +95,35 @@ namespace Diagnostics.TestData.Exercises
 
             return sb.ToString().Trim();
         }
+
+        
+
+        /// <summary>
+        /// returns random number between -1 and 1 with normal distribution (more numbers near 0 than near 1/-1).  The standard
+        /// deviation is 0.3.  Any values outside the range (5 in 10,000 or so) are adjusted to -1 or 1.
+        /// </summary>
+        /// <returns></returns>
+        public double GetGaussian()
+        {
+            return Math.Min(Math.Max(-1,_normalDist.Sample()),1);
+        }
+
+
+        /// <summary>
+        /// returns random number between lowerBoundary and upperBoundary with a gaussian distribution around the middle
+        /// </summary>
+        /// <returns></returns>
+        public double GetGaussian(double lowerBoundary, double upperBoundary)
+        {
+            if(upperBoundary< lowerBoundary)
+                throw new ArgumentException("lower must be lower than upper boundary");
+
+            double distributionZeroToOne = (GetGaussian() + 1)/2;
+
+            double range = upperBoundary - lowerBoundary;
+            return (distributionZeroToOne * range) + lowerBoundary;
+        }
+
 
         /// <summary>
         /// Returns a random sentence.  There are 391 available.  They were created by https://randomwordgenerator.com/sentence.php

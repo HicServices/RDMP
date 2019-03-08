@@ -7,7 +7,7 @@ namespace Diagnostics.TestData.Exercises
     /// <summary>
     /// Test data based on the Scottish Vascular Labs CARSCAN database table
     /// </summary>
-    class CarotidArteryScanReportExerciseTestData : ExerciseTestDataGenerator
+    public class CarotidArteryScanReportExerciseTestData : ExerciseTestDataGenerator
     {
         private Random r = new Random();
         private int id = 0;
@@ -52,8 +52,8 @@ namespace Diagnostics.TestData.Exercises
             results[18] = id++; //id
             results[19] = p.CHI; //PatientID
             results[20] = 0; //SUMMARY
-            results[21] = 0; //LAST_AUTH_BY
-            results[22] = 0; //LAST_AUTH_DT
+            results[21] = r.Next(0,99999); //LAST_AUTH_BY
+            results[22] = TestPerson.GetRandomDateAfter(appointment.StartDate,r); //LAST_AUTH_DT
             results[23] = 0; //CV_FILE
             results[24] = 0; //L_CC_STEN_S
             results[25] = 0; //CV_DT
