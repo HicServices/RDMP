@@ -5,9 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
+using System.Linq;
 using System.Text;
 using CsvHelper;
 using MathNet.Numerics.Distributions;
@@ -127,6 +129,19 @@ namespace Diagnostics.TestData.Exercises
         protected int GetGaussianInt(double lowerBoundary, double upperBoundary)
         {
             return (int) GetGaussian(lowerBoundary, upperBoundary);
+        }
+
+
+        /// <summary>
+        /// returns <paramref name="swapFor"/> if <see cref="swapIfIn"/> contains the input <paramref name="randomInt"/> (otherwise returns the input)
+        /// </summary>
+        /// <param name="randomInt"></param>
+        /// <param name="swapIfIn"></param>
+        /// <param name="swapFor"></param>
+        /// <returns></returns>
+        protected int Swap(int randomInt, IEnumerable<int> swapIfIn, int swapFor)
+        {
+            return swapIfIn.Contains(randomInt) ? swapFor : randomInt;
         }
 
         /// <summary>
@@ -544,6 +559,54 @@ W,Western Isles
 X,Common Service Agency
 Y,Dumfries and Galloway
 Z,Shetland");
+
+
+            File.WriteAllText(Path.Combine(dir.FullName, "z_PCStenosis.csv"),
+@"Code,CodeValueDescription
+1,Normal
+2,Minimal disease
+3,30% < 50%
+4,50% < 70%
+5,70% < 99%
+6,Occluded
+9,Unsure");
+
+            File.WriteAllText(Path.Combine(dir.FullName, "z_ICStenosisLookup.csv"),
+@"Code Type Description,Code,CodeValueDescription
+%stenosis Carotid Artery Scan,1,Normal
+%stenosis Carotid Artery Scan,2,Minimal disease
+%stenosis Carotid Artery Scan,3,30% < 50%
+%stenosis Carotid Artery Scan,4,50% < 70%
+%stenosis Carotid Artery Scan,5,70% < 99%
+%stenosis Carotid Artery Scan,6,Occluded
+%stenosis Carotid Artery Scan,8,See report text
+%stenosis Carotid Artery Scan,9,Unsure");
+
+            File.WriteAllText(Path.Combine(dir.FullName, "z_VertflowLookup.csv"),
+@"Code,CodeValueDescription
+1,Cephalad
+2,Reversed
+3,Not Detected
+4,See report text");
+            
+            File.WriteAllText(Path.Combine(dir.FullName, "z_StenosisLookup.csv"),
+@"Code,CodeValueDescription
+1,Normal
+2,Minimum
+3,Moderate
+4,Severe
+5,Occluded
+9,Not seen
+6,See report text");
+            
+            File.WriteAllText(Path.Combine(dir.FullName, "z_PlaqueLookup.csv"),
+@"Code,CodeValueDescription
+1,I
+2,II
+3,III
+4,IV
+9,Nil
+8,Not applicable");
         }
 
     }

@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using System.Linq;
 using System.Text;
 
 namespace Diagnostics.TestData.Exercises
@@ -15,20 +16,7 @@ namespace Diagnostics.TestData.Exercises
         protected override object[] GenerateTestDataRow(TestPerson p)
         {
             object[] results = new object[68];
-
-/*            TestBiochemistrySample randomSample = new TestBiochemistrySample(r);
-
-            results[0] = p.CHI;
-            results[1] = BulkTestsData.GetRandomLetter(true, r);
-            results[2] = p.GetRandomDateDuringLifetime(r);
-            results[3] = randomSample.Sample_type;
-            results[4] = randomSample.Test_code;
-            results[5] = randomSample.Result;
-            results[6] = GetRandomLabNumber();
-            results[7] = randomSample.Units;
-            results[8] = randomSample.ReadCodeValue;
-            results[9] = randomSample.ReadCodeDescription;*/
-
+            
             var appointment = p.GetRandomAppointment(r);
             
             results[0] = appointment.Identifier; //RECORD_NUMBER
@@ -74,14 +62,14 @@ namespace Diagnostics.TestData.Exercises
             results[40] = GetGaussian(0,3); //L_AC_RATIO
             results[41] = GetGaussian(0,10); //R_BD_RATIO
             results[42] = GetGaussian(0,5); //R_AC_RATIO
-            results[43] = Math.Max(1, GetGaussianInt(-5, 9)); //L_CC_STENOSIS   (lots of 1's some non ones
+            results[43] = Swap(Math.Max(1, GetGaussianInt(-5, 9)), new[] { 6, 7, 8 }, 1); //L_CC_STENOSIS   (lots of 1's some non ones but no 6,7 or 8s
             results[44] = GetGaussian(0,2); //L_CC_PEAK_SYS
             results[45] = GetGaussian(0,0.09); //L_GetGaussian(0,2);
-            results[46] = GetGaussianInt(1,8); //L_IC_STENOSIS   
+            results[46] = Swap(GetGaussianInt(1,8),new[]{7},9); //L_IC_STENOSIS   
             results[47] = GetGaussian(0,4); //L_IC_PEAK_SYS
             results[48] = GetGaussian(0,4); //L_IC_END_DIA
             results[49] = Math.Max(1, GetGaussianInt(0, 9)); //L_EC_STENOSIS
-            results[50] = Math.Max(1, GetGaussianInt(0, 9)); ; //L_PLAQUE
+            results[50] = Swap(Math.Max(1, GetGaussianInt(0, 9)), new[] { 5,6,7 }, 9); ; //L_PLAQUE
             results[51] = Math.Min(GetGaussianInt(1, 20), 8); //L_SYMPTOMS
             results[52] = 0; //L_BRUIT
             results[53] = 0; //L_CC_STEN_A
@@ -89,21 +77,19 @@ namespace Diagnostics.TestData.Exercises
             results[55] = Math.Max(1, GetGaussianInt(-5, 4)); ; //R_VERT_ARTERY
             results[56] = 0; //R_BRUIT
             results[57] = Math.Min(GetGaussianInt(1, 20), 8); //R_SYMPTOMS
-            results[58] = Math.Max(1, GetGaussianInt(0, 9));//R_PLAQUE
+            results[58] = Swap(Math.Max(1, GetGaussianInt(0, 9)), new[] { 5, 6, 7 }, 9);//R_PLAQUE
             results[59] = 0; //L_CC_STEN_C
             results[60] = Math.Max(1, GetGaussianInt(-5, 9)); ; //R_EC_STENOSIS
             results[61] = 0; //R_IC_PEAK_SYS
-            results[62] = 0; //R_IC_STENOSIS
+            results[62] = Swap(GetGaussianInt(1, 8),new[]{7},9); //R_IC_STENOSIS
             results[63] = GetGaussian(0,0.2); //R_CC_END_DIA
             results[64] = GetGaussian(0, 2); ; //R_CC_PEAK_SYS
-            results[65] = Math.Max(1, GetGaussianInt(-5, 9)); //R_CC_STENOSIS
+            results[65] = Swap(Math.Max(1, GetGaussianInt(-5, 9)),new []{6,7,8},1); //R_CC_STENOSIS
             results[66] = Math.Max(1, GetGaussianInt(-5, 4)); //L_VERT_ARTERY
             results[67] = GetGaussian(0, 2); //R_IC_END_DIA
 
             return results;
         }
-
-        
 
 
         protected override void WriteHeaders(StreamWriter sw)
