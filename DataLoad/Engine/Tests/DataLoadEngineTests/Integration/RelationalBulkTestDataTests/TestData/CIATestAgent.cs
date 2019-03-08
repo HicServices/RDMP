@@ -10,12 +10,13 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using Diagnostics.TestData;
 using FAnsi.Discovery;
 using ReusableLibraryCode;
 
-namespace Diagnostics.TestData.Relational
+namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
 {
-    public class CIATestAgent
+    class CIATestAgent
     {
         public int PKAgentID;
         public string AgentCodeName;

@@ -6,9 +6,9 @@
 
 using System.Data;
 
-namespace Diagnostics.TestData.Relational
+namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
 {
-    public class CIATestEvent_AgentLinkTable
+    class CIATestEvent_AgentLinkTable
     {
         public string PKAgencyCodename;
         public CIATestClearenceLevel PKClearenceLevel;

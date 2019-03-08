@@ -319,6 +319,13 @@
     <Compile Include="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
     <Compile Include="Integration\PrematureLoadEnderTests.cs" />
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestAgent.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestAgentEquipment.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent_AgentLinkTable.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestInformant.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestReport.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\RelationalBulkTestData.cs" />
     <Compile Include="Integration\RemoteDatabaseAttacherTests.cs" />
     <Compile Include="Integration\RuntimeTaskFactoryTests.cs" />
     <Compile Include="Integration\SafePrimaryKeyCollisionResolverMutilationTests.cs" />

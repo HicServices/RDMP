@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
+using Diagnostics.TestData;
 using FAnsi.Discovery;
 
-namespace Diagnostics.TestData.Relational
+namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
 {
-    public class CIATestInformant
+    class CIATestInformant
     {
         public int ID;
         public string Name;

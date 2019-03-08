@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
-using Diagnostics.TestData.Relational;
+using DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData;
 using NUnit.Framework;
 using Tests.Common;
 

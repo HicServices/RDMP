@@ -197,13 +197,6 @@
     <Compile Include="TestData\Exercises\IExerciseTestIdentifiers.cs" />
     <Compile Include="TestData\Exercises\PrescribingExerciseTestData.cs" />
     <Compile Include="TestData\Exercises\ExerciseTestIdentifiers.cs" />
-    <Compile Include="TestData\Relational\CIATestAgent.cs" />
-    <Compile Include="TestData\Relational\CIATestAgentEquipment.cs" />
-    <Compile Include="TestData\Relational\CIATestEvent.cs" />
-    <Compile Include="TestData\Relational\CIATestEvent_AgentLinkTable.cs" />
-    <Compile Include="TestData\Relational\CIATestInformant.cs" />
-    <Compile Include="TestData\Relational\CIATestReport.cs" />
-    <Compile Include="TestData\Relational\RelationalBulkTestData.cs" />
     <Compile Include="TestData\TestAppointment.cs" />
     <Compile Include="TestData\TestBiochemistrySample.cs" />
     <Compile Include="TestData\Postcode.cs" />

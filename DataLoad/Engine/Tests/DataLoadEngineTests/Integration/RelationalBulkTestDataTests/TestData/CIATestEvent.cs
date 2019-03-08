@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
+using Diagnostics.TestData;
 using FAnsi.Discovery;
 
-namespace Diagnostics.TestData.Relational
+namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
 {
-    public class CIATestEvent
+    class CIATestEvent
     {
         public string PKAgencyCodename { get; set; }
         public CIATestClearenceLevel PKClearenceLevel { get; set; }

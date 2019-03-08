@@ -8,9 +8,9 @@ using System;
 using System.Data;
 using System.Text;
 
-namespace Diagnostics.TestData.Relational
+namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
 {
-    public class CIATestAgentEquipment
+    class CIATestAgentEquipment
     {
         public int PKFKAgentID;
         public string PKName;

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -16,9 +15,9 @@ using FAnsi.Discovery;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace Diagnostics.TestData.Relational
+namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
 {
-    public class RelationalBulkTestData
+    class RelationalBulkTestData
     {
         private readonly CatalogueRepository _repository;
         public readonly DiscoveredDatabase Database;
