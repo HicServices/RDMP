@@ -108,12 +108,12 @@ namespace Diagnostics.TestData.Exercises
             return Math.Min(Math.Max(-1,_normalDist.Sample()),1);
         }
 
-
         /// <summary>
         /// returns random number between lowerBoundary and upperBoundary with a gaussian distribution around the middle
         /// </summary>
+        /// <param name="digits">The number of decimal places to have in the number</param>
         /// <returns></returns>
-        public double GetGaussian(double lowerBoundary, double upperBoundary)
+        public double GetGaussian(double lowerBoundary, double upperBoundary, int digits = 2)
         {
             if(upperBoundary< lowerBoundary)
                 throw new ArgumentException("lower must be lower than upper boundary");
@@ -121,9 +121,13 @@ namespace Diagnostics.TestData.Exercises
             double distributionZeroToOne = (GetGaussian() + 1)/2;
 
             double range = upperBoundary - lowerBoundary;
-            return (distributionZeroToOne * range) + lowerBoundary;
+            return Math.Round((distributionZeroToOne * range) + lowerBoundary,digits);
         }
 
+        protected int GetGaussianInt(double lowerBoundary, double upperBoundary)
+        {
+            return (int) GetGaussian(lowerBoundary, upperBoundary);
+        }
 
         /// <summary>
         /// Returns a random sentence.  There are 391 available.  They were created by https://randomwordgenerator.com/sentence.php
