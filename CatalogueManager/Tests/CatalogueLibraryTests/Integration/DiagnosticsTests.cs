@@ -68,6 +68,9 @@ namespace CatalogueLibraryTests.Integration
             a = a.Select(e => t.GetGaussian()).OrderBy(e => e).ToArray();
 
             Console.WriteLine(string.Join(Environment.NewLine, a));
+
+            Assert.GreaterOrEqual(a.Min(),-1);
+            Assert.LessOrEqual(a.Max(), 1);
         }
         [Test]
         public void TestGaussianRange()
@@ -79,6 +82,10 @@ namespace CatalogueLibraryTests.Integration
             a = a.Select(e => t.GetGaussian(10,20)).OrderBy(e => e).ToArray();
 
             Console.WriteLine(string.Join(Environment.NewLine, a));
+
+
+            Assert.GreaterOrEqual(a.Min(), 10);
+            Assert.LessOrEqual(a.Max(), 20);
         }
     }
 
