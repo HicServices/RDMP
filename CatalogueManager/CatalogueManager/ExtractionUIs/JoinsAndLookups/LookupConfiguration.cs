@@ -129,9 +129,6 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             olvExtractionInformations.ClearObjects();
             olvExtractionInformations.AddObjects(allExtractionInformationFromCatalogue.ToArray());
             
-            btnAddExistingTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo);
-            toolTip.SetToolTip(btnAddExistingTableInfo,"Choose existing TableInfo");
-            
             btnImportNewTableInfo.Image = activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
             toolTip.SetToolTip(btnImportNewTableInfo, "Import new...");
 
@@ -140,39 +137,40 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             pictureBox1.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
             tbCatalogue.Text = databaseObject.ToString();
 
+            cbxLookup.SetUp(activator.CoreChildProvider.AllTableInfos);
+
             UpdateValidityAssesment();
         }
         
-        private void btnAddExistingTableInfo_Click(object sender, EventArgs e)
+        public void SetLookupTableInfo(TableInfo t,bool setComboBox = true)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>(), false, false);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-                SetLookupTableInfo((TableInfo) dialog.Selected);
-        }
-
-        public void SetLookupTableInfo(TableInfo t)
-        {
-            if(t.IsTableValuedFunction)
+            if(t != null && t.IsTableValuedFunction)
             {
                 WideMessageBox.Show("Lookup table not valid","Table '" + t + "' is a TableValuedFunction, you cannot use it as a lookup table");
                 return;
             }
-
-            tbLookupTableInfo.Text = t.ToString();
+            
+            if(setComboBox)
+                cbxLookup.SelectedItem = t;
 
             olvLookupColumns.ClearObjects();
-            olvLookupColumns.AddObjects(t.ColumnInfos);
 
-            SetStage(LookupCreationStage.DragAPrimaryKey);
+            if (t != null)
+            {
+                olvLookupColumns.AddObjects(t.ColumnInfos);
 
-            pk1.IsValidGetter = c => c.TableInfo_ID == t.ID;
-            pk2.IsValidGetter = c => c.TableInfo_ID == t.ID;
-            pk3.IsValidGetter = c => c.TableInfo_ID == t.ID;
-            
-            fk1.IsValidGetter = c => c.TableInfo_ID != t.ID;
-            fk2.IsValidGetter = c => c.TableInfo_ID != t.ID;
-            fk3.IsValidGetter = c => c.TableInfo_ID != t.ID;
+                SetStage(LookupCreationStage.DragAPrimaryKey);
+
+                pk1.IsValidGetter = c => c.TableInfo_ID == t.ID;
+                pk2.IsValidGetter = c => c.TableInfo_ID == t.ID;
+                pk3.IsValidGetter = c => c.TableInfo_ID == t.ID;
+
+                fk1.IsValidGetter = c => c.TableInfo_ID != t.ID;
+                fk2.IsValidGetter = c => c.TableInfo_ID != t.ID;
+                fk3.IsValidGetter = c => c.TableInfo_ID != t.ID;
+            }
+            else
+                SetStage(LookupCreationStage.ChooseLookupTable);
         }
 
         private void btnImportNewTableInfo_Click(object sender, EventArgs e)
@@ -180,8 +178,8 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             var importDialog = new ImportSQLTable(_activator,false);
 
             if(importDialog.ShowDialog() == DialogResult.OK)
-                if(importDialog.TableInfoCreatedIfAny != null)
-                    SetLookupTableInfo(importDialog.TableInfoCreatedIfAny);
+                if (importDialog.TableInfoCreatedIfAny != null)
+                    cbxLookup.SelectedItem = importDialog.TableInfoCreatedIfAny;
         }
 
         private void SetStage(LookupCreationStage newStage)
@@ -517,6 +515,11 @@ Only define secondary columns if you really need them! if any of the key fields 
             if(o != null)
                 _activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
 
+        }
+
+        private void cbxLookup_SelectedItemChanged(object sender, EventArgs e)
+        {
+            SetLookupTableInfo((TableInfo) cbxLookup.SelectedItem,false);
         }
     }
 

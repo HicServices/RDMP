@@ -40,12 +40,12 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.olvDescriptionsColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvLookupColumns = new BrightIdeasSoftware.ObjectListView();
             this.olvLookupNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.btnAddExistingTableInfo = new System.Windows.Forms.Button();
             this.btnImportNewTableInfo = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.cbxLookup = new MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox();
             this.label3 = new System.Windows.Forms.Label();
+            this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.tbLookupTableInfo = new System.Windows.Forms.TextBox();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.tbCatalogue = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -180,15 +180,6 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.olvLookupNameColumn.Groupable = false;
             this.olvLookupNameColumn.Text = "ColumnInfos";
             // 
-            // btnAddExistingTableInfo
-            // 
-            this.btnAddExistingTableInfo.Location = new System.Drawing.Point(409, 24);
-            this.btnAddExistingTableInfo.Name = "btnAddExistingTableInfo";
-            this.btnAddExistingTableInfo.Size = new System.Drawing.Size(26, 26);
-            this.btnAddExistingTableInfo.TabIndex = 148;
-            this.btnAddExistingTableInfo.UseVisualStyleBackColor = true;
-            this.btnAddExistingTableInfo.Click += new System.EventHandler(this.btnAddExistingTableInfo_Click);
-            // 
             // btnImportNewTableInfo
             // 
             this.btnImportNewTableInfo.Location = new System.Drawing.Point(441, 24);
@@ -200,12 +191,12 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // groupBox1
             // 
+            this.groupBox1.Controls.Add(this.cbxLookup);
             this.groupBox1.Controls.Add(this.label3);
+            this.groupBox1.Controls.Add(this.label6);
             this.groupBox1.Controls.Add(this.label2);
-            this.groupBox1.Controls.Add(this.tbLookupTableInfo);
             this.groupBox1.Controls.Add(this.olvLookupColumns);
             this.groupBox1.Controls.Add(this.btnImportNewTableInfo);
-            this.groupBox1.Controls.Add(this.btnAddExistingTableInfo);
             this.groupBox1.Location = new System.Drawing.Point(3, 3);
             this.groupBox1.Name = "groupBox1";
             this.groupBox1.Size = new System.Drawing.Size(473, 234);
@@ -213,6 +204,15 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "1.Choose Lookup Table (contains the codes and descriptions e.g. T = Tayside, F = " +
     "Fife";
+            // 
+            // cbxLookup
+            // 
+            this.cbxLookup.Location = new System.Drawing.Point(9, 26);
+            this.cbxLookup.Name = "cbxLookup";
+            this.cbxLookup.SelectedItem = null;
+            this.cbxLookup.Size = new System.Drawing.Size(426, 24);
+            this.cbxLookup.TabIndex = 152;
+            this.cbxLookup.SelectedItemChanged += new System.EventHandler<System.EventArgs>(this.cbxLookup_SelectedItemChanged);
             // 
             // label3
             // 
@@ -225,6 +225,16 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.label3.TabIndex = 151;
             this.label3.Text = "(Columns)";
             // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F, System.Drawing.FontStyle.Italic, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.label6.Location = new System.Drawing.Point(435, 51);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(36, 13);
+            this.label6.TabIndex = 151;
+            this.label6.Text = "Import";
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
@@ -234,14 +244,6 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 151;
             this.label2.Text = "(Lookup Table)";
-            // 
-            // tbLookupTableInfo
-            // 
-            this.tbLookupTableInfo.Location = new System.Drawing.Point(6, 28);
-            this.tbLookupTableInfo.Name = "tbLookupTableInfo";
-            this.tbLookupTableInfo.ReadOnly = true;
-            this.tbLookupTableInfo.Size = new System.Drawing.Size(397, 20);
-            this.tbLookupTableInfo.TabIndex = 150;
             // 
             // pictureBox1
             // 
@@ -318,6 +320,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // fk3
             // 
+            this.fk3.IsValidGetter = null;
             this.fk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
             this.fk3.Location = new System.Drawing.Point(826, 369);
             this.fk3.Name = "fk3";
@@ -326,6 +329,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // fk2
             // 
+            this.fk2.IsValidGetter = null;
             this.fk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
             this.fk2.Location = new System.Drawing.Point(826, 328);
             this.fk2.Name = "fk2";
@@ -334,6 +338,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // fk1
             // 
+            this.fk1.IsValidGetter = null;
             this.fk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
             this.fk1.Location = new System.Drawing.Point(826, 285);
             this.fk1.Name = "fk1";
@@ -342,6 +347,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // pk2
             // 
+            this.pk2.IsValidGetter = null;
             this.pk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
             this.pk2.Location = new System.Drawing.Point(575, 328);
             this.pk2.Name = "pk2";
@@ -350,6 +356,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // pk3
             // 
+            this.pk3.IsValidGetter = null;
             this.pk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
             this.pk3.Location = new System.Drawing.Point(575, 369);
             this.pk3.Name = "pk3";
@@ -358,6 +365,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // 
             // pk1
             // 
+            this.pk1.IsValidGetter = null;
             this.pk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
             this.pk1.Location = new System.Drawing.Point(575, 285);
             this.pk1.Name = "pk1";
@@ -434,12 +442,10 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbCollation;
         private System.Windows.Forms.Label label13;
-        private System.Windows.Forms.Button btnAddExistingTableInfo;
         private System.Windows.Forms.Button btnImportNewTableInfo;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbLookupTableInfo;
         private OLVColumn olvLookupNameColumn;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.TextBox tbCatalogue;
@@ -459,5 +465,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
         private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.Label label6;
+        private MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox cbxLookup;
     }
 }

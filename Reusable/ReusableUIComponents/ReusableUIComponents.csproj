@@ -304,7 +304,6 @@
     <Compile Include="ServerDatabaseTableSelectorDialog.Designer.cs">
       <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="Heatmapping\ExampleData.cs" />
     <Compile Include="Heatmapping\HeatmapUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

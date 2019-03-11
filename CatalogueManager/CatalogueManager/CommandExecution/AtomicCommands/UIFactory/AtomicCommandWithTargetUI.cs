@@ -6,19 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
@@ -47,16 +40,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
             lblName.Text = name;
             
             helpIcon1.SetHelpText(_command.GetCommandName(),_command.GetCommandHelp());
-            
-            suggestComboBox1.DataSource = selection;
-            suggestComboBox1.PropertySelector = sel => sel.Cast<T>().Select(propertySelector);
-            suggestComboBox1.SelectedIndex = -1;
 
-            
+            selectIMapsDirectlyToDatabaseTableComboBox1.SetUp(_selection.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
+            selectIMapsDirectlyToDatabaseTableComboBox1.SelectedItemChanged += suggestComboBox1_SelectedIndexChanged;
             lblGo.Enabled = false;
 
             Enabled = _selection.Any();
-
         }
 
         private void lblGo_Click(object sender, EventArgs e)
@@ -83,19 +72,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
 
         private void suggestComboBox1_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var comboBox = sender as ComboBox;
-            if (comboBox != null)
-            {
-                lblGo.Enabled = comboBox.SelectedIndex != -1;
-                _command.SetTarget((DatabaseEntity) comboBox.SelectedItem);
-            }
+            var t = (DatabaseEntity) selectIMapsDirectlyToDatabaseTableComboBox1.SelectedItem;
+
+            if(t != null)
+                _command.SetTarget(t);
+
+            lblGo.Enabled = t != null;
         }
 
-        private void lPick_Click(object sender, EventArgs e)
-        {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_selection.Cast<IMapsDirectlyToDatabaseTable>(), false, false);
-            if (dialog.ShowDialog() == DialogResult.OK)
-                suggestComboBox1.SelectedItem = dialog.Selected;
-        }
     }
 }

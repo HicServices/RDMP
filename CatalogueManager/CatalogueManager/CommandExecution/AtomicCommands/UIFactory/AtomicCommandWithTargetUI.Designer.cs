@@ -33,9 +33,8 @@
             this.lblName = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblGo = new System.Windows.Forms.Label();
-            this.suggestComboBox1 = new ReusableUIComponents.SuggestComboBox();
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
-            this.lPick = new System.Windows.Forms.Label();
+            this.selectIMapsDirectlyToDatabaseTableComboBox1 = new MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbCommandIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -75,20 +74,6 @@
             this.lblGo.MouseEnter += new System.EventHandler(this.lblGo_MouseEnter);
             this.lblGo.MouseLeave += new System.EventHandler(this.lblGo_MouseLeave);
             // 
-            // suggestComboBox1
-            // 
-            this.suggestComboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.suggestComboBox1.FilterRule = null;
-            this.suggestComboBox1.FormattingEnabled = true;
-            this.suggestComboBox1.Location = new System.Drawing.Point(28, 20);
-            this.suggestComboBox1.Name = "suggestComboBox1";
-            this.suggestComboBox1.PropertySelector = null;
-            this.suggestComboBox1.Size = new System.Drawing.Size(322, 21);
-            this.suggestComboBox1.SuggestBoxHeight = 96;
-            this.suggestComboBox1.SuggestListOrderRule = null;
-            this.suggestComboBox1.TabIndex = 4;
-            this.suggestComboBox1.SelectedIndexChanged += new System.EventHandler(this.suggestComboBox1_SelectedIndexChanged);
-            // 
             // helpIcon1
             // 
             this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
@@ -97,26 +82,22 @@
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.TabIndex = 6;
             // 
-            // lPick
+            // selectIMapsDirectlyToDatabaseTableComboBox1
             // 
-            this.lPick.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.lPick.BackColor = System.Drawing.Color.White;
-            this.lPick.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lPick.Location = new System.Drawing.Point(351, 20);
-            this.lPick.Margin = new System.Windows.Forms.Padding(0);
-            this.lPick.Name = "lPick";
-            this.lPick.Size = new System.Drawing.Size(18, 21);
-            this.lPick.TabIndex = 8;
-            this.lPick.Text = "...";
-            this.lPick.Click += new System.EventHandler(this.lPick_Click);
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.Location = new System.Drawing.Point(25, 17);
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.Name = "selectIMapsDirectlyToDatabaseTableComboBox1";
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.SelectedItem = null;
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.Size = new System.Drawing.Size(350, 24);
+            this.selectIMapsDirectlyToDatabaseTableComboBox1.TabIndex = 10;
             // 
             // AtomicCommandWithTargetUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lPick);
+            this.Controls.Add(this.selectIMapsDirectlyToDatabaseTableComboBox1);
             this.Controls.Add(this.helpIcon1);
-            this.Controls.Add(this.suggestComboBox1);
             this.Controls.Add(this.lblGo);
             this.Controls.Add(this.lblName);
             this.Controls.Add(this.pbCommandIcon);
@@ -133,8 +114,7 @@
         private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label lblGo;
-        private ReusableUIComponents.SuggestComboBox suggestComboBox1;
         private ReusableUIComponents.HelpIcon helpIcon1;
-        private System.Windows.Forms.Label lPick;
+        private MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox selectIMapsDirectlyToDatabaseTableComboBox1;
     }
 }

@@ -533,7 +533,9 @@ namespace Diagnostics.TestData.Exercises
         public static void WriteLookups(DirectoryInfo dir)
         {
             File.WriteAllText(Path.Combine(dir.FullName, "z_Healthboards.csv"),
-@"A,Ayrshire and Arran
+@"
+Code,Description
+A,Ayrshire and Arran
 B,Borders
 C,Argyle and Clyde
 D,State Hospital
