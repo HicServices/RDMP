@@ -697,7 +697,15 @@ namespace MapsDirectlyToDatabaseTable
             {
                 using (var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction))
                 {
-                    return cmd.ExecuteNonQuery();
+                    var affectedRows = cmd.ExecuteNonQuery();
+                    var message = "no parameters";
+                    if (parameters != null)
+                        message = String.Join(" | ", parameters.Select(d =>
+                            String.Format("prop: '{0}' - value: '{1}'", d.Key, d.Value)
+                        ));
+
+                    _logger.Info("CUSTOM CREATE: SQL - " + sql + " {" + message + "}");
+                    return affectedRows;
                 }
             }
         }
