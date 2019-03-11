@@ -20,6 +20,7 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NLog;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Extensions;
 
 namespace MapsDirectlyToDatabaseTable
 {
@@ -65,7 +66,7 @@ namespace MapsDirectlyToDatabaseTable
         /// <inheritdoc/>
         public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            _logger.Debug("Deleted," + oTableWrapperObject.GetType().Name + "," + oTableWrapperObject.ID + "," + oTableWrapperObject);
+            _logger.Warn("DELETE: " + oTableWrapperObject.GetType().Name + ", id: " + oTableWrapperObject.ID + ", name: " + oTableWrapperObject);
             
             lock (_oLockUpdateCommands)
             {
@@ -102,8 +103,6 @@ namespace MapsDirectlyToDatabaseTable
             return toReturn;
         }
 
-        
-
         /// <inheritdoc/>
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
@@ -113,8 +112,11 @@ namespace MapsDirectlyToDatabaseTable
             if(changes.Evaluation == ChangeDescription.NoChanges)
                 return;
 
-            foreach (var c in changes.Differences)
-                _logger.Debug("Save," + oTableWrapperObject.GetType().Name + "," + oTableWrapperObject.ID + "," + c.Property + "," + c.DatabaseValue + "," + c.LocalValue);
+            var message = String.Join(" | ", changes.Differences.Select(d =>
+                    String.Format("prop: '{0}' - old: '{1}' - new: '{2}'", d.Property.Name, d.DatabaseValue, d.LocalValue)
+                ));
+            
+            _logger.Info("UPDATE: type - " + oTableWrapperObject.GetType().Name + ", id - " + oTableWrapperObject.ID + " {" + message + "}");// + "," + c.Property + "," + c.DatabaseValue + "," + c.LocalValue);
 
             lock (_oLockUpdateCommands)
             {
@@ -129,7 +131,7 @@ namespace MapsDirectlyToDatabaseTable
                     //change the transaction of the update comand to the specified transaction but only long enough to run it
                     DbTransaction transactionBefore = cmd.Transaction;
                     cmd.Transaction = managedConnection.Transaction;
-
+                    
                     int affectedRows;
                     try
                     {
@@ -141,7 +143,6 @@ namespace MapsDirectlyToDatabaseTable
                         //reset the transaction to whatever it was before
                         cmd.Transaction = transactionBefore;    
                     }
-                    
                     
                     if (affectedRows != 1)
                     {
@@ -725,8 +726,12 @@ namespace MapsDirectlyToDatabaseTable
         
         private string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
         {
-            _logger.Info("Created New," + typeof(T).Name);
-            
+            var message = String.Join(" | ", parameters.Select(d =>
+                    String.Format("prop: '{0}' - value: '{1}'", d.Key, d.Value)
+                ));
+
+            _logger.Info("CREATE: type - " + typeof(T).Name + " {" + message + "}");
+
             var query = @"INSERT INTO " + typeof (T).Name;
             if (parameters != null && parameters.Any())
             {
