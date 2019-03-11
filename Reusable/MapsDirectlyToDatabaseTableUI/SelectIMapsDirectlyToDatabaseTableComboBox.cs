@@ -26,7 +26,11 @@ namespace MapsDirectlyToDatabaseTableUI
                 //avoids circular event calls
                 if(!Equals(suggestComboBox1.SelectedItem,value))
                 {
-                    suggestComboBox1.SelectedItem = value;
+                    if (value != null)
+                        suggestComboBox1.SelectedItem = value;
+                    else
+                        suggestComboBox1.SelectedIndex = -1;
+
                     suggestComboBox1_SelectedIndexChanged(this,new EventArgs());
                 }
             }

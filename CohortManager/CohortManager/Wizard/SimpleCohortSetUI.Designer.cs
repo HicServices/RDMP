@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(SimpleCohortSetUI));
-            this.cbxCatalogues = new ReusableUIComponents.SuggestComboBox();
             this.btnDelete = new System.Windows.Forms.Button();
             this.btnAddFilter = new System.Windows.Forms.Button();
             this.ddAvailableFilters = new System.Windows.Forms.ComboBox();
@@ -44,26 +43,12 @@
             this.pbCatalogue = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pbExtractionIdentifier = new System.Windows.Forms.PictureBox();
+            this.cbxCatalogues = new MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox();
             this.gbFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFilters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCatalogue)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbExtractionIdentifier)).BeginInit();
             this.SuspendLayout();
-            // 
-            // cbxCatalogues
-            // 
-            this.cbxCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbxCatalogues.FilterRule = null;
-            this.cbxCatalogues.FormattingEnabled = true;
-            this.cbxCatalogues.Location = new System.Drawing.Point(116, 9);
-            this.cbxCatalogues.Name = "cbxCatalogues";
-            this.cbxCatalogues.PropertySelector = null;
-            this.cbxCatalogues.Size = new System.Drawing.Size(396, 21);
-            this.cbxCatalogues.SuggestBoxHeight = 96;
-            this.cbxCatalogues.SuggestListOrderRule = null;
-            this.cbxCatalogues.TabIndex = 1;
-            this.cbxCatalogues.SelectedIndexChanged += new System.EventHandler(this.cbxCatalogues_SelectedIndexChanged);
             // 
             // btnDelete
             // 
@@ -217,10 +202,22 @@
             this.pbExtractionIdentifier.TabIndex = 14;
             this.pbExtractionIdentifier.TabStop = false;
             // 
+            // cbxCatalogues
+            // 
+            this.cbxCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.cbxCatalogues.Location = new System.Drawing.Point(116, 8);
+            this.cbxCatalogues.Name = "cbxCatalogues";
+            this.cbxCatalogues.SelectedItem = null;
+            this.cbxCatalogues.Size = new System.Drawing.Size(396, 24);
+            this.cbxCatalogues.TabIndex = 17;
+            this.cbxCatalogues.SelectedItemChanged += new System.EventHandler<System.EventArgs>(this.cbxCatalogues_SelectedIndexChanged);
+            // 
             // SimpleCohortSetUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.cbxCatalogues);
             this.Controls.Add(this.pbExtractionIdentifier);
             this.Controls.Add(this.pbCatalogue);
             this.Controls.Add(this.btnLockExtractionIdentifier);
@@ -228,7 +225,6 @@
             this.Controls.Add(this.cbxColumns);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.btnDelete);
-            this.Controls.Add(this.cbxCatalogues);
             this.Controls.Add(this.label1);
             this.Name = "SimpleCohortSetUI";
             this.Size = new System.Drawing.Size(546, 345);
@@ -244,7 +240,6 @@
 
         #endregion
 
-        private ReusableUIComponents.SuggestComboBox cbxCatalogues;
         private System.Windows.Forms.Button btnDelete;
         private System.Windows.Forms.Button btnAddFilter;
         private System.Windows.Forms.ComboBox ddAvailableFilters;
@@ -259,5 +254,6 @@
         private System.Windows.Forms.PictureBox pbExtractionIdentifier;
         private System.Windows.Forms.PictureBox pbFilters;
         private System.Windows.Forms.ComboBox ddAndOr;
+        private MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox cbxCatalogues;
     }
 }

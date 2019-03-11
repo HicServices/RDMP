@@ -50,7 +50,6 @@ namespace CohortManager.Wizard
             _linkImage = FamFamFamIcons.link;
             _unlinkImage = FamFamFamIcons.link_break;
 
-            cbxCatalogues.PropertySelector = collection => collection.Cast<Catalogue>().Select(c => c.Name);
             cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
 
             btnLockExtractionIdentifier.Image = _linkImage;
@@ -62,7 +61,7 @@ namespace CohortManager.Wizard
         public void SetupFor(IActivateItems activator)
         {
             _activator = activator;
-            cbxCatalogues.DataSource = activator.CoreChildProvider.AllCatalogues;
+            cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
             pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
             pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation);
             pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter);
@@ -222,7 +221,7 @@ namespace CohortManager.Wizard
 
         public void Clear()
         {
-            cbxCatalogues.DataSource = null;
+            cbxCatalogues.SelectedItem = null;
         }
 
         public void CreateCohortSet(CohortIdentificationConfiguration cic, CohortAggregateContainer targetContainer, int order)
