@@ -276,6 +276,7 @@
     <Compile Include="ImportTests\GatherAndShareTests.cs" />
     <Compile Include="ImportTests\PluginClassTests.cs" />
     <Compile Include="ImportTests\TestImportingAnObject.cs" />
+    <Compile Include="MemoryRepositoryTests\MemoryRepositoryTests.cs" />
     <Compile Include="Integration\AllKeywordsDescribedTest.cs" />
     <Compile Include="Integration\AllObjectsHaveImages.cs" />
     <Compile Include="Integration\ArgumentTests\TestArgumentedClass.cs" />

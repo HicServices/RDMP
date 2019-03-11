@@ -187,6 +187,7 @@
     <Compile Include="IRepository.cs" />
     <Compile Include="IMapsDirectlyToDatabaseTable.cs" />
     <Compile Include="ITableRepository.cs" />
+    <Compile Include="MemoryRepository.cs" />
     <Compile Include="ObjectDeletedException.cs" />
     <Compile Include="Attributes\RelationshipAttribute.cs" />
     <Compile Include="Attributes\SqlAttribute.cs" />
