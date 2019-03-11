@@ -53,7 +53,7 @@ namespace MapsDirectlyToDatabaseTable
         //If you are calling this constructor then make sure to set the connection strings in your derrived class constructor
         public TableRepository()
         {
-            
+
         }
 
         public TableRepository(IObscureDependencyFinder obscureDependencyFinder, DbConnectionStringBuilder connectionStringBuilder)
@@ -66,17 +66,15 @@ namespace MapsDirectlyToDatabaseTable
         /// <inheritdoc/>
         public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            _logger.Warn("DELETE: " + oTableWrapperObject.GetType().Name + ", id: " + oTableWrapperObject.ID + ", name: " + oTableWrapperObject);
-            
             lock (_oLockUpdateCommands)
             {
                 //if the repository has obscure dependencies
                 if (ObscureDependencyFinder != null)
                     ObscureDependencyFinder.ThrowIfDeleteDisallowed(oTableWrapperObject);//confirm that deleting the object is allowed by the dependencies
 
-                using(var con = GetConnection())
+                using (var con = GetConnection())
                 {
-                    DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,con.Transaction);
+                    DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection, con.Transaction);
                     DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
                     int affectedRows = cmd.ExecuteNonQuery();
 
@@ -85,16 +83,19 @@ namespace MapsDirectlyToDatabaseTable
                         throw new Exception("Attempted to delete object of type " + oTableWrapperObject.GetType().Name + " from table " + oTableWrapperObject.GetType().Name + " with ID " + oTableWrapperObject.ID +
                                             " but the DELETE command resulted in " + affectedRows + " affected rows");
                     }
-                    
+
+                    _logger.Warn("DELETE: " + oTableWrapperObject.GetType().Name + ", id: " + oTableWrapperObject.ID + ", name: " + oTableWrapperObject);
                     //likewise if there are obscure depenedency handlers let them handle cascading this delete into the mists of their obscure functionality (e.g. deleting a Catalogue in CatalogueRepository would delete all Evaluations of that Catalogue in the DQE repository because they would then be orphans)
-                    if(ObscureDependencyFinder != null)
+                    if (ObscureDependencyFinder != null)
                         ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
                 }
             }
         }
 
         /// <inheritdoc/>
-        public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjectsWithParent<T, T2>(T2 parent)
+            where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2>
+            where T2 : IMapsDirectlyToDatabaseTable
         {
             var toReturn = GetAllObjectsWithParent<T>(parent);
             foreach (T v in toReturn)
@@ -106,17 +107,11 @@ namespace MapsDirectlyToDatabaseTable
         /// <inheritdoc/>
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            var r = (IRevertable) oTableWrapperObject;
+            var r = (IRevertable)oTableWrapperObject;
             var changes = r.HasLocalChanges();
-            
-            if(changes.Evaluation == ChangeDescription.NoChanges)
-                return;
 
-            var message = String.Join(" | ", changes.Differences.Select(d =>
-                    String.Format("prop: '{0}' - old: '{1}' - new: '{2}'", d.Property.Name, d.DatabaseValue, d.LocalValue)
-                ));
-            
-            _logger.Info("UPDATE: type - " + oTableWrapperObject.GetType().Name + ", id - " + oTableWrapperObject.ID + " {" + message + "}");// + "," + c.Property + "," + c.DatabaseValue + "," + c.LocalValue);
+            if (changes.Evaluation == ChangeDescription.NoChanges)
+                return;
 
             lock (_oLockUpdateCommands)
             {
@@ -124,14 +119,14 @@ namespace MapsDirectlyToDatabaseTable
                 {
                     var cmd = GetUpdateCommandFromStore(oTableWrapperObject.GetType(), managedConnection);
 
-                    PopulateUpdateCommandValuesWithCurrentState(cmd,oTableWrapperObject);
-                    
+                    PopulateUpdateCommandValuesWithCurrentState(cmd, oTableWrapperObject);
+
                     cmd.Connection = managedConnection.Connection;
 
                     //change the transaction of the update comand to the specified transaction but only long enough to run it
                     DbTransaction transactionBefore = cmd.Transaction;
                     cmd.Transaction = managedConnection.Transaction;
-                    
+
                     int affectedRows;
                     try
                     {
@@ -141,17 +136,23 @@ namespace MapsDirectlyToDatabaseTable
                     finally
                     {
                         //reset the transaction to whatever it was before
-                        cmd.Transaction = transactionBefore;    
+                        cmd.Transaction = transactionBefore;
                     }
-                    
+
                     if (affectedRows != 1)
                     {
-                        throw new Exception("Attempted to update " + oTableWrapperObject.GetType().Name+ " with ID " + oTableWrapperObject.ID + " but the UPDATE command resulted in " + affectedRows + " affected rows");
+                        throw new Exception("Attempted to update " + oTableWrapperObject.GetType().Name + " with ID " + oTableWrapperObject.ID + " but the UPDATE command resulted in " + affectedRows + " affected rows");
                     }
+        
+                    var message = String.Join(" | ", changes.Differences.Select(d =>
+                        String.Format("prop: '{0}' - old: '{1}' - new: '{2}'", d.Property.Name, d.DatabaseValue, d.LocalValue)
+                    ));
+
+                    _logger.Info("UPDATE: type - " + oTableWrapperObject.GetType().Name + ", id - " + oTableWrapperObject.ID + " {" + message + "}");
                 }
             }
         }
-        
+
         public void FigureOutMaxLengths(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             lock (_oLockUpdateCommands)
@@ -166,7 +167,7 @@ namespace MapsDirectlyToDatabaseTable
                 FieldInfo[] fields = oTableWrapperObject.GetType().GetFields();
                 //fields in database
                 DiscoveredColumn[] colsInDatabase = DiscoveredServer.GetCurrentDatabase().ExpectTable(oTableWrapperObject.GetType().Name).DiscoverColumns().ToArray();
-             
+
                 foreach (var field in fields)
                 {
                     if (field.Name.EndsWith("_MaxLength"))
@@ -175,9 +176,9 @@ namespace MapsDirectlyToDatabaseTable
 
                         DiscoveredColumn col = colsInDatabase.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName));
 
-                        if(col == null)
+                        if (col == null)
                             throw new MissingFieldException("Data class " + oTableWrapperObject.GetType().Name + " has a field called " + field.Name + " but the database did not have a field called " + expectedColName + " so we were unable to set it's max length");
-                        
+
                         //null because static!
                         field.SetValue(null, col.DataType.GetLengthIfString());
                     }
@@ -191,7 +192,7 @@ namespace MapsDirectlyToDatabaseTable
             foreach (DbParameter p in cmd.Parameters)
             {
                 PropertyInfo prop = oTableWrapperObject.GetType().GetProperty(p.ParameterName.Trim('@'));
-                
+
                 object propValue = prop.GetValue(oTableWrapperObject, null);
                 SetParameterToValue(p, propValue);
             }
@@ -229,7 +230,7 @@ namespace MapsDirectlyToDatabaseTable
                 foreach (DbParameter parameter in insertCommand.Parameters)
                 {
                     Type t = oTableWrapperObject.GetType();
-                    string property = parameter.ParameterName.TrimStart(new char[] {'@'});
+                    string property = parameter.ParameterName.TrimStart(new char[] { '@' });
 
                     PropertyInfo p = t.GetProperty(property);
 
@@ -237,22 +238,22 @@ namespace MapsDirectlyToDatabaseTable
                         throw new Exception("could not find property called " + property + " on object of type " +
                                             oTableWrapperObject.GetType().Name);
                     object value = p.GetValue(oTableWrapperObject, null);
-                    
+
                     SetParameterToValue(parameter, value);
                 }
             }
         }
 
         /// <inheritdoc/>
-        public T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable
+        public T CloneObjectInTable<T>(T oToClone) where T : IMapsDirectlyToDatabaseTable
         {
-            var repository = (TableRepository) oToClone.Repository;
+            var repository = (TableRepository)oToClone.Repository;
             return CloneObjectInTable(oToClone, repository);
         }
 
         public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
-            return StillExists(typeof(T),id);
+            return StillExists(typeof(T), id);
         }
 
         public bool StillExists(IMapsDirectlyToDatabaseTable o)
@@ -267,13 +268,13 @@ namespace MapsDirectlyToDatabaseTable
 
             //go to database to see if it exists
             using (var connection = GetConnection())
-                using ( DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT case when exists(select * FROM " + type.Name + " WHERE ID= " + id +") then 1 else 0 end", connection.Connection, connection.Transaction))
-                     exists = Convert.ToBoolean(selectCommand.ExecuteScalar());
-            
+            using (DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT case when exists(select * FROM " + type.Name + " WHERE ID= " + id + ") then 1 else 0 end", connection.Connection, connection.Transaction))
+                exists = Convert.ToBoolean(selectCommand.ExecuteScalar());
+
             return exists;
         }
 
-        public T CloneObjectInTable<T>(T oToClone, TableRepository sourceRepository) where T:IMapsDirectlyToDatabaseTable
+        public T CloneObjectInTable<T>(T oToClone, TableRepository sourceRepository) where T : IMapsDirectlyToDatabaseTable
         {
             //first of all run a select on the table so that we can get all the columns in the underlying table
             using (var con = sourceRepository.GetConnection())
@@ -286,12 +287,12 @@ namespace MapsDirectlyToDatabaseTable
 
                 DbCommand cloneCommand = DatabaseCommandHelper.GetInsertCommand(cmd);
                 cloneCommand.Connection = con.Connection;
-                
+
                 //if cloning into the same database
                 PopulateInsertCommandValuesWithCurrentState(cloneCommand, oToClone); //give the new clone a new ID
-                
+
                 cloneCommand.CommandText += ";SELECT @@IDENTITY";
-                    
+
                 try
                 {
                     return GetObjectByID<T>(int.Parse(cloneCommand.ExecuteScalar().ToString()));
@@ -302,7 +303,7 @@ namespace MapsDirectlyToDatabaseTable
                 }
             }
         }
-        
+
         /// <summary>
         /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by it's ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
         /// </summary>
@@ -313,15 +314,15 @@ namespace MapsDirectlyToDatabaseTable
         {
             //no cached result so fallback on regular method
             string fieldName = parent.GetType().Name + "_ID";
-            return GetAllObjects<T>("WHERE " + fieldName + "=" + parent.ID );
+            return GetAllObjects<T>("WHERE " + fieldName + "=" + parent.ID);
         }
 
-        public T GetObjectByID<T>(int id) where T:IMapsDirectlyToDatabaseTable
+        public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
             if (typeof(T).IsInterface)
                 throw new Exception("GetObjectByID<T> requires a proper class not an interface so that it can access the correct table");
 
-            return (T) GetObjectByID(typeof (T), id);
+            return (T)GetObjectByID(typeof(T), id);
         }
 
         public IMapsDirectlyToDatabaseTable GetObjectByID(Type type, int id)
@@ -340,29 +341,29 @@ namespace MapsDirectlyToDatabaseTable
                         throw new KeyNotFoundException("Could not find " + typename + " with ID " + id);
 
                     r.Read();
-                    
-                    var result = ConstructEntity(type,r);
+
+                    var result = ConstructEntity(type, r);
 
                     return result;
                 }
             }
         }
-        
+
         protected abstract IMapsDirectlyToDatabaseTable ConstructEntity(Type t, DbDataReader reader);
 
         private T ConstructEntity<T>(DbDataReader reader) where T : IMapsDirectlyToDatabaseTable
         {
-            if(reader == null)
+            if (reader == null)
                 throw new ArgumentNullException("reader");
 
             try
             {
-                return (T) ConstructEntity(typeof (T), reader);
+                return (T)ConstructEntity(typeof(T), reader);
             }
             catch (Exception e)
             {
                 var id = reader["ID"];
-                throw new Exception("Could not construct '" + typeof(T).Name +"' with ID="+id,e);
+                throw new Exception("Could not construct '" + typeof(T).Name + "' with ID=" + id, e);
             }
         }
 
@@ -372,17 +373,17 @@ namespace MapsDirectlyToDatabaseTable
         {
             if (_cacheMonitor.HasValidCache<T>())
                 return _cacheMonitor.GetCached<T>();
-            
+
             return _cacheMonitor.RegisterTableMonitor(this, ConstructEntity<T>);
         }
 
-        public T[] GetAllObjects<T>( string whereSQL = null) where T:IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjects<T>(string whereSQL = null) where T : IMapsDirectlyToDatabaseTable
         {
-            string typename = typeof (T).Name;
+            string typename = typeof(T).Name;
 
             //if there is whereSQL make sure it is a legit SQL where
             if (!string.IsNullOrWhiteSpace(whereSQL))
-                if(!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
+                if (!whereSQL.Trim().ToUpper().StartsWith("WHERE"))
                     throw new ArgumentException("whereSQL did not start with the word 'WHERE', it was:" + whereSQL);
 
             List<T> toReturn = new List<T>();
@@ -403,10 +404,10 @@ namespace MapsDirectlyToDatabaseTable
             return result;
         }
 
-        
+
         public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
-            return GetAllObjects(typeof (T), whereSQL, parameters).Cast<T>().ToArray();
+            return GetAllObjects(typeof(T), whereSQL, parameters).Cast<T>().ToArray();
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t, string whereSQL, Dictionary<string, object> parameters = null)
@@ -424,7 +425,7 @@ namespace MapsDirectlyToDatabaseTable
 
                 using (DbDataReader r = selectCommand.ExecuteReader())
                     while (r.Read())
-                        toReturn.Add(ConstructEntity(t,r));
+                        toReturn.Add(ConstructEntity(t, r));
             }
 
             return toReturn.ToArray();
@@ -438,7 +439,7 @@ namespace MapsDirectlyToDatabaseTable
             using (var opener = GetConnection())
             {
                 DbCommand selectCommand = DatabaseCommandHelper.GetCommand("SELECT * FROM " + typename, opener.Connection, opener.Transaction);
-          
+
                 using (DbDataReader r = selectCommand.ExecuteReader())
                     while (r.Read())
                         toReturn.Add(ConstructEntity(t, r));
@@ -465,7 +466,7 @@ namespace MapsDirectlyToDatabaseTable
             using (var opener = GetConnection())
             {
                 Dictionary<string, int> toReturn = new Dictionary<string, int>();
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT SoftwareVersion,Count(*) as countOfObjects FROM " + type.Name + " group by SoftwareVersion", opener.Connection,opener.Transaction);
+                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT SoftwareVersion,Count(*) as countOfObjects FROM " + type.Name + " group by SoftwareVersion", opener.Connection, opener.Transaction);
 
                 DbDataReader r = cmd.ExecuteReader();
 
@@ -479,7 +480,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
         {
-            return GetAllObjectsInIDList(typeof (T), ids).Cast<T>();
+            return GetAllObjectsInIDList(typeof(T), ids).Cast<T>();
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids)
@@ -489,7 +490,7 @@ namespace MapsDirectlyToDatabaseTable
             if (string.IsNullOrWhiteSpace(inList))
                 return Enumerable.Empty<IMapsDirectlyToDatabaseTable>();
 
-            return GetAllObjects(elementType," WHERE ID in (" + inList + ")");
+            return GetAllObjects(elementType, " WHERE ID in (" + inList + ")");
         }
 
         /// <inheritdoc/>
@@ -501,12 +502,12 @@ namespace MapsDirectlyToDatabaseTable
             if (obj2 == null && obj1 != null)
                 return false;
 
-            if(obj1 == null && obj2 == null)
+            if (obj1 == null && obj2 == null)
                 throw new NotSupportedException("Why are you comparing two null things against one another with this method?");
 
             if (obj1.GetType() == obj2.GetType())
             {
-                return ((IMapsDirectlyToDatabaseTable) obj1).ID == ((IMapsDirectlyToDatabaseTable) obj2).ID;
+                return ((IMapsDirectlyToDatabaseTable)obj1).ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
             }
 
             return false;
@@ -515,7 +516,7 @@ namespace MapsDirectlyToDatabaseTable
         /// <inheritdoc/>
         public int GetHashCode(IMapsDirectlyToDatabaseTable obj1)
         {
-            return obj1.GetType().GetHashCode()*obj1.ID;
+            return obj1.GetType().GetHashCode() * obj1.ID;
         }
 
         /// <summary>
@@ -525,14 +526,14 @@ namespace MapsDirectlyToDatabaseTable
         /// <returns></returns>
         public static PropertyInfo[] GetPropertyInfos(Type type)
         {
-            return type.GetProperties().Where(prop =>!Attribute.IsDefined(prop, typeof (NoMappingToDatabase))).ToArray();
+            return type.GetProperties().Where(prop => !Attribute.IsDefined(prop, typeof(NoMappingToDatabase))).ToArray();
         }
 
         /// <inheritdoc/>
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable localCopy)
         {
             //get new copy out of database
-            IMapsDirectlyToDatabaseTable databaseState = GetObjectByID(localCopy.GetType(),localCopy.ID);
+            IMapsDirectlyToDatabaseTable databaseState = GetObjectByID(localCopy.GetType(), localCopy.ID);
 
             Debug.Assert(localCopy.GetType() == databaseState.GetType());
 
@@ -544,10 +545,10 @@ namespace MapsDirectlyToDatabaseTable
 
                 propertyInfo.SetValue(localCopy, propertyInfo.GetValue(databaseState));
             }
-            
+
             //Mark any cached data as out of date
             var inject = localCopy as IInjectKnown;
-            if(inject != null) 
+            if (inject != null)
                 inject.ClearAllInjections();
         }
 
@@ -575,7 +576,7 @@ namespace MapsDirectlyToDatabaseTable
                 var db = propertyInfo.GetValue(dbCopy);
 
                 //don't decided that "" vs null is a legit change
-                if (local is string && string.IsNullOrWhiteSpace((string) local))
+                if (local is string && string.IsNullOrWhiteSpace((string)local))
                     local = null;
 
                 if (db is string && string.IsNullOrWhiteSpace((string)db))
@@ -583,7 +584,7 @@ namespace MapsDirectlyToDatabaseTable
 
                 if (!object.Equals(local, db))
                 {
-                    toReturn.Differences.Add(new RevertablePropertyDifference(propertyInfo,local,db));
+                    toReturn.Differences.Add(new RevertablePropertyDifference(propertyInfo, local, db));
                     toReturn.Evaluation = ChangeDescription.DatabaseCopyDifferent;
                 }
             }
@@ -593,8 +594,8 @@ namespace MapsDirectlyToDatabaseTable
 
 
         #region new
-        
-        
+
+
         public void TestConnection()
         {
             try
@@ -609,7 +610,7 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
-        public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID= null) where T : IMapsDirectlyToDatabaseTable
+        public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable
         {
             if (columnWithObjectID == null)
                 columnWithObjectID = typeof(T).Name + "_ID";
@@ -679,17 +680,17 @@ namespace MapsDirectlyToDatabaseTable
                     return Enumerable.Empty<T>();
 
 
-                var toReturn =  GetAllObjects<T>("WHERE ID in (" + String.Join(",", idsToReturn) + ")").ToList();
+                var toReturn = GetAllObjects<T>("WHERE ID in (" + String.Join(",", idsToReturn) + ")").ToList();
 
                 //this bit of hackery is if your a crazy person who hates transparency and wants something like ColumnInfo.Missing to appear in the return list instead of an empty return list
-                if(dbNullSubstition != null)
+                if (dbNullSubstition != null)
                     for (int i = 0; i < nullsFound; i++)
                         toReturn.Add(dbNullSubstition);
 
                 return toReturn;
             }
         }
-        
+
         public int Insert(string sql, Dictionary<string, object> parameters)
         {
             using (var opener = GetConnection())
@@ -720,19 +721,23 @@ namespace MapsDirectlyToDatabaseTable
                 query += ";SELECT @@IDENTITY;";
 
                 var cmd = PrepareCommand(query, parameters, opener.Connection, opener.Transaction);
-                return int.Parse(cmd.ExecuteScalar().ToString());
+
+                var message = "no parameters";
+                if (parameters != null)
+                    message = String.Join(" | ", parameters.Select(d =>
+                        String.Format("prop: '{0}' - value: '{1}'", d.Key, d.Value)
+                    ));
+
+                var newId = int.Parse(cmd.ExecuteScalar().ToString());
+
+                _logger.Info("CREATE: type - " + typeof(T).Name + " {" + message + " | newId: " + newId + "}");
+                return newId;
             }
         }
-        
+
         private string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
         {
-            var message = String.Join(" | ", parameters.Select(d =>
-                    String.Format("prop: '{0}' - value: '{1}'", d.Key, d.Value)
-                ));
-
-            _logger.Info("CREATE: type - " + typeof(T).Name + " {" + message + "}");
-
-            var query = @"INSERT INTO " + typeof (T).Name;
+            var query = @"INSERT INTO " + typeof(T).Name;
             if (parameters != null && parameters.Any())
             {
                 if (parameters.Any(kvp => kvp.Key.StartsWith("@")))
@@ -745,11 +750,11 @@ namespace MapsDirectlyToDatabaseTable
             }
             else
                 query += " DEFAULT VALUES";
-            
+
             return query;
         }
 
-        
+
 
         public int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows = true)
         {
@@ -757,7 +762,7 @@ namespace MapsDirectlyToDatabaseTable
             {
                 var cmd = PrepareCommand(deleteQuery, parameters, opener.Connection, opener.Transaction);
                 int affectedRows = cmd.ExecuteNonQuery();
-                
+
                 if (affectedRows == 0 && throwOnZeroAffectedRows)
                     throw new Exception("Deleted failed, resulted in " + affectedRows + " affected rows");
 
@@ -803,15 +808,15 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         #endregion
-        
-        public void InsertAndHydrate<T>(T toCreate, Dictionary<string,object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
+
+        public void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
             int id = InsertAndReturnID<T>(constructorParameters);
 
             var actual = GetObjectByID<T>(id);
-            
+
             //.Repository does not get included in this list because it is [NoMappingToDatabase]
-            foreach (PropertyInfo prop in GetPropertyInfos(typeof (T)))
+            foreach (PropertyInfo prop in GetPropertyInfos(typeof(T)))
                 prop.SetValue(toCreate, prop.GetValue(actual));
 
             toCreate.Repository = actual.Repository;
@@ -819,7 +824,7 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         private object ongoingConnectionsLock = new object();
-        private readonly Dictionary<Thread,IManagedConnection> ongoingConnections = new Dictionary<Thread, IManagedConnection>();
+        private readonly Dictionary<Thread, IManagedConnection> ongoingConnections = new Dictionary<Thread, IManagedConnection>();
         private readonly Dictionary<Thread, IManagedTransaction> ongoingTransactions = new Dictionary<Thread, IManagedTransaction>();
 
 
@@ -830,10 +835,10 @@ namespace MapsDirectlyToDatabaseTable
             IManagedTransaction ongoingTransaction = null;
 
             GetOngoingActivitiesFromThreadsDictionary(out ongoingConnection, out ongoingTransaction);
-            
+
             //if we are in the middle of doing stuff we can just reuse the ongoing one
             if (ongoingConnection != null && ongoingConnection.Connection.State == ConnectionState.Open)//as long as it hasn't timed out or been disposed etc
-                    return ongoingConnection;
+                return ongoingConnection;
 
             ongoingConnection = new ManagedConnection(DiscoveredServer, ongoingTransaction);
 
@@ -877,12 +882,12 @@ namespace MapsDirectlyToDatabaseTable
             if (ongoingTransaction != null)
                 throw new NotSupportedException("There is already an ongoing transaction on this Thread! Call EndTransactedConnection on the last one first");
 
-            var toReturn =  DiscoveredServer.BeginNewTransactedConnection();
+            var toReturn = DiscoveredServer.BeginNewTransactedConnection();
             ongoingTransaction = toReturn.ManagedTransaction;
             ongoingTransactions[Thread.CurrentThread] = ongoingTransaction;
 
             if (!ongoingConnections.ContainsKey(Thread.CurrentThread))
-                ongoingConnections.Add(Thread.CurrentThread,toReturn);
+                ongoingConnections.Add(Thread.CurrentThread, toReturn);
             else
                 ongoingConnections[Thread.CurrentThread] = toReturn;
 
@@ -899,7 +904,7 @@ namespace MapsDirectlyToDatabaseTable
             IManagedConnection ongoingConnection;
             GetOngoingActivitiesFromThreadsDictionary(out ongoingConnection, out ongoingTransaction);
 
-            if(ongoingTransaction == null)
+            if (ongoingTransaction == null)
                 throw new NotSupportedException("There is no ongoing transaction on this Thread, did you try to close the Transaction from another Thread? or did you maybe never start one in the first place?");
 
             if (commit)
@@ -936,19 +941,19 @@ namespace MapsDirectlyToDatabaseTable
             return (DateTime)o;
         }
 
-        Dictionary<Type,bool> _knownSupportedTypes = new Dictionary<Type,bool>();
+        Dictionary<Type, bool> _knownSupportedTypes = new Dictionary<Type, bool>();
         object oLockKnownTypes = new object();
 
         public bool SupportsObjectType(Type type)
         {
             if (!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(type))
                 throw new NotSupportedException("This method can only be passed Types derrived from IMapsDirectlyToDatabaseTable");
-            
+
             lock (oLockKnownTypes)
             {
                 if (!_knownSupportedTypes.ContainsKey(type))
-                    _knownSupportedTypes.Add(type,DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
-            
+                    _knownSupportedTypes.Add(type, DiscoveredServer.GetCurrentDatabase().ExpectTable(type.Name).Exists());
+
                 return _knownSupportedTypes[type];
             }
         }
@@ -998,7 +1003,7 @@ namespace MapsDirectlyToDatabaseTable
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Failed to GetAllObjects of Type '" + type +"'",e);
+                    throw new Exception("Failed to GetAllObjects of Type '" + type + "'", e);
                 }
 
             return toReturn.ToArray();
@@ -1015,7 +1020,7 @@ namespace MapsDirectlyToDatabaseTable
                     .Where(
                         t =>
                             typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface &&
-                            !t.Name.Contains("Spontaneous")&&IsCompatibleType(t)).ToArray();
+                            !t.Name.Contains("Spontaneous") && IsCompatibleType(t)).ToArray();
         }
 
         /// <summary>
