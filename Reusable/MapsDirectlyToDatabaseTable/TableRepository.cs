@@ -18,6 +18,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using MapsDirectlyToDatabaseTable.Versioning;
+using NLog;
 using ReusableLibraryCode;
 
 namespace MapsDirectlyToDatabaseTable
@@ -46,6 +47,8 @@ namespace MapsDirectlyToDatabaseTable
         /// </summary>
         protected Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>> Constructors = new Dictionary<Type, Func<IRepository, DbDataReader, IMapsDirectlyToDatabaseTable>>();
 
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+
         //If you are calling this constructor then make sure to set the connection strings in your derrived class constructor
         public TableRepository()
         {
@@ -62,6 +65,8 @@ namespace MapsDirectlyToDatabaseTable
         /// <inheritdoc/>
         public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
+            _logger.Debug("Deleted," + oTableWrapperObject.GetType().Name + "," + oTableWrapperObject.ID + "," + oTableWrapperObject);
+            
             lock (_oLockUpdateCommands)
             {
                 //if the repository has obscure dependencies
@@ -97,9 +102,20 @@ namespace MapsDirectlyToDatabaseTable
             return toReturn;
         }
 
+        
+
         /// <inheritdoc/>
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
+            var r = (IRevertable) oTableWrapperObject;
+            var changes = r.HasLocalChanges();
+            
+            if(changes.Evaluation == ChangeDescription.NoChanges)
+                return;
+
+            foreach (var c in changes.Differences)
+                _logger.Debug("Save," + oTableWrapperObject.GetType().Name + "," + oTableWrapperObject.ID + "," + c.Property + "," + c.DatabaseValue + "," + c.LocalValue);
+
             lock (_oLockUpdateCommands)
             {
                 using (IManagedConnection managedConnection = GetConnection())
@@ -707,8 +723,10 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
         
-        private static string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
+        private string CreateInsertStatement<T>(Dictionary<string, object> parameters) where T : IMapsDirectlyToDatabaseTable
         {
+            _logger.Info("Created New," + typeof(T).Name);
+            
             var query = @"INSERT INTO " + typeof (T).Name;
             if (parameters != null && parameters.Any())
             {
