@@ -659,7 +659,10 @@ namespace CatalogueLibrary.Providers
             var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
             var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
             var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
-
+            
+            //do we have any foreign key fields into this lookup table
+            var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
+            
             var docs = AllSupportingDocuments.Where(d => d.Catalogue_ID == c.ID).ToArray();
             var sql = AllSupportingSQL.Where(d => d.Catalogue_ID == c.ID).ToArray();
 
@@ -674,7 +677,18 @@ namespace CatalogueLibrary.Providers
                 //record the children
                 AddToDictionaries(new HashSet<object>(docs.Cast<object>().Union(sql)),descendancy.Add(documentationNode));
             }
-            
+
+            if (lookups.Any())
+            {
+                var lookupsNode = new CatalogueLookupsNode(c, lookups);
+                //add the documentations node
+                childObjects.Add(lookupsNode);
+
+
+                //record the children
+                AddToDictionaries(new HashSet<object>(lookups), descendancy.Add(lookupsNode));
+            }
+
             if(cohortAggregates.Any())
             {
                 //the cohort node is our child
@@ -975,7 +989,7 @@ namespace CatalogueLibrary.Providers
             {
                 children.Add(c);
                 c.InjectKnown(tableInfo);
-                AddChildren(c,descendancy.Add(c));
+                AddChildren(c,descendancy.Add(c).SetBetterRouteExists());
             }
 
             //finally add any credentials objects
@@ -1192,4 +1206,5 @@ namespace CatalogueLibrary.Providers
                 toReturn.Add(m, null);
         }
     }
+
 }

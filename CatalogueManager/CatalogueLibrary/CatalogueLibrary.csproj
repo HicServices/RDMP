@@ -384,6 +384,7 @@
     <Compile Include="Nodes\AllPermissionWindowsNode.cs" />
     <Compile Include="Nodes\AllStandardRegexesNode.cs" />
     <Compile Include="Nodes\ArbitraryFolderNode.cs" />
+    <Compile Include="Nodes\CatalogueLookupsNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllFreeCohortIdentificationConfigurationsNode.cs" />
     <Compile Include="Nodes\CohortNodes\AllProjectCohortIdentificationConfigurationsNode.cs" />
     <Compile Include="Nodes\CohortNodes\QueryCacheUsedByCohortIdentificationNode.cs" />

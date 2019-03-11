@@ -1624,6 +1624,7 @@
     <None Include="Icons\AllProjectCohortIdentificationConfigurationsNode.png" />
     <None Include="Icons\AllFreeCohortIdentificationConfigurationsNode.png" />
     <None Include="Icons\famfamfam\picture_save.png" />
+    <None Include="Icons\CatalogueLookupsNode.png" />
     <Content Include="Icons\File.png" />
     <None Include="Icons\Help.png" />
     <None Include="Icons\HICProjectDirectoryNode.png" />

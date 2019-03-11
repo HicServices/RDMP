@@ -56,6 +56,7 @@ namespace CatalogueManager.Icons.IconProvision
 
         CatalogueFolder,
         DocumentationNode,
+        CatalogueLookupsNode,
 
         DashboardLayout,
         DashboardControl,
