@@ -365,7 +365,6 @@
     <Compile Include="Checks\CheckEntireDataLoadProcess.cs" />
     <Compile Include="LoadExecution\SingleJobExecution.cs" />
     <Compile Include="LoadExecution\Components\Arguments\StageArgs.cs" />
-    <Compile Include="LoadExecution\Components\Runtime\StoredProcedureRuntimeTask.cs" />
     <Compile Include="LoadProcess\IDataLoadOperation.cs" />
     <Compile Include="Migration\BackfillMigrationFieldProcessor.cs" />
     <Compile Include="Migration\QueryBuilding\ReverseMigrationQueryHelper.cs" />

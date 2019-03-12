@@ -197,8 +197,6 @@ namespace CatalogueLibrary.Data.DataLoad
                     CheckForProblemsInSQLFile(notifier);
 
                     break;
-                case ProcessTaskType.StoredProcedure:
-                    break;
                 case ProcessTaskType.Attacher:
                     break;
                 case ProcessTaskType.DataProvider:
@@ -394,8 +392,6 @@ namespace CatalogueLibrary.Data.DataLoad
                 case ProcessTaskType.Executable:
                     return true;
                 case ProcessTaskType.SQLFile:
-                    return stage != LoadStage.GetFiles;
-                case ProcessTaskType.StoredProcedure:
                     return stage != LoadStage.GetFiles;
                 case ProcessTaskType.Attacher:
                     return stage == LoadStage.Mounting;

@@ -39,8 +39,6 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
                     return new ExecutableRuntimeTask(task, args);
                 case ProcessTaskType.SQLFile:
                     return new ExecuteSqlFileRuntimeTask(task, args);
-                case ProcessTaskType.StoredProcedure:
-                    return new StoredProcedureRuntimeTask(task, args, _repository);
                 case ProcessTaskType.Attacher:
                     return new AttacherRuntimeTask(task, args, _repository.MEF);
                 case ProcessTaskType.DataProvider:
