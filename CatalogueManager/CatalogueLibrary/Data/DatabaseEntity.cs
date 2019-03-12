@@ -9,14 +9,10 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Newtonsoft.Json;
 using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
@@ -43,18 +39,21 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public IRepository Repository { get; set; }
-
+        
         /// <summary>
         /// Returns <see cref="Repository"/> as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
         /// </summary>
+        [NoMappingToDatabase]
         public ICatalogueRepository CatalogueRepository
         {
             get { return Repository as ICatalogueRepository; }
         }
 
+        
         /// <summary>
         /// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
         /// </summary>
+        [NoMappingToDatabase]
         public IDataExportRepository DataExportRepository
         {
             get { return Repository as IDataExportRepository; }
