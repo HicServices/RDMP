@@ -48,36 +48,7 @@ namespace CatalogueLibraryTests.Integration
 
             c.DeleteInDatabase();
         }
-
-        [Test]
-        public void MaxLengthsSetTest()
-        {
-            Catalogue c = new Catalogue(CatalogueRepository, "bob");
-
-            try
-            {
-                Assert.AreEqual(255, Catalogue.Administrative_contact_email_MaxLength);
-                Assert.AreEqual(int.MaxValue,Catalogue.Description_MaxLength);
-
-                CatalogueItem ci = new CatalogueItem(CatalogueRepository, c, "Fisny");
-
-                try
-                {
-                    Assert.AreEqual(255,CatalogueItem.Agg_method_MaxLength);    
-                }
-                finally 
-                {
-                    ci.DeleteInDatabase();
-                }
-                
-
-            }
-            finally 
-            {
-                c.DeleteInDatabase();
-            }
-        }
-
+        
         
         [Test]
         public void update_changeNameOfCatalogue_passes()

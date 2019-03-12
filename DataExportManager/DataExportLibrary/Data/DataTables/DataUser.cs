@@ -43,13 +43,7 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
         
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Forename_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Surname_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Email_MaxLength = -1;
-
+        
         public DataUser(IDataExportRepository repository, string forename, string surname)
         {
             Repository = repository;

@@ -32,7 +32,6 @@ namespace MapsDirectlyToDatabaseTable
         protected DbConnectionStringBuilder _connectionStringBuilder;
         public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
-        static List<Type> MaxLengthsFetchedFor = new List<Type>();
         private static object _oLockUpdateCommands = new object();
         private UpdateCommandStore _updateCommandStore = new UpdateCommandStore();
 
@@ -149,40 +148,6 @@ namespace MapsDirectlyToDatabaseTable
                     }
                 }
             }
-        }
-        
-        public void FigureOutMaxLengths(IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            lock (_oLockUpdateCommands)
-            {
-                //since we are setting static fields we must keep a list of what types we have already processed the max lengths for
-                if (MaxLengthsFetchedFor.Contains(oTableWrapperObject.GetType()))
-                    return;
-
-                MaxLengthsFetchedFor.Add(oTableWrapperObject.GetType());
-
-                //fields in class
-                FieldInfo[] fields = oTableWrapperObject.GetType().GetFields();
-                //fields in database
-                DiscoveredColumn[] colsInDatabase = DiscoveredServer.GetCurrentDatabase().ExpectTable(oTableWrapperObject.GetType().Name).DiscoverColumns().ToArray();
-             
-                foreach (var field in fields)
-                {
-                    if (field.Name.EndsWith("_MaxLength"))
-                    {
-                        string expectedColName = field.Name.Substring(0, field.Name.IndexOf("_MaxLength"));
-
-                        DiscoveredColumn col = colsInDatabase.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName));
-
-                        if(col == null)
-                            throw new MissingFieldException("Data class " + oTableWrapperObject.GetType().Name + " has a field called " + field.Name + " but the database did not have a field called " + expectedColName + " so we were unable to set it's max length");
-                        
-                        //null because static!
-                        field.SetValue(null, col.DataType.GetLengthIfString());
-                    }
-                }
-            }
-
         }
 
         protected void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)

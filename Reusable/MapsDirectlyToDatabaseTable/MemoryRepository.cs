@@ -55,12 +55,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
         {
-            throw new NotImplementedException();
-        }
-
-        public void FigureOutMaxLengths(IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            throw new NotImplementedException();
+            return Objects[t];
         }
 
         public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable

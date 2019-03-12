@@ -42,17 +42,7 @@ namespace CatalogueLibrary.Data
     public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
     {
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Server_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Database_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int State_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ValidationXml_MaxLength = -1;
-
+        
         #region Database Properties
         private string _name;
         private DatabaseType _databaseType;

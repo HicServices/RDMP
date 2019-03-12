@@ -33,11 +33,7 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
     {
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int SelectSQL_MaxLength = -1;
         
-        
-
         #region Properties 
         
         private int _catalogueItemID;

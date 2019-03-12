@@ -43,9 +43,7 @@ namespace MapsDirectlyToDatabaseTable
         void SetReadOnly();
 
         //you must have a Property for each thing in your database table (With the same name)
-
-        //you may have a public static field called X_MaxLength for each of these Properties
-
+        
         //use MapsDirectlyToDatabaseTableRepository to fully utilise this interface
 
         //ensure you have a the same class name as the table name DIRECTLY

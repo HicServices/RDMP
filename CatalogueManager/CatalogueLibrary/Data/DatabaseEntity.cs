@@ -33,7 +33,6 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public int ID { get; set; }
 
-        protected bool MaxLengthSet = false;
         private bool _readonly;
 
         /// <inheritdoc/>
@@ -80,11 +79,6 @@ namespace CatalogueLibrary.Data
 
             ID = int.Parse(r["ID"].ToString()); // gets around decimals and other random crud number field types that sql returns
 
-            if (!MaxLengthSet)
-            {
-                Repository.FigureOutMaxLengths(this);
-                MaxLengthSet = true;
-            }
         }
 
         private bool HasColumn(IDataRecord reader, string columnName)

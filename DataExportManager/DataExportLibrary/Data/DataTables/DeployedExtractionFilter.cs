@@ -118,11 +118,6 @@ namespace DataExportLibrary.Data.DataTables
 
         }
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
-
         /// <summary>
         /// Creates a new empty WHERE filter in the given <paramref name="container"/> that will be used when 
         /// extracting the dataset.

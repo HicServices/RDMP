@@ -123,9 +123,6 @@ namespace CatalogueLibrary.Data.DataLoad
         #endregion
 
         
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int LocationOfFlatFiles_MaxLength = -1;
-
         #region Relationships
 
         /// <inheritdoc/>

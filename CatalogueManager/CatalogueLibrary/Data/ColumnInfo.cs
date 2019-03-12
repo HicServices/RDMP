@@ -38,23 +38,7 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class ColumnInfo : VersionedDatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
     {
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Data_type_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Format_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Digitisation_specs_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Source_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int RegexPattern_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ValidationRules_MaxLength;
-
+        
         #region Database Properties
 
         private int _tableInfoID;

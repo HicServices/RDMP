@@ -7,38 +7,21 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using CatalogueManager;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.MainFormUITabs;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.ProjectUI.DataUsers;
-using DataExportManager.ProjectUI.Graphs;
-using DataExportLibrary;
-using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.DataRelease;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Repositories;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.ProjectUI
 {
@@ -143,30 +126,7 @@ namespace DataExportManager.ProjectUI
             Project = databaseObject;
         }
 
-        #region helper methods
-        private void SetStringProperty(Control controlContainingValue, string property, object toSetOn)
-        {
-            if (toSetOn != null)
-            {
-                PropertyInfo target = toSetOn.GetType().GetProperty(property);
-                FieldInfo targetMaxLength = toSetOn.GetType().GetField(property + "_MaxLength");
-
-
-                if (target == null || targetMaxLength == null)
-                    throw new Exception("Could not find property " + property + " or it did not have a specified _MaxLength");
-
-                if (controlContainingValue.Text.Length > (int)targetMaxLength.GetValue(toSetOn))
-                    controlContainingValue.ForeColor = Color.Red;
-                else
-                {
-                    target.SetValue(toSetOn, controlContainingValue.Text, null);
-                    controlContainingValue.ForeColor = Color.Black;
-                }
-            }
-        }
-        #endregion
-
-
+        
 
         private DataTable LoadDatagridFor(Project value)
         {
@@ -251,7 +211,7 @@ namespace DataExportManager.ProjectUI
             if (toSetDescriptionOn.IsReleased)
                 return;
 
-            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", ExtractionConfiguration.Description_MaxLength, toSetDescriptionOn.Description);
+            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000, toSetDescriptionOn.Description);
 
             dialog.ShowDialog(this);
 
@@ -270,8 +230,7 @@ namespace DataExportManager.ProjectUI
             if (toSetDescriptionOn.IsReleased)
                 return;
 
-            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator of up to " + ExtractionConfiguration.Separator_MaxLength + " characters long",
-                                                     ExtractionConfiguration.Separator_MaxLength,toSetDescriptionOn.Separator);
+            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator",3,toSetDescriptionOn.Separator);
 
             dialog.ShowDialog(this);
 
