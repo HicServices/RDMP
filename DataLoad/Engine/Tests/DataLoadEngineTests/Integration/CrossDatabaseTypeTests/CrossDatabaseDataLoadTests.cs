@@ -85,7 +85,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
-            var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             
             var db = GetCleanedServer(databaseType);
@@ -269,7 +269,7 @@ MrMurder,2001-01-01,Yella");
         {
             //setup the data tables
             var defaults = new ServerDefaults(CatalogueRepository);
-            var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
 
             var db = GetCleanedServer(databaseType);

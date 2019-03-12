@@ -71,7 +71,7 @@ namespace CatalogueManager.Menus.MenuItems
 
         private void CreateNewIdentifierDumpServer(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(IdentifierDump.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID);
+            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(IdentifierDump.Database.Class1).Assembly, PermissableDefaults.IdentifierDumpServer_ID);
             cmd.Execute();
 
             if (cmd.ServerCreatedIfAny != null)

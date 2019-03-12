@@ -22,7 +22,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandCreateNewANOTable(IActivateItems activator) : base(activator)
         {
-            _anoStoreServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore);
+            _anoStoreServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
             if(_anoStoreServer == null)
                 SetImpossible("No default ANOStore has been set");

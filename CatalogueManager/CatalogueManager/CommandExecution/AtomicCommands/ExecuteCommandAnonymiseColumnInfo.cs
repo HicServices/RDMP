@@ -29,7 +29,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if (columnInfo.ANOTable_ID != null)
                 SetImpossible("ColumnInfo is already anonymised");
 
-            if(Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore) == null)
+            if(Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore) == null)
                 SetImpossible("No Default ANOStore has been configured");
         }
 

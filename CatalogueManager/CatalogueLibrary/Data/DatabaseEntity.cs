@@ -13,6 +13,7 @@ using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Runtime.CompilerServices;
 using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Newtonsoft.Json;
@@ -43,6 +44,21 @@ namespace CatalogueLibrary.Data
         [NoMappingToDatabase]
         public IRepository Repository { get; set; }
 
+        /// <summary>
+        /// Returns <see cref="Repository"/> as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
+        /// </summary>
+        public ICatalogueRepository CatalogueRepository
+        {
+            get { return Repository as ICatalogueRepository; }
+        }
+
+        /// <summary>
+        /// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
+        /// </summary>
+        public IDataExportRepository DataExportRepository
+        {
+            get { return Repository as IDataExportRepository; }
+        }
         /// <summary>
         /// Constructs a new instance.  You should only use this when your object does not yet exist in the database
         /// and you are trying to create it into the db

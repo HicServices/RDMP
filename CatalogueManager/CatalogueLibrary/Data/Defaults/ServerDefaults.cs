@@ -6,22 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
     /// <inheritdoc cref="IServerDefaults"/>
-    public class ServerDefaults : IServerDefaults
+    class ServerDefaults : IServerDefaults
     {
         /// <inheritdoc/>
         public ICatalogueRepository Repository { get; private set; }
-
         
-
         /// <summary>
         /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
         /// </summary>
@@ -95,11 +90,7 @@ namespace CatalogueLibrary.Data
                 });
         }
 
-        /// <summary>
-        /// Changes the database <paramref name="toChange"/> default to the specified server
-        /// </summary>
-        /// <param name="toChange"></param>
-        /// <param name="externalDatabaseServer"></param>
+        /// <inheritdoc/>
         public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
         {
             if(toChange == PermissableDefaults.None)
@@ -146,34 +137,6 @@ namespace CatalogueLibrary.Data
                 });
         }
 
-        /// <summary>
-        /// Translates the given <see cref="PermissableDefaults"/> (a default that can be set) to a <see cref="Tier2DatabaseType"/> (identifies what type of database it is).
-        /// </summary>
-        /// <param name="permissableDefault"></param>
-        /// <returns></returns>
-        public static Tier2DatabaseType? PermissableDefaultToTier2DatabaseType(PermissableDefaults permissableDefault)
-        {
-            switch (permissableDefault)
-            {
-                case PermissableDefaults.LiveLoggingServer_ID:
-                    return Tier2DatabaseType.Logging;
-                case PermissableDefaults.TestLoggingServer_ID:
-                    return Tier2DatabaseType.Logging;
-                case PermissableDefaults.IdentifierDumpServer_ID:
-                    return Tier2DatabaseType.IdentifierDump;
-                case PermissableDefaults.DQE:
-                    return Tier2DatabaseType.DataQuality;
-                case PermissableDefaults.WebServiceQueryCachingServer_ID:
-                    return Tier2DatabaseType.QueryCaching;
-                case PermissableDefaults.CohortIdentificationQueryCachingServer_ID:
-                    return Tier2DatabaseType.QueryCaching;
-                case PermissableDefaults.RAWDataLoadServer:
-                    return null;
-                case PermissableDefaults.ANOStore:
-                    return Tier2DatabaseType.ANOStore;
-                default:
-                    throw new ArgumentOutOfRangeException("permissableDefault");
-            }
-        }
+        
     }
 }

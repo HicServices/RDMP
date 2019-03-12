@@ -307,7 +307,7 @@ namespace CatalogueManager.SimpleDialogs
 
         private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)
         {
-            CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
             RefreshUIFromDatabase();
         }
 

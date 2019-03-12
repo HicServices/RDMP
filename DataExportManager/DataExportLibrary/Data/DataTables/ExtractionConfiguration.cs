@@ -637,7 +637,7 @@ namespace DataExportLibrary.Data.DataTables
 
                 //see if there is a default
                 var defaultGetter = new ServerDefaults(Project.DataExportRepository.CatalogueRepository);
-                var defaultLoggingServer = defaultGetter.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                var defaultLoggingServer = defaultGetter.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 //there is a default?
                 if (defaultLoggingServer != null)

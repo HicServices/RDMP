@@ -26,8 +26,7 @@ namespace Dashboard.Menus.MenuItems
         {
             _catalogue = catalogue;
 
-            var defaults = new ServerDefaults(activator.RepositoryLocator.CatalogueRepository);
-            _dqeServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
+            _dqeServer = activator.RepositoryLocator.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.DQE);
 
             Image = activator.CoreIconProvider.GetImage(RDMPConcept.DQE);
 
@@ -40,7 +39,7 @@ namespace Dashboard.Menus.MenuItems
 
             if (_dqeServer == null)
             {
-                var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(DataQualityEngine.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.DQE);
+                var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(DataQualityEngine.Database.Class1).Assembly, PermissableDefaults.DQE);
                 cmdCreateDb.Execute();
             }
             else

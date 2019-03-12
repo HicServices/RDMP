@@ -34,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandBulkImportTableInfos(IActivateItems activator):base(activator)
         {
-            _loggingServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if(_loggingServer == null)
                 SetImpossible("There is no default logging server configured");

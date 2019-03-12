@@ -51,7 +51,7 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
         /// <param name="lmd"></param>
         /// <param name="namer"></param>
         public HICDatabaseConfiguration(ILoadMetadata lmd, INameDatabasesAndTablesDuringLoads namer = null):
-            this(lmd.GetDistinctLiveDatabaseServer(), namer, new ServerDefaults(((CatalogueRepository)lmd.Repository)),lmd.OverrideRAWServer)
+            this(lmd.GetDistinctLiveDatabaseServer(), namer, lmd.CatalogueRepository.GetServerDefaults(),lmd.OverrideRAWServer)
         {
         }
 
@@ -78,7 +78,7 @@ namespace DataLoadEngine.DatabaseManagement.EntityNaming
 
             //if there are defaults
             if(overrideRAWServer == null && defaults != null)
-                overrideRAWServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
+                overrideRAWServer = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
             
             //if there was defaults and a raw default server
             if (overrideRAWServer != null)

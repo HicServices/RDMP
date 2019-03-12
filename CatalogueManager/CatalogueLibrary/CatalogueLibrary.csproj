@@ -295,7 +295,8 @@
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
-    <Compile Include="Data\PermissableDefaults.cs" />
+    <Compile Include="Data\Defaults\PermissableDefaults.cs" />
+    <Compile Include="Data\Defaults\PermissableDefaultsExtensions.cs" />
     <Compile Include="Data\Referencing\IReferenceOtherObjectWithPersist.cs" />
     <Compile Include="Exceptions\AmbiguousDatabaseTypeException.cs" />
     <Compile Include="Data\Cohort\SetOperation.cs" />
@@ -366,7 +367,7 @@
     <Compile Include="Data\IEncryptedString.cs" />
     <Compile Include="Data\IExternalDatabaseServer.cs" />
     <Compile Include="Data\IPermissionWindow.cs" />
-    <Compile Include="Data\IServerDefaults.cs" />
+    <Compile Include="Data\Defaults\IServerDefaults.cs" />
     <Compile Include="Data\ISupplementalJoin.cs" />
     <Compile Include="Data\Pipelines\IDemandToUseAPipeline.cs" />
     <Compile Include="Data\Pipelines\IPipeline.cs" />
@@ -523,7 +524,7 @@
     <Compile Include="Data\Pipelines\PipelineComponent.cs" />
     <Compile Include="Data\Pipelines\PipelineComponentArgument.cs" />
     <Compile Include="Data\SafeDirectoryCatalog.cs" />
-    <Compile Include="Data\ServerDefaults.cs" />
+    <Compile Include="Data\Defaults\ServerDefaults.cs" />
     <Compile Include="Data\DataLoad\ANOTable.cs" />
     <Compile Include="DataHelper\JoinHelper.cs" />
     <Compile Include="DataHelper\TableInfoImporter.cs" />

@@ -125,7 +125,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
             else
             {
-                loggingServer = new ServerDefaults(catarepo).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = catarepo.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 
                 if(loggingServer == null)
                     throw new Exception("There is no default logging server!");

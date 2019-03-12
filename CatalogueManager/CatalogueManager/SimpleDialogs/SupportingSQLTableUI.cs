@@ -171,7 +171,7 @@ namespace CatalogueManager.SimpleDialogs
         
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null, ServerDefaults.PermissableDefaults.None);
+            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null, PermissableDefaults.None);
             cmd.Execute();
             RefreshUIFromDatabase();
         }

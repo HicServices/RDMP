@@ -73,7 +73,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
         public ITheme Theme { get; private set; }
-        public ServerDefaults ServerDefaults { get; private set; }
+        public IServerDefaults ServerDefaults { get; private set; }
         public RefreshBus RefreshBus { get; private set; }
         public FavouritesProvider FavouritesProvider { get; private set; }
 
@@ -101,7 +101,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
             RepositoryLocator = repositoryLocator;
 
-            ServerDefaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+            ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);

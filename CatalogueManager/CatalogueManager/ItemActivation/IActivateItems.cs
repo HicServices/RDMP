@@ -42,7 +42,7 @@ namespace CatalogueManager.ItemActivation
     {
         ITheme Theme { get; }
 
-        ServerDefaults ServerDefaults { get; }
+        IServerDefaults ServerDefaults { get; }
 
         /// <summary>
         /// Component for publishing the fact that an object has recently been put out of date by you.

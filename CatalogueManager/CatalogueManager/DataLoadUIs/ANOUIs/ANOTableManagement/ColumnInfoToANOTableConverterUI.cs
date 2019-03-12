@@ -163,7 +163,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
             
             ddExternalDatabaseServer.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.ANOStore));
 
-            var defaultServer = _activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore);
+            var defaultServer = _activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
             if (defaultServer != null)
                 ddExternalDatabaseServer.SelectedItem = defaultServer;

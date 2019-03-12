@@ -60,7 +60,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
                 return this;
             }
 
-            var dqeServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
+            var dqeServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.DQE);
 
             if (dqeServer == null)
             {

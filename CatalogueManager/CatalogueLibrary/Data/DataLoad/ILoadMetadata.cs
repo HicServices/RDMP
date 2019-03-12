@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 
@@ -15,12 +16,14 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <inheritdoc cref="LoadMetadata"/>
     public interface ILoadMetadata : ILoadProgressHost,INamed
     {
+        ICatalogueRepository CatalogueRepository { get; }
+
+
         /// <summary>
         /// The root working directory for a load.  Should have subdirectories like Data, Executables etc
         /// <para>For structured access to this use a new <see cref="ILoadDirectory"/></para>
         /// </summary>
         string LocationOfFlatFiles { get; set; }
-
 
         /// <summary>
         /// Optional - Overrides the <see cref="ServerDefaults"/> RAWDataLoadServer with an explicit RAW server to use this load only.

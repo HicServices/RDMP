@@ -9,6 +9,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
@@ -27,7 +28,7 @@ namespace CatalogueManager.LocationsMenu
     /// </summary>
     public partial class ManageExternalServers : RDMPForm
     {
-        ServerDefaults defaults;
+        IServerDefaults defaults;
         
         public ManageExternalServers()
         {
@@ -50,18 +51,18 @@ namespace CatalogueManager.LocationsMenu
         {
             try
             {
-                defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+                defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
                 var allServers = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
                 
-                InitializeServerDropdown(ddDefaultLoggingServer, ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, allServers);
-                InitializeServerDropdown(ddDefaultTestLoggingServer, ServerDefaults.PermissableDefaults.TestLoggingServer_ID, allServers);
-                InitializeServerDropdown(ddDQEServer, ServerDefaults.PermissableDefaults.DQE, allServers);
-                InitializeServerDropdown(ddWebServiceQueryCacheServer, ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID, allServers);
-                InitializeServerDropdown(ddCohortIdentificationQueryCacheServer, ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID, allServers);
-                InitializeServerDropdown(ddDefaultIdentifierDump, ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID, allServers);
-                InitializeServerDropdown(ddOverrideRawServer, ServerDefaults.PermissableDefaults.RAWDataLoadServer, allServers);
-                InitializeServerDropdown(ddDefaultANOStore, ServerDefaults.PermissableDefaults.ANOStore, allServers);
+                InitializeServerDropdown(ddDefaultLoggingServer, PermissableDefaults.LiveLoggingServer_ID, allServers);
+                InitializeServerDropdown(ddDefaultTestLoggingServer, PermissableDefaults.TestLoggingServer_ID, allServers);
+                InitializeServerDropdown(ddDQEServer, PermissableDefaults.DQE, allServers);
+                InitializeServerDropdown(ddWebServiceQueryCacheServer, PermissableDefaults.WebServiceQueryCachingServer_ID, allServers);
+                InitializeServerDropdown(ddCohortIdentificationQueryCacheServer, PermissableDefaults.CohortIdentificationQueryCachingServer_ID, allServers);
+                InitializeServerDropdown(ddDefaultIdentifierDump, PermissableDefaults.IdentifierDumpServer_ID, allServers);
+                InitializeServerDropdown(ddOverrideRawServer, PermissableDefaults.RAWDataLoadServer, allServers);
+                InitializeServerDropdown(ddDefaultANOStore, PermissableDefaults.ANOStore, allServers);
 
                 btnCreateNewDQEServer.Enabled = ddDQEServer.SelectedItem == null;
                 btnClearDQEServer.Enabled = ddDQEServer.SelectedItem != null;
@@ -79,12 +80,12 @@ namespace CatalogueManager.LocationsMenu
             }
         }
 
-        private void InitializeServerDropdown(ComboBox comboBox, ServerDefaults.PermissableDefaults permissableDefault, ExternalDatabaseServer[] allServers)
+        private void InitializeServerDropdown(ComboBox comboBox, PermissableDefaults permissableDefault, ExternalDatabaseServer[] allServers)
         {
             comboBox.Items.Clear();
 
             var currentDefault = defaults.GetDefaultFor(permissableDefault);
-            Tier2DatabaseType? expectedTypeOfServer = ServerDefaults.PermissableDefaultToTier2DatabaseType(permissableDefault);
+            Tier2DatabaseType? expectedTypeOfServer = permissableDefault.ToTier2DatabaseType();
             
             var toAdd = allServers;
             
@@ -108,23 +109,23 @@ namespace CatalogueManager.LocationsMenu
         
         private void ddDefault_SelectedIndexChanged(object sender, EventArgs e)
         {
-            ServerDefaults.PermissableDefaults toChange;
+            PermissableDefaults toChange;
 
             if(sender == ddDefaultIdentifierDump)
-                toChange = ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID;
+                toChange = PermissableDefaults.IdentifierDumpServer_ID;
             else
             if (sender == ddDefaultLoggingServer)
-                toChange = ServerDefaults.PermissableDefaults.LiveLoggingServer_ID;
+                toChange = PermissableDefaults.LiveLoggingServer_ID;
             else if (sender == ddDefaultTestLoggingServer)
-                toChange = ServerDefaults.PermissableDefaults.TestLoggingServer_ID;
+                toChange = PermissableDefaults.TestLoggingServer_ID;
             else if(sender == ddOverrideRawServer)
-                toChange = ServerDefaults.PermissableDefaults.RAWDataLoadServer;
+                toChange = PermissableDefaults.RAWDataLoadServer;
             else if (sender == ddDefaultANOStore)
-                toChange = ServerDefaults.PermissableDefaults.ANOStore;
+                toChange = PermissableDefaults.ANOStore;
             else if (sender == ddWebServiceQueryCacheServer)
-                toChange = ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID;
+                toChange = PermissableDefaults.WebServiceQueryCachingServer_ID;
             else if (sender == ddCohortIdentificationQueryCacheServer)
-                toChange = ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
+                toChange = PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
             else
                 throw new Exception("Did not recognise sender:" + sender);
 
@@ -139,50 +140,50 @@ namespace CatalogueManager.LocationsMenu
 
         private void btnClearServer_Click(object sender, EventArgs e)
         {
-            ServerDefaults.PermissableDefaults toClear;
+            PermissableDefaults toClear;
 
             if(sender == btnClearTestLoggingServer)
             {
-                toClear = ServerDefaults.PermissableDefaults.TestLoggingServer_ID;
+                toClear = PermissableDefaults.TestLoggingServer_ID;
                 ddDefaultTestLoggingServer.SelectedItem = null;
 
             }
             else
             if(sender == btnClearLoggingServer)
             {
-                toClear = ServerDefaults.PermissableDefaults.LiveLoggingServer_ID;
+                toClear = PermissableDefaults.LiveLoggingServer_ID;
                 ddDefaultLoggingServer.SelectedItem = null;
             }
             else
             if(sender == btnClearIdentifierDump)
             {
-                toClear = ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID;
+                toClear = PermissableDefaults.IdentifierDumpServer_ID;
                 ddDefaultIdentifierDump.SelectedItem = null;
             }
             else if (sender == btnClearDQEServer)
             {
-                toClear = ServerDefaults.PermissableDefaults.DQE;
+                toClear = PermissableDefaults.DQE;
                 ddDQEServer.SelectedItem = null;
 
             }
             else if (sender == btnClearRAWServer)
             {
-                toClear = ServerDefaults.PermissableDefaults.RAWDataLoadServer;
+                toClear = PermissableDefaults.RAWDataLoadServer;
                 ddOverrideRawServer.SelectedItem = null;
             }
             else if (sender == btnClearANOStore)
             {
-                toClear = ServerDefaults.PermissableDefaults.ANOStore;
+                toClear = PermissableDefaults.ANOStore;
                 ddDefaultANOStore.SelectedItem = null;
             }
             else if (sender == btnClearWebServiceQueryCache)
             {
-                toClear = ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID;
+                toClear = PermissableDefaults.WebServiceQueryCachingServer_ID;
                 ddWebServiceQueryCacheServer.SelectedItem = null;
             }
             else if (sender == btnClearCohortIdentificationQueryCache)
             {
-                toClear = ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
+                toClear = PermissableDefaults.CohortIdentificationQueryCachingServer_ID;
                 ddCohortIdentificationQueryCacheServer.SelectedItem = null;
             }
             else
@@ -192,7 +193,7 @@ namespace CatalogueManager.LocationsMenu
             RefreshUIFromDatabase();
         }
         
-        private void CreateNewExternalServer(ServerDefaults.PermissableDefaults defaultToSet, Assembly databaseAssembly)
+        private void CreateNewExternalServer(PermissableDefaults defaultToSet, Assembly databaseAssembly)
         {
 
             if(CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,defaultToSet, databaseAssembly) != null)
@@ -203,41 +204,41 @@ namespace CatalogueManager.LocationsMenu
         private void ddDQEServer_SelectedIndexChanged(object sender, EventArgs e)
         {
             if(ddDQEServer.SelectedItem != null)
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.DQE, (ExternalDatabaseServer) ddDQEServer.SelectedItem);
+                defaults.SetDefault(PermissableDefaults.DQE, (ExternalDatabaseServer) ddDQEServer.SelectedItem);
         }
 
         private void btnCreateNewDQEServer_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(ServerDefaults.PermissableDefaults.DQE, typeof(DataQualityEngine.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.DQE, typeof(DataQualityEngine.Database.Class1).Assembly);
         }
         private void btnCreateNewWebServiceQueryCache_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.WebServiceQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
         }
 
         private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
         }
 
         private void btnCreateNewTestLoggingServer_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(ServerDefaults.PermissableDefaults.TestLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.TestLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
         }
 
         private void btnCreateNewIdentifierDump_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID, typeof(IdentifierDump.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.IdentifierDumpServer_ID, typeof(IdentifierDump.Database.Class1).Assembly);
         }
 
         private void btnCreateNewANOStore_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(ServerDefaults.PermissableDefaults.ANOStore, typeof(ANOStore.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.ANOStore, typeof(ANOStore.Database.Class1).Assembly);
         }
 
         private void btnCreateNewCohortIdentificationQueryCache_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
         }
 
 

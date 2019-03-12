@@ -89,7 +89,7 @@ namespace DataQualityEngine.Tests
             Assert.GreaterOrEqual(results.ColumnStates.Count(),5);
 
             //Did it log?
-            LogManager logManager = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
+            LogManager logManager = new LogManager(CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
             var log = logManager.GetArchivalDataLoadInfos("DQE").FirstOrDefault();
             Assert.IsNotNull(log);
             Assert.GreaterOrEqual(log.StartTime, startTime);
@@ -109,14 +109,14 @@ namespace DataQualityEngine.Tests
         [Test]
         public void SupportsValidation_NoLoggingServer()
         {
-            ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
-            var before = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            IServerDefaults defaults = CatalogueRepository.GetServerDefaults();
+            var before = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             //cannot run test because it didn't have a value to clear!
             Assert.IsNotNull(before);
 
             //clear the default value
-            defaults.ClearDefault(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            defaults.ClearDefault(PermissableDefaults.LiveLoggingServer_ID);
 
             try
             {
@@ -130,21 +130,21 @@ namespace DataQualityEngine.Tests
             }
             finally
             {
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, before);
+                defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, before);
             }
         }
 
         [Test]
         public void SupportsValidation_NoDQE()
         {
-            ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
-            var before = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
+            IServerDefaults defaults = CatalogueRepository.GetServerDefaults();
+            var before = defaults.GetDefaultFor(PermissableDefaults.DQE);
 
             //cannot run test because it didn't have a value to clear!
             Assert.IsNotNull(before);
 
             //clear the default value
-            defaults.ClearDefault(ServerDefaults.PermissableDefaults.DQE);
+            defaults.ClearDefault(PermissableDefaults.DQE);
             
             try
             {
@@ -158,7 +158,7 @@ namespace DataQualityEngine.Tests
             }
             finally
             {
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.DQE, before);
+                defaults.SetDefault(PermissableDefaults.DQE, before);
             }
         }
 

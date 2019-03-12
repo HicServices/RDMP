@@ -173,7 +173,7 @@ namespace MapsDirectlyToDatabaseTableUI
             
         }
 
-        public static ExternalDatabaseServer CreateNewExternalServer(CatalogueRepository repository,ServerDefaults.PermissableDefaults defaultToSet, Assembly databaseAssembly)
+        public static ExternalDatabaseServer CreateNewExternalServer(CatalogueRepository repository,PermissableDefaults defaultToSet, Assembly databaseAssembly)
         {
 
             CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(databaseAssembly);
@@ -195,8 +195,8 @@ namespace MapsDirectlyToDatabaseTableUI
                 }
                 newServer.SaveToDatabase();
                 
-                if(defaultToSet != ServerDefaults.PermissableDefaults.None)
-                    new ServerDefaults(repository).SetDefault(defaultToSet, newServer);
+                if(defaultToSet != PermissableDefaults.None)
+                    repository.GetServerDefaults().SetDefault(defaultToSet, newServer);
 
                 return newServer;
             }

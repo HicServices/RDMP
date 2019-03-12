@@ -803,7 +803,7 @@ namespace CatalogueLibrary.Data
             //if there is a default logging server
             if (LiveLoggingServer_ID == null)
             {
-                var liveLoggingServer = new ServerDefaults(repository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                var liveLoggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 
                 if(liveLoggingServer != null)
                     LiveLoggingServer_ID = liveLoggingServer.ID;

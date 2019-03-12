@@ -18,7 +18,7 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandCreateNewANOTable(_activator));
             
             Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
-                typeof(ANOStore.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.ANOStore) 
+                typeof(ANOStore.Database.Class1).Assembly, PermissableDefaults.ANOStore) 
                 { OverrideCommandName = "Create ANOStore Database" });
 
             Add(new ExecuteCommandExportObjectsToFileUI(_activator,_activator.CoreChildProvider.AllANOTables));

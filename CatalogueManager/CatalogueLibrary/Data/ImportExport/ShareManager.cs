@@ -55,12 +55,12 @@ namespace CatalogueLibrary.Data.ImportExport
 
         private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
         {
-            var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
 
             if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
             {
-                var server = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                var server = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 if (server == null)
                     return null;
 

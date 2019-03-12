@@ -35,5 +35,12 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="toDelete"></param>
         void ClearDefault(PermissableDefaults toDelete);
+
+        /// <summary>
+        /// Changes the database <paramref name="toChange"/> default to the specified server
+        /// </summary>
+        /// <param name="toChange"></param>
+        /// <param name="externalDatabaseServer"></param>
+        void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer);
     }
 }

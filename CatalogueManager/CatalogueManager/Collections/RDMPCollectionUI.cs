@@ -40,8 +40,6 @@ namespace CatalogueManager.Collections
             CommonFunctionality.TearDown();
         }
 
-        public abstract void SetItemActivator(IActivateItems activator);
-
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI_Design, UserControl>))]

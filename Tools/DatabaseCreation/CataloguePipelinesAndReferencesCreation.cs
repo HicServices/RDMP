@@ -52,7 +52,7 @@ namespace DatabaseCreation
         }
         private void CreateServers()
         {
-            var defaults = new ServerDefaults(_repositoryLocator.CatalogueRepository);
+            var defaults = _repositoryLocator.CatalogueRepository.GetServerDefaults();
 
             _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging", typeof(HIC.Logging.Database.Class1).Assembly);
 
@@ -66,7 +66,7 @@ namespace DatabaseCreation
             }
 
             _edsLogging.SaveToDatabase();
-            defaults.SetDefault(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
+            defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
             Console.WriteLine("Successfully configured default logging server");
 
             var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", typeof(DataQualityEngine.Database.Class1).Assembly);
@@ -80,13 +80,13 @@ namespace DatabaseCreation
             }
 
             edsDQE.SaveToDatabase();
-            defaults.SetDefault(ServerDefaults.PermissableDefaults.DQE, edsDQE);
+            defaults.SetDefault(PermissableDefaults.DQE, edsDQE);
             Console.WriteLine("Successfully configured default dqe server");
 
             var edsRAW = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "RAW Server", null);
             edsRAW.Server = _dqe.DataSource;
             edsRAW.SaveToDatabase();
-            defaults.SetDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer, edsRAW);
+            defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, edsRAW);
             Console.WriteLine("Successfully configured RAW server");
         }
 

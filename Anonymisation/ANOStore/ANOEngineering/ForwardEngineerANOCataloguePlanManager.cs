@@ -95,7 +95,7 @@ namespace ANOStore.ANOEngineering
 
         public IExternalDatabaseServer GetIdentifierDumpServer()
         {
-            return new ServerDefaults((CatalogueRepository)Catalogue.Repository).GetDefaultFor(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID);
+            return Catalogue.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
         }
 
         

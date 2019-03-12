@@ -45,7 +45,7 @@ namespace DataLoadEngineTests.Integration
             b.catalogue.LoggingDataTask = "TestPayloadInjection";
             b.catalogue.SaveToDatabase();
 
-            var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
+            var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
             lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
 
             var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);

@@ -61,7 +61,7 @@ namespace DataQualityEngine.Reports
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
                 return;
 
-            _loggingServer = new ServerDefaults(repository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (_loggingServer != null)
             {

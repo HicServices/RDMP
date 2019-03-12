@@ -36,9 +36,9 @@ namespace RDMPAutomationService.Runners
             const string dataLoadTask = "caching";
 
             CacheProgress cp = repositoryLocator.CatalogueRepository.GetObjectByID<CacheProgress>(_options.CacheProgress);
-            
-            var defaults = new ServerDefaults(repositoryLocator.CatalogueRepository);
-            var loggingServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+
+            var defaults = repositoryLocator.CatalogueRepository.GetServerDefaults();
+            var loggingServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (loggingServer == null)
                 throw new NotSupportedException("No default logging server specified, you must specify one in ");

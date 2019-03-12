@@ -211,7 +211,7 @@ namespace CatalogueLibrary.Repositories
         public LogManager GetDefaultLogManager()
         {
             ServerDefaults defaults = new ServerDefaults(this);
-            return new LogManager(defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
+            return new LogManager(defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         }
 
         /// <inheritdoc/>
