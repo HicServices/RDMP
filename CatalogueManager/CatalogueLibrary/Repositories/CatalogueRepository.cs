@@ -433,6 +433,11 @@ namespace CatalogueLibrary.Repositories
         {
             return GetAllObjects<T>("WHERE ReferencedObjectID = " + o.ID + " AND ReferencedObjectType = '" + o.GetType().Name + "' AND ReferencedObjectRepositoryType = '" + o.Repository.GetType().Name + "'");
         }
+
+        public IServerDefaults GetServerDefaults()
+        {
+            return new ServerDefaults(this);
+        }
     }
 
     public enum Tier2DatabaseType

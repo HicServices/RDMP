@@ -796,6 +796,20 @@ namespace CatalogueLibrary.Data
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
 
+            //default values
+            if(Folder == null)
+                Folder = new CatalogueFolder(this, "\\");
+            
+            //if there is a default logging server
+            if (LiveLoggingServer_ID == null)
+            {
+                var liveLoggingServer = new ServerDefaults(repository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                
+                if(liveLoggingServer != null)
+                    LiveLoggingServer_ID = liveLoggingServer.ID;
+            }
+            
+
             ClearAllInjections();
         }
         
@@ -1371,5 +1385,4 @@ namespace CatalogueLibrary.Data
         #endregion
 
     }
-
 }

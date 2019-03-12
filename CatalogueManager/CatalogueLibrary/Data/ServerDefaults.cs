@@ -8,8 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -20,59 +18,9 @@ namespace CatalogueLibrary.Data
     public class ServerDefaults : IServerDefaults
     {
         /// <inheritdoc/>
-        public CatalogueRepository Repository { get; private set; }
+        public ICatalogueRepository Repository { get; private set; }
 
-        /// <summary>
-        /// Fields that can be set or fetched from the ServerDefaults table in the Catalogue Database
-        /// </summary>
-        public enum PermissableDefaults
-        {
-            /// <summary>
-            /// Null value/representation
-            /// </summary>
-            None = 0,
-
-            /// <summary>
-            /// Relational logging database to store logs in while loading, running DQE, extracting etc
-            /// </summary>
-            LiveLoggingServer_ID,
-
-            /// <summary>
-            /// Deprecated, use LiveLoggingServer_ID instead.
-            /// </summary>
-            TestLoggingServer_ID,
-
-            /// <summary>
-            /// Server to split sensitive identifiers off to during load (e.g. IdentifierDumper)
-            /// </summary>
-            IdentifierDumpServer_ID,
-
-            /// <summary>
-            /// Server to store the results of running the DQE on datasets over time
-            /// </summary>
-            DQE,
-
-            /// <summary>
-            /// Server to store cached results of <see cref="AggregateConfiguration"/> which are not sensitive and could be shown on a website etc
-            /// </summary>
-            WebServiceQueryCachingServer_ID,
-
-            /// <summary>
-            /// The RAW bubble server in data loads
-            /// </summary>
-            RAWDataLoadServer,
-
-            /// <summary>
-            /// Server to store substituted ANO/Identifiable mappings for sensitive fields during data load e.g. GPCode, CHI, etc.
-            /// </summary>
-            ANOStore,
-
-            /// <summary>
-            /// Server to store cached identifier lists of <see cref="AggregateConfiguration"/>  which are part of a <see cref="CohortIdentificationConfiguration"/> in order
-            /// to speed up performance of UNION/INTERSECT/EXCEPT section of the cohort building query.
-            /// </summary>
-            CohortIdentificationQueryCachingServer_ID
-        }
+        
 
         /// <summary>
         /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
@@ -83,7 +31,7 @@ namespace CatalogueLibrary.Data
         /// Creates a new reader for the defaults configured in the <paramref name="repository"/> platform database
         /// </summary>
         /// <param name="repository"></param>
-        public ServerDefaults(CatalogueRepository repository)
+        public ServerDefaults(ICatalogueRepository repository)
         {
             Repository = repository;
             StringExpansionDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, "Catalogue.LiveLoggingServer_ID");
@@ -133,10 +81,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <summary>
-        /// Sets the database <paramref name="toDelete"/> default to null (not configured)
-        /// </summary>
-        /// <param name="toDelete"></param>
+        /// <inheritdoc/>
         public void ClearDefault(PermissableDefaults toDelete)
         {
             // Repository strictly complains if there is nothing to delete, so we'll check first (probably good for the repo to be so strict?)

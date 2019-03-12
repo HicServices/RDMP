@@ -23,11 +23,17 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="field"></param>
         /// <returns>the currently configured ExternalDatabaseServer the user wants to use as the default for the supplied role or null if no default has yet been picked</returns>
-        IExternalDatabaseServer GetDefaultFor(ServerDefaults.PermissableDefaults field);
+        IExternalDatabaseServer GetDefaultFor(PermissableDefaults field);
 
         /// <summary>
         /// The repository the defaults are configured on
         /// </summary>
-        CatalogueRepository Repository { get; }
+        ICatalogueRepository Repository { get; }
+
+        /// <summary>
+        /// Sets the database <paramref name="toDelete"/> default to null (not configured)
+        /// </summary>
+        /// <param name="toDelete"></param>
+        void ClearDefault(PermissableDefaults toDelete);
     }
 }

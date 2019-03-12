@@ -1,4 +1,5 @@
-﻿using CatalogueLibrary.Data;
+﻿using System.Reflection;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using FAnsi.Implementation;
@@ -41,8 +42,13 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
 
             var qb = new QueryBuilder(null,null);
             qb.AddColumnRange(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
-            
-            Assert.AreEqual("",qb.SQL);
+
+            Assert.AreEqual(@"
+SELECT 
+
+Mycol
+FROM 
+My table", qb.SQL);
         }
     }
 }

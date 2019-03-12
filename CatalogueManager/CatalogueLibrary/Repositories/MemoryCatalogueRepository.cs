@@ -133,5 +133,10 @@ namespace CatalogueLibrary.Repositories
         {
             throw new NotImplementedException();
         }
+
+        public IServerDefaults GetServerDefaults()
+        {
+            throw new NotImplementedException();
+        }
     }
 }

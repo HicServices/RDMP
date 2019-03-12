@@ -81,10 +81,10 @@ namespace CatalogueLibrary.QueryBuilding
             if (!qb.TablesUsedInQuery.Any())
                 throw new QueryBuildingException("Query has no TableInfos! Make sure your query has at least one column with an underlying ColumnInfo / TableInfo set - possibly you have deleted the TableInfo? this would result in orphan CatalogueItem");
 
-            CatalogueRepository cataRepository;
+            ICatalogueRepository cataRepository;
             try
             {
-                cataRepository = (CatalogueRepository)qb.TablesUsedInQuery.Select(t => t.Repository).Distinct().Single();
+                cataRepository = (ICatalogueRepository)qb.TablesUsedInQuery.Select(t => t.Repository).Distinct().Single();
             }
             catch (Exception e)
             {

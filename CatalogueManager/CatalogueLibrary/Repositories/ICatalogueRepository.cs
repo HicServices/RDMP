@@ -115,5 +115,7 @@ namespace CatalogueLibrary.Repositories
 
         T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity;
 
+        IServerDefaults GetServerDefaults();
+
     }
 }

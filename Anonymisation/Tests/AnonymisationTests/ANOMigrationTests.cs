@@ -129,7 +129,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         public void FinalTearDown()
         {
             //clear anostore default
-            new ServerDefaults(CatalogueRepository).ClearDefault(ServerDefaults.PermissableDefaults.ANOStore);
+            CatalogueRepository.GetServerDefaults().ClearDefault(ServerDefaults.PermissableDefaults.ANOStore);
             //delete the external server reference
             ANOStore_ExternalDatabaseServer.DeleteInDatabase();
         }
