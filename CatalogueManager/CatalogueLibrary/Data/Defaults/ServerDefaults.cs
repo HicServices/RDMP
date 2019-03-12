@@ -9,13 +9,13 @@ using System.Collections.Generic;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data
+namespace CatalogueLibrary.Data.Defaults
 {
     /// <inheritdoc cref="IServerDefaults"/>
     class ServerDefaults : IServerDefaults
     {
         /// <inheritdoc/>
-        public ICatalogueRepository Repository { get; private set; }
+        private readonly ICatalogueRepository _repository;
         
         /// <summary>
         /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
@@ -28,7 +28,7 @@ namespace CatalogueLibrary.Data
         /// <param name="repository"></param>
         public ServerDefaults(ICatalogueRepository repository)
         {
-            Repository = repository;
+            _repository = repository;
             StringExpansionDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, "Catalogue.LiveLoggingServer_ID");
             StringExpansionDictionary.Add(PermissableDefaults.TestLoggingServer_ID, "Catalogue.TestLoggingServer_ID");
             StringExpansionDictionary.Add(PermissableDefaults.IdentifierDumpServer_ID, "TableInfo.IdentifierDumpServer_ID");
@@ -50,7 +50,7 @@ namespace CatalogueLibrary.Data
             if (field == PermissableDefaults.None)
                 return null;
 
-            using(var con = Repository.GetConnection())
+            using (var con = _repository.GetConnection())
             {
                 var cmd = DatabaseCommandHelper.GetCommand("SELECT dbo.GetDefaultExternalServerIDFor('" + StringExpansionDictionary[field] + "')", con.Connection,con.Transaction);
                 var executeScalar = cmd.ExecuteScalar();
@@ -58,7 +58,7 @@ namespace CatalogueLibrary.Data
                 if (executeScalar == DBNull.Value)
                     return null;
 
-                return Repository.GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
+                return _repository.GetObjectByID<ExternalDatabaseServer>(Convert.ToInt32(executeScalar));
             }
         }
 
@@ -67,7 +67,7 @@ namespace CatalogueLibrary.Data
             if (type == PermissableDefaults.None)
                 return 0;
 
-            using (var con = Repository.GetConnection())
+            using (var con = _repository.GetConnection())
             {
                 var cmd = DatabaseCommandHelper.GetCommand("SELECT COUNT(*) AS NumDefaults FROM ServerDefaults WHERE DefaultType=@DefaultType", con.Connection, con.Transaction);
                 DatabaseCommandHelper.AddParameterWithValueToCommand("@DefaultType", cmd, StringExpansionDictionary[type]);
@@ -83,7 +83,7 @@ namespace CatalogueLibrary.Data
             if (CountDefaults(toDelete) == 0)
                 return;
 
-            Repository.Delete("DELETE FROM ServerDefaults WHERE DefaultType=@DefaultType",
+            _repository.Delete("DELETE FROM ServerDefaults WHERE DefaultType=@DefaultType",
                 new Dictionary<string, object>()
                 {
                     {"DefaultType",StringExpansionDictionary[toDelete]}
@@ -113,7 +113,7 @@ namespace CatalogueLibrary.Data
             string sql =
                 "UPDATE ServerDefaults set ExternalDatabaseServer_ID  = @ExternalDatabaseServer_ID where DefaultType=@DefaultType";
 
-                int affectedRows = Repository.Update(sql, new Dictionary<string, object>()
+            int affectedRows = _repository.Update(sql, new Dictionary<string, object>()
                 {
                     {"DefaultType",StringExpansionDictionary[toChange]},
                     {"ExternalDatabaseServer_ID",externalDatabaseServer.ID}
@@ -128,7 +128,7 @@ namespace CatalogueLibrary.Data
             if (toChange == PermissableDefaults.None)
                 throw new ArgumentException("toChange cannot be None", "toChange");
 
-            Repository.Insert(
+            _repository.Insert(
                 "INSERT INTO ServerDefaults(DefaultType,ExternalDatabaseServer_ID) VALUES (@DefaultType,@ExternalDatabaseServer_ID)",
                 new Dictionary<string, object>()
                 {

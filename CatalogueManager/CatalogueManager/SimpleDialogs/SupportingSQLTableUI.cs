@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;

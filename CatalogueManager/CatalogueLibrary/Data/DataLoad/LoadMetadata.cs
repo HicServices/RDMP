@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;

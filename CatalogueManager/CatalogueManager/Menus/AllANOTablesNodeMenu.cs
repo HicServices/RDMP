@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.Sharing;

@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;

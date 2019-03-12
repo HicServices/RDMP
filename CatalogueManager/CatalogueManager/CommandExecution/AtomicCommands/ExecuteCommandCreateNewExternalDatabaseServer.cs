@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;

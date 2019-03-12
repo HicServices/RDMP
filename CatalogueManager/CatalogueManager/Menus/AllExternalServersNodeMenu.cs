@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 

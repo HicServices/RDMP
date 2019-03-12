@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;

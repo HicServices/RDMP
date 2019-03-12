@@ -6,6 +6,7 @@
 
 using System.Diagnostics;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using NUnit.Framework;
 using Tests.Common;
 

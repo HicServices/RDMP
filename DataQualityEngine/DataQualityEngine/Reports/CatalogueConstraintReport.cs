@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
-
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataQualityEngine.Data;

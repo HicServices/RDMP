@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;

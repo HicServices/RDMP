@@ -1,10 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Referencing;
 using FAnsi.Connections;
 using FAnsi.Discovery;
@@ -14,7 +16,7 @@ using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Repositories
 {
-    class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository
+    class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults
     {
         public AggregateForcedJoin AggregateForcedJoiner { get; set; }
         public TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
@@ -27,6 +29,34 @@ namespace CatalogueLibrary.Repositories
         public string ConnectionString { get { return null; } }
         public DbConnectionStringBuilder ConnectionStringBuilder { get { return null; } }
         public DiscoveredServer DiscoveredServer { get { return null; }}
+
+        readonly Dictionary<PermissableDefaults, IExternalDatabaseServer> _defaults = new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
+
+        public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
+        {
+            //we need to know what the default servers for stuff are
+            foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
+                if(currentDefaults == null)
+                    _defaults.Add(value, null); //we have no defaults to import
+                else
+                {
+                    //we have defaults to import so get the default
+                    var defaultServer = currentDefaults.GetDefaultFor(value);
+
+                    //if it's not null we must be able to return it with GetObjectByID
+                    if(defaultServer != null)
+                    {
+                        AddType(typeof (ExternalDatabaseServer));
+                        Objects[typeof(ExternalDatabaseServer)].Add(defaultServer);
+                    }
+                    
+                    _defaults.Add(value,defaultServer);
+                }
+
+            if(Objects.Any())
+                NextObjectId = Objects.Max(kvp => kvp.Value.Max(o => o.ID)) + 1;
+        }
+
 
         public void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
@@ -136,7 +166,31 @@ namespace CatalogueLibrary.Repositories
 
         public IServerDefaults GetServerDefaults()
         {
-            throw new NotImplementedException();
+            return this;
+        }
+        
+        public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
+        {
+            return _defaults[field];
+        }
+
+        public void ClearDefault(PermissableDefaults toDelete)
+        {
+            _defaults[toDelete] = null;
+        }
+
+        public void SetDefault(PermissableDefaults toChange, IExternalDatabaseServer externalDatabaseServer)
+        {
+            _defaults[toChange] = externalDatabaseServer;
+        }
+
+        public override void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
+        {
+            base.InsertAndHydrate(toCreate, constructorParameters);
+
+            var v = toCreate as VersionedDatabaseEntity;
+            if(v != null)
+                v.SoftwareVersion = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion;
         }
     }
 }

@@ -8,6 +8,7 @@ using System.IO;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;

@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.Repositories;

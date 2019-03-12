@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Ticketing;
 using HIC.Logging;

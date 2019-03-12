@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;

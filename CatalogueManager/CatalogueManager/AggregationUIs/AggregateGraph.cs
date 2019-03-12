@@ -19,6 +19,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Reports;
 using CatalogueManager.CommandExecution.AtomicCommands;

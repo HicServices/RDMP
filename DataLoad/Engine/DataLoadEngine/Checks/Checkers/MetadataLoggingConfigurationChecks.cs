@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;
 using ReusableLibraryCode.Checks;

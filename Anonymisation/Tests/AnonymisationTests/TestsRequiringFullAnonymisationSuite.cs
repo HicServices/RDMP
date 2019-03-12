@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using DataLoadEngine.DatabaseManagement.Operations;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;

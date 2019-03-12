@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;

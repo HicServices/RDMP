@@ -9,6 +9,7 @@ using System.Linq;
 using CachingEngine;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;

@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;

@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;

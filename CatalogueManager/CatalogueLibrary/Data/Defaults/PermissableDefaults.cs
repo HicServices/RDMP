@@ -1,7 +1,7 @@
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 
-namespace CatalogueLibrary.Data
+namespace CatalogueLibrary.Data.Defaults
 {
     /// <summary>
     /// Fields that can be set or fetched from the ServerDefaults table in the Catalogue Database

@@ -6,7 +6,7 @@
 
 using CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data
+namespace CatalogueLibrary.Data.Defaults
 {
     /// <summary>
     /// Server defaults let you identify a role a server plays (e.g. IdentifierDumpServer) and make it the default one of it's type for all rows created which have an IdentifierDump.
@@ -24,12 +24,7 @@ namespace CatalogueLibrary.Data
         /// <param name="field"></param>
         /// <returns>the currently configured ExternalDatabaseServer the user wants to use as the default for the supplied role or null if no default has yet been picked</returns>
         IExternalDatabaseServer GetDefaultFor(PermissableDefaults field);
-
-        /// <summary>
-        /// The repository the defaults are configured on
-        /// </summary>
-        ICatalogueRepository Repository { get; }
-
+        
         /// <summary>
         /// Sets the database <paramref name="toDelete"/> default to null (not configured)
         /// </summary>

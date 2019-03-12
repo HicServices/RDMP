@@ -13,15 +13,15 @@ namespace MapsDirectlyToDatabaseTable
     public class MemoryRepository : IRepository
     {
 
-        private int _nextObjectId = 0;
+        protected int NextObjectId = 0;
 
         protected readonly Dictionary<Type, List<IMapsDirectlyToDatabaseTable>> Objects = new Dictionary<Type, List<IMapsDirectlyToDatabaseTable>>();
 
 
-        public void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
+        public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
-            _nextObjectId++;
-            toCreate.ID = _nextObjectId;
+            NextObjectId++;
+            toCreate.ID = NextObjectId;
 
             AddType(typeof (T));
 
@@ -32,11 +32,11 @@ namespace MapsDirectlyToDatabaseTable
             }
 
             toCreate.Repository = this;
-
+            
             Objects[typeof(T)].Add(toCreate);
         }
 
-        private void AddType(Type type)
+        protected void AddType(Type type)
         {
             if(!Objects.ContainsKey(type))
                 Objects.Add(type,new List<IMapsDirectlyToDatabaseTable>());
@@ -44,6 +44,8 @@ namespace MapsDirectlyToDatabaseTable
 
         public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
+            AddType(typeof(T));
+
             return (T) Objects[typeof (T)].Single(o => o.ID == id);
         }
 

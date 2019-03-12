@@ -4,6 +4,8 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
 using NUnit.Framework;
 
 namespace CatalogueLibraryTests.MemoryRepositoryTests
@@ -15,7 +17,10 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
         [OneTimeSetUp]
         public void Setup()
         {
-            ImplementationManager.Load(typeof(MicrosoftSQLImplementation).Assembly);
+            ImplementationManager.Load(
+                typeof(MicrosoftSQLImplementation).Assembly,
+                typeof(MySqlImplementation).Assembly,
+                typeof(OracleImplementation).Assembly);
         }
 
         [Test]

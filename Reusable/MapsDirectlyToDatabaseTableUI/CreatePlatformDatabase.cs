@@ -11,6 +11,7 @@ using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.Checks;

@@ -10,6 +10,7 @@ using System.Data;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using FAnsi;

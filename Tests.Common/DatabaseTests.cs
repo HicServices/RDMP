@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;

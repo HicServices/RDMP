@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;

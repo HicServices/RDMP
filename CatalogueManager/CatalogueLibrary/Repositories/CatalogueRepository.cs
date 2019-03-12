@@ -17,6 +17,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Pipelines;

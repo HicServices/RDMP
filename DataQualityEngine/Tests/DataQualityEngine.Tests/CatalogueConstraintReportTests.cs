@@ -10,6 +10,7 @@ using System.Linq.Expressions;
 using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Triggers;
 using DataExportLibrary.Tests.DataExtraction;
 using DataQualityEngine.Data;

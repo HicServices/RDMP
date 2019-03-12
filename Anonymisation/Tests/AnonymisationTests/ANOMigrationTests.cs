@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using NUnit.Framework;
