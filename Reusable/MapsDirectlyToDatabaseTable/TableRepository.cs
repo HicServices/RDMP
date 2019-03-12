@@ -185,7 +185,7 @@ namespace MapsDirectlyToDatabaseTable
 
         }
 
-        public void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        protected void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             foreach (DbParameter p in cmd.Parameters)
             {
@@ -457,23 +457,6 @@ namespace MapsDirectlyToDatabaseTable
         public Version GetVersion()
         {
             return DatabaseVersionProvider.GetVersionFromDatabase(ConnectionStringBuilder);
-        }
-
-        public Dictionary<string, int> GetObjectCountByVersion(Type type)
-        {
-            using (var opener = GetConnection())
-            {
-                Dictionary<string, int> toReturn = new Dictionary<string, int>();
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT SoftwareVersion,Count(*) as countOfObjects FROM " + type.Name + " group by SoftwareVersion", opener.Connection,opener.Transaction);
-
-                DbDataReader r = cmd.ExecuteReader();
-
-                while (r.Read())
-                    toReturn.Add((string)r["SoftwareVersion"], (int)r["countOfObjects"]);
-
-                r.Close();
-                return toReturn;
-            }
         }
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable

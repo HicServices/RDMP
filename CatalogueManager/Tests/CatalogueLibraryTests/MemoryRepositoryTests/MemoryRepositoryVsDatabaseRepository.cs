@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
@@ -12,7 +11,6 @@ using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.DataAccess;
-using Rhino.Mocks.Constraints;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.MemoryRepositoryTests

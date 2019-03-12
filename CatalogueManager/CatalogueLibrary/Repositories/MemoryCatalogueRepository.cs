@@ -62,17 +62,7 @@ namespace CatalogueLibrary.Repositories
             if (allObjs.Any())
                 NextObjectId = allObjs.Max(o => o.ID);
         }
-
-
-        public void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Dictionary<string, int> GetObjectCountByVersion(Type type)
-        {
-            throw new NotImplementedException();
-        }
+        
 
         public IManagedConnection GetConnection()
         {

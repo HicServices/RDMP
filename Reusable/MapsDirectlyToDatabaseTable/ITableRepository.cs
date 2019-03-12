@@ -23,8 +23,6 @@ namespace MapsDirectlyToDatabaseTable
         string ConnectionString { get; }
         DbConnectionStringBuilder ConnectionStringBuilder { get; }
         DiscoveredServer DiscoveredServer { get; }
-        void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject);
-        Dictionary<string, int> GetObjectCountByVersion(Type type);
 
         IManagedConnection GetConnection();
         IManagedConnection BeginNewTransactedConnection();
