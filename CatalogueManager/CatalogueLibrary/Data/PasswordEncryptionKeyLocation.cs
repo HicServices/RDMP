@@ -14,6 +14,7 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data
 {
+
     /// <summary>
     /// The file system location of the RSA private decryption key used to decrypt passwords stored in RDMP database.  There can only ever be one PasswordEncryptionKeyLocation
     /// and this is used by all SimpleStringValueEncryption.  This means that passwords can be securely held in the RDMP database so long as suitable windows account management
@@ -21,7 +22,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
     /// </summary>
-    public class PasswordEncryptionKeyLocation
+    class PasswordEncryptionKeyLocation
     {
         private readonly ICatalogueRepository _repository;
 
@@ -54,18 +55,16 @@ namespace CatalogueLibrary.Data
         /// Connects to the private key location and returns the encryption/decryption parameters stored in it
         /// </summary>
         /// <returns></returns>
-        public RSAParameters OpenKeyFile()
+        public RSAParameters? OpenKeyFile()
         {
             string existingKey = GetKeyFileLocation();
-
             return DeserializeFromLocation(existingKey);
         }
 
-        private RSAParameters DeserializeFromLocation(string keyLocation)
+        private RSAParameters? DeserializeFromLocation(string keyLocation)
         {
-
             if (string.IsNullOrWhiteSpace(keyLocation))
-                throw new NotSupportedException("There is no key file configured for this Catalogue database, use CreateNewKeyFile to create one in a shared network location");
+                return null;
 
             string xml;
 

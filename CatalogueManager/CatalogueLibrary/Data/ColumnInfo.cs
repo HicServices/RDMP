@@ -305,6 +305,9 @@ namespace CatalogueLibrary.Data
                 {"TableInfo_ID", parent.ID}
             });
 
+            //defaults
+            DuplicateRecordResolutionIsAscending = true;
+
             ClearAllInjections();
         }
 

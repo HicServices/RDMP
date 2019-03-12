@@ -51,11 +51,9 @@ namespace CatalogueLibrary.Repositories
         public AggregateForcedJoin AggregateForcedJoiner { get; set; }
 
         /// <inheritdoc/>
-        public TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
+        public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
 
-        /// <inheritdoc/>
-        public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
-
+        
         /// <inheritdoc/>
         public JoinInfoFinder JoinInfoFinder { get; set; }
 
@@ -82,7 +80,6 @@ namespace CatalogueLibrary.Repositories
         {
             AggregateForcedJoiner = new AggregateForcedJoin(this);
             TableInfoToCredentialsLinker = new TableInfoToCredentialsLinker(this);
-            PasswordEncryptionKeyLocation = new PasswordEncryptionKeyLocation(this);
             JoinInfoFinder = new JoinInfoFinder(this);
             MEF = new MEF();
             
@@ -146,6 +143,10 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(TicketingSystemConfiguration),(rep,r)=>new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
 
+        }
+        public IEncryptStrings GetEncrypter()
+        {
+            return new SimpleStringValueEncryption(new PasswordEncryptionKeyLocation(this).OpenKeyFile());
         }
 
         /// <summary>

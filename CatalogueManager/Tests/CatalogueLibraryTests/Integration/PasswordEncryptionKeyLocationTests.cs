@@ -75,7 +75,7 @@ namespace CatalogueLibraryTests.Integration
             keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.WorkDirectory, "my.key"));
             var p = keyLocation.OpenKeyFile();
 
-            SimpleStringValueEncryption s = new SimpleStringValueEncryption(CatalogueRepository);
+            var s = CatalogueRepository.GetEncrypter();
             var exception = Assert.Throws<Exception>(()=>s.Decrypt(encrypter.Value));
             Assert.IsTrue(exception.Message.StartsWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 

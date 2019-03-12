@@ -297,6 +297,7 @@
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
     <Compile Include="Data\Defaults\PermissableDefaults.cs" />
     <Compile Include="Data\Defaults\PermissableDefaultsExtensions.cs" />
+    <Compile Include="Data\ITableInfoToCredentialsLinker.cs" />
     <Compile Include="Data\Referencing\IReferenceOtherObjectWithPersist.cs" />
     <Compile Include="Exceptions\AmbiguousDatabaseTypeException.cs" />
     <Compile Include="Data\Cohort\SetOperation.cs" />

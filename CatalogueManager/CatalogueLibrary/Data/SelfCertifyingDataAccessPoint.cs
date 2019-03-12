@@ -24,7 +24,7 @@ namespace CatalogueLibrary.Data
     {
 
         /// <inheritdoc cref="SelfCertifyingDataAccessPoint"/>
-        public SelfCertifyingDataAccessPoint(CatalogueRepository repository, DatabaseType databaseType) : base(repository)
+        public SelfCertifyingDataAccessPoint(ICatalogueRepository repository, DatabaseType databaseType) : base(repository)
         {
             DatabaseType = databaseType;
         }

@@ -71,7 +71,7 @@ namespace CatalogueLibrary
         /// <inheritdoc cref="ExecuteForwardEngineering()"/>
         public void ExecuteForwardEngineering(Catalogue intoExistingCatalogue,out Catalogue catalogue, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
         {
-            var repo = (CatalogueRepository)_tableInfo.Repository;
+            var repo = _tableInfo.CatalogueRepository;
 
             //if user did not specify an existing catalogue to supplement 
             if (intoExistingCatalogue == null)

@@ -32,12 +32,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Allows linking/unlinking <see cref="DataAccessCredentials"/> to <see cref="TableInfo"/>
         /// </summary>
-        TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
-
-        /// <summary>
-        /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
-        /// </summary>
-        PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
+        ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; }
         
         /// <summary>
         /// Allows creation/discover of <see cref="JoinInfo"/> objects which describe how to join two <see cref="TableInfo"/> together in SQL
@@ -53,6 +48,11 @@ namespace CatalogueLibrary.Repositories
         /// Stores class comments discovered at startup using NuDoq
         /// </summary>
         CommentStore CommentStore { get; }
+        
+        /// <summary>
+        /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
+        /// </summary>
+        IEncryptStrings GetEncrypter();
 
         /// <summary>
         /// If the configuration is part of any aggregate container anywhere this method will return the order within that container

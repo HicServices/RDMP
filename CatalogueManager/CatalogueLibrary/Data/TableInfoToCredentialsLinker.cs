@@ -8,9 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Runtime.Remoting.Contexts;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
@@ -25,7 +22,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para></para>
     /// </summary>
-    public class TableInfoToCredentialsLinker
+    class TableInfoToCredentialsLinker : ITableInfoToCredentialsLinker
     {
         private readonly ICatalogueRepository _repository;
 
@@ -45,13 +42,7 @@ namespace CatalogueLibrary.Data
         }
 
 
-        /// <summary>
-        /// Declares that the given <paramref name="tableInfo"/> can be accessed using the <paramref name="credentials"/> (username / encrypted password) under the 
-        /// usage <paramref name="context"/> 
-        /// </summary>
-        /// <param name="credentials"></param>
-        /// <param name="tableInfo"></param>
-        /// <param name="context"></param>
+        /// <inheritdoc/>
         public void CreateLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo,DataAccessContext context)
         {
             using (var con = _repository.GetConnection())
@@ -69,12 +60,7 @@ namespace CatalogueLibrary.Data
             }
         }
 
-        /// <summary>
-        /// Removes the right to use passed <paramref name="credentials"/> to access the <paramref name="tableInfo"/> under the <paramref name="context"/>
-        /// </summary>
-        /// <param name="credentials"></param>
-        /// <param name="tableInfo"></param>
-        /// <param name="context"></param>
+        /// <inheritdoc/>
         public void BreakLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context)
         {
             _repository.Delete(
@@ -87,11 +73,7 @@ namespace CatalogueLibrary.Data
                 });
         }
 
-        /// <summary>
-        /// Removes all rights to use the passed <paramref name="credentials"/> to access the <paramref name="tableInfo"/>
-        /// </summary>
-        /// <param name="credentials"></param>
-        /// <param name="tableInfo"></param>
+        /// <inheritdoc/>
         public void BreakAllLinksBetween(DataAccessCredentials credentials, TableInfo tableInfo)
         {
                  _repository.Delete("DELETE FROM DataAccessCredentials_TableInfo WHERE DataAccessCredentials_ID = @cid AND TableInfo_ID = @tid",
@@ -102,16 +84,7 @@ namespace CatalogueLibrary.Data
                 },false);
         }
 
-        /// <summary>
-        ///  Answers the question, "what is the best credential (if any) to use under the given context"
-        /// 
-        /// <para>Tries to find a DataAccessCredentials for the supplied TableInfo.  For example you are trying to find a username/pasword to use with the TableInfo when performing
-        /// a DataLoad, this method will first return any explicit usage allowances (if there is a credential liscenced for use during DataLoad) if no such credentials exist 
-        /// it will then check for a credential which is liscenced for Any usage (can be used for data load, data export etc) and return that else it will return null</para>
-        /// </summary>
-        /// <param name="tableInfo"></param>
-        /// <param name="context"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public DataAccessCredentials GetCredentialsIfExistsFor(TableInfo tableInfo, DataAccessContext context)
         {
             int toReturn = -1;
@@ -147,36 +120,7 @@ namespace CatalogueLibrary.Data
         }
 
 
-        /// <summary>
-        /// Fetches all <see cref="DataAccessContext"/> under which the given <paramref name="credential"/> (username and encrypted password) can be used to access the <see cref="TableInfo"/>.
-        /// </summary>
-        /// <param name="tableInfo"></param>
-        /// <returns></returns>
-        public Dictionary<DataAccessContext, DataAccessCredentials> GetAllLinksBetween(TableInfo tableInfo, DataAccessCredentials credential)
-        {
-            var toReturn = new Dictionary<DataAccessContext, int>();
-
-            using (var con = _repository.GetConnection())
-            {
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT DataAccessCredentials_ID,Context FROM DataAccessCredentials_TableInfo WHERE TableInfo_ID = @tid and DataAccessCredentials_ID = @cid", con.Connection,con.Transaction);
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@tid", cmd));
-                cmd.Parameters["@tid"].Value = tableInfo.ID;
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@cid", cmd));
-                cmd.Parameters["@cid"].Value = credential.ID;
-
-                var r = cmd.ExecuteReader();
-                toReturn = GetLinksFromReader(r);
-            }
-
-            return toReturn.ToDictionary(k => k.Key, v => _repository.GetObjectByID<DataAccessCredentials>(v.Value));
-        }
-
-        /// <summary>
-        /// Fetches all <see cref="DataAccessCredentials"/> (username and encrypted password) that can be used to access the <see cref="TableInfo"/> under any
-        /// <see cref="DataAccessContext"/>)
-        /// </summary>
-        /// <param name="tableInfo"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public Dictionary<DataAccessContext,DataAccessCredentials> GetCredentialsIfExistsFor(TableInfo tableInfo)
         {
             var toReturn = new Dictionary<DataAccessContext, int>();
@@ -193,12 +137,7 @@ namespace CatalogueLibrary.Data
             return toReturn.ToDictionary(k => k.Key, v => _repository.GetObjectByID<DataAccessCredentials>(v.Value));
         }
 
-        /// <summary>
-        /// Returns all credential usage permissions for the given set of <paramref name="allTableInfos"/> and <paramref name="allCredentials"/>
-        /// </summary>
-        /// <param name="allCredentials"></param>
-        /// <param name="allTableInfos"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, TableInfo[] allTableInfos)
         {
             var allCredentialsDictionary = allCredentials.ToDictionary(k => k.ID, v => v);
@@ -239,11 +178,7 @@ namespace CatalogueLibrary.Data
             return toReturn;
         }
 
-        /// <summary>
-        /// Returns all the <see cref="TableInfo"/> that are allowed to use the given <paramref name="credentials"/>
-        /// </summary>
-        /// <param name="credentials"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public Dictionary<DataAccessContext, List<TableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
         {
             Dictionary<DataAccessContext,List<int>> toReturn = new Dictionary<DataAccessContext, List<int>>();
@@ -299,13 +234,7 @@ namespace CatalogueLibrary.Data
             return toReturn;
         }
 
-        /// <summary>
-        /// Returns the existing <see cref="DataAccessCredentials"/> if any which match the unencrypted <paramref name="username"/> and <paramref name="password"/> combination.  Throws
-        /// if there are more than 1 
-        /// </summary>
-        /// <param name="username"></param>
-        /// <param name="password"></param>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
         {
             //see if we already have a record of this user
@@ -340,11 +269,7 @@ namespace CatalogueLibrary.Data
             return context;
         }
 
-        /// <summary>
-        /// Changes the <see cref="DataAccessContext"/> under which the <paramref name="node"/> credentials are usable to access the <paramref name="node"/> table 
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="destinationContext"></param>
+        /// <inheritdoc/>
         public void SetContextFor(DataAccessCredentialUsageNode node, DataAccessContext destinationContext)
         {
             //don't bother if it is already at that context

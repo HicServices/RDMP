@@ -1,15 +1,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace MapsDirectlyToDatabaseTable
 {
-    /// <summary>
-    /// 
-    /// </summary>
     public class MemoryRepository : IRepository
     {
 
@@ -17,14 +13,21 @@ namespace MapsDirectlyToDatabaseTable
 
         protected readonly Dictionary<Type, List<IMapsDirectlyToDatabaseTable>> Objects = new Dictionary<Type, List<IMapsDirectlyToDatabaseTable>>();
 
-
+        /// <summary>
+        /// Initializes a new repository to hold objects in the types <paramref name="types"/>.  You can add other types later via <see cref="Objects"/> dictionary
+        /// </summary>
+        /// <param name="types"></param>
+        protected MemoryRepository(IEnumerable<Type> types)
+        {
+            foreach (Type t in types)
+                Objects.Add(t, new List<IMapsDirectlyToDatabaseTable>());
+        }
+        
         public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
             NextObjectId++;
             toCreate.ID = NextObjectId;
-
-            AddType(typeof (T));
-
+            
             foreach (KeyValuePair<string, object> kvp in constructorParameters)
             {
                 var prop = toCreate.GetType().GetProperty(kvp.Key);
@@ -36,23 +39,14 @@ namespace MapsDirectlyToDatabaseTable
             Objects[typeof(T)].Add(toCreate);
         }
 
-        protected void AddType(Type type)
-        {
-            if(!Objects.ContainsKey(type))
-                Objects.Add(type,new List<IMapsDirectlyToDatabaseTable>());
-        }
 
         public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
-            AddType(typeof(T));
-
             return (T) Objects[typeof (T)].Single(o => o.ID == id);
         }
 
         public T[] GetAllObjects<T>(string whereText = null) where T : IMapsDirectlyToDatabaseTable
         {
-            AddType(typeof(T));
-
             if (string.IsNullOrWhiteSpace(whereText))
                 return Objects[typeof (T)].Cast<T>().ToArray();
 
@@ -75,10 +69,6 @@ namespace MapsDirectlyToDatabaseTable
             string propertyName = parent.GetType().Name + "_ID";
 
             var prop = typeof(T).GetProperty(propertyName);
-
-            AddType(typeof(T));
-            AddType(parent.GetType());
-
             return Objects[typeof(T)].Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
         }
 
@@ -88,10 +78,6 @@ namespace MapsDirectlyToDatabaseTable
             string propertyName = typeof (T2).Name + "_ID";
 
             var prop = typeof (T).GetProperty(propertyName);
-
-            AddType(typeof(T));
-            AddType(typeof(T2));
-
             return Objects[typeof (T)].Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
 
         }
@@ -116,14 +102,30 @@ namespace MapsDirectlyToDatabaseTable
             throw new NotImplementedException();
         }
 
+        /// <inheritdoc/>
         public bool AreEqual(IMapsDirectlyToDatabaseTable obj1, object obj2)
         {
-            throw new NotImplementedException();
+            if (obj1 == null && obj2 != null)
+                return false;
+
+            if (obj2 == null && obj1 != null)
+                return false;
+
+            if (obj1 == null && obj2 == null)
+                throw new NotSupportedException("Why are you comparing two null things against one another with this method?");
+
+            if (obj1.GetType() == obj2.GetType())
+            {
+                return ((IMapsDirectlyToDatabaseTable)obj1).ID == ((IMapsDirectlyToDatabaseTable)obj2).ID;
+            }
+
+            return false;
         }
 
+        /// <inheritdoc/>
         public int GetHashCode(IMapsDirectlyToDatabaseTable obj1)
         {
-            throw new NotImplementedException();
+            return obj1.GetType().GetHashCode() * obj1.ID;
         }
 
         public Version GetVersion()
@@ -207,5 +209,8 @@ namespace MapsDirectlyToDatabaseTable
             var prop = entity.GetType().GetProperty(propertyName);
             prop.SetValue(entity,propertyValue);
         }
+
+
+        
     }
 }

@@ -8,19 +8,25 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Nodes;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Comments;
+using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Repositories
 {
-    class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults
+    class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker
     {
         public AggregateForcedJoin AggregateForcedJoiner { get; set; }
-        public TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
-        public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
+        public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get { return this; }}
+        public IEncryptStrings GetEncrypter()
+        {
+            return new SimpleStringValueEncryption(null);
+        }
+
         public JoinInfoFinder JoinInfoFinder { get; set; }
         public MEF MEF { get; set; }
         public CommentStore CommentStore { get; private set; }
@@ -32,7 +38,8 @@ namespace CatalogueLibrary.Repositories
 
         readonly Dictionary<PermissableDefaults, IExternalDatabaseServer> _defaults = new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
 
-        public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
+        public MemoryCatalogueRepository(IServerDefaults currentDefaults = null) :
+            base(typeof(MemoryCatalogueRepository).Assembly.GetTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
         {
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
@@ -44,17 +51,16 @@ namespace CatalogueLibrary.Repositories
                     var defaultServer = currentDefaults.GetDefaultFor(value);
 
                     //if it's not null we must be able to return it with GetObjectByID
-                    if(defaultServer != null)
-                    {
-                        AddType(typeof (ExternalDatabaseServer));
-                        Objects[typeof(ExternalDatabaseServer)].Add(defaultServer);
-                    }
-                    
+                    if (defaultServer != null)
+                        Objects[typeof (ExternalDatabaseServer)].Add(defaultServer);
+
                     _defaults.Add(value,defaultServer);
                 }
 
-            if(Objects.Any())
-                NextObjectId = Objects.Max(kvp => kvp.Value.Max(o => o.ID)) + 1;
+            //start IDs with the maximum id of any default to avoid collisions
+            var allObjs = Objects.SelectMany(kvp => kvp.Value).ToList();
+            if (allObjs.Any())
+                NextObjectId = allObjs.Max(o => o.ID);
         }
 
 
@@ -192,5 +198,77 @@ namespace CatalogueLibrary.Repositories
             if(v != null)
                 v.SoftwareVersion = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion;
         }
+
+        #region ITableInfoToCredentialsLinker
+        
+        /// <summary>
+        /// records which credentials can be used to access the table under which contexts
+        /// </summary>
+        Dictionary<TableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> _credentialsDictionary = new Dictionary<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
+
+        public void CreateLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context)
+        {
+            if(!_credentialsDictionary.ContainsKey(tableInfo))
+                _credentialsDictionary.Add(tableInfo,new Dictionary<DataAccessContext, DataAccessCredentials>());
+
+            _credentialsDictionary[tableInfo].Add(context,credentials);
+        }
+
+        public void BreakLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context)
+        {
+            if (!_credentialsDictionary.ContainsKey(tableInfo))
+                return;
+
+            _credentialsDictionary[tableInfo].Remove(context);
+        }
+
+        public void BreakAllLinksBetween(DataAccessCredentials credentials, TableInfo tableInfo)
+        {
+            if(!_credentialsDictionary.ContainsKey(tableInfo))
+                return;
+
+            var toRemove = _credentialsDictionary[tableInfo].Where(v=>Equals(v.Value ,credentials)).Select(k=>k.Key).ToArray();
+
+            foreach (DataAccessContext context in toRemove)
+                _credentialsDictionary[tableInfo].Remove(context);
+        }
+
+        public DataAccessCredentials GetCredentialsIfExistsFor(TableInfo tableInfo, DataAccessContext context)
+        {
+            if(_credentialsDictionary.ContainsKey(tableInfo))
+                if (_credentialsDictionary[tableInfo].ContainsKey(context))
+                    return _credentialsDictionary[tableInfo][context];
+
+            return null;
+        }
+
+        public Dictionary<DataAccessContext, DataAccessCredentials> GetCredentialsIfExistsFor(TableInfo tableInfo)
+        {
+            if (_credentialsDictionary.ContainsKey(tableInfo))
+                return _credentialsDictionary[tableInfo];
+
+            return null;
+        }
+
+        public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, TableInfo[] allTableInfos)
+        {
+            throw new NotImplementedException();
+        }
+
+        public Dictionary<DataAccessContext, List<TableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
+        {
+            return GetAllObjects<DataAccessCredentials>().FirstOrDefault(c=>Equals(c.Name,username) && Equals(c.GetDecryptedPassword(),password));
+        }
+
+        public void SetContextFor(DataAccessCredentialUsageNode node, DataAccessContext destinationContext)
+        {
+            throw new NotImplementedException();
+        }
+        #endregion
     }
 }

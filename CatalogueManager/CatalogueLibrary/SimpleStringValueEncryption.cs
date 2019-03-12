@@ -23,10 +23,8 @@ namespace CatalogueLibrary
     /// </summary>
     public class SimpleStringValueEncryption : IEncryptStrings
     {
-
         private Encoding encoding = Encoding.ASCII;
-        private PasswordEncryptionKeyLocation _location;
-
+        
         private const string Key =
             @"<?xml version=""1.0"" encoding=""utf-16""?>
 <RSAParameters xmlns:xsd=""http://www.w3.org/2001/XMLSchema"" xmlns:xsi=""http://www.w3.org/2001/XMLSchema-instance"">
@@ -40,40 +38,16 @@ namespace CatalogueLibrary
     <D>Y8zC8dUF7gI9zeeAkKfReInauV6wpg4iVh7jaTDN5DAmKFURTAyv6Il6LEyr07JB</D>
 </RSAParameters>";
 
-        public SimpleStringValueEncryption(ICatalogueRepository repository)
-        {
-            _repository = repository;
-        }
-
-        private bool _initialised;
-        private RSAParameters _privateKey;
-        private ICatalogueRepository _repository;
-
         /// <summary>
         /// The private key file parameters required to encrypt/decrypt strings.  These will either be read from the secure location on disk (<see cref="PasswordEncryptionKeyLocation"/>) or
         /// will match the the default decryption certificate (<see cref="Key"/>).
         /// </summary>
-        public RSAParameters PrivateKey
+        public RSAParameters PrivateKey { get; set; }
+
+        public SimpleStringValueEncryption(RSAParameters? parameters)
         {
-            get
-            {
-                if (_initialised)
-                    return _privateKey;
-
-                //if there isn't a key file
-                if (string.IsNullOrWhiteSpace(_location.GetKeyFileLocation()))
-                {
-                    //use the memory one
-                    string xml = Key;
-                    XmlSerializer DeserializeXml = new XmlSerializer(typeof (RSAParameters));
-                    _privateKey = (RSAParameters)DeserializeXml.Deserialize(new StringReader(xml));
-                }
-                else
-                    _privateKey = _location.OpenKeyFile();
-
-                _initialised = true;
-                return _privateKey;
-            }
+            //use the memory one no parameters passed
+            PrivateKey = parameters ?? (RSAParameters)new XmlSerializer(typeof(RSAParameters)).Deserialize(new StringReader(Key));
         }
 
         /// <summary>
@@ -82,22 +56,13 @@ namespace CatalogueLibrary
         /// <returns></returns>
         public string Encrypt(string toEncrypt)
         {
-            InitializeKey();
-
             using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
             {
                 RSA.ImportParameters(PrivateKey);
                return BitConverter.ToString(RSA.Encrypt(encoding.GetBytes(toEncrypt), false));
             }
         }
-
-        private void InitializeKey()
-        {
-            if(_location == null)
-                _location = new PasswordEncryptionKeyLocation(_repository);
-        }
-
-
+        
         /// <summary>
         /// Takes an encrypted byte[] (in string format as produced by BitConverter.ToString() 
         /// </summary>
@@ -105,8 +70,6 @@ namespace CatalogueLibrary
         /// <returns></returns>
         public string Decrypt(string toDecrypt)
         {
-            InitializeKey();
-
             using (RSACryptoServiceProvider RSA = new RSACryptoServiceProvider())
             {
                 RSA.ImportParameters(PrivateKey);

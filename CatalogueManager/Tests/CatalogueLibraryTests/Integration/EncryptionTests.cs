@@ -5,12 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using NUnit.Framework;
@@ -24,8 +19,8 @@ namespace CatalogueLibraryTests.Integration
         [Test]
         public void EncryptAndThenDecryptString()
         {
-            
-            SimpleStringValueEncryption encrypter = new SimpleStringValueEncryption(CatalogueRepository);
+
+            var encrypter = CatalogueRepository.GetEncrypter();
 
             string toEncrypt = "Amagad";
             string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
@@ -39,7 +34,7 @@ namespace CatalogueLibraryTests.Integration
         public void CheckIfThingsAreEncryptedOrNot()
         {
 
-            SimpleStringValueEncryption encrypter = new SimpleStringValueEncryption(CatalogueRepository);
+            var encrypter = CatalogueRepository.GetEncrypter();
 
             string toEncrypt = "Amagad";
             string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);

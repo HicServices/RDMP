@@ -184,7 +184,7 @@ namespace CatalogueLibrary.Data
                 parameters.Add("CreatedByAssembly", databaseAssemblyIfCreatedByOne.GetName().Name);
 
             Repository = repository;
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository) repository,DatabaseType.MicrosoftSQLServer);
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository,DatabaseType.MicrosoftSQLServer);
             repository.InsertAndHydrate(this, parameters);
         }
 
