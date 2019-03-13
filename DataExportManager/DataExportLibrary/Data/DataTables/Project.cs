@@ -101,12 +101,6 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IDataExportRepository DataExportRepository
-        {
-            get { return (IDataExportRepository)Repository; }
-        }
 
         /// <summary>
         /// Defines a new extraction project this is stored in the Data Export database

@@ -168,10 +168,6 @@ namespace CatalogueLibrary.Data.Cohort
         
 
         #endregion
-
-        [NoMappingToDatabase]
-        CatalogueRepository CatalogueRepository { get { return (CatalogueRepository) Repository; } }
-
         
 
         /// <summary>
@@ -257,7 +253,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters()
         {
-            return ((CatalogueRepository)Repository).GetAllParametersForParentTable(this).ToArray();
+            return CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
         }
 
 

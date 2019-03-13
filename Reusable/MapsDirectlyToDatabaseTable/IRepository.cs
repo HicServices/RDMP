@@ -50,6 +50,14 @@ namespace MapsDirectlyToDatabaseTable
         /// <returns></returns>
         T[] GetAllObjects<T>(string whereText = null) where T : IMapsDirectlyToDatabaseTable;
 
+
+        /// <summary>
+        /// Gets all objects of the given Type from the database where the given property of the object is <paramref name="value"/>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T[] GetAllObjectsWhere<T>(string property, object value) where T : IMapsDirectlyToDatabaseTable;
+
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
         
         /// <summary>
@@ -161,5 +169,6 @@ namespace MapsDirectlyToDatabaseTable
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids);
 
         void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,object propertyValue);
+
     }
 }

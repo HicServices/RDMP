@@ -18,10 +18,12 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Repositories
 {
-    class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker, IAggregateForcedJoin
+    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker, IAggregateForcedJoin, ICohortContainerLinker
     {
         public IAggregateForcedJoin AggregateForcedJoiner { get { return this; } }
         public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get { return this; }}
+        public ICohortContainerLinker CohortContainerLinker { get { return this; }}
+
         public IEncryptStrings GetEncrypter()
         {
             return new SimpleStringValueEncryption(null);
@@ -104,11 +106,6 @@ namespace CatalogueLibrary.Repositories
             throw new NotImplementedException();
         }
 
-        public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
-        {
-            throw new NotImplementedException();
-        }
-
         public LogManager GetDefaultLogManager()
         {
             throw new NotImplementedException();
@@ -164,7 +161,12 @@ namespace CatalogueLibrary.Repositories
         {
             return this;
         }
-        
+
+        public bool IsLookupTable(ITableInfo tableInfo)
+        {
+            return GetAllObjects<Lookup>().Any(l => l.Description.TableInfo.Equals(tableInfo));
+        }
+
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
         {
             return _defaults[field];
@@ -303,6 +305,72 @@ namespace CatalogueLibrary.Repositories
 
             _forcedJoins[configuration].Add(tableInfo);
         }
+        #endregion
+
+        #region ICohortContainerLinker
+        readonly Dictionary<CohortAggregateContainer, List<CohortContainerContent>> _cohortContainerContents = new Dictionary<CohortAggregateContainer, List<CohortContainerContent>>(); 
+
+        public CohortAggregateContainer GetCohortAggregateContainerIfAny(AggregateConfiguration aggregateConfiguration)
+        {
+            //if it is in the contents of a container
+            if (_cohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(aggregateConfiguration)))
+                return _cohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(aggregateConfiguration)).Key;
+
+            return null;
+        }
+
+        public void AddConfigurationToContainer(AggregateConfiguration configuration, CohortAggregateContainer cohortAggregateContainer,int order)
+        {
+            //make sure we know about the container
+            if(!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
+                _cohortContainerContents.Add(cohortAggregateContainer,new List<CohortContainerContent>());
+
+            _cohortContainerContents[cohortAggregateContainer].Add(new CohortContainerContent(configuration,order));
+        }
+
+        public void RemoveConfigurationFromContainer(AggregateConfiguration configuration,CohortAggregateContainer cohortAggregateContainer)
+        {
+            var toRemove = _cohortContainerContents[cohortAggregateContainer].Single(c => c.Orderable.Equals(configuration));
+            _cohortContainerContents[cohortAggregateContainer].Remove(toRemove);
+        }
+
+        private class CohortContainerContent
+        {
+            public IOrderable Orderable { get; private set; }
+            public int Order { get; private set; }
+
+            public CohortContainerContent(IOrderable orderable, int order)
+            {
+                Orderable = orderable;
+                Order = order;
+            }
+        }
+        
+        public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
+        {
+            var o = _cohortContainerContents.SelectMany(kvp => kvp.Value).SingleOrDefault(c => c.Orderable.Equals(configuration));
+            if (o == null)
+                return null;
+
+            return o.Order;
+        }
+
+        public CohortAggregateContainer[] GetSubcontainers(CohortAggregateContainer cohortAggregateContainer)
+        {
+            if (!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
+                return null;
+                    
+            return _cohortContainerContents[cohortAggregateContainer].Select(c=>c.Orderable).OfType<CohortAggregateContainer>().ToArray();
+        }
+
+        public AggregateConfiguration[] GetAggregateConfigurations(CohortAggregateContainer cohortAggregateContainer)
+        {
+            if (!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
+                return null;
+
+            return _cohortContainerContents[cohortAggregateContainer].Select(c => c.Orderable).OfType<AggregateConfiguration>().ToArray();
+        }
+
         #endregion
     }
 }

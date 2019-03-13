@@ -6,13 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -53,7 +50,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="operation"></param>
         public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation)
         {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
+            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation}});
         }
 
 
@@ -211,7 +208,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public AggregateConfiguration GetAggregate()
         {
-            var aggregateConfiguration = Repository.GetAllObjects<AggregateConfiguration>("WHERE RootFilterContainer_ID = " + ID).SingleOrDefault();
+            var aggregateConfiguration = Repository.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID",ID).SingleOrDefault();
 
             if (aggregateConfiguration != null)
                 return aggregateConfiguration;

@@ -391,17 +391,7 @@ namespace CatalogueLibrary.Data
 
         private bool FetchIsLookup()
         {
-            using (var con = _catalogueRepository.GetConnection())
-            {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand(
-@"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
-select 1
-else
-select 0", con.Connection, con.Transaction);
-
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, ID);
-                return Convert.ToBoolean(cmd.ExecuteScalar());
-            }
+            return _catalogueRepository.IsLookupTable(this);
         }
 
         /// <summary>

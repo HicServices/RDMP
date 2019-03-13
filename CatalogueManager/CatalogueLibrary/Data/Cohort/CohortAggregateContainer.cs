@@ -101,7 +101,7 @@ namespace CatalogueLibrary.Data.Cohort
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
-                {"Operation", operation.ToString()},
+                {"Operation", operation},
                 {"Order", 0},
                 {"Name", operation.ToString()}
             });
@@ -114,12 +114,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public CohortAggregateContainer[] GetSubContainers()
         {
-            return Repository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ChildID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ParentID=@CohortAggregateContainer_ParentID", 
-                "CohortAggregateContainer_ChildID",
-                new Dictionary<string, object>
-                {
-                    {"CohortAggregateContainer_ParentID", ID}
-                }).ToArray();
+            return CatalogueRepository.CohortContainerLinker.GetSubcontainers(this);
         }
 
         /// <summary>
@@ -144,7 +139,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public AggregateConfiguration[] GetAggregateConfigurations()
         {
-            return Repository.SelectAll<AggregateConfiguration>("SELECT AggregateConfiguration_ID FROM CohortAggregateContainer_AggregateConfiguration where CohortAggregateContainer_ID=" + ID).OrderBy(config=>config.Order).ToArray();
+            return CatalogueRepository.CohortContainerLinker.GetAggregateConfigurations(this);
         }
 
         /// <summary>
@@ -154,15 +149,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <param name="order"></param>
         public void AddChild(AggregateConfiguration configuration, int order)
         {
-            Repository.Insert(
-                "INSERT INTO CohortAggregateContainer_AggregateConfiguration (CohortAggregateContainer_ID, AggregateConfiguration_ID, [Order]) VALUES (@CohortAggregateContainer_ID, @AggregateConfiguration_ID, @Order)",
-                new Dictionary<string, object>
-                {
-                    {"CohortAggregateContainer_ID", ID},
-                    {"AggregateConfiguration_ID", configuration.ID},
-                    {"Order", order}
-                });
-
+            CatalogueRepository.CohortContainerLinker.AddConfigurationToContainer(configuration,this, order);
             configuration.ReFetchOrder();
         }
 
@@ -174,11 +161,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <param name="configuration"></param>
         public void RemoveChild(AggregateConfiguration configuration)
         {
-            Repository.Delete("DELETE FROM CohortAggregateContainer_AggregateConfiguration WHERE CohortAggregateContainer_ID = @CohortAggregateContainer_ID AND AggregateConfiguration_ID = @AggregateConfiguration_ID", new Dictionary<string, object>
-            {
-                {"CohortAggregateContainer_ID", ID},
-                {"AggregateConfiguration_ID", configuration.ID}
-            });
+            CatalogueRepository.CohortContainerLinker.RemoveConfigurationFromContainer(configuration, this);
         }
 
 

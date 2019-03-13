@@ -26,7 +26,7 @@ namespace Diagnostics.TestData
 {
     public class BulkTestsData
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         public readonly DiscoveredDatabase BulkDataDatabase;
         
 
@@ -35,7 +35,7 @@ namespace Diagnostics.TestData
 
         public readonly int ExpectedNumberOfRowsInTestData = 100000;
 
-        public BulkTestsData(CatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 100000)
+        public BulkTestsData(ICatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 100000)
         {
             _repository = repository;
             BulkDataDatabase = targetDatabase;

@@ -367,7 +367,12 @@ namespace MapsDirectlyToDatabaseTable
             return result;
         }
 
-        
+        public T[] GetAllObjectsWhere<T>(string property, object value) where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjectsWhere<T>("WHERE " + property + " = @val",new Dictionary<string, object>(){{"@val",value}} );
+        }
+
+
         public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjects(typeof (T), whereSQL, parameters).Cast<T>().ToArray();

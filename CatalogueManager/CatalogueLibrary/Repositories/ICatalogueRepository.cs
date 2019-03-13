@@ -48,18 +48,16 @@ namespace CatalogueLibrary.Repositories
         /// Stores class comments discovered at startup using NuDoq
         /// </summary>
         CommentStore CommentStore { get; }
-        
+
+        /// <summary>
+        /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
+        /// </summary>
+        ICohortContainerLinker CohortContainerLinker { get;}
+
         /// <summary>
         /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
         /// </summary>
         IEncryptStrings GetEncrypter();
-
-        /// <summary>
-        /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        int? GetOrderIfExistsFor(AggregateConfiguration configuration);
 
         /// <summary>
         /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
@@ -118,5 +116,10 @@ namespace CatalogueLibrary.Repositories
 
         IServerDefaults GetServerDefaults();
 
+        /// <summary>
+        /// True if the <paramref name="tableInfo"/> has <see cref="Lookup"/> relationships declared which make it a linkable lookup table in queries.
+        /// </summary>
+        /// <returns></returns>
+        bool IsLookupTable(ITableInfo tableInfo);
     }
 }

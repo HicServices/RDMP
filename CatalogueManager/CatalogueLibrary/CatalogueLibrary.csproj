@@ -408,6 +408,8 @@
     <Compile Include="QueryBuilding\Options\AggregateBuilderOptionsFactory.cs" />
     <Compile Include="QueryBuilding\Options\IAggregateBuilderOptions.cs" />
     <Compile Include="Reports\BitmapWithDescription.cs" />
+    <Compile Include="Repositories\CohortContainerLinker.cs" />
+    <Compile Include="Repositories\ICohortContainerLinker.cs" />
     <Compile Include="Repositories\MemoryCatalogueRepository.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />

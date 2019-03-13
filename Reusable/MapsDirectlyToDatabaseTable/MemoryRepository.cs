@@ -30,8 +30,14 @@ namespace MapsDirectlyToDatabaseTable
             
             foreach (KeyValuePair<string, object> kvp in constructorParameters)
             {
+                var val = kvp.Value;
+
+                //don't set nulls
+                if (val == DBNull.Value)
+                    val = null;
+
                 var prop = toCreate.GetType().GetProperty(kvp.Key);
-                prop.SetValue(toCreate,kvp.Value);
+                prop.SetValue(toCreate,val);
             }
 
             toCreate.Repository = this;
@@ -51,6 +57,13 @@ namespace MapsDirectlyToDatabaseTable
                 return Objects[typeof (T)].Cast<T>().ToArray();
 
             throw new NotImplementedException();
+        }
+
+        public T[] GetAllObjectsWhere<T>(string property, object value) where T : IMapsDirectlyToDatabaseTable
+        {
+            var prop = typeof (T).GetProperty(property);
+
+            return GetAllObjects<T>().Where(o => Equals(prop.GetValue(o), value)).ToArray();
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)

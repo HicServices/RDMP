@@ -64,7 +64,10 @@ namespace CatalogueLibrary.Repositories
 
         /// <inheritdoc/>
         public CommentStore CommentStore { get; set; }
-        
+
+        /// <inheritdoc/>
+        public ICohortContainerLinker CohortContainerLinker { get; private set; }
+
         /// <summary>
         /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
         /// them obviously this affects test performance so set this to true if you want it to skip this process.  Note where this is turned on, it's in the static constructor
@@ -81,6 +84,7 @@ namespace CatalogueLibrary.Repositories
             AggregateForcedJoiner = new AggregateForcedJoin(this);
             TableInfoToCredentialsLinker = new TableInfoToCredentialsLinker(this);
             JoinInfoFinder = new JoinInfoFinder(this);
+            CohortContainerLinker = new CohortContainerLinker(this);
             MEF = new MEF();
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
@@ -183,28 +187,6 @@ namespace CatalogueLibrary.Repositories
 
                 if (!CommentStore.ContainsKey(split[0]))
                     CommentStore.Add(split[0], split[1]);
-            }
-        }
-        
-        /// <summary>
-        /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
-        {
-            if (configuration.Repository != this)
-                if (((CatalogueRepository)configuration.Repository).ConnectionString != ConnectionString)
-                    throw new NotSupportedException("AggregateConfiguration is from a different repository than this with a different connection string");
-
-            using (var con = GetConnection())
-            {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT [Order] FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID", con.Connection, con.Transaction);
-
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
-                cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
-
-                return ObjectToNullableInt(cmd.ExecuteScalar());
             }
         }
         
@@ -439,6 +421,21 @@ namespace CatalogueLibrary.Repositories
         public IServerDefaults GetServerDefaults()
         {
             return new ServerDefaults(this);
+        }
+
+        public bool IsLookupTable(ITableInfo tableInfo)
+        {
+            using (var con = GetConnection())
+            {
+                DbCommand cmd = DatabaseCommandHelper.GetCommand(
+@"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
+select 1
+else
+select 0", con.Connection, con.Transaction);
+
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
+                return Convert.ToBoolean(cmd.ExecuteScalar());
+            }
         }
     }
 

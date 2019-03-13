@@ -217,7 +217,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public IEnumerable<AnyTableSqlParameter> Parameters
         {
-            get { return ((CatalogueRepository) Repository).GetAllParametersForParentTable(this); }
+            get { return CatalogueRepository.GetAllParametersForParentTable(this); }
         }
 
         /// <inheritdoc cref="Parameters"/>
@@ -234,7 +234,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public TableInfo[] ForcedJoins
         {
-            get { return ((CatalogueRepository) Repository).AggregateForcedJoiner.GetAllForcedJoinsFor(this); }
+            get { return CatalogueRepository.AggregateForcedJoiner.GetAllForcedJoinsFor(this); }
         }
 
         /// <summary>
@@ -351,6 +351,10 @@ namespace CatalogueLibrary.Data.Aggregation
                 {"Catalogue_ID", catalogue.ID}
             });
 
+            //default values
+            CountSQL = "count(*)";
+            dtCreated = DateTime.Now;
+
             ClearAllInjections();
         }
         
@@ -391,7 +395,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// </summary>
         public void ReFetchOrder()
         {
-            _orderWithinKnownContainer = ((CatalogueRepository) Repository).GetOrderIfExistsFor(this);
+            _orderWithinKnownContainer = CatalogueRepository.CohortContainerLinker.GetOrderIfExistsFor(this);
         }
 
         private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
@@ -565,14 +569,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public CohortAggregateContainer GetCohortAggregateContainerIfAny()
         {
-            return
-                Repository.SelectAllWhere<CohortAggregateContainer>(
-                    "SELECT CohortAggregateContainer_ID FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
-                    "CohortAggregateContainer_ID",
-                    new Dictionary<string, object>
-                    {
-                        {"AggregateConfiguration_ID", ID}
-                    }).SingleOrDefault();
+            return CatalogueRepository.CohortContainerLinker.GetCohortAggregateContainerIfAny(this);
         }
 
         /// <summary>

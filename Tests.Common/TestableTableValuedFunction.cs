@@ -24,7 +24,7 @@ namespace Tests.Common
         public ExtractionInformation[] ExtractionInformations;
 
 
-        public void Create(DiscoveredDatabase databaseICanCreateRandomTablesIn, CatalogueRepository catalogueRepository)
+        public void Create(DiscoveredDatabase databaseICanCreateRandomTablesIn, ICatalogueRepository catalogueRepository)
         {
 
             CreateFunctionSQL = @"

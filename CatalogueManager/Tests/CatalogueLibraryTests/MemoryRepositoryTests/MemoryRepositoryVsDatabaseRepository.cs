@@ -1,9 +1,11 @@
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
@@ -32,6 +34,20 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
         }
 
 
+        [Test]
+        public void TestMemoryRepository_AggregateConfigurationConstructor()
+        {
+            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository.GetServerDefaults());
+
+            Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
+            Catalogue dbCatalogue = new Catalogue(CatalogueRepository, "My New Catalogue");
+
+            var memAggregate = new AggregateConfiguration(memoryRepository, memCatalogue, "My New Aggregate");
+            var dbAggregate = new AggregateConfiguration(CatalogueRepository, dbCatalogue, "My New Aggregate");
+
+            AssertAreEqual(memAggregate, dbAggregate);
+        }
+        
         [Test]
         public void TestMemoryRepository_LiveLogging()
         {
@@ -124,9 +140,25 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
 
                 _alreadyChecked[property].Add(memObj);
 
-                var memValue = property.GetValue(memObj);
-                var dbValue = property.GetValue(dbObj);
-                
+                object memValue = null;
+                object dbValue = null;
+                try
+                {
+                    memValue = property.GetValue(memObj);
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail("{0} Property {1} could not be read from Memory:\r\n{2}", memObj.GetType().Name, property.Name,e);
+                }
+                try
+                {
+                    dbValue = property.GetValue(dbObj);
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name, property.Name, e);
+                }
+
                 if(memValue is IMapsDirectlyToDatabaseTable)
                 {
                     AssertAreEqual((IMapsDirectlyToDatabaseTable)memValue, (IMapsDirectlyToDatabaseTable)dbValue);
@@ -138,9 +170,20 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
                     return;
                 }
 
+                if (memValue is DateTime && dbValue is DateTime)
+                    if (!AreAboutTheSameTime((DateTime) memValue, (DateTime) dbValue))
+                        Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memValue, dbValue);
+                    else
+                        return;
+
                 //all other properties should be legit
                 Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,property.Name, memValue, dbValue);
             }
+        }
+
+        private bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
+        {
+            return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < 10;
         }
     }
 }
