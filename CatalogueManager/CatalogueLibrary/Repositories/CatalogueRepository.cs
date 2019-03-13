@@ -48,10 +48,10 @@ namespace CatalogueLibrary.Repositories
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         /// <inheritdoc/>
-        public AggregateForcedJoin AggregateForcedJoiner { get; set; }
+        public IAggregateForcedJoin AggregateForcedJoiner { get; private set; }
 
         /// <inheritdoc/>
-        public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
+        public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; private set; }
 
         
         /// <inheritdoc/>

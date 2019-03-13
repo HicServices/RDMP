@@ -294,6 +294,7 @@
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
+    <Compile Include="Data\Aggregation\IAggregateForcedJoin.cs" />
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
     <Compile Include="Data\Defaults\PermissableDefaults.cs" />
     <Compile Include="Data\Defaults\PermissableDefaultsExtensions.cs" />

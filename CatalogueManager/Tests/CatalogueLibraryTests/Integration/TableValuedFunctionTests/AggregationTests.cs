@@ -54,7 +54,7 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
                 agg.HavingSQL = "count(*)>1";
                 agg.SaveToDatabase();
 
-                var aggregateForcedJoin = new AggregateForcedJoin(CatalogueRepository);
+                var aggregateForcedJoin = CatalogueRepository.AggregateForcedJoiner;
                 aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
                 AggregateBuilder queryBuilder = agg.GetQueryBuilder();

@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
@@ -8,7 +9,6 @@ namespace MapsDirectlyToDatabaseTable
 {
     public class MemoryRepository : IRepository
     {
-
         protected int NextObjectId = 0;
 
         protected readonly Dictionary<Type, List<IMapsDirectlyToDatabaseTable>> Objects = new Dictionary<Type, List<IMapsDirectlyToDatabaseTable>>();
@@ -94,7 +94,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
         {
-            throw new NotImplementedException();
+            return new RevertableObjectReport {Evaluation = ChangeDescription.NoChanges};
         }
 
         /// <inheritdoc/>
@@ -125,7 +125,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public Version GetVersion()
         {
-            throw new NotImplementedException();
+            return new Version(FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
         }
 
         public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null,
@@ -135,16 +135,6 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
-        public int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Insert<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
             throw new NotImplementedException();
         }
@@ -204,8 +194,5 @@ namespace MapsDirectlyToDatabaseTable
             var prop = entity.GetType().GetProperty(propertyName);
             prop.SetValue(entity,propertyValue);
         }
-
-
-        
     }
 }

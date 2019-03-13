@@ -27,7 +27,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Allows creation/discover/deletion of <see cref="AggregateForcedJoin"/> objects
         /// </summary>
-        AggregateForcedJoin AggregateForcedJoiner { get; set; }
+        IAggregateForcedJoin AggregateForcedJoiner { get;}
 
         /// <summary>
         /// Allows linking/unlinking <see cref="DataAccessCredentials"/> to <see cref="TableInfo"/>

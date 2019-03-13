@@ -18,9 +18,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Repositories
 {
-    class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker
+    class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker, IAggregateForcedJoin
     {
-        public AggregateForcedJoin AggregateForcedJoiner { get; set; }
+        public IAggregateForcedJoin AggregateForcedJoiner { get { return this; } }
         public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get { return this; }}
         public IEncryptStrings GetEncrypter()
         {
@@ -186,7 +186,7 @@ namespace CatalogueLibrary.Repositories
 
             var v = toCreate as VersionedDatabaseEntity;
             if(v != null)
-                v.SoftwareVersion = FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion;
+                v.SoftwareVersion = GetVersion().ToString();
         }
 
         #region ITableInfoToCredentialsLinker
@@ -194,7 +194,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// records which credentials can be used to access the table under which contexts
         /// </summary>
-        Dictionary<TableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> _credentialsDictionary = new Dictionary<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
+        readonly Dictionary<TableInfo,Dictionary<DataAccessContext, DataAccessCredentials>> _credentialsDictionary = new Dictionary<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>>();
 
         public void CreateLinkBetween(DataAccessCredentials credentials, TableInfo tableInfo, DataAccessContext context)
         {
@@ -242,12 +242,32 @@ namespace CatalogueLibrary.Repositories
 
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> GetAllCredentialUsagesBy(DataAccessCredentials[] allCredentials, TableInfo[] allTableInfos)
         {
-            throw new NotImplementedException();
+            var toreturn = new Dictionary<TableInfo, List<DataAccessCredentialUsageNode>>();
+
+            foreach (KeyValuePair<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+            {
+                toreturn.Add(kvp.Key, new List<DataAccessCredentialUsageNode>());
+
+                foreach (KeyValuePair<DataAccessContext, DataAccessCredentials> forNode in kvp.Value)
+                    toreturn[kvp.Key].Add(new DataAccessCredentialUsageNode(forNode.Value, kvp.Key, forNode.Key));
+            }
+
+            return toreturn;
         }
 
         public Dictionary<DataAccessContext, List<TableInfo>> GetAllTablesUsingCredentials(DataAccessCredentials credentials)
         {
-            throw new NotImplementedException();
+            var toreturn = new Dictionary<DataAccessContext, List<TableInfo>>();
+            
+            //add the keys
+            foreach (DataAccessContext context in Enum.GetValues(typeof (DataAccessContext)))
+                toreturn.Add(context, new List<TableInfo>());
+
+            foreach (KeyValuePair<TableInfo, Dictionary<DataAccessContext, DataAccessCredentials>> kvp in _credentialsDictionary)
+                foreach (KeyValuePair<DataAccessContext, DataAccessCredentials> forNode in kvp.Value)
+                    toreturn[forNode.Key].Add(kvp.Key);
+            
+            return toreturn;
         }
 
         public DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password)
@@ -255,9 +275,33 @@ namespace CatalogueLibrary.Repositories
             return GetAllObjects<DataAccessCredentials>().FirstOrDefault(c=>Equals(c.Name,username) && Equals(c.GetDecryptedPassword(),password));
         }
 
-        public void SetContextFor(DataAccessCredentialUsageNode node, DataAccessContext destinationContext)
+        #endregion
+
+        #region IAggregateForcedJoin
+        readonly Dictionary<AggregateConfiguration,List<TableInfo>> _forcedJoins = new Dictionary<AggregateConfiguration, List<TableInfo>>();
+
+        public TableInfo[] GetAllForcedJoinsFor(AggregateConfiguration configuration)
         {
-            throw new NotImplementedException();
+            if (!_forcedJoins.ContainsKey(configuration))
+                return new TableInfo[0];
+
+            return _forcedJoins[configuration].ToArray();
+        }
+
+        public void BreakLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo)
+        {
+            if (!_forcedJoins.ContainsKey(configuration))
+                return;
+
+            _forcedJoins[configuration].Remove(tableInfo);
+        }
+
+        public void CreateLinkBetween(AggregateConfiguration configuration, TableInfo tableInfo)
+        {
+            if (!_forcedJoins.ContainsKey(configuration))
+                _forcedJoins.Add(configuration,new List<TableInfo>());
+
+            _forcedJoins[configuration].Add(tableInfo);
         }
         #endregion
     }

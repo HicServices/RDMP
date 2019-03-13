@@ -269,15 +269,5 @@ namespace CatalogueLibrary.Data
             return context;
         }
 
-        /// <inheritdoc/>
-        public void SetContextFor(DataAccessCredentialUsageNode node, DataAccessContext destinationContext)
-        {
-            //don't bother if it is already at that context
-            if(node.Context == destinationContext)
-                return;
-
-            BreakLinkBetween(node.Credentials,node.TableInfo,node.Context);
-            CreateLinkBetween(node.Credentials,node.TableInfo,destinationContext);
-        }
     }
 }

@@ -648,17 +648,8 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
-        public int Insert<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            using (var opener = GetConnection())
-            {
-                var query = CreateInsertStatement<T>(parameters);
-                var cmd = PrepareCommand(query, parameters, opener.Connection, opener.Transaction);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
+        
+        private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
             using (var opener = GetConnection())
             {

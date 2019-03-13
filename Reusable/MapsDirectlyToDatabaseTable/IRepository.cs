@@ -129,8 +129,6 @@ namespace MapsDirectlyToDatabaseTable
         IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID=null, Dictionary<string, object> parameters = null, T dbNullSubstition = default(T)) where T : IMapsDirectlyToDatabaseTable;
         IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID=null) where T : IMapsDirectlyToDatabaseTable;
 
-        int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable;
-        int Insert<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable;
         int Insert(string sql, Dictionary<string, object> parameters);
 
         int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows=true);
@@ -163,8 +161,5 @@ namespace MapsDirectlyToDatabaseTable
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids);
 
         void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,object propertyValue);
-
-
-        
     }
 }

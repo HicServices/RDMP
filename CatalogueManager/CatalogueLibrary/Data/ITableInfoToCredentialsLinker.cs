@@ -76,12 +76,5 @@ namespace CatalogueLibrary.Data
         /// <param name="password"></param>
         /// <returns></returns>
         DataAccessCredentials GetCredentialByUsernameAndPasswordIfExists(string username, string password);
-
-        /// <summary>
-        /// Changes the <see cref="DataAccessContext"/> under which the <paramref name="node"/> credentials are usable to access the <paramref name="node"/> table 
-        /// </summary>
-        /// <param name="node"></param>
-        /// <param name="destinationContext"></param>
-        void SetContextFor(DataAccessCredentialUsageNode node, DataAccessContext destinationContext);
     }
 }
