@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
@@ -15,6 +16,7 @@ using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
+using IContainer = CatalogueLibrary.Data.IContainer;
 
 namespace CatalogueLibrary.Repositories
 {
@@ -42,8 +44,7 @@ namespace CatalogueLibrary.Repositories
 
         readonly Dictionary<PermissableDefaults, IExternalDatabaseServer> _defaults = new Dictionary<PermissableDefaults, IExternalDatabaseServer>();
 
-        public MemoryCatalogueRepository(IServerDefaults currentDefaults = null) :
-            base(typeof(MemoryCatalogueRepository).Assembly.GetTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
+        public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
         {
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
@@ -56,15 +57,14 @@ namespace CatalogueLibrary.Repositories
 
                     //if it's not null we must be able to return it with GetObjectByID
                     if (defaultServer != null)
-                        Objects[typeof (ExternalDatabaseServer)].Add(defaultServer);
+                        Objects.Add(defaultServer);
 
                     _defaults.Add(value,defaultServer);
                 }
 
             //start IDs with the maximum id of any default to avoid collisions
-            var allObjs = Objects.SelectMany(kvp => kvp.Value).ToList();
-            if (allObjs.Any())
-                NextObjectId = allObjs.Max(o => o.ID);
+            if (Objects.Any())
+                NextObjectId = Objects.Max(o => o.ID);
         }
         
 
@@ -192,6 +192,7 @@ namespace CatalogueLibrary.Repositories
             if(v != null)
                 v.SoftwareVersion = GetVersion().ToString();
         }
+        
 
         #region ITableInfoToCredentialsLinker
         
@@ -310,7 +311,7 @@ namespace CatalogueLibrary.Repositories
         #endregion
 
         #region ICohortContainerLinker
-        readonly Dictionary<CohortAggregateContainer, List<CohortContainerContent>> _cohortContainerContents = new Dictionary<CohortAggregateContainer, List<CohortContainerContent>>(); 
+        readonly Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> _cohortContainerContents = new Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>>(); 
 
         public CohortAggregateContainer GetCohortAggregateContainerIfAny(AggregateConfiguration aggregateConfiguration)
         {
@@ -325,7 +326,7 @@ namespace CatalogueLibrary.Repositories
         {
             //make sure we know about the container
             if(!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
-                _cohortContainerContents.Add(cohortAggregateContainer,new List<CohortContainerContent>());
+                _cohortContainerContents.Add(cohortAggregateContainer, new HashSet<CohortContainerContent>());
 
             _cohortContainerContents[cohortAggregateContainer].Add(new CohortContainerContent(configuration,order));
         }
@@ -378,9 +379,8 @@ namespace CatalogueLibrary.Repositories
 
         #region IFilterContainerManager
 
-        readonly Dictionary<IContainer,List<IContainer>>  _whereSubContainers = new Dictionary<IContainer, List<IContainer>>();
-        readonly Dictionary<IContainer,List<IFilter>> _whereContainerContents = new Dictionary<IContainer, List<IFilter>>();
-
+        readonly Dictionary<IContainer, HashSet<IContainer>> _whereSubContainers = new Dictionary<IContainer, HashSet<IContainer>>();
+        
         public IContainer[] GetSubContainers(IContainer container)
         {
             if(!_whereSubContainers.ContainsKey(container))
@@ -407,25 +407,19 @@ namespace CatalogueLibrary.Repositories
 
         public IFilter[] GetFilters(IContainer container)
         {
-            if (!_whereContainerContents.ContainsKey(container))
-                return new IFilter[0];
-
-            return _whereContainerContents[container].ToArray();
+            return GetAllObjects<IFilter>().Where(f => f.FilterContainer_ID == container.ID).ToArray();
         }
 
         public void AddChild(IContainer container, IFilter filter)
         {
-            if(!_whereContainerContents.ContainsKey(container))
-                _whereContainerContents.Add(container,new List<IFilter>());
-
-            _whereContainerContents[container].Add(filter);
+            filter.FilterContainer_ID = container.ID;
         }
 
         public void AddSubContainer(IContainer parent, IContainer child)
         {
             if (!_whereSubContainers.ContainsKey(parent))
-                _whereSubContainers.Add(parent, new List<IContainer>());
-
+                _whereSubContainers.Add(parent, new HashSet<IContainer>());
+            
             _whereSubContainers[parent].Add(child);
         }
 

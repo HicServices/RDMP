@@ -11,17 +11,7 @@ namespace MapsDirectlyToDatabaseTable
     {
         protected int NextObjectId = 0;
 
-        protected readonly Dictionary<Type, List<IMapsDirectlyToDatabaseTable>> Objects = new Dictionary<Type, List<IMapsDirectlyToDatabaseTable>>();
-
-        /// <summary>
-        /// Initializes a new repository to hold objects in the types <paramref name="types"/>.  You can add other types later via <see cref="Objects"/> dictionary
-        /// </summary>
-        /// <param name="types"></param>
-        protected MemoryRepository(IEnumerable<Type> types)
-        {
-            foreach (Type t in types)
-                Objects.Add(t, new List<IMapsDirectlyToDatabaseTable>());
-        }
+        protected readonly HashSet<IMapsDirectlyToDatabaseTable> Objects = new HashSet<IMapsDirectlyToDatabaseTable>();
         
         public virtual void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters) where T : IMapsDirectlyToDatabaseTable
         {
@@ -42,19 +32,19 @@ namespace MapsDirectlyToDatabaseTable
 
             toCreate.Repository = this;
             
-            Objects[typeof(T)].Add(toCreate);
+            Objects.Add(toCreate);
         }
 
 
         public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
-            return (T) Objects[typeof (T)].Single(o => o.ID == id);
+            return Objects.OfType<T>().Single(o => o.ID == id);
         }
 
         public T[] GetAllObjects<T>(string whereText = null) where T : IMapsDirectlyToDatabaseTable
         {
             if (string.IsNullOrWhiteSpace(whereText))
-                return Objects[typeof (T)].Cast<T>().ToArray();
+                return Objects.OfType<T>().ToArray();
 
             throw new NotImplementedException();
         }
@@ -68,7 +58,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)
         {
-            return Objects[t];
+            return Objects.Where(o=>o.GetType() == t);
         }
 
         public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
@@ -77,7 +67,7 @@ namespace MapsDirectlyToDatabaseTable
             string propertyName = parent.GetType().Name + "_ID";
 
             var prop = typeof(T).GetProperty(propertyName);
-            return Objects[typeof(T)].Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
+            return Objects.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
         }
 
         public T[] GetAllObjectsWithParent<T, T2>(T2 parent) where T : IMapsDirectlyToDatabaseTable, IInjectKnown<T2> where T2 : IMapsDirectlyToDatabaseTable
@@ -86,7 +76,7 @@ namespace MapsDirectlyToDatabaseTable
             string propertyName = typeof (T2).Name + "_ID";
 
             var prop = typeof (T).GetProperty(propertyName);
-            return Objects[typeof (T)].Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
+            return Objects.OfType<T>().Where(o => prop.GetValue(o) as int? == parent.ID).Cast<T>().ToArray();
 
         }
 
@@ -97,7 +87,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            Objects[oTableWrapperObject.GetType()].Remove(oTableWrapperObject);
+            Objects.Remove(oTableWrapperObject);
         }
 
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
@@ -179,7 +169,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public bool StillExists(IMapsDirectlyToDatabaseTable o)
         {
-            return Objects[o.GetType()].Contains(o);
+            return Objects.Contains(o);
         }
 
         public bool StillExists(Type objectType, int objectId)
