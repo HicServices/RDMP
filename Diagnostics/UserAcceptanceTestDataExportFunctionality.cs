@@ -324,7 +324,7 @@ GO
         private bool CreateProjectAndExtractionConfiguration(ICheckNotifier notifier)
         {
             var repository = RepositoryLocator.DataExportRepository;
-            Project projectToCleanUp = repository.GetAllObjects<Project>("WHERE ProjectNumber = " + _projectNumber).SingleOrDefault();
+            Project projectToCleanUp = repository.GetAllObjectsWhere<Project>("ProjectNumber" , _projectNumber).SingleOrDefault();
 
             if(projectToCleanUp != null)
             {
@@ -332,7 +332,7 @@ GO
                 {
                     
                     //extractable dataset
-                    var toCleanupDataset = repository.GetAllObjects<ExtractableDataSet>("WHERE Catalogue_ID = " + _catalogue.ID).SingleOrDefault();
+                    var toCleanupDataset = repository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).SingleOrDefault();
                  
                     if(toCleanupDataset != null)
                     {
@@ -523,7 +523,7 @@ GO
             var repository = RepositoryLocator.DataExportRepository;
             try
             {
-                ExternalCohortTable toCleanup = repository.GetAllObjects<ExternalCohortTable>("WHERE Name = '" + _cohortDatabaseName + "'").SingleOrDefault();
+                ExternalCohortTable toCleanup = repository.GetAllObjectsWhere<ExternalCohortTable>("Name",_cohortDatabaseName).SingleOrDefault();
                 if(toCleanup != null)
                 {
                     toCleanup.DeleteInDatabase();
@@ -579,14 +579,14 @@ GO
         private bool ImportAsExtractableCohort(ICheckNotifier notifier)
         {
             var repository = RepositoryLocator.DataExportRepository;
-            ExtractableCohort oldExtractableCohort = repository.GetAllObjects<ExtractableCohort>("WHERE OriginID = " + _cohortForcedIdentity).SingleOrDefault();
+            ExtractableCohort oldExtractableCohort = repository.GetAllObjectsWhere<ExtractableCohort>("OriginID" ,_cohortForcedIdentity).SingleOrDefault();
 
             try
             {
                 if(oldExtractableCohort != null)
                 {
                     ExternalCohortTable oldExternalCohortTableSource = repository.GetObjectByID<ExternalCohortTable>(oldExtractableCohort.ExternalCohortTable_ID);
-                    ExtractableCohort[] otherCohortsUsingOldSource = repository.GetAllObjects<ExtractableCohort>("WHERE ExternalCohortTable_ID = " + oldExternalCohortTableSource.ID).ToArray();
+                    ExtractableCohort[] otherCohortsUsingOldSource = repository.GetAllObjectsWhere<ExtractableCohort>("ExternalCohortTable_ID" , oldExternalCohortTableSource.ID).ToArray();
 
                     if (otherCohortsUsingOldSource.Length > 1)
                         throw new Exception("Could not cleanup old reference to an external cohort table with ID=" + oldExternalCohortTableSource.ID + " because it is used by the following cohorts: " + otherCohortsUsingOldSource.Aggregate("", (s, n) => s + "'" + n +"' ") + " you must delete these cohorts before you can delete the source");

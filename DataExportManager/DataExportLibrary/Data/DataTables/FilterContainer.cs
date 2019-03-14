@@ -151,7 +151,7 @@ namespace DataExportLibrary.Data.DataTables
             if (root == null)
                 return null;
 
-            return Repository.GetAllObjects<SelectedDataSets>("WHERE RootFilterContainer_ID=" + root.ID).SingleOrDefault();
+            return Repository.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
         }
 
 

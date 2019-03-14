@@ -166,7 +166,7 @@ namespace CatalogueLibrary.Data.ImportExport
             if (Guid.Empty.ToString().Equals(sharingUID))
                 return false;
 
-            return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").Any();
+            return _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
         }
 
         /// <summary>
@@ -243,7 +243,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public ObjectImport GetExistingImport(string sharingUID)
         {
-            return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+            return _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).SingleOrDefault();
         }
 
         /// <inheritdoc cref="GetExistingImport(string)"/>
@@ -259,7 +259,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public ObjectExport GetExistingExport(string sharingUID)
         {
-            return _catalogueRepository.GetAllObjects<ObjectExport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+            return _catalogueRepository.GetAllObjectsWhere<ObjectExport>("SharingUID", sharingUID).SingleOrDefault();
         }
 
         /// <inheritdoc cref="GetExistingExport(string)"/>

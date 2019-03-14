@@ -206,6 +206,8 @@ namespace CatalogueLibraryTests.Integration
             //don't try to cleanup if there was Assert.Inconclusive because the server was inaccessible
             if(_database == null)
                 return;
+            if(!_table.Exists())
+                return;
 
             string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
 

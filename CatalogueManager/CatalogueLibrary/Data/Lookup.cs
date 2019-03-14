@@ -283,7 +283,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
         {
-            return Repository.GetAllObjects<LookupCompositeJoinInfo>("WHERE OriginalLookup_ID=" + ID);
+            return Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID" , ID);
         }
         /// <inheritdoc/>
         public ExtractionJoinType GetInvertedJoinType()

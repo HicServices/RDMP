@@ -72,9 +72,7 @@ namespace DataExportLibrary.Data.DataTables
             get
             {
                 return
-                Repository.GetAllObjects<DeployedExtractionFilterParameter>(
-                    "WHERE ExtractionFilter_ID=" + ID)
-                    .ToArray();
+                Repository.GetAllObjectsWhere<DeployedExtractionFilterParameter>("ExtractionFilter_ID" , ID).ToArray();
             }
         }
 

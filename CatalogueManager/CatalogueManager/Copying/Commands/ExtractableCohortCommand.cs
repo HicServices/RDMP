@@ -37,7 +37,7 @@ namespace CatalogueManager.Copying.Commands
                 return;
             }
 
-            CompatibleProjects = extractableCohort.Repository.GetAllObjects<Project>("WHERE ProjectNumber = " + ExternalProjectNumber);
+            CompatibleProjects = extractableCohort.Repository.GetAllObjectsWhere<Project>("ProjectNumber" , ExternalProjectNumber);
             CompatibleExtractionConfigurations = CompatibleProjects.SelectMany(p => p.ExtractionConfigurations).ToArray();
         }
         

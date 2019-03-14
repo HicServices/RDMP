@@ -448,11 +448,9 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public ConcreteColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
         {
-            return Repository.GetAllObjects<ExtractableColumn>(
-                string.Format(
-                    "WHERE ExtractionConfiguration_ID={0} AND ExtractableDataSet_ID={1}",
-                    ID,
-                    dataset.ID));
+            return
+                Repository.GetAllObjectsWhere<ExtractableColumn>("ExtractionConfiguration_ID", ID)
+                .Where(e => e.ExtractableDataSet_ID == dataset.ID).ToArray();
         }
         /// <inheritdoc/>
         public IContainer GetFilterContainerFor(IExtractableDataSet dataset)

@@ -589,7 +589,7 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return Repository.GetAllObjects<ExtractionConfiguration>("WHERE Cohort_ID = " + ID);
+            return Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID " , ID);
         }
     }
 }
