@@ -24,6 +24,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -209,7 +210,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
                     lblPreviewDataIsFictional.Visible = false;
 
                     var qb = new QueryBuilder(null, null, new[] {_tableInfo});
-                    qb.AddColumn(new ColumnInfoToIColumn(_columnInfo));
+                    qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                     qb.TopX = 10;
 
                     DbCommand cmd = server.GetCommand(qb.SQL, con);

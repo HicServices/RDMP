@@ -12,10 +12,12 @@ using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.Copying;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
@@ -56,22 +58,25 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
         public string GetCommand()
         {
+            var repo = new MemoryCatalogueRepository();
+
             var qb = new QueryBuilder("distinct", null);
-            qb.AddColumn(new ColumnInfoToIColumn(_keyColumn){Order = 0});
-            qb.AddColumn(new ColumnInfoToIColumn(_descriptionColumn){Order = 1});
+            qb.AddColumn(new ColumnInfoToIColumn(repo,_keyColumn) { Order = 0 });
+            qb.AddColumn(new ColumnInfoToIColumn(repo,_descriptionColumn) { Order = 1 });
             qb.TopX = 100;
-            
-            var container = new SpontaneouslyInventedFilterContainer(null, null, FilterContainerOperation.AND);
+
+
+            var container = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
 
             if(!string.IsNullOrWhiteSpace(tbCode.Text))
             {
-                var codeFilter = new SpontaneouslyInventedFilter(container, _keyColumn.GetFullyQualifiedName() + " LIKE '" + tbCode.Text + "%'", "Key Starts", "", null);
+                var codeFilter = new SpontaneouslyInventedFilter(repo,container, _keyColumn.GetFullyQualifiedName() + " LIKE '" + tbCode.Text + "%'", "Key Starts", "", null);
                 container.AddChild(codeFilter);
             }
             
             if(!string.IsNullOrWhiteSpace(tbDescription.Text))
             {
-                var codeFilter = new SpontaneouslyInventedFilter(container, _descriptionColumn.GetFullyQualifiedName() + " LIKE '%" + tbDescription.Text + "%'", "Description Contains", "", null);
+                var codeFilter = new SpontaneouslyInventedFilter(repo,container, _descriptionColumn.GetFullyQualifiedName() + " LIKE '%" + tbDescription.Text + "%'", "Description Contains", "", null);
                 container.AddChild(codeFilter);
             }
             

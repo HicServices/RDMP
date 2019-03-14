@@ -192,7 +192,17 @@ namespace CatalogueLibrary.Repositories
             if(v != null)
                 v.SoftwareVersion = GetVersion().ToString();
         }
-        
+
+        public override void Clear()
+        {
+            base.Clear();
+
+            _cohortContainerContents.Clear();
+            _credentialsDictionary.Clear();
+            _forcedJoins.Clear();
+            _whereSubContainers.Clear();
+            _defaults.Clear();
+        }
 
         #region ITableInfoToCredentialsLinker
         

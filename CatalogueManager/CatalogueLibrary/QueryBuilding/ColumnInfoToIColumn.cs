@@ -27,7 +27,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// Allows the given <see cref="ColumnInfo"/> to act as an <see cref="IColumn"/> giving it an Order and setting extraction flags (e.g. <see cref="HashOnDataRelease"/>)to sensible defaults.
         /// </summary>
         /// <param name="column"></param>
-        public ColumnInfoToIColumn(ColumnInfo column)
+        public ColumnInfoToIColumn(MemoryRepository repo, ColumnInfo column):base(repo)
         {
             ColumnInfo = column;
             Order = -1;

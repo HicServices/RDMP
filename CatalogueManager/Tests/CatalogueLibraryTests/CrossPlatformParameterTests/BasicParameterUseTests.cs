@@ -17,6 +17,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.MainFormUITabs.SubComponents;
 using DataLoadEngine.DataFlowPipeline.Destinations;
@@ -92,7 +93,7 @@ namespace CatalogueLibraryTests.CrossPlatformParameterTests
                 
                 var qb = new QueryBuilder(null, null);
                 qb.AddColumn(extractionInformation);
-                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,new []{filter},FilterContainerOperation.AND);
+                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
             
                 using(var con = db.Server.GetConnection())
                 {

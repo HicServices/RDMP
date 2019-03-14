@@ -6,6 +6,7 @@
 
 using System;
 using CatalogueLibrary.Data;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibrary.Spontaneous
@@ -15,7 +16,7 @@ namespace CatalogueLibrary.Spontaneous
     /// </summary>
     public class SpontaneouslyInventedColumn : SpontaneousObject,IColumn
     {
-        public SpontaneouslyInventedColumn(string alias, string selectSQl)
+        public SpontaneouslyInventedColumn(MemoryRepository repo, string alias, string selectSQl):base(repo)
         {
             ColumnInfo = null;//no underlying column
             if(string.IsNullOrWhiteSpace(alias))

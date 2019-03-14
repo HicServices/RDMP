@@ -33,7 +33,7 @@ namespace CatalogueLibrary.Spontaneous
         
         public string Comment { get; set; }
 
-        public SpontaneouslyInventedSqlParameter(string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper)
+        public SpontaneouslyInventedSqlParameter(MemoryRepository repo, string declarationSql, string value, string comment, IQuerySyntaxHelper syntaxHelper):base(repo)
         {
             _syntaxHelper = syntaxHelper;
             ParameterSQL = declarationSql;

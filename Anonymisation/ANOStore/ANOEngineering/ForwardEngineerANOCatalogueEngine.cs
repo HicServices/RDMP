@@ -55,6 +55,8 @@ namespace ANOStore.ANOEngineering
             if(_planManager.TargetDatabase == null)
                 throw new Exception("PlanManager has no TargetDatabase set");
 
+            var memoryRepo = new MemoryCatalogueRepository();
+
             using (_catalogueRepository.BeginNewTransactedConnection())
             {
                 try
@@ -84,7 +86,7 @@ namespace ANOStore.ANOEngineering
                             if (columnPlan.Plan != Plan.Drop)
                             {
                                 //add the column verbatim to the query builder because we know we have to read it from source
-                                querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(columnInfo));
+                                querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(memoryRepo,columnInfo));
 
                                 string colName = columnInfo.GetRuntimeName();
                                 
@@ -295,11 +297,11 @@ namespace ANOStore.ANOEngineering
 
                         //date column based migration only works for single TableInfo migrations (see Plan Manager checks)
                         var qb = SelectSQLForMigrations.Single(kvp=>!kvp.Key.IsLookupTable()).Value;
-                        qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,
+                        qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepo,null,
                             new[]
                             {
-                                new SpontaneouslyInventedFilter(null,_planManager.DateColumn + " >= @startDate","After batch start date","",null),
-                                new SpontaneouslyInventedFilter(null,_planManager.DateColumn + " <= @endDate","Before batch end date","",null),
+                                new SpontaneouslyInventedFilter(memoryRepo,null,_planManager.DateColumn + " >= @startDate","After batch start date","",null),
+                                new SpontaneouslyInventedFilter(memoryRepo,null,_planManager.DateColumn + " <= @endDate","Before batch end date","",null),
                             }
                             ,FilterContainerOperation.AND);
                     }

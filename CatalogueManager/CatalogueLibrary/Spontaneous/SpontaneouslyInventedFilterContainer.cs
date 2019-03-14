@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -32,8 +33,10 @@ namespace CatalogueLibrary.Spontaneous
     /// </summary>
     public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContainer
     {
-        public SpontaneouslyInventedFilterContainer(IContainer[] subContainersIfAny, IFilter[] filtersIfAny, FilterContainerOperation operation): base(new MemoryCatalogueRepository())
+        public SpontaneouslyInventedFilterContainer(MemoryCatalogueRepository repo, IContainer[] subContainersIfAny, IFilter[] filtersIfAny, FilterContainerOperation operation):base(repo)
         {
+            repo.InsertAndHydrate(this,new Dictionary<string, object>());
+
             if (subContainersIfAny != null)
                 foreach (IContainer container in subContainersIfAny)
                     AddChild(container);

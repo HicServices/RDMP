@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.QueryBuilding
 {

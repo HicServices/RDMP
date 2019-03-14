@@ -4,11 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
-using System.Data.Common;
+using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -23,54 +21,16 @@ namespace CatalogueLibrary.Spontaneous
     /// <para>SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for object equality without getting confused but prevents the
     /// system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue</para>
     /// </summary>
-    public abstract class SpontaneousObject: IRevertable
+    public abstract class SpontaneousObject: DatabaseEntity
     {
-        static Random random = new Random();
-
-        private int _id;
-
-        protected SpontaneousObject()
-        {
-            _id = random.Next(1000000000)*-1;
-        }
-
-        public virtual void DeleteInDatabase()
-        {
-            throw new System.NotSupportedException("Spontaneously Invented Objects cannot be deleted");
-        }
-
-        public virtual void SaveToDatabase()
-        {
-            throw new System.NotSupportedException("Spontaneously Invented Objects cannot be saved");
-        }
-        
         /// <summary>
-        /// Returns a random negative number (set during construction) to satisfy interface.  SpontaneousObjects do not get stored in 
-        /// the database so the ID is not very meaningful.
+        /// Optional repository for tracking the objects relationship to other <see cref="SpontaneousObject"/>
         /// </summary>
-        public int ID { get { return _id; }  set{throw new NotSupportedException();}}
-        public IRepository Repository { get { throw new NotSupportedException(); } set { throw new NotSupportedException(); } }
-        public event PropertyChangedEventHandler PropertyChanged;
-        public void SetReadOnly()
+        /// <param name="repository"></param>
+        protected SpontaneousObject(MemoryRepository repository)
         {
-            //already is mate... kinda
-        }
-
-        public DbCommand UpdateCommand { get { throw new NotSupportedException(); } set { throw new NotSupportedException(); } }
-
-        public void RevertToDatabaseState()
-        {
-            //there will never be any persistence so we revert by doing nothing - it is assumed that any change is intended
-        }
-
-        public RevertableObjectReport HasLocalChanges()
-        {
-            return new RevertableObjectReport {Evaluation = ChangeDescription.NoChanges};
-        }
-
-        public bool Exists()
-        {
-            return true;
+            if(repository != null)
+                repository.InsertAndHydrate(this,new Dictionary<string, object>());
         }
     }
 }

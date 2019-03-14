@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -168,7 +169,7 @@ namespace CatalogueManager.ExtractionUIs
             foreach (ExtractionFilter f in olvFilters.CheckedObjects)
                 filters.Add(f);
 
-            builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,filters.ToArray(),FilterContainerOperation.AND);
+            builder.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null,filters.ToArray(),FilterContainerOperation.AND);
             return builder.SQL;
         }
         

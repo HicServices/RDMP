@@ -14,6 +14,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -51,7 +52,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                     var syntaxHelper = Request.Catalogue.GetQuerySyntaxHelper();
 
                     Request.QueryBuilder.AddColumn(
-                        new SpontaneouslyInventedColumn(SYNTH_PK_COLUMN,syntaxHelper.HowDoWeAchieveMd5(newSql))
+                        new SpontaneouslyInventedColumn(new MemoryRepository(),SYNTH_PK_COLUMN,syntaxHelper.HowDoWeAchieveMd5(newSql))
                     {
                         HashOnDataRelease = true,
                         IsPrimaryKey = true,

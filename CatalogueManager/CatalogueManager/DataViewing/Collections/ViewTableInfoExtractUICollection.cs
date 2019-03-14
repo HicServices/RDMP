@@ -10,6 +10,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
@@ -79,11 +80,13 @@ namespace CatalogueManager.DataViewing.Collections
             if(ViewType ==  ViewType.TOP_100)
             qb.TopX = 100;
 
-            qb.AddColumnRange(TableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(c)).ToArray());
+            var memoryRepository = new MemoryCatalogueRepository();
+
+            qb.AddColumnRange(TableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
 
             var filter = GetFilterIfAny();
             if(filter != null)
-                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,new []{filter},FilterContainerOperation.AND);
+                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository, null, new[] { filter }, FilterContainerOperation.AND);
             
             if(ViewType == ViewType.Aggregate)
                 qb.AddCustomLine("count(*),",QueryComponent.QueryTimeColumn);

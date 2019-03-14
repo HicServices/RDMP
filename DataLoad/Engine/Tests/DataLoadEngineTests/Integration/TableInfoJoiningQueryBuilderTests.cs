@@ -7,7 +7,9 @@
 using System;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -18,6 +20,8 @@ namespace DataLoadEngineTests.Integration
         [Test]
         public void OpportunisticJoinRequired()
         {
+            var memory = new MemoryRepository();
+            
             //tables and columns
             TableInfo head = new TableInfo(CatalogueRepository,"Head");
             ColumnInfo col1 = new ColumnInfo(CatalogueRepository,"TestResultSetNumber","int",head);
@@ -33,7 +37,7 @@ namespace DataLoadEngineTests.Integration
 
             //CASE 1 : Only 1 column used so no join needed
             var queryBuilder = new QueryBuilder(null, null);
-            var icol1 = new ColumnInfoToIColumn(col1);
+            var icol1 = new ColumnInfoToIColumn(memory,col1);
             icol1.Order = 1;
             queryBuilder.AddColumn(icol1);
 
@@ -45,9 +49,9 @@ namespace DataLoadEngineTests.Integration
 
             //CASE 2 : 2 columns used one from each table so join is needed
             queryBuilder = new QueryBuilder(null, null);
-            queryBuilder.AddColumn(new ColumnInfoToIColumn(col1));
+            queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
 
-            var icol4 = new ColumnInfoToIColumn(col4);
+            var icol4 = new ColumnInfoToIColumn(memory,col4);
             icol4.Order = 2;
             queryBuilder.AddColumn(icol4);
 
@@ -63,16 +67,18 @@ Code
 FROM 
 [biochemistry]..[Result] Right JOIN Head ON FK = PK"),CollapseWhitespace(queryBuilder.SQL));
 
-            var spontContainer = new SpontaneouslyInventedFilterContainer(null, null, FilterContainerOperation.AND);
+            var memoryRepository = new MemoryCatalogueRepository();
 
-            var spontFilter = new SpontaneouslyInventedFilter(spontContainer, "[biochemistry]..[Result].[OmgBob] = 'T'",
+            var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, null, FilterContainerOperation.AND);
+
+            var spontFilter = new SpontaneouslyInventedFilter(memoryRepository,spontContainer, "[biochemistry]..[Result].[OmgBob] = 'T'",
                 "My Filter", "Causes spontaneous requirement for joining compeltely", null);
             spontContainer.AddChild(spontFilter);
 
 
             //CASE 3 : Only 1 column from Head but filter contains a reference to Result column
             queryBuilder = new QueryBuilder(null, null);
-            queryBuilder.AddColumn(new ColumnInfoToIColumn(col1));
+            queryBuilder.AddColumn(new ColumnInfoToIColumn(memory,col1));
 
             //without the filter
             tablesUsed = SqlQueryBuilderHelper.GetTablesUsedInQuery(queryBuilder, out primary, null);

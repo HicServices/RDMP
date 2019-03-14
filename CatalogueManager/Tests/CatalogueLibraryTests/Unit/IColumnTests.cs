@@ -29,6 +29,10 @@ namespace CatalogueLibraryTests.Unit
         /// </summary>
         private class TestColumn:SpontaneousObject,IColumn
         {
+            public TestColumn():base(new MemoryRepository())
+            {
+                
+            }
             public string GetRuntimeName()
             {
                 return RDMPQuerySyntaxHelper.GetRuntimeName(this);

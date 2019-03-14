@@ -54,6 +54,8 @@ namespace DataExportLibrary.ExtractionTime
                 throw new NullReferenceException("No Cohort selected");
 
             substitutions = new List<ReleaseIdentifierSubstitution>();
+
+            var memoryRepository = new MemoryRepository();
             
             switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
             { 
@@ -61,13 +63,13 @@ namespace DataExportLibrary.ExtractionTime
                 case 0: throw new Exception("There are no Columns in this dataset ("+request+") marked as IsExtractionIdentifier"); 
                     
                 //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
-                case 1: substitutions.Add(new ReleaseIdentifierSubstitution(request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false));
+                case 1: substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository,request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false));
                     break;
 
                 //multiple extraction identifiers e.g. Mother X had Babies A, B, C where A,B and C are all CHIs that must be subbed for ProCHIs
                 default:
                     foreach (IColumn columnToSubstituteForReleaseIdentifier in request.ColumnsToExtract.Where(c=>c.IsExtractionIdentifier))
-                        substitutions.Add(new ReleaseIdentifierSubstitution(columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true));
+                        substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true));
                     break;
             }
 

@@ -435,11 +435,13 @@ namespace CatalogueLibrary.Providers
         private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
+            
+            MemoryRepository repo = new MemoryRepository();
 
             //find compatible pipelines useCase.Value
             foreach (Pipeline compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
             {
-                children.Add(new PipelineCompatibleWithUseCaseNode(compatiblePipeline, node.UseCase));
+                children.Add(new PipelineCompatibleWithUseCaseNode(repo,compatiblePipeline, node.UseCase));
             }
 
             //it is the first standard use case

@@ -9,6 +9,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Spontaneous;
 using FAnsi.Discovery.QuerySyntax;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
 
@@ -32,7 +33,7 @@ namespace CatalogueLibrary.QueryBuilding
         /// <para>Can include aliases e.g. count(*) as MyCount</para>
         /// </summary>
         /// <param name="sql"></param>
-        public AggregateCountColumn(string sql)
+        public AggregateCountColumn(string sql): base(new MemoryRepository())
         {
             _sql = sql;
         }
