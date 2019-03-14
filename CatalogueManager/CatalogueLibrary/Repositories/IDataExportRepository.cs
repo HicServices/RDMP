@@ -17,5 +17,11 @@ namespace CatalogueLibrary.Repositories
     {
         CatalogueRepository CatalogueRepository { get; }
         CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
+        
+        /// <summary>
+        /// Manager for AND/OR WHERE containers and filters
+        /// </summary>
+        IFilterContainerManager FilterContainerManager { get; }
+
     }
 }

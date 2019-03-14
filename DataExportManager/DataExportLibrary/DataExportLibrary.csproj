@@ -338,6 +338,7 @@
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
+    <Compile Include="Repositories\DataExportFilterContainerManager.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
   </ItemGroup>
   <ItemGroup>

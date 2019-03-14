@@ -41,9 +41,13 @@ namespace DataExportLibrary.Repositories
         /// </summary>
         public CatalogueRepository CatalogueRepository { get; private set; }
 
+        public IFilterContainerManager FilterContainerManager { get; private set; }
+
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
+            
+            FilterContainerManager = new DataExportFilterContainerManager(this);
 
             Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
             Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));
@@ -96,6 +100,8 @@ namespace DataExportLibrary.Repositories
 
             return eds.GetCatalogueExtractabilityStatus();
         }
+
+        
 
         public SelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
         {

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using ReusableLibraryCode;
@@ -72,7 +73,7 @@ namespace CatalogueLibrary.Repositories
             }
         }
 
-        public CohortAggregateContainer[] GetSubcontainers(CohortAggregateContainer cohortAggregateContainer)
+        public CohortAggregateContainer[] GetSubContainers(CohortAggregateContainer cohortAggregateContainer)
         {
             return _catalogueRepository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ChildID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ParentID=@CohortAggregateContainer_ParentID",
                 "CohortAggregateContainer_ChildID",

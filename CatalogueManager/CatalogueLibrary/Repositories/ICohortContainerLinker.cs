@@ -1,3 +1,4 @@
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 
@@ -42,7 +43,7 @@ namespace CatalogueLibrary.Repositories
         /// Gets all the subcontainers of the current container (if any)
         /// </summary>
         /// <returns></returns>
-        CohortAggregateContainer[] GetSubcontainers(CohortAggregateContainer cohortAggregateContainer);
+        CohortAggregateContainer[] GetSubContainers(CohortAggregateContainer cohortAggregateContainer);
 
         /// <summary>
         /// Returns all the cohort identifier set queries (See <see cref="AggregateConfiguration"/>) declared as immediate children of the container.  These exist in 
@@ -50,5 +51,6 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         AggregateConfiguration[] GetAggregateConfigurations(CohortAggregateContainer cohortAggregateContainer);
+
     }
 }

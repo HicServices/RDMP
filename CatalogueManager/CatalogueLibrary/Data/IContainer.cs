@@ -86,13 +86,25 @@ namespace CatalogueLibrary.Data
 
         //ContainerHelper implements these if you are writting a sane IContainer you can instantiate the helper and use it's methods
 
-        /// <inheritdoc cref="ContainerHelper.GetRootContainerOrSelf"/>
+
+        /// <summary>
+        /// Returns the absolute top level root IContainer of the hierarchy that the container is a part of.  If the specified container is already a root level container
+        /// or it is an orphan or part of it's hierarchy going upwards is an orphan then the same container reference will be returned.
+        /// </summary>
+        /// <returns></returns>
         IContainer GetRootContainerOrSelf();
 
-        /// <inheritdoc cref="ContainerHelper.GetAllSubContainersRecursively"/>
+        /// <summary>
+        /// Returns all IContainers that are declared as below the current IContainer (e.g. children).  This includes children of children etc down the tree.
+        /// </summary>
+        /// <returns></returns>
         List<IContainer> GetAllSubContainersRecursively();
 
-        /// <inheritdoc cref="ContainerHelper.GetAllFiltersIncludingInSubContainersRecursively"/>
+        /// <summary>
+        /// Returns all IFilters that are declared in the current container or any of it's subcontainers (recursively).  This includes children of children 
+        /// etc down the tree.
+        /// </summary>
+        /// <returns></returns>
         List<IFilter> GetAllFiltersIncludingInSubContainersRecursively();
 
         /// <summary>

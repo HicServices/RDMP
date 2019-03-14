@@ -114,7 +114,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public CohortAggregateContainer[] GetSubContainers()
         {
-            return CatalogueRepository.CohortContainerLinker.GetSubcontainers(this);
+            return CatalogueRepository.CohortContainerLinker.GetSubContainers(this);
         }
 
         /// <summary>

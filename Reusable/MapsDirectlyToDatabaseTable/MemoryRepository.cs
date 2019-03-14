@@ -179,7 +179,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public bool StillExists(IMapsDirectlyToDatabaseTable o)
         {
-            throw new NotImplementedException();
+            return Objects[o.GetType()].Contains(o);
         }
 
         public bool StillExists(Type objectType, int objectId)

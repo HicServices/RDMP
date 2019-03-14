@@ -294,6 +294,7 @@
     <Compile Include="DataFlowPipeline\Requirements\IDataFlowPipelineContext.cs" />
     <Compile Include="Data\AggregateTopX.cs" />
     <Compile Include="Data\AggregateTopXOrderByDirection.cs" />
+    <Compile Include="Data\ConcreteContainer.cs" />
     <Compile Include="Data\Aggregation\IAggregateForcedJoin.cs" />
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
     <Compile Include="Data\Defaults\PermissableDefaults.cs" />
@@ -303,7 +304,6 @@
     <Compile Include="Exceptions\AmbiguousDatabaseTypeException.cs" />
     <Compile Include="Data\Cohort\SetOperation.cs" />
     <Compile Include="Data\ConcreteFilter.cs" />
-    <Compile Include="Data\ContainerHelper.cs" />
     <Compile Include="Data\ConnectionStringKeyword.cs" />
     <Compile Include="Data\Dashboarding\DashboardControl.cs" />
     <Compile Include="Data\Dashboarding\DashboardLayout.cs" />
@@ -409,7 +409,9 @@
     <Compile Include="QueryBuilding\Options\IAggregateBuilderOptions.cs" />
     <Compile Include="Reports\BitmapWithDescription.cs" />
     <Compile Include="Repositories\CohortContainerLinker.cs" />
+    <Compile Include="Repositories\AggregateFilterContainerManager.cs" />
     <Compile Include="Repositories\ICohortContainerLinker.cs" />
+    <Compile Include="Repositories\IFilterContainerManager.cs" />
     <Compile Include="Repositories\MemoryCatalogueRepository.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />

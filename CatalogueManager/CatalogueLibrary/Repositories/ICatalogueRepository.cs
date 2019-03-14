@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Referencing;
@@ -58,6 +57,11 @@ namespace CatalogueLibrary.Repositories
         /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
         /// </summary>
         IEncryptStrings GetEncrypter();
+
+        /// <summary>
+        /// Manager for AND/OR WHERE containers and filters
+        /// </summary>
+        IFilterContainerManager FilterContainerManager {get;}
 
         /// <summary>
         /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>

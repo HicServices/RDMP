@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
@@ -20,25 +21,29 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
     /// The class deals with all this transparently via GetSubContainers.</para>
     /// </summary>
-    public class AggregateFilterContainer : VersionedDatabaseEntity, IContainer, IDisableable
+    public class AggregateFilterContainer : ConcreteContainer, IDisableable
     {
         #region Database Properties
-        private FilterContainerOperation _operation;
+        
         private bool _isDisabled;
-
-
-        /// <inheritdoc/>
-        public FilterContainerOperation Operation
-        {
-            get { return _operation; }
-            set { SetField(ref  _operation, value); }
-        }
+        private string _softwareVersion;
+        
 
         /// <inheritdoc/>
         public bool IsDisabled
         {
             get { return _isDisabled; }
             set { SetField(ref _isDisabled, value); }
+        }
+
+        /// <summary>
+        /// The version of RDMP that was running when the object was created
+        /// </summary>
+        [DoNotExtractProperty]
+        public string SoftwareVersion
+        {
+            get { return _softwareVersion; }
+            set { SetField(ref  _softwareVersion, value); }
         }
 
         #endregion
@@ -48,18 +53,15 @@ namespace CatalogueLibrary.Data.Aggregation
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="operation"></param>
-        public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation)
+        public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterContainerManager)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation}});
         }
 
 
-        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterContainerManager,repository, r)
         {
-            FilterContainerOperation op;
-            FilterContainerOperation.TryParse(r["Operation"].ToString(), out op);
-            Operation = op;
-
+            SoftwareVersion = r["SoftwareVersion"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
 
@@ -69,77 +71,12 @@ namespace CatalogueLibrary.Data.Aggregation
             return Operation.ToString();
         }
 
-        /// <inheritdoc/>
-        public IContainer GetParentContainerIfAny()
-        {
-            return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID=" + ID,
-                "AggregateFilterContainer_ParentID").SingleOrDefault();
-        }
 
         /// <inheritdoc/>
-        public IContainer[] GetSubContainers()
-        {
-            return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID=" + ID, 
-                "AggregateFilterContainer_ChildID").ToArray();
-        }
-        
-        /// <inheritdoc/>
-        public IFilter[] GetFilters()
-        {
-            return Repository.GetAllObjects<AggregateFilter>("WHERE FilterContainer_ID="+ID).ToArray();
-        }
-
-        /// <inheritdoc/>
-        public void AddChild(IContainer child)
-        {
-            AddChild((AggregateFilterContainer)child);
-        }
-
-        private void AddChild(AggregateFilterContainer child)
-        {
-            Repository.Insert(
-                "INSERT INTO AggregateFilterSubContainer(AggregateFilterContainer_ParentID,AggregateFilterContainer_ChildID) VALUES (@AggregateFilterContainer_ParentID,@AggregateFilterContainer_ChildID)",
-            new Dictionary<string, object>
-            {
-                {"AggregateFilterContainer_ParentID", ID},
-                {"AggregateFilterContainer_ChildID", child.ID}
-            });
-        }
-
-
-
-        /// <inheritdoc/>
-        public void MakeIntoAnOrphan()
-        {
-            Repository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
-            {
-                {"AggregateFilterContainer_ChildID", ID}
-            });
-        }
-        
-        /// <inheritdoc/>
-        public IContainer GetRootContainerOrSelf()
-        {
-            return new ContainerHelper().GetRootContainerOrSelf(this);
-        }
-
-        /// <inheritdoc/>
-        public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllFiltersIncludingInSubContainersRecursively(this);
-        }
-
-        /// <inheritdoc/>
-        public Catalogue GetCatalogueIfAny()
+        public override Catalogue GetCatalogueIfAny()
         {
             var agg = GetAggregate();
             return agg != null?agg.Catalogue:null;
-        }
-
-        /// <inheritdoc/>
-        public List<IContainer> GetAllSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllSubContainersRecursively(this);
         }
         
         /// <summary>
@@ -188,19 +125,7 @@ namespace CatalogueLibrary.Data.Aggregation
             return clone;
         }
 
-        /// <inheritdoc/>
-        public void AddChild(IFilter filter)
-        {
-            if(filter.FilterContainer_ID.HasValue)
-                if (filter.FilterContainer_ID == ID)
-                    return; //It's already a child of us
-                else
-                    throw new NotSupportedException("Filter " + filter + " is already a child of nother container (ID=" + filter.FilterContainer_ID + ")");
-
-            filter.FilterContainer_ID = ID;
-            filter.SaveToDatabase();
-        }
-
+        
         /// <summary>
         /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
         /// Returns null if the container is somehow an orphan. 

@@ -11,9 +11,9 @@
     </TypeIdentifier>
   </Class>
   <Class Name="RDMPStartup.LinkedRepositoryProvider">
-    <Position X="11.5" Y="2.75" Width="2.25" />
+    <Position X="11.75" Y="2.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>MAACCAAAAABAAAAAEAAAAAAAAAgABAAAAAAAAAABAgA=</HashCode>
+      <HashCode>MAACCAAAAABAAAAAEAAQAAAAAAgABAAAAAAAAAABAgA=</HashCode>
       <FileName>LinkedRepositoryProvider.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -68,6 +68,29 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="CatalogueLibrary.Repositories.MemoryCatalogueRepository" Collapsed="true">
+    <Position X="10" Y="12.75" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.Comments.CommentStore" Collapsed="true">
+    <Position X="15.5" Y="11" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Repositories.JoinInfoFinder" Collapsed="true">
+    <Position X="15.5" Y="9" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="MapsDirectlyToDatabaseTable.MemoryRepository" Collapsed="true">
+    <Position X="6.75" Y="12.75" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="CatalogueLibrary.Repositories.MEF" Collapsed="true">
+    <Position X="15.5" Y="12" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
   <Interface Name="MapsDirectlyToDatabaseTable.IObscureDependencyFinder" Collapsed="true">
     <Position X="7.5" Y="5" Width="2.25" />
     <TypeIdentifier />
@@ -76,5 +99,69 @@
     <Position X="6.25" Y="0.75" Width="3.25" />
     <TypeIdentifier />
   </Interface>
+  <Interface Name="CatalogueLibrary.Repositories.ICatalogueRepository">
+    <Position X="10" Y="7" Width="2.25" />
+    <AssociationLine Name="JoinInfoFinder" Type="CatalogueLibrary.Repositories.JoinInfoFinder">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.308" Y="0.112" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="MEF" Type="CatalogueLibrary.Repositories.MEF" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.062" Y="10.67" />
+        <Point X="12.062" Y="12.281" />
+        <Point X="15.5" Y="12.281" />
+      </Path>
+    </AssociationLine>
+    <AssociationLine Name="CommentStore" Type="ReusableLibraryCode.Comments.CommentStore" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.25" Y="9.875" />
+        <Point X="12.625" Y="9.875" />
+        <Point X="12.625" Y="11.281" />
+        <Point X="15.5" Y="11.281" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="AggregateForcedJoiner" />
+      <Property Name="TableInfoToCredentialsLinker" />
+      <Property Name="JoinInfoFinder" />
+      <Property Name="MEF" />
+      <Property Name="CommentStore" />
+      <Property Name="CohortContainerLinker" />
+      <Property Name="FilterContainerManager" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="CatalogueLibrary.Data.Aggregation.IAggregateForcedJoin" Collapsed="true">
+    <Position X="15.5" Y="7.5" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="CatalogueLibrary.Repositories.ICohortContainerLinker" Collapsed="true">
+    <Position X="15.5" Y="8.25" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="CatalogueLibrary.Data.ITableInfoToCredentialsLinker">
+    <Position X="15.5" Y="6.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.ITableRepository" Collapsed="true">
+    <Position X="9" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.IRepository" Collapsed="true">
+    <Position X="10" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="CatalogueLibrary.Repositories.IFilterContainerManager" Collapsed="true">
+    <Position X="15.5" Y="9.75" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Enum Name="CatalogueLibrary.Repositories.Tier2DatabaseType" Collapsed="true">
+    <Position X="15.5" Y="12.75" Width="2" />
+    <TypeIdentifier />
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

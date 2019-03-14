@@ -75,6 +75,9 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         public static bool SuppressHelpLoading;
 
+        /// <inheritdoc/>
+        public IFilterContainerManager FilterContainerManager { get; private set; }
+
         /// <summary>
         /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
         /// </summary>
@@ -86,6 +89,7 @@ namespace CatalogueLibrary.Repositories
             JoinInfoFinder = new JoinInfoFinder(this);
             CohortContainerLinker = new CohortContainerLinker(this);
             MEF = new MEF();
+            FilterContainerManager = new AggregateFilterContainerManager(this);
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
             
@@ -152,6 +156,8 @@ namespace CatalogueLibrary.Repositories
         {
             return new SimpleStringValueEncryption(new PasswordEncryptionKeyLocation(this).OpenKeyFile());
         }
+
+        
 
         /// <summary>
         /// Initializes and loads <see cref="CommentStore"/> with all the xml doc/dll files found in the provided <paramref name="directories"/> 

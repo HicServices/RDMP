@@ -18,7 +18,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Repositories
 {
-    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker, IAggregateForcedJoin, ICohortContainerLinker
+    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker, IAggregateForcedJoin, ICohortContainerLinker, IFilterContainerManager
     {
         public IAggregateForcedJoin AggregateForcedJoiner { get { return this; } }
         public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get { return this; }}
@@ -28,6 +28,8 @@ namespace CatalogueLibrary.Repositories
         {
             return new SimpleStringValueEncryption(null);
         }
+
+        public IFilterContainerManager FilterContainerManager { get { return this; }}
 
         public JoinInfoFinder JoinInfoFinder { get; set; }
         public MEF MEF { get; set; }
@@ -355,10 +357,10 @@ namespace CatalogueLibrary.Repositories
             return o.Order;
         }
 
-        public CohortAggregateContainer[] GetSubcontainers(CohortAggregateContainer cohortAggregateContainer)
+        public CohortAggregateContainer[] GetSubContainers(CohortAggregateContainer cohortAggregateContainer)
         {
             if (!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
-                return null;
+                return new CohortAggregateContainer[0];
                     
             return _cohortContainerContents[cohortAggregateContainer].Select(c=>c.Orderable).OfType<CohortAggregateContainer>().ToArray();
         }
@@ -369,6 +371,62 @@ namespace CatalogueLibrary.Repositories
                 return null;
 
             return _cohortContainerContents[cohortAggregateContainer].Select(c => c.Orderable).OfType<AggregateConfiguration>().ToArray();
+        }
+
+        #endregion
+
+
+        #region IFilterContainerManager
+
+        readonly Dictionary<IContainer,List<IContainer>>  _whereSubContainers = new Dictionary<IContainer, List<IContainer>>();
+        readonly Dictionary<IContainer,List<IFilter>> _whereContainerContents = new Dictionary<IContainer, List<IFilter>>();
+
+        public IContainer[] GetSubContainers(IContainer container)
+        {
+            if(!_whereSubContainers.ContainsKey(container))
+                return new IContainer[0];
+
+            return _whereSubContainers[container].ToArray();
+        }
+
+        public void MakeIntoAnOrphan(IContainer container)
+        {
+            foreach (var contents in _whereSubContainers)
+                if (contents.Value.Contains(container))
+                    contents.Value.Remove(container);
+        }
+
+        public IContainer GetParentContainerIfAny(IContainer container)
+        {
+            var match = _whereSubContainers.Where(k => k.Value.Contains(container)).ToArray();
+            if (match.Length != 0)
+                return match[0].Key;
+
+            return null;
+        }
+
+        public IFilter[] GetFilters(IContainer container)
+        {
+            if (!_whereContainerContents.ContainsKey(container))
+                return new IFilter[0];
+
+            return _whereContainerContents[container].ToArray();
+        }
+
+        public void AddChild(IContainer container, IFilter filter)
+        {
+            if(!_whereContainerContents.ContainsKey(container))
+                _whereContainerContents.Add(container,new List<IFilter>());
+
+            _whereContainerContents[container].Add(filter);
+        }
+
+        public void AddSubContainer(IContainer parent, IContainer child)
+        {
+            if (!_whereSubContainers.ContainsKey(parent))
+                _whereSubContainers.Add(parent, new List<IContainer>());
+
+            _whereSubContainers[parent].Add(child);
         }
 
         #endregion
