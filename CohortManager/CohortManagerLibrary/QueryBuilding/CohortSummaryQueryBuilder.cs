@@ -149,7 +149,7 @@ namespace CohortManagerLibrary.QueryBuilding
 
             //if we are only graphing a single filter from the Cohort
             if (singleFilterOnly != null)
-                cohortRootContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, new[] { singleFilterOnly }, FilterContainerOperation.AND);
+                cohortRootContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, new [] { singleFilterOnly }, FilterContainerOperation.AND);
 
             //so hacky, we pass in the summary builder (a blatant lie!) and tell the CohortQueryBuilderHelper it belongs to AggregateConfiguration _cohort (when it doesn't).  This
             //will result in any PatientIndex tables associated with _cohort being propagated into the _summary builder

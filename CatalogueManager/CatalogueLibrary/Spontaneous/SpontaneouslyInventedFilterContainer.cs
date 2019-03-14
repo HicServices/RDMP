@@ -44,7 +44,10 @@ namespace CatalogueLibrary.Spontaneous
 
             if (filtersIfAny != null)
                 foreach (IFilter filter in filtersIfAny)
-                    AddChild(filter);
+                    if(filter is SpontaneouslyInventedFilter)
+                        AddChild(filter);
+                    else
+                        AddChild(new SpontaneouslyInventedFilter(repo,this,filter.WhereSQL,filter.Name,filter.Description,filter.GetAllParameters())); 
 
             Operation = operation;
         }

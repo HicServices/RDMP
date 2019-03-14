@@ -89,9 +89,9 @@ namespace CatalogueLibrary.QueryBuilding
             if (obj is QueryTimeColumn == false)
                 throw new Exception(".Equals only works for objects of type QueryTimeColumn");
 
+            var other = (obj as QueryTimeColumn);
             return
-                (obj as QueryTimeColumn).IColumn.ID == this.IColumn.ID
-                && IColumn.ID != -1;
+                other.IColumn.Equals(IColumn);
         }
 
         /// <inheritdoc/>

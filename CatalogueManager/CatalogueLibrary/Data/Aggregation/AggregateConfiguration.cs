@@ -345,16 +345,16 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="name"></param>
         public AggregateConfiguration(ICatalogueRepository repository, ICatalogue catalogue, string name)
         {
+            //default values
+            CountSQL = "count(*)";
+            dtCreated = DateTime.Now;
+
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name},
                 {"Catalogue_ID", catalogue.ID}
             });
-
-            //default values
-            CountSQL = "count(*)";
-            dtCreated = DateTime.Now;
-
+            
             ClearAllInjections();
         }
         

@@ -458,7 +458,7 @@ namespace MapsDirectlyToDatabaseTable
 
             if (obj1.GetType() == obj2.GetType())
             {
-                return ((IMapsDirectlyToDatabaseTable) obj1).ID == ((IMapsDirectlyToDatabaseTable) obj2).ID;
+                return obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID && obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
             }
 
             return false;
