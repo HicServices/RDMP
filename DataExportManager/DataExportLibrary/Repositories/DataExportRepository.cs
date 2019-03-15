@@ -52,7 +52,6 @@ namespace DataExportLibrary.Repositories
 
             Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
             Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));
-            Constructors.Add(typeof(DataUser),(rep,r)=>new DataUser((IDataExportRepository)rep,r));
             Constructors.Add(typeof(DeployedExtractionFilter),(rep,r)=>new DeployedExtractionFilter((IDataExportRepository)rep,r));
             Constructors.Add(typeof(DeployedExtractionFilterParameter),(rep,r)=>new DeployedExtractionFilterParameter((IDataExportRepository)rep,r));
             Constructors.Add(typeof(ExternalCohortTable),(rep,r)=>new ExternalCohortTable((IDataExportRepository)rep,r));

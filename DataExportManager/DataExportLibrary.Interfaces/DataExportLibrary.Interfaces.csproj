@@ -168,7 +168,6 @@
     <Compile Include="Data\DataTables\ICohortDefinition.cs" />
     <Compile Include="Data\DataTables\IExternalCohortTable.cs" />
     <Compile Include="Data\DataTables\ICumulativeExtractionResults.cs" />
-    <Compile Include="Data\DataTables\IDataUser.cs" />
     <Compile Include="Data\DataTables\IExtractableCohort.cs" />
     <Compile Include="Data\DataTables\IExtractableDataSet.cs" />
     <Compile Include="Data\DataTables\IExtractionConfiguration.cs" />

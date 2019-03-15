@@ -17,7 +17,6 @@ using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.ProjectUI.DataUsers;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode;
 using ReusableUIComponents;
@@ -61,7 +60,6 @@ namespace DataExportManager.ProjectUI
                 tbExtractionDirectory.Text = value == null ? "" : value.ExtractionDirectory;
                 tbProjectNumber.Text = value == null ? "" : ""+value.ProjectNumber;
                 
-                btnConfigureDataUsers.Enabled = value != null;
                 dataGridView1.Invalidate();
 
                 SetCohorts();
@@ -364,13 +362,6 @@ namespace DataExportManager.ProjectUI
             Project.MasterTicket = tcMasterTicket.TicketText;
         }
 
-
-        private void btnConfigureDataUsers_Click(object sender, EventArgs e)
-        {
-            DataUserManagement management = new DataUserManagement(Project);
-            management.ShowDialog(this);
-        }
-        
         public void SwitchToCutDownUIMode()
         {
             dataGridView1.Visible = false;

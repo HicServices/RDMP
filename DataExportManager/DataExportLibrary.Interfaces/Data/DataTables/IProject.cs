@@ -41,11 +41,6 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         IExtractionConfiguration[] ExtractionConfigurations { get; }
 
         /// <summary>
-        /// Available to document who the recipients of extractions are (not really used for anything in RDMP)
-        /// </summary>
-        IEnumerable<IDataUser> DataUsers { get; }
-        
-        /// <summary>
         /// The database in which the object is persisted
         /// </summary>
         IDataExportRepository DataExportRepository { get; }

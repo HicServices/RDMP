@@ -288,7 +288,6 @@
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />
-    <Compile Include="Data\DataTables\DataUser.cs" />
     <Compile Include="Data\DataTables\ExternalCohortTable.cs" />
     <Compile Include="Data\DataTables\ExtractableCohort.cs" />
     <Compile Include="Data\DataTables\DeployedExtractionFilter.cs" />

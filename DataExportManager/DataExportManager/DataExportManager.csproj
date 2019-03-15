@@ -402,12 +402,6 @@
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ProjectUI\Datasets\Node\AvailableForceJoinNode.cs" />
-    <Compile Include="ProjectUI\DataUsers\DataUserManagement.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProjectUI\DataUsers\DataUserManagement.Designer.cs">
-      <DependentUpon>DataUserManagement.cs</DependentUpon>
-    </Compile>
     <Compile Include="ProjectUI\ExecuteExtractionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -506,10 +500,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\Datasets\ConfigureDatasetUI.resx">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectUI\DataUsers\DataUserManagement.resx">
-      <DependentUpon>DataUserManagement.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\ExecuteExtractionUI.resx">

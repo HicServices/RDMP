@@ -359,9 +359,6 @@ delete from {1}..DeployedExtractionFilterParameter
 delete from {1}..DeployedExtractionFilter
 delete from {1}..FilterContainer
 
-delete from {1}..Project_DataUser
-delete from {1}..DataUser
-
 delete from {1}..ExtractableCohort
 delete from {1}..ExternalCohortTable
 

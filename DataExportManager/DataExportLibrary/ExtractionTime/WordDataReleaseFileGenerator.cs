@@ -74,11 +74,6 @@ namespace DataExportLibrary.ExtractionTime
 
                 CreateTopTable1(document);
 
-                var users = Project.DataUsers.ToArray();
-
-                if (users.Any())
-                    InsertParagraph(document,"Data User(s):" + string.Join(",", users.Select(u => u.ToString())));
-                
                 InsertParagraph(document, Environment.NewLine);
 
                 CreateCohortDetailsTable(document);
