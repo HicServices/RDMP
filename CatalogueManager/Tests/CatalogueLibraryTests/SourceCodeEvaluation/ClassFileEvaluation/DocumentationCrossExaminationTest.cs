@@ -143,8 +143,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "DependingOnThis",
             "ProposedFixes",
             "PropertyX",
-            "PropertyX_MaxLength",
-            "Property_MaxLength",
             "FamilyMembers",
             
             //CreatingANewCollectionTreeNode.md

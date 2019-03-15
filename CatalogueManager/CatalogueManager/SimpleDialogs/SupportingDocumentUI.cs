@@ -106,13 +106,6 @@ namespace CatalogueManager.SimpleDialogs
                     tb.ForeColor = Color.Black;
 
                     PropertyInfo target = toSetOn.GetType().GetProperty(propertyToSet);
-                    FieldInfo targetMaxLength = toSetOn.GetType().GetField(propertyToSet + "_MaxLength");
-
-                    if (target == null || targetMaxLength == null)
-                        throw new Exception("Could not find property " + propertyToSet + " or it did not have a specified _MaxLength");
-
-                    if (tb.TextLength > (int)targetMaxLength.GetValue(toSetOn))
-                        throw new UriFormatException("Uri is too long to fit in database");
 
                     target.SetValue(toSetOn, new Uri(tb.Text), null);
                     tb.ForeColor = Color.Black;

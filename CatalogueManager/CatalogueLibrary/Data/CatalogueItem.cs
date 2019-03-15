@@ -40,23 +40,7 @@ namespace CatalogueLibrary.Data
     public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
     {
         #region Database Properties
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Statistical_cons_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Research_relevance_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Topic_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Agg_method_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Limitations_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Comments_MaxLength = -1;
-
+        
         private string _Name;
         private string _Statistical_cons;
         private string _Research_relevance;

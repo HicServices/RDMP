@@ -272,21 +272,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
 
                 for (int i = 0; i < text.Length; i++)
                 {
-
-                    //////////////////////////////////MAX LENGTH FIELDS////////////////////////////////////////////////////
-                    Regex rMaxLength = new Regex(@"(\s+)public static int .*_MaxLength(\s?)=(\s?)-1;");
-
-                    Match mMaxLength = rMaxLength.Match(text[i]);
-                    if(mMaxLength.Success)
-                    {
-                        //if previous line didn't have an inherit doc
-                        if (!text[i - 1].Trim().StartsWith("///"))
-                        {
-                            var whitespace = mMaxLength.Groups[1].Value;
-                            sbSuggestedText.AppendLine(whitespace + @"///<inheritdoc cref=""IRepository.FigureOutMaxLengths""/>");
-                            changes = true;
-                        }
-                    }
                     
                     //////////////////////////////////No Mapping Properties////////////////////////////////////////////////////
                     if (text[i].Trim().Equals("[NoMappingToDatabase]"))

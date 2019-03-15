@@ -69,13 +69,6 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int MasterTicket_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ExtractionDirectory_MaxLength = -1;
-
         #region Relationships
 
         /// <inheritdoc/>

@@ -27,11 +27,6 @@ namespace CatalogueLibrary.Data.Aggregation
     /// </summary>
     public class AggregateFilterParameter : VersionedDatabaseEntity, ISqlParameter
     {
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ParameterSQL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Value_MaxLength = -1;
-
         #region Database Properties
         private int _aggregateFilterID;
         private string _parameterSQL;
