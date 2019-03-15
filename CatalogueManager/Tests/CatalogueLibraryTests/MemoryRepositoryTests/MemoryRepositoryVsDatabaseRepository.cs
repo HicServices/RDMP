@@ -29,13 +29,13 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
         private static readonly string[] IgnorePropertiesWhenDiffing = new[] {"ID","Repository","CatalogueRepository","SoftwareVersion"};
         
         [Test]
-        public void TestMemoryRepository_CatalogueConstructor()
+        public void TestMemoryVsDatabaseRepository_CatalogueConstructor()
         {
             var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository.GetServerDefaults());
 
             Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
             Catalogue dbCatalogue = new Catalogue(CatalogueRepository,"My New Catalogue");
-
+            
             AssertAreEqual(memCatalogue,dbCatalogue);
         }
 

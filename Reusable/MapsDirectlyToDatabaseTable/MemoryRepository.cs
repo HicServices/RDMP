@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -58,11 +59,27 @@ namespace MapsDirectlyToDatabaseTable
             throw new NotImplementedException();
         }
 
-        public T[] GetAllObjectsWhere<T>(string property, object value) where T : IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
         {
             var prop = typeof (T).GetProperty(property);
 
-            return GetAllObjects<T>().Where(o => Equals(prop.GetValue(o), value)).ToArray();
+            return GetAllObjects<T>().Where(o => Equals(prop.GetValue(o), value1)).ToArray();
+        }
+
+        public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2, object value2) where T : IMapsDirectlyToDatabaseTable
+        {
+            var prop1 = typeof(T).GetProperty(property1);
+            var prop2 = typeof(T).GetProperty(property2);
+
+            switch (operand)
+            {
+                case ExpressionType.AndAlso:
+                    return GetAllObjects<T>().Where(o => Equals(prop1.GetValue(o), value1) && Equals(prop2.GetValue(o), value2)).ToArray();
+                case ExpressionType.OrElse:
+                    return GetAllObjects<T>().Where(o => Equals(prop1.GetValue(o), value1) || Equals(prop2.GetValue(o), value2)).ToArray();
+                default:
+                    throw new NotSupportedException("operand");
+            }
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t)

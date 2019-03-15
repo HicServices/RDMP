@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
@@ -508,22 +509,14 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         public Lookup[] GetAllLookupForColumnInfoWhereItIsA(LookupType type)
         {
-            string sql;
             if (type == LookupType.Description)
-                sql = "SELECT * FROM Lookup WHERE Description_ID=" + ID;
-            else if (type == LookupType.AnyKey)
-                sql = "SELECT * FROM Lookup WHERE ForeignKey_ID=" + ID + " OR PrimaryKey_ID=" + ID;
-            else if (type == LookupType.ForeignKey)
-                sql = "SELECT * FROM Lookup WHERE ForeignKey_ID=" + ID;
-            else
-                throw new NotImplementedException("Unrecognised LookupType " + type);
-
-            var lookups = Repository.SelectAll<Lookup>(sql, "ID").ToArray();
-
-            if (lookups.Select(l => l.PrimaryKey_ID).Distinct().Count() > 1 && type == LookupType.ForeignKey)
-                throw new Exception("Column " + this + " is configured as a foreign key to more than 1 primary key (only 1 is allowed), the Lookups are:" + string.Join(",", lookups.Select(l => l.PrimaryKey)));
-
-            return lookups.ToArray();
+                return Repository.GetAllObjectsWhere<Lookup>("Description_ID", ID);
+            if (type == LookupType.AnyKey)
+                return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID,ExpressionType.OrElse,"PrimaryKey_ID",ID);      
+            if (type == LookupType.ForeignKey)
+                return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID);
+            
+            throw new NotImplementedException("Unrecognised LookupType " + type);
         }
 
         ///<inheritdoc/>

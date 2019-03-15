@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -52,11 +53,18 @@ namespace MapsDirectlyToDatabaseTable
 
 
         /// <summary>
-        /// Gets all objects of the given Type from the database where the given property of the object is <paramref name="value"/>
+        /// Gets all objects of the given Type from the database where the given property of the object is <paramref name="value1"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        T[] GetAllObjectsWhere<T>(string property, object value) where T : IMapsDirectlyToDatabaseTable;
+        T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable;
+
+        /// <summary>
+        /// Gets all objects of the given Type from the database where the given properties match the provided values with the given operand
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,object value2) where T : IMapsDirectlyToDatabaseTable;
 
         /// <summary>
         /// Gets all objects of type <paramref name="t"/>

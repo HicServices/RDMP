@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using FAnsi.Connections;
@@ -367,11 +368,37 @@ namespace MapsDirectlyToDatabaseTable
             return result;
         }
 
-        public T[] GetAllObjectsWhere<T>(string property, object value) where T : IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
         {
-            return GetAllObjectsWhere<T>("WHERE " + property + " = @val",new Dictionary<string, object>(){{"@val",value}} );
+            return GetAllObjectsWhere<T>("WHERE " + property + " = @val",new Dictionary<string, object>(){{"@val",value1}} );
         }
 
+        public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,object value2) where T : IMapsDirectlyToDatabaseTable
+        {
+            string oper;
+
+            switch (operand)
+            {
+                case ExpressionType.AndAlso:
+                    oper = "AND";
+                    break;
+                case ExpressionType.OrElse:
+                    oper = "OR";
+                    break;
+                default:
+                    throw new NotSupportedException("operand");
+            }
+
+            return GetAllObjectsWhere<T>(
+
+                string.Format("WHERE {0}=@val1 {1} {2}=@val2",property1,oper,property2) , new Dictionary<string, object>()
+                {
+                    { "@val1", value1 },
+                    { "@val2", value2 },
+
+                
+                });
+        }
 
         public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
