@@ -172,22 +172,12 @@ namespace DataExportLibrary.ExtractionTime
                     document.InsertSectionPageBreak();
 
                     AddFiltersAndParameters(document);
-
-                    AddIssuesForCatalogue(document);
                     
                     document.Save();
                 }
             }
         }
-
-        private void AddIssuesForCatalogue(DocX document)
-        {
-            var cata = Executer.Source.Request.Catalogue;
-            WordCatalogueExtractor catalogueMetaData = new WordCatalogueExtractor(cata, document);
-
-            catalogueMetaData.AddIssuesForCatalogue();
-        }
-
+        
         private void AddFiltersAndParameters(DocX document)
         {
             var request = Executer.Source.Request;

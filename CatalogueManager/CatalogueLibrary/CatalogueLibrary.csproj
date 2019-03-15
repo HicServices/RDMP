@@ -541,7 +541,6 @@
     <Compile Include="DataHelper\TableValuedFunctionImporter.cs" />
     <Compile Include="Data\Catalogue.cs" />
     <Compile Include="Data\CatalogueItem.cs" />
-    <Compile Include="Data\CatalogueItemIssue.cs" />
     <Compile Include="Data\ColumnInfo.cs" />
     <Compile Include="Data\DataLoad\IArgument.cs" />
     <Compile Include="Data\DataLoad\IProcessTask.cs" />
@@ -550,7 +549,6 @@
     <Compile Include="Data\DataLoad\ProcessTaskArgument.cs" />
     <Compile Include="Data\LoadBubble.cs" />
     <Compile Include="Data\IJoin.cs" />
-    <Compile Include="Data\IssueSystemUser.cs" />
     <Compile Include="Data\DataLoad\LoadMetadata.cs" />
     <Compile Include="Data\ExtractionFilter.cs" />
     <Compile Include="Data\ExtractionInformation.cs" />

@@ -115,7 +115,6 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(AggregateFilterContainer),(rep,r)=>new AggregateFilterContainer((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(AggregateFilterParameter),(rep,r)=>new AggregateFilterParameter((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(CatalogueItem),(rep,r)=>new CatalogueItem((ICatalogueRepository)rep, r));
-            Constructors.Add(typeof(CatalogueItemIssue),(rep,r)=>new CatalogueItemIssue((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ColumnInfo),(rep,r)=>new ColumnInfo((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(JoinableCohortAggregateConfiguration),(rep,r)=>new JoinableCohortAggregateConfiguration((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(JoinableCohortAggregateConfigurationUse),(rep,r)=>new JoinableCohortAggregateConfigurationUse((ICatalogueRepository)rep, r));
@@ -123,7 +122,6 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(ExtractionFilter),(rep,r)=>new ExtractionFilter((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionFilterParameter),(rep,r)=>new ExtractionFilterParameter((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionInformation),(rep,r)=>new ExtractionInformation((ICatalogueRepository)rep, r));
-            Constructors.Add(typeof(IssueSystemUser),(rep,r)=>new IssueSystemUser((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionFilterParameterSet),(rep,r)=>new ExtractionFilterParameterSet((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(LoadMetadata),(rep,r)=>new LoadMetadata((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionFilterParameterSetValue),(rep,r)=>new ExtractionFilterParameterSetValue((ICatalogueRepository)rep, r));

@@ -1161,13 +1161,6 @@ namespace CatalogueLibrary.Data
             return AggregateConfigurations;
         }
 
-
-        /// <inheritdoc/>
-        public CatalogueItemIssue[] GetAllIssues()
-        {
-            return Repository.GetAllObjects<CatalogueItemIssue>("WHERE CatalogueItem_ID in (select ID from CatalogueItem WHERE Catalogue_ID =  " + ID + ")").ToArray();
-        }
-
         /// <inheritdoc/>
         public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
         {

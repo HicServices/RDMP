@@ -207,16 +207,6 @@ namespace CatalogueLibrary.Data
             }
         }
         
-        /// <summary>
-        /// Gets all issues documented against the this column
-        /// </summary>
-        [NoMappingToDatabase]
-        public IEnumerable<CatalogueItemIssue> CatalogueItemIssues
-        {
-            get { return Repository.GetAllObjectsWithParent<CatalogueItemIssue>(this); }
-        }
-
-
         internal bool IsColumnInfoCached()
         {
             return _knownColumnInfo.IsValueCreated;

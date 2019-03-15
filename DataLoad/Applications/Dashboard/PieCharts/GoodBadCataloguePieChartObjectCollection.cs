@@ -18,7 +18,6 @@ namespace Dashboard.PieCharts
 {
     public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollection
     {
-        public CataloguePieChartType PieChartType { get; set; }
         public bool ShowLabels { get; set; }
 
 
@@ -28,18 +27,11 @@ namespace Dashboard.PieCharts
         {
             return (Catalogue) DatabaseObjects.SingleOrDefault();
         }
-
-        public GoodBadCataloguePieChartObjectCollection()
-        {
-            //default
-            PieChartType = CataloguePieChartType.EmptyDescriptions;
-        }
-
+        
         public override string SaveExtraText()
         {
             return Helper.SaveDictionaryToString(new Dictionary<string, string>()
             {
-                {"PieChartType", PieChartType.ToString()},
                 {"ShowLabels", ShowLabels.ToString()}
             });
         }
@@ -52,7 +44,6 @@ namespace Dashboard.PieCharts
             if(dict == null || !dict.Any())
                 return;
 
-            PieChartType = (CataloguePieChartType)Enum.Parse(typeof(CataloguePieChartType), dict["PieChartType"], true);
             ShowLabels = bool.Parse(dict["ShowLabels"]);
         }
 

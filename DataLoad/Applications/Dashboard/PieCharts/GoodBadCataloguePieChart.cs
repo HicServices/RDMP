@@ -8,16 +8,13 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.DashboardTabs.Construction;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
@@ -41,8 +38,6 @@ namespace Dashboard.PieCharts
         public GoodBadCataloguePieChart()
         {
             InitializeComponent();
-            ddChartType.ComboBox.DataSource = Enum.GetValues(typeof (CataloguePieChartType));
-            ddChartType.ComboBox.SelectionChangeCommitted += ComboBox_SelectionChangeCommitted;
             
             btnRefresh.Image = FamFamFamIcons.arrow_refresh;
             btnShowLabels.Image = FamFamFamIcons.text_list_bullets;
@@ -59,30 +54,13 @@ namespace Dashboard.PieCharts
         {
             chart1.Visible = false;
             lblNoIssues.Visible = false;
-            
-            switch (_collection.PieChartType)
-            {
-                case CataloguePieChartType.Issues:
 
-                    if (_collection.IsSingleCatalogueMode)
-                        gbWhatThisIs.Text = "Issues in " + _collection.GetSingleCatalogueModeCatalogue();
-                    else
-                        gbWhatThisIs.Text = "All Issues";
+            if (_collection.IsSingleCatalogueMode)
+                gbWhatThisIs.Text = "Column Descriptions in " + _collection.GetSingleCatalogueModeCatalogue();
+            else
+                gbWhatThisIs.Text = "Column Descriptions";
 
-                    PopulateAsIssueChart();
-                    break;
-                case CataloguePieChartType.EmptyDescriptions:
-
-                    if (_collection.IsSingleCatalogueMode)
-                        gbWhatThisIs.Text = "Column Descriptions in " + _collection.GetSingleCatalogueModeCatalogue();
-                    else
-                        gbWhatThisIs.Text = "Column Descriptions";
-
-                    PopulateAsEmptyDescriptionsChart();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("pieType");
-            }
+            PopulateAsEmptyDescriptionsChart();
         }
         
         private void PopulateAsEmptyDescriptionsChart()
@@ -150,52 +128,6 @@ namespace Dashboard.PieCharts
             return !c.IsColdStorageDataset && !c.IsInternalDataset && !c.IsDeprecated && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository);
         }
 
-        private void PopulateAsIssueChart()
-        {
-            try
-            {
-                CatalogueItemIssue[] Issues;
-
-                if (!_collection.IsSingleCatalogueMode)
-                    Issues = _activator.CoreChildProvider.AllCatalogueItemIssues;
-                else
-                    Issues = _collection.GetSingleCatalogueModeCatalogue().GetAllIssues();
-
-                if (Issues.Any())
-                {
-                    DataTable dt = new DataTable();
-                    dt.Columns.Add("Count");
-                    dt.Columns.Add("State");
-
-                    int countOutstanding = Issues.Count(i => i.Status != IssueStatus.Resolved);
-                    int countResolved = Issues.Count(i => i.Status == IssueStatus.Resolved);
-
-
-                    dt.Rows.Add(new object[] {countOutstanding, "Outstanding (" + countOutstanding + ")"});
-                    dt.Rows.Add(new object[] {countResolved, "Resolved (" + countResolved + ")"});
-
-                    chart1.Series[0].XValueMember = dt.Columns[1].ColumnName;
-                    chart1.Series[0].YValueMembers = dt.Columns[0].ColumnName;
-                        
-                    chart1.DataSource = dt;
-                    chart1.DataBind();
-                    chart1.Visible = true;
-                    lblNoIssues.Visible = false;
-
-                }
-                else
-                {
-                    chart1.DataSource = null;
-                    chart1.Visible = false;
-                    lblNoIssues.Visible = true;
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(this.GetType().Name + " failed to load data", e);
-            }
-        }
-
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
             
@@ -211,7 +143,6 @@ namespace Dashboard.PieCharts
             btnAllCatalogues.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemsNode);
             btnSingleCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Link);
 
-            ddChartType.SelectedItem = _collection.PieChartType;
             btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
             btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
             btnShowLabels.Checked = _collection.ShowLabels;
@@ -289,21 +220,6 @@ namespace Dashboard.PieCharts
         {
             GenerateChart();
         }
-        void ComboBox_SelectionChangeCommitted(object sender, EventArgs e)
-        {
-            if(ddChartType.SelectedItem == null || _bLoading)
-                return;
-
-            var newType = (CataloguePieChartType) ddChartType.SelectedItem;
-
-            //no change
-            if(newType == _collection.PieChartType)
-                return;
-            
-            _collection.PieChartType = newType;
-            GenerateChart();
-            SaveCollectionChanges();
-        }
 
         private void SaveCollectionChanges()
         {
@@ -342,11 +258,5 @@ namespace Dashboard.PieCharts
             var form = new SingleControlForm(dtv, true);
             form.Show();
         }
-    }
-
-    public enum CataloguePieChartType
-    {
-        Issues,
-        EmptyDescriptions
     }
 }

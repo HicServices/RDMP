@@ -115,34 +115,6 @@ namespace CatalogueLibrary
                     GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem, null);
             }
         }
-        public void AddIssuesForCatalogue()
-        {
-            //first of all output all the info in the Catalogue
-            var issues = Catalogue.GetAllIssues();
-            
-            InsertHeader(_document,"Issues");
-
-            if (!issues.Any())
-                InsertParagraph(_document,"No Issues recorded in this dataset");
-            else
-                foreach (CatalogueItemIssue issue in issues)
-                {
-                    string header = issue.Status + " Issue: " + issue.Name;
-
-                    if (issue.ReportedBy_ID != null)
-                        if (issue.ReportedOnDate == null)
-                            header += "(Reported By " + issue.GetReportedByName() + ")";
-                        else
-                            header += "(Reported By " + issue.GetReportedByName() + " on " + issue.ReportedOnDate + ")";
-
-                    InsertHeader(_document,header,2);
-
-                    int requiredRowsCount = CountWriteableProperties(issue);
-                    var t = InsertTable(_document, requiredRowsCount, 2, TableDesign.TableGrid);
-                    
-                    GenerateObjectPropertiesAsRowUsingReflection(t, issue, null);
-                }
-        }
 
         private int CountWriteableProperties(object o)
         {
