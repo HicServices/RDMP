@@ -42,11 +42,14 @@ namespace ANOStore.ANOEngineering
 
         private ShareManager _shareManager;
 
+        private ColumnInfo[] _allColumnsInfos;
+
         public ForwardEngineerANOCatalogueEngine(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ForwardEngineerANOCataloguePlanManager planManager)
         {
             _catalogueRepository = repositoryLocator.CatalogueRepository;
             _shareManager = new ShareManager(repositoryLocator);
             _planManager = planManager;
+            _allColumnsInfos = _catalogueRepository.GetAllObjects<ColumnInfo>();
         }
         
         public void Execute()
@@ -357,8 +360,7 @@ namespace ANOStore.ANOEngineering
 
             return toReturn;
         }
-
-
+        
         /// <summary>
         /// Here we are migrating a Catalogue but some of the TableInfos have already been migrated e.g. lookup tables as part of migrating another Catalogue.  We are
         /// now trying to find one of those 'not migrated' ColumnInfos by name without knowing whether the user has since deleted the reference or worse introduced 
@@ -376,8 +378,8 @@ namespace ANOStore.ANOEngineering
                 null,
                 col.TableInfo.GetRuntimeName(),
                 expectedName);
-            
-            var columns = GetColumnInfosWithNameExactly(expectedNewName);
+
+            var columns = _allColumnsInfos.Where(c=>c.Name.Equals(expectedNewName,StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             bool failedANOToo = false;
 
@@ -425,23 +427,6 @@ namespace ANOStore.ANOEngineering
 
             //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);
-        }
-
-
-        /// <summary>
-        /// Returns all ColumnInfos which have names exactly matching name, this must be a fully qualified string e.g. [MyDatabase]..[MyTable].[MyColumn].  You can use
-        /// IQuerySyntaxHelper.EnsureFullyQualified to get this.  Return is an array because you can have an identical table/database structure on two different servers
-        /// in each case the ColumnInfo will have the same fully qualified name (or you could have duplicate references to the same ColumnInfo/TableInfo for some reason)
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        private ColumnInfo[] GetColumnInfosWithNameExactly(string name)
-        {
-            return _catalogueRepository.SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE LOWER(Name) = LOWER(@name)", "ID",
-                new Dictionary<string, object>
-                {
-                    {"name", name}
-                }).ToArray();
         }
     }
 }

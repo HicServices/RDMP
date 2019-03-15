@@ -455,16 +455,9 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public IContainer GetFilterContainerFor(IExtractableDataSet dataset)
         {
-            var objects = Repository.SelectAllWhere<FilterContainer>(
-                "SELECT RootFilterContainer_ID FROM SelectedDataSets WHERE ExtractionConfiguration_ID=@ExtractionConfiguration_ID AND ExtractableDataSet_ID=@ExtractableDataSet_ID",
-                "RootFilterContainer_ID",
-                new Dictionary<string, object>
-                {
-                    {"ExtractionConfiguration_ID", ID},
-                    {"ExtractableDataSet_ID", dataset.ID}
-                });
-
-            return objects.SingleOrDefault();
+            return Repository.GetAllObjectsWhere<SelectedDataSets>("ExtractionConfiguration_ID", ID)
+                .Single(sds => sds.ExtractableDataSet_ID == dataset.ID)
+                .RootFilterContainer;
         }
 
         private ExternalDatabaseServer GetDistinctLoggingServer(bool testLoggingServer)
@@ -511,14 +504,10 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public IExtractableDataSet[] GetAllExtractableDataSets()
         {
-            return Repository.SelectAllWhere<ExtractableDataSet>(
-                "SELECT * FROM SelectedDataSets WHERE ExtractionConfiguration_ID = @ExtractionConfiguration_ID",
-                "ExtractableDataSet_ID",
-                new Dictionary<string, object>
-                {
-                    {"ExtractionConfiguration_ID", ID}
-                })
-                .ToArray();
+            return
+                Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+                    .Select(sds => sds.ExtractableDataSet)
+                    .ToArray();
         }
 
         /// <summary>

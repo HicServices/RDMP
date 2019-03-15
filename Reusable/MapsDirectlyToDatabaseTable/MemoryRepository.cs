@@ -140,11 +140,6 @@ namespace MapsDirectlyToDatabaseTable
             return new Version(FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
         }
 
-        public IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID = null, Dictionary<string, object> parameters = null,
-            T dbNullSubstition = default(T)) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
 
         public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable
         {

@@ -55,26 +55,6 @@ namespace DataExportLibrary.Data.DataTables
         {
             return Operation.ToString();
         }
-
-        /// <summary>
-        /// Returns the root filter container (if any) for the given <paramref name="dataSet"/> as it is extracted in the <paramref name="configuration"/>
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <param name="dataSet"></param>
-        /// <returns></returns>
-        public FilterContainer GetFilterContainerFor(IExtractionConfiguration configuration, IExtractableDataSet dataSet)
-        {
-            var objects = Repository.SelectAllWhere<FilterContainer>(
-                "SELECT RootFilterContainer_ID FROM SelectedDataSets WHERE ExtractionConfiguration_ID=@ExtractionConfiguration_ID AND ExtractableDataSet_ID=@ExtractableDataSet_ID",
-                "RootFilterContainer_ID",
-                new Dictionary<string, object>
-                {
-                    {"ExtractionConfiguration_ID", configuration.ID},
-                    {"ExtractableDataSet_ID", dataSet.ID}
-                }).ToList();
-
-            return objects.Any() ? objects.Single() : null;
-        }
         
         /// <inheritdoc/>
         public override void DeleteInDatabase()

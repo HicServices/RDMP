@@ -58,6 +58,11 @@ namespace MapsDirectlyToDatabaseTable
         /// <returns></returns>
         T[] GetAllObjectsWhere<T>(string property, object value) where T : IMapsDirectlyToDatabaseTable;
 
+        /// <summary>
+        /// Gets all objects of type <paramref name="t"/>
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
         IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
         
         /// <summary>
@@ -124,17 +129,7 @@ namespace MapsDirectlyToDatabaseTable
 
         Version GetVersion();
 
-        /// <summary>
-        /// Run select query (SQL) and return objects fetched by ID, IDs can be found in the query result set in column columnWithObjectID 
-        /// IMPORTANT: if columnWithObjectID you should use typeof(T).Name + "_ID";
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="selectQuery"></param>
-        /// <param name="columnWithObjectID"></param>
-        /// <param name="parameters"></param>
-        /// <param name="dbNullSubstition"></param>
-        /// <returns></returns>
-        IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID=null, Dictionary<string, object> parameters = null, T dbNullSubstition = default(T)) where T : IMapsDirectlyToDatabaseTable;
+        
         IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID=null) where T : IMapsDirectlyToDatabaseTable;
 
         int Insert(string sql, Dictionary<string, object> parameters);

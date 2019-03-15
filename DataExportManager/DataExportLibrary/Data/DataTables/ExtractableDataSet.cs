@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -61,14 +62,10 @@ namespace DataExportLibrary.Data.DataTables
         {
             get
             {
-                return Repository.SelectAllWhere<ExtractionConfiguration>(
-                    "SELECT * FROM SelectedDataSets WHERE ExtractableDataSet_ID = @ExtractableDataSet_ID",
-                    "ExtractionConfiguration_ID", new Dictionary<string, object>
-                    {
-                        {"ExtractableDataSet_ID", ID}
-                    })
-                    .Cast<IExtractionConfiguration>()
-                    .ToArray();
+                return
+                    Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+                        .Select(sds => sds.ExtractionConfiguration)
+                        .ToArray();
             }
         }
 
