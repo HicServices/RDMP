@@ -17,7 +17,7 @@ namespace CatalogueLibrary.Repositories.Managers
             _catalogueRepository = catalogueRepository;
         }
 
-        public CohortAggregateContainer GetCohortAggregateContainerIfAny(AggregateConfiguration aggregateConfiguration)
+        public CohortAggregateContainer GetParent(AggregateConfiguration child)
         {
             return
                 _catalogueRepository.SelectAllWhere<CohortAggregateContainer>(
@@ -25,32 +25,30 @@ namespace CatalogueLibrary.Repositories.Managers
                     "CohortAggregateContainer_ID",
                     new Dictionary<string, object>
                     {
-                        {"AggregateConfiguration_ID", aggregateConfiguration.ID}
+                        {"AggregateConfiguration_ID", child.ID}
                     }).SingleOrDefault();
         }
 
-        public void AddConfigurationToContainer(AggregateConfiguration configuration, CohortAggregateContainer cohortAggregateContainer,
-            int order)
+        public void Add(CohortAggregateContainer parent, AggregateConfiguration child,int order)
         {
 
             _catalogueRepository.Insert(
                 "INSERT INTO CohortAggregateContainer_AggregateConfiguration (CohortAggregateContainer_ID, AggregateConfiguration_ID, [Order]) VALUES (@CohortAggregateContainer_ID, @AggregateConfiguration_ID, @Order)",
                 new Dictionary<string, object>
                 {
-                    {"CohortAggregateContainer_ID", cohortAggregateContainer.ID},
-                    {"AggregateConfiguration_ID", configuration.ID},
+                    {"CohortAggregateContainer_ID", parent.ID},
+                    {"AggregateConfiguration_ID", child.ID},
                     {"Order", order}
                 });
 
         }
 
-        public void RemoveConfigurationFromContainer(AggregateConfiguration configuration,
-            CohortAggregateContainer cohortAggregateContainer)
+        public void Remove(CohortAggregateContainer parent,AggregateConfiguration child)
         {
             _catalogueRepository.Delete("DELETE FROM CohortAggregateContainer_AggregateConfiguration WHERE CohortAggregateContainer_ID = @CohortAggregateContainer_ID AND AggregateConfiguration_ID = @AggregateConfiguration_ID", new Dictionary<string, object>
             {
-                {"CohortAggregateContainer_ID", cohortAggregateContainer.ID},
-                {"AggregateConfiguration_ID", configuration.ID}
+                {"CohortAggregateContainer_ID", parent.ID},
+                {"AggregateConfiguration_ID", child.ID}
             });
         }
 
@@ -72,35 +70,51 @@ namespace CatalogueLibrary.Repositories.Managers
             }
         }
 
-        public CohortAggregateContainer[] GetSubContainers(CohortAggregateContainer cohortAggregateContainer)
+        public IOrderable[] GetChildren(CohortAggregateContainer parent)
         {
-            return _catalogueRepository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ChildID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ParentID=@CohortAggregateContainer_ParentID",
+            var containers = _catalogueRepository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ChildID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ParentID=@CohortAggregateContainer_ParentID",
                 "CohortAggregateContainer_ChildID",
                 new Dictionary<string, object>
                 {
-                    {"CohortAggregateContainer_ParentID", cohortAggregateContainer.ID}
+                    {"CohortAggregateContainer_ParentID", parent.ID}
                 }).ToArray();
+
+            var configs = _catalogueRepository.SelectAll<AggregateConfiguration>("SELECT AggregateConfiguration_ID FROM CohortAggregateContainer_AggregateConfiguration where CohortAggregateContainer_ID=" + parent.ID).OrderBy(config => config.Order).ToArray();
+
+            return containers.Cast<IOrderable>().Union(configs).OrderBy(o => o.Order).ToArray();
         }
 
-        public AggregateConfiguration[] GetAggregateConfigurations(CohortAggregateContainer cohortAggregateContainer)
-        {
-            return _catalogueRepository.SelectAll<AggregateConfiguration>("SELECT AggregateConfiguration_ID FROM CohortAggregateContainer_AggregateConfiguration where CohortAggregateContainer_ID=" + cohortAggregateContainer.ID).OrderBy(config => config.Order).ToArray();
-        }
-
-        public CohortAggregateContainer GetParentContainerIfAny(CohortAggregateContainer cohortAggregateContainer)
+        public CohortAggregateContainer GetParent(CohortAggregateContainer child)
         {
             return _catalogueRepository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ParentID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ChildID=@CohortAggregateContainer_ChildID",
                 "CohortAggregateContainer_ParentID",
                 new Dictionary<string, object>
                 {
-                    {"CohortAggregateContainer_ChildID", cohortAggregateContainer.ID}
+                    {"CohortAggregateContainer_ChildID", child.ID}
                 }).SingleOrDefault();
         }
 
-        public void RemoveSubContainerFrom(CohortAggregateContainer parent, CohortAggregateContainer child)
+        public void Remove(CohortAggregateContainer parent, CohortAggregateContainer child)
         {
             _catalogueRepository.Delete("DELETE FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ChildID = @CohortAggregateContainer_ChildID", new Dictionary<string, object>
             {
+                {"CohortAggregateContainer_ChildID", child.ID}
+            });
+        }
+
+        public void SetOrder(AggregateConfiguration child, int newOrder)
+        {
+            _catalogueRepository.Update("UPDATE CohortAggregateContainer_AggregateConfiguration SET [Order] = " + newOrder + " WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID", new Dictionary<string, object>
+            {
+                {"AggregateConfiguration_ID", child.ID}
+            });
+        }
+
+        public void Add(CohortAggregateContainer parent, CohortAggregateContainer child)
+        {
+            _catalogueRepository.Insert("INSERT INTO CohortAggregateSubContainer(CohortAggregateContainer_ParentID,CohortAggregateContainer_ChildID) VALUES (@CohortAggregateContainer_ParentID, @CohortAggregateContainer_ChildID)", new Dictionary<string, object>
+            {
+                {"CohortAggregateContainer_ParentID", parent.ID},
                 {"CohortAggregateContainer_ChildID", child.ID}
             });
         }

@@ -324,34 +324,34 @@ namespace CatalogueLibrary.Repositories
         #region ICohortContainerLinker
         readonly Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>> _cohortContainerContents = new Dictionary<CohortAggregateContainer, HashSet<CohortContainerContent>>(); 
 
-        public CohortAggregateContainer GetCohortAggregateContainerIfAny(AggregateConfiguration aggregateConfiguration)
+        public CohortAggregateContainer GetParent(AggregateConfiguration child)
         {
             //if it is in the contents of a container
-            if (_cohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(aggregateConfiguration)))
-                return _cohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(aggregateConfiguration)).Key;
+            if (_cohortContainerContents.Any(kvp => kvp.Value.Select(c=>c.Orderable).Contains(child)))
+                return _cohortContainerContents.Single(kvp => kvp.Value.Select(c => c.Orderable).Contains(child)).Key;
 
             return null;
         }
 
-        public void AddConfigurationToContainer(AggregateConfiguration configuration, CohortAggregateContainer cohortAggregateContainer,int order)
+        public void Add(CohortAggregateContainer parent,AggregateConfiguration child,int order)
         {
             //make sure we know about the container
-            if(!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
-                _cohortContainerContents.Add(cohortAggregateContainer, new HashSet<CohortContainerContent>());
+            if(!_cohortContainerContents.ContainsKey(parent))
+                _cohortContainerContents.Add(parent, new HashSet<CohortContainerContent>());
 
-            _cohortContainerContents[cohortAggregateContainer].Add(new CohortContainerContent(configuration,order));
+            _cohortContainerContents[parent].Add(new CohortContainerContent(child, order));
         }
 
-        public void RemoveConfigurationFromContainer(AggregateConfiguration configuration,CohortAggregateContainer cohortAggregateContainer)
+        public void Remove(CohortAggregateContainer parent, AggregateConfiguration child)
         {
-            var toRemove = _cohortContainerContents[cohortAggregateContainer].Single(c => c.Orderable.Equals(configuration));
-            _cohortContainerContents[cohortAggregateContainer].Remove(toRemove);
+            var toRemove = _cohortContainerContents[parent].Single(c => c.Orderable.Equals(child));
+            _cohortContainerContents[parent].Remove(toRemove);
         }
 
         private class CohortContainerContent
         {
             public IOrderable Orderable { get; private set; }
-            public int Order { get; private set; }
+            public int Order { get; set; }
 
             public CohortContainerContent(IOrderable orderable, int order)
             {
@@ -369,34 +369,46 @@ namespace CatalogueLibrary.Repositories
             return o.Order;
         }
 
-        public CohortAggregateContainer[] GetSubContainers(CohortAggregateContainer cohortAggregateContainer)
+        public IOrderable[] GetChildren(CohortAggregateContainer parent)
         {
-            if (!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
-                return new CohortAggregateContainer[0];
-                    
-            return _cohortContainerContents[cohortAggregateContainer].Select(c=>c.Orderable).OfType<CohortAggregateContainer>().ToArray();
+            if (!_cohortContainerContents.ContainsKey(parent))
+                return new IOrderable[0];
+
+            return _cohortContainerContents[parent].OrderBy(o => o.Order).Select(o => o.Orderable).ToArray();
         }
-
-        public AggregateConfiguration[] GetAggregateConfigurations(CohortAggregateContainer cohortAggregateContainer)
+        
+        public CohortAggregateContainer GetParent(CohortAggregateContainer child)
         {
-            if (!_cohortContainerContents.ContainsKey(cohortAggregateContainer))
-                return null;
-
-            return _cohortContainerContents[cohortAggregateContainer].Select(c => c.Orderable).OfType<AggregateConfiguration>().ToArray();
-        }
-
-        public CohortAggregateContainer GetParentContainerIfAny(CohortAggregateContainer cohortAggregateContainer)
-        {
-            var match = _cohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, cohortAggregateContainer))).Select(kvp=>kvp.Key).ToArray();
+            var match = _cohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, child))).Select(kvp=>kvp.Key).ToArray();
             if (match.Length > 0)
                 return match.Single();
             
             return null;
         }
 
-        public void RemoveSubContainerFrom(CohortAggregateContainer parent, CohortAggregateContainer child)
+        public void Remove(CohortAggregateContainer parent, CohortAggregateContainer child)
         {
             _cohortContainerContents[parent].RemoveWhere(c => Equals(c.Orderable, child));
+        }
+
+        public void SetOrder(AggregateConfiguration child, int newOrder)
+        {
+            var parent = GetParent(child);
+
+            if (parent != null && _cohortContainerContents.ContainsKey(parent))
+            {
+                var record = _cohortContainerContents[parent].SingleOrDefault(o => o.Orderable.Equals(child));
+                if (record != null)
+                    record.Order = newOrder;
+            }
+        }
+
+        public void Add(CohortAggregateContainer parent, CohortAggregateContainer child)
+        {
+            if(!_cohortContainerContents.ContainsKey(parent))
+                _cohortContainerContents.Add(parent,new HashSet<CohortContainerContent>());
+
+            _cohortContainerContents[parent].Add(new CohortContainerContent(child, child.Order));
         }
 
         #endregion

@@ -321,7 +321,7 @@ namespace CatalogueLibrary.Data.Aggregation
 
             set
             {
-                CohortAggregateContainer.SetOrderIfExistsFor(this, value);
+                CatalogueRepository.CohortContainerManager.SetOrder(this,value);
                 _orderWithinKnownContainer = value;
             }
         }
@@ -569,7 +569,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public CohortAggregateContainer GetCohortAggregateContainerIfAny()
         {
-            return CatalogueRepository.CohortContainerManager.GetCohortAggregateContainerIfAny(this);
+            return CatalogueRepository.CohortContainerManager.GetParent(this);
         }
 
         /// <summary>

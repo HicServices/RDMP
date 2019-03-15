@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
@@ -79,6 +80,8 @@ namespace CatalogueLibrary.Data.Cohort
 
         #endregion
 
+        private ICohortContainerManager _manager;
+
         internal CohortAggregateContainer(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
@@ -88,6 +91,8 @@ namespace CatalogueLibrary.Data.Cohort
             Operation = op;
             Name = r["Name"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
+
+            _manager = repository.CohortContainerManager;
         }
 
         /// <summary>
@@ -105,6 +110,8 @@ namespace CatalogueLibrary.Data.Cohort
                 {"Order", 0},
                 {"Name", operation.ToString()}
             });
+
+            _manager = repository.CohortContainerManager;
         }
 
         /// <summary>
@@ -114,7 +121,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public CohortAggregateContainer[] GetSubContainers()
         {
-            return CatalogueRepository.CohortContainerManager.GetSubContainers(this);
+            return _manager.GetChildren(this).OfType<CohortAggregateContainer>().ToArray();
         }
 
         /// <summary>
@@ -123,7 +130,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public CohortAggregateContainer GetParentContainerIfAny()
         {
-            return CatalogueRepository.CohortContainerManager.GetParentContainerIfAny(this);
+            return _manager.GetParent(this);
         }
 
         /// <summary>
@@ -134,7 +141,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public AggregateConfiguration[] GetAggregateConfigurations()
         {
-            return CatalogueRepository.CohortContainerManager.GetAggregateConfigurations(this);
+            return _manager.GetChildren(this).OfType<AggregateConfiguration>().ToArray();
         }
 
         /// <summary>
@@ -144,7 +151,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <param name="order"></param>
         public void AddChild(AggregateConfiguration configuration, int order)
         {
-            CatalogueRepository.CohortContainerManager.AddConfigurationToContainer(configuration,this, order);
+            _manager.Add(this, configuration, order);
             configuration.ReFetchOrder();
         }
 
@@ -156,23 +163,10 @@ namespace CatalogueLibrary.Data.Cohort
         /// <param name="configuration"></param>
         public void RemoveChild(AggregateConfiguration configuration)
         {
-            CatalogueRepository.CohortContainerManager.RemoveConfigurationFromContainer(configuration, this);
+            _manager.Remove(this, configuration);
         }
 
-
-        /// <summary>
-        /// If the configuration is part of any aggregate container anywhere this method will set the order to the newOrder int
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        public static void SetOrderIfExistsFor(AggregateConfiguration configuration, int newOrder)
-        {
-            ((CatalogueRepository)configuration.Repository).Update("UPDATE CohortAggregateContainer_AggregateConfiguration SET [Order] = " + newOrder + " WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID", new Dictionary<string, object>
-            {
-                {"AggregateConfiguration_ID", configuration.ID}
-            });
-        }
-
+        
         /// <summary>
         /// Deletes all relationships in which this has a parent - kills all containers parents
         /// </summary>
@@ -180,7 +174,7 @@ namespace CatalogueLibrary.Data.Cohort
         {
             var parent = GetParentContainerIfAny();
             if(parent != null)
-                CatalogueRepository.CohortContainerManager.RemoveSubContainerFrom(parent,this);
+                _manager.Remove(parent,this);
         }
 
 
@@ -190,11 +184,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <param name="child"></param>
         public void AddChild(CohortAggregateContainer child)
         {
-            Repository.Insert("INSERT INTO CohortAggregateSubContainer(CohortAggregateContainer_ParentID,CohortAggregateContainer_ChildID) VALUES (@CohortAggregateContainer_ParentID, @CohortAggregateContainer_ChildID)", new Dictionary<string, object>
-            {
-                {"CohortAggregateContainer_ParentID", ID},
-                {"CohortAggregateContainer_ChildID", child.ID}
-            });
+            _manager.Add(this,child);
         }
 
         /// <inheritdoc/>
@@ -261,11 +251,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public IOrderedEnumerable<IOrderable> GetOrderedContents()
         {
-            List<IOrderable> toReturn = new List<IOrderable>();
-            toReturn.AddRange(GetSubContainers());
-            toReturn.AddRange(GetAggregateConfigurations());
-
-            return toReturn.OrderBy(o => o.Order);
+            return _manager.GetChildren(this).OrderBy(o => o.Order);
         }
 
         /// <summary>
