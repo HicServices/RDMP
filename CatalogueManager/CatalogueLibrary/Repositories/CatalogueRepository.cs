@@ -44,7 +44,7 @@ namespace CatalogueLibrary.Repositories
     /// 
     /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Catalogue database.  </para>
     /// 
-    /// <para>It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. AggregateForcedJoiner</para>
+    /// <para>It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. <see cref="AggregateForcedJoinManager"/></para>
     /// </summary>
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
