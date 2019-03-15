@@ -29,6 +29,8 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         IAggregateForcedJoinManager AggregateForcedJoinManager { get;}
 
+        IGovernanceManager GovernanceManager { get; }
+
         /// <summary>
         /// Allows linking/unlinking <see cref="DataAccessCredentials"/> to <see cref="TableInfo"/>
         /// </summary>

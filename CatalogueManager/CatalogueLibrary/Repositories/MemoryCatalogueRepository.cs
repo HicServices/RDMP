@@ -8,6 +8,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories.Managers;
@@ -21,9 +22,10 @@ using IContainer = CatalogueLibrary.Data.IContainer;
 
 namespace CatalogueLibrary.Repositories
 {
-    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager
+    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
     {
         public IAggregateForcedJoinManager AggregateForcedJoinManager { get { return this; } }
+        public IGovernanceManager GovernanceManager { get { return this; }}
         public ITableInfoCredentialsManager TableInfoCredentialsManager { get { return this; }}
         public ICohortContainerManager CohortContainerManager { get { return this; }}
 
@@ -458,6 +460,40 @@ namespace CatalogueLibrary.Repositories
                 _whereSubContainers.Add(parent, new HashSet<IContainer>());
             
             _whereSubContainers[parent].Add(child);
+        }
+
+        #endregion
+
+        #region IGovernanceManager
+
+        readonly Dictionary<GovernancePeriod,HashSet<ICatalogue>> _governanceCoverage = new Dictionary<GovernancePeriod, HashSet<ICatalogue>>();
+        public void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
+        {
+            if(!_governanceCoverage.ContainsKey(governancePeriod))
+                _governanceCoverage.Add(governancePeriod,new HashSet<ICatalogue>());
+
+            _governanceCoverage[governancePeriod].Remove(catalogue);
+        }
+
+        public void Link(GovernancePeriod governancePeriod, ICatalogue catalogue)
+        {
+            if (!_governanceCoverage.ContainsKey(governancePeriod))
+                _governanceCoverage.Add(governancePeriod, new HashSet<ICatalogue>());
+
+            _governanceCoverage[governancePeriod].Add(catalogue);
+        }
+
+        public Dictionary<int, HashSet<int>> GetAllGovernedCataloguesForAllGovernancePeriods()
+        {
+            return  _governanceCoverage.ToDictionary(k => k.Key.ID, v => new HashSet<int>(v.Value.Select(c => c.ID)));
+        }
+
+        public IEnumerable<ICatalogue> GetAllGovernedCatalogues(GovernancePeriod governancePeriod)
+        {
+            if (!_governanceCoverage.ContainsKey(governancePeriod))
+                return Enumerable.Empty<ICatalogue>();
+
+            return _governanceCoverage[governancePeriod];
         }
 
         #endregion

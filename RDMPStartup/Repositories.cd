@@ -114,6 +114,7 @@
       <Property Name="JoinManager" />
       <Property Name="TableInfoCredentialsManager" />
       <Property Name="FilterManager" />
+      <Property Name="GovernanceManager" />
     </ShowAsAssociation>
   </Interface>
   <Interface Name="MapsDirectlyToDatabaseTable.ITableRepository" Collapsed="true">
@@ -125,15 +126,15 @@
     <TypeIdentifier />
   </Interface>
   <Interface Name="CatalogueLibrary.Data.Aggregation.IAggregateForcedJoinManager" Collapsed="true">
-    <Position X="14.75" Y="7.75" Width="2.5" />
-    <TypeIdentifier />
-  </Interface>
-  <Interface Name="CatalogueLibrary.Repositories.Managers.ICohortContainerManager" Collapsed="true">
     <Position X="14.75" Y="8.5" Width="2.5" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Repositories.Managers.IJoinManager" Collapsed="true">
+  <Interface Name="CatalogueLibrary.Repositories.Managers.ICohortContainerManager" Collapsed="true">
     <Position X="14.75" Y="6" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="CatalogueLibrary.Repositories.Managers.IJoinManager" Collapsed="true">
+    <Position X="14.75" Y="10" Width="2.5" />
     <TypeIdentifier />
   </Interface>
   <Interface Name="CatalogueLibrary.Repositories.Managers.ITableInfoCredentialsManager" Collapsed="true">
@@ -141,7 +142,11 @@
     <TypeIdentifier />
   </Interface>
   <Interface Name="CatalogueLibrary.Repositories.Managers.IFilterManager" Collapsed="true">
-    <Position X="14.75" Y="6.75" Width="2.25" />
+    <Position X="14.75" Y="7.5" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="CatalogueLibrary.Repositories.Managers.IGovernanceManager" Collapsed="true">
+    <Position X="14.75" Y="6.75" Width="2.5" />
     <TypeIdentifier />
   </Interface>
   <Enum Name="CatalogueLibrary.Repositories.Tier2DatabaseType" Collapsed="true">

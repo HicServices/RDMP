@@ -310,7 +310,7 @@ namespace CatalogueLibrary.Providers
             AllGovernanceNode = new AllGovernanceNode();
             AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
             AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
-            GovernanceCoverage = GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods(repository);
+            GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
 
             AddChildren(AllGovernanceNode);
         }

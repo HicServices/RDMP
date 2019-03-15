@@ -409,8 +409,10 @@
     <Compile Include="Reports\BitmapWithDescription.cs" />
     <Compile Include="Repositories\Managers\CohortContainerManager.cs" />
     <Compile Include="Repositories\Managers\AggregateFilterManager.cs" />
+    <Compile Include="Repositories\Managers\GovernanceManager.cs" />
     <Compile Include="Repositories\Managers\ICohortContainerManager.cs" />
     <Compile Include="Repositories\Managers\IFilterManager.cs" />
+    <Compile Include="Repositories\Managers\IGovernanceManager.cs" />
     <Compile Include="Repositories\Managers\IJoinManager.cs" />
     <Compile Include="Repositories\Managers\ITableInfoCredentialsManager.cs" />
     <Compile Include="Repositories\Managers\JoinInfoType.cs" />

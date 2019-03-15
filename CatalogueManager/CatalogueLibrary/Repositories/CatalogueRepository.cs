@@ -52,6 +52,9 @@ namespace CatalogueLibrary.Repositories
         public IAggregateForcedJoinManager AggregateForcedJoinManager { get; private set; }
 
         /// <inheritdoc/>
+        public IGovernanceManager GovernanceManager { get; private set; }
+
+        /// <inheritdoc/>
         public ITableInfoCredentialsManager TableInfoCredentialsManager { get; private set; }
 
         
@@ -86,6 +89,7 @@ namespace CatalogueLibrary.Repositories
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
             AggregateForcedJoinManager = new AggregateForcedJoin(this);
+            GovernanceManager = new GovernanceManager(this);
             TableInfoCredentialsManager = new TableInfoCredentialsManager(this);
             JoinManager = new JoinManager(this);
             CohortContainerManager = new CohortContainerManager(this);

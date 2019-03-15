@@ -5,16 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Governance;
+using CatalogueLibrary.Repositories;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -92,11 +89,14 @@ namespace CatalogueLibraryTests.Integration
 
         }
 
-        [Test]
-        public void GovernsCatalogue()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void GovernsCatalogue(bool memoryRepository)
         {
-            var gov = GetGov(); 
-            Catalogue c = new Catalogue(CatalogueRepository, "GovernedCatalogue");
+            ICatalogueRepository repo = memoryRepository ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
+
+            var gov = GetGov(repo);
+            Catalogue c = new Catalogue(repo, "GovernedCatalogue");
             try
             {
                 Assert.AreEqual(gov.GovernedCatalogues.Count(), 0);
@@ -156,9 +156,9 @@ namespace CatalogueLibraryTests.Integration
             
         }
         List<GovernancePeriod> toCleanup = new List<GovernancePeriod>();
-        private GovernancePeriod GetGov()
+        private GovernancePeriod GetGov(ICatalogueRepository repo = null)
         {
-            GovernancePeriod gov = new GovernancePeriod(CatalogueRepository);
+            GovernancePeriod gov = new GovernancePeriod(repo??CatalogueRepository);
             toCleanup.Add(gov);
 
             return gov;

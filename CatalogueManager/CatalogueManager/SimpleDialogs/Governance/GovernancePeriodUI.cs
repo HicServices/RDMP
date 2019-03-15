@@ -141,7 +141,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             
         }
 
-        private void AddCatalogue(Catalogue c)
+        private void AddCatalogue(ICatalogue c)
         {
             _governancePeriod.CreateGovernanceRelationshipTo(c);
             olvCatalogues.AddObject(c);
@@ -180,7 +180,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Catalogue[] toAdd = ((GovernancePeriod) dialog.Selected).GovernedCatalogues.ToArray();
+                ICatalogue[] toAdd = ((GovernancePeriod) dialog.Selected).GovernedCatalogues.ToArray();
 
                 //do not add any we already have
                 toAdd = toAdd.Except(olvCatalogues.Objects.Cast<Catalogue>()).ToArray();
