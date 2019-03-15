@@ -10,13 +10,13 @@ using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.Aggregation
 {
-    class AggregateForcedJoin : IAggregateForcedJoin
+    class AggregateForcedJoin : IAggregateForcedJoinManager
     {
         private readonly CatalogueRepository _repository;
 
         /// <summary>
         /// Creates a new instance targetting the catalogue database referenced by the repository.  The instance can be used to populate / edit the AggregateForcedJoin in 
-        /// the database.  Access via <see cref="CatalogueRepository.AggregateForcedJoiner"/>
+        /// the database.  Access via <see cref="CatalogueRepository.AggregateForcedJoinManager"/>
         /// </summary>
         /// <param name="repository"></param>
         internal AggregateForcedJoin(CatalogueRepository repository)

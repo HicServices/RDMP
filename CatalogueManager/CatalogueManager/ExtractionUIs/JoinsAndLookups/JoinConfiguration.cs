@@ -173,14 +173,14 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
                 var cataRepo = (CatalogueRepository) _leftTableInfo.Repository;
 
                 for (int i = 0; i < pks.Length; i++)
-                    if (cataRepo.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(fks[i]).Any(j => j.PrimaryKey_ID == pks[i].ID))
+                    if (cataRepo.JoinManager.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(fks[i]).Any(j => j.PrimaryKey_ID == pks[i].ID))
                         throw new Exception("Join already exists between " + fks[i] + " and " + pks[i].ID);
 
                 
                 if (actuallyDoIt)
                 {
                     for (int i = 0; i < pks.Length; i++)
-                        cataRepo.JoinInfoFinder.AddJoinInfo(fks[i], pks[i], joinType, tbCollation.Text);
+                        cataRepo.JoinManager.AddJoinInfo(fks[i], pks[i], joinType, tbCollation.Text);
 
                     MessageBox.Show("Successfully Created Joins");
                     _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_leftTableInfo));

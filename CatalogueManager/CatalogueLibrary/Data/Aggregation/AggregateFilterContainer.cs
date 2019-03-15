@@ -53,13 +53,13 @@ namespace CatalogueLibrary.Data.Aggregation
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="operation"></param>
-        public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterContainerManager)
+        public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterManager)
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation}});
         }
 
 
-        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterContainerManager,repository, r)
+        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterManager,repository, r)
         {
             SoftwareVersion = r["SoftwareVersion"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);

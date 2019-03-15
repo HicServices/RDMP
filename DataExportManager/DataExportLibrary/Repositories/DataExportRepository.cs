@@ -11,6 +11,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
@@ -41,13 +42,13 @@ namespace DataExportLibrary.Repositories
         /// </summary>
         public CatalogueRepository CatalogueRepository { get; private set; }
 
-        public IFilterContainerManager FilterContainerManager { get; private set; }
+        public IFilterManager FilterManager { get; private set; }
 
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
             
-            FilterContainerManager = new DataExportFilterContainerManager(this);
+            FilterManager = new DataExportFilterManager(this);
 
             Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
             Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));

@@ -26,6 +26,7 @@ using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Properties;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueLibrary.Repositories.Managers;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -48,14 +49,14 @@ namespace CatalogueLibrary.Repositories
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         /// <inheritdoc/>
-        public IAggregateForcedJoin AggregateForcedJoiner { get; private set; }
+        public IAggregateForcedJoinManager AggregateForcedJoinManager { get; private set; }
 
         /// <inheritdoc/>
-        public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; private set; }
+        public ITableInfoCredentialsManager TableInfoCredentialsManager { get; private set; }
 
         
         /// <inheritdoc/>
-        public JoinInfoFinder JoinInfoFinder { get; set; }
+        public IJoinManager JoinManager { get; set; }
 
         /// <inheritdoc/>
         public MEF MEF { get; set; }
@@ -66,7 +67,7 @@ namespace CatalogueLibrary.Repositories
         public CommentStore CommentStore { get; set; }
 
         /// <inheritdoc/>
-        public ICohortContainerLinker CohortContainerLinker { get; private set; }
+        public ICohortContainerManager CohortContainerManager { get; private set; }
 
         /// <summary>
         /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
@@ -76,7 +77,7 @@ namespace CatalogueLibrary.Repositories
         public static bool SuppressHelpLoading;
 
         /// <inheritdoc/>
-        public IFilterContainerManager FilterContainerManager { get; private set; }
+        public IFilterManager FilterManager { get; private set; }
 
         /// <summary>
         /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
@@ -84,12 +85,12 @@ namespace CatalogueLibrary.Repositories
         /// <param name="catalogueConnectionString"></param>
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
-            AggregateForcedJoiner = new AggregateForcedJoin(this);
-            TableInfoToCredentialsLinker = new TableInfoToCredentialsLinker(this);
-            JoinInfoFinder = new JoinInfoFinder(this);
-            CohortContainerLinker = new CohortContainerLinker(this);
+            AggregateForcedJoinManager = new AggregateForcedJoin(this);
+            TableInfoCredentialsManager = new TableInfoCredentialsManager(this);
+            JoinManager = new JoinManager(this);
+            CohortContainerManager = new CohortContainerManager(this);
             MEF = new MEF();
-            FilterContainerManager = new AggregateFilterContainerManager(this);
+            FilterManager = new AggregateFilterManager(this);
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
             

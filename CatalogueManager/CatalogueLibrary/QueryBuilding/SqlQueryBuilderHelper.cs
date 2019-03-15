@@ -10,6 +10,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -97,7 +98,7 @@ namespace CatalogueLibrary.QueryBuilding
                     if (table1.ID != table2.ID) //each table must join with a single other table
                     {
                         //figure out which of the users columns is from table 1 to join using
-                        JoinInfo[] availableJoins = cataRepository.JoinInfoFinder.GetAllJoinInfosBetweenColumnInfoSets(
+                        JoinInfo[] availableJoins = cataRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
                             table1.ColumnInfos.ToArray(),
                             table2.ColumnInfos.ToArray());
 
@@ -273,7 +274,7 @@ namespace CatalogueLibrary.QueryBuilding
             foreach(var table in toReturn.ToArray())
             {
                 var cataRepo = ((CatalogueRepository) table.Repository);
-                var available = cataRepo.JoinInfoFinder.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
+                var available = cataRepo.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
                 
                 foreach (JoinInfo newAvailableJoin in available)
                 {

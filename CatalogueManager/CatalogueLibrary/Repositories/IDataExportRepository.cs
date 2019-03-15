@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
@@ -21,7 +22,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Manager for AND/OR WHERE containers and filters
         /// </summary>
-        IFilterContainerManager FilterContainerManager { get; }
+        IFilterManager FilterManager { get; }
 
     }
 }

@@ -2,18 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Repositories
+namespace CatalogueLibrary.Repositories.Managers
 {
-    class CohortContainerLinker : ICohortContainerLinker
+    class CohortContainerManager : ICohortContainerManager
     {
         private readonly CatalogueRepository _catalogueRepository;
 
-        public CohortContainerLinker(CatalogueRepository catalogueRepository)
+        public CohortContainerManager(CatalogueRepository catalogueRepository)
         {
             _catalogueRepository = catalogueRepository;
         }
@@ -86,6 +85,24 @@ namespace CatalogueLibrary.Repositories
         public AggregateConfiguration[] GetAggregateConfigurations(CohortAggregateContainer cohortAggregateContainer)
         {
             return _catalogueRepository.SelectAll<AggregateConfiguration>("SELECT AggregateConfiguration_ID FROM CohortAggregateContainer_AggregateConfiguration where CohortAggregateContainer_ID=" + cohortAggregateContainer.ID).OrderBy(config => config.Order).ToArray();
+        }
+
+        public CohortAggregateContainer GetParentContainerIfAny(CohortAggregateContainer cohortAggregateContainer)
+        {
+            return _catalogueRepository.SelectAllWhere<CohortAggregateContainer>("SELECT CohortAggregateContainer_ParentID FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ChildID=@CohortAggregateContainer_ChildID",
+                "CohortAggregateContainer_ParentID",
+                new Dictionary<string, object>
+                {
+                    {"CohortAggregateContainer_ChildID", cohortAggregateContainer.ID}
+                }).SingleOrDefault();
+        }
+
+        public void RemoveSubContainerFrom(CohortAggregateContainer parent, CohortAggregateContainer child)
+        {
+            _catalogueRepository.Delete("DELETE FROM CohortAggregateSubContainer WHERE CohortAggregateContainer_ChildID = @CohortAggregateContainer_ChildID", new Dictionary<string, object>
+            {
+                {"CohortAggregateContainer_ChildID", child.ID}
+            });
         }
     }
 }

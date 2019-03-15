@@ -43,7 +43,7 @@ namespace CatalogueLibraryTests.Integration
             foreach (var i in CatalogueRepository.GetAllObjects<ObjectImport>())
                 i.DeleteInDatabase();
 
-            foreach (var j in CatalogueRepository.JoinInfoFinder.GetAllJoinInfos())
+            foreach (var j in CatalogueRepository.JoinManager.GetAllJoinInfos())
                 j.DeleteInDatabase();
 
             foreach (var p in CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>())
@@ -261,7 +261,7 @@ namespace CatalogueLibraryTests.Integration
                 }
 
                 //Create a JoinInfo so the query builder knows how to connect the tables
-                CatalogueRepository.JoinInfoFinder.AddJoinInfo(
+                CatalogueRepository.JoinManager.AddJoinInfo(
                     fromHeadsColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")),
                     fromNeckColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")), ExtractionJoinType.Inner, null
                     );

@@ -3,15 +3,16 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data.DataTables;
 
 namespace DataExportLibrary.Repositories
 {
-    class DataExportFilterContainerManager : IFilterContainerManager
+    class DataExportFilterManager : IFilterManager
     {
         private readonly IDataExportRepository _dataExportRepository;
 
-        public DataExportFilterContainerManager(IDataExportRepository dataExportRepository)
+        public DataExportFilterManager(IDataExportRepository dataExportRepository)
         {
             _dataExportRepository = dataExportRepository;
         }

@@ -584,7 +584,7 @@ delete from {1}..Project
             {
                 //remove any existing credentials
                 foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
-                    CatalogueRepository.TableInfoToCredentialsLinker.BreakAllLinksBetween(cred, ti);
+                    CatalogueRepository.TableInfoCredentialsManager.BreakAllLinksBetween(cred, ti);
 
                 //set the new ones
                 DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);

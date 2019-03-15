@@ -37,7 +37,7 @@ namespace CatalogueManager.CommandExecution
         {
             base.Execute();
 
-            _catalogueRepository.TableInfoToCredentialsLinker.CreateLinkBetween(_credentials,_tableInfo,DataAccessContext.Any);
+            _catalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(_credentials,_tableInfo,DataAccessContext.Any);
             Publish(_tableInfo);
         }
     }

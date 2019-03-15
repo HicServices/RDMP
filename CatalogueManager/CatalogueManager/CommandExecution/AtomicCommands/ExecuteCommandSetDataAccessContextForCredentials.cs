@@ -60,7 +60,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if (_node.Context == _newContext)
                 return;
 
-            var linker = Activator.RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker;
+            var linker = Activator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager;
 
             linker.BreakLinkBetween(_node.Credentials, _node.TableInfo, _node.Context);
             linker.CreateLinkBetween(_node.Credentials, _node.TableInfo, _newContext);

@@ -14,6 +14,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using CatalogueLibrary.Triggers;
 using DataLoadEngine.Job;
 using FAnsi.Discovery;
@@ -99,7 +100,7 @@ namespace DataLoadEngineTests.Integration
         {
             foreach (TableInfo tableInfo in _catalogue.GetTableInfoList(true))
             {
-                var joinInfos = ((CatalogueRepository)tableInfo.Repository).JoinInfoFinder.GetAllJoinInfosWhereTableContains(tableInfo, JoinInfoType.AnyKey);
+                var joinInfos = ((CatalogueRepository)tableInfo.Repository).JoinManager.GetAllJoinInfosWhereTableContains(tableInfo, JoinInfoType.AnyKey);
 
                 foreach (JoinInfo j in joinInfos)
                     j.DeleteInDatabase();
@@ -351,7 +352,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
 
             // Samples (1:M) Results join
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
+            CatalogueRepository.JoinManager.AddJoinInfo(ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
                 ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
         }
@@ -597,7 +598,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
 
             // Headers (1:M) Samples join
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
+            CatalogueRepository.JoinManager.AddJoinInfo(ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
                 ciHeaders.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
         }
@@ -1104,7 +1105,7 @@ namespace DataLoadEngineTests.Integration
             var ti = AddTableToCatalogue(databaseName, "Results", "ID", out ciList);
 
             // setup join infos
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
+            CatalogueRepository.JoinManager.AddJoinInfo(ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
                 ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
             return ti;
@@ -1116,7 +1117,7 @@ namespace DataLoadEngineTests.Integration
             var ti = AddTableToCatalogue(databaseName, "Header", "ID", out ciList);
 
             // setup join infos
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
+            CatalogueRepository.JoinManager.AddJoinInfo(ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
                 ciList.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
 

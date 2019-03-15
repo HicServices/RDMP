@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Data
@@ -11,7 +12,7 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public abstract class ConcreteContainer:DatabaseEntity, IContainer
     {
-        private readonly IFilterContainerManager _manager;
+        private readonly IFilterManager _manager;
         private FilterContainerOperation _operation;
         /// <inheritdoc/>
         public FilterContainerOperation Operation
@@ -20,13 +21,13 @@ namespace CatalogueLibrary.Data
             set { SetField(ref  _operation, value); }
         }
 
-        protected ConcreteContainer(IFilterContainerManager manager,IRepository repository, DbDataReader r):base(repository,r)
+        protected ConcreteContainer(IFilterManager manager,IRepository repository, DbDataReader r):base(repository,r)
         {
             _manager = manager;
             Operation = (FilterContainerOperation) Enum.Parse(typeof(FilterContainerOperation), r["Operation"].ToString());
         }
 
-        protected ConcreteContainer(IFilterContainerManager manager)
+        protected ConcreteContainer(IFilterManager manager)
         {
             _manager = manager;
         }

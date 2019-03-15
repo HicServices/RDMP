@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Repositories.Managers;
 using CatalogueLibrary.Ticketing;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
@@ -26,17 +27,17 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Allows creation/discover/deletion of <see cref="AggregateForcedJoin"/> objects
         /// </summary>
-        IAggregateForcedJoin AggregateForcedJoiner { get;}
+        IAggregateForcedJoinManager AggregateForcedJoinManager { get;}
 
         /// <summary>
         /// Allows linking/unlinking <see cref="DataAccessCredentials"/> to <see cref="TableInfo"/>
         /// </summary>
-        ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; }
+        ITableInfoCredentialsManager TableInfoCredentialsManager { get; }
         
         /// <summary>
         /// Allows creation/discover of <see cref="JoinInfo"/> objects which describe how to join two <see cref="TableInfo"/> together in SQL
         /// </summary>
-        JoinInfoFinder JoinInfoFinder { get; set; }
+        IJoinManager JoinManager { get; set; }
 
         /// <summary>
         /// Supports creation of objects using Reflection and discovery of Types based on Managed Extensibility Framework Export attributes.
@@ -51,7 +52,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
         /// </summary>
-        ICohortContainerLinker CohortContainerLinker { get;}
+        ICohortContainerManager CohortContainerManager { get;}
 
         /// <summary>
         /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
@@ -61,7 +62,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Manager for AND/OR WHERE containers and filters
         /// </summary>
-        IFilterContainerManager FilterContainerManager {get;}
+        IFilterManager FilterManager {get;}
 
         /// <summary>
         /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>

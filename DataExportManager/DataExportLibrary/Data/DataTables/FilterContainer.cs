@@ -27,7 +27,7 @@ namespace DataExportLibrary.Data.DataTables
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="operation"></param>
-        public FilterContainer(IDataExportRepository repository, FilterContainerOperation operation = FilterContainerOperation.AND):base(repository.FilterContainerManager)
+        public FilterContainer(IDataExportRepository repository, FilterContainerOperation operation = FilterContainerOperation.AND):base(repository.FilterManager)
         {
             Repository = repository;
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
@@ -36,7 +36,7 @@ namespace DataExportLibrary.Data.DataTables
             });
         }
 
-        internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterContainerManager,repository, r)
+        internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterManager,repository, r)
         {
         }
 

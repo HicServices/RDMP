@@ -1,13 +1,14 @@
 using System.Collections.Generic;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace CatalogueLibrary.Repositories.Managers
 {
     /// <summary>
     /// Models the relationship between <see cref="TableInfo"/> and the <see cref="DataAccessCredentials"/> (if any) that can be used to reach them.
     /// </summary>
-    public interface ITableInfoToCredentialsLinker
+    public interface ITableInfoCredentialsManager
     {
         /// <summary>
         /// Declares that the given <paramref name="tableInfo"/> can be accessed using the <paramref name="credentials"/> (username / encrypted password) under the 

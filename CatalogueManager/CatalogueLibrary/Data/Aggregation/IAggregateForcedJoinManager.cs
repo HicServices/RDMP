@@ -5,7 +5,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// query (the usual way of deciding which TableInfos to join).  This is needed if you want a count(*) for example in which both header and result records tables are
     /// joined together. 
     /// </summary>
-    public interface IAggregateForcedJoin
+    public interface IAggregateForcedJoinManager
     {
         /// <summary>
         /// Returns all the TableInfos that the provided <see cref="AggregateConfiguration"/> has been explicitly requested (by the user) to join to in it's FROM section (See 

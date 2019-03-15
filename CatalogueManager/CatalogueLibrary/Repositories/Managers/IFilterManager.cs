@@ -1,8 +1,8 @@
 using CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Repositories
+namespace CatalogueLibrary.Repositories.Managers
 {
-    public interface IFilterContainerManager
+    public interface IFilterManager
     {
         IContainer[] GetSubContainers(IContainer container);
         void MakeIntoAnOrphan(IContainer container);

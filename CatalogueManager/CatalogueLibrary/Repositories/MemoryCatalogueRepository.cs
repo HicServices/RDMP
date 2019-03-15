@@ -10,6 +10,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using HIC.Logging;
@@ -20,20 +21,20 @@ using IContainer = CatalogueLibrary.Data.IContainer;
 
 namespace CatalogueLibrary.Repositories
 {
-    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoToCredentialsLinker, IAggregateForcedJoin, ICohortContainerLinker, IFilterContainerManager
+    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager
     {
-        public IAggregateForcedJoin AggregateForcedJoiner { get { return this; } }
-        public ITableInfoToCredentialsLinker TableInfoToCredentialsLinker { get { return this; }}
-        public ICohortContainerLinker CohortContainerLinker { get { return this; }}
+        public IAggregateForcedJoinManager AggregateForcedJoinManager { get { return this; } }
+        public ITableInfoCredentialsManager TableInfoCredentialsManager { get { return this; }}
+        public ICohortContainerManager CohortContainerManager { get { return this; }}
 
         public IEncryptStrings GetEncrypter()
         {
             return new SimpleStringValueEncryption(null);
         }
 
-        public IFilterContainerManager FilterContainerManager { get { return this; }}
+        public IFilterManager FilterManager { get { return this; }}
 
-        public JoinInfoFinder JoinInfoFinder { get; set; }
+        public IJoinManager JoinManager { get; set; }
         public MEF MEF { get; set; }
         public CommentStore CommentStore { get; private set; }
 
@@ -382,6 +383,20 @@ namespace CatalogueLibrary.Repositories
                 return null;
 
             return _cohortContainerContents[cohortAggregateContainer].Select(c => c.Orderable).OfType<AggregateConfiguration>().ToArray();
+        }
+
+        public CohortAggregateContainer GetParentContainerIfAny(CohortAggregateContainer cohortAggregateContainer)
+        {
+            var match = _cohortContainerContents.Where(k => k.Value.Any(hs => Equals(hs.Orderable, cohortAggregateContainer))).Select(kvp=>kvp.Key).ToArray();
+            if (match.Length > 0)
+                return match.Single();
+            
+            return null;
+        }
+
+        public void RemoveSubContainerFrom(CohortAggregateContainer parent, CohortAggregateContainer child)
+        {
+            _cohortContainerContents[parent].RemoveWhere(c => Equals(c.Orderable, child));
         }
 
         #endregion

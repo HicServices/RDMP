@@ -440,8 +440,8 @@ namespace CatalogueLibrary.Data.Cohort
 
 
             //now clone it's AggregateForcedJoins
-            foreach (var t in cataRepo.AggregateForcedJoiner.GetAllForcedJoinsFor(toClone))
-                cataRepo.AggregateForcedJoiner.CreateLinkBetween(newConfiguration, t);
+            foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(toClone))
+                cataRepo.AggregateForcedJoinManager.CreateLinkBetween(newConfiguration, t);
 
 
             //now give it 1 dimension which is the only IsExtractionIdentifier column 

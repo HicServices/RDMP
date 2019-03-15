@@ -1,13 +1,12 @@
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 
-namespace CatalogueLibrary.Repositories
+namespace CatalogueLibrary.Repositories.Managers
 {
     /// <summary>
     /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
     /// </summary>
-    public interface ICohortContainerLinker
+    public interface ICohortContainerManager
     {
         /// <summary>
         /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
@@ -15,8 +14,7 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         CohortAggregateContainer GetCohortAggregateContainerIfAny(AggregateConfiguration aggregateConfiguration);
-
-
+        
         /// <summary>
         /// Makes the configuration a member of the given container with the given <paramref name="order"/> relative to other things (if any) in the container.
         /// </summary>
@@ -52,5 +50,17 @@ namespace CatalogueLibrary.Repositories
         /// <returns></returns>
         AggregateConfiguration[] GetAggregateConfigurations(CohortAggregateContainer cohortAggregateContainer);
 
+        /// <summary>
+        /// Gets the parent container of the current container (if it is not a root / orphan container)
+        /// </summary>
+        /// <returns></returns>
+        CohortAggregateContainer GetParentContainerIfAny(CohortAggregateContainer cohortAggregateContainer);
+
+        /// <summary>
+        /// Removes the given container from it's host parent container
+        /// </summary>
+        /// <param name="parent"></param>
+        /// <param name="child"></param>
+        void RemoveSubContainerFrom(CohortAggregateContainer parent, CohortAggregateContainer child);
     }
 }

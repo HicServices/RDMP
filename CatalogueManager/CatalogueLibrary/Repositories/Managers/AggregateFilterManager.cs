@@ -1,16 +1,15 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 
-namespace CatalogueLibrary.Repositories
+namespace CatalogueLibrary.Repositories.Managers
 {
-    class AggregateFilterContainerManager : IFilterContainerManager
+    class AggregateFilterManager : IFilterManager
     {
         private readonly CatalogueRepository _catalogueRepository;
 
-        public AggregateFilterContainerManager(CatalogueRepository catalogueRepository)
+        public AggregateFilterManager(CatalogueRepository catalogueRepository)
         {
             _catalogueRepository = catalogueRepository;
         }

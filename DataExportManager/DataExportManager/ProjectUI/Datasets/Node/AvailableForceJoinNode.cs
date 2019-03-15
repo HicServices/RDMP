@@ -76,7 +76,7 @@ namespace DataExportManager.ProjectUI.Datasets.Node
                     continue;
 
                 var theirCols = otherNode.TableInfo.ColumnInfos;
-                foundJoinInfos.AddRange(((CatalogueRepository) TableInfo.Repository).JoinInfoFinder.GetAllJoinInfosBetweenColumnInfoSets(mycols, theirCols));
+                foundJoinInfos.AddRange(((CatalogueRepository) TableInfo.Repository).JoinManager.GetAllJoinInfosBetweenColumnInfoSets(mycols, theirCols));
             }
 
             JoinInfos = foundJoinInfos.ToArray();

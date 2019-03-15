@@ -234,7 +234,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public TableInfo[] ForcedJoins
         {
-            get { return CatalogueRepository.AggregateForcedJoiner.GetAllForcedJoinsFor(this); }
+            get { return CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this); }
         }
 
         /// <summary>
@@ -395,7 +395,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// </summary>
         public void ReFetchOrder()
         {
-            _orderWithinKnownContainer = CatalogueRepository.CohortContainerLinker.GetOrderIfExistsFor(this);
+            _orderWithinKnownContainer = CatalogueRepository.CohortContainerManager.GetOrderIfExistsFor(this);
         }
 
         private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
@@ -569,7 +569,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public CohortAggregateContainer GetCohortAggregateContainerIfAny()
         {
-            return CatalogueRepository.CohortContainerLinker.GetCohortAggregateContainerIfAny(this);
+            return CatalogueRepository.CohortContainerManager.GetCohortAggregateContainerIfAny(this);
         }
 
         /// <summary>
@@ -635,8 +635,8 @@ namespace CatalogueLibrary.Data.Aggregation
             }
 
             //now clone it's AggregateForcedJoins
-            foreach (var t in cataRepo.AggregateForcedJoiner.GetAllForcedJoinsFor(this))
-                cataRepo.AggregateForcedJoiner.CreateLinkBetween(clone, t);
+            foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(this))
+                cataRepo.AggregateForcedJoinManager.CreateLinkBetween(clone, t);
             
             if (RootFilterContainer_ID != null)
             {

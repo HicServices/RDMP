@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace CatalogueLibrary.Repositories.Managers
 {
     /// <summary>
     /// Allows you to create and destroy usage relationships between TableInfos and DataAccessCredentials (under context X).  For example you might have a DataAccessCredentials 
@@ -22,7 +22,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para></para>
     /// </summary>
-    class TableInfoToCredentialsLinker : ITableInfoToCredentialsLinker
+    class TableInfoCredentialsManager : ITableInfoCredentialsManager
     {
         private readonly ICatalogueRepository _repository;
 
@@ -36,7 +36,7 @@ namespace CatalogueLibrary.Data
         /// Creates a new helper class instance for writting/deleting credential usages for <see cref="TableInfo"/> objects in the <paramref name="repository"/>
         /// </summary>
         /// <param name="repository"></param>
-        public TableInfoToCredentialsLinker(ICatalogueRepository repository)
+        public TableInfoCredentialsManager(ICatalogueRepository repository)
         {
             _repository = repository;
         }

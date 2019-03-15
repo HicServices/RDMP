@@ -10,24 +10,17 @@ using System.Data.Common;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Repositories
+namespace CatalogueLibrary.Repositories.Managers
 {
-    public enum JoinInfoType
-    {
-        AnyKey,
-        ForeignKey,
-        PrimaryKey
-    }
-
     /// <summary>
     /// Handles creation, discovery and deletion of JoinInfos.  JoinInfos are not IMapsDirectlyToDatabaseTable classes because they are mostly just a m-m relationship
     /// table between ColumnInfos (with join direction / collation).
     /// </summary>
-    public class JoinInfoFinder
+    public class JoinManager : IJoinManager
     {
         private readonly CatalogueRepository _repository;
 
-        public JoinInfoFinder(CatalogueRepository repository)
+        public JoinManager(CatalogueRepository repository)
         {
             _repository = repository;
         }

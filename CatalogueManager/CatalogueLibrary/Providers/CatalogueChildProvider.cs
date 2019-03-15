@@ -201,7 +201,7 @@ namespace CatalogueLibrary.Providers
             AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
             
             //which TableInfos use which Credentials under which DataAccessContexts
-            AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
+            AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             
             AllColumnInfos = GetAllObjects<ColumnInfo>(repository);
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
@@ -249,7 +249,7 @@ namespace CatalogueLibrary.Providers
             foreach (Lookup l in AllLookups)
                 l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],_allColumnInfos[l.Description_ID]);
 
-            AllJoinInfos = repository.JoinInfoFinder.GetAllJoinInfos();
+            AllJoinInfos = repository.JoinManager.GetAllJoinInfos();
 
             foreach (JoinInfo j in AllJoinInfos)
                 j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);

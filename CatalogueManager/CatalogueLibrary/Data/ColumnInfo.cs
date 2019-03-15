@@ -474,7 +474,7 @@ namespace CatalogueLibrary.Data
 
             //also join infoslookups are dependent on us
             dependantObjects.AddRange(
-                ((CatalogueRepository) Repository).JoinInfoFinder.GetAllJoinInfos().Where(j =>
+                ((CatalogueRepository) Repository).JoinManager.GetAllJoinInfos().Where(j =>
                 j.ForeignKey_ID == ID ||
                 j.PrimaryKey_ID == ID));
 
