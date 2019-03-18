@@ -734,7 +734,7 @@ namespace CatalogueLibrary.Data.Aggregation
 
         public AggregateConfiguration ShallowClone()
         {
-            var clone = new AggregateConfiguration(CatalogueRepository, Catalogue, Name + "(Clone)");
+            var clone = new AggregateConfiguration(CatalogueRepository, Catalogue, Name);
             CopyShallowValuesTo(clone);
             return clone;
         }

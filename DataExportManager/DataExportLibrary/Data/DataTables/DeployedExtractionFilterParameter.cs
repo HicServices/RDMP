@@ -35,6 +35,7 @@ namespace DataExportLibrary.Data.DataTables
         /// The <see cref="ExtractionFilter"/> against which the parameter is declared.  The WHERE Sql of the filter should
         /// reference this parameter (e.g. "[mydb]..[mytbl].[hb_extract] = @healthboard").
         /// </summary>
+        [Relationship(typeof(DeployedExtractionFilter),RelationshipType.SharedObject)]
         public int ExtractionFilter_ID
         {
             get { return _extractionFilter_ID; }

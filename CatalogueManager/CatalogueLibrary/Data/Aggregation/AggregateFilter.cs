@@ -14,6 +14,7 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -47,6 +48,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         /// <inheritdoc/>
+        [Relationship(typeof(AggregateFilterContainer),RelationshipType.SharedObject)]
         public override int? FilterContainer_ID
         {
             get { return _filterContainerID; }

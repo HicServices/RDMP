@@ -37,6 +37,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
         /// in it's WhereSQL.
         /// </summary>
+        [Relationship(typeof(AggregateFilter),RelationshipType.SharedObject)]
         public int AggregateFilter_ID
         {
             get { return _aggregateFilterID; }

@@ -240,7 +240,7 @@ namespace CatalogueLibrary.Data
         /// Also skips 'Name' and 'ID'
         /// </summary>
         /// <param name="to"></param>
-        protected void CopyShallowValuesTo(DatabaseEntity to)
+        protected void CopyShallowValuesTo(DatabaseEntity to,bool copyName = false,bool save = true)
         {
             if (GetType() != to.GetType())
                 throw new NotSupportedException(string.Format("Object to must be the same Type as us, we were '{0}' and it was '{1}'",GetType().Name,to.GetType().Name) );
@@ -248,17 +248,22 @@ namespace CatalogueLibrary.Data
             var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(to);
             var relationsFinder = new AttributePropertyFinder<RelationshipAttribute>(to);
             
-            foreach (var p in typeof(Catalogue).GetProperties())
+            foreach (var p in GetType().GetProperties())
             {
-                if (p.Name.Equals("ID") || p.Name.Equals("Name"))
+                if (p.Name.Equals("ID"))
                     continue;
-                
+
+                if (p.Name.Equals("Name") && !copyName)
+                    continue;
+
                 if(noMappingFinder.GetAttribute(p) != null || relationsFinder.GetAttribute(p) != null)
                     continue;
 
                 p.SetValue(to, p.GetValue(this));
             }
-            SaveToDatabase();
+
+            if(save)
+                to.SaveToDatabase();
         }
     }
 }

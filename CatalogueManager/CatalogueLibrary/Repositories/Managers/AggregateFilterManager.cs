@@ -32,7 +32,7 @@ namespace CatalogueLibrary.Repositories.Managers
             _catalogueRepository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
             {
                 {"AggregateFilterContainer_ChildID", container.ID}
-            });
+            },false);
         }
 
         public IContainer GetParentContainerIfAny(IContainer container)

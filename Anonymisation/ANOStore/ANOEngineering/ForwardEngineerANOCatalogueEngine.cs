@@ -155,7 +155,7 @@ namespace ANOStore.ANOEngineering
                     }
 
                     NewCatalogue = _planManager.Catalogue.ShallowClone();
-                    NewCatalogue.Name = "ANO" + NewCatalogue.Name;
+                    NewCatalogue.Name = "ANO" + _planManager.Catalogue.Name;
                     NewCatalogue.Folder = new CatalogueFolder(NewCatalogue, "\\anonymous" + NewCatalogue.Folder.Path);
                     NewCatalogue.SaveToDatabase();
 

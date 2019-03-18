@@ -18,7 +18,7 @@ using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
@@ -54,6 +54,7 @@ namespace DataExportLibrary.Data.DataTables
         }
         
         /// <inheritdoc/>
+        [Relationship(typeof(FilterContainer), RelationshipType.SharedObject)]
         public override int? FilterContainer_ID
         {
             get { return _filterContainerID; }
