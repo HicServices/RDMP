@@ -100,11 +100,7 @@ namespace CatalogueLibrary.Repositories
             throw new NotImplementedException();
         }
 
-        public T CloneObjectInTable<T>(T oToClone, TableRepository destinationRepository) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
             throw new NotImplementedException();

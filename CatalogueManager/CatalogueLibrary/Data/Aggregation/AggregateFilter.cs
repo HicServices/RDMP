@@ -198,5 +198,12 @@ namespace CatalogueLibrary.Data.Aggregation
             var container = Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value);
             return container.GetAggregate();
         }
+
+        public AggregateFilter ShallowClone(AggregateFilterContainer into)
+        {
+            var clone = new AggregateFilter(CatalogueRepository, Name, into);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

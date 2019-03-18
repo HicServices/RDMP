@@ -132,5 +132,12 @@ namespace DataExportLibrary.Data.DataTables
         {
             return Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
         }
+
+        public DeployedExtractionFilterParameter ShallowClone(DeployedExtractionFilter into)
+        {
+            var clone = new DeployedExtractionFilterParameter(DataExportRepository, ParameterSQL, into);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

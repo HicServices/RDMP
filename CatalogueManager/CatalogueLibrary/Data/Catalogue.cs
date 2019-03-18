@@ -1313,5 +1313,15 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
+        /// <summary>
+        /// Provides a new instance of the object (in the database).  Properties will be copied from this object (child objects will not be created).
+        /// </summary>
+        /// <returns></returns>
+        public Catalogue ShallowClone()
+        {
+            var clone = new Catalogue(CatalogueRepository, Name + " Clone");
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

@@ -87,27 +87,17 @@ namespace CatalogueLibrary.Data.Aggregation
         public AggregateFilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
-            AggregateFilterContainer clone = Repository.CloneObjectInTable(this);
+            AggregateFilterContainer clone = ShallowClone();
             
             //clone our filters
             foreach (AggregateFilter filterToClone in GetFilters())
             {
                 //clone it
-                AggregateFilter cloneFilter = Repository.CloneObjectInTable(filterToClone);
+                AggregateFilter cloneFilter = filterToClone.ShallowClone(clone);
 
                 //clone parameters
                 foreach (AggregateFilterParameter parameterToClone in filterToClone.GetAllParameters())
-                {
-                    AggregateFilterParameter clonefilterParameter = Repository.CloneObjectInTable(parameterToClone);
-
-                    //change the cloned parameter to belong to the cloned filter
-                    clonefilterParameter.AggregateFilter_ID = cloneFilter.ID;
-                    clonefilterParameter.SaveToDatabase();
-                }
-
-                //change the clone to belonging to the cloned container (instead of this - the original container)
-                cloneFilter.FilterContainer_ID = clone.ID;
-                cloneFilter.SaveToDatabase();
+                    parameterToClone.ShallowClone(cloneFilter);
             }
 
             //now clone all subcontainers
@@ -125,7 +115,13 @@ namespace CatalogueLibrary.Data.Aggregation
             return clone;
         }
 
-        
+        private AggregateFilterContainer ShallowClone()
+        {
+            var container = new AggregateFilterContainer(CatalogueRepository, Operation);
+            CopyShallowValuesTo(container);
+            return container;
+        }
+
         /// <summary>
         /// Returns the AggregateConfiguration for which this container is either the root container for or part of the root container subcontainer tree.
         /// Returns null if the container is somehow an orphan. 

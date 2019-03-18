@@ -438,5 +438,11 @@ namespace CatalogueLibrary.Data
             InjectKnown(columnInfo);
         }
 
+        public CatalogueItem ShallowClone(Catalogue into)
+        {
+            var clone = new CatalogueItem(CatalogueRepository, into, Name);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

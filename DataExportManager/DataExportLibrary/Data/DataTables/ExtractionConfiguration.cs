@@ -265,7 +265,7 @@ namespace DataExportLibrary.Data.DataTables
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="project"></param>
-        public ExtractionConfiguration(IDataExportRepository repository, Project project)
+        public ExtractionConfiguration(IDataExportRepository repository, IProject project)
         {
             Repository = repository;
 
@@ -352,7 +352,7 @@ namespace DataExportLibrary.Data.DataTables
                 try
                 {
                     //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort 
-                    ExtractionConfiguration clone = repo.CloneObjectInTable(this);
+                    ExtractionConfiguration clone = this.ShallowClone();
 
                     //find each of the selected datasets for ourselves and clone those too
                     foreach (SelectedDataSets selected in SelectedDataSets)
@@ -363,7 +363,7 @@ namespace DataExportLibrary.Data.DataTables
                         // now clone each of the columns for each of the datasets that we just created links to (make them the same as the old configuration
                         foreach (IColumn extractableColumn in GetAllExtractableColumnsFor(selected.ExtractableDataSet))
                         {
-                            ExtractableColumn cloneExtractableColumn = repo.CloneObjectInTable((ExtractableColumn)extractableColumn);
+                            ExtractableColumn cloneExtractableColumn = ((ExtractableColumn)extractableColumn).ShallowClone();
                             cloneExtractableColumn.ExtractionConfiguration_ID = clone.ID;
                             cloneExtractableColumn.SaveToDatabase();
                         }
@@ -414,6 +414,13 @@ namespace DataExportLibrary.Data.DataTables
                     throw;
                 }
             }
+        }
+
+        private ExtractionConfiguration ShallowClone()
+        {
+            var clone = new ExtractionConfiguration(DataExportRepository, Project);
+            CopyShallowValuesTo(clone);
+            return clone;
         }
 
         /// <inheritdoc/>

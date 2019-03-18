@@ -193,5 +193,12 @@ namespace DataExportLibrary.Data.DataTables
             var container = Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value);
             return container.GetSelectedDataSetsRecursively();
         }
+
+        public DeployedExtractionFilter ShallowClone(FilterContainer into)
+        {
+            var clone = new DeployedExtractionFilter(DataExportRepository, Name, into);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

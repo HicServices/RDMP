@@ -419,7 +419,7 @@ namespace CatalogueLibrary.Data.Cohort
             IColumn extractionIdentifier = GetExtractionIdentifierFrom(toClone, out underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
             
             //clone will not have axis or pivot or dimensions other than extraction identifier
-            var newConfiguration = cataRepo.CloneObjectInTable(toClone);
+            var newConfiguration = toClone.ShallowClone();
 
             //make it's name follow the naming convention e.g. cic_105_LINK103_MyAggregate 
             EnsureNamingConvention(newConfiguration);

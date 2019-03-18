@@ -88,5 +88,13 @@ namespace CatalogueLibrary.Data.DataLoad
                 //convert the result back from generic to specific (us)
                 .ToArray();
         }
+
+        public ProcessTaskArgument ShallowClone(ProcessTask into)
+        {
+            ProcessTaskArgument clone = new ProcessTaskArgument(CatalogueRepository, into);
+            CopyShallowValuesTo(clone);
+
+            return clone;
+        }
     }
 }

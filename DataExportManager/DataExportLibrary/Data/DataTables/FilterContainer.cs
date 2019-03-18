@@ -66,21 +66,17 @@ namespace DataExportLibrary.Data.DataTables
         public FilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
-            var clonedFilterContainer = Repository.CloneObjectInTable(this);
+            var clonedFilterContainer = this.ShallowClone();
             
             //clone our filters
             foreach (var deployedExtractionFilter in GetFilters())
             {
                 //clone it
-                var cloneFilter = Repository.CloneObjectInTable((DeployedExtractionFilter) deployedExtractionFilter);
+                var cloneFilter = ((DeployedExtractionFilter) deployedExtractionFilter).ShallowClone(clonedFilterContainer);
 
                 //clone parameters
                 foreach (DeployedExtractionFilterParameter parameter in deployedExtractionFilter.GetAllParameters())
-                {
-                    var clonefilterParameter = Repository.CloneObjectInTable(parameter);
-                    clonefilterParameter.ExtractionFilter_ID = cloneFilter.ID;
-                    clonefilterParameter.SaveToDatabase();
-                }
+                    parameter.ShallowClone(cloneFilter);
 
                 //change the clone to belonging to the cloned container (instead of this - the original container)
                 cloneFilter.FilterContainer_ID = clonedFilterContainer.ID;
@@ -99,6 +95,13 @@ namespace DataExportLibrary.Data.DataTables
 
             //return the cloned version
             return clonedFilterContainer;
+        }
+
+        private FilterContainer ShallowClone()
+        {
+            var clone = new FilterContainer(DataExportRepository, Operation);
+            CopyShallowValuesTo(clone);
+            return clone;
         }
 
         /// <summary>

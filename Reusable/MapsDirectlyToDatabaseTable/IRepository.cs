@@ -137,17 +137,6 @@ namespace MapsDirectlyToDatabaseTable
 
         Version GetVersion();
 
-        
-        /// <summary>
-        /// Creates a new copy of the <paramref name="oToClone"/> object in the database that is identical except for having a new <see cref="IMapsDirectlyToDatabaseTable.ID"/>.
-        /// This will not work if there are database constraints that would get in the way e.g. if there is an unique constraint on Name (for example). 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="oToClone">The database object to clone</param>
-        /// <returns>The new copy fetched out of the database</returns>
-        T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable;
-
-
         bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable;
         bool StillExists(IMapsDirectlyToDatabaseTable o);
 

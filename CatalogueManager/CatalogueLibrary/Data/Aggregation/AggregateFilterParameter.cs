@@ -136,6 +136,12 @@ namespace CatalogueLibrary.Data.Aggregation
             return AggregateFilter;
         }
 
-        
+
+        public AggregateFilterParameter ShallowClone(AggregateFilter into)
+        {
+            var clone = new AggregateFilterParameter(CatalogueRepository, ParameterSQL, into);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

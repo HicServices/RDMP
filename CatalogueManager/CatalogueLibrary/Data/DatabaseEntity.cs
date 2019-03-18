@@ -12,6 +12,7 @@ using System.Data.Common;
 using System.Runtime.CompilerServices;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.Annotations;
 
@@ -232,6 +233,32 @@ namespace CatalogueLibrary.Data
         public void SetReadOnly()
         {
             _readonly = true;
+        }
+
+        /// <summary>
+        /// Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the <paramref name="to"/> object. 
+        /// Also skips 'Name' and 'ID'
+        /// </summary>
+        /// <param name="to"></param>
+        protected void CopyShallowValuesTo(DatabaseEntity to)
+        {
+            if (GetType() != to.GetType())
+                throw new NotSupportedException(string.Format("Object to must be the same Type as us, we were '{0}' and it was '{1}'",GetType().Name,to.GetType().Name) );
+
+            var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(to);
+            var relationsFinder = new AttributePropertyFinder<RelationshipAttribute>(to);
+            
+            foreach (var p in typeof(Catalogue).GetProperties())
+            {
+                if (p.Name.Equals("ID") || p.Name.Equals("Name"))
+                    continue;
+                
+                if(noMappingFinder.GetAttribute(p) != null || relationsFinder.GetAttribute(p) != null)
+                    continue;
+
+                p.SetValue(to, p.GetValue(this));
+            }
+            SaveToDatabase();
         }
     }
 }

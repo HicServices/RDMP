@@ -157,11 +157,7 @@ namespace MapsDirectlyToDatabaseTable
             return new Version(FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
         }
         
-        public T CloneObjectInTable<T>(T oToClone) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
         {
             return Objects.OfType<T>().Any(o => o.ID == allegedParent);

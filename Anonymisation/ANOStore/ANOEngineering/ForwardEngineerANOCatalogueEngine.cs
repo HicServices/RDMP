@@ -153,8 +153,8 @@ namespace ANOStore.ANOEngineering
                             newTableInfo.SaveToDatabase();
                         }
                     }
-                    
-                    NewCatalogue = _catalogueRepository.CloneObjectInTable(_planManager.Catalogue);
+
+                    NewCatalogue = _planManager.Catalogue.ShallowClone();
                     NewCatalogue.Name = "ANO" + NewCatalogue.Name;
                     NewCatalogue.Folder = new CatalogueFolder(NewCatalogue, "\\anonymous" + NewCatalogue.Folder.Path);
                     NewCatalogue.SaveToDatabase();
@@ -178,11 +178,8 @@ namespace ANOStore.ANOEngineering
                         
                         ColumnInfo newColumnInfo = GetNewColumnInfoForOld(oldColumnInfo);
 
-                        var newCatalogueItem = _catalogueRepository.CloneObjectInTable(oldCatalogueItem);
+                        var newCatalogueItem = oldCatalogueItem.ShallowClone(NewCatalogue);
                         
-                        //wire it to the new Catalogue
-                        newCatalogueItem.Catalogue_ID = NewCatalogue.ID;
-
                         //and rewire it's ColumnInfo to the cloned child one
                         newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
 

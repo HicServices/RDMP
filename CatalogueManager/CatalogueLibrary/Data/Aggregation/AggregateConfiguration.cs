@@ -615,10 +615,8 @@ namespace CatalogueLibrary.Data.Aggregation
         public AggregateConfiguration CreateClone()
         {
             var cataRepo = (CatalogueRepository) Repository;
-            var clone = Repository.CloneObjectInTable(this);
-
-            clone.Name = Name + "(Clone)";
-
+            var clone = ShallowClone();
+            
             if(clone.PivotOnDimensionID != null)
                 throw new NotImplementedException("Cannot clone due to PIVOT");
 
@@ -732,6 +730,13 @@ namespace CatalogueLibrary.Data.Aggregation
             return
                 @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  It's role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
 
+        }
+
+        public AggregateConfiguration ShallowClone()
+        {
+            var clone = new AggregateConfiguration(CatalogueRepository, Catalogue, Name + "(Clone)");
+            CopyShallowValuesTo(clone);
+            return clone;
         }
     }
 }

@@ -179,42 +179,7 @@ namespace MapsDirectlyToDatabaseTable
             else
                 p.Value = propValue;
         }
-
-        /// <summary>
-        /// This method is used to allow you to clone an IMapsDirectlyToDatabaseTable object into a DIFFERENT database.  You should use DbCommandBuilder
-        /// and "SELECT * FROM TableX" in order to get the Insert command and then pass in a corresponding wrapper object which must have properties
-        /// that exactly match the underlying table, these will be populated into insertCommand ready for you to use
-        /// </summary>
-        /// <param name="insertCommand"></param>
-        /// <param name="oTableWrapperObject"></param>
-        public void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            lock (_oLockUpdateCommands)
-            {
-                foreach (DbParameter parameter in insertCommand.Parameters)
-                {
-                    Type t = oTableWrapperObject.GetType();
-                    string property = parameter.ParameterName.TrimStart(new char[] {'@'});
-
-                    PropertyInfo p = t.GetProperty(property);
-
-                    if (p == null)
-                        throw new Exception("could not find property called " + property + " on object of type " +
-                                            oTableWrapperObject.GetType().Name);
-                    object value = p.GetValue(oTableWrapperObject, null);
-                    
-                    SetParameterToValue(parameter, value);
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable
-        {
-            var repository = (TableRepository) oToClone.Repository;
-            return CloneObjectInTable(oToClone, repository);
-        }
-
+        
         public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
             return StillExists(typeof(T),id);
@@ -238,36 +203,6 @@ namespace MapsDirectlyToDatabaseTable
             return exists;
         }
 
-        public T CloneObjectInTable<T>(T oToClone, TableRepository sourceRepository) where T:IMapsDirectlyToDatabaseTable
-        {
-            //first of all run a select on the table so that we can get all the columns in the underlying table
-            using (var con = sourceRepository.GetConnection())
-            {
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT * FROM [" + oToClone.GetType().Name + "] WHERE ID=" + oToClone.ID, con.Connection, con.Transaction);
-
-                //adapter and builder are used to generate an INSERT command compatible with the SELECT (i.e. all fields).  Note that this does not generate for the
-                //identity column ID.  We know there is an identity and that it is called ID because that is one of the requirements of the IMapsDirectlyToDatabaseTable 
-                //pattern
-
-                DbCommand cloneCommand = DatabaseCommandHelper.GetInsertCommand(cmd);
-                cloneCommand.Connection = con.Connection;
-                
-                //if cloning into the same database
-                PopulateInsertCommandValuesWithCurrentState(cloneCommand, oToClone); //give the new clone a new ID
-                
-                cloneCommand.CommandText += ";SELECT @@IDENTITY";
-                    
-                try
-                {
-                    return GetObjectByID<T>(int.Parse(cloneCommand.ExecuteScalar().ToString()));
-                }
-                catch (SqlException e)
-                {
-                    throw new Exception("Error cloning " + oToClone + " (object of type " + oToClone.GetType().Name + " with ID=" + oToClone.ID + ")", e);
-                }
-            }
-        }
-        
         /// <summary>
         /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by it's ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
         /// </summary>

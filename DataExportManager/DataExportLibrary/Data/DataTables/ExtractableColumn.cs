@@ -284,5 +284,15 @@ namespace DataExportLibrary.Data.DataTables
             SelectSQL = item.SelectSQL;
             SaveToDatabase();
         }
+
+        public ExtractableColumn ShallowClone()
+        {
+            var eds = DataExportRepository.GetObjectByID<ExtractableDataSet>(ExtractableDataSet_ID);
+            var config = DataExportRepository.GetObjectByID<ExtractionConfiguration>(ExtractionConfiguration_ID);
+
+            var clone = new ExtractableColumn(DataExportRepository, eds, config, CatalogueExtractionInformation, Order, SelectSQL);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

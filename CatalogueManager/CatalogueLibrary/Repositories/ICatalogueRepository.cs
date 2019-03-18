@@ -94,17 +94,6 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         TicketingSystemConfiguration GetTicketingSystem();
-
-        /// <summary>
-        /// This method is used to allow you to clone an IMapsDirectlyToDatabaseTable object into a DIFFERENT database.  You should use DbCommandBuilder
-        /// and "SELECT * FROM TableX" in order to get the Insert command and then pass in a corresponding wrapper object which must have properties
-        /// that exactly match the underlying table, these will be populated into insertCommand ready for you to use
-        /// </summary>
-        /// <param name="insertCommand"></param>
-        /// <param name="oTableWrapperObject"></param>
-        void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject);
-
-        T CloneObjectInTable<T>(T oToClone, TableRepository destinationRepository) where T : IMapsDirectlyToDatabaseTable;
         
         T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
             where T : IMapsDirectlyToDatabaseTable;

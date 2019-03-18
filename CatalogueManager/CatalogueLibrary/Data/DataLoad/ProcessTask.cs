@@ -323,15 +323,14 @@ namespace CatalogueLibrary.Data.DataLoad
                     ProcessTaskArgument[] toCloneArguments = ProcessTaskArguments.ToArray();
 
                     //create a new transaction for all the cloning - note that once all objects are cloned the transaction is committed then all the objects are adjusted outside the transaction
-                    ProcessTask clone = Repository.CloneObjectInTable(this);
+                    ProcessTask clone = new ProcessTask(CatalogueRepository,LoadMetadata,loadStage);
+                    CopyShallowValuesTo(clone);
 
                     //foreach of our child arguments
                     foreach (ProcessTaskArgument argument in toCloneArguments)
                     {
                         //clone it but rewire it to the proper ProcessTask parent (the clone)
-                        var arg = Repository.CloneObjectInTable(argument);
-                        arg.ProcessTask_ID = clone.ID;
-                        arg.SaveToDatabase();
+                        argument.ShallowClone(clone);
                     }
             
                     //the values passed into parameter
