@@ -12,7 +12,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
     /// <summary>
     /// See ReleaseLogEntry
     /// </summary>
-    public interface IReleaseLogEntry : IDeleteable
+    public interface IReleaseLog : IMapsDirectlyToDatabaseTable
     {
         int CumulativeExtractionResults_ID { get; }
         string Username { get; }

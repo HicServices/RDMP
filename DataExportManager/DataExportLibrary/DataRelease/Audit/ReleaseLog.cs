@@ -7,7 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.IO;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
@@ -16,11 +19,15 @@ using ReusableLibraryCode;
 namespace DataExportLibrary.DataRelease.Audit
 {
     /// <summary>
-    /// Records the fact that a given dataset has been succesfully extracted (See ReleaseLogWriter)
+    /// Records the fact that a given extracted dataset has been released.  It audits the user performing the release, the environmental release potential,
+    /// destination directory etc.
     /// 
-    /// <para>Cannot be updated (saved) and does not have it's own ID - there is a 1 to 1 relationship between cumulative extraction results and ReleaseLog</para>
+    /// <para>This is done by linking the CumulativeExtractionResult with a record in the ReleaseLog.  Each SelectedDataSet in an ExtractionConfiguration
+    /// can only have 1 CumulativeExtractionResult at a time (it is a record of the last extracted SQL etc - See CumulativeExtractionResult) and there can be 
+    /// only 1 ReleaseLog entry per CumulativeExtractionResult.  This means that once a dataset has been released it cannot be extracted/released again (this
+    /// is intended behaviour).  If you want to re run a released ExtractionConfiguration then you should clone it.</para>
     /// </summary>
-    public class ReleaseLogEntry : IReleaseLogEntry
+    public class ReleaseLog : DatabaseEntity,IReleaseLog
     {
         private readonly IRepository _repository;
         public int CumulativeExtractionResults_ID { get; private set; }
@@ -57,7 +64,24 @@ namespace DataExportLibrary.DataRelease.Audit
                     Username);
         }
 
-        public ReleaseLogEntry(IRepository repository, DbDataReader r)
+        public ReleaseLog(IDataExportRepository repository,ReleasePotential dataset, ReleaseEnvironmentPotential environment,bool isPatch,DirectoryInfo releaseDirectory,FileInfo datasetFileBeingReleased)
+        {
+            
+            repository.InsertAndHydrate(this,
+                 new Dictionary<string, object>
+                                       {
+                                           {"CumulativeExtractionResults_ID", dataset.DatasetExtractionResult.ID},
+                                           {"Username", Environment.UserName},
+                                           {"DateOfRelease", DateTime.Now},
+                                           {"MD5OfDatasetFile", datasetFileBeingReleased == null ? "X" : UsefulStuff.MD5File(datasetFileBeingReleased.FullName)},
+                                           {"DatasetState", dataset.DatasetExtractionResult.ToString()},
+                                           {"EnvironmentState", environment.Assesment.ToString()},
+                                           {"IsPatch", isPatch},
+                                           {"ReleaseFolder", releaseDirectory.FullName}
+                                       });
+        }
+
+        public ReleaseLog(IRepository repository, DbDataReader r)
         {
             _repository = repository;
             CumulativeExtractionResults_ID = Convert.ToInt32(r["CumulativeExtractionResults_ID"]);
@@ -68,19 +92,6 @@ namespace DataExportLibrary.DataRelease.Audit
             DateOfRelease = Convert.ToDateTime(r["DateOfRelease"]);
             IsPatch = Convert.ToBoolean(r["IsPatch"]);
             ReleaseFolder = r["ReleaseFolder"].ToString();
-        }
-
-        public void DeleteInDatabase()
-        {
-            var affectedRows = _repository.Delete(
-                @"DELETE FROM [ReleaseLog] where CumulativeExtractionResults_ID = @CumulativeExtractionResults_ID",
-                new Dictionary<string, object>
-                {
-                    {"CumulativeExtractionResults_ID", CumulativeExtractionResults_ID}
-                });
-
-            if(affectedRows != 1)
-                throw new Exception("Attempted to delete a ReleaseLog entry (CumulativeExtractionResults_ID=" + CumulativeExtractionResults_ID + ") but result was " + affectedRows + " affected rows (expected 1)");
         }
     }
 }

@@ -186,7 +186,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         /// <inheritdoc/>
-        public IReleaseLogEntry GetReleaseLogEntryIfAny()
+        public IReleaseLog GetReleaseLogEntryIfAny()
         {
             var repo = (DataExportRepository)Repository;
             using (var con = repo.GetConnection())
@@ -199,7 +199,7 @@ namespace DataExportLibrary.Data.DataTables
 
                 var r = cmdselect.ExecuteReader();
                 if (r.Read())
-                    return new ReleaseLogEntry(Repository, r);
+                    return new ReleaseLog(Repository, r);
 
                 return null;
             }

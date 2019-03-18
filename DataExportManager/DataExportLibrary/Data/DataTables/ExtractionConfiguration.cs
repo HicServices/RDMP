@@ -204,32 +204,9 @@ namespace DataExportLibrary.Data.DataTables
 
         /// <inheritdoc/>
         [NoMappingToDatabase]
-        public IReleaseLogEntry[] ReleaseLogEntries
+        public IReleaseLog[] ReleaseLog
         {
-            get
-            {
-                List<IReleaseLogEntry> entries = new List<IReleaseLogEntry>();
-
-                var repo = (DataExportRepository) Repository;
-                using (var con = repo.GetConnection())
-                {
-                    var cmdselect = DatabaseCommandHelper.GetCommand(@"SELECT *
-  FROM ReleaseLog
-  where
-  CumulativeExtractionResults_ID
-  in
-  (select ID from CumulativeExtractionResults where ExtractionConfiguration_ID = @ExtractionConfiguration_ID)",
-                    con.Connection, con.Transaction);
-
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@ExtractionConfiguration_ID", cmdselect, ID);
-                
-                    var sqlDataReader = cmdselect.ExecuteReader();
-                    while (sqlDataReader.Read())
-                        entries.Add(new ReleaseLogEntry(repo, sqlDataReader));
-                }
-
-                return entries.ToArray();
-            }
+            get { return Repository.GetAllObjectsWithParent<ReleaseLog>(this); }
         }
 
         /// <inheritdoc cref="DefaultPipeline_ID"/>

@@ -669,16 +669,7 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
         
-        public int Insert(string sql, Dictionary<string, object> parameters)
-        {
-            using (var opener = GetConnection())
-            {
-                using (var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction))
-                {
-                    return cmd.ExecuteNonQuery();
-                }
-            }
-        }
+        
 
         
         private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
@@ -935,19 +926,16 @@ namespace MapsDirectlyToDatabaseTable
             });
         }
 
-
-        private void AuditCacheHit()
+        public int Insert(string sql, Dictionary<string, object> parameters)
         {
-            if (DatabaseCommandHelper.PerformanceCounter != null)
-                Interlocked.Add(ref DatabaseCommandHelper.PerformanceCounter.CacheHits, 1);
+            using (var opener = GetConnection())
+            {
+                using (var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction))
+                {
+                    return cmd.ExecuteNonQuery();
+                }
+            }
         }
-
-        private void AuditCacheMiss()
-        {
-            if (DatabaseCommandHelper.PerformanceCounter != null)
-                Interlocked.Add(ref DatabaseCommandHelper.PerformanceCounter.CacheMisses, 1);
-        }
-
 
         private Type[] _compatibleTypes;
         public IMapsDirectlyToDatabaseTable[] GetEverySingleObjectInEntireDatabase()

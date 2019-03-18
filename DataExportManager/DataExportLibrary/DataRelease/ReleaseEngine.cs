@@ -215,8 +215,6 @@ namespace DataExportLibrary.DataRelease
 
         protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
         {
-            var releaseLogWriter = new ReleaseLogWriter(rp, environment, _repository);
-
             FileInfo datasetFile = null;
             
             if (rp.ExtractFile != null)
@@ -229,7 +227,8 @@ namespace DataExportLibrary.DataRelease
                 }
             }
 
-            releaseLogWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
+            //creates a new one in the database
+            new ReleaseLog(_repository,rp, environment,isPatch, rpDirectory, datasetFile);
         }
 
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)

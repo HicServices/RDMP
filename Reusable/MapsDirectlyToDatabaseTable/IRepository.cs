@@ -138,11 +138,6 @@ namespace MapsDirectlyToDatabaseTable
         Version GetVersion();
 
         
-        int Insert(string sql, Dictionary<string, object> parameters);
-
-        int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows=true);
-        int Update(string updateQuery, Dictionary<string, object> parameters);
-
         /// <summary>
         /// Creates a new copy of the <paramref name="oToClone"/> object in the database that is identical except for having a new <see cref="IMapsDirectlyToDatabaseTable.ID"/>.
         /// This will not work if there are database constraints that would get in the way e.g. if there is an unique constraint on Name (for example). 
@@ -153,7 +148,7 @@ namespace MapsDirectlyToDatabaseTable
         T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable;
 
 
-        bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable;
+        bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable;
         bool StillExists(IMapsDirectlyToDatabaseTable o);
 
         /// <summary>

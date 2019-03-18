@@ -156,23 +156,7 @@ namespace MapsDirectlyToDatabaseTable
         {
             return new Version(FileVersionInfo.GetVersionInfo(GetType().Assembly.Location).FileVersion);
         }
-
-
-        public int Insert(string sql, Dictionary<string, object> parameters)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows = true)
-        {
-            throw new NotImplementedException();
-        }
-
-        public int Update(string updateQuery, Dictionary<string, object> parameters)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public T CloneObjectInTable<T>(T oToClone) where T : IMapsDirectlyToDatabaseTable
         {
             throw new NotImplementedException();
@@ -180,7 +164,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable
         {
-            throw new NotImplementedException();
+            return Objects.OfType<T>().Any(o => o.ID == allegedParent);
         }
 
         public bool StillExists(IMapsDirectlyToDatabaseTable o)
@@ -190,22 +174,24 @@ namespace MapsDirectlyToDatabaseTable
 
         public bool StillExists(Type objectType, int objectId)
         {
-            throw new NotImplementedException();
+            return Objects.Any(o => o.GetType() == objectType && o.ID == objectId);
         }
 
         public IMapsDirectlyToDatabaseTable GetObjectByID(Type objectType, int objectId)
         {
-            throw new NotImplementedException();
+            return Objects.Single(o => o.GetType() == objectType && objectId == o.ID);
         }
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
         {
-            throw new NotImplementedException();
+            var hs = new HashSet<int>(ids);
+            return Objects.OfType<T>().Where(o => hs.Contains(o.ID));
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjectsInIDList(Type elementType, IEnumerable<int> ids)
         {
-            throw new NotImplementedException();
+            var hs = new HashSet<int>(ids);
+            return GetAllObjects(elementType).Where(o => hs.Contains(o.ID));
         }
 
         public void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName, object propertyValue)

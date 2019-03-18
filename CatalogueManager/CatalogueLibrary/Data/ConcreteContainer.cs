@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
@@ -78,6 +79,25 @@ namespace CatalogueLibrary.Data
         public void MakeIntoAnOrphan()
         {
             _manager.MakeIntoAnOrphan(this);
+        }
+
+        /// <inheritdoc/>
+        public override void DeleteInDatabase()
+        {
+            var children = GetAllFiltersIncludingInSubContainersRecursively();
+
+            MakeIntoAnOrphan();
+
+            //then delete any children it has itself
+            foreach (IContainer subContainer in this.GetAllSubContainersRecursively())
+                subContainer.DeleteInDatabase();
+
+            //clean up the orphans that will be created by killing ourselves
+            foreach (var filter in children.Where(c => c.Exists()))
+                filter.DeleteInDatabase();
+
+            // then delete the actual component
+            base.DeleteInDatabase();
         }
 
         /// <inheritdoc/>
