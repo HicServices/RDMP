@@ -109,5 +109,12 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         bool IsLookupTable(ITableInfo tableInfo);
+
+        /// <summary>
+        /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back 
+        /// a whole bunch of catalogues.
+        /// </summary>
+        /// <returns></returns>
+        Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
     }
 }

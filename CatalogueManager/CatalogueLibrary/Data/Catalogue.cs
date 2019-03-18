@@ -1164,20 +1164,38 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
         {
-            string sql = GetFetchSQL(fetch);
-
-            return Repository.GetAllObjects<SupportingDocument>(sql).ToArray();
+            return Repository.GetAllObjects<SupportingDocument>().Where(o => Fetch(o, fetch)).ToArray();
         }
         
         /// <inheritdoc/>
         public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
         {
-            string sql = GetFetchSQL(fetch);
-
-            return Repository.GetAllObjects<SupportingSQLTable>(sql).ToArray();
+            return Repository.GetAllObjects<SupportingSQLTable>().Where(o=>Fetch(o,fetch)).ToArray();
         }
 
-        private string GetFetchSQL(FetchOptions fetch)
+        private bool Fetch(ISupportingObject o, FetchOptions fetch)
+        {
+            switch (fetch)
+            {
+                case FetchOptions.AllGlobals:
+                    return o.IsGlobal;
+                case FetchOptions.ExtractableGlobalsAndLocals:
+                    return (o.Catalogue_ID == ID || o.IsGlobal) && o.Extractable;
+                case FetchOptions.ExtractableGlobals:
+                    return o.IsGlobal && o.Extractable;
+                case FetchOptions.AllLocals:
+                    return o.Catalogue_ID == ID && !o.IsGlobal;
+               case FetchOptions.ExtractableLocals:
+                    return o.Catalogue_ID == ID && o.Extractable && !o.IsGlobal;
+                case FetchOptions.AllGlobalsAndAllLocals:
+                    return o.Catalogue_ID == ID || o.IsGlobal;
+                default:
+                    throw new ArgumentOutOfRangeException("fetch");
+            }
+        }
+
+
+        private string GetFetchSQL<T>(FetchOptions fetch) where T:IMapsDirectlyToDatabaseTable
         {
             switch (fetch)
             {

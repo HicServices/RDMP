@@ -47,9 +47,8 @@ namespace MapsDirectlyToDatabaseTable
         /// Gets all objects of the given Type from the database, optionally fetches only those that match SQL WHERE statement
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="whereText">Optional Boolean SQL logic that limits the objects returned e.g. "Catalogue_ID=7" (do not include the word WHERE)</param>
         /// <returns></returns>
-        T[] GetAllObjects<T>(string whereText = null) where T : IMapsDirectlyToDatabaseTable;
+        T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable;
 
 
         /// <summary>

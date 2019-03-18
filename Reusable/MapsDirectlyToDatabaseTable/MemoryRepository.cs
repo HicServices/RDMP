@@ -51,12 +51,9 @@ namespace MapsDirectlyToDatabaseTable
             return Objects.OfType<T>().Single(o => o.ID == id);
         }
 
-        public T[] GetAllObjects<T>(string whereText = null) where T : IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
         {
-            if (string.IsNullOrWhiteSpace(whereText))
-                return Objects.OfType<T>().ToArray();
-
-            throw new NotImplementedException();
+            return Objects.OfType<T>().ToArray();
         }
 
         public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable

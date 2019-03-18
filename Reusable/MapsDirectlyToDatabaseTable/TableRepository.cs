@@ -212,8 +212,7 @@ namespace MapsDirectlyToDatabaseTable
         public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
         {
             //no cached result so fallback on regular method
-            string fieldName = parent.GetType().Name + "_ID";
-            return GetAllObjects<T>("WHERE " + fieldName + "=" + parent.ID );
+            return GetAllObjectsWhere<T>(parent.GetType().Name + "_ID", parent.ID );
         }
 
         public T GetObjectByID<T>(int id) where T:IMapsDirectlyToDatabaseTable
@@ -276,7 +275,12 @@ namespace MapsDirectlyToDatabaseTable
             return _cacheMonitor.RegisterTableMonitor(this, ConstructEntity<T>);
         }
 
-        public T[] GetAllObjects<T>( string whereSQL = null) where T:IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjects<T>(null);
+        }
+
+        public T[] GetAllObjects<T>(string whereSQL) where T : IMapsDirectlyToDatabaseTable
         {
             string typename = typeof (T).Name;
 

@@ -126,6 +126,16 @@ namespace CatalogueLibrary.Repositories
             return GetAllObjects<Lookup>().Any(l => l.Description.TableInfo.Equals(tableInfo));
         }
 
+        public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
+        {
+            return
+                GetAllObjects<Catalogue>()
+                    .Where(
+                        c =>
+                            c.CatalogueItems.Any(
+                                ci => ci.ColumnInfo_ID != null && ci.ColumnInfo.TableInfo_ID == tableInfo.ID)).ToArray();
+        }
+
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
         {
             return _defaults[field];

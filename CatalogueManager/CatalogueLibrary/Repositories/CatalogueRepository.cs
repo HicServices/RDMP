@@ -427,6 +427,18 @@ select 0", con.Connection, con.Transaction);
                 return Convert.ToBoolean(cmd.ExecuteScalar());
             }
         }
+
+        public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
+        {
+
+            return GetAllObjects<Catalogue>(
+                string.Format(@"Where
+  Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
+  CatalogueItem join
+  ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
+  where
+  TableInfo_ID = {0} )", tableInfo.ID)).ToArray();
+        }
     }
 
     public enum Tier2DatabaseType

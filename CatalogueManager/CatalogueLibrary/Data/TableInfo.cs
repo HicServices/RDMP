@@ -402,14 +402,7 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         public Catalogue[] GetAllRelatedCatalogues()
         {
-            return Repository.GetAllObjects<Catalogue>(
-                string.Format(@"Where
-  Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
-  CatalogueItem join
-  ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
-  where
-  TableInfo_ID = {0} )", ID)).ToArray();
-
+            return CatalogueRepository.GetAllCataloguesUsing(this);
         }
 
         /// <inheritdoc/>
