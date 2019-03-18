@@ -409,6 +409,8 @@
     <Compile Include="Reports\BitmapWithDescription.cs" />
     <Compile Include="Repositories\Managers\CohortContainerManager.cs" />
     <Compile Include="Repositories\Managers\AggregateFilterManager.cs" />
+    <Compile Include="Repositories\Managers\DataExportProperty.cs" />
+    <Compile Include="Repositories\Managers\IDataExportPropertyManager.cs" />
     <Compile Include="Repositories\Managers\PasswordEncryptionKeyLocation.cs" />
     <Compile Include="Repositories\Managers\GovernanceManager.cs" />
     <Compile Include="Repositories\Managers\ICohortContainerManager.cs" />

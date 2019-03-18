@@ -6,12 +6,11 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 
-namespace DataExportLibrary.Data
+namespace DataExportLibrary.Repositories.Managers
 {
     /// <summary>
     /// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release 
@@ -19,26 +18,10 @@ namespace DataExportLibrary.Data
     /// 
     /// <para>Values are stored in the ConfigurationProperties table in the Data Export Database.</para>
     /// </summary>
-    public class ConfigurationProperties
+    class DataExportPropertyManager : IDataExportPropertyManager
     {
-        /// <summary>
-        /// List of all Keys that can be stored in the <see cref="ConfigurationProperties"/> table of the data export database
-        /// </summary>
-        public enum ExpectedProperties
-        {
-            /// <summary>
-            /// What to do in order to produce a 'Hash' when an <see cref="ExtractableColumn"/> is marked <see cref="ConcreteColumn.HashOnDataRelease"/>
-            /// </summary>
-            HashingAlgorithmPattern,
-
-            /// <summary>
-            /// What text to write into the release document when releasing datasets
-            /// </summary>
-            ReleaseDocumentDisclaimer
-        }
-
         private readonly bool _allowCaching;
-        private readonly IRepository _repository;
+        private readonly DataExportRepository _repository;
         private bool _cacheOutOfDate = true;
         private readonly Dictionary<string,string> _cacheDictionary = new Dictionary<string, string>();
 
@@ -47,14 +30,14 @@ namespace DataExportLibrary.Data
         /// </summary>
         /// <param name="allowCaching"></param>
         /// <param name="repository"></param>
-        public ConfigurationProperties(bool allowCaching, IRepository repository)
+        public DataExportPropertyManager(bool allowCaching, DataExportRepository repository)
         {
             _allowCaching = allowCaching;
             _repository = repository;
         }
 
         /// <summary>
-        /// Returns the currently persisted value for the given key (See <see cref="ExpectedProperties"/>)
+        /// Returns the currently persisted value for the given key (See <see cref="DataExportProperty"/>)
         /// </summary>
         /// <param name="property"></param>
         ///  <returns></returns>
@@ -69,37 +52,13 @@ namespace DataExportLibrary.Data
             if (_cacheDictionary.ContainsKey(property))
                 return _cacheDictionary[property];
 
-            throw new KeyNotFoundException("Could not find property called " + property + " in ConfigurationProperties table in Data Export database");
+            return null;
         }
         
         /// <inheritdoc cref="GetValue(string)"/>
-        public string GetValue(ExpectedProperties property)
+        public string GetValue(DataExportProperty property)
         {
             return GetValue(property.ToString());
-        }
-
-        /// <inheritdoc cref="GetValue(string)"/>
-        public string TryGetValue(string property)
-        {
-            try
-            {
-                return GetValue(property);
-            }
-            catch (KeyNotFoundException)
-            {
-                return null;
-            }
-        }
-
-        /// <inheritdoc cref="GetValue(string)"/>
-        public string TryGetValue(ExpectedProperties property)
-        {
-            string value = TryGetValue(property.ToString());
-
-            if (string.IsNullOrWhiteSpace(value))
-                return null;
-
-            return value;
         }
 
       
@@ -108,16 +67,18 @@ namespace DataExportLibrary.Data
         /// </summary>
         /// <param name="property"></param>
         /// <param name="value"></param>
-        public void SetValue(ExpectedProperties property, string value)
+        public void SetValue(DataExportProperty property, string value)
         {
             SetValue(property.ToString(), value);
         }
 
-        /// <inheritdoc cref="SetValue(DataExportLibrary.Data.ConfigurationProperties.ExpectedProperties,string)"/>
-        public void SetValue(string property, string value)
+        private void SetValue(string property, string value)
         {
             if(_cacheOutOfDate)
                 RefreshCache();
+
+            if (string.IsNullOrWhiteSpace(value))
+                IssueDeleteCommand(property);
 
             if (_cacheDictionary.ContainsKey(property))
                 IssueUpdateCommand(property, value);

@@ -10,12 +10,14 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Exceptions;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
+using DataExportLibrary.Repositories.Managers;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
@@ -72,10 +74,8 @@ namespace DataExportLibrary.ExtractionTime
                         substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true));
                     break;
             }
-
-            var configurationProperties = new ConfigurationProperties(false, _repository);
             
-            string hashingAlgorithm = configurationProperties.TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern);
+            string hashingAlgorithm = _repository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
             if (string.IsNullOrWhiteSpace(hashingAlgorithm))
                 hashingAlgorithm = null;
 

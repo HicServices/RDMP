@@ -17,6 +17,7 @@ using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Repositories
@@ -44,11 +45,15 @@ namespace DataExportLibrary.Repositories
 
         public IFilterManager FilterManager { get; private set; }
 
+        public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
+
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
             
             FilterManager = new DataExportFilterManager(this);
+
+            DataExportPropertyManager = new DataExportPropertyManager(false,this);
 
             Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
             Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));

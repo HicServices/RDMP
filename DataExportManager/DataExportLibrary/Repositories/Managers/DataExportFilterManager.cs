@@ -12,7 +12,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data.DataTables;
 
-namespace DataExportLibrary.Repositories
+namespace DataExportLibrary.Repositories.Managers
 {
     class DataExportFilterManager : IFilterManager
     {

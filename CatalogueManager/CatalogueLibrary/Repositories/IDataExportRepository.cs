@@ -28,6 +28,7 @@ namespace CatalogueLibrary.Repositories
         /// Handles forbidding deleting stuff / cascading deletes into other objects
         /// </summary>
         IObscureDependencyFinder ObscureDependencyFinder { get; set; }
-
+        
+        IDataExportPropertyManager DataExportPropertyManager { get; }
     }
 }

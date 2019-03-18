@@ -11,6 +11,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -19,6 +20,7 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Repositories.Managers;
 using DataLoadEngine.DatabaseManagement.Operations;
 using Diagnostics.TestData;
 using FAnsi;
@@ -720,13 +722,11 @@ GO
 
         private bool CheckWeCanCreateBasicSQLWithQueryBuilder(ICheckNotifier notifier)
         {
-            var repository = RepositoryLocator.DataExportRepository;
-
             try
             {
                 //Create a query builder and give it all columns from the Catalogue (this is the extractio SQL before it is linked to a cohort and should have already been setup by SetupTestEnvironment
                 QueryBuilder qb = new QueryBuilder(null,
-                    new ConfigurationProperties(false, repository).TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern)
+                    RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern)
                     );
 
                 

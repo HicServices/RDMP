@@ -265,7 +265,7 @@
     <Compile Include="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />
-    <Compile Include="Data\ConfigurationProperties.cs" />
+    <Compile Include="Repositories\Managers\DataExportPropertyManager.cs" />
     <Compile Include="Data\DataTables\CohortDefinition.cs" />
     <Compile Include="Data\DataTables\CumulativeExtractionResults.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
@@ -337,7 +337,7 @@
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
-    <Compile Include="Repositories\DataExportFilterManager.cs" />
+    <Compile Include="Repositories\Managers\DataExportFilterManager.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
   </ItemGroup>
   <ItemGroup>
