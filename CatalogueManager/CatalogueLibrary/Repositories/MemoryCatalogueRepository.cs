@@ -30,17 +30,13 @@ namespace CatalogueLibrary.Repositories
     /// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in 
     /// dictionaries and arrays in memory instead of the database.
     /// </summary>
-    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager
+    public class MemoryCatalogueRepository : MemoryRepository, ICatalogueRepository, IServerDefaults,ITableInfoCredentialsManager, IAggregateForcedJoinManager, ICohortContainerManager, IFilterManager, IGovernanceManager, IEncryptionManager
     {
         public IAggregateForcedJoinManager AggregateForcedJoinManager { get { return this; } }
         public IGovernanceManager GovernanceManager { get { return this; }}
         public ITableInfoCredentialsManager TableInfoCredentialsManager { get { return this; }}
         public ICohortContainerManager CohortContainerManager { get { return this; }}
-
-        public IEncryptStrings GetEncrypter()
-        {
-            return new SimpleStringValueEncryption(null);
-        }
+        public IEncryptionManager EncryptionManager { get { return this; }}
 
         public IFilterManager FilterManager { get { return this; }}
 
@@ -79,59 +75,13 @@ namespace CatalogueLibrary.Repositories
         }
         
 
-        public IManagedConnection GetConnection()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IManagedConnection BeginNewTransactedConnection()
-        {
-            throw new NotImplementedException();
-        }
-
-        public void EndTransactedConnection(bool commit)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ClearUpdateCommandCache()
-        {
-            throw new NotImplementedException();
-        }
-
-        public int? ObjectToNullableInt(object o)
-        {
-            throw new NotImplementedException();
-        }
-
-        public DateTime? ObjectToNullableDateTime(object o)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void TestConnection()
-        {
-            throw new NotImplementedException();
-        }
-
-        public bool SupportsObjectType(Type type)
-        {
-            throw new NotImplementedException();
-        }
-
         public LogManager GetDefaultLogManager()
         {
-            throw new NotImplementedException();
-        }
-
-        public Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false)
-        {
-            throw new NotImplementedException();
-        }
-
-        public Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem()
-        {
-            throw new NotImplementedException();
+            var server = GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+            if (server == null)
+                return null;
+            
+            return new LogManager(server);
         }
 
         public IEnumerable<AnyTableSqlParameter> GetAllParametersForParentTable(IMapsDirectlyToDatabaseTable parent)
@@ -141,7 +91,7 @@ namespace CatalogueLibrary.Repositories
 
         public TicketingSystemConfiguration GetTicketingSystem()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
         public void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand,
@@ -167,7 +117,7 @@ namespace CatalogueLibrary.Repositories
 
         public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
         {
-            throw new NotImplementedException();
+            return Objects.OfType<T>().Where(r => r.IsReferenceTo(o)).ToArray();
         }
 
         public IServerDefaults GetServerDefaults()
@@ -504,6 +454,13 @@ namespace CatalogueLibrary.Repositories
             return _governanceCoverage[governancePeriod];
         }
 
+        #endregion
+
+        #region IEncryptionManager
+        public IEncryptStrings GetEncrypter()
+        {
+            return new SimpleStringValueEncryption(null);
+        }
         #endregion
     }
 }

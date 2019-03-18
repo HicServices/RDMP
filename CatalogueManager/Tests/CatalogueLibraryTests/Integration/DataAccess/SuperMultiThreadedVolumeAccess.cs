@@ -77,7 +77,7 @@ namespace CatalogueLibraryTests.Integration.DataAccess
 
                 //now fetch them out of database lots of times
                 for (int i = 0; i < 100; i++)
-                    CatalogueRepository.GetAllCatalogues(true);
+                    CatalogueRepository.GetAllObjects<Catalogue>();
 
                 if (useTransactions)
                     CatalogueRepository.EndTransactedConnection(false);

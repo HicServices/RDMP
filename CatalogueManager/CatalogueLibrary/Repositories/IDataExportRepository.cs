@@ -23,6 +23,11 @@ namespace CatalogueLibrary.Repositories
         /// Manager for AND/OR WHERE containers and filters
         /// </summary>
         IFilterManager FilterManager { get; }
+        
+        /// <summary>
+        /// Handles forbidding deleting stuff / cascading deletes into other objects
+        /// </summary>
+        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
     }
 }

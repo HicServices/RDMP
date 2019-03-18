@@ -553,7 +553,7 @@ namespace Diagnostics
                         }
                     }
 
-                    var cataloguesUsingServer = repository.GetAllCatalogues(true)
+                    var cataloguesUsingServer = repository.GetAllObjects<Catalogue>()
                         .Where(
                             c =>
                                 c.LiveLoggingServer_ID == externalDatabaseServer.ID ||
@@ -1002,7 +1002,7 @@ namespace Diagnostics
             var repository = RepositoryLocator.CatalogueRepository;
             try
             {
-                DemographyCatalogue = repository.GetAllCatalogues().SingleOrDefault(cata => cata.Name.Equals(CatalogueName));
+                DemographyCatalogue = repository.GetAllObjects<Catalogue>().SingleOrDefault(cata => cata.Name.Equals(CatalogueName));
                 
                 if (DemographyCatalogue != null)
                 {

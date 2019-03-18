@@ -64,7 +64,7 @@ namespace CatalogueLibrary.Data
         /// <param name="repository"></param>
         public EncryptedString(ICatalogueRepository repository)
         {
-            _encrypter =  repository.GetEncrypter();
+            _encrypter =  repository.EncryptionManager.GetEncrypter();
         }
 
         /// <inheritdoc/>

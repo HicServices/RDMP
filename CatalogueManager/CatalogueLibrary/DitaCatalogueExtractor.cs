@@ -73,7 +73,7 @@ namespace CatalogueLibrary
             xml += Environment.NewLine;
 
             //get all the catalogues then sort them alphabetically
-            List<Catalogue> catas = new List<Catalogue>(_repository.GetAllCatalogues().Where(c => !(c.IsDeprecated || c.IsInternalDataset || c.IsColdStorageDataset)));
+            List<Catalogue> catas = new List<Catalogue>(_repository.GetAllObjects<Catalogue>().Where(c => !(c.IsDeprecated || c.IsInternalDataset || c.IsColdStorageDataset)));
             catas.Sort();
 
             Stopwatch sw = Stopwatch.StartNew();
@@ -306,7 +306,7 @@ namespace CatalogueLibrary
         /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
-            var catas = _repository.GetAllCatalogues().Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset).ToArray();
+            var catas = _repository.GetAllObjects<Catalogue>().Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset).ToArray();
 
             //Catalogues with no acronyms
             foreach (Catalogue c in catas.Where(c => string.IsNullOrWhiteSpace(c.Acronym)))

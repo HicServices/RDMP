@@ -31,7 +31,7 @@ namespace ANOStore.ANOEngineering
     /// </summary>
     public class ForwardEngineerANOCatalogueEngine
     {
-        private readonly ICatalogueRepository _catalogueRepository;
+        private readonly CatalogueRepository _catalogueRepository;
         private readonly ForwardEngineerANOCataloguePlanManager _planManager;
         public Catalogue NewCatalogue { get; private set; }
         public LoadMetadata LoadMetadata { get; private set; }

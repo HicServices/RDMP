@@ -24,7 +24,7 @@ namespace CatalogueLibrary.Repositories.Managers
     /// </summary>
     class TableInfoCredentialsManager : ITableInfoCredentialsManager
     {
-        private readonly ICatalogueRepository _repository;
+        private readonly CatalogueRepository _repository;
 
         //returns of querying these links are either 
         //          Dictionary<DataAccessContext,DataAccessCredentials> for all links where there is only one access point 1 - M (1 point many credentials)
@@ -36,7 +36,7 @@ namespace CatalogueLibrary.Repositories.Managers
         /// Creates a new helper class instance for writting/deleting credential usages for <see cref="TableInfo"/> objects in the <paramref name="repository"/>
         /// </summary>
         /// <param name="repository"></param>
-        public TableInfoCredentialsManager(ICatalogueRepository repository)
+        public TableInfoCredentialsManager(CatalogueRepository repository)
         {
             _repository = repository;
         }

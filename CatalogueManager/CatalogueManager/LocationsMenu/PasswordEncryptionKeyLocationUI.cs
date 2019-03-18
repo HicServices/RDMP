@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Managers;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;

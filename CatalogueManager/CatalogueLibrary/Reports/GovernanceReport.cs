@@ -41,7 +41,7 @@ namespace CatalogueLibrary.Reports
             
             Dictionary<GovernancePeriod, ICatalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
             
-            foreach (Catalogue catalogue in _repository.GetAllCataloguesWithAtLeastOneExtractableItem())
+            foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>().Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null)))
             {
                 if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
                     continue;

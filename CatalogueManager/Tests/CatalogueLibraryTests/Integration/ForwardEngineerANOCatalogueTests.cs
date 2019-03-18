@@ -141,7 +141,7 @@ namespace CatalogueLibraryTests.Integration
             var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
             engine.Execute();
 
-            var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.Path.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
             db.Drop();
@@ -188,7 +188,7 @@ namespace CatalogueLibraryTests.Integration
             var engine = new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
             engine.Execute();
 
-            var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.Path.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
             //should only be one (the id column
@@ -316,7 +316,7 @@ namespace CatalogueLibraryTests.Integration
                 else
                     engine.Execute();
 
-                var newCata = CatalogueRepository.GetAllCatalogues().Single(c => c.Name.Equals("ANOHeads"));
+                var newCata = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Name.Equals("ANOHeads"));
                 Assert.IsTrue(newCata.Exists());
 
                 var newCataItems = newCata.CatalogueItems;
@@ -461,7 +461,7 @@ namespace CatalogueLibraryTests.Integration
             engine.Execute();
             //////////////////////////////////////////////////////////////////////////////////////End The Actual Bit Being Tested////////////////////////////////////////////////////
 
-            var anoCatalogue = CatalogueRepository.GetAllCatalogues().Single(c => c.Folder.Path.StartsWith("\\ano"));
+            var anoCatalogue = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Folder.Path.StartsWith("\\ano"));
             Assert.IsTrue(anoCatalogue.Exists());
 
             //The new Catalogue should have the same number of ExtractionInformations

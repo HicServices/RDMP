@@ -77,7 +77,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             bool generateCatalogues = false;
 
             if (MessageBox.Show("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues());
+                catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
             else if(MessageBox.Show("Would you like to generate empty Catalogues for non-matching tables instead?","Generate New Catalogues", MessageBoxButtons.YesNo)== DialogResult.Yes)
                 generateCatalogues = true;
             

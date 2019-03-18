@@ -466,7 +466,7 @@ GO
 
         private bool CreateHospitalAdmissionsIfPresent(ICheckNotifier notifier)
         {
-            Catalogue hospitalAdmissionsCatalogue = RepositoryLocator.CatalogueRepository.GetAllCatalogues()
+            Catalogue hospitalAdmissionsCatalogue = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
                 .SingleOrDefault(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName));
 
             if (hospitalAdmissionsCatalogue == null)

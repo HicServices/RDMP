@@ -8,10 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using Rhino.Mocks.Constraints;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration
@@ -22,7 +19,7 @@ namespace CatalogueLibraryTests.Integration
         public void getlist_listCatalogues_greaterThanOne()
         {
             Catalogue catalogueWithId = new Catalogue(CatalogueRepository, "bob");
-            Catalogue[] catas = CatalogueRepository.GetAllCatalogues();
+            Catalogue[] catas = CatalogueRepository.GetAllObjects<Catalogue>();
 
             Assert.IsTrue(catas.Length > 0);
 
@@ -58,7 +55,7 @@ namespace CatalogueLibraryTests.Integration
             int expectedID = cata.ID;
 
             //find it and change it's name
-            Catalogue[] catas = CatalogueRepository.GetAllCatalogues().ToArray();
+            Catalogue[] catas = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catas)
             {
@@ -70,7 +67,7 @@ namespace CatalogueLibraryTests.Integration
             }
 
             //find it again and see if it's name has changed - then delete it so we don't polute the db
-            Catalogue[] catasAfter = CatalogueRepository.GetAllCatalogues().ToArray();
+            Catalogue[] catasAfter = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catasAfter)
             {
@@ -90,7 +87,7 @@ namespace CatalogueLibraryTests.Integration
             int expectedID = cata.ID;
 
             //find it and change it's name
-            Catalogue[] catas = CatalogueRepository.GetAllCatalogues().ToArray();
+            Catalogue[] catas = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catas)
             {
@@ -137,7 +134,7 @@ namespace CatalogueLibraryTests.Integration
 
 
             //find it again and see if it has changed - then delete it so we don't polute the db
-            Catalogue[] catasAfter = CatalogueRepository.GetAllCatalogues().ToArray();
+            Catalogue[] catasAfter = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catasAfter)
             {
@@ -187,7 +184,7 @@ namespace CatalogueLibraryTests.Integration
         [Test]
         public void create_blankConstructorCatalogue_createsNewInDatabase()
         {
-            int before = CatalogueRepository.GetAllCatalogues().Count();
+            int before = CatalogueRepository.GetAllObjects<Catalogue>().Count();
 
             var newCatalogue = new Catalogue(CatalogueRepository, "fishing");
             int expectedID = newCatalogue.ID;
@@ -195,7 +192,7 @@ namespace CatalogueLibraryTests.Integration
             Assert.IsTrue(expectedID > 1);
 
 
-            Catalogue[] catasAfter = CatalogueRepository.GetAllCatalogues().ToArray();
+            Catalogue[] catasAfter = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
             int after = catasAfter.Count();
 
             Assert.AreEqual(before, after - 1);

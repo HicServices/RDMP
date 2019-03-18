@@ -129,7 +129,7 @@ namespace CohortManager.Menus
 
         private void AddCatalogues()
         {
-            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.CatalogueRepository.GetAllCatalogues(),false,false);
+            SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(),false,false);
             dialog.AllowMultiSelect = true;
 
             if(dialog.ShowDialog() == DialogResult.OK)

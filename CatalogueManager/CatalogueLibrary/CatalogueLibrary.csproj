@@ -409,8 +409,10 @@
     <Compile Include="Reports\BitmapWithDescription.cs" />
     <Compile Include="Repositories\Managers\CohortContainerManager.cs" />
     <Compile Include="Repositories\Managers\AggregateFilterManager.cs" />
+    <Compile Include="Repositories\Managers\PasswordEncryptionKeyLocation.cs" />
     <Compile Include="Repositories\Managers\GovernanceManager.cs" />
     <Compile Include="Repositories\Managers\ICohortContainerManager.cs" />
+    <Compile Include="Repositories\Managers\IEncryptionManager.cs" />
     <Compile Include="Repositories\Managers\IFilterManager.cs" />
     <Compile Include="Repositories\Managers\IGovernanceManager.cs" />
     <Compile Include="Repositories\Managers\IJoinManager.cs" />
@@ -526,7 +528,6 @@
     <Compile Include="Data\ICatalogue.cs" />
     <Compile Include="Data\ICollectSqlParameters.cs" />
     <Compile Include="Data\ILoadProgress.cs" />
-    <Compile Include="Data\PasswordEncryptionKeyLocation.cs" />
     <Compile Include="Data\PermissionWindow.cs" />
     <Compile Include="Data\PermissionWindowPeriod.cs" />
     <Compile Include="Data\Pipelines\IDataFlowPipelineEngine.cs" />

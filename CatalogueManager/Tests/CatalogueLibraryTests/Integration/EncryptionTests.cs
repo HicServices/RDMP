@@ -20,7 +20,7 @@ namespace CatalogueLibraryTests.Integration
         public void EncryptAndThenDecryptString()
         {
 
-            var encrypter = CatalogueRepository.GetEncrypter();
+            var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
 
             string toEncrypt = "Amagad";
             string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);
@@ -34,7 +34,7 @@ namespace CatalogueLibraryTests.Integration
         public void CheckIfThingsAreEncryptedOrNot()
         {
 
-            var encrypter = CatalogueRepository.GetEncrypter();
+            var encrypter = CatalogueRepository.EncryptionManager.GetEncrypter();
 
             string toEncrypt = "Amagad";
             string encrytpedBinaryString = encrypter.Encrypt(toEncrypt);

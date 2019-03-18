@@ -39,7 +39,7 @@ namespace DataLoadEngineTests.Integration
         [OneTimeSetUp]
         public void SetUpFixture()
         {
-            _catalogue = CatalogueRepository.GetAllCatalogues().SingleOrDefault(c => c.Name.Equals("BackfillTests"));
+            _catalogue = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("BackfillTests"));
             if (_catalogue != null)
             {
                 // Previous test run has not exited cleanly

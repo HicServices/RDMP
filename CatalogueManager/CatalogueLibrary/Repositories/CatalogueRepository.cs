@@ -56,7 +56,6 @@ namespace CatalogueLibrary.Repositories
 
         /// <inheritdoc/>
         public ITableInfoCredentialsManager TableInfoCredentialsManager { get; private set; }
-
         
         /// <inheritdoc/>
         public IJoinManager JoinManager { get; set; }
@@ -71,6 +70,9 @@ namespace CatalogueLibrary.Repositories
 
         /// <inheritdoc/>
         public ICohortContainerManager CohortContainerManager { get; private set; }
+
+        public IEncryptionManager EncryptionManager { get; private set; }
+
 
         /// <summary>
         /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
@@ -95,6 +97,7 @@ namespace CatalogueLibrary.Repositories
             CohortContainerManager = new CohortContainerManager(this);
             MEF = new MEF();
             FilterManager = new AggregateFilterManager(this);
+            EncryptionManager = new PasswordEncryptionKeyLocation(this);
             
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
             
@@ -153,14 +156,7 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(PermissionWindow),(rep,r)=>new PermissionWindow((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(TicketingSystemConfiguration),(rep,r)=>new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
-
         }
-        public IEncryptStrings GetEncrypter()
-        {
-            return new SimpleStringValueEncryption(new PasswordEncryptionKeyLocation(this).OpenKeyFile());
-        }
-
-        
 
         /// <summary>
         /// Initializes and loads <see cref="CommentStore"/> with all the xml doc/dll files found in the provided <paramref name="directories"/> 
@@ -205,21 +201,6 @@ namespace CatalogueLibrary.Repositories
         {
             ServerDefaults defaults = new ServerDefaults(this);
             return new LogManager(defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
-        }
-
-        /// <inheritdoc/>
-        public Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false)
-        {
-            return GetAllObjects<Catalogue>().Where(cata => (!cata.IsDeprecated) || includeDeprecatedCatalogues).ToArray();
-        }
-
-        /// <inheritdoc/>
-        public Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem()
-        {
-            return
-                GetAllObjects<Catalogue>(
-                    @"WHERE exists (select 1 from CatalogueItem ci where Catalogue_ID = Catalogue.ID AND exists (select 1 from ExtractionInformation where CatalogueItem_ID = ci.ID)) ")
-                    .ToArray();
         }
 
         /// <inheritdoc/>

@@ -82,7 +82,7 @@ namespace DataLoadEngineTests.Integration
                 stage1_setupCatalogue.Check(new AcceptAllCheckNotifier());
 
                 Catalogue testCatalogue =
-                    CatalogueRepository.GetAllCatalogues().Single(c => c.Name.Equals(UserAcceptanceTestEnvironment.CatalogueName));
+                    CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Name.Equals(UserAcceptanceTestEnvironment.CatalogueName));
 
                 var loadMetadata = testCatalogue.LoadMetadata;
                 var configuration = new HICDatabaseConfiguration(loadMetadata);

@@ -201,7 +201,7 @@ namespace Dashboard.PieCharts
 
         private void btnSingleCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues(), false,false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {

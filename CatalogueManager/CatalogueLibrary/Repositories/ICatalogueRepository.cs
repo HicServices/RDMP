@@ -22,7 +22,7 @@ namespace CatalogueLibrary.Repositories
     /// <summary>
     /// See CatalogueRepository
     /// </summary>
-    public interface ICatalogueRepository : ITableRepository
+    public interface ICatalogueRepository : IRepository
     {
         /// <summary>
         /// Allows creation/discover/deletion of <see cref="AggregateForcedJoin"/> objects
@@ -57,9 +57,14 @@ namespace CatalogueLibrary.Repositories
         ICohortContainerManager CohortContainerManager { get;}
 
         /// <summary>
-        /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
+        /// Handles encrypting/decrypting strings with private/public key encryption
         /// </summary>
-        IEncryptStrings GetEncrypter();
+        IEncryptionManager EncryptionManager { get; }
+
+        /// <summary>
+        /// Handles forbidding deleting stuff / cascading deletes into other objects
+        /// </summary>
+        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
         /// <summary>
         /// Manager for AND/OR WHERE containers and filters
@@ -71,19 +76,6 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         LogManager GetDefaultLogManager();
-
-        /// <summary>
-        /// Returns all <see cref="Catalogue"/> optionally filtered by <see cref="Catalogue.IsDeprecated"/>
-        /// </summary>
-        /// <param name="includeDeprecatedCatalogues"></param>
-        /// <returns></returns>
-        Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false);
-        
-        /// <summary>
-        /// Returns all <see cref="Catalogue"/> which have at least one <see cref="CatalogueItem"/> with an <see cref="ExtractionInformation"/>
-        /// </summary>
-        /// <returns></returns>
-        Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();
 
         /// <summary>
         /// Returns all sql parameters declared in the immediate scope of the <paramref name="parent"/> (does not include parameters that are declared at a lower scope).

@@ -15,7 +15,7 @@ namespace CatalogueLibrary.Data.Defaults
     class ServerDefaults : IServerDefaults
     {
         /// <inheritdoc/>
-        private readonly ICatalogueRepository _repository;
+        private readonly CatalogueRepository _repository;
         
         /// <summary>
         /// The value that will actually be stored in the ServerDefaults table as a dictionary (see constructor for population
@@ -26,7 +26,7 @@ namespace CatalogueLibrary.Data.Defaults
         /// Creates a new reader for the defaults configured in the <paramref name="repository"/> platform database
         /// </summary>
         /// <param name="repository"></param>
-        public ServerDefaults(ICatalogueRepository repository)
+        public ServerDefaults(CatalogueRepository repository)
         {
             _repository = repository;
             StringExpansionDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, "Catalogue.LiveLoggingServer_ID");

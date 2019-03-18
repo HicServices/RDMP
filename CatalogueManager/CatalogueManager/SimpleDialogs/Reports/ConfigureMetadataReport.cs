@@ -56,10 +56,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             if(VisualStudioDesignMode)
                 return;
-
-            _extractableCatalogues = RepositoryLocator.CatalogueRepository.GetAllCataloguesWithAtLeastOneExtractableItem().ToArray();
+            
+            _extractableCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null)).ToArray();
             cbxCatalogues.Items.AddRange(_extractableCatalogues);
         }
+        
 
         MetadataReport report;
         private Catalogue[] _extractableCatalogues;

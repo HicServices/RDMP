@@ -1,20 +1,12 @@
-// Copyright (c) The University of Dundee 2018-2019
-// This file is part of the Research Data Management Platform (RDMP).
-// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
-// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
-// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
-
 using System;
 using System.Data.Common;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
-using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data
+namespace CatalogueLibrary.Repositories.Managers
 {
-
     /// <summary>
     /// The file system location of the RSA private decryption key used to decrypt passwords stored in RDMP database.  There can only ever be one PasswordEncryptionKeyLocation
     /// and this is used by all SimpleStringValueEncryption.  This means that passwords can be securely held in the RDMP database so long as suitable windows account management
@@ -22,18 +14,24 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
     /// </summary>
-    class PasswordEncryptionKeyLocation
+    public class PasswordEncryptionKeyLocation : IEncryptionManager
     {
-        private readonly ICatalogueRepository _repository;
+        private readonly CatalogueRepository _catalogueRepository;
 
         /// <summary>
         /// Prepares to retrieve/create the key file for the given platform database
         /// </summary>
-        /// <param name="repository"></param>
-        public PasswordEncryptionKeyLocation(ICatalogueRepository repository)
+        /// <param name="catalogueRepository"></param>
+        public PasswordEncryptionKeyLocation(CatalogueRepository catalogueRepository)
         {
-            _repository = repository;
+            _catalogueRepository = catalogueRepository;
         }
+
+        public IEncryptStrings GetEncrypter()
+        {
+            return new SimpleStringValueEncryption(OpenKeyFile());
+        }
+
 
         /// <summary>
         /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no
@@ -42,7 +40,8 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         public string GetKeyFileLocation()
         {
-            using (var con = _repository.DiscoveredServer.GetConnection())
+
+            using (var con = _catalogueRepository.DiscoveredServer.GetConnection())
             {
                 con.Open();
                 //Table can only ever have 1 record
@@ -50,6 +49,7 @@ namespace CatalogueLibrary.Data
                 return cmd.ExecuteScalar() as string;
             }
         }
+
 
         /// <summary>
         /// Connects to the private key location and returns the encryption/decryption parameters stored in it
@@ -98,29 +98,29 @@ namespace CatalogueLibrary.Data
         public FileInfo CreateNewKeyFile(string path)
         {
             string existingKey = GetKeyFileLocation();
-            if(existingKey != null)
+            if (existingKey != null)
                 throw new NotSupportedException("There is already a key file at location:" + existingKey);
 
             RSACryptoServiceProvider provider = new RSACryptoServiceProvider(4096);
             RSAParameters p = provider.ExportParameters(true);
 
-            using(var stream = File.Create(path))
+            using (var stream = File.Create(path))
             {
                 XmlSerializer SerializeXml = new XmlSerializer(typeof(RSAParameters));
-                SerializeXml.Serialize(stream,p);
+                SerializeXml.Serialize(stream, p);
                 stream.Flush();
                 stream.Close();
             }
 
             var fileInfo = new FileInfo(path);
 
-            if(!fileInfo.Exists)
+            if (!fileInfo.Exists)
                 throw new Exception("Created file but somehow it didn't exist!?!");
 
-            using(var con = _repository.GetConnection())
+            using (var con = _catalogueRepository.GetConnection())
             {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')", con.Connection,con.Transaction);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@Path",cmd,fileInfo.FullName);
+                DbCommand cmd = DatabaseCommandHelper.GetCommand("INSERT INTO PasswordEncryptionKeyLocation(Path,Lock) VALUES (@Path,'X')", con.Connection, con.Transaction);
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, fileInfo.FullName);
                 cmd.ExecuteNonQuery();
             }
 
@@ -139,7 +139,7 @@ namespace CatalogueLibrary.Data
             //confirms that it is accessible and deserializable
             DeserializeFromLocation(newLocation);
 
-            using (var con = _repository.GetConnection())
+            using (var con = _catalogueRepository.GetConnection())
             {
                 //Table can only ever have 1 record
                 DbCommand cmd = DatabaseCommandHelper.GetCommand(@"if exists (select 1 from PasswordEncryptionKeyLocation)
@@ -160,16 +160,16 @@ namespace CatalogueLibrary.Data
         {
             string existingKey = GetKeyFileLocation();
 
-            if(existingKey == null)
+            if (existingKey == null)
                 throw new NotSupportedException("Cannot delete key because there is no key file configured");
 
-            using (var con = _repository.GetConnection())
+            using (var con = _catalogueRepository.GetConnection())
             {
                 //Table can only ever have 1 record
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation", con.Connection,con.Transaction);
+                DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM PasswordEncryptionKeyLocation", con.Connection, con.Transaction);
                 int affectedRows = cmd.ExecuteNonQuery();
 
-                if(affectedRows != 1)
+                if (affectedRows != 1)
                     throw new Exception("Delete from PasswordEncryptionKeyLocation resulted in " + affectedRows + ", expected 1");
             }
         }

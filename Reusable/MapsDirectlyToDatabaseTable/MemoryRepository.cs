@@ -158,11 +158,6 @@ namespace MapsDirectlyToDatabaseTable
         }
 
 
-        public IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            throw new NotImplementedException();
-        }
-
         public int Insert(string sql, Dictionary<string, object> parameters)
         {
             throw new NotImplementedException();

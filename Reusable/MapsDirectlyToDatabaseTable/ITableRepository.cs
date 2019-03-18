@@ -19,7 +19,7 @@ namespace MapsDirectlyToDatabaseTable
     /// </summary>
     public interface ITableRepository : IRepository
     {
-        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
+        
         string ConnectionString { get; }
         DbConnectionStringBuilder ConnectionStringBuilder { get; }
         DiscoveredServer DiscoveredServer { get; }
@@ -33,6 +33,9 @@ namespace MapsDirectlyToDatabaseTable
         void TestConnection();
         bool SupportsObjectType(Type type);
 
+
+
+        IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable;
     }
 
 }
