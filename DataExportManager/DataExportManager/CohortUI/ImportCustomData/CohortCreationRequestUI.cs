@@ -245,18 +245,19 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
                 ok.Anchor = AnchorStyles.Bottom;
                 cancel.Anchor  = AnchorStyles.Bottom;
-                    
-                p.Project = new Project(_repository,"New Project");
+
+                var project = new Project(_repository, "New Project");
+                p.SetDatabaseObject(Activator,project);
                 DialogResult result = dialog.ShowDialog();
 
                 if (result == DialogResult.OK)
                 {
-                    p.Project.SaveToDatabase();
-                    SetProject(p.Project);
-                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(p.Project));
+                    project.SaveToDatabase();
+                    SetProject(project);
+                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(project));
                 }
                 else
-                    p.Project.DeleteInDatabase();
+                    project.DeleteInDatabase();
 
             }
             catch (Exception exception)

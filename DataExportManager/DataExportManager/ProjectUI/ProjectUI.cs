@@ -47,27 +47,6 @@ namespace DataExportManager.ProjectUI
     {
         private Project _project;
         
-        public Project Project
-        {
-            get { return _project; }
-            set
-            {
-                //now load the UI form 
-                _project = value;
-
-                dataGridView1.DataSource = value == null?null : LoadDatagridFor(value);
-                tcMasterTicket.TicketText = value == null ? "" : value.MasterTicket;
-                tbExtractionDirectory.Text = value == null ? "" : value.ExtractionDirectory;
-                tbProjectNumber.Text = value == null ? "" : ""+value.ProjectNumber;
-                
-                dataGridView1.Invalidate();
-
-                SetCohorts();
-
-
-            }
-        }
-
         private void SetCohorts()
         {
             if(RepositoryLocator == null || _project == null || _project.ProjectNumber == null)
@@ -106,7 +85,7 @@ namespace DataExportManager.ProjectUI
 
         public void RefreshLists()
         {
-             dataGridView1.DataSource = LoadDatagridFor(Project);
+             dataGridView1.DataSource = LoadDatagridFor(_project);
         }
 
 
@@ -121,7 +100,17 @@ namespace DataExportManager.ProjectUI
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            Project = databaseObject;
+            //now load the UI form 
+            _project = databaseObject;
+
+            dataGridView1.DataSource = LoadDatagridFor(_project);
+            tcMasterTicket.TicketText = _project.MasterTicket;
+            tbExtractionDirectory.Text = _project.ExtractionDirectory;
+            tbProjectNumber.Text = _project.ProjectNumber.ToString();
+
+            dataGridView1.Invalidate();
+
+            SetCohorts();
         }
 
         
@@ -301,7 +290,7 @@ namespace DataExportManager.ProjectUI
                     tbExtractionDirectory.ForeColor = Color.Red;
                 else
                 {
-                    Project.ExtractionDirectory = tbExtractionDirectory.Text;
+                    _project.ExtractionDirectory = tbExtractionDirectory.Text;
                     tbExtractionDirectory.ForeColor = Color.Black;
                 }
             }
@@ -337,36 +326,35 @@ namespace DataExportManager.ProjectUI
 
         private void tbProjectNumber_TextChanged(object sender, EventArgs e)
         {
-            if (Project != null)
+            
+            if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
             {
-                if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
-                {
-                    Project.ProjectNumber = null;
-                    return;
-                }
-
-                try
-                {
-                    Project.ProjectNumber = int.Parse(tbProjectNumber.Text);
-                    tbProjectNumber.ForeColor = Color.Black;
-                    Project.SaveToDatabase();
-                }
-                catch (Exception )
-                {
-                    tbProjectNumber.ForeColor = Color.Red;
-                }
+                _project.ProjectNumber = null;
+                return;
             }
+
+            try
+            {
+                _project.ProjectNumber = int.Parse(tbProjectNumber.Text);
+                tbProjectNumber.ForeColor = Color.Black;
+                _project.SaveToDatabase();
+            }
+            catch (Exception )
+            {
+                tbProjectNumber.ForeColor = Color.Red;
+            }
+            
         }
         void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
         {
-            Project.MasterTicket = tcMasterTicket.TicketText;
+            _project.MasterTicket = tcMasterTicket.TicketText;
         }
 
         public void SwitchToCutDownUIMode()
         {
             dataGridView1.Visible = false;
             lblExtractions.Visible = false;
-            this.Height = 140;
+            this.Height = 160;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)
