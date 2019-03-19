@@ -142,7 +142,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             ExtractionInformation fkEi = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "Name");
             ColumnInfo pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
             
-            CatalogueRepository.JoinManager.AddJoinInfo(fkEi.ColumnInfo, pk, ExtractionJoinType.Left, null);
+            new JoinInfo(CatalogueRepository,fkEi.ColumnInfo, pk, ExtractionJoinType.Left, null);
 
             var ci = new CatalogueItem(CatalogueRepository, _catalogue, "Name_2");
             var ei = new ExtractionInformation(CatalogueRepository, ci, pk, pk.Name)

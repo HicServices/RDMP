@@ -16,7 +16,6 @@ using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories.Managers;
-using FAnsi.Connections;
 using FAnsi.Discovery;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
@@ -40,7 +39,7 @@ namespace CatalogueLibrary.Repositories
 
         public IFilterManager FilterManager { get { return this; }}
 
-        public IJoinManager JoinManager { get; set; }
+        public IJoinManager JoinManager { get; private set; }
         public MEF MEF { get; set; }
         public CommentStore CommentStore { get; private set; }
 
@@ -53,6 +52,8 @@ namespace CatalogueLibrary.Repositories
 
         public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
         {
+            JoinManager = new JoinManager(this);
+
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
                 if(currentDefaults == null)

@@ -262,6 +262,7 @@
     <EmbeddedResource Include="db\up\064_FAnsiSupport.sql" />
     <EmbeddedResource Include="db\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="db\up\066_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="db\up\067_AddJoinInfoID.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

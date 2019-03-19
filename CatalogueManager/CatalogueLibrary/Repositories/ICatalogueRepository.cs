@@ -39,7 +39,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Allows creation/discover of <see cref="JoinInfo"/> objects which describe how to join two <see cref="TableInfo"/> together in SQL
         /// </summary>
-        IJoinManager JoinManager { get; set; }
+        IJoinManager JoinManager { get;}
 
         /// <summary>
         /// Supports creation of objects using Reflection and discovery of Types based on Managed Extensibility Framework Export attributes.

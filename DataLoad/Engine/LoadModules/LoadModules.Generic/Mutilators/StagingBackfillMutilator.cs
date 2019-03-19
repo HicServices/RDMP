@@ -114,7 +114,7 @@ namespace LoadModules.Generic.Mutilators
             var repository = (CatalogueRepository) tiCurrent.Repository;
 
             // Find all parents of this table
-            var allJoinInfos = repository.JoinManager.GetAllJoinInfos();
+            var allJoinInfos = repository.GetAllObjects<JoinInfo>();
             var joinsWithThisTableAsChild = allJoinInfos.Where(info => info.ForeignKey.TableInfo_ID == tiCurrent.ID).ToList();
             
             // Infinite recursion check
@@ -151,7 +151,7 @@ namespace LoadModules.Generic.Mutilators
 
             // Process old updates in children first
             // Does toCurrent have any children?
-            var allJoinInfos = repository.JoinManager.GetAllJoinInfos();
+            var allJoinInfos = repository.GetAllObjects<JoinInfo>();
             var joinsToProcess = allJoinInfos.Where(info => info.PrimaryKey.TableInfo_ID == tiCurrent.ID).ToList();
             foreach (var join in joinsToProcess)
             {

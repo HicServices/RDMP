@@ -83,3 +83,5 @@ ix_SelectedDataSetsForceJoinsMustBeUnique: Prevents you from declaring that the 
 FK_SupplementalExtractionResults_ExtractionConfiguration: Prevents you from having Supplemental files extracted for configurations that don't exist.
 FK_OverrideRAWServer_ID: Prevents you deleting a server which is used as a RAW server for a data load (LoadMetadata)
 ix_PluginNameAndVersionMustBeUnique: Prevents you uploading two copies of the same plugin version.
+ix_JoinColumnsMustBeUnique: Prevents you creating two joins involving the same pair of columns
+ix_CumulativeExtractionResultsMustBeUnique: Prevents two release audits of the same extraction record

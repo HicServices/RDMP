@@ -245,7 +245,7 @@ namespace CatalogueLibrary.Providers
             foreach (Lookup l in AllLookups)
                 l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],_allColumnInfos[l.Description_ID]);
 
-            AllJoinInfos = repository.JoinManager.GetAllJoinInfos();
+            AllJoinInfos = repository.GetAllObjects<JoinInfo>();
 
             foreach (JoinInfo j in AllJoinInfos)
                 j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);

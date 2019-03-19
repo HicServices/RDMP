@@ -9,4 +9,10 @@
 
   if(not exists (select * from sys.key_constraints where type ='PK' AND OBJECT_NAME(parent_object_id) = 'ReleaseLog'))
 	ALTER TABLE ReleaseLog ADD CONSTRAINT PK_ReleaseLog PRIMARY KEY (ID);
-  
+
+
+  if not exists (select 1 from sys.indexes where name = 'ix_CumulativeExtractionResultsMustBeUnique')
+	CREATE UNIQUE NONCLUSTERED INDEX ix_CumulativeExtractionResultsMustBeUnique ON ReleaseLog
+	(
+		CumulativeExtractionResults_ID ASC
+	)

@@ -254,7 +254,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             if (RelationshipPropertyInfos.TryGetBySecond(methodInfo, out prop))
                             {
 
-                                
+                                //It doesn't look injected but it is
+                                if(t == typeof(JoinInfo))
+                                    continue;
+
                                 //if we are injectable for it
                         if( t.GetInterfaces().Any(x =>
                               x.IsGenericType &&

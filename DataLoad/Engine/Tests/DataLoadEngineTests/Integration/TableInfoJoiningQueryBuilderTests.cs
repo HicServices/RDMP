@@ -33,7 +33,7 @@ namespace DataLoadEngineTests.Integration
             ColumnInfo col5 = new ColumnInfo(CatalogueRepository, "[biochemistry]..[Result].[OmgBob]", "varchar(10)", result);
 
             //we can join on col2 = col3
-            CatalogueRepository.JoinManager.AddJoinInfo(col3, col2, ExtractionJoinType.Right, "");
+            new JoinInfo(CatalogueRepository,col3, col2, ExtractionJoinType.Right, "");
 
             //CASE 1 : Only 1 column used so no join needed
             var queryBuilder = new QueryBuilder(null, null);

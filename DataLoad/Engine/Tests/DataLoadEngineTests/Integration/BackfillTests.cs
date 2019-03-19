@@ -352,7 +352,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
 
             // Samples (1:M) Results join
-            CatalogueRepository.JoinManager.AddJoinInfo(ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
+            new JoinInfo(CatalogueRepository,ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
                 ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
         }
@@ -598,7 +598,7 @@ namespace DataLoadEngineTests.Integration
             Assert.AreEqual(10, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
 
             // Headers (1:M) Samples join
-            CatalogueRepository.JoinManager.AddJoinInfo(ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
+            new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
                 ciHeaders.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
         }
@@ -1105,7 +1105,7 @@ namespace DataLoadEngineTests.Integration
             var ti = AddTableToCatalogue(databaseName, "Results", "ID", out ciList);
 
             // setup join infos
-            CatalogueRepository.JoinManager.AddJoinInfo(ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
+            new JoinInfo(CatalogueRepository,ciList.Single(info => info.GetRuntimeName().Equals("SampleID")),
                 ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
             return ti;
@@ -1117,7 +1117,7 @@ namespace DataLoadEngineTests.Integration
             var ti = AddTableToCatalogue(databaseName, "Header", "ID", out ciList);
 
             // setup join infos
-            CatalogueRepository.JoinManager.AddJoinInfo(ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
+            new JoinInfo(CatalogueRepository,ciSamples.Single(info => info.GetRuntimeName().Equals("HeaderID")),
                 ciList.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
 

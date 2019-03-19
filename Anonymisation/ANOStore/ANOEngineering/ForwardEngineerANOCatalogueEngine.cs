@@ -241,7 +241,7 @@ namespace ANOStore.ANOEngineering
                         }
                     }
 
-                    var existingJoinInfos = _catalogueRepository.JoinManager.GetAllJoinInfos();
+                    var existingJoinInfos = _catalogueRepository.GetAllObjects<JoinInfo>();
                     var existingLookups = _catalogueRepository.GetAllObjects<Lookup>();
                     var existingLookupComposites = _catalogueRepository.GetAllObjects<LookupCompositeJoinInfo>();
 
@@ -252,8 +252,8 @@ namespace ANOStore.ANOEngineering
                         var newPk = GetNewColumnInfoForOld(joinInfo.PrimaryKey);
 
                         //already exists
-                        if(!existingJoinInfos.Any(ej=>ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
-                            _catalogueRepository.JoinManager.AddJoinInfo(newFk,newPk,joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
+                        if (!existingJoinInfos.Any(ej => ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
+                            new JoinInfo(_catalogueRepository, newFk, newPk, joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
                     }
 
                     //migrate Lookups

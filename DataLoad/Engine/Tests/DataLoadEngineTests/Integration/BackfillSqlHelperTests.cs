@@ -58,7 +58,7 @@ namespace DataLoadEngineTests.Integration
                 _catalogue.DeleteInDatabase();
 
             // ensure the database is cleared of test remnants
-            foreach (var ji in CatalogueRepository.JoinManager.GetAllJoinInfos())
+            foreach (var ji in CatalogueRepository.GetAllObjects<JoinInfo>())
                 ji.DeleteInDatabase();
 
             // column infos don't appear to delete
@@ -97,7 +97,7 @@ namespace DataLoadEngineTests.Integration
             var tiSamples = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Samples"));
             var tiResults = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Results"));
 
-            var joinInfos = CatalogueRepository.JoinManager.GetAllJoinInfos();
+            var joinInfos = CatalogueRepository.GetAllObjects<JoinInfo>();
             var joinPath = new List<JoinInfo>
             {
                 joinInfos.Single(info => info.PrimaryKey.TableInfo_ID == tiHeader.ID),
@@ -136,12 +136,12 @@ LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON Ti
             Assert.AreEqual(15, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
 
             // Headers (1:M) Samples join
-            CatalogueRepository.JoinManager.AddJoinInfo(ciSamples.Single(ci => ci.GetRuntimeName().Equals("HeaderID")),
+            new JoinInfo(CatalogueRepository,ciSamples.Single(ci => ci.GetRuntimeName().Equals("HeaderID")),
                 ciHeaders.Single(ci => ci.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
 
             // Samples (1:M) Results join
-            CatalogueRepository.JoinManager.AddJoinInfo(ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
+            new JoinInfo(CatalogueRepository,ciResults.Single(info => info.GetRuntimeName().Equals("SampleID")),
                 ciSamples.Single(info => info.GetRuntimeName().Equals("ID")),
                 ExtractionJoinType.Left, "");
         }
