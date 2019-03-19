@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using CatalogueLibrary.Data;
-
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using DataQualityEngine.Data;
@@ -61,7 +61,7 @@ namespace DataQualityEngine.Reports
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
                 return;
 
-            _loggingServer = new ServerDefaults(repository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (_loggingServer != null)
             {

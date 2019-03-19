@@ -11,6 +11,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using DataLoadEngine.DataProvider.FromCache;
@@ -215,7 +216,7 @@ namespace DataLoadEngineTests.Integration
                 throw new NotSupportedException("Cannot send dodgy credentials if you aren't overriding RAW");
 
             ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
-            var oldDefault = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
+            var oldDefault = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);
 
             var testDirPath = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             var testDir = Directory.CreateDirectory(testDirPath);
@@ -249,7 +250,7 @@ namespace DataLoadEngineTests.Integration
                     }
                     external.SaveToDatabase();
 
-                    defaults.SetDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer, external);
+                    defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, external);
                 }
 
                 var options = new DleOptions();
@@ -284,7 +285,7 @@ namespace DataLoadEngineTests.Integration
             finally
             {
                 //reset the original RAW server
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer, oldDefault);
+                defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, oldDefault);
 
                 if (external != null)
                     external.DeleteInDatabase();

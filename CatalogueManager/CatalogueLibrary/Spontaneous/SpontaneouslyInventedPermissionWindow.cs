@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -34,7 +35,7 @@ namespace CatalogueLibrary.Spontaneous
             PermissionWindowPeriods = windows;
         }
 
-        private SpontaneouslyInventedPermissionWindow()
+        private SpontaneouslyInventedPermissionWindow():base(new MemoryRepository())
         {
             RequiresSynchronousAccess = true;
             Name = "Spontaneous Permission Window";

@@ -55,7 +55,6 @@ namespace CatalogueManager.LocationsMenu.Ticketing
         }
 
         bool _bLoading = true;
-        private IActivateItems _activator;
 
         private void RefreshUIFromDatabase()
         {
@@ -216,8 +215,10 @@ namespace CatalogueManager.LocationsMenu.Ticketing
             }
         }
 
-        public void SetItemActivator(IActivateItems activator)
+        private IActivateItems _activator;
+        public override void SetItemActivator(IActivateItems activator)
         {
+            base.SetItemActivator(activator);
             _activator = activator;
         }
     }

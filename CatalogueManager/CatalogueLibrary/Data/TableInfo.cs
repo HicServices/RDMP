@@ -42,17 +42,7 @@ namespace CatalogueLibrary.Data
     public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
     {
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Server_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Database_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int State_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ValidationXml_MaxLength = -1;
-
+        
         #region Database Properties
         private string _name;
         private DatabaseType _databaseType;
@@ -318,7 +308,7 @@ namespace CatalogueLibrary.Data
             if (context == DataAccessContext.Any)
                 throw new Exception("You cannot ask for any credentials, you must supply a usage context.");
 
-            return _catalogueRepository.TableInfoToCredentialsLinker.GetCredentialsIfExistsFor(this, context);
+            return _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
         }
 
         /// <summary>
@@ -330,7 +320,7 @@ namespace CatalogueLibrary.Data
         /// <param name="allowOverwritting">False will throw if there is already credentials declared for the table/context</param>
         public void SetCredentials(DataAccessCredentials credentials, DataAccessContext context, bool allowOverwritting = false)
         {
-            var existingCredentials = _catalogueRepository.TableInfoToCredentialsLinker.GetCredentialsIfExistsFor(this, context);
+            var existingCredentials = _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
             
             //if user told us to set credentials to null complain
             if(credentials == null)
@@ -349,17 +339,17 @@ namespace CatalogueLibrary.Data
             
                 //allow overwritting is on
                 //remove the existing link
-                _catalogueRepository.TableInfoToCredentialsLinker.BreakLinkBetween(existingCredentials, this, context);
+                _catalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(existingCredentials, this, context);
             }
             //create a new one to the new credentials
-            _catalogueRepository.TableInfoToCredentialsLinker.CreateLinkBetween(credentials, this, context);
+            _catalogueRepository.TableInfoCredentialsManager.CreateLinkBetween(credentials, this, context);
         }
 
         /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {
             return 
-                _catalogueRepository.TableInfoToCredentialsLinker.GetCredentialsIfExistsFor(this)
+                _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this)
                 .Select(kvp => kvp.Value)
                 .Cast<IHasDependencies>()
                 .ToArray();
@@ -401,17 +391,7 @@ namespace CatalogueLibrary.Data
 
         private bool FetchIsLookup()
         {
-            using (var con = _catalogueRepository.GetConnection())
-            {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand(
-@"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
-select 1
-else
-select 0", con.Connection, con.Transaction);
-
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, ID);
-                return Convert.ToBoolean(cmd.ExecuteScalar());
-            }
+            return _catalogueRepository.IsLookupTable(this);
         }
 
         /// <summary>
@@ -422,14 +402,7 @@ select 0", con.Connection, con.Transaction);
         /// <returns></returns>
         public Catalogue[] GetAllRelatedCatalogues()
         {
-            return Repository.GetAllObjects<Catalogue>(
-                string.Format(@"Where
-  Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
-  CatalogueItem join
-  ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
-  where
-  TableInfo_ID = {0} )", ID)).ToArray();
-
+            return CatalogueRepository.GetAllCataloguesUsing(this);
         }
 
         /// <inheritdoc/>

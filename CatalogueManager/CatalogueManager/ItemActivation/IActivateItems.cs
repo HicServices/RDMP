@@ -11,6 +11,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -42,7 +43,7 @@ namespace CatalogueManager.ItemActivation
     {
         ITheme Theme { get; }
 
-        ServerDefaults ServerDefaults { get; }
+        IServerDefaults ServerDefaults { get; }
 
         /// <summary>
         /// Component for publishing the fact that an object has recently been put out of date by you.

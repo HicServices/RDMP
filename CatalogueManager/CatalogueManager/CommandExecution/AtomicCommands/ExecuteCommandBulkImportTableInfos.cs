@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;
@@ -34,7 +35,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandBulkImportTableInfos(IActivateItems activator):base(activator)
         {
-            _loggingServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            _loggingServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if(_loggingServer == null)
                 SetImpossible("There is no default logging server configured");
@@ -76,7 +77,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             bool generateCatalogues = false;
 
             if (MessageBox.Show("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues());
+                catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
             else if(MessageBox.Show("Would you like to generate empty Catalogues for non-matching tables instead?","Generate New Catalogues", MessageBoxButtons.YesNo)== DialogResult.Yes)
                 generateCatalogues = true;
             

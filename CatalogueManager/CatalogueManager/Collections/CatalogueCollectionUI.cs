@@ -246,7 +246,7 @@ namespace CatalogueManager.Collections
             if( o is CatalogueItem || o is AggregateConfiguration ||
             o is ColumnInfo || o is TableInfo || o is ExtractionFilter || o is ExtractionFilterParameter ||
             o is ExtractionFilterParameterSet || o is ExtractionInformation ||
-            o is AggregateFilterContainer || o is AggregateFilter || o is AggregateFilterParameter|| o is CatalogueItemIssue)
+            o is AggregateFilterContainer || o is AggregateFilter || o is AggregateFilterParameter)
             {
                 //then refresh us
                 RefreshUIFromDatabase(o);

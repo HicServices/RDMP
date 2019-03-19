@@ -66,7 +66,7 @@ namespace CatalogueLibrary.Nodes
             //if (MessageBox.Show("Are you sure you want to remove usage rights under Context " + credentialUsage.Context + " for TableInfo " + credentialUsage.TableInfo, "Revoke Usage Permission", MessageBoxButtons.YesNo) == DialogResult.Yes)
             //{
             var cataRepo = (CatalogueRepository)TableInfo.Repository;
-                cataRepo.TableInfoToCredentialsLinker.BreakLinkBetween(Credentials, TableInfo, Context);
+                cataRepo.TableInfoCredentialsManager.BreakLinkBetween(Credentials, TableInfo, Context);
 
             //;
         }

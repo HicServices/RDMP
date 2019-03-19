@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Repositories;
 using Diagnostics.TestData;
 using NUnit.Framework;
 using Tests.Common;
@@ -30,37 +31,42 @@ namespace CohortManagerTests
         [SetUp]
         public void SetupTestData()
         {
-            testData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            SetupTestData(CatalogueRepository);
+        }
+
+        public void SetupTestData(ICatalogueRepository repository)
+        {
+            testData = new BulkTestsData(repository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
             testData.SetupTestData();
 
             testData.ImportAsCatalogue();
-           
+
             aggregate1 =
-                new AggregateConfiguration(CatalogueRepository,testData.catalogue, "UnitTestAggregate1");
+                new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate1");
             aggregate1.CountSQL = null;
             aggregate1.SaveToDatabase();
 
-            new AggregateDimension(CatalogueRepository,testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate1);
+            new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate1);
 
             aggregate2 =
-                new AggregateConfiguration(CatalogueRepository,testData.catalogue, "UnitTestAggregate2");
+                new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate2");
 
             aggregate2.CountSQL = null;
             aggregate2.SaveToDatabase();
 
-            new AggregateDimension(CatalogueRepository,testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate2);
+            new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate2);
 
             aggregate3 =
-                new AggregateConfiguration(CatalogueRepository, testData.catalogue, "UnitTestAggregate3");
+                new AggregateConfiguration(repository, testData.catalogue, "UnitTestAggregate3");
             aggregate3.CountSQL = null;
             aggregate3.SaveToDatabase();
 
-            new AggregateDimension(CatalogueRepository,testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate3);
+            new AggregateDimension(repository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate3);
 
-            cohortIdentificationConfiguration = new CohortIdentificationConfiguration (CatalogueRepository,"UnitTestIdentification");
+            cohortIdentificationConfiguration = new CohortIdentificationConfiguration(repository, "UnitTestIdentification");
 
-            rootcontainer = new CohortAggregateContainer(CatalogueRepository,SetOperation.EXCEPT);
-            container1 = new CohortAggregateContainer(CatalogueRepository,SetOperation.UNION);
+            rootcontainer = new CohortAggregateContainer(repository, SetOperation.EXCEPT);
+            container1 = new CohortAggregateContainer(repository, SetOperation.UNION);
 
             cohortIdentificationConfiguration.RootCohortAggregateContainer_ID = rootcontainer.ID;
             cohortIdentificationConfiguration.SaveToDatabase();

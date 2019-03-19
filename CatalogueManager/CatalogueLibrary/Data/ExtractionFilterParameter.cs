@@ -28,10 +28,6 @@ namespace CatalogueLibrary.Data
     public class ExtractionFilterParameter : VersionedDatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
     {
         #region Database Properties
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ParameterSQL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Value_MaxLength = -1;
 
         private string _value;
         private string _comment;

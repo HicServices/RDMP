@@ -21,12 +21,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// ProcessTask is to run an SQL file directly on the server
         /// </summary>
         SQLFile,
-
-        /// <summary>
-        /// ProcessTask is to execute a stored proceedure defined on the server
-        /// </summary>
-        StoredProcedure,
-
+        
         /// <summary>
         /// ProcessTask is to instantiate the IAttacher class Type specified in Path and hydrate it's [DemandsInitialization] properties with values matching 
         /// ProcessTaskArguments and run it in the specified load stage in an AttacherRuntimeTask wrapper.

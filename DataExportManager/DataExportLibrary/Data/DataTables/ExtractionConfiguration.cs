@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.Repositories;
@@ -140,19 +141,6 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
         
-        #region MaxLengths
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Username_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int RequestTicket_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ReleaseTicket_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Separator_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
-        #endregion
-
         #region Relationships
         
         /// <inheritdoc/>
@@ -216,32 +204,9 @@ namespace DataExportLibrary.Data.DataTables
 
         /// <inheritdoc/>
         [NoMappingToDatabase]
-        public IReleaseLogEntry[] ReleaseLogEntries
+        public IReleaseLog[] ReleaseLog
         {
-            get
-            {
-                List<IReleaseLogEntry> entries = new List<IReleaseLogEntry>();
-
-                var repo = (DataExportRepository) Repository;
-                using (var con = repo.GetConnection())
-                {
-                    var cmdselect = DatabaseCommandHelper.GetCommand(@"SELECT *
-  FROM ReleaseLog
-  where
-  CumulativeExtractionResults_ID
-  in
-  (select ID from CumulativeExtractionResults where ExtractionConfiguration_ID = @ExtractionConfiguration_ID)",
-                    con.Connection, con.Transaction);
-
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@ExtractionConfiguration_ID", cmdselect, ID);
-                
-                    var sqlDataReader = cmdselect.ExecuteReader();
-                    while (sqlDataReader.Read())
-                        entries.Add(new ReleaseLogEntry(repo, sqlDataReader));
-                }
-
-                return entries.ToArray();
-            }
+            get { return Repository.GetAllObjectsWithParent<ReleaseLog>(this); }
         }
 
         /// <inheritdoc cref="DefaultPipeline_ID"/>
@@ -300,7 +265,7 @@ namespace DataExportLibrary.Data.DataTables
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="project"></param>
-        public ExtractionConfiguration(IDataExportRepository repository, Project project)
+        public ExtractionConfiguration(IDataExportRepository repository, IProject project)
         {
             Repository = repository;
 
@@ -387,7 +352,7 @@ namespace DataExportLibrary.Data.DataTables
                 try
                 {
                     //clone the root object (the configuration) - this includes cloning the link to the correct project and cohort 
-                    ExtractionConfiguration clone = repo.CloneObjectInTable(this);
+                    ExtractionConfiguration clone = this.ShallowClone();
 
                     //find each of the selected datasets for ourselves and clone those too
                     foreach (SelectedDataSets selected in SelectedDataSets)
@@ -398,7 +363,7 @@ namespace DataExportLibrary.Data.DataTables
                         // now clone each of the columns for each of the datasets that we just created links to (make them the same as the old configuration
                         foreach (IColumn extractableColumn in GetAllExtractableColumnsFor(selected.ExtractableDataSet))
                         {
-                            ExtractableColumn cloneExtractableColumn = repo.CloneObjectInTable((ExtractableColumn)extractableColumn);
+                            ExtractableColumn cloneExtractableColumn = ((ExtractableColumn)extractableColumn).ShallowClone();
                             cloneExtractableColumn.ExtractionConfiguration_ID = clone.ID;
                             cloneExtractableColumn.SaveToDatabase();
                         }
@@ -451,6 +416,13 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
+        private ExtractionConfiguration ShallowClone()
+        {
+            var clone = new ExtractionConfiguration(DataExportRepository, Project);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
+
         /// <inheritdoc/>
         public IProject GetProject()
         {
@@ -460,25 +432,16 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public ConcreteColumn[] GetAllExtractableColumnsFor(IExtractableDataSet dataset)
         {
-            return Repository.GetAllObjects<ExtractableColumn>(
-                string.Format(
-                    "WHERE ExtractionConfiguration_ID={0} AND ExtractableDataSet_ID={1}",
-                    ID,
-                    dataset.ID));
+            return
+                Repository.GetAllObjectsWhere<ExtractableColumn>("ExtractionConfiguration_ID", ID)
+                .Where(e => e.ExtractableDataSet_ID == dataset.ID).ToArray();
         }
         /// <inheritdoc/>
         public IContainer GetFilterContainerFor(IExtractableDataSet dataset)
         {
-            var objects = Repository.SelectAllWhere<FilterContainer>(
-                "SELECT RootFilterContainer_ID FROM SelectedDataSets WHERE ExtractionConfiguration_ID=@ExtractionConfiguration_ID AND ExtractableDataSet_ID=@ExtractableDataSet_ID",
-                "RootFilterContainer_ID",
-                new Dictionary<string, object>
-                {
-                    {"ExtractionConfiguration_ID", ID},
-                    {"ExtractableDataSet_ID", dataset.ID}
-                });
-
-            return objects.SingleOrDefault();
+            return Repository.GetAllObjectsWhere<SelectedDataSets>("ExtractionConfiguration_ID", ID)
+                .Single(sds => sds.ExtractableDataSet_ID == dataset.ID)
+                .RootFilterContainer;
         }
 
         private ExternalDatabaseServer GetDistinctLoggingServer(bool testLoggingServer)
@@ -525,14 +488,10 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public IExtractableDataSet[] GetAllExtractableDataSets()
         {
-            return Repository.SelectAllWhere<ExtractableDataSet>(
-                "SELECT * FROM SelectedDataSets WHERE ExtractionConfiguration_ID = @ExtractionConfiguration_ID",
-                "ExtractableDataSet_ID",
-                new Dictionary<string, object>
-                {
-                    {"ExtractionConfiguration_ID", ID}
-                })
-                .ToArray();
+            return
+                Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+                    .Select(sds => sds.ExtractableDataSet)
+                    .ToArray();
         }
 
         /// <summary>
@@ -637,7 +596,7 @@ namespace DataExportLibrary.Data.DataTables
 
                 //see if there is a default
                 var defaultGetter = new ServerDefaults(Project.DataExportRepository.CatalogueRepository);
-                var defaultLoggingServer = defaultGetter.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                var defaultLoggingServer = defaultGetter.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 //there is a default?
                 if (defaultLoggingServer != null)

@@ -4,17 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting.Construction;
-using FAnsi.Discovery.QuerySyntax;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Attributes;
-using ReusableLibraryCode.Checks;
-using IFilter = CatalogueLibrary.Data.IFilter;
+using CatalogueLibrary.Repositories;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -25,62 +18,59 @@ namespace CatalogueLibrary.Spontaneous
     /// 
     /// <para>The other way to inject sql code into an ISqlQueryBuilder is via CustomLine but that's less precise.</para>
     /// </summary>
-    public class SpontaneouslyInventedFilter:SpontaneousObject,IFilter
+    public class SpontaneouslyInventedFilter:ConcreteFilter
     {
-        private readonly IContainer _notionalParent;
+        private readonly MemoryCatalogueRepository _repo;
         private readonly ISqlParameter[] _filterParametersIfAny;
 
-        public SpontaneouslyInventedFilter(IContainer notionalParent, string whereSql, string name, string description, ISqlParameter[] filterParametersIfAny)
+        public SpontaneouslyInventedFilter(MemoryCatalogueRepository repo,IContainer notionalParent, string whereSql, string name, string description, ISqlParameter[] filterParametersIfAny)
         {
-            _notionalParent = notionalParent;
-            _filterParametersIfAny = filterParametersIfAny?? new ISqlParameter[0];
+            _repo = repo;
+            _filterParametersIfAny = filterParametersIfAny;
             WhereSQL = whereSql;
             Name = name;
             Description = description;
+            
+            repo.InsertAndHydrate(this,new Dictionary<string, object>());
+
+            if(notionalParent != null)
+            {
+                repo.AddChild(notionalParent,this);
+                FilterContainer_ID = notionalParent.ID;
+            }
         }
 
-        [Sql]
-        public string WhereSQL { get; set; }
-        public string Name { get; set; }
-        public string Description { get; set; }
-
-
-        public ISqlParameter[] GetAllParameters()
+        public override int? ClonedFromExtractionFilter_ID { get; set; }
+        public override int? FilterContainer_ID { get; set; }
+        public override ISqlParameter[] GetAllParameters()
         {
-            return _filterParametersIfAny;
+            return _filterParametersIfAny??new ISqlParameter[0];
         }
 
-        public bool IsMandatory { get { return false; } set{throw new NotSupportedException();}}
-        public int? ClonedFromExtractionFilter_ID { get { return null; } set{throw new NotSupportedException();} }
-        
-
-        public int? FilterContainer_ID { get {return _notionalParent != null ?_notionalParent.ID:(int?) null; } set{throw new NotSupportedException();} }
-        public IContainer FilterContainer { get { return _notionalParent; } }
-
-        public ColumnInfo GetColumnInfoIfExists()
+        public override IContainer FilterContainer
         {
-            //there is definetly no ColumnInfo associated with this magically made up filter
-            return null;
+            get
+            {
+                if (FilterContainer_ID.HasValue)
+                    return _repo.GetObjectByID<IContainer>(FilterContainer_ID.Value);
+
+                return null;
+            }
         }
 
-        public IFilterFactory GetFilterFactory()
-        {
-            throw new NotImplementedException();
-        }
-
-        public Catalogue GetCatalogue()
+        public override ColumnInfo GetColumnInfoIfExists()
         {
             return null;
         }
 
-        public IQuerySyntaxHelper GetQuerySyntaxHelper()
+        public override IFilterFactory GetFilterFactory()
         {
-            throw new NotImplementedException();
+            return null;
         }
 
-        public void Check(ICheckNotifier notifier)
+        public override Catalogue GetCatalogue()
         {
-            new FilterSyntaxChecker(this).Check(notifier);
+            return null;
         }
     }
 }

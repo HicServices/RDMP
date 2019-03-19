@@ -10,6 +10,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.ObjectVisualisation;
@@ -79,11 +80,11 @@ namespace CatalogueManager.DataViewing.Collections
             if (ViewType == ViewType.Distribution)
                 AddDistributionColumns(qb);
             else
-                qb.AddColumn(new ColumnInfoToIColumn(ColumnInfo));
+                qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(),ColumnInfo));
 
             var filter = GetFilterIfAny();
             if (filter != null && !string.IsNullOrWhiteSpace(filter.WhereSQL))
-                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null, new[] { filter }, FilterContainerOperation.AND);
+                qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(), null, new[] { filter }, FilterContainerOperation.AND);
 
             if (ViewType == ViewType.Aggregate)
                 qb.AddCustomLine("count(*),", QueryComponent.QueryTimeColumn);
@@ -98,28 +99,28 @@ namespace CatalogueManager.DataViewing.Collections
 
         private void AddDistributionColumns(QueryBuilder qb)
         {
+            var repo = new MemoryRepository();
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"CountTotal", "count(1)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"CountNull", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " IS NULL THEN 1 ELSE 0  END)"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"CountZero", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " = 0 THEN 1  ELSE 0 END)"));
 
-            qb.AddColumn(new SpontaneouslyInventedColumn("CountTotal", "count(1)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn("CountNull", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " IS NULL THEN 1 ELSE 0  END)"));
-            qb.AddColumn(new SpontaneouslyInventedColumn("CountZero", "SUM(CASE WHEN " + ColumnInfo.GetFullyQualifiedName() + " = 0 THEN 1  ELSE 0 END)"));
-
-            qb.AddColumn(new SpontaneouslyInventedColumn("Max", "max(" + ColumnInfo.GetFullyQualifiedName() + ")"));
-            qb.AddColumn(new SpontaneouslyInventedColumn("Min", "min(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"Max", "max(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo,"Min", "min(" + ColumnInfo.GetFullyQualifiedName() + ")"));
 
             switch (ColumnInfo.GetQuerySyntaxHelper().DatabaseType)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    qb.AddColumn(new SpontaneouslyInventedColumn("stdev ", "stdev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+                    qb.AddColumn(new SpontaneouslyInventedColumn(repo,"stdev ", "stdev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
                     break;
                 case DatabaseType.MySql:
                 case DatabaseType.Oracle:
-                    qb.AddColumn(new SpontaneouslyInventedColumn("stddev ", "stddev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+                    qb.AddColumn(new SpontaneouslyInventedColumn(repo, "stddev ", "stddev(" + ColumnInfo.GetFullyQualifiedName() + ")"));
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
             }
 
-            qb.AddColumn(new SpontaneouslyInventedColumn("avg", "avg(" + ColumnInfo.GetFullyQualifiedName() + ")"));
+            qb.AddColumn(new SpontaneouslyInventedColumn(repo, "avg", "avg(" + ColumnInfo.GetFullyQualifiedName() + ")"));
 
         }
 

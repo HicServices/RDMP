@@ -94,7 +94,7 @@ namespace CatalogueLibrary.Data.Cohort.Joinables
 
         internal JoinableCohortAggregateConfigurationUse(ICatalogueRepository repository, AggregateConfiguration user, JoinableCohortAggregateConfiguration joinable)
         {
-            if (repository.GetAllObjects<JoinableCohortAggregateConfiguration>("WHERE AggregateConfiguration_ID = " + user.ID).Any())
+            if (repository.GetAllObjectsWhere<JoinableCohortAggregateConfiguration>("AggregateConfiguration_ID", user.ID).Any())
                 throw new NotSupportedException("Cannot add user " + user + " because that AggregateConfiguration is itself a JoinableCohortAggregateConfiguration");
          
             if(user.AggregateDimensions.Count(u=>u.IsExtractionIdentifier) != 1)

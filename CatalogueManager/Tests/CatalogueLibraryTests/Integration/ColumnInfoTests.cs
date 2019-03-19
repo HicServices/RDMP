@@ -49,15 +49,6 @@ namespace CatalogueLibraryTests.Integration
                 Assert.AreEqual(child.RegexPattern, childAfter.RegexPattern);
                 Assert.AreEqual(child.ValidationRules, childAfter.ValidationRules); 
 
-                //find max lengths for UI
-                FieldInfo targetMaxLength = child.GetType().GetField("Description_MaxLength");
-                Assert.IsNotNull(targetMaxLength);
-                targetMaxLength = child.GetType().GetField("RegexPattern_MaxLength");
-                Assert.IsNotNull(targetMaxLength);
-                targetMaxLength = child.GetType().GetField("ValidationRules_MaxLength");
-                Assert.IsNotNull(targetMaxLength);
-
-
             }
             finally 
             {

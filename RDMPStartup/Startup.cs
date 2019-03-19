@@ -130,7 +130,7 @@ namespace RDMPStartup
             {
                 LoadMEF(RepositoryLocator.CatalogueRepository);
 
-                FindTier2Databases(RepositoryLocator.CatalogueRepository);
+                FindTier2Databases();
 
                 try
                 {
@@ -220,10 +220,8 @@ namespace RDMPStartup
 
             return true;
         }
-        private void FindTier2Databases(CatalogueRepository catalogueRepository)
+        private void FindTier2Databases()
         {
-            var defaults = new ServerDefaults(catalogueRepository);
-            
             //DQE
             Type type = typeof(DataQualityEngine.Class1);
             Debug.Assert(type != null);

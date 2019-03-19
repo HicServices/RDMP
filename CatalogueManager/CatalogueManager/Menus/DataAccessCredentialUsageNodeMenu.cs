@@ -29,7 +29,7 @@ namespace CatalogueManager.Menus
         {
             var setUsage = new ToolStripMenuItem("Set Context");
 
-            var existingUsages = _activator.RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.GetCredentialsIfExistsFor(node.TableInfo);
+            var existingUsages = _activator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(node.TableInfo);
 
             foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
                 Add(new ExecuteCommandSetDataAccessContextForCredentials(_activator, node, context, existingUsages), Keys.None, setUsage);

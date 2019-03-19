@@ -276,6 +276,7 @@
     <Compile Include="ImportTests\GatherAndShareTests.cs" />
     <Compile Include="ImportTests\PluginClassTests.cs" />
     <Compile Include="ImportTests\TestImportingAnObject.cs" />
+    <Compile Include="MemoryRepositoryTests\MemoryRepositoryTests.cs" />
     <Compile Include="Integration\AllKeywordsDescribedTest.cs" />
     <Compile Include="Integration\AllObjectsHaveImages.cs" />
     <Compile Include="Integration\ArgumentTests\TestArgumentedClass.cs" />
@@ -322,6 +323,7 @@
     <Compile Include="Integration\VersioningTests.cs" />
     <Compile Include="JsonSerializationTests\JsonSerializationTests.cs" />
     <Compile Include="LazyTest.cs" />
+    <Compile Include="MemoryRepositoryTests\MemoryRepositoryVsDatabaseRepository.cs" />
     <Compile Include="Mocks\RdmpMockFactory.cs" />
     <Compile Include="RefactoringTests\SelectSQLRefactorerTests.cs" />
     <Compile Include="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />

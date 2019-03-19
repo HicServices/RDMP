@@ -8,6 +8,7 @@ using System;
 using System.IO;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Managers;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -75,7 +76,7 @@ namespace CatalogueLibraryTests.Integration
             keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.WorkDirectory, "my.key"));
             var p = keyLocation.OpenKeyFile();
 
-            SimpleStringValueEncryption s = new SimpleStringValueEncryption(CatalogueRepository);
+            var s = CatalogueRepository.EncryptionManager.GetEncrypter();
             var exception = Assert.Throws<Exception>(()=>s.Decrypt(encrypter.Value));
             Assert.IsTrue(exception.Message.StartsWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 

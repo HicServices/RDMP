@@ -12,9 +12,11 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using FAnsi;
 using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -113,6 +115,8 @@ namespace CatalogueLibrary.Triggers
 
         private void GetInsertData(DiscoveredServer server, DiscoveredDatabase database, ICheckNotifier checkNotifier)
         {
+            var memoryRepository = new MemoryCatalogueRepository();
+
             var sytnaxHelper = server.GetQuerySyntaxHelper();
             string tableName = _tableInfo.Name;
             string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
@@ -124,18 +128,18 @@ namespace CatalogueLibrary.Triggers
 
             var qb = new QueryBuilder(null, null, new[] {_tableInfo});
             qb.TopX = _batchSize;
-            qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c=>new ColumnInfoToIColumn(c)).ToArray());
-
+            qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
+            
             //where
-            var filter1 = new SpontaneouslyInventedFilter(null, SpecialFieldNames.DataLoadRunID + " = " + _dataLoadRunID,"DataLoadRunID matches",null,null);
-            var filter2 = 
-                new SpontaneouslyInventedFilter(null,
+            var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null, SpecialFieldNames.DataLoadRunID + " = " + _dataLoadRunID, "DataLoadRunID matches", null, null);
+            var filter2 =
+                new SpontaneouslyInventedFilter(memoryRepository,null,
                 string.Format(@" not exists (
 select 1 from {0} where {1} {2} < {3}
 )",archiveTableName,whereStatement,SpecialFieldNames.DataLoadRunID,_dataLoadRunID),
   "Record doesn't exist in archive",null,null);
 
-            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,new []{filter1,filter2},FilterContainerOperation.AND);
+            qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null,new []{filter1,filter2},FilterContainerOperation.AND);
 
             Inserts = new DataTable();
             FillTableWithQueryIfUserConsents(Inserts, qb.SQL, checkNotifier, server);

@@ -11,11 +11,13 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Repositories
@@ -41,13 +43,20 @@ namespace DataExportLibrary.Repositories
         /// </summary>
         public CatalogueRepository CatalogueRepository { get; private set; }
 
+        public IFilterManager FilterManager { get; private set; }
+
+        public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
+
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
+            
+            FilterManager = new DataExportFilterManager(this);
+
+            DataExportPropertyManager = new DataExportPropertyManager(false,this);
 
             Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
             Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));
-            Constructors.Add(typeof(DataUser),(rep,r)=>new DataUser((IDataExportRepository)rep,r));
             Constructors.Add(typeof(DeployedExtractionFilter),(rep,r)=>new DeployedExtractionFilter((IDataExportRepository)rep,r));
             Constructors.Add(typeof(DeployedExtractionFilterParameter),(rep,r)=>new DeployedExtractionFilterParameter((IDataExportRepository)rep,r));
             Constructors.Add(typeof(ExternalCohortTable),(rep,r)=>new ExternalCohortTable((IDataExportRepository)rep,r));
@@ -96,6 +105,8 @@ namespace DataExportLibrary.Repositories
 
             return eds.GetCatalogueExtractabilityStatus();
         }
+
+        
 
         public SelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
         {

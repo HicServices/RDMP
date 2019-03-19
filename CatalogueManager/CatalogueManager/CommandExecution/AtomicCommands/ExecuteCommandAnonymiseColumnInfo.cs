@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -29,7 +30,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if (columnInfo.ANOTable_ID != null)
                 SetImpossible("ColumnInfo is already anonymised");
 
-            if(Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore) == null)
+            if(Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore) == null)
                 SetImpossible("No Default ANOStore has been configured");
         }
 

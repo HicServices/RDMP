@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
@@ -70,7 +71,7 @@ namespace AnonymisationTests
             ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,typeof(ANOStore.Class1).Assembly);
             ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
 
-            new ServerDefaults(CatalogueRepository).SetDefault(ServerDefaults.PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
+            CatalogueRepository.GetServerDefaults().SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);
         }
 
         private void RemovePreExistingReference()

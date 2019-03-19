@@ -34,7 +34,7 @@ namespace CatalogueLibraryTests.Integration
                 Random random = new Random();
                 
                 //delete all catalogues with duplicate names
-                Catalogue[] catalogues = CatalogueRepository.GetAllCatalogues().ToArray();
+                Catalogue[] catalogues = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
 
                 foreach (var cata in catalogues)
                     if (catalogues.Count(c => c.Name.Equals(cata.Name)) > 1)
@@ -44,7 +44,7 @@ namespace CatalogueLibraryTests.Integration
                     }
 
                 //make sure all Catalogues have acroynms, if they dont then assign them a super random one
-                foreach (Catalogue cata in CatalogueRepository.GetAllCatalogues(true))
+                foreach (Catalogue cata in CatalogueRepository.GetAllObjects<Catalogue>())
                     if (string.IsNullOrWhiteSpace(cata.Acronym))
                     {
                         cata.Acronym = "RANDOMACRONYM_" + random.Next(10000);
@@ -81,7 +81,7 @@ namespace CatalogueLibraryTests.Integration
             var testDir = _directoryHelper.Directory;
 
             //get rid of any old copies lying around
-            Catalogue oldCatalogueVersion = CatalogueRepository.GetAllCatalogues().SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
+            Catalogue oldCatalogueVersion = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("DitaExtractorConstructor_ExtractTestCatalogue_FilesExist"));
             if(oldCatalogueVersion != null)
                 oldCatalogueVersion.DeleteInDatabase();
 

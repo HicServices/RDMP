@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using NUnit.Framework;
@@ -129,7 +130,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         public void FinalTearDown()
         {
             //clear anostore default
-            new ServerDefaults(CatalogueRepository).ClearDefault(ServerDefaults.PermissableDefaults.ANOStore);
+            CatalogueRepository.GetServerDefaults().ClearDefault(PermissableDefaults.ANOStore);
             //delete the external server reference
             ANOStore_ExternalDatabaseServer.DeleteInDatabase();
         }

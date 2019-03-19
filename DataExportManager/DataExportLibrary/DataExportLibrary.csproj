@@ -244,8 +244,7 @@
     <Compile Include="CohortDescribing\CohortDescriptionDataTableAsyncFetch.cs" />
     <Compile Include="CohortDescribing\CohortDescriptionFactory.cs" />
     <Compile Include="CohortDescribing\ExtractableCohortDescription.cs" />
-    <Compile Include="DataRelease\Audit\ReleaseLogWriter.cs" />
-    <Compile Include="DataRelease\Audit\ReleaseLogEntry.cs" />
+    <Compile Include="DataRelease\Audit\ReleaseLog.cs" />
     <Compile Include="DataRelease\Potential\FlatFileGlobalsReleasePotential.cs" />
     <Compile Include="DataRelease\Potential\GlobalReleasePotential.cs" />
     <Compile Include="DataRelease\Potential\MsSqlGlobalsReleasePotential.cs" />
@@ -265,7 +264,7 @@
     <Compile Include="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />
-    <Compile Include="Data\ConfigurationProperties.cs" />
+    <Compile Include="Repositories\Managers\DataExportPropertyManager.cs" />
     <Compile Include="Data\DataTables\CohortDefinition.cs" />
     <Compile Include="Data\DataTables\CumulativeExtractionResults.cs" />
     <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
@@ -288,7 +287,6 @@
     <Compile Include="ExtractionTime\UserPicks\Bundle.cs" />
     <Compile Include="ExtractionTime\UserPicks\BundledLookupTable.cs" />
     <Compile Include="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />
-    <Compile Include="Data\DataTables\DataUser.cs" />
     <Compile Include="Data\DataTables\ExternalCohortTable.cs" />
     <Compile Include="Data\DataTables\ExtractableCohort.cs" />
     <Compile Include="Data\DataTables\DeployedExtractionFilter.cs" />
@@ -338,6 +336,7 @@
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
     <Compile Include="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
+    <Compile Include="Repositories\Managers\DataExportFilterManager.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
   </ItemGroup>
   <ItemGroup>

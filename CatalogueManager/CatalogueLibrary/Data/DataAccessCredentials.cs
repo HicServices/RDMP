@@ -116,7 +116,7 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         public Dictionary<DataAccessContext, List<TableInfo>> GetAllTableInfosThatUseThis()
         {
-            return ((CatalogueRepository)Repository).TableInfoToCredentialsLinker.GetAllTablesUsingCredentials(this);
+            return ((CatalogueRepository)Repository).TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
         }
 
         /// <inheritdoc/>

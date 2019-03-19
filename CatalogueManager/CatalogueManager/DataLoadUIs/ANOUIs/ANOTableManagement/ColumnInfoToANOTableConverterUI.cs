@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -23,6 +24,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
+using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -163,7 +165,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
             
             ddExternalDatabaseServer.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.ANOStore));
 
-            var defaultServer = _activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore);
+            var defaultServer = _activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
             if (defaultServer != null)
                 ddExternalDatabaseServer.SelectedItem = defaultServer;
@@ -208,7 +210,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
                     lblPreviewDataIsFictional.Visible = false;
 
                     var qb = new QueryBuilder(null, null, new[] {_tableInfo});
-                    qb.AddColumn(new ColumnInfoToIColumn(_columnInfo));
+                    qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                     qb.TopX = 10;
 
                     DbCommand cmd = server.GetCommand(qb.SQL, con);

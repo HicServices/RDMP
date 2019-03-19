@@ -19,6 +19,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Reports;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -54,7 +55,7 @@ namespace CatalogueManager.AggregationUIs
     {
         
         public Scintilla QueryEditor { get;private set; }
-        ServerDefaults _defaults;
+        IServerDefaults _defaults;
 
         public int Timeout
         {
@@ -532,7 +533,7 @@ namespace CatalogueManager.AggregationUIs
             //set publish enabledness to the enabledness of 
             btnCache.Enabled =
                 _defaults.GetDefaultFor(
-                    ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
+                    PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
             btnClearFromCache.Enabled = false;
 
             //Make publish button enabledness be dependant on cache
@@ -664,7 +665,7 @@ namespace CatalogueManager.AggregationUIs
 
         private CachedAggregateConfigurationResultsManager GetCacheManager()
         {
-            return new CachedAggregateConfigurationResultsManager(_defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID));
+            return new CachedAggregateConfigurationResultsManager(_defaults.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID));
         }
 
         /// <summary>
@@ -748,7 +749,7 @@ namespace CatalogueManager.AggregationUIs
             if (VisualStudioDesignMode)
                 return;
 
-            _defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+            _defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
         }
 
         public IEnumerable<BitmapWithDescription> GetImages()

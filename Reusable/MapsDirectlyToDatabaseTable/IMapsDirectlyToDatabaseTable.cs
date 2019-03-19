@@ -18,7 +18,7 @@ namespace MapsDirectlyToDatabaseTable
     /// classes must follow strict rules e.g. all public properties must directly match columns in the database table holding them (See DatabaseEntity).  This is
     /// done in order to prevent corruption / race conditions / data loass etc in a multi user environment.</para>
     /// </summary>
-    public interface IMapsDirectlyToDatabaseTable : IDeleteable
+    public interface IMapsDirectlyToDatabaseTable : IDeleteable, INotifyPropertyChanged
     {
         /// <summary>
         /// Every database table that stores an <see cref="IMapsDirectlyToDatabaseTable"/> must have an identity column called ID which must be the primary key.
@@ -31,21 +31,14 @@ namespace MapsDirectlyToDatabaseTable
         /// </summary>
         [NoMappingToDatabase]
         IRepository Repository { get; set; }
-
-        /// <summary>
-        /// Event called when any persistent Property is changed to a new unique value (different than it's previous value)
-        /// </summary>
-        event PropertyChangedEventHandler PropertyChanged;
-
+        
         /// <summary>
         /// Makes any persistent Proporty change attempts throw an Exception.  (See also <see cref="PropertyChanged"/>)
         /// </summary>
         void SetReadOnly();
 
         //you must have a Property for each thing in your database table (With the same name)
-
-        //you may have a public static field called X_MaxLength for each of these Properties
-
+        
         //use MapsDirectlyToDatabaseTableRepository to fully utilise this interface
 
         //ensure you have a the same class name as the table name DIRECTLY

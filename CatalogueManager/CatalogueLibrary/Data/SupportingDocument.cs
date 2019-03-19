@@ -26,15 +26,8 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Finally you can tie in the Ticketing system so that you can audit time spent curating the document etc.</para>
     /// </summary>
-    public class SupportingDocument : VersionedDatabaseEntity,INamed
+    public class SupportingDocument : VersionedDatabaseEntity,INamed, ISupportingObject
     {
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int URL_MaxLength = -1;
-
         #region Database Properties
         private string _name;
         private Uri _uRL;

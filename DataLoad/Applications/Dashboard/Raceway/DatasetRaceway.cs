@@ -218,7 +218,7 @@ namespace Dashboard.Raceway
         
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues().Except(_collection.GetCatalogues()), false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Except(_collection.GetCatalogues()), false, false);
             dialog.AllowMultiSelect = true;
 
             if (dialog.ShowDialog() == DialogResult.OK)

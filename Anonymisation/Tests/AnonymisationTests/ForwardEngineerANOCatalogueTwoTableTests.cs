@@ -98,7 +98,7 @@ GO";
             engineer1.ExecuteForwardEngineering(out cata1,out cataItems1,out eis1);
             engineer2.ExecuteForwardEngineering(out cata2, out cataItems2, out eis2);
 
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(
+            new JoinInfo(CatalogueRepository,
                 c1.Single(e => e.GetRuntimeName().Equals("TestId")),
                 c2.Single(e => e.GetRuntimeName().Equals("TestId")),
                 ExtractionJoinType.Left,null);

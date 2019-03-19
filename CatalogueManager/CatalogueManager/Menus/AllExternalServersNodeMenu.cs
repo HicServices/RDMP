@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 
@@ -18,22 +19,22 @@ namespace CatalogueManager.Menus
     {
         public AllExternalServersNodeMenu(RDMPContextMenuStripArgs args, AllExternalServersNode node) : base(args,node)
         {
-            var assemblyDictionary = new Dictionary<ServerDefaults.PermissableDefaults, Assembly>();
+            var assemblyDictionary = new Dictionary<PermissableDefaults, Assembly>();
 
-            Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,ServerDefaults.PermissableDefaults.None));
+            Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null,PermissableDefaults.None));
 
             Items.Add(new ToolStripSeparator());
 
             //Add(new ExecuteCommandConfigureDefaultServers());
 
-            assemblyDictionary.Add(ServerDefaults.PermissableDefaults.DQE, typeof(DataQualityEngine.Database.Class1).Assembly);
-            assemblyDictionary.Add(ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
-            assemblyDictionary.Add(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
-            assemblyDictionary.Add(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID, typeof(IdentifierDump.Database.Class1).Assembly);
-            assemblyDictionary.Add(ServerDefaults.PermissableDefaults.ANOStore, typeof(ANOStore.Database.Class1).Assembly);
-            assemblyDictionary.Add(ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
+            assemblyDictionary.Add(PermissableDefaults.DQE, typeof(DataQualityEngine.Database.Class1).Assembly);
+            assemblyDictionary.Add(PermissableDefaults.WebServiceQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
+            assemblyDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            assemblyDictionary.Add(PermissableDefaults.IdentifierDumpServer_ID, typeof(IdentifierDump.Database.Class1).Assembly);
+            assemblyDictionary.Add(PermissableDefaults.ANOStore, typeof(ANOStore.Database.Class1).Assembly);
+            assemblyDictionary.Add(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
 
-            foreach (KeyValuePair<ServerDefaults.PermissableDefaults, Assembly> kvp in assemblyDictionary)
+            foreach (KeyValuePair<PermissableDefaults, Assembly> kvp in assemblyDictionary)
                 Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator, kvp.Value, kvp.Key));
 
             Add(new ExecuteCommandConfigureDefaultServers(_activator));

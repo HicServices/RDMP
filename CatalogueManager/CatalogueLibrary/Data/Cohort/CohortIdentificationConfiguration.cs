@@ -168,10 +168,6 @@ namespace CatalogueLibrary.Data.Cohort
         
 
         #endregion
-
-        [NoMappingToDatabase]
-        CatalogueRepository CatalogueRepository { get { return (CatalogueRepository) Repository; } }
-
         
 
         /// <summary>
@@ -257,7 +253,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters()
         {
-            return ((CatalogueRepository)Repository).GetAllParametersForParentTable(this).ToArray();
+            return CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
         }
 
 
@@ -423,7 +419,7 @@ namespace CatalogueLibrary.Data.Cohort
             IColumn extractionIdentifier = GetExtractionIdentifierFrom(toClone, out underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
             
             //clone will not have axis or pivot or dimensions other than extraction identifier
-            var newConfiguration = cataRepo.CloneObjectInTable(toClone);
+            var newConfiguration = toClone.ShallowClone();
 
             //make it's name follow the naming convention e.g. cic_105_LINK103_MyAggregate 
             EnsureNamingConvention(newConfiguration);
@@ -444,8 +440,8 @@ namespace CatalogueLibrary.Data.Cohort
 
 
             //now clone it's AggregateForcedJoins
-            foreach (var t in cataRepo.AggregateForcedJoiner.GetAllForcedJoinsFor(toClone))
-                cataRepo.AggregateForcedJoiner.CreateLinkBetween(newConfiguration, t);
+            foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(toClone))
+                cataRepo.AggregateForcedJoinManager.CreateLinkBetween(newConfiguration, t);
 
 
             //now give it 1 dimension which is the only IsExtractionIdentifier column 

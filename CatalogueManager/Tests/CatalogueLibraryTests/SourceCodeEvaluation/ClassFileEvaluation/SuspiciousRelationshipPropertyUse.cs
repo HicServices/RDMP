@@ -16,6 +16,7 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -45,6 +46,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
             foreach (Type type in types)
             {
+                //if it's a spont object ignore it
+                if(typeof(SpontaneousObject).IsAssignableFrom(type) || type == typeof(SpontaneouslyInventedColumn) || type == typeof(SpontaneouslyInventedFilter))
+                    continue;
+
                 //Find the C sharp code for the class
                 var relationshipProperties = type.GetProperties().Where(p => p.CanRead && !p.CanWrite);
                 
@@ -249,7 +254,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                             if (RelationshipPropertyInfos.TryGetBySecond(methodInfo, out prop))
                             {
 
-                                
+                                //It doesn't look injected but it is
+                                if(t == typeof(JoinInfo))
+                                    continue;
+
                                 //if we are injectable for it
                         if( t.GetInterfaces().Any(x =>
                               x.IsGenericType &&

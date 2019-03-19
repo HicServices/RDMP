@@ -305,7 +305,7 @@ namespace Diagnostics
 
 
             //cleanup old Catalogues
-            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllCatalogues(true).Where(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)))
+            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)))
                 c.DeleteInDatabase();
 
 

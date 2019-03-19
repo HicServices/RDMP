@@ -8,6 +8,7 @@ using System.IO;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Attachers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
@@ -45,7 +46,7 @@ namespace DataLoadEngineTests.Integration
             b.catalogue.LoggingDataTask = "TestPayloadInjection";
             b.catalogue.SaveToDatabase();
 
-            var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
+            var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
             lm.CreateNewLoggingTaskIfNotExists("TestPayloadInjection");
 
             var pt = new ProcessTask(CatalogueRepository, lmd, LoadStage.Mounting);

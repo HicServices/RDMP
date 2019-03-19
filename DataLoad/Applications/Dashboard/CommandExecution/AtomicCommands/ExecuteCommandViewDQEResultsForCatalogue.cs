@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -60,7 +61,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
                 return this;
             }
 
-            var dqeServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
+            var dqeServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.DQE);
 
             if (dqeServer == null)
             {

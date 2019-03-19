@@ -25,7 +25,7 @@ namespace Diagnostics
 
         protected Catalogue FindTestCatalogue(ICheckNotifier notifier)
         {
-            Catalogue[] catas = RepositoryLocator.CatalogueRepository.GetAllCatalogues()
+            Catalogue[] catas = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
                 .Where(c => c.Name.Equals(UserAcceptanceTestEnvironment.CatalogueName)).ToArray();
 
             if (catas.Length != 1)

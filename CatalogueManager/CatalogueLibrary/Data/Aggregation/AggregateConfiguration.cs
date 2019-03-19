@@ -217,7 +217,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public IEnumerable<AnyTableSqlParameter> Parameters
         {
-            get { return ((CatalogueRepository) Repository).GetAllParametersForParentTable(this); }
+            get { return CatalogueRepository.GetAllParametersForParentTable(this); }
         }
 
         /// <inheritdoc cref="Parameters"/>
@@ -234,7 +234,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public TableInfo[] ForcedJoins
         {
-            get { return ((CatalogueRepository) Repository).AggregateForcedJoiner.GetAllForcedJoinsFor(this); }
+            get { return CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this); }
         }
 
         /// <summary>
@@ -321,7 +321,7 @@ namespace CatalogueLibrary.Data.Aggregation
 
             set
             {
-                CohortAggregateContainer.SetOrderIfExistsFor(this, value);
+                CatalogueRepository.CohortContainerManager.SetOrder(this,value);
                 _orderWithinKnownContainer = value;
             }
         }
@@ -345,12 +345,16 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="name"></param>
         public AggregateConfiguration(ICatalogueRepository repository, ICatalogue catalogue, string name)
         {
+            //default values
+            CountSQL = "count(*)";
+            dtCreated = DateTime.Now;
+
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name},
                 {"Catalogue_ID", catalogue.ID}
             });
-
+            
             ClearAllInjections();
         }
         
@@ -391,7 +395,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// </summary>
         public void ReFetchOrder()
         {
-            _orderWithinKnownContainer = ((CatalogueRepository) Repository).GetOrderIfExistsFor(this);
+            _orderWithinKnownContainer = CatalogueRepository.CohortContainerManager.GetOrderIfExistsFor(this);
         }
 
         private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
@@ -565,14 +569,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public CohortAggregateContainer GetCohortAggregateContainerIfAny()
         {
-            return
-                Repository.SelectAllWhere<CohortAggregateContainer>(
-                    "SELECT CohortAggregateContainer_ID FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
-                    "CohortAggregateContainer_ID",
-                    new Dictionary<string, object>
-                    {
-                        {"AggregateConfiguration_ID", ID}
-                    }).SingleOrDefault();
+            return CatalogueRepository.CohortContainerManager.GetParent(this);
         }
 
         /// <summary>
@@ -618,10 +615,8 @@ namespace CatalogueLibrary.Data.Aggregation
         public AggregateConfiguration CreateClone()
         {
             var cataRepo = (CatalogueRepository) Repository;
-            var clone = Repository.CloneObjectInTable(this);
-
-            clone.Name = Name + "(Clone)";
-
+            var clone = ShallowClone();
+            
             if(clone.PivotOnDimensionID != null)
                 throw new NotImplementedException("Cannot clone due to PIVOT");
 
@@ -638,8 +633,8 @@ namespace CatalogueLibrary.Data.Aggregation
             }
 
             //now clone it's AggregateForcedJoins
-            foreach (var t in cataRepo.AggregateForcedJoiner.GetAllForcedJoinsFor(this))
-                cataRepo.AggregateForcedJoiner.CreateLinkBetween(clone, t);
+            foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(this))
+                cataRepo.AggregateForcedJoinManager.CreateLinkBetween(clone, t);
             
             if (RootFilterContainer_ID != null)
             {
@@ -735,6 +730,13 @@ namespace CatalogueLibrary.Data.Aggregation
             return
                 @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  It's role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
 
+        }
+
+        public AggregateConfiguration ShallowClone()
+        {
+            var clone = new AggregateConfiguration(CatalogueRepository, Catalogue, Name);
+            CopyShallowValuesTo(clone);
+            return clone;
         }
     }
 }

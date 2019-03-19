@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.ItemActivation;
@@ -42,11 +43,13 @@ namespace DataExportManager.ProjectUI.Graphs
             if(Request == null)
                 throw new Exception("Request has not been initialized yet, has SetCollection not yet been called?");
 
+            var repo = new MemoryCatalogueRepository();
+
             //we are hijacking the query builder creation for this graph
             AggregateBuilder toReturn =  base.GetQueryBuilder(aggregateConfiguration);
             
             //instead of only filtering on the filters of the Aggregate, also filter on the configurations data extraction filters AND on the cohort ID
-            var spontedContainer = new SpontaneouslyInventedFilterContainer(null,null,FilterContainerOperation.AND);
+            var spontedContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
 
             //the aggregate has filters (it probably does)
             if (toReturn.RootFilterContainer != null)
@@ -59,7 +62,7 @@ namespace DataExportManager.ProjectUI.Graphs
             //now also add the cohort where statement
             string cohortWhereSql = Request.ExtractableCohort.WhereSQL();
 
-            var spontedFilter = new SpontaneouslyInventedFilter(spontedContainer, cohortWhereSql, "Cohort ID Filter",
+            var spontedFilter = new SpontaneouslyInventedFilter(repo,spontedContainer, cohortWhereSql, "Cohort ID Filter",
                 "Cohort ID Filter (" + Request.ExtractableCohort + ")", null);
 
             //now we need to figure out what impromptu joins are going on in the main query extraction 

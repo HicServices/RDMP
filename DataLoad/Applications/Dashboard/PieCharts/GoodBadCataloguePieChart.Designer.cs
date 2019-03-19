@@ -38,7 +38,6 @@
             this.lblNoIssues = new System.Windows.Forms.Label();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.ddChartType = new System.Windows.Forms.ToolStripComboBox();
             this.btnAllCatalogues = new System.Windows.Forms.ToolStripButton();
             this.btnSingleCatalogue = new System.Windows.Forms.ToolStripButton();
             this.btnShowLabels = new System.Windows.Forms.ToolStripButton();
@@ -123,7 +122,6 @@
             // 
             this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.toolStripLabel1,
-            this.ddChartType,
             this.btnAllCatalogues,
             this.btnSingleCatalogue,
             this.btnShowLabels,
@@ -139,12 +137,6 @@
             this.toolStripLabel1.Name = "toolStripLabel1";
             this.toolStripLabel1.Size = new System.Drawing.Size(36, 22);
             this.toolStripLabel1.Text = "Type:";
-            // 
-            // ddChartType
-            // 
-            this.ddChartType.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddChartType.Name = "ddChartType";
-            this.ddChartType.Size = new System.Drawing.Size(121, 25);
             // 
             // btnAllCatalogues
             // 
@@ -208,7 +200,6 @@
         private System.Windows.Forms.GroupBox gbWhatThisIs;
         private System.Windows.Forms.Label lblNoIssues;
         private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripComboBox ddChartType;
         private System.Windows.Forms.ToolStripButton btnSingleCatalogue;
         private System.Windows.Forms.ToolStripButton btnAllCatalogues;
         private System.Windows.Forms.ToolStripButton btnRefresh;

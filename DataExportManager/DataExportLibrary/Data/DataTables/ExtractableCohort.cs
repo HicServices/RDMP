@@ -116,9 +116,6 @@ namespace DataExportLibrary.Data.DataTables
             }
         }
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int OverrideReleaseIdentifierSQL_MaxLength = -1;
-
         private Dictionary<string, string> _releaseToPrivateKeyDictionary;
         
         #region Relationships
@@ -592,7 +589,7 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return Repository.GetAllObjects<ExtractionConfiguration>("WHERE Cohort_ID = " + ID);
+            return Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID " , ID);
         }
     }
 }

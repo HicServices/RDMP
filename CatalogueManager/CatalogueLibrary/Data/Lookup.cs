@@ -165,7 +165,7 @@ namespace CatalogueLibrary.Data
                 {"Description_ID", description.ID},
                 {"ForeignKey_ID", foreignKey.ID},
                 {"PrimaryKey_ID", primaryKey.ID},
-                {"ExtractionJoinType", type.ToString()},
+                {"ExtractionJoinType", type},
                 {"Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation}
             });
         }
@@ -283,7 +283,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
         {
-            return Repository.GetAllObjects<LookupCompositeJoinInfo>("WHERE OriginalLookup_ID=" + ID);
+            return Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID" , ID);
         }
         /// <inheritdoc/>
         public ExtractionJoinType GetInvertedJoinType()

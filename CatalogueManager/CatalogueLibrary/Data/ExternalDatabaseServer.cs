@@ -152,17 +152,7 @@ namespace CatalogueLibrary.Data
 
         #endregion
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Server_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Database_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Username_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Password_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-
+        
         /// <summary>
         /// Creates a new persistent server reference in RDMP platform database that allows it to connect to a (usually database) server.
         /// 
@@ -184,7 +174,7 @@ namespace CatalogueLibrary.Data
                 parameters.Add("CreatedByAssembly", databaseAssemblyIfCreatedByOne.GetName().Name);
 
             Repository = repository;
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository) repository,DatabaseType.MicrosoftSQLServer);
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository,DatabaseType.MicrosoftSQLServer);
             repository.InsertAndHydrate(this, parameters);
         }
 

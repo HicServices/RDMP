@@ -16,7 +16,9 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
+using MapsDirectlyToDatabaseTable;
 
 namespace CohortManagerLibrary.QueryBuilding
 {
@@ -134,6 +136,8 @@ namespace CohortManagerLibrary.QueryBuilding
             if(_cohort == null)
                 throw new NotSupportedException("This method only works when there is a cohort aggregate, it does not work for CohortAggregateContainers");
 
+            var memoryRepository = new MemoryCatalogueRepository();
+
             //Get a builder for creating the basic aggregate graph 
             var summaryBuilder = _summary.GetQueryBuilder();
 
@@ -145,7 +149,7 @@ namespace CohortManagerLibrary.QueryBuilding
 
             //if we are only graphing a single filter from the Cohort
             if (singleFilterOnly != null)
-                cohortRootContainer = new SpontaneouslyInventedFilterContainer(null, new[] {singleFilterOnly},FilterContainerOperation.AND);
+                cohortRootContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, new [] { singleFilterOnly }, FilterContainerOperation.AND);
 
             //so hacky, we pass in the summary builder (a blatant lie!) and tell the CohortQueryBuilderHelper it belongs to AggregateConfiguration _cohort (when it doesn't).  This
             //will result in any PatientIndex tables associated with _cohort being propagated into the _summary builder
@@ -164,7 +168,7 @@ namespace CohortManagerLibrary.QueryBuilding
                 //they both have WHERE SQL
                 
                 //Create a new spontaneous container (virtual memory only container) that contains both subtrees
-                var spontContainer = new SpontaneouslyInventedFilterContainer(new[] { cohortRootContainer,summaryRootContainer }, null, FilterContainerOperation.AND);
+                var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,new[] { cohortRootContainer,summaryRootContainer }, null, FilterContainerOperation.AND);
                 summaryBuilder.RootFilterContainer = spontContainer;
             }
 
@@ -181,6 +185,8 @@ namespace CohortManagerLibrary.QueryBuilding
 
             if (cachingServer == null)
                 throw new NotSupportedException("No Query Caching Server configured");
+            
+            var memoryRepository = new MemoryCatalogueRepository();
 
             //Get a builder for creating the basic aggregate graph 
             var builder = _summary.GetQueryBuilder();
@@ -189,7 +195,7 @@ namespace CohortManagerLibrary.QueryBuilding
             var oldRootContainer = builder.RootFilterContainer;
 
             //Create a new spontaneous container (virtual memory only container, this will include an in line filter that restricts the graph to match the cohort and then include a subcontainer with the old root container - if there was one)
-            var spontContainer = new SpontaneouslyInventedFilterContainer(oldRootContainer != null ? new[] { oldRootContainer } : null, null, FilterContainerOperation.AND);
+            var spontContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,oldRootContainer != null ? new[] { oldRootContainer } : null, null, FilterContainerOperation.AND);
 
             //work out a filter SQL that will restrict the graph generated only to the cohort 
             CohortQueryBuilder cohortQueryBuilder = GetBuilder();
@@ -207,7 +213,7 @@ namespace CohortManagerLibrary.QueryBuilding
             var filterSql = _extractionIdentifierColumn.SelectSQL + " IN (" + cohortSql + ")";
 
             //Add a filter which restricts the graph generated to the cohort only
-            spontContainer.AddChild(new SpontaneouslyInventedFilter(spontContainer, filterSql, "Patient is in cohort", "Ensures the patients in the summary aggregate are also in the cohort aggregate (and only them)", null));
+            spontContainer.AddChild(new SpontaneouslyInventedFilter(memoryRepository,spontContainer, filterSql, "Patient is in cohort", "Ensures the patients in the summary aggregate are also in the cohort aggregate (and only them)", null));
 
             builder.RootFilterContainer = spontContainer;
 

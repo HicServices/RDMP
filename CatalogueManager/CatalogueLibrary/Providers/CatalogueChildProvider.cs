@@ -97,8 +97,6 @@ namespace CatalogueLibrary.Providers
 
         public StandardRegex[] AllStandardRegexes { get; set; }
 
-        public CatalogueItemIssue[] AllCatalogueItemIssues { get; private set; }
-
         //TableInfo side of things
         public AllANOTablesNode AllANOTablesNode { get; private set; }
         public ANOTable[] AllANOTables { get; set; }
@@ -201,7 +199,7 @@ namespace CatalogueLibrary.Providers
             AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
             
             //which TableInfos use which Credentials under which DataAccessContexts
-            AllDataAccessCredentialUsages = repository.TableInfoToCredentialsLinker.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
+            AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             
             AllColumnInfos = GetAllObjects<ColumnInfo>(repository);
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
@@ -237,8 +235,6 @@ namespace CatalogueLibrary.Providers
                 ei.InjectKnown(ci);
             }
 
-            AllCatalogueItemIssues = GetAllObjects<CatalogueItemIssue>(repository);
-
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             
             _filterChildProvider = new CatalogueFilterHierarchy(repository);
@@ -249,7 +245,7 @@ namespace CatalogueLibrary.Providers
             foreach (Lookup l in AllLookups)
                 l.SetKnownColumns(_allColumnInfos[l.PrimaryKey_ID], _allColumnInfos[l.ForeignKey_ID],_allColumnInfos[l.Description_ID]);
 
-            AllJoinInfos = repository.JoinInfoFinder.GetAllJoinInfos();
+            AllJoinInfos = repository.GetAllObjects<JoinInfo>();
 
             foreach (JoinInfo j in AllJoinInfos)
                 j.SetKnownColumns(_allColumnInfos[j.PrimaryKey_ID], _allColumnInfos[j.ForeignKey_ID]);
@@ -310,7 +306,7 @@ namespace CatalogueLibrary.Providers
             AllGovernanceNode = new AllGovernanceNode();
             AllGovernancePeriods = GetAllObjects<GovernancePeriod>(repository);
             AllGovernanceDocuments = GetAllObjects<GovernanceDocument>(repository);
-            GovernanceCoverage = GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods(repository);
+            GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
 
             AddChildren(AllGovernanceNode);
         }
@@ -435,11 +431,13 @@ namespace CatalogueLibrary.Providers
         private IEnumerable<Pipeline> AddChildren(StandardPipelineUseCaseNode node, DescendancyList descendancy)
         {
             HashSet<object> children = new HashSet<object>();
+            
+            MemoryRepository repo = new MemoryRepository();
 
             //find compatible pipelines useCase.Value
             foreach (Pipeline compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
             {
-                children.Add(new PipelineCompatibleWithUseCaseNode(compatiblePipeline, node.UseCase));
+                children.Add(new PipelineCompatibleWithUseCaseNode(repo,compatiblePipeline, node.UseCase));
             }
 
             //it is the first standard use case
@@ -803,9 +801,7 @@ namespace CatalogueLibrary.Providers
 
             if (ci.ColumnInfo_ID.HasValue)
                 childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
-
-            childObjects.AddRange(AllCatalogueItemIssues.Where(i => i.CatalogueItem_ID == ci.ID));
-
+            
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
         }
 

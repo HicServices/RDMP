@@ -6,9 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
@@ -23,25 +21,29 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>FilterContainers are fully hierarchical and must be fetched from the database via recursion from the SubContainer table (AggregateFilterSubContainer). 
     /// The class deals with all this transparently via GetSubContainers.</para>
     /// </summary>
-    public class AggregateFilterContainer : VersionedDatabaseEntity, IContainer, IDisableable
+    public class AggregateFilterContainer : ConcreteContainer, IDisableable
     {
         #region Database Properties
-        private FilterContainerOperation _operation;
+        
         private bool _isDisabled;
-
-
-        /// <inheritdoc/>
-        public FilterContainerOperation Operation
-        {
-            get { return _operation; }
-            set { SetField(ref  _operation, value); }
-        }
+        private string _softwareVersion;
+        
 
         /// <inheritdoc/>
         public bool IsDisabled
         {
             get { return _isDisabled; }
             set { SetField(ref _isDisabled, value); }
+        }
+
+        /// <summary>
+        /// The version of RDMP that was running when the object was created
+        /// </summary>
+        [DoNotExtractProperty]
+        public string SoftwareVersion
+        {
+            get { return _softwareVersion; }
+            set { SetField(ref  _softwareVersion, value); }
         }
 
         #endregion
@@ -51,18 +53,15 @@ namespace CatalogueLibrary.Data.Aggregation
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="operation"></param>
-        public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation)
+        public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterManager)
         {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
+            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation}});
         }
 
 
-        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
+        internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterManager,repository, r)
         {
-            FilterContainerOperation op;
-            FilterContainerOperation.TryParse(r["Operation"].ToString(), out op);
-            Operation = op;
-
+            SoftwareVersion = r["SoftwareVersion"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
 
@@ -72,77 +71,12 @@ namespace CatalogueLibrary.Data.Aggregation
             return Operation.ToString();
         }
 
-        /// <inheritdoc/>
-        public IContainer GetParentContainerIfAny()
-        {
-            return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ParentID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID=" + ID,
-                "AggregateFilterContainer_ParentID").SingleOrDefault();
-        }
 
         /// <inheritdoc/>
-        public IContainer[] GetSubContainers()
-        {
-            return Repository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID=" + ID, 
-                "AggregateFilterContainer_ChildID").ToArray();
-        }
-        
-        /// <inheritdoc/>
-        public IFilter[] GetFilters()
-        {
-            return Repository.GetAllObjects<AggregateFilter>("WHERE FilterContainer_ID="+ID).ToArray();
-        }
-
-        /// <inheritdoc/>
-        public void AddChild(IContainer child)
-        {
-            AddChild((AggregateFilterContainer)child);
-        }
-
-        private void AddChild(AggregateFilterContainer child)
-        {
-            Repository.Insert(
-                "INSERT INTO AggregateFilterSubContainer(AggregateFilterContainer_ParentID,AggregateFilterContainer_ChildID) VALUES (@AggregateFilterContainer_ParentID,@AggregateFilterContainer_ChildID)",
-            new Dictionary<string, object>
-            {
-                {"AggregateFilterContainer_ParentID", ID},
-                {"AggregateFilterContainer_ChildID", child.ID}
-            });
-        }
-
-
-
-        /// <inheritdoc/>
-        public void MakeIntoAnOrphan()
-        {
-            Repository.Delete("DELETE FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ChildID = @AggregateFilterContainer_ChildID", new Dictionary<string, object>
-            {
-                {"AggregateFilterContainer_ChildID", ID}
-            });
-        }
-        
-        /// <inheritdoc/>
-        public IContainer GetRootContainerOrSelf()
-        {
-            return new ContainerHelper().GetRootContainerOrSelf(this);
-        }
-
-        /// <inheritdoc/>
-        public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllFiltersIncludingInSubContainersRecursively(this);
-        }
-
-        /// <inheritdoc/>
-        public Catalogue GetCatalogueIfAny()
+        public override Catalogue GetCatalogueIfAny()
         {
             var agg = GetAggregate();
             return agg != null?agg.Catalogue:null;
-        }
-
-        /// <inheritdoc/>
-        public List<IContainer> GetAllSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllSubContainersRecursively(this);
         }
         
         /// <summary>
@@ -153,27 +87,17 @@ namespace CatalogueLibrary.Data.Aggregation
         public AggregateFilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
-            AggregateFilterContainer clone = Repository.CloneObjectInTable(this);
+            AggregateFilterContainer clone = ShallowClone();
             
             //clone our filters
             foreach (AggregateFilter filterToClone in GetFilters())
             {
                 //clone it
-                AggregateFilter cloneFilter = Repository.CloneObjectInTable(filterToClone);
+                AggregateFilter cloneFilter = filterToClone.ShallowClone(clone);
 
                 //clone parameters
                 foreach (AggregateFilterParameter parameterToClone in filterToClone.GetAllParameters())
-                {
-                    AggregateFilterParameter clonefilterParameter = Repository.CloneObjectInTable(parameterToClone);
-
-                    //change the cloned parameter to belong to the cloned filter
-                    clonefilterParameter.AggregateFilter_ID = cloneFilter.ID;
-                    clonefilterParameter.SaveToDatabase();
-                }
-
-                //change the clone to belonging to the cloned container (instead of this - the original container)
-                cloneFilter.FilterContainer_ID = clone.ID;
-                cloneFilter.SaveToDatabase();
+                    parameterToClone.ShallowClone(cloneFilter);
             }
 
             //now clone all subcontainers
@@ -191,17 +115,11 @@ namespace CatalogueLibrary.Data.Aggregation
             return clone;
         }
 
-        /// <inheritdoc/>
-        public void AddChild(IFilter filter)
+        private AggregateFilterContainer ShallowClone()
         {
-            if(filter.FilterContainer_ID.HasValue)
-                if (filter.FilterContainer_ID == ID)
-                    return; //It's already a child of us
-                else
-                    throw new NotSupportedException("Filter " + filter + " is already a child of nother container (ID=" + filter.FilterContainer_ID + ")");
-
-            filter.FilterContainer_ID = ID;
-            filter.SaveToDatabase();
+            var container = new AggregateFilterContainer(CatalogueRepository, Operation);
+            CopyShallowValuesTo(container);
+            return container;
         }
 
         /// <summary>
@@ -211,7 +129,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public AggregateConfiguration GetAggregate()
         {
-            var aggregateConfiguration = Repository.GetAllObjects<AggregateConfiguration>("WHERE RootFilterContainer_ID = " + ID).SingleOrDefault();
+            var aggregateConfiguration = Repository.GetAllObjectsWhere<AggregateConfiguration>("RootFilterContainer_ID",ID).SingleOrDefault();
 
             if (aggregateConfiguration != null)
                 return aggregateConfiguration;

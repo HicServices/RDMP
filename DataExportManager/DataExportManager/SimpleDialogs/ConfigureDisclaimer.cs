@@ -13,8 +13,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data;
+using DataExportLibrary.Repositories.Managers;
 
 namespace DataExportManager.SimpleDialogs
 {
@@ -27,11 +30,12 @@ namespace DataExportManager.SimpleDialogs
     /// </summary> 
     public partial class ConfigureDisclaimer : RDMPForm
     {
+        private readonly IDataExportRepository _dataExportRepository;
         private bool _allowClose = false;
-        ConfigurationProperties config;
-
-        public ConfigureDisclaimer()
+        
+        public ConfigureDisclaimer(IDataExportRepository dataExportRepository)
         {
+            _dataExportRepository = dataExportRepository;
             InitializeComponent();
         }
 
@@ -40,9 +44,7 @@ namespace DataExportManager.SimpleDialogs
             if(VisualStudioDesignMode)
                 return;
 
-             config = new ConfigurationProperties(false,RepositoryLocator.DataExportRepository);
-
-            string value = config.TryGetValue(ConfigurationProperties.ExpectedProperties.ReleaseDocumentDisclaimer);
+            string value = _dataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
             tb.Text = value ?? GetDefaultText();
 
@@ -70,7 +72,7 @@ Once you have finished your project, please inform HIC who will make arrangement
 
         private void btnSaveAndClose_Click(object sender, EventArgs e)
         {
-            config.SetValue(ConfigurationProperties.ExpectedProperties.ReleaseDocumentDisclaimer,tb.Text);
+            _dataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.ReleaseDocumentDisclaimer, tb.Text);
             _allowClose = true;
             DialogResult = DialogResult.OK;
             Close();

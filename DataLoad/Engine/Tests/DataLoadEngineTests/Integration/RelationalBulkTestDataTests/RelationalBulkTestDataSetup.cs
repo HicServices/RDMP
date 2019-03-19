@@ -29,7 +29,7 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
         [Test]
         public void ForwardEngineerCatalogue_Works()
         {
-            foreach (Catalogue remnant in CatalogueRepository.GetAllCatalogues().Where(c => c.Name.Equals("CIATestEvent")))
+            foreach (Catalogue remnant in CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name.Equals("CIATestEvent")))
             {
                 List<ITableInfo> normalTables, lookupTables;
                 remnant.GetTableInfos(out normalTables, out lookupTables);
@@ -49,7 +49,7 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
             Assert.NotNull(bulkData.CIATestEventCatalogue);
             try
             {
-                Assert.AreEqual(1, CatalogueRepository.GetAllCatalogues().Count(c => c.Name.Equals("CIATestEvent")));
+                Assert.AreEqual(1, CatalogueRepository.GetAllObjects<Catalogue>().Count(c => c.Name.Equals("CIATestEvent")));
 
                 QueryBuilder qb = new QueryBuilder("","");
 
@@ -71,7 +71,7 @@ FROM
                 bulkData.DeleteCatalogues();
 
                 //shouldn't be any anymore
-                Assert.IsFalse(CatalogueRepository.GetAllCatalogues().Any(c => c.Name.Equals("CIATestEvent")));
+                Assert.IsFalse(CatalogueRepository.GetAllObjects<Catalogue>().Any(c => c.Name.Equals("CIATestEvent")));
             }
         }        
   

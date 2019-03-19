@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Data.DataLoad
@@ -29,6 +30,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <summary>
         /// The task for which this <see cref="ProcessTaskArgument"/> stores values
         /// </summary>
+        [Relationship(typeof(ProcessTask), RelationshipType.SharedObject)]
         public int ProcessTask_ID
         {
             get { return _processTask_ID; }
@@ -87,6 +89,14 @@ namespace CatalogueLibrary.Data.DataLoad
 
                 //convert the result back from generic to specific (us)
                 .ToArray();
+        }
+
+        public ProcessTaskArgument ShallowClone(ProcessTask into)
+        {
+            ProcessTaskArgument clone = new ProcessTaskArgument(CatalogueRepository, into);
+            CopyShallowValuesTo(clone,true);
+
+            return clone;
         }
     }
 }

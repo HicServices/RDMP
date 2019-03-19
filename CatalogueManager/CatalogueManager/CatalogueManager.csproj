@@ -506,7 +506,6 @@
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableCohortStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemIssue.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentials.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalDatabaseServer.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
@@ -845,7 +844,6 @@
     <Compile Include="Icons\IconProvision\Exceptions\IconProvisionException.cs" />
     <Compile Include="Icons\IconProvision\ICoreIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\AggregateConfigurationStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CatalogueItemIssueStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\CatalogueItemStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\CatalogueStateBasedIconProvider.cs" />
     <Compile Include="Icons\IconProvision\StateBasedIconProviders\CheckResultStateBasedIconProvider.cs" />
@@ -1136,18 +1134,6 @@
     </Compile>
     <Compile Include="PluginManagement\PluginManagementForm.Designer.cs">
       <DependentUpon>PluginManagementForm.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Issues\IssueUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Issues\IssueUI.Designer.cs">
-      <DependentUpon>IssueUI.cs</DependentUpon>
-    </Compile>
-    <Compile Include="Issues\SelectIssueSystemUser.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="Issues\SelectIssueSystemUser.Designer.cs">
-      <DependentUpon>SelectIssueSystemUser.cs</DependentUpon>
     </Compile>
     <Compile Include="MainFormUITabs\SubComponents\ImportSQLTable.cs">
       <SubType>Form</SubType>
@@ -1977,12 +1963,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="PluginManagement\PluginManagementForm.resx">
       <DependentUpon>PluginManagementForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Issues\IssueUI.resx">
-      <DependentUpon>IssueUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Issues\SelectIssueSystemUser.resx">
-      <DependentUpon>SelectIssueSystemUser.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\SubComponents\ImportSQLTable.resx">
       <DependentUpon>ImportSQLTable.cs</DependentUpon>

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
@@ -95,7 +96,7 @@ namespace ANOStore.ANOEngineering
 
         public IExternalDatabaseServer GetIdentifierDumpServer()
         {
-            return new ServerDefaults((CatalogueRepository)Catalogue.Repository).GetDefaultFor(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID);
+            return Catalogue.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
         }
 
         

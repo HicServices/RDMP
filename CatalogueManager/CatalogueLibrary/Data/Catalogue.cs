@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
@@ -34,71 +35,6 @@ namespace CatalogueLibrary.Data
     {
         #region Database Properties
         
-        //just create these variables (one for every string or Uri field and reflection will populate them
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Acronym_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Geographical_coverage_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Background_summary_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Search_keywords_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Update_freq_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Update_sched_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Time_coverage_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Contact_details_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Resource_owner_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Attribution_citation_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Access_options_MaxLength = -1;
-
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Detail_Page_URL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int API_access_URL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Browse_URL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Bulk_Download_URL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Query_tool_URL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Source_URL_MaxLength = -1;
-
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Country_of_origin_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Data_standards_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Administrative_contact_name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Administrative_contact_email_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Administrative_contact_telephone_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Administrative_contact_address_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Ethics_approver_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Source_of_data_collection_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int SubjectNumbers_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ValidatorXML_MaxLength = -1;
-
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Ticket_MaxLength = -1;
-
         private string _acronym;
         private string _name;
         private CatalogueFolder _folder;
@@ -796,6 +732,20 @@ namespace CatalogueLibrary.Data
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
 
+            //default values
+            if(Folder == null)
+                Folder = new CatalogueFolder(this, "\\");
+            
+            //if there is a default logging server
+            if (LiveLoggingServer_ID == null)
+            {
+                var liveLoggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                
+                if(liveLoggingServer != null)
+                    LiveLoggingServer_ID = liveLoggingServer.ID;
+            }
+            
+
             ClearAllInjections();
         }
         
@@ -1211,30 +1161,41 @@ namespace CatalogueLibrary.Data
             return AggregateConfigurations;
         }
 
-
-        /// <inheritdoc/>
-        public CatalogueItemIssue[] GetAllIssues()
-        {
-            return Repository.GetAllObjects<CatalogueItemIssue>("WHERE CatalogueItem_ID in (select ID from CatalogueItem WHERE Catalogue_ID =  " + ID + ")").ToArray();
-        }
-
         /// <inheritdoc/>
         public SupportingDocument[] GetAllSupportingDocuments(FetchOptions fetch)
         {
-            string sql = GetFetchSQL(fetch);
-
-            return Repository.GetAllObjects<SupportingDocument>(sql).ToArray();
+            return Repository.GetAllObjects<SupportingDocument>().Where(o => Fetch(o, fetch)).ToArray();
         }
         
         /// <inheritdoc/>
         public SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch)
         {
-            string sql = GetFetchSQL(fetch);
-
-            return Repository.GetAllObjects<SupportingSQLTable>(sql).ToArray();
+            return Repository.GetAllObjects<SupportingSQLTable>().Where(o=>Fetch(o,fetch)).ToArray();
         }
 
-        private string GetFetchSQL(FetchOptions fetch)
+        private bool Fetch(ISupportingObject o, FetchOptions fetch)
+        {
+            switch (fetch)
+            {
+                case FetchOptions.AllGlobals:
+                    return o.IsGlobal;
+                case FetchOptions.ExtractableGlobalsAndLocals:
+                    return (o.Catalogue_ID == ID || o.IsGlobal) && o.Extractable;
+                case FetchOptions.ExtractableGlobals:
+                    return o.IsGlobal && o.Extractable;
+                case FetchOptions.AllLocals:
+                    return o.Catalogue_ID == ID && !o.IsGlobal;
+               case FetchOptions.ExtractableLocals:
+                    return o.Catalogue_ID == ID && o.Extractable && !o.IsGlobal;
+                case FetchOptions.AllGlobalsAndAllLocals:
+                    return o.Catalogue_ID == ID || o.IsGlobal;
+                default:
+                    throw new ArgumentOutOfRangeException("fetch");
+            }
+        }
+
+
+        private string GetFetchSQL<T>(FetchOptions fetch) where T:IMapsDirectlyToDatabaseTable
         {
             switch (fetch)
             {
@@ -1370,6 +1331,15 @@ namespace CatalogueLibrary.Data
         }
         #endregion
 
+        /// <summary>
+        /// Provides a new instance of the object (in the database).  Properties will be copied from this object (child objects will not be created).
+        /// </summary>
+        /// <returns></returns>
+        public Catalogue ShallowClone()
+        {
+            var clone = new Catalogue(CatalogueRepository, Name + " Clone");
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
-
 }

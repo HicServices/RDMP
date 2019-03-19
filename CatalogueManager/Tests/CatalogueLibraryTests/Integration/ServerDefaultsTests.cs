@@ -6,6 +6,7 @@
 
 using System.Diagnostics;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -18,7 +19,7 @@ namespace CatalogueLibraryTests.Integration
         {
 
             ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
-            var originalTestLoggingServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.TestLoggingServer_ID);
+            var originalTestLoggingServer = defaults.GetDefaultFor(PermissableDefaults.TestLoggingServer_ID);
 
             var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme");
 
@@ -34,7 +35,7 @@ namespace CatalogueLibraryTests.Integration
                 databaseServer.Database = "TEST";
                 databaseServer.SaveToDatabase();
 
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.TestLoggingServer_ID,databaseServer);
+                defaults.SetDefault(PermissableDefaults.TestLoggingServer_ID,databaseServer);
                 Catalogue cata = new Catalogue(CatalogueRepository, "TestCatalogueFor_CreateNewExternalServerAndConfigureItAsDefault");
 
                 Assert.AreEqual(databaseServer.ID, cata.TestLoggingServer_ID);
@@ -46,11 +47,11 @@ namespace CatalogueLibraryTests.Integration
                 databaseServer.DeleteInDatabase();
 
                 //Although we have not expressedly cleared the default, we have deleted the server which should cascade into the defaults table
-                Assert.IsNull(defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.TestLoggingServer_ID));
+                Assert.IsNull(defaults.GetDefaultFor(PermissableDefaults.TestLoggingServer_ID));
 
                 //reset the original one
                 if (originalTestLoggingServer != null)
-                    defaults.SetDefault(ServerDefaults.PermissableDefaults.TestLoggingServer_ID, originalTestLoggingServer);
+                    defaults.SetDefault(PermissableDefaults.TestLoggingServer_ID, originalTestLoggingServer);
             }
 
         }

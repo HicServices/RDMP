@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -63,7 +64,7 @@ namespace CatalogueLibrary.Data.DataLoad
         private string _description;
         private CacheArchiveType _cacheArchiveType;
         private int? _overrideRawServerID;
-
+        
         /// <inheritdoc/>
         [AdjustableLocation]
         public string LocationOfFlatFiles
@@ -122,9 +123,6 @@ namespace CatalogueLibrary.Data.DataLoad
         #endregion
 
         
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int LocationOfFlatFiles_MaxLength = -1;
-
         #region Relationships
 
         /// <inheritdoc/>
@@ -344,7 +342,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
             if (catalogue.LiveLoggingServer_ID == null)
             {
-                loggingServer = new ServerDefaults((CatalogueRepository) Repository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = new ServerDefaults((CatalogueRepository) Repository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 if (loggingServer != null)
                     catalogue.LiveLoggingServer_ID = loggingServer.ID;

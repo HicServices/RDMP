@@ -6,6 +6,7 @@
 
 using System;
 using CatalogueLibrary.Data.DataLoad;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -16,7 +17,7 @@ namespace CatalogueLibrary.Spontaneous
     {
         private readonly object _value;
 
-        public SpontaneouslyInventedArgument(string name, object value)
+        public SpontaneouslyInventedArgument(MemoryRepository repo,string name, object value):base(repo)
         {
             Name = name;
             _value = value;

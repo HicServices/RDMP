@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
 using System.Threading;
 using FAnsi.Connections;
@@ -32,7 +33,6 @@ namespace MapsDirectlyToDatabaseTable
         protected DbConnectionStringBuilder _connectionStringBuilder;
         public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
 
-        static List<Type> MaxLengthsFetchedFor = new List<Type>();
         private static object _oLockUpdateCommands = new object();
         private UpdateCommandStore _updateCommandStore = new UpdateCommandStore();
 
@@ -150,42 +150,8 @@ namespace MapsDirectlyToDatabaseTable
                 }
             }
         }
-        
-        public void FigureOutMaxLengths(IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            lock (_oLockUpdateCommands)
-            {
-                //since we are setting static fields we must keep a list of what types we have already processed the max lengths for
-                if (MaxLengthsFetchedFor.Contains(oTableWrapperObject.GetType()))
-                    return;
 
-                MaxLengthsFetchedFor.Add(oTableWrapperObject.GetType());
-
-                //fields in class
-                FieldInfo[] fields = oTableWrapperObject.GetType().GetFields();
-                //fields in database
-                DiscoveredColumn[] colsInDatabase = DiscoveredServer.GetCurrentDatabase().ExpectTable(oTableWrapperObject.GetType().Name).DiscoverColumns().ToArray();
-             
-                foreach (var field in fields)
-                {
-                    if (field.Name.EndsWith("_MaxLength"))
-                    {
-                        string expectedColName = field.Name.Substring(0, field.Name.IndexOf("_MaxLength"));
-
-                        DiscoveredColumn col = colsInDatabase.SingleOrDefault(c => c.GetRuntimeName().Equals(expectedColName));
-
-                        if(col == null)
-                            throw new MissingFieldException("Data class " + oTableWrapperObject.GetType().Name + " has a field called " + field.Name + " but the database did not have a field called " + expectedColName + " so we were unable to set it's max length");
-                        
-                        //null because static!
-                        field.SetValue(null, col.DataType.GetLengthIfString());
-                    }
-                }
-            }
-
-        }
-
-        public void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        protected void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             foreach (DbParameter p in cmd.Parameters)
             {
@@ -213,42 +179,7 @@ namespace MapsDirectlyToDatabaseTable
             else
                 p.Value = propValue;
         }
-
-        /// <summary>
-        /// This method is used to allow you to clone an IMapsDirectlyToDatabaseTable object into a DIFFERENT database.  You should use DbCommandBuilder
-        /// and "SELECT * FROM TableX" in order to get the Insert command and then pass in a corresponding wrapper object which must have properties
-        /// that exactly match the underlying table, these will be populated into insertCommand ready for you to use
-        /// </summary>
-        /// <param name="insertCommand"></param>
-        /// <param name="oTableWrapperObject"></param>
-        public void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject)
-        {
-            lock (_oLockUpdateCommands)
-            {
-                foreach (DbParameter parameter in insertCommand.Parameters)
-                {
-                    Type t = oTableWrapperObject.GetType();
-                    string property = parameter.ParameterName.TrimStart(new char[] {'@'});
-
-                    PropertyInfo p = t.GetProperty(property);
-
-                    if (p == null)
-                        throw new Exception("could not find property called " + property + " on object of type " +
-                                            oTableWrapperObject.GetType().Name);
-                    object value = p.GetValue(oTableWrapperObject, null);
-                    
-                    SetParameterToValue(parameter, value);
-                }
-            }
-        }
-
-        /// <inheritdoc/>
-        public T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable
-        {
-            var repository = (TableRepository) oToClone.Repository;
-            return CloneObjectInTable(oToClone, repository);
-        }
-
+        
         public bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
             return StillExists(typeof(T),id);
@@ -272,36 +203,6 @@ namespace MapsDirectlyToDatabaseTable
             return exists;
         }
 
-        public T CloneObjectInTable<T>(T oToClone, TableRepository sourceRepository) where T:IMapsDirectlyToDatabaseTable
-        {
-            //first of all run a select on the table so that we can get all the columns in the underlying table
-            using (var con = sourceRepository.GetConnection())
-            {
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT * FROM [" + oToClone.GetType().Name + "] WHERE ID=" + oToClone.ID, con.Connection, con.Transaction);
-
-                //adapter and builder are used to generate an INSERT command compatible with the SELECT (i.e. all fields).  Note that this does not generate for the
-                //identity column ID.  We know there is an identity and that it is called ID because that is one of the requirements of the IMapsDirectlyToDatabaseTable 
-                //pattern
-
-                DbCommand cloneCommand = DatabaseCommandHelper.GetInsertCommand(cmd);
-                cloneCommand.Connection = con.Connection;
-                
-                //if cloning into the same database
-                PopulateInsertCommandValuesWithCurrentState(cloneCommand, oToClone); //give the new clone a new ID
-                
-                cloneCommand.CommandText += ";SELECT @@IDENTITY";
-                    
-                try
-                {
-                    return GetObjectByID<T>(int.Parse(cloneCommand.ExecuteScalar().ToString()));
-                }
-                catch (SqlException e)
-                {
-                    throw new Exception("Error cloning " + oToClone + " (object of type " + oToClone.GetType().Name + " with ID=" + oToClone.ID + ")", e);
-                }
-            }
-        }
-        
         /// <summary>
         /// Get's all the objects of type T that have the parent 'parent' (which will be interrogated by it's ID).  Note that for this to work the type T must have a property which is EXACTLY the Parent objects name with _ID afterwards
         /// </summary>
@@ -311,8 +212,7 @@ namespace MapsDirectlyToDatabaseTable
         public T[] GetAllObjectsWithParent<T>(IMapsDirectlyToDatabaseTable parent) where T : IMapsDirectlyToDatabaseTable
         {
             //no cached result so fallback on regular method
-            string fieldName = parent.GetType().Name + "_ID";
-            return GetAllObjects<T>("WHERE " + fieldName + "=" + parent.ID );
+            return GetAllObjectsWhere<T>(parent.GetType().Name + "_ID", parent.ID );
         }
 
         public T GetObjectByID<T>(int id) where T:IMapsDirectlyToDatabaseTable
@@ -375,7 +275,12 @@ namespace MapsDirectlyToDatabaseTable
             return _cacheMonitor.RegisterTableMonitor(this, ConstructEntity<T>);
         }
 
-        public T[] GetAllObjects<T>( string whereSQL = null) where T:IMapsDirectlyToDatabaseTable
+        public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjects<T>(null);
+        }
+
+        public T[] GetAllObjects<T>(string whereSQL) where T : IMapsDirectlyToDatabaseTable
         {
             string typename = typeof (T).Name;
 
@@ -402,7 +307,38 @@ namespace MapsDirectlyToDatabaseTable
             return result;
         }
 
-        
+        public T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjectsWhere<T>("WHERE " + property + " = @val",new Dictionary<string, object>(){{"@val",value1}} );
+        }
+
+        public T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,object value2) where T : IMapsDirectlyToDatabaseTable
+        {
+            string oper;
+
+            switch (operand)
+            {
+                case ExpressionType.AndAlso:
+                    oper = "AND";
+                    break;
+                case ExpressionType.OrElse:
+                    oper = "OR";
+                    break;
+                default:
+                    throw new NotSupportedException("operand");
+            }
+
+            return GetAllObjectsWhere<T>(
+
+                string.Format("WHERE {0}=@val1 {1} {2}=@val2",property1,oper,property2) , new Dictionary<string, object>()
+                {
+                    { "@val1", value1 },
+                    { "@val2", value2 },
+
+                
+                });
+        }
+
         public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjects(typeof (T), whereSQL, parameters).Cast<T>().ToArray();
@@ -459,23 +395,6 @@ namespace MapsDirectlyToDatabaseTable
             return DatabaseVersionProvider.GetVersionFromDatabase(ConnectionStringBuilder);
         }
 
-        public Dictionary<string, int> GetObjectCountByVersion(Type type)
-        {
-            using (var opener = GetConnection())
-            {
-                Dictionary<string, int> toReturn = new Dictionary<string, int>();
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT SoftwareVersion,Count(*) as countOfObjects FROM " + type.Name + " group by SoftwareVersion", opener.Connection,opener.Transaction);
-
-                DbDataReader r = cmd.ExecuteReader();
-
-                while (r.Read())
-                    toReturn.Add((string)r["SoftwareVersion"], (int)r["countOfObjects"]);
-
-                r.Close();
-                return toReturn;
-            }
-        }
-
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjectsInIDList(typeof (T), ids).Cast<T>();
@@ -505,7 +424,7 @@ namespace MapsDirectlyToDatabaseTable
 
             if (obj1.GetType() == obj2.GetType())
             {
-                return ((IMapsDirectlyToDatabaseTable) obj1).ID == ((IMapsDirectlyToDatabaseTable) obj2).ID;
+                return obj1.ID == ((IMapsDirectlyToDatabaseTable)obj2).ID && obj1.Repository == ((IMapsDirectlyToDatabaseTable)obj2).Repository;
             }
 
             return false;
@@ -689,28 +608,10 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
         
-        public int Insert(string sql, Dictionary<string, object> parameters)
-        {
-            using (var opener = GetConnection())
-            {
-                using (var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction))
-                {
-                    return cmd.ExecuteNonQuery();
-                }
-            }
-        }
+        
 
-        public int Insert<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
-        {
-            using (var opener = GetConnection())
-            {
-                var query = CreateInsertStatement<T>(parameters);
-                var cmd = PrepareCommand(query, parameters, opener.Connection, opener.Transaction);
-                return cmd.ExecuteNonQuery();
-            }
-        }
-
-        public int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
+        
+        private int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
             using (var opener = GetConnection())
             {
@@ -964,19 +865,16 @@ namespace MapsDirectlyToDatabaseTable
             });
         }
 
-
-        private void AuditCacheHit()
+        public int Insert(string sql, Dictionary<string, object> parameters)
         {
-            if (DatabaseCommandHelper.PerformanceCounter != null)
-                Interlocked.Add(ref DatabaseCommandHelper.PerformanceCounter.CacheHits, 1);
+            using (var opener = GetConnection())
+            {
+                using (var cmd = PrepareCommand(sql, parameters, opener.Connection, opener.Transaction))
+                {
+                    return cmd.ExecuteNonQuery();
+                }
+            }
         }
-
-        private void AuditCacheMiss()
-        {
-            if (DatabaseCommandHelper.PerformanceCounter != null)
-                Interlocked.Add(ref DatabaseCommandHelper.PerformanceCounter.CacheMisses, 1);
-        }
-
 
         private Type[] _compatibleTypes;
         public IMapsDirectlyToDatabaseTable[] GetEverySingleObjectInEntireDatabase()

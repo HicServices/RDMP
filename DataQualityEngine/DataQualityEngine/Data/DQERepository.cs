@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
@@ -37,9 +38,8 @@ namespace DataQualityEngine.Data
         public DQERepository(CatalogueRepository catalogueRepository)
         {
             CatalogueRepository = catalogueRepository;
-            
-            ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
-            var server = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
+
+            var server = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.DQE);
 
             if (server == null)
                 throw new NotSupportedException("There is no DataQualityEngine Reporting Server (ExternalDatabaseServer).  You will need to create/set one in CatalogueManager by using 'Locations=>Manage External Servers...'");

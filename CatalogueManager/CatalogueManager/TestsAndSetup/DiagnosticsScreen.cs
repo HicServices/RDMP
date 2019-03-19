@@ -111,7 +111,7 @@ namespace CatalogueManager.TestsAndSetup
             checksUI1.Clear();
             try
             {
-                foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllCatalogues(true))
+                foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                     c.Check(checksUI1);
             }
             catch (Exception exception)

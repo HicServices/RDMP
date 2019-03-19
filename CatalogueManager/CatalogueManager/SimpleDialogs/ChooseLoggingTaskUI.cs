@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
@@ -307,7 +308,7 @@ namespace CatalogueManager.SimpleDialogs
 
         private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)
         {
-            CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
             RefreshUIFromDatabase();
         }
 

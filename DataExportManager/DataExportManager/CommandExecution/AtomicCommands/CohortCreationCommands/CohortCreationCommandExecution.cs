@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.CohortCreationPipeline;
@@ -91,7 +92,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);
 
             //add in the logging server
-            var loggingServer = new ServerDefaults(catalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            var loggingServer = catalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (loggingServer != null)
             {

@@ -4,8 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using DataExportLibrary.Data;
+using CatalogueLibrary.Repositories.Managers;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -14,33 +13,14 @@ namespace DataExportLibrary.Tests
     public class ConfigurationPropertiesTests : DatabaseTests
     {
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void CreateNewArgumentAndGetValue(bool withCaching)
-        {
-            var configurationProperties = new ConfigurationProperties(withCaching, DataExportRepository);
-            configurationProperties.SetValue("fishes","hi");
-            Assert.AreEqual(configurationProperties.GetValue("fishes"),"hi");
+        public void CreateNewArgumentAndGetValue()
+        {            
+            DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "hi");
+            Assert.AreEqual(DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), "hi");
 
-            //make sure delete results in 1 affected row
-            Assert.AreEqual(configurationProperties.DeleteValue("fishes"),1);
+            //make sure delete
+            DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, null);
+            Assert.AreEqual(DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern), null);
         }
-
-        [Test]
-        public void GetNonExistantValue_KeyNotFound()
-        {
-            ConfigurationProperties properties = new ConfigurationProperties(true, DataExportRepository);
-            Assert.Throws<KeyNotFoundException>(()=>properties.GetValue("asdfasljdfljsadkflkasjdflkjasdfljk"));
-        }
-
-
-        [Test]
-        public void GetNonExistantValueUsingTry_ReturnsNull()
-        {
-            ConfigurationProperties properties = new ConfigurationProperties(true, DataExportRepository);
-            Assert.IsNull(properties.TryGetValue("asdfasljdfljsadkflkasjdflkjasdfljk"));
-        }
-
-
     }
 }

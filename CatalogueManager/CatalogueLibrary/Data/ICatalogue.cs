@@ -150,10 +150,7 @@ namespace CatalogueLibrary.Data
 
         /// <inheritdoc cref="GetDistinctLiveDatabaseServer(DataAccessContext,bool,out IDataAccessPoint)"/>
         DiscoveredServer GetDistinctLiveDatabaseServer(DataAccessContext context, bool setInitialDatabase);
-
-        /// <inheritdoc cref="CatalogueItemIssue"/>
-        CatalogueItemIssue[] GetAllIssues();
-
+        
         /// <inheritdoc cref="SupportingSQLTable"/>
         SupportingSQLTable[] GetAllSupportingSQLTablesForCatalogue(FetchOptions fetch);
 

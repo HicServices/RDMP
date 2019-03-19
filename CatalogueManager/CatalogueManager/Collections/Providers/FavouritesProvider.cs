@@ -25,7 +25,7 @@ namespace CatalogueManager.Collections.Providers
         {
             _activator = activator;
             _catalogueRepository = catalogueRepository;
-            CurrentFavourites = catalogueRepository.GetAllObjects<Favourite>("WHERE Username='" + Environment.UserName + "'").ToList();
+            CurrentFavourites = catalogueRepository.GetAllObjectsWhere<Favourite>("Username" , Environment.UserName).ToList();
         }
 
         public void AddFavourite(object sender, IMapsDirectlyToDatabaseTable o)

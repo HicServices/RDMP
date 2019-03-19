@@ -15,6 +15,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.ItemActivation;
@@ -52,7 +53,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
             //stick our IFilter into the root container (actually create a new root container with our filter in it and move the old root if any into it)
             rootContainer =
-                new SpontaneouslyInventedFilterContainer(rootContainer == null ? null : new[] {rootContainer},
+                new SpontaneouslyInventedFilterContainer(new MemoryCatalogueRepository(),rootContainer == null ? null : new[] { rootContainer },
                     new[] {_collection.GetFilter()}, FilterContainerOperation.AND);
 
             basicQueryBuilder.RootFilterContainer = rootContainer;

@@ -23,7 +23,7 @@ namespace DataExportLibrary.Data.DataTables
 {
     /// <summary>
     /// All extractions through DataExportManager must be done through Projects.  A Project has a name, extraction directory and optionally Tickets (if you have a ticketing system 
-    /// configured) and DataUsers.  A Project should never be deleted even after all ExtractionConfigurations have been executed as it serves as an audit and a cloning point if you 
+    /// configured).  A Project should never be deleted even after all ExtractionConfigurations have been executed as it serves as an audit and a cloning point if you 
     /// ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).
     /// 
     /// <para>The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. </para>
@@ -69,25 +69,8 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int MasterTicket_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ExtractionDirectory_MaxLength = -1;
-
         #region Relationships
-
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IEnumerable<IDataUser> DataUsers
-        {
-            get
-            {
-                return Repository.SelectAll<DataUser>("SELECT * FROM Project_DataUser WHERE Project_ID=" + ID, "DataUser_ID");
-            }
-        }
-
+        
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public IExtractionConfiguration[] ExtractionConfigurations
@@ -101,12 +84,6 @@ namespace DataExportLibrary.Data.DataTables
         }
         #endregion
 
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IDataExportRepository DataExportRepository
-        {
-            get { return (IDataExportRepository)Repository; }
-        }
 
         /// <summary>
         /// Defines a new extraction project this is stored in the Data Export database

@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
@@ -17,5 +18,17 @@ namespace CatalogueLibrary.Repositories
     {
         CatalogueRepository CatalogueRepository { get; }
         CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
+        
+        /// <summary>
+        /// Manager for AND/OR WHERE containers and filters
+        /// </summary>
+        IFilterManager FilterManager { get; }
+        
+        /// <summary>
+        /// Handles forbidding deleting stuff / cascading deletes into other objects
+        /// </summary>
+        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
+        
+        IDataExportPropertyManager DataExportPropertyManager { get; }
     }
 }

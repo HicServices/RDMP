@@ -14,6 +14,7 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -47,6 +48,7 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         /// <inheritdoc/>
+        [Relationship(typeof(AggregateFilterContainer),RelationshipType.SharedObject)]
         public override int? FilterContainer_ID
         {
             get { return _filterContainerID; }
@@ -90,12 +92,6 @@ namespace CatalogueLibrary.Data.Aggregation
         public override IContainer FilterContainer { get { return FilterContainer_ID.HasValue? Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value):null;}}
 
         #endregion
-
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
         
         /// <summary>
         /// Defines a new filter (line of WHERE SQL) in the specified AggregateFilterContainer (AND / OR).  Calling this constructor creates a new object in the database
@@ -203,6 +199,13 @@ namespace CatalogueLibrary.Data.Aggregation
 
             var container = Repository.GetObjectByID<AggregateFilterContainer>(FilterContainer_ID.Value);
             return container.GetAggregate();
+        }
+
+        public AggregateFilter ShallowClone(AggregateFilterContainer into)
+        {
+            var clone = new AggregateFilter(CatalogueRepository, Name, into);
+            CopyShallowValuesTo(clone);
+            return clone;
         }
     }
 }

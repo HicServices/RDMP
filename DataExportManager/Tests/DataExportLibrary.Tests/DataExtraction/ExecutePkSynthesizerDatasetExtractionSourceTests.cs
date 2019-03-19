@@ -11,12 +11,14 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Repositories.Managers;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
@@ -32,7 +34,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [SetUp]
         public void SetHash()
         {
-            new ConfigurationProperties(false, DataExportRepository).SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
+            DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
         }
 
         [Test]
@@ -140,7 +142,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             ExtractionInformation fkEi = _catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(n => n.GetRuntimeName() == "Name");
             ColumnInfo pk = lookupCata.GetTableInfoList(false).Single().ColumnInfos.Single(n => n.GetRuntimeName() == "Name");
             
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(fkEi.ColumnInfo, pk, ExtractionJoinType.Left, null);
+            new JoinInfo(CatalogueRepository,fkEi.ColumnInfo, pk, ExtractionJoinType.Left, null);
 
             var ci = new CatalogueItem(CatalogueRepository, _catalogue, "Name_2");
             var ei = new ExtractionInformation(CatalogueRepository, ci, pk, pk.Name)

@@ -13,6 +13,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
@@ -167,8 +168,8 @@ namespace Diagnostics
             {
                 var builder = ((SqlConnectionStringBuilder)_discoveredServerToCreateRawDataOn.Builder);
 
-                var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
-                if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer) == null)
+                var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+                if (defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer) == null)
                 {
                     var create = notifier.OnCheckPerformed(new CheckEventArgs("There is no currently configured RAW server",
                         CheckResult.Warning, null,
@@ -182,7 +183,7 @@ namespace Diagnostics
                         raw.Password = builder.Password;
                         raw.SaveToDatabase();
 
-                        defaults.SetDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer, raw);
+                        defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, raw);
                         
                         _serversCreated.Add(raw);
                     }
@@ -482,13 +483,13 @@ namespace Diagnostics
             
             
             //if there are not currently any default logging servers, set them to the one we just created.
-            ServerDefaults defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+            IServerDefaults defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
-            if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID) == null)
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID,_loggingServer);
+            if (defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) == null)
+                defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID,_loggingServer);
 
-            if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.TestLoggingServer_ID) == null)
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.TestLoggingServer_ID, _loggingServer);
+            if (defaults.GetDefaultFor(PermissableDefaults.TestLoggingServer_ID) == null)
+                defaults.SetDefault(PermissableDefaults.TestLoggingServer_ID, _loggingServer);
 
             return true;
 
@@ -552,7 +553,7 @@ namespace Diagnostics
                         }
                     }
 
-                    var cataloguesUsingServer = repository.GetAllCatalogues(true)
+                    var cataloguesUsingServer = repository.GetAllObjects<Catalogue>()
                         .Where(
                             c =>
                                 c.LiveLoggingServer_ID == externalDatabaseServer.ID ||
@@ -1001,7 +1002,7 @@ namespace Diagnostics
             var repository = RepositoryLocator.CatalogueRepository;
             try
             {
-                DemographyCatalogue = repository.GetAllCatalogues().SingleOrDefault(cata => cata.Name.Equals(CatalogueName));
+                DemographyCatalogue = repository.GetAllObjects<Catalogue>().SingleOrDefault(cata => cata.Name.Equals(CatalogueName));
                 
                 if (DemographyCatalogue != null)
                 {
@@ -1253,12 +1254,12 @@ namespace Diagnostics
                 credentials.DeleteInDatabase();
             
             //check RAW server
-            var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
-            var rawServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
+            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            var rawServer = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);
 
             //did we create it?
             if (rawServer != null && _serversCreated.Contains(rawServer))//yes
-                defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);//so clear the default we created
+                defaults.ClearDefault(PermissableDefaults.RAWDataLoadServer);//so clear the default we created
 
             //any servers we created need to be deleted
             foreach (var server in _serversCreated)

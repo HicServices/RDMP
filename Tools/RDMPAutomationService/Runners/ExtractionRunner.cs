@@ -251,7 +251,7 @@ namespace RDMPAutomationService.Runners
 
         private bool HasConfigurationPreviouslyBeenReleased()
         {
-            var previouslyReleasedStuff = _configuration.ReleaseLogEntries;
+            var previouslyReleasedStuff = _configuration.ReleaseLog;
 
             if (previouslyReleasedStuff.Any())
                 return true;

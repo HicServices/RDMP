@@ -15,6 +15,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Providers
@@ -62,14 +63,12 @@ namespace CatalogueLibrary.Providers
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }
-
-        CatalogueItemIssue[] AllCatalogueItemIssues { get; }
-
+        
         AllGovernanceNode AllGovernanceNode { get; }
         GovernancePeriod[] AllGovernancePeriods { get; }
         GovernanceDocument[] AllGovernanceDocuments { get;}
 
-        /// <inheritdoc cref="GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods"/>
+        /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods"/>
         Dictionary<int, HashSet<int>> GovernanceCoverage { get;}
 
         JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }

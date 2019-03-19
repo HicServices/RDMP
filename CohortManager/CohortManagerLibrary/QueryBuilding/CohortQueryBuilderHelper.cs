@@ -15,6 +15,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueLibrary.Spontaneous;
 using FAnsi.Discovery.QuerySyntax;
+using MapsDirectlyToDatabaseTable;
 using QueryCaching.Aggregation;
 
 namespace CohortManagerLibrary.QueryBuilding
@@ -85,7 +86,7 @@ namespace CohortManagerLibrary.QueryBuilding
                 builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
 
                 if (topX != -1)
-                    builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(topX,AggregateTopXOrderByDirection.Descending,null);
+                    builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), topX,AggregateTopXOrderByDirection.Descending,null);
 
                 //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select 
                 if(!isJoinAggregate)

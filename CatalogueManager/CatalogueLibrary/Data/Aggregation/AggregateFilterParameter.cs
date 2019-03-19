@@ -27,11 +27,6 @@ namespace CatalogueLibrary.Data.Aggregation
     /// </summary>
     public class AggregateFilterParameter : VersionedDatabaseEntity, ISqlParameter
     {
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ParameterSQL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Value_MaxLength = -1;
-
         #region Database Properties
         private int _aggregateFilterID;
         private string _parameterSQL;
@@ -42,6 +37,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// The ID of the <see cref="AggregateFilter"/> to which this parameter should be used with.  The filter should have a reference to the parameter name (e.g. @startDate)
         /// in it's WhereSQL.
         /// </summary>
+        [Relationship(typeof(AggregateFilter),RelationshipType.SharedObject)]
         public int AggregateFilter_ID
         {
             get { return _aggregateFilterID; }
@@ -141,6 +137,12 @@ namespace CatalogueLibrary.Data.Aggregation
             return AggregateFilter;
         }
 
-        
+
+        public AggregateFilterParameter ShallowClone(AggregateFilter into)
+        {
+            var clone = new AggregateFilterParameter(CatalogueRepository, ParameterSQL, into);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

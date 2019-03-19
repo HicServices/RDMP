@@ -14,6 +14,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
@@ -121,11 +122,11 @@ namespace Tests.Common
 
             RunBlitzDatabases(RepositoryLocator);
 
-            var defaults = new ServerDefaults(CatalogueRepository);
+            var defaults = CatalogueRepository.GetServerDefaults();
 
-            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultDQEDatabaseName, ServerDefaults.PermissableDefaults.DQE,typeof(DataQualityEngine.Database.Class1).Assembly);
-            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultLoggingDatabaseName, ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, ServerDefaults.PermissableDefaults.RAWDataLoadServer, null));
+            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultDQEDatabaseName, PermissableDefaults.DQE,typeof(DataQualityEngine.Database.Class1).Assembly);
+            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
             CreateScratchArea();
             
@@ -170,7 +171,7 @@ namespace Tests.Common
             return settings;
         }
 
-        private SqlConnectionStringBuilder CreateServerPointerInCatalogue(ServerDefaults defaults, string prefix, string databaseName, ServerDefaults.PermissableDefaults defaultToSet,Assembly creator)
+        private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,Assembly creator)
         {
             var opts = new DatabaseCreationProgramOptions()
             {
@@ -357,9 +358,6 @@ delete from {1}..ConfigurationProperties
 delete from {1}..DeployedExtractionFilterParameter
 delete from {1}..DeployedExtractionFilter
 delete from {1}..FilterContainer
-
-delete from {1}..Project_DataUser
-delete from {1}..DataUser
 
 delete from {1}..ExtractableCohort
 delete from {1}..ExternalCohortTable
@@ -583,7 +581,7 @@ delete from {1}..Project
             {
                 //remove any existing credentials
                 foreach (DataAccessCredentials cred in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
-                    CatalogueRepository.TableInfoToCredentialsLinker.BreakAllLinksBetween(cred, ti);
+                    CatalogueRepository.TableInfoCredentialsManager.BreakAllLinksBetween(cred, ti);
 
                 //set the new ones
                 DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(CatalogueRepository);

@@ -124,7 +124,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         /// If the extracted artifacts for this configuration have been released (See <see cref="IsReleased"/>) then this will return all the
         /// audit objects describing that process.
         /// </summary>
-        IReleaseLogEntry[] ReleaseLogEntries { get; }
+        IReleaseLog[] ReleaseLog { get; }
 
         /// <summary>
         /// If the user (or an automated system) has attempted to extract any datasets in this <see cref="IExtractionConfiguration"/> then this will

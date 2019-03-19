@@ -10,9 +10,12 @@ using System.Linq;
 using System.Threading;
 using CatalogueLibrary;
 using CatalogueLibrary.Reports;
+using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
@@ -26,13 +29,13 @@ namespace DataExportLibrary.ExtractionTime
     /// </summary>
     public class WordDataReleaseFileGenerator : DocXHelper
     {
-        private readonly IRepository _repository;
+        private readonly IDataExportRepository _repository;
         public IExtractionConfiguration Configuration { get; set; }
         protected ICumulativeExtractionResults[] ExtractionResults { get; set; }
         protected IExtractableCohort Cohort { get; set; }
         protected IProject Project { get; set; }
-        
-        public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, IRepository repository)
+
+        public WordDataReleaseFileGenerator(IExtractionConfiguration configuration, IDataExportRepository repository)
         {
             _repository = repository;
             Configuration = configuration;
@@ -67,18 +70,13 @@ namespace DataExportLibrary.ExtractionTime
                 //actually changes it to landscape :)
                 document.PageLayout.Orientation = Orientation.Landscape;
                 
-                string disclaimer = new ConfigurationProperties(false, _repository)
-                    .TryGetValue(ConfigurationProperties.ExpectedProperties.ReleaseDocumentDisclaimer);
+                string disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
-                InsertParagraph(document,disclaimer);
+                if(disclaimer != null)
+                    InsertParagraph(document,disclaimer);
 
                 CreateTopTable1(document);
 
-                var users = Project.DataUsers.ToArray();
-
-                if (users.Any())
-                    InsertParagraph(document,"Data User(s):" + string.Join(",", users.Select(u => u.ToString())));
-                
                 InsertParagraph(document, Environment.NewLine);
 
                 CreateCohortDetailsTable(document);

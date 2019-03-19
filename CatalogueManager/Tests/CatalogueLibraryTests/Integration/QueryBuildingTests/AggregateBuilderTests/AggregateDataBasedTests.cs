@@ -13,6 +13,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi;
@@ -117,13 +118,15 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             var syntaxHelper = new QuerySyntaxHelperFactory().Create(type);
             var declaration = syntaxHelper.GetParameterDeclaration("@category", new DatabaseTypeRequest(typeof(string), 1));
 
-            var ORContainer = new SpontaneouslyInventedFilterContainer(null, null, FilterContainerOperation.OR);
+            var repo = new MemoryCatalogueRepository();
+
+            var ORContainer = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.OR);
             var constParam = new ConstantParameter(declaration, "'T'", "T Category Only", syntaxHelper);
             
             //this is deliberately duplication, it tests that the parameter compiles as well as that any dynamic sql doesn't get thrown by quotes
-            var filter1 = new SpontaneouslyInventedFilter(ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",
+            var filter1 = new SpontaneouslyInventedFilter(repo,ORContainer, "(Category=@category OR Category = 'T')", "Category Is @category",
                 "ensures the records belong to the category @category", new ISqlParameter[] { constParam });
-            var filter2 = new SpontaneouslyInventedFilter(ORContainer, "NumberInTrouble > 42",
+            var filter2 = new SpontaneouslyInventedFilter(repo,ORContainer, "NumberInTrouble > 42",
                 "number in trouble greater than 42", "See above", null);
 
             ORContainer.AddChild(filter1);

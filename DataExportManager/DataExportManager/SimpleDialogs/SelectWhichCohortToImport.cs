@@ -8,6 +8,7 @@ using System;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Windows.Forms;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
@@ -57,7 +58,7 @@ namespace DataExportManager.SimpleDialogs
 
             var idUserPlansToImport = (int) dataGridView1.SelectedRows[0].Cells[_valueMember].Value;
 
-            var existing = RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>("WHERE ExternalCohortTable_ID = " + _source.ID + " AND OriginID =" + idUserPlansToImport);
+            var existing = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableCohort>("ExternalCohortTable_ID" , _source.ID ,ExpressionType.AndAlso,  "OriginID" , idUserPlansToImport);
 
             if (existing.Any())
             {

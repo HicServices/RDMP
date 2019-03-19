@@ -13,8 +13,11 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data;
+using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 using CatalogueManager.Copying;
 using ReusableLibraryCode;
@@ -37,13 +40,14 @@ namespace DataExportManager.SimpleDialogs
     /// </summary>
     public partial class ConfigureHashingAlgorithm : RDMPForm
     {
+        private readonly IDataExportRepository _dataExportRepository;
+
         [DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryPreview { get; set; }
 
-        ConfigurationProperties _configurationProperties;
-
-        public ConfigureHashingAlgorithm()
+        public ConfigureHashingAlgorithm(IDataExportRepository dataExportRepository)
         {
+            _dataExportRepository = dataExportRepository;
             InitializeComponent();
             
             if(VisualStudioDesignMode)
@@ -64,9 +68,7 @@ namespace DataExportManager.SimpleDialogs
                 return;
 
             //get the current hashing algorithm
-            _configurationProperties = new ConfigurationProperties(false,RepositoryLocator.DataExportRepository);
-
-            string value = _configurationProperties.TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern);
+            string value = _dataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
             tbHashingAlgorithm.Text = value;
         }
 
@@ -78,7 +80,7 @@ namespace DataExportManager.SimpleDialogs
             {
                 QueryPreview.ReadOnly = false;
                 QueryPreview.Text = String.Format(pattern, "[TEST]..[ExampleColumn]", "123");
-                _configurationProperties.SetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern, pattern);
+                _dataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
                 
             }
             catch (Exception exception)

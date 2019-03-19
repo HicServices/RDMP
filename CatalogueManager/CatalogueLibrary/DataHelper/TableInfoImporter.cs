@@ -103,7 +103,6 @@ namespace CatalogueLibrary.DataHelper
         /// <inheritdoc/>
         public void DoImport(out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated)
         {
-            var cataRepository = (CatalogueRepository) _repository;
             string tableName;
             string databaseName;
 
@@ -124,7 +123,7 @@ namespace CatalogueLibrary.DataHelper
 
             DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName).ExpectTable(_importTableName,_importFromSchema).DiscoverColumns();
             
-            TableInfo parent = new TableInfo(cataRepository, tableName)
+            TableInfo parent = new TableInfo(_repository, tableName)
             {
                 DatabaseType = _type,
                 Database = databaseName,
@@ -145,7 +144,7 @@ namespace CatalogueLibrary.DataHelper
             //if there is a username then we need to associate it with the TableInfo we just created
             if(!string.IsNullOrWhiteSpace(_username) )
             {
-                DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(cataRepository);
+                DataAccessCredentialsFactory credentialsFactory = new DataAccessCredentialsFactory(_repository);
                 credentialsFactory.Create(tableInfoCreated, _username, _password, _usageContext);
             }
         }

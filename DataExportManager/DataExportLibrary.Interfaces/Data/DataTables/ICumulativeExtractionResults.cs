@@ -60,7 +60,7 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         /// If the extracted artifacts have been packaged up and released then this method returns the audit object for that release.
         /// </summary>
         /// <returns>Release audit or null if artifacts have not been released</returns>
-        IReleaseLogEntry GetReleaseLogEntryIfAny();
+        IReleaseLog GetReleaseLogEntryIfAny();
         
         /// <summary>
         /// If there are supplemental artifacts produced during extraction (e.g. lookup tables) then this method returns the audit object(s) for these

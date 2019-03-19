@@ -59,13 +59,12 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/> or the provided <paramref name="encrypter"/>
+        /// Creates a new encrypted string using <see cref="SimpleStringValueEncryption"/>
         /// </summary>
         /// <param name="repository"></param>
-        /// <param name="encrypter"></param>
-        public EncryptedString(ICatalogueRepository repository, IEncryptStrings encrypter = null)
+        public EncryptedString(ICatalogueRepository repository)
         {
-            _encrypter = encrypter ?? new SimpleStringValueEncryption(repository);
+            _encrypter =  repository.EncryptionManager.GetEncrypter();
         }
 
         /// <inheritdoc/>

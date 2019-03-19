@@ -10,6 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport.Exceptions;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
@@ -55,12 +56,12 @@ namespace CatalogueLibrary.Data.ImportExport
 
         private int? DefaultLocalReferenceGetter(PropertyInfo property, RelationshipAttribute relationshipattribute, ShareDefinition sharedefinition)
         {
-            var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
 
             if(property.Name == "LiveLoggingServer_ID" || property.Name == "TestLoggingServer_ID")
             {
-                var server = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                var server = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 if (server == null)
                     return null;
 
@@ -165,7 +166,7 @@ namespace CatalogueLibrary.Data.ImportExport
             if (Guid.Empty.ToString().Equals(sharingUID))
                 return false;
 
-            return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").Any();
+            return _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).Any();
         }
 
         /// <summary>
@@ -242,7 +243,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public ObjectImport GetExistingImport(string sharingUID)
         {
-            return _catalogueRepository.GetAllObjects<ObjectImport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+            return _catalogueRepository.GetAllObjectsWhere<ObjectImport>("SharingUID", sharingUID).SingleOrDefault();
         }
 
         /// <inheritdoc cref="GetExistingImport(string)"/>
@@ -258,7 +259,7 @@ namespace CatalogueLibrary.Data.ImportExport
         /// <returns></returns>
         public ObjectExport GetExistingExport(string sharingUID)
         {
-            return _catalogueRepository.GetAllObjects<ObjectExport>("WHERE SharingUID = '" + sharingUID + "'").SingleOrDefault();
+            return _catalogueRepository.GetAllObjectsWhere<ObjectExport>("SharingUID", sharingUID).SingleOrDefault();
         }
 
         /// <inheritdoc cref="GetExistingExport(string)"/>

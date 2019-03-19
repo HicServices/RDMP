@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
@@ -18,7 +19,7 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandCreateNewANOTable(_activator));
             
             Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
-                typeof(ANOStore.Database.Class1).Assembly, ServerDefaults.PermissableDefaults.ANOStore) 
+                typeof(ANOStore.Database.Class1).Assembly, PermissableDefaults.ANOStore) 
                 { OverrideCommandName = "Create ANOStore Database" });
 
             Add(new ExecuteCommandExportObjectsToFileUI(_activator,_activator.CoreChildProvider.AllANOTables));
