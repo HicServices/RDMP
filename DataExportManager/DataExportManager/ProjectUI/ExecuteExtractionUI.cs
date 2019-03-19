@@ -69,6 +69,9 @@ namespace DataExportManager.ProjectUI
         
         private ToolStripControlHost _pipelinePanel;
 
+        private ToolStripLabel lblMaxConcurrent = new ToolStripLabel("Concurrent:");
+        private ToolStripTextBox tbMaxConcurrent = new ToolStripTextBox(){Text="3"};
+
         public ExecuteExtractionUI()
         {
             InitializeComponent();
@@ -206,10 +209,15 @@ namespace DataExportManager.ProjectUI
         
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
         {
+            int max;
+
+            //if user has defined an alternative maximum concurrent number of executing extraction threads
+            max = int.TryParse(tbMaxConcurrent.Text, out max) ? max : 3;
+
             return new ExtractionOptions() { 
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
-                MaxConcurrentExtractions = 3,
+                MaxConcurrentExtractions = max,
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 : _pipelineSelectionUI1.Pipeline.ID,
                 Datasets = _datasets.All(tlvDatasets.IsChecked) ? new int[0] : _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray()
@@ -291,7 +299,10 @@ namespace DataExportManager.ProjectUI
             Add(_pipelinePanel);
 
             AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
-            
+
+            Add(lblMaxConcurrent);
+            Add(tbMaxConcurrent);
+
             checkAndExecuteUI1.SetItemActivator(activator);
 
             tlvDatasets.ExpandAll();

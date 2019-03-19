@@ -17,7 +17,6 @@ using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
@@ -206,7 +205,7 @@ namespace DataExportLibrary.Data.DataTables
         [NoMappingToDatabase]
         public IReleaseLog[] ReleaseLog
         {
-            get { return Repository.GetAllObjectsWithParent<ReleaseLog>(this); }
+            get { return CumulativeExtractionResults.Select(c => c.GetReleaseLogEntryIfAny()).Where(l => l != null).ToArray(); }
         }
 
         /// <inheritdoc cref="DefaultPipeline_ID"/>
@@ -252,13 +251,6 @@ namespace DataExportLibrary.Data.DataTables
 
 
         #endregion
-
-        /// <summary>
-        /// Used for static Test property, do not ever make public
-        /// </summary>
-        private ExtractionConfiguration()
-        {
-        }
         
         /// <summary>
         /// Creates a new extraction configuration in the <paramref name="repository"/> database for the provided <paramref name="project"/>.
@@ -633,16 +625,11 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public void Unfreeze()
         {
-            foreach (ICumulativeExtractionResults cumulativeExtractionResult in CumulativeExtractionResults)
-            {
-                //delete the release audit
-                var release = cumulativeExtractionResult.GetReleaseLogEntryIfAny();
-                if(release != null)
-                    release.DeleteInDatabase();
+            foreach (IReleaseLog l in ReleaseLog)
+                l.DeleteInDatabase();
 
-                //delete the extraction result
-                cumulativeExtractionResult.DeleteInDatabase();
-            }
+            foreach (ICumulativeExtractionResults r in CumulativeExtractionResults)
+                r.DeleteInDatabase();
 
             IsReleased = false;
             SaveToDatabase();

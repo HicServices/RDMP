@@ -29,15 +29,63 @@ namespace DataExportLibrary.DataRelease.Audit
     /// </summary>
     public class ReleaseLog : DatabaseEntity,IReleaseLog
     {
-        private readonly IRepository _repository;
-        public int CumulativeExtractionResults_ID { get; private set; }
-        public string Username { get; private set; }
-        public DateTime DateOfRelease { get; private set; }
-        public string MD5OfDatasetFile { get; private set; }
-        public string DatasetState { get; private set; }
-        public string EnvironmentState { get; private set; }
-        public bool IsPatch { get; private set; }
-        public string ReleaseFolder { get; private set; }
+        public int CumulativeExtractionResults_ID
+        {
+            get { return _cumulativeExtractionResultsID; }
+            set { SetField(ref _cumulativeExtractionResultsID, value); }
+        }
+
+        public string Username
+        {
+            get { return _username; }
+            set { SetField(ref _username , value); }
+        }
+
+        public DateTime DateOfRelease
+        {
+            get { return _dateOfRelease; }
+            set { SetField(ref  _dateOfRelease, value); }
+        }
+
+        public string MD5OfDatasetFile
+        {
+            get { return _md5OfDatasetFile; }
+            set { SetField(ref  _md5OfDatasetFile, value); }
+        }
+
+        public string DatasetState
+        {
+            get { return _datasetState; }
+            set { SetField(ref _datasetState, value); }
+        }
+
+        public string EnvironmentState
+        {
+            get { return _environmentState; }
+            set { SetField(ref _environmentState, value); }
+        }
+
+        public bool IsPatch
+        {
+            get { return _isPatch; }
+            set { SetField(ref _isPatch, value); }
+        }
+
+        public string ReleaseFolder
+        {
+            get { return _releaseFolder; }
+            set { SetField(ref _releaseFolder , value); }
+        }
+
+
+        private int _cumulativeExtractionResultsID;
+        private string _username;
+        private DateTime _dateOfRelease;
+        private string _md5OfDatasetFile;
+        private string _datasetState;
+        private string _environmentState;
+        private bool _isPatch;
+        private string _releaseFolder;
 
         private string _datasetName;
         public override string ToString()
@@ -45,8 +93,8 @@ namespace DataExportLibrary.DataRelease.Audit
             if (_datasetName == null)
                 try
                 {
-                    ICumulativeExtractionResults cumulativeExtractionResults = _repository.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
-                    IExtractableDataSet ds = _repository.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
+                    ICumulativeExtractionResults cumulativeExtractionResults = Repository.GetObjectByID<CumulativeExtractionResults>(CumulativeExtractionResults_ID);
+                    IExtractableDataSet ds = Repository.GetObjectByID<ExtractableDataSet>(cumulativeExtractionResults.ExtractableDataSet_ID);
                     _datasetName = ds.ToString();
                 }
                 catch (Exception e)
@@ -66,7 +114,6 @@ namespace DataExportLibrary.DataRelease.Audit
 
         public ReleaseLog(IDataExportRepository repository,ReleasePotential dataset, ReleaseEnvironmentPotential environment,bool isPatch,DirectoryInfo releaseDirectory,FileInfo datasetFileBeingReleased)
         {
-            
             repository.InsertAndHydrate(this,
                  new Dictionary<string, object>
                                        {
@@ -81,9 +128,8 @@ namespace DataExportLibrary.DataRelease.Audit
                                        });
         }
 
-        public ReleaseLog(IRepository repository, DbDataReader r)
+        public ReleaseLog(IRepository repository, DbDataReader r):base(repository,r)
         {
-            _repository = repository;
             CumulativeExtractionResults_ID = Convert.ToInt32(r["CumulativeExtractionResults_ID"]);
             Username = r["Username"].ToString();
             MD5OfDatasetFile = r["MD5OfDatasetFile"].ToString();
