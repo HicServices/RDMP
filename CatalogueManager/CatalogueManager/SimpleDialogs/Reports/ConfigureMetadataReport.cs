@@ -44,50 +44,51 @@ namespace CatalogueManager.SimpleDialogs.Reports
     {
         private readonly IActivateItems _activator;
 
-        public ConfigureMetadataReport(IActivateItems activator)
+        public ConfigureMetadataReport(IActivateItems activator,ICatalogue initialSelection = null)
         {
             _activator = activator;
             InitializeComponent();
-        }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-
-            if(VisualStudioDesignMode)
-                return;
-            
             _extractableCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null)).ToArray();
             cbxCatalogues.Items.AddRange(_extractableCatalogues);
-        }
-        
 
+            if (initialSelection != null)
+            {
+                rbSpecificCatalogue.Checked = true;
+                cbxCatalogues.SelectedItem = initialSelection;
+            }
+        }
+
+        
         MetadataReport report;
         private Catalogue[] _extractableCatalogues;
 
         private void btnGenerateReport_Click(object sender, EventArgs e)
         {
+            IEnumerable<Catalogue> toReportOn = _extractableCatalogues;
+
             if(rbAllCatalogues.Checked)
-            {
-                IEnumerable<Catalogue> toReportOn = _extractableCatalogues;
-
-                if (!cbIncludeDeprecated.Checked)
-                    toReportOn = toReportOn.Where(c => !c.IsDeprecated);
-
-                if (!cbIncludeInternal.Checked)
-                    toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset);
-                
-                report = new MetadataReport(RepositoryLocator.CatalogueRepository,toReportOn,_timeout,cbIncludeRowCounts.Checked,cbIncludeDistinctIdentifiers.Checked,!cbIncludeGraphs.Checked,new DatasetTimespanCalculator());
-            }
-            else
-                if (cbxCatalogues.SelectedItem == null)
+                toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated).ToArray();
+            else if (cbxCatalogues.SelectedItem == null)
                 return;
             else
-                    report = new MetadataReport(RepositoryLocator.CatalogueRepository, new[] { (Catalogue)cbxCatalogues.SelectedItem }, _timeout, cbIncludeRowCounts.Checked, cbIncludeDistinctIdentifiers.Checked, !cbIncludeGraphs.Checked, new DatasetTimespanCalculator());
+                toReportOn = new[] {(Catalogue) cbxCatalogues.SelectedItem};
 
+            var args = new MetadataReportArgs(toReportOn)
+            {
+                Timeout = _timeout,
+                IncludeRowCounts = cbIncludeRowCounts.Checked,
+                IncludeDistinctIdentifierCounts =  cbIncludeDistinctIdentifiers.Checked,
+                SkipImages =  !cbIncludeGraphs.Checked,
+                TimespanCalculator = new DatasetTimespanCalculator(),
+                IncludeDeprecatedItems = cbIncludeDeprecatedCatalogueItems.Checked,
+                IncludeInternalItems = cbIncludeInternalCatalogueItems.Checked,
+                MaxLookupRows = (int)nMaxLookupRows.Value
+            };
+            
+            report = new MetadataReport(RepositoryLocator.CatalogueRepository,args);
 
             report.RequestCatalogueImages += report_RequestCatalogueImages;
-            report.MaxLookupRows = (int)nMaxLookupRows.Value;
             report.GenerateWordFileAsync(progressBarsUI1);
 
             btnGenerateReport.Enabled = false;
@@ -166,19 +167,12 @@ namespace CatalogueManager.SimpleDialogs.Reports
         {
             cbxCatalogues.Enabled = false;
             btnPick.Enabled = false;
-
-            cbIncludeDeprecated.Enabled = true;
-            cbIncludeInternal.Enabled = true;
         }
 
         private void rbSpecificCatalogue_CheckedChanged(object sender, EventArgs e)
         {
             cbxCatalogues.Enabled = true;
             btnPick.Enabled = true;
-
-            cbIncludeDeprecated.Enabled = false;
-            cbIncludeInternal.Enabled = false;
-            
         }
 
 

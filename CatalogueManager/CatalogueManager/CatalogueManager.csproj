@@ -428,6 +428,7 @@
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateMetadataReport.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />

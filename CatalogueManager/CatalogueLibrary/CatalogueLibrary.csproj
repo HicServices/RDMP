@@ -408,6 +408,7 @@
     <Compile Include="QueryBuilding\Options\AggregateBuilderOptionsFactory.cs" />
     <Compile Include="QueryBuilding\Options\IAggregateBuilderOptions.cs" />
     <Compile Include="Reports\BitmapWithDescription.cs" />
+    <Compile Include="Reports\MetadataReportArgs.cs" />
     <Compile Include="Repositories\Managers\CohortContainerManager.cs" />
     <Compile Include="Repositories\Managers\AggregateFilterManager.cs" />
     <Compile Include="Repositories\Managers\DataExportProperty.cs" />

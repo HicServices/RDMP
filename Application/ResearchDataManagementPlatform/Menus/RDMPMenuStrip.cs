@@ -16,6 +16,7 @@ using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.FindAndReplace;
+using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.LocationsMenu.Ticketing;
@@ -123,9 +124,8 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            ConfigureMetadataReport dialog = new ConfigureMetadataReport(_activator);
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.Show();
+            var cmd = new ExecuteCommandGenerateMetadataReport(_activator,null);
+            cmd.Execute();
         }
 
 

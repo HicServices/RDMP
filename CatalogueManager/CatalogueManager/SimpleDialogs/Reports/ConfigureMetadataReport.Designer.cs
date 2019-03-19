@@ -32,8 +32,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
         {
             this.label1 = new System.Windows.Forms.Label();
             this.btnGenerateReport = new System.Windows.Forms.Button();
-            this.cbIncludeDeprecated = new System.Windows.Forms.CheckBox();
-            this.cbIncludeInternal = new System.Windows.Forms.CheckBox();
             this.btnStop = new System.Windows.Forms.Button();
             this.cbxCatalogues = new System.Windows.Forms.ComboBox();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
@@ -49,8 +47,12 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.nMaxLookupRows = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.progressBarsUI1 = new ReusableUIComponents.Progress.ProgressBarsUI();
+            this.gbReportOptions = new System.Windows.Forms.GroupBox();
+            this.cbIncludeInternalCatalogueItems = new System.Windows.Forms.CheckBox();
+            this.cbIncludeDeprecatedCatalogueItems = new System.Windows.Forms.CheckBox();
             this.groupBox1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nMaxLookupRows)).BeginInit();
+            this.gbReportOptions.SuspendLayout();
             this.SuspendLayout();
             // 
             // label1
@@ -73,26 +75,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.btnGenerateReport.UseVisualStyleBackColor = true;
             this.btnGenerateReport.Click += new System.EventHandler(this.btnGenerateReport_Click);
             // 
-            // cbIncludeDeprecated
-            // 
-            this.cbIncludeDeprecated.AutoSize = true;
-            this.cbIncludeDeprecated.Location = new System.Drawing.Point(124, 34);
-            this.cbIncludeDeprecated.Name = "cbIncludeDeprecated";
-            this.cbIncludeDeprecated.Size = new System.Drawing.Size(120, 17);
-            this.cbIncludeDeprecated.TabIndex = 1;
-            this.cbIncludeDeprecated.Text = "Include Deprecated";
-            this.cbIncludeDeprecated.UseVisualStyleBackColor = true;
-            // 
-            // cbIncludeInternal
-            // 
-            this.cbIncludeInternal.AutoSize = true;
-            this.cbIncludeInternal.Location = new System.Drawing.Point(246, 34);
-            this.cbIncludeInternal.Name = "cbIncludeInternal";
-            this.cbIncludeInternal.Size = new System.Drawing.Size(99, 17);
-            this.cbIncludeInternal.TabIndex = 2;
-            this.cbIncludeInternal.Text = "Include Internal";
-            this.cbIncludeInternal.UseVisualStyleBackColor = true;
-            // 
             // btnStop
             // 
             this.btnStop.Anchor = System.Windows.Forms.AnchorStyles.Top;
@@ -112,7 +94,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.cbxCatalogues.FormattingEnabled = true;
             this.cbxCatalogues.Location = new System.Drawing.Point(48, 79);
             this.cbxCatalogues.Name = "cbxCatalogues";
-            this.cbxCatalogues.Size = new System.Drawing.Size(530, 21);
+            this.cbxCatalogues.Size = new System.Drawing.Size(338, 21);
             this.cbxCatalogues.TabIndex = 4;
             // 
             // groupBox1
@@ -121,11 +103,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.groupBox1.Controls.Add(this.rbSpecificCatalogue);
             this.groupBox1.Controls.Add(this.rbAllCatalogues);
             this.groupBox1.Controls.Add(this.cbxCatalogues);
-            this.groupBox1.Controls.Add(this.cbIncludeInternal);
-            this.groupBox1.Controls.Add(this.cbIncludeDeprecated);
             this.groupBox1.Location = new System.Drawing.Point(17, 29);
             this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(622, 111);
+            this.groupBox1.Size = new System.Drawing.Size(430, 111);
             this.groupBox1.TabIndex = 0;
             this.groupBox1.TabStop = false;
             this.groupBox1.Text = "Catalogue";
@@ -133,7 +113,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             // btnPick
             // 
             this.btnPick.Enabled = false;
-            this.btnPick.Location = new System.Drawing.Point(584, 79);
+            this.btnPick.Location = new System.Drawing.Point(389, 79);
             this.btnPick.Name = "btnPick";
             this.btnPick.Size = new System.Drawing.Size(32, 21);
             this.btnPick.TabIndex = 5;
@@ -168,7 +148,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(797, 139);
+            this.label2.Location = new System.Drawing.Point(233, 57);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 8;
@@ -176,7 +156,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             // 
             // tbTimeout
             // 
-            this.tbTimeout.Location = new System.Drawing.Point(882, 136);
+            this.tbTimeout.Location = new System.Drawing.Point(318, 54);
             this.tbTimeout.Name = "tbTimeout";
             this.tbTimeout.Size = new System.Drawing.Size(100, 20);
             this.tbTimeout.TabIndex = 9;
@@ -188,7 +168,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.cbIncludeRowCounts.AutoSize = true;
             this.cbIncludeRowCounts.Checked = true;
             this.cbIncludeRowCounts.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIncludeRowCounts.Location = new System.Drawing.Point(664, 75);
+            this.cbIncludeRowCounts.Location = new System.Drawing.Point(6, 65);
             this.cbIncludeRowCounts.Name = "cbIncludeRowCounts";
             this.cbIncludeRowCounts.Size = new System.Drawing.Size(122, 17);
             this.cbIncludeRowCounts.TabIndex = 5;
@@ -200,7 +180,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.cbIncludeDistinctIdentifiers.AutoSize = true;
             this.cbIncludeDistinctIdentifiers.Checked = true;
             this.cbIncludeDistinctIdentifiers.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIncludeDistinctIdentifiers.Location = new System.Drawing.Point(664, 52);
+            this.cbIncludeDistinctIdentifiers.Location = new System.Drawing.Point(6, 42);
             this.cbIncludeDistinctIdentifiers.Name = "cbIncludeDistinctIdentifiers";
             this.cbIncludeDistinctIdentifiers.Size = new System.Drawing.Size(173, 17);
             this.cbIncludeDistinctIdentifiers.TabIndex = 5;
@@ -224,7 +204,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.cbIncludeGraphs.AutoSize = true;
             this.cbIncludeGraphs.Checked = true;
             this.cbIncludeGraphs.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIncludeGraphs.Location = new System.Drawing.Point(664, 29);
+            this.cbIncludeGraphs.Location = new System.Drawing.Point(6, 19);
             this.cbIncludeGraphs.Name = "cbIncludeGraphs";
             this.cbIncludeGraphs.Size = new System.Drawing.Size(98, 17);
             this.cbIncludeGraphs.TabIndex = 5;
@@ -234,7 +214,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             // 
             // nMaxLookupRows
             // 
-            this.nMaxLookupRows.Location = new System.Drawing.Point(756, 97);
+            this.nMaxLookupRows.Location = new System.Drawing.Point(318, 77);
             this.nMaxLookupRows.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -252,7 +232,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(664, 99);
+            this.label3.Location = new System.Drawing.Point(226, 79);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 13);
             this.label3.TabIndex = 12;
@@ -267,20 +247,56 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.progressBarsUI1.Size = new System.Drawing.Size(1016, 181);
             this.progressBarsUI1.TabIndex = 13;
             // 
+            // gbReportOptions
+            // 
+            this.gbReportOptions.Controls.Add(this.cbIncludeDeprecatedCatalogueItems);
+            this.gbReportOptions.Controls.Add(this.cbIncludeInternalCatalogueItems);
+            this.gbReportOptions.Controls.Add(this.cbIncludeGraphs);
+            this.gbReportOptions.Controls.Add(this.cbIncludeRowCounts);
+            this.gbReportOptions.Controls.Add(this.label3);
+            this.gbReportOptions.Controls.Add(this.tbTimeout);
+            this.gbReportOptions.Controls.Add(this.cbIncludeDistinctIdentifiers);
+            this.gbReportOptions.Controls.Add(this.label2);
+            this.gbReportOptions.Controls.Add(this.nMaxLookupRows);
+            this.gbReportOptions.Location = new System.Drawing.Point(453, 29);
+            this.gbReportOptions.Name = "gbReportOptions";
+            this.gbReportOptions.Size = new System.Drawing.Size(575, 104);
+            this.gbReportOptions.TabIndex = 14;
+            this.gbReportOptions.TabStop = false;
+            this.gbReportOptions.Text = "Report Options";
+            // 
+            // cbIncludeInternalCatalogueItems
+            // 
+            this.cbIncludeInternalCatalogueItems.AutoSize = true;
+            this.cbIncludeInternalCatalogueItems.Location = new System.Drawing.Point(229, 14);
+            this.cbIncludeInternalCatalogueItems.Name = "cbIncludeInternalCatalogueItems";
+            this.cbIncludeInternalCatalogueItems.Size = new System.Drawing.Size(178, 17);
+            this.cbIncludeInternalCatalogueItems.TabIndex = 5;
+            this.cbIncludeInternalCatalogueItems.Text = "Include Internal Catalogue Items";
+            this.cbIncludeInternalCatalogueItems.UseVisualStyleBackColor = true;
+            this.cbIncludeInternalCatalogueItems.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
+            // 
+            // cbIncludeDeprecatedCatalogueItems
+            // 
+            this.cbIncludeDeprecatedCatalogueItems.AutoSize = true;
+            this.cbIncludeDeprecatedCatalogueItems.Checked = true;
+            this.cbIncludeDeprecatedCatalogueItems.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbIncludeDeprecatedCatalogueItems.Location = new System.Drawing.Point(229, 34);
+            this.cbIncludeDeprecatedCatalogueItems.Name = "cbIncludeDeprecatedCatalogueItems";
+            this.cbIncludeDeprecatedCatalogueItems.Size = new System.Drawing.Size(196, 17);
+            this.cbIncludeDeprecatedCatalogueItems.TabIndex = 5;
+            this.cbIncludeDeprecatedCatalogueItems.Text = "Include Deprecated CatalogueItems";
+            this.cbIncludeDeprecatedCatalogueItems.UseVisualStyleBackColor = true;
+            this.cbIncludeDeprecatedCatalogueItems.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
+            // 
             // ConfigureMetadataReport
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1040, 864);
+            this.Controls.Add(this.gbReportOptions);
             this.Controls.Add(this.progressBarsUI1);
-            this.Controls.Add(this.label3);
-            this.Controls.Add(this.nMaxLookupRows);
-            this.Controls.Add(this.cbIncludeGraphs);
-            this.Controls.Add(this.cbIncludeDistinctIdentifiers);
-            this.Controls.Add(this.cbIncludeRowCounts);
             this.Controls.Add(this.aggregateGraph1);
-            this.Controls.Add(this.tbTimeout);
-            this.Controls.Add(this.label2);
             this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnGenerateReport);
@@ -291,6 +307,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nMaxLookupRows)).EndInit();
+            this.gbReportOptions.ResumeLayout(false);
+            this.gbReportOptions.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -300,8 +318,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnGenerateReport;
-        private System.Windows.Forms.CheckBox cbIncludeDeprecated;
-        private System.Windows.Forms.CheckBox cbIncludeInternal;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.ComboBox cbxCatalogues;
         private System.Windows.Forms.GroupBox groupBox1;
@@ -317,5 +333,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
         private System.Windows.Forms.Label label3;
         private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;
         private System.Windows.Forms.Button btnPick;
+        private System.Windows.Forms.GroupBox gbReportOptions;
+        private System.Windows.Forms.CheckBox cbIncludeDeprecatedCatalogueItems;
+        private System.Windows.Forms.CheckBox cbIncludeInternalCatalogueItems;
     }
 }
