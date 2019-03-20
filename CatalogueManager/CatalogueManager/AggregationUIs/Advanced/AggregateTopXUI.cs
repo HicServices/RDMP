@@ -21,6 +21,7 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 
 namespace CatalogueManager.AggregationUIs.Advanced
 {
@@ -31,12 +32,11 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// lowest number e.g. 'Top 10 LEAST prescribed drugs' instead.  If you change the dimension from the 'count column' to one of your dimensions then the TOP X will apply to that column
     /// instead.  e.g. the 'The first 10 prescribed drugs alphabetically' (not particularly useful).
     /// </summary>
-    public partial class AggregateTopXUI : UserControl
+    public partial class AggregateTopXUI : RDMPUserControl
     {
         private AggregateTopX _topX;
         private AggregateConfiguration _aggregate;
-        private IActivateItems _activator;
-
+        
         private const string CountColumn  = "Count Column";
 
         public AggregateTopXUI()
@@ -48,7 +48,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
         {
-            _activator = activator;
+            SetItemActivator(activator);
+
             Enabled = options.ShouldBeEnabled(AggregateEditorSection.TOPX, aggregate);
             _aggregate = aggregate;
             _topX = aggregate.GetTopXIfAny();
@@ -101,7 +102,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             if (_topX != null && string.IsNullOrWhiteSpace(tbTopX.Text))
             {
                 _topX.DeleteInDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
                 return;
             }
 
@@ -125,14 +126,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             //there isn't one yet
             if (_topX == null)
-                _topX = new AggregateTopX(_activator.RepositoryLocator.CatalogueRepository, _aggregate, i);
+                _topX = new AggregateTopX(Activator.RepositoryLocator.CatalogueRepository, _aggregate, i);
             else
             {
                 //there is one so change it's topX
                 _topX.TopX = i;
                 _topX.SaveToDatabase();
             }
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
         }
 
         private void ddOrderByDimension_SelectedIndexChanged(object sender, EventArgs e)
@@ -151,7 +152,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 _topX.OrderByDimensionIfAny_ID = null; //means use count column 
 
             _topX.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
         }
 
         private void ddAscOrDesc_SelectedIndexChanged(object sender, EventArgs e)
@@ -164,7 +165,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             _topX.OrderByDirection = (AggregateTopXOrderByDirection) ddAscOrDesc.SelectedItem;
             _topX.SaveToDatabase();
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
         }
     }
 }

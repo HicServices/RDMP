@@ -27,7 +27,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             ConfigureMetadataReport dialog = new ConfigureMetadataReport(Activator, _catalogue);
-            dialog.RepositoryLocator = Activator.RepositoryLocator;
             dialog.Show();
         }
 

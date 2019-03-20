@@ -67,13 +67,13 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             
             tbID.Text = _processTask.ID.ToString();
 
-            loadStageIconUI1.Setup(_activator.CoreIconProvider, _processTask.LoadStage);
+            loadStageIconUI1.Setup(Activator.CoreIconProvider, _processTask.LoadStage);
             loadStageIconUI1.Left = tbID.Right + 2;
         }
 
         private ExecutableRuntimeTask GetRuntimeTask()
         {
-            var factory = new RuntimeTaskFactory(_activator.RepositoryLocator.CatalogueRepository);
+            var factory = new RuntimeTaskFactory(Activator.RepositoryLocator.CatalogueRepository);
 
             var lmd = _processTask.LoadMetadata;
             var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);
@@ -136,7 +136,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             {
                 _processTask.Path = dialog.FileName;
                 _processTask.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_processTask));
+                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_processTask));
                 SetupForFile();
             }
         }

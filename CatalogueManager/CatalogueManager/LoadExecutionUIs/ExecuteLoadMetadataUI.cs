@@ -143,7 +143,7 @@ namespace CatalogueManager.LoadExecutionUIs
             if (scheduleItem.Key == 0)
                 return null;
 
-            return RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
+            return Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
         }
 
         

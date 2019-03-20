@@ -12,20 +12,17 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddNewLookupTableRelationship : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly Catalogue _catalogueIfKnown;
         private readonly TableInfo _lookupTableInfoIfKnown;
 
         public ExecuteCommandAddNewLookupTableRelationship(IActivateItems activator, Catalogue catalogueIfKnown, TableInfo lookupTableInfoIfKnown) : base(activator)
         {
-            _activator = activator;
             _catalogueIfKnown = catalogueIfKnown;
             _lookupTableInfoIfKnown = lookupTableInfoIfKnown;
 
@@ -45,7 +42,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if (_catalogueIfKnown == null)  
                 PickCatalogueAndLaunchForTableInfo(_lookupTableInfoIfKnown);
             else
-                _activator.ActivateLookupConfiguration(this, _catalogueIfKnown, _lookupTableInfoIfKnown);
+                Activator.ActivateLookupConfiguration(this, _catalogueIfKnown, _lookupTableInfoIfKnown);
         }
 
         private void PickCatalogueAndLaunchForTableInfo(TableInfo tbl)
@@ -61,7 +58,7 @@ provides a description for (a given TableInfo can be a Lookup for many columns i
                 {
                     Catalogue cata;
                     if(SelectOne(tbl.Repository,out cata))
-                        _activator.ActivateLookupConfiguration(this, cata, tbl);
+                        Activator.ActivateLookupConfiguration(this, cata, tbl);
                 }
             }
             catch (Exception exception)

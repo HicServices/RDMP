@@ -59,15 +59,15 @@ namespace CatalogueManager.LocationsMenu.Ticketing
         private void RefreshUIFromDatabase()
         {
             _bLoading = true;
-            _ticketingSystemConfiguration = RepositoryLocator.CatalogueRepository.GetTicketingSystem();
-            var mef = RepositoryLocator.CatalogueRepository.MEF;
+            _ticketingSystemConfiguration = _activator.RepositoryLocator.CatalogueRepository.GetTicketingSystem();
+            var mef = _activator.RepositoryLocator.CatalogueRepository.MEF;
             
             cbxType.Items.Clear();
             cbxType.Items.AddRange(mef.GetTypes<ITicketingSystem>().Select(t=>t.FullName).ToArray());
 
             ddCredentials.Items.Clear();
             ddCredentials.Items.Add(NoneText);
-            ddCredentials.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>().ToArray());
+            ddCredentials.Items.AddRange(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<DataAccessCredentials>().ToArray());
 
             if (_ticketingSystemConfiguration == null)
             {
@@ -111,7 +111,7 @@ namespace CatalogueManager.LocationsMenu.Ticketing
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            new TicketingSystemConfiguration(RepositoryLocator.CatalogueRepository,"New Ticketing System");
+            new TicketingSystemConfiguration(_activator.RepositoryLocator.CatalogueRepository, "New Ticketing System");
             RefreshUIFromDatabase();
         }
 
@@ -132,7 +132,7 @@ namespace CatalogueManager.LocationsMenu.Ticketing
             ITicketingSystem instance;
             try
             {
-                TicketingSystemFactory factory = new TicketingSystemFactory(RepositoryLocator.CatalogueRepository);
+                TicketingSystemFactory factory = new TicketingSystemFactory(_activator.RepositoryLocator.CatalogueRepository);
                 instance = factory.CreateIfExists(_ticketingSystemConfiguration);
 
                 checksUI1.OnCheckPerformed(
@@ -159,7 +159,7 @@ namespace CatalogueManager.LocationsMenu.Ticketing
 
         private void btnAddCredentials_Click(object sender, EventArgs e)
         {
-            new DataAccessCredentials(RepositoryLocator.CatalogueRepository,"New Data Access Credentials");
+            new DataAccessCredentials(_activator.RepositoryLocator.CatalogueRepository, "New Data Access Credentials");
             RefreshUIFromDatabase();
         }
 

@@ -140,7 +140,7 @@ namespace DataExportManager.ProjectUI.Datasets
 
         private object ImageGetter(object rowObject)
         {
-            return _activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject);
         }
 
         private object AvailableColumnCategoryAspectGetter(object rowObject)
@@ -264,7 +264,7 @@ namespace DataExportManager.ProjectUI.Datasets
             foreach (IColumn item in olvAvailable.SelectedObjects)
                 AddColumnToExtraction(item);
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
         }
 
         private void btnExclude_Click(object sender, EventArgs e)
@@ -272,7 +272,7 @@ namespace DataExportManager.ProjectUI.Datasets
             foreach (ExtractableColumn item in olvSelected.SelectedObjects)
                 RemoveColumnFromExtraction(item);
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
         }
 
         private void btnExcludeAll_Click(object sender, EventArgs e)
@@ -280,7 +280,7 @@ namespace DataExportManager.ProjectUI.Datasets
             foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
                 RemoveColumnFromExtraction(c);
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
         }
 
         private void RemoveColumnFromExtraction(ConcreteColumn concreteColumn)
@@ -312,7 +312,7 @@ namespace DataExportManager.ProjectUI.Datasets
             AddToMenu(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true),"Show Catalogue");
             Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
 
-            AddChecks(new SelectedDataSetsChecker(SelectedDataSet, _activator.RepositoryLocator));
+            AddChecks(new SelectedDataSetsChecker(SelectedDataSet, Activator.RepositoryLocator));
         }
 
         public override string GetTabName()
@@ -322,7 +322,7 @@ namespace DataExportManager.ProjectUI.Datasets
 
         private void olvAvailable_ItemActivate(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandActivate(_activator, olvAvailable.SelectedObject);
+            var cmd = new ExecuteCommandActivate(Activator, olvAvailable.SelectedObject);
 
             if(!cmd.IsImpossible)
                 cmd.Execute();
@@ -462,7 +462,7 @@ namespace DataExportManager.ProjectUI.Datasets
             if(node.ForcedJoin == null)
                 if (newvalue == CheckState.Checked)
                 {
-                    var forceJoin = new SelectedDataSetsForcedJoin(_activator.RepositoryLocator.DataExportRepository,SelectedDataSet, node.TableInfo);
+                    var forceJoin = new SelectedDataSetsForcedJoin(Activator.RepositoryLocator.DataExportRepository,SelectedDataSet, node.TableInfo);
                     node.ForcedJoin = forceJoin;
                     return CheckState.Checked;
                 }
@@ -567,7 +567,7 @@ namespace DataExportManager.ProjectUI.Datasets
                     }
 
                     if(toEmphasise != null)
-                        _activator.RequestItemEmphasis(this, new EmphasiseRequest(toEmphasise, 1));
+                        Activator.RequestItemEmphasis(this, new EmphasiseRequest(toEmphasise, 1));
 
                     return;
                 }
@@ -592,7 +592,7 @@ namespace DataExportManager.ProjectUI.Datasets
 
                 if(otherTable != null)
                 {
-                    var cmd = new ExecuteCommandAddJoinInfo(_activator, node.TableInfo);
+                    var cmd = new ExecuteCommandAddJoinInfo(Activator, node.TableInfo);
                     cmd.SetInitialJoinToTableInfo(otherTable);
                     cmd.Execute();
                 }

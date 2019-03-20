@@ -26,6 +26,7 @@ using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Theme;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers.Nodes;
@@ -42,9 +43,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
     /// <summary>
     /// Allows you to search all objects in your database and rapidly select 1 which will be shown via the Emphasis system.
     /// </summary>
-    public partial class NavigateToObjectUI : Form
+    public partial class NavigateToObjectUI : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
         private ICoreIconProvider _coreIconProvider;
         private FavouritesProvider _favouriteProvider;
@@ -143,11 +143,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if(!TypesThatAreNotUsefulParents.Contains(t))
                 TypesThatAreNotUsefulParents.Add(t);
         }
-        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None)
+        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None):base(activator)
         {
-            _activator = activator;
             _coreIconProvider = activator.CoreIconProvider;
-            _favouriteProvider = _activator.FavouritesProvider;
+            _favouriteProvider = Activator.FavouritesProvider;
             _magnifier = FamFamFamIcons.magnifier;
             InitializeComponent();
 
@@ -155,7 +154,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             activator.Theme.ApplyTo(toolStrip1);
 
-            _searchables = _activator.CoreChildProvider.GetAllSearchables();
+            _searchables = Activator.CoreChildProvider.GetAllSearchables();
             
             _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
 
@@ -189,7 +188,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     _typeNames.Add(t.Name);
             }
 
-            _autoCompleteProvider = new AutoCompleteProvider(_activator);
+            _autoCompleteProvider = new AutoCompleteProvider(Activator);
             foreach (Type t in _types)
                 _autoCompleteProvider.Add(t);
 
@@ -332,7 +331,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void Emphasise(IMapsDirectlyToDatabaseTable o)
         {
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = UserSettings.FindShouldPin });
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = UserSettings.FindShouldPin });
         }
         
         protected override void OnMouseMove(MouseEventArgs e)
@@ -532,7 +531,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     for (int i = 0; i < _matches.Count; i++)
                     {
                         //get first parent that isn't one of the explicitly useless parent types (I'd rather know the Catalogue of an AggregateGraph than to know it's an under an AggregatesGraphNode)                
-                        var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
+                        var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
                 
                         object lastParent = null;
 
@@ -623,7 +622,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 var lineStartX = diagramStartX + (DiagramTabDistance*i);
                 var lineStartY = diagramStartY + (RowHeight*i);
 
-                var img = _activator.CoreIconProvider.GetImage(descendancy.Parents[i]);
+                var img = Activator.CoreIconProvider.GetImage(descendancy.Parents[i]);
                 e.Graphics.DrawImage(img, lineStartX, lineStartY);
                 e.Graphics.DrawString(descendancy.Parents[i].ToString(), Font, Brushes.Black, lineStartX + 21, lineStartY);
 
@@ -635,7 +634,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             var lastLineStartX = diagramStartX + (DiagramTabDistance * descendancy.Parents.Length);
             var lastLineStartY = diagramStartY + (diagramHeight - RowHeight);
             
-            var matchImg = _activator.CoreIconProvider.GetImage(match);
+            var matchImg = Activator.CoreIconProvider.GetImage(match);
             e.Graphics.DrawImage(matchImg, lastLineStartX, lastLineStartY);
             e.Graphics.DrawString(match.ToString(), Font, Brushes.Black, lastLineStartX + 21, lastLineStartY);
 

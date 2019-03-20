@@ -35,7 +35,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             var f = new PluginManagementForm(Activator);
-            f.RepositoryLocator = Activator.RepositoryLocator;
             f.Show();
         }
     }

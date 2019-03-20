@@ -42,7 +42,7 @@ namespace CatalogueManager.DataQualityUIs
         void checkAndExecuteUI1_ExecutionFinished(object sender, ExecutionEventArgs e)
         {
             //refresh
-            SetDatabaseObject(_activator,_catalogue);
+            SetDatabaseObject(Activator,_catalogue);
         }
 
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity commandLineActivity)
@@ -56,7 +56,7 @@ namespace CatalogueManager.DataQualityUIs
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
             
-            Add(new ExecuteCommandConfigureCatalogueValidationRules(_activator).SetTarget(_catalogue),"Validation Rules...");
+            Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue),"Validation Rules...");
             AddPluginCommands();
         }
         

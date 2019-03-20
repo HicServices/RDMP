@@ -47,14 +47,12 @@ namespace CatalogueManager.LocationsMenu.Ticketing
             InitializeComponent();
         }
 
-        protected override void OnRepositoryLocatorAvailable()
+        protected override void OnLoad(EventArgs e)
         {
-            base.OnRepositoryLocatorAvailable(); 
-            
+            base.OnLoad(e);
             
             ReCheckTicketingSystemInCatalogue();
         }
-
 
         public void ReCheckTicketingSystemInCatalogue()
         {
@@ -65,12 +63,14 @@ namespace CatalogueManager.LocationsMenu.Ticketing
                 if (VisualStudioDesignMode)
                     return;
 
-                if(RepositoryLocator == null)
-                    return;
+                if (Activator == null)
+                    throw new Exception("Activator has not been set, call SetItemActivator");
 
-                TicketingSystemFactory factory = new TicketingSystemFactory(RepositoryLocator.CatalogueRepository);
-            
-                _ticketingSystemConfiguration = factory.CreateIfExists(RepositoryLocator.CatalogueRepository.GetTicketingSystem());
+                TicketingSystemFactory factory = new TicketingSystemFactory(Activator.RepositoryLocator.CatalogueRepository);
+
+                var configuration = Activator.RepositoryLocator.CatalogueRepository.GetTicketingSystem();
+                _ticketingSystemConfiguration = factory.CreateIfExists(configuration);
+
                 gbTicketing.Enabled = _ticketingSystemConfiguration != null;
             }
             catch (Exception exception)

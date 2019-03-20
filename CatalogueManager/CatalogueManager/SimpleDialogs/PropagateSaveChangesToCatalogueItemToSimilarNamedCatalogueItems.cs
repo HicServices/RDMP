@@ -42,7 +42,6 @@ namespace CatalogueManager.SimpleDialogs
     /// </summary>
     public partial class PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private readonly CatalogueItem _catalogueItemBeingSaved;
         protected List<PropertyInfo>ChangedProperties;
         private ScintillaNET.Scintilla previewOldValue;
@@ -50,10 +49,9 @@ namespace CatalogueManager.SimpleDialogs
 
         Dictionary<string,CatalogueItem> FriendlyNamedListOfCatalogueItems = new Dictionary<string, CatalogueItem>();
         Dictionary<string, PropertyInfo> FriendlyNamedListOfPropertiesChanged = new Dictionary<string, PropertyInfo>();
-        
-        public PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed)
+
+        public PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
         {
-            _activator = activator;
             _catalogueItemBeingSaved = catalogueItemBeingSaved;
             InitializeComponent();
 
@@ -126,7 +124,7 @@ namespace CatalogueManager.SimpleDialogs
 
         private CatalogueItem[] GetAllCatalogueItemsSharingNameWith(CatalogueItem catalogueItemBeingSaved)
         {
-            return _activator.CoreChildProvider.AllCatalogueItems
+            return Activator.CoreChildProvider.AllCatalogueItems
                 .Where(ci=>
                         ci.Name.Equals(catalogueItemBeingSaved.Name,StringComparison.CurrentCultureIgnoreCase) 
                         && ci.ID != catalogueItemBeingSaved.ID)

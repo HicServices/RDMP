@@ -8,31 +8,24 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ANOStore.ANOEngineering;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi;
 using LoadModules.Generic.Attachers;
-using LoadModules.Generic.LoadProgressUpdating;
 using LoadModules.Generic.Mutilators.Dilution;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
@@ -229,7 +222,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                     }
 
                     var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(
-                        _activator.CoreChildProvider.AllANOTables, true, false);
+                        Activator.CoreChildProvider.AllANOTables, true, false);
                     try
                     {
                         if (dialog.ShowDialog() == DialogResult.OK)
@@ -442,7 +435,7 @@ namespace CatalogueManager.ANOEngineeringUIs
         {
             try
             {
-                var engine = new ForwardEngineerANOCatalogueEngine(_activator.RepositoryLocator, _planManager);
+                var engine = new ForwardEngineerANOCatalogueEngine(Activator.RepositoryLocator, _planManager);
                 engine.Execute();
 
                 if(engine.NewCatalogue != null && engine.LoadMetadata != null)
@@ -457,7 +450,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                     Publish(engine.NewCatalogue);
 
                     if(MessageBox.Show("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                        _activator.WindowArranger.SetupEditLoadMetadata(this,engine.LoadMetadata);
+                        Activator.WindowArranger.SetupEditLoadMetadata(this,engine.LoadMetadata);
                 }
                 else
                     throw new Exception("Engine did not create a NewCatalogue/LoadMetadata");
@@ -470,7 +463,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void CreateAttacher(ITableInfo t, QueryBuilder qb, LoadMetadata lmd, LoadProgress loadProgressIfAny)
         {
-            var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
+            var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.Mounting);
             pt.ProcessTaskType = ProcessTaskType.Attacher;
             pt.Name = "Read from " + t;
             pt.Path = typeof(RemoteTableAttacher).FullName;
@@ -502,7 +495,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void CreateDilutionMutilation(KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOp,LoadMetadata lmd)
         {
-            var pt = new ProcessTask(RepositoryLocator.CatalogueRepository, lmd, LoadStage.AdjustStaging);
+            var pt = new ProcessTask(Activator.RepositoryLocator.CatalogueRepository, lmd, LoadStage.AdjustStaging);
             pt.CreateArgumentsForClassIfNotExists<Dilution>();
             pt.ProcessTaskType = ProcessTaskType.MutilateDataTable;
             pt.Name = "Dilute " + dilutionOp.Key.GetRuntimeName();
@@ -567,14 +560,14 @@ namespace CatalogueManager.ANOEngineeringUIs
             if (sfd.ShowDialog() == DialogResult.OK)
             {
                 var fi = new FileInfo(sfd.FileName);
-                
-                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFileUI(_activator, RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
+
+                var cmdAnoTablesToo = new ExecuteCommandExportObjectsToFileUI(Activator, Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray(), fi.Directory);
                 cmdAnoTablesToo.ShowInExplorer = false;
 
                 if (!cmdAnoTablesToo.IsImpossible)
                     cmdAnoTablesToo.Execute();
 
-                var json = JsonConvertExtensions.SerializeObject(_planManager, _activator.RepositoryLocator);
+                var json = JsonConvertExtensions.SerializeObject(_planManager, Activator.RepositoryLocator);
                 File.WriteAllText(fi.FullName,json);
 
             }
@@ -591,7 +584,7 @@ namespace CatalogueManager.ANOEngineeringUIs
                     var fi = new FileInfo(ofd.FileName);
                     var json = File.ReadAllText(fi.FullName);
                     _planManager = (ForwardEngineerANOCataloguePlanManager)
-                        JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), _activator.RepositoryLocator);
+                        JsonConvertExtensions.DeserializeObject(json, typeof(ForwardEngineerANOCataloguePlanManager), Activator.RepositoryLocator);
 
                     if (_planManager.StartDate != null)
                         tbStartDate.Text = _planManager.StartDate.Value.ToString();

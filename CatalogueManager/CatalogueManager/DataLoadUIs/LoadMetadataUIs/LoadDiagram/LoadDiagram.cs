@@ -92,14 +92,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 if (tableNode.Bubble == LoadBubble.Live)
                 {
                     //for live just use the TableInfo!
-                    _activator.ViewDataSample(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
+                    Activator.ViewDataSample(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
                     return;   
                 }
                 else
                     table = tableNode.Table; //otherwise it's a non Live bubble table or an unplanned table somewhere so use Arbitrary table Data Viewing
             
             if(table != null)
-                _activator.ViewDataSample(new ArbitraryTableExtractionUICollection(table));
+                Activator.ViewDataSample(new ArbitraryTableExtractionUICollection(table));
         }
 
         void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)
@@ -174,32 +174,32 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
         private object ImageGetter(object rowObject)
         {
-            if (_activator == null)
+            if (Activator == null)
                 return null;
 
             var db = rowObject as LoadDiagramDatabaseNode;
             var col = rowObject as LoadDiagramColumnNode;
 
             if (rowObject is UnplannedTable)
-                return _activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Problem);
 
             if (rowObject is DiscoveredColumn)
-                return _activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem);
             
             if (rowObject is LoadDiagramServerNode)
                 if (string.IsNullOrWhiteSpace(((LoadDiagramServerNode) rowObject).ErrorDescription))
-                        return _activator.CoreIconProvider.GetImage(rowObject);
+                        return Activator.CoreIconProvider.GetImage(rowObject);
                     else
-                        return _activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem);
+                        return Activator.CoreIconProvider.GetImage(rowObject, OverlayKind.Problem);
 
             if (db != null)
-                return db.GetImage(_activator.CoreIconProvider);
+                return db.GetImage(Activator.CoreIconProvider);
 
             if(rowObject is LoadDiagramTableNode)
-                return _activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.TableInfo);
 
             if (col != null)
-                return col.GetImage(_activator.CoreIconProvider);
+                return col.GetImage(Activator.CoreIconProvider);
             
             return null;
         }
@@ -323,7 +323,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 });
 
             if (_dragDropProvider == null)
-                _dragDropProvider = new DragDropProvider(new RDMPCommandFactory(), new RDMPCommandExecutionFactory(_activator), tlvLoadedTables);
+                _dragDropProvider = new DragDropProvider(new RDMPCommandFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
             
             _loadMetadata = databaseObject;
             RefreshUIFromDatabase();

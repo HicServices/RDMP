@@ -15,6 +15,7 @@ using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
@@ -32,16 +33,14 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
     /// <para>Clicking Import will create TableInfo / ColumnInfo objects in your Data Catalogue database and then ConfigureCatalogueExtractabilityUI will be launched which lets you pick which 
     /// columns are extractable and which contains the Patient Identifier (e.g. CHI number / NHS number etc).  See ConfigureCatalogueExtractabilityUI for full details. </para>
     /// </summary>
-    public partial class ImportSQLTable : Form
+    public partial class ImportSQLTable : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private readonly bool _allowImportAsCatalogue;
         public ITableInfoImporter Importer { get; private set; }
         public TableInfo TableInfoCreatedIfAny { get; private set; }
 
-        public ImportSQLTable(IActivateItems activator,bool allowImportAsCatalogue)
+        public ImportSQLTable(IActivateItems activator,bool allowImportAsCatalogue):base(activator)
         {
-            _activator = activator;
             _allowImportAsCatalogue = allowImportAsCatalogue;
             InitializeComponent();
 
@@ -59,7 +58,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
         private void AdjustImporter()
         {
-            var cataRepo = _activator.RepositoryLocator.CatalogueRepository;
+            var cataRepo = Activator.RepositoryLocator.CatalogueRepository;
             try
             {
                 DiscoveredTable tbl = serverDatabaseTableSelector1.GetDiscoveredTable();
@@ -90,7 +89,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
             if(_allowImportAsCatalogue)
             {
-                var ui = new ConfigureCatalogueExtractabilityUI(_activator, Importer, "Existing Table", null);
+                var ui = new ConfigureCatalogueExtractabilityUI(Activator, Importer, "Existing Table", null);
                 ui.ShowDialog();
                 TableInfoCreatedIfAny = ui.TableInfoCreated;
             }
@@ -101,7 +100,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
                 TableInfo ti;
                 ColumnInfo[] cols;
                 Importer.DoImport(out ti,out cols);
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(ti));
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(ti));
                 TableInfoCreatedIfAny = ti;
             }
 

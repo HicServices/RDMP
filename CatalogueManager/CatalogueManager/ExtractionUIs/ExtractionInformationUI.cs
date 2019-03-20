@@ -193,7 +193,7 @@ namespace CatalogueManager.ExtractionUIs
                 if (ExtractionInformation.CatalogueItem.Name.Equals(ExtractionInformation.ToString()))
                     _namesMatchedWhenDialogWasLaunched = true;
 
-                var autoComplete = new AutoCompleteProviderFactory(_activator).Create(ExtractionInformation.GetQuerySyntaxHelper());
+                var autoComplete = new AutoCompleteProviderFactory(Activator).Create(ExtractionInformation.GetQuerySyntaxHelper());
                 autoComplete.Add(ExtractionInformation.CatalogueItem.Catalogue);
                 
                 autoComplete.RegisterForEvents(QueryEditor);

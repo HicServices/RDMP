@@ -48,8 +48,7 @@ namespace CatalogueManager.MainFormUITabs
         {
             //see if we need to display the dialog that lets the user sync up descriptions of multiuse columns e.g. CHI
             bool shouldDialogBeDisplayed;
-            var propagate = new PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems(_activator,_catalogueItem, out shouldDialogBeDisplayed);
-            propagate.RepositoryLocator = RepositoryLocator;
+            var propagate = new PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems(Activator,_catalogueItem, out shouldDialogBeDisplayed);
 
             //there are other CatalogueItems that share the same name as this one so give the user the option to propagate his changes to those too
             if (shouldDialogBeDisplayed)

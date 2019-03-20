@@ -24,11 +24,11 @@ namespace CatalogueManager.LogViewer.Tabs
         {
 
             var taskId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
-            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.ProgressLog, new LogViewerFilter { Run = taskId });
-            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.FatalError, new LogViewerFilter { Run = taskId });
-            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.TableLoadRun, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.ProgressLog, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.FatalError, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.TableLoadRun, new LogViewerFilter { Run = taskId });
 
-            yield return new ExecuteCommandExportLoggedDataToCsv(_activator, new LogViewerFilter { Run = taskId });
+            yield return new ExecuteCommandExportLoggedDataToCsv(Activator, new LogViewerFilter { Run = taskId });
         }
 
         protected override LoggingTables GetTableEnum()

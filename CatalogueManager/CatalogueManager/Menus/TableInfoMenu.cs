@@ -97,8 +97,7 @@ namespace CatalogueManager.Menus
 
         private void ConfigurePrimaryKeyCollisionResolution_Click(TableInfo tableInfo)
         {
-            var dialog = new ConfigurePrimaryKeyCollisionResolution(tableInfo);
-            dialog.RepositoryLocator = RepositoryLocator;
+            var dialog = new ConfigurePrimaryKeyCollisionResolution(tableInfo,_activator);
             dialog.ShowDialog(this);
         }
 

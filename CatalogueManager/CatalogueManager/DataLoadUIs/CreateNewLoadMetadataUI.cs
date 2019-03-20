@@ -5,18 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Logging;
-using ReusableUIComponents;
-using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.DataLoadUIs
 {
@@ -31,15 +24,14 @@ namespace CatalogueManager.DataLoadUIs
     public partial class CreateNewLoadMetadataUI : RDMPForm
     {
         private readonly Catalogue _catalogue;
-        private readonly IActivateItems _activator;
         public LoadMetadata LoadMetadataCreatedIfAny { get; set; }
 
-        public CreateNewLoadMetadataUI(Catalogue catalogue, IActivateItems activator)
+        public CreateNewLoadMetadataUI(Catalogue catalogue, IActivateItems activator):base(activator)
         {
             _catalogue = catalogue;
-            _activator = activator;
             InitializeComponent();
             
+            chooseLoggingTaskUI1.SetItemActivator(activator);
             chooseLoggingTaskUI1.Catalogue = catalogue;
         }
 
@@ -56,7 +48,7 @@ namespace CatalogueManager.DataLoadUIs
                 return;
             }
 
-            LoadMetadataCreatedIfAny = new LoadMetadata(RepositoryLocator.CatalogueRepository, tbLoadMetadataNameToCreate.Text);
+            LoadMetadataCreatedIfAny = new LoadMetadata(Activator.RepositoryLocator.CatalogueRepository, tbLoadMetadataNameToCreate.Text);
             
             this.DialogResult = DialogResult.OK;
             this.Close();

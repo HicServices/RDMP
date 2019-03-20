@@ -5,30 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
-using ScintillaNET;
 
 namespace DataExportManager.ProjectUI
 {
@@ -71,7 +58,7 @@ namespace DataExportManager.ProjectUI
                     throw new Exception("No cohort has been defined for this ExtractionConfiguration");
 
                 //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
-                ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_extractionConfiguration,new ExtractableDatasetBundle(_extractableDataSet));
+                ExtractDatasetCommand request = new ExtractDatasetCommand(Activator.RepositoryLocator,_extractionConfiguration,new ExtractableDatasetBundle(_extractableDataSet));
                 request.GenerateQueryBuilder();
 
                 QueryEditor.ReadOnly = false;

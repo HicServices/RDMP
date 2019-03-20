@@ -52,7 +52,7 @@ namespace CatalogueManager.DashboardTabs
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            _controlFactory = new DashboardControlFactory(activator,RepositoryLocator,new Point(5,25));
+            _controlFactory = new DashboardControlFactory(activator,new Point(5,25));
             btnAddDashboardControl.Image = activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
             _layout = databaseObject;
             ReLayout();
@@ -120,7 +120,7 @@ namespace CatalogueManager.DashboardTabs
             _layout.Name = tbDashboardName.Text;
             _layout.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_layout));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_layout));
             
         }
 

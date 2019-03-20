@@ -71,7 +71,6 @@ namespace CatalogueManager.ItemActivation
         /// </summary>
         IArrangeWindows WindowArranger { get;}
 
-
         Form ShowWindow(Control singleControlForm, bool asDocument = false);
 
         Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity objectOfTypeT);

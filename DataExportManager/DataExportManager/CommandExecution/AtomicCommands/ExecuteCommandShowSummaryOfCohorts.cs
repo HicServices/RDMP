@@ -59,7 +59,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             var extractableCohortCollection = new ExtractableCohortCollection();
-            extractableCohortCollection.RepositoryLocator = Activator.RepositoryLocator;
+            extractableCohortCollection.SetItemActivator(Activator);
             Activator.ShowWindow(extractableCohortCollection, true);
 
             if (_onlyCohorts != null)

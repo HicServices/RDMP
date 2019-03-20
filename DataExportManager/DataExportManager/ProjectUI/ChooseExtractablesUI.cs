@@ -94,15 +94,15 @@ namespace DataExportManager.ProjectUI
             Categories.Add(Bundles, new List<object>());
             
             var factory = new ExtractCommandCollectionFactory();
-            var collection = factory.Create(RepositoryLocator, configuration);
+            var collection = factory.Create(Activator.RepositoryLocator, configuration);
 
             //find all the things that are available for extraction
             
             //add globals to the globals category
-            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
+            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
 
             //add global SQLs to globals category
-            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
+            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
 
             //add the bundle
             Categories[Bundles].AddRange(collection.Datasets);

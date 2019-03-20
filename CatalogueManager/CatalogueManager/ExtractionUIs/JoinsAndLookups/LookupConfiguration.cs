@@ -175,7 +175,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
         private void btnImportNewTableInfo_Click(object sender, EventArgs e)
         {
-            var importDialog = new ImportSQLTable(_activator,false);
+            var importDialog = new ImportSQLTable(Activator,false);
 
             if(importDialog.ShowDialog() == DialogResult.OK)
                 if (importDialog.TableInfoCreatedIfAny != null)
@@ -350,7 +350,7 @@ Only define secondary columns if you really need them! if any of the key fields 
             if(c == null)
                 return;
 
-            e.MenuStrip = new ColumnInfoMenu(new RDMPContextMenuStripArgs(_activator), c);
+            e.MenuStrip = new ColumnInfoMenu(new RDMPContextMenuStripArgs(Activator), c);
         }
 
         private void olvSelectedDescriptionColumns_KeyUp(object sender, KeyEventArgs e)
@@ -461,13 +461,13 @@ Only define secondary columns if you really need them! if any of the key fields 
                     if(p3 != null)
                         keyPairs.Add(Tuple.Create(f3,p3));
 
-                    var cmd = new ExecuteCommandCreateLookup(_activator.RepositoryLocator.CatalogueRepository,foreignKeyExtractionInformation, descs,
+                    var cmd = new ExecuteCommandCreateLookup(Activator.RepositoryLocator.CatalogueRepository,foreignKeyExtractionInformation, descs,
                         keyPairs, tbCollation.Text, alsoCreateExtractionInformation);
 
                     cmd.Execute();
 
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
-                    SetDatabaseObject(_activator, _catalogue);
+                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
+                    SetDatabaseObject(Activator, _catalogue);
 
                     MessageBox.Show("Lookup created successfully, fields will now be cleared");
                     pk1.Clear();
@@ -513,7 +513,7 @@ Only define secondary columns if you really need them! if any of the key fields 
             var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
             
             if(o != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
 
         }
 

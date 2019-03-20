@@ -55,8 +55,7 @@ namespace CatalogueManager.AggregationUIs
     {
         
         public Scintilla QueryEditor { get;private set; }
-        IServerDefaults _defaults;
-
+        
         public int Timeout
         {
             get
@@ -531,9 +530,7 @@ namespace CatalogueManager.AggregationUIs
             lblLoadStage.Visible = false;
 
             //set publish enabledness to the enabledness of 
-            btnCache.Enabled =
-                _defaults.GetDefaultFor(
-                    PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
+            btnCache.Enabled =Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID) != null;
             btnClearFromCache.Enabled = false;
 
             //Make publish button enabledness be dependant on cache
@@ -665,7 +662,9 @@ namespace CatalogueManager.AggregationUIs
 
         private CachedAggregateConfigurationResultsManager GetCacheManager()
         {
-            return new CachedAggregateConfigurationResultsManager(_defaults.GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID));
+            return new CachedAggregateConfigurationResultsManager(
+                Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.WebServiceQueryCachingServer_ID)
+                );
         }
 
         /// <summary>
@@ -727,7 +726,7 @@ namespace CatalogueManager.AggregationUIs
                 if (o is string)
                     Add((string) o);
                 else if (o is DatabaseEntity)
-                    AddToMenu(new ExecuteCommandShow(_activator, (DatabaseEntity) o, 0, true));
+                    AddToMenu(new ExecuteCommandShow(Activator, (DatabaseEntity) o, 0, true));
                 else
                     throw new NotSupportedException(
                         "GetRibbonObjects can only return strings or DatabaseEntity objects, object '" + o +
@@ -742,15 +741,6 @@ namespace CatalogueManager.AggregationUIs
             return new object[0];
         }
 
-        protected override void OnRepositoryLocatorAvailable()
-        {
-            base.OnRepositoryLocatorAvailable();
-            
-            if (VisualStudioDesignMode)
-                return;
-
-            _defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
-        }
 
         public IEnumerable<BitmapWithDescription> GetImages()
         {

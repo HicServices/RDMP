@@ -69,8 +69,8 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             _collection = (FilterGraphObjectCollection)collection;
-            _activator = activator;
-            SetAggregate(_activator,_collection.GetGraph());
+            SetItemActivator(activator);
+            SetAggregate(Activator,_collection.GetGraph());
             LoadGraphAsync();
         }
 

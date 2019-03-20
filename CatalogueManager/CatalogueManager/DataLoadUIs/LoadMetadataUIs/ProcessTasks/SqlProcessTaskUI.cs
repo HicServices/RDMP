@@ -105,7 +105,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         {
             //if theres an old one dispose it
             if (_autoComplete == null)
-                _autoComplete = new AutoCompleteProviderFactory(_activator).Create(_processTask.LoadMetadata.GetQuerySyntaxHelper());
+                _autoComplete = new AutoCompleteProviderFactory(Activator).Create(_processTask.LoadMetadata.GetQuerySyntaxHelper());
             else
                 _autoComplete.Clear();
 
@@ -157,7 +157,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
                 _processTask.Path = ofd.FileName;
                 _processTask.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_processTask));
+                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_processTask));
                 LoadFile();
             }
         }

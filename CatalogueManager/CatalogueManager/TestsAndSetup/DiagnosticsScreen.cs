@@ -10,6 +10,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Checks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Diagnostics;
 using ReusableLibraryCode;
@@ -39,7 +40,7 @@ namespace CatalogueManager.TestsAndSetup
     {
         private readonly Exception _originalException;
         
-        public DiagnosticsScreen(Exception exception)
+        public DiagnosticsScreen(IActivateItems activator,Exception exception):base(activator)
         {
             _originalException = exception;
 
@@ -50,49 +51,26 @@ namespace CatalogueManager.TestsAndSetup
             
         }
 
-        protected override void OnRepositoryLocatorAvailable()
-        {
-            base.OnRepositoryLocatorAvailable();
-
-            if (RepositoryLocator.DataExportRepository == null)
-            {
-                btnDataExportManagerFields.Enabled = false;
-            }
-        }
-
-        public static void OfferLaunchingDiagnosticsScreenOrEnvironmentExit(IRDMPPlatformRepositoryServiceLocator locator, IWin32Window owner, Exception e)
-        {
-            if (MessageBox.Show(ExceptionHelper.ExceptionToListOfInnerMessages(e) + Environment.NewLine + Environment.NewLine + " Would you like to launch the Diagnostics Screen? (If you choose No then the application will exit ᕦ(ò_óˇ)ᕤ )", "Launch Diagnostics?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            {
-                DiagnosticsScreen screen = new DiagnosticsScreen(e);
-                screen.RepositoryLocator = locator;
-                screen.ShowDialog(owner);
-            }
-            else
-                Environment.Exit(499);
-        }
-
         private void btnCatalogueFields_Click(object sender, EventArgs e)
         {
-
-            StartChecking(new MissingFieldsChecker(MissingFieldsChecker.ThingToCheck.Catalogue, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository));
+            StartChecking(new MissingFieldsChecker(MissingFieldsChecker.ThingToCheck.Catalogue, Activator.RepositoryLocator.CatalogueRepository, Activator.RepositoryLocator.DataExportRepository));
         }
         private void btnDataExportManagerFields_Click(object sender, EventArgs e)
         {
-            StartChecking(new MissingFieldsChecker(MissingFieldsChecker.ThingToCheck.DataExportManager, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository));
+            StartChecking(new MissingFieldsChecker(MissingFieldsChecker.ThingToCheck.DataExportManager, Activator.RepositoryLocator.CatalogueRepository, Activator.RepositoryLocator.DataExportRepository));
         }
 
         private void btnCheckANOConfigurations_Click(object sender, EventArgs e)
         {
-            StartChecking(new ANOConfigurationChecker(RepositoryLocator.CatalogueRepository));
+            StartChecking(new ANOConfigurationChecker(Activator.RepositoryLocator.CatalogueRepository));
         }
         private void btnCohortDatabase_Click(object sender, EventArgs e)
         {
-            StartChecking(new CohortConfigurationChecker(RepositoryLocator.DataExportRepository));
+            StartChecking(new CohortConfigurationChecker(Activator.RepositoryLocator.DataExportRepository));
         }
         private void btnListBadAssemblies_Click(object sender, EventArgs e)
         {
-            StartChecking(new BadAssembliesChecker(RepositoryLocator.CatalogueRepository.MEF));
+            StartChecking(new BadAssembliesChecker(Activator.RepositoryLocator.CatalogueRepository.MEF));
         }
 
         private void StartChecking(ICheckable checkable)
@@ -111,7 +89,7 @@ namespace CatalogueManager.TestsAndSetup
             checksUI1.Clear();
             try
             {
-                foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
+                foreach (Catalogue c in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>())
                     c.Check(checksUI1);
             }
             catch (Exception exception)

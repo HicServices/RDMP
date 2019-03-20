@@ -89,7 +89,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             var factory = new FilterUIOptionsFactory();
             var options = factory.Create(_extractionFilter);
             
-            var autoCompleteFactory = new AutoCompleteProviderFactory(_activator);
+            var autoCompleteFactory = new AutoCompleteProviderFactory(Activator);
             _autoCompleteProvider = autoCompleteFactory.Create(_extractionFilter.GetQuerySyntaxHelper());
             
             foreach (var t in options.GetTableInfos())
@@ -195,11 +195,11 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
 
             parameterCollectionUI1.SetUp(options);
             
-            AddToMenu(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
-            AddToMenu(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
-            AddToMenu(new ExecuteCommandViewFilterMatchGraph(_activator, databaseObject));
-            AddToMenu(new ExecuteCommandBrowseLookup(_activator, databaseObject));
-            AddToMenu(new ExecuteCommandPublishFilter(_activator,databaseObject,databaseObject.GetCatalogue()));
+            AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
+            AddToMenu(new ExecuteCommandViewFilterMatchData(Activator,databaseObject,ViewType.Aggregate));
+            AddToMenu(new ExecuteCommandViewFilterMatchGraph(Activator, databaseObject));
+            AddToMenu(new ExecuteCommandBrowseLookup(Activator, databaseObject));
+            AddToMenu(new ExecuteCommandPublishFilter(Activator,databaseObject,databaseObject.GetCatalogue()));
 
             FigureOutGlobalsAndAutoComplete();
             

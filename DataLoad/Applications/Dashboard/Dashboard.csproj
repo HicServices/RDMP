@@ -232,12 +232,6 @@
     <Compile Include="PieCharts\GoodBadCataloguePieChart.Designer.cs">
       <DependentUpon>GoodBadCataloguePieChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="Overview\GovernanceSummary.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Overview\GovernanceSummary.Designer.cs">
-      <DependentUpon>GovernanceSummary.cs</DependentUpon>
-    </Compile>
     <Compile Include="Raceway\DatasetRacewayObjectCollection.cs" />
     <Compile Include="Raceway\RacewayRenderAreaUI.cs">
       <SubType>UserControl</SubType>
@@ -296,9 +290,6 @@
     </Compile>
     <EmbeddedResource Include="PieCharts\GoodBadCataloguePieChart.resx">
       <DependentUpon>GoodBadCataloguePieChart.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Overview\GovernanceSummary.resx">
-      <DependentUpon>GovernanceSummary.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Raceway\RacewayRenderAreaUI.resx">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>

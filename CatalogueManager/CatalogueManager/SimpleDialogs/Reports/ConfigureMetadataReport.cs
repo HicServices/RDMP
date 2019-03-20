@@ -42,14 +42,14 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// </summary>
     public partial class ConfigureMetadataReport : RDMPForm
     {
-        private readonly IActivateItems _activator;
+        MetadataReport _report;
+        private readonly Catalogue[] _extractableCatalogues;
 
-        public ConfigureMetadataReport(IActivateItems activator,ICatalogue initialSelection = null)
+        public ConfigureMetadataReport(IActivateItems activator,ICatalogue initialSelection = null):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
 
-            _extractableCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null)).ToArray();
+            _extractableCatalogues = Activator.CoreChildProvider.AllCatalogues.Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null)).ToArray();
             cbxCatalogues.Items.AddRange(_extractableCatalogues);
 
             if (initialSelection != null)
@@ -58,10 +58,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 cbxCatalogues.SelectedItem = initialSelection;
             }
         }
-
-        
-        MetadataReport report;
-        private Catalogue[] _extractableCatalogues;
 
         private void btnGenerateReport_Click(object sender, EventArgs e)
         {
@@ -85,11 +81,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 IncludeInternalItems = cbIncludeInternalCatalogueItems.Checked,
                 MaxLookupRows = (int)nMaxLookupRows.Value
             };
-            
-            report = new MetadataReport(RepositoryLocator.CatalogueRepository,args);
 
-            report.RequestCatalogueImages += report_RequestCatalogueImages;
-            report.GenerateWordFileAsync(progressBarsUI1);
+            _report = new MetadataReport(Activator.RepositoryLocator.CatalogueRepository, args);
+
+            _report.RequestCatalogueImages += report_RequestCatalogueImages;
+            _report.GenerateWordFileAsync(progressBarsUI1);
 
             btnGenerateReport.Enabled = false;
             btnStop.Enabled = true;
@@ -104,7 +100,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             var toReturn = new List<BitmapWithDescription>();
                 
             
-            aggregateGraph1.Width = (int) report.PageWidthInPixels;
+            aggregateGraph1.Width = (int) _report.PageWidthInPixels;
             aggregateGraph1.Visible = true;
 
             bool firstTime = true;
@@ -114,11 +110,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
             {
                 if (firstTime)
                 {
-                    aggregateGraph1.SetDatabaseObject(_activator, aggregate);
+                    aggregateGraph1.SetDatabaseObject(Activator, aggregate);
                     firstTime = false;
                 }
                 else
-                    aggregateGraph1.SetAggregate(_activator,aggregate);
+                    aggregateGraph1.SetAggregate(Activator,aggregate);
 
                 aggregateGraph1.LoadGraphAsync();
                 
@@ -148,7 +144,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
         
         private void btnStop_Click(object sender, EventArgs e)
         {
-            report.Abort();
+            _report.Abort();
             aggregateGraph1.AbortLoadGraph();
 
             btnStop.Enabled = false;
@@ -157,8 +153,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         private void ConfigureMetadataReport_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if(report != null)
-                report.Abort();
+            if(_report != null)
+                _report.Abort();
 
             aggregateGraph1.AbortLoadGraph();
         }

@@ -121,7 +121,7 @@ namespace DataExportManager.ProjectUI
 
         private void SetupCohortIdentificationConfiguration()
         {
-            cbxCohortIdentificationConfiguration.DataSource = _activator.CoreChildProvider.AllCohortIdentificationConfigurations;
+            cbxCohortIdentificationConfiguration.DataSource = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;
             cbxCohortIdentificationConfiguration.SelectedItem = _extractionConfiguration.CohortIdentificationConfiguration;
         }
 
@@ -140,7 +140,7 @@ namespace DataExportManager.ProjectUI
                 var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("CohortRefreshPipeline_ID"), _extractionConfiguration);
 
                 //create the UI for this situation
-                var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
+                var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
                 _cohortRefreshingPipelineSelectionUI = factory.Create("Cohort Refresh Pipeline", DockStyle.Fill,pChooseCohortRefreshPipeline);
                 _cohortRefreshingPipelineSelectionUI.Pipeline = _extractionConfiguration.CohortRefreshPipeline;
                 _cohortRefreshingPipelineSelectionUI.PipelineChanged += _cohortRefreshingPipelineSelectionUI_PipelineChanged;
@@ -178,7 +178,7 @@ namespace DataExportManager.ProjectUI
             var user = new PipelineUser(typeof(ExtractionConfiguration).GetProperty("DefaultPipeline_ID"), _extractionConfiguration);
 
             //create the UI for this situation
-            var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
+            var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
             _extractionPipelineSelectionUI = factory.Create("Extraction Pipeline", DockStyle.Fill, pChooseExtractionPipeline);
             _extractionPipelineSelectionUI.CollapseToSingleLineMode();
         }

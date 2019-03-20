@@ -46,7 +46,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             set { tbDescription.Text = value; }
         }
 
-        public CohortCreationRequestUI(ExternalCohortTable target, Project project =null)
+        public CohortCreationRequestUI(IActivateItems activator,ExternalCohortTable target, Project project =null):base(activator)
         {
             _target = target;
 
@@ -67,7 +67,6 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
         
         public CohortCreationRequest Result { get; set; }
-        public IActivateItems Activator { get; set; }
         public Project Project { get; set; }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -216,7 +215,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             try
             {
                 ProjectUI.ProjectUI p = new ProjectUI.ProjectUI();
-                RDMPForm dialog = new RDMPForm();
+                RDMPForm dialog = new RDMPForm(Activator);
 
                 p.SwitchToCutDownUIMode();
 
@@ -240,9 +239,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
                 dialog.Height = p.Height + 80;
                 dialog.Width = p.Width + 10;
                 dialog.Controls.Add(p);
-
-                dialog.RepositoryLocator = RepositoryLocator;
-
+                
                 ok.Anchor = AnchorStyles.Bottom;
                 cancel.Anchor  = AnchorStyles.Bottom;
 
@@ -293,7 +290,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
 
         private void btnExisting_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>(), false, false);
             if(dialog.ShowDialog()== DialogResult.OK)
                 SetProject((Project)dialog.Selected);
         }

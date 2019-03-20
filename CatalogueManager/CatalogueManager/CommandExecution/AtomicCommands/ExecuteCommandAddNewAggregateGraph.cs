@@ -17,12 +17,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandAddNewAggregateGraph : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly Catalogue _catalogue;
 
         public ExecuteCommandAddNewAggregateGraph(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
-            _activator = activator;
             _catalogue = catalogue;
         }
 
@@ -35,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var newAggregate = new AggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
+            var newAggregate = new AggregateConfiguration(Activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
             Publish(_catalogue);
             Activate(newAggregate);
         }

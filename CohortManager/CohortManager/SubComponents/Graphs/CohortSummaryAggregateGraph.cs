@@ -63,7 +63,7 @@ namespace CohortManager.SubComponents.Graphs
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             _collection = (CohortSummaryAggregateGraphObjectCollection) collection;
-            _activator = activator;
+            SetItemActivator(activator);
             base.SetAggregate(activator,_collection.Graph);
             LoadGraphAsync();
         }

@@ -28,10 +28,8 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     /// </summary>
     [TechnicalUI]
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPUserControl, UserControl>))]
-    public abstract class RDMPUserControl : UserControl, IRepositoryUser, IKnowIfImHostedByVisualStudio
+    public abstract class RDMPUserControl : UserControl
     {
-        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-
         /// <summary>
         /// This is the strip of buttons and labels for all controls commonly used for interacting with the content of the tab.  The 
         /// bar should start with <see cref="_menuDropDown"/>.
@@ -44,69 +42,29 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         private ToolStripMenuItem _menuDropDown;
 
         private AtomicCommandUIFactory atomicCommandUIFactory;
-        private IActivateItems _activator;
+        protected IActivateItems Activator { get; private set; }
 
-        private RAGSmileyToolStrip ragSmileyToolStrip;
-        private ToolStripButton runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
+        private RAGSmileyToolStrip _ragSmileyToolStrip;
+        private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
         private ICheckable _checkable;
+        
+        protected readonly bool VisualStudioDesignMode;
 
         /// <summary>
         /// All keywords added via <see cref="AddHelp"/>
         /// </summary>
         private readonly HashSet<string> _helpAdded = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
-
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator
-        {
-            get { return _repositoryLocator; }
-            set
-            {
-                //no change so don't bother firing events or even changing it
-                if(value == _repositoryLocator)
-                    return;
-
-                _repositoryLocator = value;
-                if (value != null)
-                    OnRepositoryLocatorAvailable();
-            }
-        }
-
-        protected virtual void OnRepositoryLocatorAvailable()
-        {
-            if (RepositoryLocator != null)
-                new ServiceLocatorPropagatorToChildControls(this).PropagateRecursively(new[] { this }, VisualStudioDesignMode);
-        }
-
-        public bool VisualStudioDesignMode { get;protected set; }
-        public void SetVisualStudioDesignMode(bool visualStudioDesignMode)
-        {
-            VisualStudioDesignMode = visualStudioDesignMode;
-        }
-
+        
         //constructor
-        public RDMPUserControl()
+        protected RDMPUserControl()
         {
+            _runChecksToolStripButton.Click += (s,e)=>StartChecking();
             VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
-
-            runChecksToolStripButton.Click += (s,e)=>StartChecking();
         }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            if (VisualStudioDesignMode)
-                return;
-            
-            if (RepositoryLocator != null)
-                new ServiceLocatorPropagatorToChildControls(this).PropagateRecursively(new[] {this},VisualStudioDesignMode);
-
-            base.OnLoad(e);
-        }
-
 
         public virtual void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
-            RepositoryLocator = _activator.RepositoryLocator;
+            Activator = activator;
         }
 
 
@@ -161,11 +119,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="checkable"></param>
         public void AddChecks(ICheckable checkable)
         {
-            if (ragSmileyToolStrip == null)
-                ragSmileyToolStrip = new RAGSmileyToolStrip(this);
+            if (_ragSmileyToolStrip == null)
+                _ragSmileyToolStrip = new RAGSmileyToolStrip(this);
 
-            Add(ragSmileyToolStrip);
-            Add(runChecksToolStripButton);
+            Add(_ragSmileyToolStrip);
+            Add(_runChecksToolStripButton);
             _checkable = checkable;
         }
 
@@ -178,11 +136,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="checkableFunc"></param>
         protected void AddChecks(Func<ICheckable> checkableFunc)
         {
-            if (ragSmileyToolStrip == null)
-                ragSmileyToolStrip = new RAGSmileyToolStrip(this);
+            if (_ragSmileyToolStrip == null)
+                _ragSmileyToolStrip = new RAGSmileyToolStrip(this);
 
-            Add(ragSmileyToolStrip);
-            Add(runChecksToolStripButton);
+            Add(_ragSmileyToolStrip);
+            Add(_runChecksToolStripButton);
 
             try
             {
@@ -192,7 +150,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             {
                 //covers the case where you have previously passed checks then fail but _checks points to the old passing one
                 _checkable = null;
-                ragSmileyToolStrip.Fatal(e);
+                _ragSmileyToolStrip.Fatal(e);
             }
         }
 
@@ -207,7 +165,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             OnBeforeChecking();
 
-            ragSmileyToolStrip.StartChecking(_checkable);
+            _ragSmileyToolStrip.StartChecking(_checkable);
         }
 
         /// <summary>
@@ -226,13 +184,13 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="exception"></param>
         protected void Fatal(string s, Exception exception)
         {
-            if (ragSmileyToolStrip == null)
-                ragSmileyToolStrip = new RAGSmileyToolStrip(this);
+            if (_ragSmileyToolStrip == null)
+                _ragSmileyToolStrip = new RAGSmileyToolStrip(this);
 
-            if (ragSmileyToolStrip.GetCurrentParent() == null)
-                Add(ragSmileyToolStrip);
+            if (_ragSmileyToolStrip.GetCurrentParent() == null)
+                Add(_ragSmileyToolStrip);
 
-            ragSmileyToolStrip.OnCheckPerformed(new CheckEventArgs(s,CheckResult.Fail,exception));
+            _ragSmileyToolStrip.OnCheckPerformed(new CheckEventArgs(s,CheckResult.Fail,exception));
         }
 
         /// <summary>
@@ -244,7 +202,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         ///  be chosen based on the control <paramref name="c"/></param>
         public void AddHelp(Control c, string propertyName,string title = null, AnchorStyles anchor = AnchorStyles.None)
         {
-            if(_activator == null)
+            if(Activator == null)
                 throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
 
             if(c.Parent == null)
@@ -253,7 +211,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             _helpAdded.Add(propertyName);
 
             title = title?? propertyName;
-            string body = _activator.CommentStore.GetDocumentationIfExists(propertyName,false,true);
+            string body = Activator.CommentStore.GetDocumentationIfExists(propertyName,false,true);
 
             if(body == null)
                 return;
@@ -369,11 +327,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
         protected virtual void InitializeToolStrip()
         {
-            if(_activator == null)
+            if(Activator == null)
                 throw new Exception("Control not initialized yet, call SetItemActivator before trying to add items to the ToolStrip");
 
             if (atomicCommandUIFactory == null)
-                atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
+                atomicCommandUIFactory = new AtomicCommandUIFactory(Activator);
 
             if (_toolStrip == null)
             {
@@ -390,7 +348,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
 
             
-            _activator.Theme.ApplyTo(_toolStrip);
+            Activator.Theme.ApplyTo(_toolStrip);
         }
 
     }

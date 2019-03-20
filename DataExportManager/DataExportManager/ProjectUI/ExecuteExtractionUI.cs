@@ -109,7 +109,7 @@ namespace DataExportManager.ProjectUI
 
         private HelpWorkflow BuildHelpFlow()
         {
-            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(_activator), new NullHelpWorkflowProgressProvider());
+            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(Activator), new NullHelpWorkflowProgressProvider());
 
             //////Normal work flow
             var root = new HelpStage(tlvDatasets, "Choose the datasets and Globals you want to extract here.\r\n" +
@@ -169,7 +169,7 @@ namespace DataExportManager.ProjectUI
         private object State_ImageGetter(object rowObject)
         {
             var state = GetState(rowObject);
-            return state == null ? null : _activator.CoreIconProvider.GetImage(state);
+            return state == null ? null : Activator.CoreIconProvider.GetImage(state);
         }
 
         private object GetState(object rowObject)
@@ -279,7 +279,7 @@ namespace DataExportManager.ProjectUI
             {
                 //create a new selection UI (pick an extraction pipeliene UI)
                 var useCase = ExtractionPipelineUseCase.DesignTime();
-                var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
+                var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
                 _pipelineSelectionUI1 = factory.Create("Extraction Pipeline", DockStyle.Fill);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();

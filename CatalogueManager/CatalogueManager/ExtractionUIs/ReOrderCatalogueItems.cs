@@ -345,7 +345,7 @@ namespace CatalogueManager.ExtractionUIs
             }
 
             //actually we changed the childrens display order..
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_catalogue));
             RefreshUIFromDatabase();
         }
 
@@ -370,7 +370,7 @@ namespace CatalogueManager.ExtractionUIs
         {
             var o = olvExtractionInformations.SelectedObject as IMapsDirectlyToDatabaseTable;
             if(o != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
         }
     }
 

@@ -18,6 +18,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using DataExportLibrary.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
@@ -36,9 +37,8 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
     /// Allows you to import a flat file into your database with appropriate column data types based on the values read from the file.  This data table will then be referenced by an RDMP
     /// Catalogue which can be used to interact with it through RDMP.  
     /// </summary>
-    public partial class CreateNewCatalogueByImportingFileUI : Form
+    public partial class CreateNewCatalogueByImportingFileUI : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private readonly ExecuteCommandCreateNewCatalogueByImportingFile _command;
 
         private FileInfo _selectedFile;
@@ -46,9 +46,8 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         public HelpWorkflow HelpWorkflow { get; set; }
 
-        public CreateNewCatalogueByImportingFileUI(IActivateItems activator, ExecuteCommandCreateNewCatalogueByImportingFile command)
+        public CreateNewCatalogueByImportingFileUI(IActivateItems activator, ExecuteCommandCreateNewCatalogueByImportingFile command):base(activator)
         {
-            _activator = activator;
             _command = command;
             InitializeComponent();
 
@@ -67,7 +66,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void BuildHelpFlow()
         {
-            var tracker = new TutorialTracker(_activator);
+            var tracker = new TutorialTracker(Activator);
 
             HelpWorkflow = new HelpWorkflow(this, _command, tracker);
 
@@ -184,7 +183,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void IdentifyCompatibleServers()
         {
-            var servers = _activator.CoreChildProvider.AllServers;
+            var servers = Activator.CoreChildProvider.AllServers;
 
             if (servers.Length == 1)
             {
@@ -192,7 +191,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
 
                 var uniqueDatabaseNames =
-                    _activator.CoreChildProvider.AllTableInfos.Select(t => t.GetDatabaseRuntimeName())
+                    Activator.CoreChildProvider.AllTableInfos.Select(t => t.GetDatabaseRuntimeName())
                         .Distinct()
                         .ToArray();
 
@@ -232,7 +231,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
             if(_selectedFile.Extension.StartsWith(".xls"))
                 _context.MustHaveSource = typeof(ExcelDataFlowSource);
 
-            var compatiblePipelines = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().Where(_context.IsAllowable).ToArray();
+            var compatiblePipelines = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>().Where(_context.IsAllowable).ToArray();
 
             if (compatiblePipelines.Length == 0)
             {
@@ -288,7 +287,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
                 return;
 
             //flip it
-            var advanced = new CreateNewCatalogueByImportingFileUI_Advanced(_activator, db, _selectedFile, true, _projectSpecific);
+            var advanced = new CreateNewCatalogueByImportingFileUI_Advanced(Activator, db, _selectedFile, true, _projectSpecific);
             var form = new SingleControlForm(advanced);
             form.Show();
         }
@@ -344,7 +343,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private DataFlowPipelineEngineFactory GetFactory()
         {
-            return new DataFlowPipelineEngineFactory(GetUseCase(),_activator.RepositoryLocator.CatalogueRepository.MEF);
+            return new DataFlowPipelineEngineFactory(GetUseCase(), Activator.RepositoryLocator.CatalogueRepository.MEF);
         }
 
 
@@ -389,19 +388,19 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
         private void ForwardEngineer(DiscoveredTable targetTableName)
         {
-            var extractionPicker = new ConfigureCatalogueExtractabilityUI(_activator,new TableInfoImporter(_activator.RepositoryLocator.CatalogueRepository, targetTableName),"File '"+ _selectedFile.FullName + "'",_projectSpecific);
+            var extractionPicker = new ConfigureCatalogueExtractabilityUI(Activator, new TableInfoImporter(Activator.RepositoryLocator.CatalogueRepository, targetTableName), "File '" + _selectedFile.FullName + "'", _projectSpecific);
             extractionPicker.ShowDialog();
 
             var catalogue = extractionPicker.CatalogueCreatedIfAny;
             if (catalogue != null)
             {
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(catalogue));
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(catalogue));
             
                 MessageBox.Show("Successfully imported new Dataset '" + catalogue + "'." +
                                 "\r\n" +
                                 "The edit functionality will now open.");
 
-                _activator.WindowArranger.SetupEditCatalogue(this, catalogue);
+                Activator.WindowArranger.SetupEditCatalogue(this, catalogue);
                 
             }
             if (cbAutoClose.Checked)

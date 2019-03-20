@@ -31,8 +31,6 @@ namespace CohortManager.Collections
     public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         //for expand all/ collapse all
-        private IActivateItems _activator;
-        
         public CohortIdentificationCollectionUI()
         {
             InitializeComponent();
@@ -40,13 +38,13 @@ namespace CohortManager.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
-            
+            base.SetItemActivator(activator);
+
             //important to register the setup before the lifetime subscription so it gets priority on events
             CommonFunctionality.SetUp(
                 RDMPCollection.Cohort, 
                 tlvCohortIdentificationConfigurations,
-                _activator,
+                Activator,
                 olvName,//column with the icon
                 olvName//column that can be renamed
                 
@@ -58,7 +56,7 @@ namespace CohortManager.Collections
             if (dataExportChildProvider == null)
             {
                 CommonFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
-                tlvCohortIdentificationConfigurations.AddObjects(_activator.CoreChildProvider.AllCohortIdentificationConfigurations);
+                tlvCohortIdentificationConfigurations.AddObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
             }
             else
             {
@@ -69,7 +67,7 @@ namespace CohortManager.Collections
 
             CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
 
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             
         }

@@ -46,8 +46,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
     {
         private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
-        private IActivateItems _activator;
-
+        
         private List<IColumn> _availableColumns;
         private List<IColumn> _includedColumns;
 
@@ -114,7 +113,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                             return;
                         }
 
-                        var dimension = new AggregateDimension(RepositoryLocator.CatalogueRepository, importableColumn, _aggregate);
+                        var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueRepository, importableColumn, _aggregate);
 
                         _availableColumns.Remove(importableColumn);
                         _includedColumns.Add(dimension);
@@ -148,7 +147,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                         olvSelectColumns.AddObject(countColumn);
                         olvSelectColumns.EnsureModelVisible(countColumn);
 
-                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+                        Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                     }
 
 
@@ -246,7 +245,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
                     var querySyntaxSource = col as IHasQuerySyntaxHelper ?? _aggregate;
 
-                    var autoComplete = new AutoCompleteProviderFactory(_activator).Create(querySyntaxSource.GetQuerySyntaxHelper());
+                    var autoComplete = new AutoCompleteProviderFactory(Activator).Create(querySyntaxSource.GetQuerySyntaxHelper());
                     autoComplete.Add(col);
                     autoComplete.Add(_aggregate);
 
@@ -283,7 +282,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     olvSelectColumns.EnsureModelVisible(countCol);
                 }
                 
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                 return;
             }
 
@@ -291,7 +290,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             if (saveable != null)
                 saveable.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
         }
 
 
@@ -301,7 +300,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
         {
             //record new states so we don't accidentally erase names of stuff
-            _activator = activator;
+            SetItemActivator(activator);
             _options = options;
             _aggregate = aggregate;
             

@@ -76,7 +76,7 @@ namespace CatalogueManager.SimpleDialogs
 
         private object ImageGetter(object rowObject)
         {
-            return _activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject);
         }
 
         private void groupBox2_Enter(object sender, EventArgs e)

@@ -36,7 +36,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
     {
         private Control _colorIndicator;
-        protected IActivateItems _activator;
 
         private BinderWithErrorProviderFactory _binder;
 
@@ -47,8 +46,8 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
         public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
         {
-            _activator = activator;
-            _activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
+            SetItemActivator(activator);
+            Activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
             DatabaseObject = databaseObject;
 
             ClearToolStrip();
@@ -199,7 +198,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         
         public void Publish(DatabaseEntity e)
         {
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
+            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
 
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
@@ -210,7 +209,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="cmd"></param>
         protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage,OverlayKind overlayKind = OverlayKind.None)
         {
-            Add(cmd,overrideCommandName,_activator.CoreIconProvider.GetImage(overrideImage,overlayKind));
+            Add(cmd,overrideCommandName,Activator.CoreIconProvider.GetImage(overrideImage,overlayKind));
         }
 
 
@@ -235,7 +234,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
         protected IEnumerable<IAtomicCommand> GetPluginCommands()
         {
-            foreach (var p in _activator.PluginUserInterfaces)
+            foreach (var p in Activator.PluginUserInterfaces)
             {
                 var cmds = p.GetAdditionalCommandsForControl(this, DatabaseObject);
 

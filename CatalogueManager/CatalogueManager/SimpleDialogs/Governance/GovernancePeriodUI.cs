@@ -45,7 +45,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Catalogue;
 
-            olvName.ImageGetter = s => _activator.CoreIconProvider.GetImage(s);
+            olvName.ImageGetter = s => Activator.CoreIconProvider.GetImage(s);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, GovernancePeriod databaseObject)
@@ -116,7 +116,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
             var alreadyMappedCatalogues = olvCatalogues.Objects.Cast<Catalogue>();
-            var allCatalogues = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
+            var allCatalogues = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
 
             var availableToSelect =
                 allCatalogues.Where(c => !alreadyMappedCatalogues.Contains(c)).ToArray();
@@ -166,7 +166,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         
         private void btnImportCatalogues_Click(object sender, EventArgs e)
         {
-            GovernancePeriod[] toImportFrom = RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
+            GovernancePeriod[] toImportFrom = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
                 .Where(gov => gov.ID != _governancePeriod.ID)
                 .ToArray();
 
@@ -208,7 +208,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         {
             var cata = olvCatalogues.SelectedObject as Catalogue;
             if(cata != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(cata));
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(cata));
         }
 
     }

@@ -312,7 +312,7 @@ namespace CohortManager.SubComponents
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+            var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
             //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
             if (descendancy != null && descendancy.Parents.Contains(_cic))

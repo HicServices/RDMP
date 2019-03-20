@@ -81,7 +81,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                     return;
                 }
 
-                _argumentCollection.Setup(databaseObject, _underlyingType,_activator.RepositoryLocator.CatalogueRepository);
+                _argumentCollection.Setup(databaseObject, _underlyingType,Activator.RepositoryLocator.CatalogueRepository);
 
                 _argumentCollection.Dock = DockStyle.Fill;
                 pArguments.Controls.Add(_argumentCollection);
@@ -91,7 +91,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
             CheckComponent();
             
-            loadStageIconUI1.Setup(_activator.CoreIconProvider,_processTask.LoadStage);
+            loadStageIconUI1.Setup(Activator.CoreIconProvider,_processTask.LoadStage);
 
             Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
         }
@@ -108,7 +108,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         {
             try
             {
-                var factory = new RuntimeTaskFactory(_activator.RepositoryLocator.CatalogueRepository);
+                var factory = new RuntimeTaskFactory(Activator.RepositoryLocator.CatalogueRepository);
 
                 var lmd = _processTask.LoadMetadata;
                 var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);

@@ -6,22 +6,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.Providers;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
 using CatalogueManager.Copying.Commands;
 
 namespace CohortManager.Wizard

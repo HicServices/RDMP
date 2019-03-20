@@ -60,18 +60,13 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             screen1.btnOk.Click += btnOk_Click;
             screen2.btnBack.Click += btnBackScreen2_Click;
         }
-        
-        protected override void OnLoad(EventArgs e)
+
+        public override void SetItemActivator(IActivateItems activator)
         {
-            base.OnLoad(e);
-
-            if(VisualStudioDesignMode)
-                return;
-
-            screen2.RepositoryLocator = RepositoryLocator;
-
+            base.SetItemActivator(activator);
+            screen2.SetItemActivator(activator);
         }
-        
+
         void btnBackScreen2_Click(object sender, EventArgs e)
         {
             pStage.Controls.Clear();

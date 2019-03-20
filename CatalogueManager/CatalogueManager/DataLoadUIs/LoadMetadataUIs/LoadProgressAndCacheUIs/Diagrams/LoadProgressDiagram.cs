@@ -5,25 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
-using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms.DataVisualization.Charting;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Triggers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.LocationsMenu;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataQualityEngine.Reports;
-using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
-using ReusableUIComponents.Progress;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams
 {
@@ -39,7 +30,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
         LoadProgressAnnotation _annotations;
         private LoadProgress _loadProgress;
         private LoadProgressSummaryReport _report;
-        private IActivateItems _activator;
         public event Action LoadProgressChanged;
 
         ChartLookAndFeelSetter _chartLookAndFeelSetter = new ChartLookAndFeelSetter();
@@ -60,7 +50,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
         void olvDQERuns_ButtonClick(object sender, BrightIdeasSoftware.CellClickEventArgs e)
         {
             var c = (Catalogue) e.Model;
-            new ExecuteCommandRunDQEOnCatalogue(_activator).SetTarget(c).Execute();
+            new ExecuteCommandRunDQEOnCatalogue(Activator).SetTarget(c).Execute();
         }
 
         private object AspectGetterLastDQERun(object rowObject)
@@ -75,8 +65,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
 
         public void SetLoadProgress(LoadProgress lp, IActivateItems activator)
         {
+            SetItemActivator(activator);
             _loadProgress = lp;
-            _activator = activator;
             RefreshUIFromDatabase();
 
             DoTransparencyProperly.ThisHoversOver(pathLinkLabel1,cacheState);
@@ -86,7 +76,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.D
         {
             ragSmiley1.Reset();
 
-            if (RepositoryLocator == null || _loadProgress == null)
+            if (_loadProgress == null)
                 return;
 
             _report = new LoadProgressSummaryReport(_loadProgress);

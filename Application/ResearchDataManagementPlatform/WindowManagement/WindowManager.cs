@@ -7,13 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
@@ -26,10 +21,8 @@ using MapsDirectlyToDatabaseTable;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
-using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
@@ -264,7 +257,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             if(_home == null)
             {
-                _home = new HomeUI(this);
+                _home = new HomeUI(this.ActivateItems);
                 
                 _homeContent = _windowFactory.Create(ActivateItems, _home, "Home", FamFamFamIcons.application_home);
                 _homeContent.Closed += (s, e) => _home = null;

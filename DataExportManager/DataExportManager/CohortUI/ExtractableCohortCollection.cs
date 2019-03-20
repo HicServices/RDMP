@@ -121,7 +121,7 @@ namespace DataExportManager.CohortUI
             lbCohortDatabaseTable.ClearObjects();
 
             //gets the empty placeholder cohort objects, these have string values like "Loading..." and -1 for counts but each one comes with a Fetch object, the node will populate itself once the callback finishes
-            CohortDescriptionFactory factory = new CohortDescriptionFactory(RepositoryLocator.DataExportRepository);
+            CohortDescriptionFactory factory = new CohortDescriptionFactory(Activator.RepositoryLocator.DataExportRepository);
             var fetchDescriptionsDictionary = factory.Create();
 
             lbCohortDatabaseTable.AddObjects(fetchDescriptionsDictionary.SelectMany(kvp => kvp.Value).ToArray());

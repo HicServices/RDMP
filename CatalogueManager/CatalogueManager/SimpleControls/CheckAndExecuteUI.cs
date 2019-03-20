@@ -44,7 +44,6 @@ namespace CatalogueManager.SimpleControls
         public event EventHandler<ExecutionEventArgs> ExecutionFinished;
 
         private RunnerFactory _factory;
-        private IActivateItems _activator;
 
         public IRunner CurrentRunner { get; private set; }
 
@@ -59,7 +58,6 @@ namespace CatalogueManager.SimpleControls
             base.SetItemActivator(activator);
 
             _factory = new RunnerFactory();
-            _activator = activator;
 
             AddToMenu(new ExecuteCommandRunDetached(activator,Detatch_CommandGetter));
             AddToMenu(new ExecuteCommandCopyRunCommandToClipboard(activator,Detatch_CommandGetter));
@@ -154,7 +152,7 @@ namespace CatalogueManager.SimpleControls
         {
             try
             {
-                runner.Run(_activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory,new GracefulCancellationToken());
+                runner.Run(Activator.RepositoryLocator, new FromCheckNotifierToDataLoadEventListener(toMemory), toMemory,new GracefulCancellationToken());
             }
             catch (Exception e)
             {
@@ -216,7 +214,7 @@ namespace CatalogueManager.SimpleControls
         {
             try
             {
-                int exitCode = runner.Run(_activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
+                int exitCode = runner.Run(Activator.RepositoryLocator, loadProgressUI1, new FromDataLoadEventListenerToCheckNotifier(loadProgressUI1), _cancellationTokenSource.Token);
 
                 loadProgressUI1.OnNotify(this,new NotifyEventArgs(exitCode == 0 ? ProgressEventType.Information : ProgressEventType.Error,"Exit code was " + exitCode));
 

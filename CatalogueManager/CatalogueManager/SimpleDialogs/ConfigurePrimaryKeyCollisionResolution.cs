@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -46,13 +47,13 @@ namespace CatalogueManager.SimpleDialogs
     /// 
     /// <para>Only use PrimaryKeyCollisionResolverMutilation (and this dialog) if you are CERTAIN you have the right primary key for the data/your researchers.</para>
     /// </summary>
-    public partial class ConfigurePrimaryKeyCollisionResolution : RDMPForm, IKnowIfImHostedByVisualStudio
+    public partial class ConfigurePrimaryKeyCollisionResolution : RDMPForm
     {
         private readonly TableInfo _table;
 
         private ScintillaNET.Scintilla QueryEditor;
         
-        public ConfigurePrimaryKeyCollisionResolution(TableInfo table)
+        public ConfigurePrimaryKeyCollisionResolution(TableInfo table, IActivateItems activator):base(activator)
         {
             _table = table;
             InitializeComponent();

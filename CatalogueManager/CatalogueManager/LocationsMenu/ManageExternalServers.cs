@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
@@ -30,7 +31,7 @@ namespace CatalogueManager.LocationsMenu
     {
         IServerDefaults defaults;
         
-        public ManageExternalServers()
+        public ManageExternalServers(IActivateItems activator):base(activator)
         {
             InitializeComponent();
         }
@@ -51,9 +52,9 @@ namespace CatalogueManager.LocationsMenu
         {
             try
             {
-                defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+                defaults = Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
-                var allServers = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
+                var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
                 
                 InitializeServerDropdown(ddDefaultLoggingServer, PermissableDefaults.LiveLoggingServer_ID, allServers);
                 InitializeServerDropdown(ddDefaultTestLoggingServer, PermissableDefaults.TestLoggingServer_ID, allServers);
@@ -91,7 +92,7 @@ namespace CatalogueManager.LocationsMenu
             
             if(expectedTypeOfServer != null) //we expect an explicit type e.g. a HIC.Logging.Database 
             {
-                var compatibles = RepositoryLocator.CatalogueRepository.GetAllTier2Databases(expectedTypeOfServer.Value);
+                var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllTier2Databases(expectedTypeOfServer.Value);
 
                 if (currentDefault == null || compatibles.Contains(currentDefault))//if there is not yet a default or the existing default is of the correct type
                     toAdd = compatibles;//then we can go ahead and use the restricted type
@@ -196,7 +197,7 @@ namespace CatalogueManager.LocationsMenu
         private void CreateNewExternalServer(PermissableDefaults defaultToSet, Assembly databaseAssembly)
         {
 
-            if(CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,defaultToSet, databaseAssembly) != null)
+            if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository, defaultToSet, databaseAssembly) != null)
                 RefreshUIFromDatabase();
         }
 

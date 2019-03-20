@@ -14,6 +14,7 @@ using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -31,9 +32,8 @@ namespace CatalogueManager.FindAndReplace
     /// 
     /// <para>You should always back up both your Catalogue and DataExport databases before embarking on a Find and Replace</para>
     /// </summary>
-    public partial class FindAndReplaceUI : UserControl
+    public partial class FindAndReplaceUI : RDMPUserControl
     {
-        private readonly IActivateItems _activator;
         private HashSet<IMapsDirectlyToDatabaseTable> _allObjects = new HashSet<IMapsDirectlyToDatabaseTable>();
 
         private IAttributePropertyFinder _adjustableLocationPropertyFinder;
@@ -45,8 +45,6 @@ namespace CatalogueManager.FindAndReplace
         
         public FindAndReplaceUI(IActivateItems activator)
         {
-            _activator = activator;
-
             GetAllObjects(activator);
 
             _adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
@@ -84,16 +82,16 @@ namespace CatalogueManager.FindAndReplace
 
             //We get these from the child provider because some objects (those below go off looking stuff up if you get them
             //and do not inject known good values first)
-            foreach (var o in _activator.CoreChildProvider.AllExtractionInformations)
+            foreach (var o in Activator.CoreChildProvider.AllExtractionInformations)
                 _allObjects.Add(o);
 
-            foreach (var o in _activator.CoreChildProvider.AllCatalogueItems)
+            foreach (var o in Activator.CoreChildProvider.AllCatalogueItems)
                 _allObjects.Add(o);
 
-            var dxmChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
+            var dxmChildProvider = Activator.CoreChildProvider as DataExportChildProvider;
 
             if (dxmChildProvider != null)
-                foreach (var o in dxmChildProvider.GetAllExtractableColumns(_activator.RepositoryLocator.DataExportRepository))
+                foreach (var o in dxmChildProvider.GetAllExtractableColumns(Activator.RepositoryLocator.DataExportRepository))
                     _allObjects.Add(o);
 
             foreach (var o in g.GetAllObjectsInAllDatabases())
@@ -107,7 +105,7 @@ namespace CatalogueManager.FindAndReplace
             
             var node = (FindAndReplaceNode)e.RowObject;
             node.SetValue(e.NewValue);
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs((DatabaseEntity) node.Instance));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)node.Instance));
         }
 
         private object ValueAspectGetter(object rowobject)
@@ -124,7 +122,7 @@ namespace CatalogueManager.FindAndReplace
 
         private object ImageGetter(object rowObject)
         {
-            return _activator.CoreIconProvider.GetImage(((FindAndReplaceNode) rowObject).Instance);
+            return Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance);
         }
 
 
@@ -169,7 +167,7 @@ namespace CatalogueManager.FindAndReplace
 
             if (node != null)
             {
-                var cmd = new ExecuteCommandActivate(_activator,node.Instance);
+                var cmd = new ExecuteCommandActivate(Activator, node.Instance);
                 if(!cmd.IsImpossible)
                     cmd.Execute();
             }

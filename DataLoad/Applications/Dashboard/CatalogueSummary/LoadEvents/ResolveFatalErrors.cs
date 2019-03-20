@@ -14,6 +14,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using HIC.Logging.PastEvents;
@@ -39,9 +40,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
         private readonly ArchivalFatalError[] _toResolve;
         public Scintilla Explanation { get; set; }
 
-        public ResolveFatalErrors(LogManager logManager, ArchivalFatalError[] toResolve)
+        public ResolveFatalErrors(IActivateItems activator,LogManager logManager, ArchivalFatalError[] toResolve):base(activator)
         {
-            
             _logManager = logManager;
             _toResolve = toResolve;
             InitializeComponent();

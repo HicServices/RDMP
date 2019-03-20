@@ -121,7 +121,7 @@ namespace CohortManager.SubComponents
             AddToMenu(cbIncludeCumulative);
             AddToMenu(new ToolStripSeparator());
             AddToMenu(_miClearCache);
-            AddToMenu(new ExecuteCommandSetQueryCachingDatabase(_activator, _configuration));
+            AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, _configuration));
             AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator,_configuration));
             
             AddToMenu(new ToolStripSeparator());

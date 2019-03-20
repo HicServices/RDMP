@@ -45,11 +45,8 @@ namespace CatalogueManager.PluginManagement
     /// </summary>
     public partial class PluginManagementForm : RDMPForm
     {
-        private readonly IActivateItems _activator;
-
-        public PluginManagementForm(IActivateItems activator)
+        public PluginManagementForm(IActivateItems activator):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
 
             var sink = new SimpleDropSink();
@@ -235,7 +232,7 @@ namespace CatalogueManager.PluginManagement
              
             if(f.Exists)
             {
-                var pluginProcessor = new PluginProcessor(checks, RepositoryLocator.CatalogueRepository);
+                var pluginProcessor = new PluginProcessor(checks, Activator.RepositoryLocator.CatalogueRepository);
             
                 if (pluginProcessor.ProcessFileReturningTrueIfIsUpgrade(f))
                 {
@@ -279,8 +276,8 @@ namespace CatalogueManager.PluginManagement
             olvPlugins.ClearObjects();
             olvLegacyPlugins.ClearObjects();
 
-            compatiblePlugins = RepositoryLocator.CatalogueRepository.GetCompatiblePlugins().ToList();
-            wrongPlugins = RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Except(compatiblePlugins).ToList();
+            compatiblePlugins = Activator.RepositoryLocator.CatalogueRepository.GetCompatiblePlugins().ToList();
+            wrongPlugins = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Except(compatiblePlugins).ToList();
 
             olvPlugins.AddObjects(compatiblePlugins.SelectMany(p => p.LoadModuleAssemblies).ToArray());
             olvLegacyPlugins.AddObjects(wrongPlugins.SelectMany(p => p.LoadModuleAssemblies).ToArray());
@@ -299,8 +296,8 @@ namespace CatalogueManager.PluginManagement
         void analyser_DoWork(object sender, DoWorkEventArgs e)
         {
             analysers.Clear();
-            
-            var mef = RepositoryLocator.CatalogueRepository.MEF;
+
+            var mef = Activator.RepositoryLocator.CatalogueRepository.MEF;
 
             foreach (Plugin plugin in compatiblePlugins)
             {
@@ -364,7 +361,7 @@ namespace CatalogueManager.PluginManagement
                     }
 
                     //delete any plugins for which there are no dlls left
-                    foreach (Plugin emptyPlugin in RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Where(p => !p.LoadModuleAssemblies.Any()))
+                    foreach (Plugin emptyPlugin in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Where(p => !p.LoadModuleAssemblies.Any()))
                         emptyPlugin.DeleteInDatabase();
                 }
             }
@@ -421,7 +418,7 @@ namespace CatalogueManager.PluginManagement
             }
 
             var barsUI = new ProgressBarsUI("Pushing to remotes", true);
-            var service = new RemotePushingService(RepositoryLocator, barsUI);
+            var service = new RemotePushingService(Activator.RepositoryLocator, barsUI);
             var f = new SingleControlForm(barsUI);
             f.Show();
 
@@ -430,7 +427,7 @@ namespace CatalogueManager.PluginManagement
 
         private void btnExportToDisk_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandExportObjectsToFileUI(_activator, compatiblePlugins.ToArray());
+            var cmd = new ExecuteCommandExportObjectsToFileUI(Activator, compatiblePlugins.ToArray());
             cmd.Execute();
         }
     }

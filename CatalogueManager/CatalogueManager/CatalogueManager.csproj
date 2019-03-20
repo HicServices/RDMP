@@ -1362,7 +1362,6 @@
     <Compile Include="TestsAndSetup\ServicePropogation\INamedTab.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IRDMPSingleDatabaseObjectControl.cs" />
-    <Compile Include="TestsAndSetup\ServicePropogation\IRepositoryUser.cs" />
     <Compile Include="TestsAndSetup\RDMPBootStrapper.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPForm.cs">
       <SubType>Form</SubType>
@@ -1373,7 +1372,6 @@
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControlPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\ServicePropogation\ServiceLocatorPropagatorToChildControls.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>

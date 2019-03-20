@@ -31,7 +31,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             base.Execute(); 
 
             var wizard = new CreateNewCohortDatabaseWizardUI();
-            wizard.RepositoryLocator = Activator.RepositoryLocator;
+            wizard.SetItemActivator(Activator);
             var f = Activator.ShowWindow(wizard,true);
             f.FormClosed += (s, e) =>
             {

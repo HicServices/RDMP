@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using Diagnostics.TestData.Exercises;
 using ReusableLibraryCode;
@@ -36,21 +37,19 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// <para>Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
     /// interesting/realistic).</para>
     /// </summary>
-    public partial class GenerateTestDataUI : Form, IHelpWorkflowUser
+    public partial class GenerateTestDataUI : RDMPForm, IHelpWorkflowUser
     {
-        private readonly IActivateItems _activator;
         public HelpWorkflow HelpWorkflow { get; private set; }
 
-        public GenerateTestDataUI(IActivateItems activator, ICommandExecution command)
+        public GenerateTestDataUI(IActivateItems activator, ICommandExecution command):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
 
             ObjectConstructor constructor = new ObjectConstructor();
 
             int yLoc = 0;
 
-            foreach (Type generator in _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<IExerciseTestDataGenerator>())
+            foreach (Type generator in Activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<IExerciseTestDataGenerator>())
             {
                 if(generator.IsAbstract || generator.IsInterface)
                     continue;
@@ -77,8 +76,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         private void BuildHelpWorkflow(ICommandExecution command)
         {
-            
-            HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(_activator));
+
+            HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(Activator));
 
             var ds =
                 new HelpStage(pDatasets,

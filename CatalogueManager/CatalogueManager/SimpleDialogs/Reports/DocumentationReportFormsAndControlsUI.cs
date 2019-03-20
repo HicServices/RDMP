@@ -6,27 +6,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
-using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 
 namespace CatalogueManager.SimpleDialogs.Reports
 {
@@ -39,13 +31,10 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// </summary>
     public partial class DocumentationReportFormsAndControlsUI : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private bool _grabArbitraryDatabaseObjects = false;
         
-
-        public DocumentationReportFormsAndControlsUI(IActivateItems activator)
+        public DocumentationReportFormsAndControlsUI(IActivateItems activator):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
         }
 
@@ -131,10 +120,10 @@ namespace CatalogueManager.SimpleDialogs.Reports
                     if(c == RDMPConcept.SQL || c == RDMPConcept.Clipboard || c == RDMPConcept.File || c == RDMPConcept.Help || c== RDMPConcept.Release || c == RDMPConcept.Database || c== RDMPConcept.Filter || c == RDMPConcept.Logging || c == RDMPConcept.DQE)
                         continue;
 
-                    icons.Add(c.ToString(), _activator.CoreIconProvider.GetImage(c));
+                    icons.Add(c.ToString(), Activator.CoreIconProvider.GetImage(c));
                 }
 
-                office.GenerateReport(_activator.RepositoryLocator.CatalogueRepository.CommentStore,checksUI1, applicationToClasses, GetImagesForType, images, icons);
+                office.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,checksUI1, applicationToClasses, GetImagesForType, images, icons);
             }
             catch (Exception exception)
             {
@@ -145,7 +134,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
         public IEnumerable<Type> GetAllFormsAndControlTypes()
         {
             List<Exception> ex;
-            return RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)
+            return Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)
                 .Where(
                 t =>
                     (typeof(Form).IsAssignableFrom(t) || typeof(UserControl).IsAssignableFrom(t))
@@ -177,16 +166,11 @@ namespace CatalogueManager.SimpleDialogs.Reports
                         {
                             //Parameters we know how to satisfy
                             if (parameters[i].ParameterType == typeof (IActivateItems))
-                                p[i] = _activator;
+                                p[i] = Activator;
                         }
 
                         //instantiate the control
                         Control c = (Control) constructor.Invoke(p);
-                        
-                        //propagate the repository locator and VisualStudioDesignMode = true downwards
-                        ServiceLocatorPropagatorToChildControls propagator = new ServiceLocatorPropagatorToChildControls(RepositoryLocator);
-                        propagator.PropagateRecursively(new[] {c},true);//true = pretend we are visual studio :)
-
                         Form f = c as Form;
                         
                         //if it isn't a form, create one and put the control on it
@@ -246,9 +230,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
                     IMapsDirectlyToDatabaseTable dbObject = null;
 
 
-                    if (RepositoryLocator.CatalogueRepository.SupportsObjectType(expectedObjectType))
+                    if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(expectedObjectType))
                     {
-                        dbObject = RepositoryLocator.CatalogueRepository.GetAllObjects(expectedObjectType).FirstOrDefault();
+                        dbObject = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(expectedObjectType).FirstOrDefault();
 
                         if (dbObject == null)
                             checksUI1.OnCheckPerformed(
@@ -256,9 +240,9 @@ namespace CatalogueManager.SimpleDialogs.Reports
                                     "Could not find an instance of Type '" + expectedObjectType.Name +
                                     "' in CatalogueRepository", CheckResult.Warning));
                     }
-                    else if (RepositoryLocator.DataExportRepository.SupportsObjectType(expectedObjectType))
+                    else if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(expectedObjectType))
                     {
-                        dbObject = RepositoryLocator.DataExportRepository.GetAllObjects(expectedObjectType).FirstOrDefault();
+                        dbObject = Activator.RepositoryLocator.DataExportRepository.GetAllObjects(expectedObjectType).FirstOrDefault();
 
                         if (dbObject == null)
                             checksUI1.OnCheckPerformed(
@@ -274,7 +258,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
 
                     if (dbObject != null)
-                        t.GetMethods().Single(m=>m.Name.Equals("SetDatabaseObject")  && m.DeclaringType == t).Invoke(c, new object[] {_activator, dbObject});
+                        t.GetMethods().Single(m=>m.Name.Equals("SetDatabaseObject")  && m.DeclaringType == t).Invoke(c, new object[] {Activator, dbObject});
                 }
                 catch (Exception e)
                 {

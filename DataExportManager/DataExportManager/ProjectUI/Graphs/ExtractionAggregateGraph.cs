@@ -137,13 +137,12 @@ namespace DataExportManager.ProjectUI.Graphs
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             _collection = (ExtractionAggregateGraphObjectCollection) collection;
-            _activator = activator;
-            RepositoryLocator = _activator.RepositoryLocator;
+            SetItemActivator(activator);
 
             var config = _collection.SelectedDataSets.ExtractionConfiguration;
             var ds = _collection.SelectedDataSets.ExtractableDataSet;
 
-            Request = new ExtractDatasetCommand(RepositoryLocator,config, new ExtractableDatasetBundle(ds));
+            Request = new ExtractDatasetCommand(activator.RepositoryLocator, config, new ExtractableDatasetBundle(ds));
             Request.GenerateQueryBuilder();
 
             SetAggregate(activator,_collection.Graph);

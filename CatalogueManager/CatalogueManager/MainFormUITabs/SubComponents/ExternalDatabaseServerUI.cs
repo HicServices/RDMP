@@ -60,9 +60,9 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
                 tbPassword.Text = _server.GetDecryptedPassword();
                 ddDatabaseType.SelectedItem = _server.DatabaseType;
-                pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_server.DatabaseType);
+                pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_server.DatabaseType);
 
-                pbServer.Image = _activator.CoreIconProvider.GetImage(_server);
+                pbServer.Image = Activator.CoreIconProvider.GetImage(_server);
 
                 AddChecks(databaseObject);
             }
@@ -115,7 +115,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
             _server.DatabaseType = type;
-            pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(type);
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type);
         }
     }
 

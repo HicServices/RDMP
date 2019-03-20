@@ -49,10 +49,10 @@ namespace DataExportManager.ProjectUI
         
         private void SetCohorts()
         {
-            if(RepositoryLocator == null || _project == null || _project.ProjectNumber == null)
+            if(_project == null || _project.ProjectNumber == null)
                 return;
 
-            var cohorts = RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>()
+            var cohorts = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>()
                 .Where(c => c.GetExternalData().ExternalProjectNumber == _project.ProjectNumber).ToArray();
 
             extractableCohortCollection1.SetupFor(cohorts);
@@ -193,7 +193,7 @@ namespace DataExportManager.ProjectUI
         
         void mi_SetDescription_Click(object sender, EventArgs e)
         {
-            ExtractionConfiguration toSetDescriptionOn = RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+            ExtractionConfiguration toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
             if (toSetDescriptionOn.IsReleased)
                 return;
@@ -212,7 +212,7 @@ namespace DataExportManager.ProjectUI
 
         void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
         {
-            ExtractionConfiguration toSetDescriptionOn = RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+            ExtractionConfiguration toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
             if (toSetDescriptionOn.IsReleased)
                 return;
@@ -247,7 +247,7 @@ namespace DataExportManager.ProjectUI
                    
                     _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
 
-                    ExtractionConfiguration selectedExtractionConfiguration = RepositoryLocator.DataExportRepository.GetObjectByID <ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+                    ExtractionConfiguration selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
                     
                     menu.Items.Clear();
                     

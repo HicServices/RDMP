@@ -87,7 +87,11 @@ namespace CatalogueManager.Collections
             var o = tlvTableInfos.SelectedObject;
             
             if (o is DecryptionPrivateKeyNode)
-                _activator.ShowWindow(new PasswordEncryptionKeyLocationUI(), true);
+            {
+                var c = new PasswordEncryptionKeyLocationUI();
+                c.SetItemActivator(_activator);
+                _activator.ShowWindow(c, true);
+            }
         }
         
         public void SelectTableInfo(TableInfo toSelect)

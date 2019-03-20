@@ -83,7 +83,7 @@ namespace CatalogueManager.Validation
 
             ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
-            olvName.ImageGetter = (o) => _activator.CoreIconProvider.GetImage(o);
+            olvName.ImageGetter = (o) => Activator.CoreIconProvider.GetImage(o);
         }
 
         private bool isFirstTime = true;
@@ -276,7 +276,7 @@ namespace CatalogueManager.Validation
         {
             tableLayoutPanel1.RowCount++;
             
-            SecondaryConstraintUI toAdd = new SecondaryConstraintUI(RepositoryLocator.CatalogueRepository,secondaryConstriant,olvColumns.Objects.Cast<ExtractionInformation>().Select(c=>c.GetRuntimeName()).ToArray());
+            SecondaryConstraintUI toAdd = new SecondaryConstraintUI(Activator.RepositoryLocator.CatalogueRepository,secondaryConstriant,olvColumns.Objects.Cast<ExtractionInformation>().Select(c=>c.GetRuntimeName()).ToArray());
 
             toAdd.Width = splitContainer1.Panel2.Width;
             toAdd.Anchor = AnchorStyles.Left | AnchorStyles.Right | AnchorStyles.Top;
@@ -307,13 +307,6 @@ namespace CatalogueManager.Validation
                     ddConsequence.SelectedItem = Consequence.Missing;
                     bSuppressChangeEvents = false;
                 }
-        }
-        
-        private void btnConfigureStandardRegex_Click(object sender, EventArgs e)
-        {
-            StandardRegexUI dialog = new StandardRegexUI();
-            dialog.RepositoryLocator = RepositoryLocator;
-            dialog.Show();
         }
         
         private void tbFilter_TextChanged(object sender, EventArgs e)

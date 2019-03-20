@@ -7,25 +7,17 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using System.Windows.Media;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
-using CatalogueManager.Copying;
 using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.Proposals;
-using ReusableUIComponents.TreeHelper;
-using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution
 {

@@ -139,7 +139,7 @@ namespace DataExportManager.CohortUI
 
             GenerateSQLPreview();
             
-            var dx = _activator.CoreChildProvider as DataExportChildProvider;
+            var dx = Activator.CoreChildProvider as DataExportChildProvider;
 
             if (!_commonFunctionality1.IsSetup)
             {
@@ -212,19 +212,19 @@ namespace DataExportManager.CohortUI
 
         private void btnShowProject_Click(object sender, EventArgs e)
         {
-            var dx = (DataExportChildProvider) _activator.CoreChildProvider;
+            var dx = (DataExportChildProvider) Activator.CoreChildProvider;
 
             var projects = dx.Projects.Where(p => p.ProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray();
 
             if (!projects.Any())
                 MessageBox.Show("No Projects exist with ProjectNumber " + _extractableCohort.ExternalProjectNumber);
             else if (projects.Length == 1)
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
+                Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
             else
             {
                 SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(projects,false,false);
                 if(dialog.ShowDialog() == DialogResult.OK)
-                    _activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
+                    Activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
             }
         }
 

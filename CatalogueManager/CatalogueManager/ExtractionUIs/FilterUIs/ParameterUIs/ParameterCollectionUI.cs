@@ -12,6 +12,7 @@ using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableUIComponents;
@@ -40,7 +41,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
     /// 
     /// <para>Sometimes the Globals are explicit fixed value parameters for example the @ProjectNumber in a data extraction, in this case the Parameter cannot be modified period.</para>
     /// </summary>
-    public partial class ParameterCollectionUI : UserControl
+    public partial class ParameterCollectionUI : RDMPUserControl
     {
         public ParameterCollectionUIOptions Options { get; private set; }
         

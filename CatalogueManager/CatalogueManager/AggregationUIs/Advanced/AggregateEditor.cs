@@ -100,7 +100,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private object ImageGetter(object rowObject)
         {
-            return _activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject);
         }
         
         private CheckState ForceJoinCheckStatePutter(object rowobject, CheckState newvalue)
@@ -139,7 +139,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 {
                     joiner.BreakLinkBetween(_aggregate, ti);
                     _forcedJoins.Remove(ti);
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                 }
 
                 if(patientIndexTableUse != null)
@@ -160,7 +160,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private void Publish()
         {
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
         }
 
         private CheckState ForceJoinCheckStateGetter(object rowObject)
@@ -183,10 +183,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         public void SetAggregate(IActivateItems activator,AggregateConfiguration configuration, IAggregateBuilderOptions options = null)
         {
-            _activator = activator;
+            SetItemActivator(activator);
             _aggregate = configuration;
             _options = options ?? new AggregateBuilderOptionsFactory().Create(configuration);
             
+            selectColumnUI1.SetItemActivator(activator);
+
             ReloadUIFromDatabase();
         }
 
@@ -199,7 +201,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
             gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
 
-            selectColumnUI1.SetUp(_activator, _options, _aggregate);
+            selectColumnUI1.SetUp(Activator, _options, _aggregate);
             
             tbID.Text = _aggregate.ID.ToString();
 
@@ -234,7 +236,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private void PopulateTopX()
         {
-           _aggregateTopXui1.SetUp(_activator, _options, _aggregate);
+           _aggregateTopXui1.SetUp(Activator, _options, _aggregate);
         }
 
         private void DetermineFromTables()
@@ -341,7 +343,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private void PopulateHavingText()
         {
-            var autoComplete = new AutoCompleteProviderFactory(_activator).Create(_aggregate.GetQuerySyntaxHelper());
+            var autoComplete = new AutoCompleteProviderFactory(Activator).Create(_aggregate.GetQuerySyntaxHelper());
             autoComplete.RegisterForEvents(QueryHaving);
             autoComplete.Add(_aggregate);
 
@@ -380,7 +382,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
                 _aggregate.PivotOnDimensionID = dimension.ID;
                 _aggregate.SaveToDatabase();
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
             }
 
             ReloadUIFromDatabase();
@@ -479,7 +481,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     return;
                 }
 
-            var axis = new AggregateContinuousDateAxis(RepositoryLocator.CatalogueRepository, selectedDimension);
+            var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension);
             axis.AxisIncrement = AxisIncrement.Month;
             axis.SaveToDatabase();
             ReloadUIFromDatabase();
@@ -538,7 +540,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         {
             var t = olvJoin.SelectedObject as TableInfo;
             if(t != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(t));
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(t));
         }
     }
     

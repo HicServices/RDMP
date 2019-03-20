@@ -86,7 +86,7 @@ namespace CatalogueManager.ExtractionUIs
 
         private object ImageGetter(object rowObject)
         {
-            return _activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject);
         }
 
         private bool bLoading = false;
@@ -190,7 +190,7 @@ namespace CatalogueManager.ExtractionUIs
             Add(rbSpecialApproval);
             Add(rbInternal);
 
-            AddToMenu(new ExecuteCommandReOrderColumns(_activator, _catalogue));
+            AddToMenu(new ExecuteCommandReOrderColumns(Activator, _catalogue));
             
         }
         
@@ -203,7 +203,7 @@ namespace CatalogueManager.ExtractionUIs
         {
             var o = ((ObjectListView)sender).SelectedObject as IMapsDirectlyToDatabaseTable;
             if(o != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(o){ExpansionDepth = 1});
         }
 
         private void olvFilters_ItemChecked(object sender, ItemCheckedEventArgs e)

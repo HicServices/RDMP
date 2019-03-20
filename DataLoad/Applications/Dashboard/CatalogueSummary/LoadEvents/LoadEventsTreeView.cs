@@ -351,8 +351,8 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             if (category != null)
             {
-                var cmd = new ExecuteCommandViewLoggedData(_activator,category.AssociatedTable,new LogViewerFilter(){Run = category.RunId});
-                RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, _activator));
+                var cmd = new ExecuteCommandViewLoggedData(Activator,category.AssociatedTable,new LogViewerFilter(){Run = category.RunId});
+                RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
             }
 
             if (tli != null && _loadMetadata != null)
@@ -377,8 +377,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 var toResolve = treeView1.SelectedObjects.OfType<ArchivalFatalError>().ToArray();
                 RightClickMenu.Items.Add("Resolve Fatal Error(s)", null, (a, b) =>
                 {
-                    var resolve = new ResolveFatalErrors(_logManager, toResolve);
-                    resolve.RepositoryLocator = RepositoryLocator;
+                    var resolve = new ResolveFatalErrors(Activator,_logManager, toResolve);
                     resolve.ShowDialog();
                     treeView1.RefreshObjects(toResolve);
                 });
@@ -403,9 +402,9 @@ namespace Dashboard.CatalogueSummary.LoadEvents
                 return;
             
             if(dli != null)
-                new ExecuteCommandViewLoggedData(_activator,LoggingTables.DataLoadRun,new LogViewerFilter(){Run = dli.ID}).Execute();
+                new ExecuteCommandViewLoggedData(Activator,LoggingTables.DataLoadRun,new LogViewerFilter(){Run = dli.ID}).Execute();
             else if (cat != null)
-                new ExecuteCommandViewLoggedData(_activator, cat.AssociatedTable, new LogViewerFilter() { Run = cat.RunId}).Execute();
+                new ExecuteCommandViewLoggedData(Activator, cat.AssociatedTable, new LogViewerFilter() { Run = cat.RunId}).Execute();
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)

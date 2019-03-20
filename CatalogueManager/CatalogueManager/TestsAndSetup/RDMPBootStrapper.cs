@@ -6,11 +6,9 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using RDMPStartup;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 
@@ -22,8 +20,7 @@ namespace CatalogueManager.TestsAndSetup
         private readonly string dataExportConnection;
         private T _mainForm;
 
-        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-
+        
         public RDMPBootStrapper(string catalogueConnection, string dataExportConnection)
         {
             this.catalogueConnection = catalogueConnection;
@@ -53,17 +50,22 @@ namespace CatalogueManager.TestsAndSetup
                 var startupUI = new StartupUIMainForm(startup);
                 startupUI.ShowDialog();
 
-                _repositoryLocator = startup.RepositoryLocator;
-                
+                if (startup.RepositoryLocator == null)
+                {
+                    MessageBox.Show("Platform databases could not be reached.  Application will exit");
+                    return;
+                }
+
                 //launch the main application form T
                 _mainForm = new T();
-                _mainForm.RepositoryLocator = _repositoryLocator;
+
+                typeof (T).GetMethod("SetRepositoryLocator").Invoke(_mainForm,new object[]{startup.RepositoryLocator});
+
                 Application.Run(_mainForm);
             }
             catch (Exception e)
             {
-                DiagnosticsScreen.OfferLaunchingDiagnosticsScreenOrEnvironmentExit(_repositoryLocator, null, e);
-                MessageBox.Show("Diagnostics has been closed, application will now exit");
+                ExceptionViewer.Show(e);
             }
         }
     }

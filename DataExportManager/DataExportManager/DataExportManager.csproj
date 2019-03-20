@@ -377,6 +377,7 @@
     <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneExtractionConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportAlreadyExistingCohort.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />

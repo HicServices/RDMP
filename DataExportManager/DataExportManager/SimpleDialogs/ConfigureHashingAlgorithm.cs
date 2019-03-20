@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Managers;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data;
 using DataExportLibrary.Repositories.Managers;
@@ -40,14 +41,11 @@ namespace DataExportManager.SimpleDialogs
     /// </summary>
     public partial class ConfigureHashingAlgorithm : RDMPForm
     {
-        private readonly IDataExportRepository _dataExportRepository;
-
         [DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryPreview { get; set; }
 
-        public ConfigureHashingAlgorithm(IDataExportRepository dataExportRepository)
+        public ConfigureHashingAlgorithm(IActivateItems activator):base(activator)
         {
-            _dataExportRepository = dataExportRepository;
             InitializeComponent();
             
             if(VisualStudioDesignMode)
@@ -68,7 +66,7 @@ namespace DataExportManager.SimpleDialogs
                 return;
 
             //get the current hashing algorithm
-            string value = _dataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
+            string value = Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
             tbHashingAlgorithm.Text = value;
         }
 
@@ -80,7 +78,7 @@ namespace DataExportManager.SimpleDialogs
             {
                 QueryPreview.ReadOnly = false;
                 QueryPreview.Text = String.Format(pattern, "[TEST]..[ExampleColumn]", "123");
-                _dataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
+                Activator.RepositoryLocator.DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, pattern);
                 
             }
             catch (Exception exception)

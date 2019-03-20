@@ -25,7 +25,7 @@ namespace CatalogueManager.AutoComplete
 {
     public class AutoCompleteProvider
     {
-        private IActivateItems _activator;
+        private readonly IActivateItems _activator;
         private AutocompleteMenu _autocomplete = new AutocompleteMenu();
 
         List<AutocompleteItem> items = new List<AutocompleteItem>();

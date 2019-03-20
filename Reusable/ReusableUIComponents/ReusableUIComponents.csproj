@@ -324,7 +324,6 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="IKnowIfImHostedByVisualStudio.cs" />
     <Compile Include="KeyboardReminder.cs">
       <SubType>UserControl</SubType>
     </Compile>

@@ -143,19 +143,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
 
             RefreshServers();
         }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            base.OnLoad(e);
-            
-            if (VisualStudioDesignMode || RepositoryLocator == null)
-                return;
-
-            RefreshServers();
-
-
-        }
-
+        
         private void RefreshServers()
         {
             if (ColumnInfo == null)
@@ -163,9 +151,9 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
             
             ddExternalDatabaseServer.Items.Clear();
             
-            ddExternalDatabaseServer.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.ANOStore));
+            ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.ANOStore));
 
-            var defaultServer = _activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
+            var defaultServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
             if (defaultServer != null)
                 ddExternalDatabaseServer.SelectedItem = defaultServer;
@@ -173,7 +161,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
                 lblNoDefaultANOStore.Visible = true;
 
             ddANOTables.Items.Clear();
-            ddANOTables.Items.AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray());
+            ddANOTables.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ANOTable>().ToArray());
         }
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
@@ -283,7 +271,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
             {
                 var server = ddExternalDatabaseServer.SelectedItem as ExternalDatabaseServer;
 
-                var a = new ANOTable(RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text, tbSuffix.Text);
+                var a = new ANOTable(Activator.RepositoryLocator.CatalogueRepository, server, tbANOTableName.Text, tbSuffix.Text);
 
                 //if we know the type is e.g. varchar(5)
                 var length = ColumnInfo.Discover(DataAccessContext.InternalDataProcessing).DataType.GetLengthIfString();
@@ -384,7 +372,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
             }
 
             //it worked (or didn't!) so notify changes to the TableInfo
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
         }
 
         private bool UserAcceptSql(string sql)

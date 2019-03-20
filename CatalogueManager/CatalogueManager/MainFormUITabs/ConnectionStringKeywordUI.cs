@@ -45,7 +45,7 @@ namespace CatalogueManager.MainFormUITabs
             tbValue.Text = _keyword.Value;
             tbID.Text = _keyword.ID.ToString();
 
-            pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
             
             tbCommandToDelete.Text = "DELETE FROM " + 
                 activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase()
@@ -72,7 +72,7 @@ namespace CatalogueManager.MainFormUITabs
                 return;
             
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
-            pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(type);
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type);
         }
     }
 

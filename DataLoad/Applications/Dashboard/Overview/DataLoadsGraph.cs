@@ -32,7 +32,6 @@ namespace Dashboard.Overview
     public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
     {
         private DataLoadsGraphObjectCollection _collection;
-        private IActivateItems _activator;
         
         public DataLoadsGraph()
         {
@@ -51,18 +50,18 @@ namespace Dashboard.Overview
         {
             olvName.ImageGetter = delegate
             {
-                return _activator.CoreIconProvider.GetImage(RDMPConcept.LoadMetadata);
+                return Activator.CoreIconProvider.GetImage(RDMPConcept.LoadMetadata);
             };
 
             olvDataLoads.ButtonClick += delegate(object sender, CellClickEventArgs e)
             {
                 var loadSummary = (DataLoadsGraphResult)e.Model;
                 var metadata =
-                    _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
+                    Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
                         .SingleOrDefault(m => m.ID == loadSummary.ID);
 
                 if (metadata != null)
-                    new ExecuteCommandViewLoadMetadataLogs(_activator).SetTarget(metadata).Execute();
+                    new ExecuteCommandViewLoadMetadataLogs(Activator).SetTarget(metadata).Execute();
             };
 
             olvDataLoads.DoubleClick += delegate(object sender, EventArgs args)
@@ -71,11 +70,11 @@ namespace Dashboard.Overview
                 if (loadSummary != null)
                 {
                     var metadata =
-                        _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
+                        Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>()
                             .SingleOrDefault(m => m.ID == loadSummary.ID);
 
                     if (metadata != null)
-                        _activator.RequestItemEmphasis(sender, new EmphasiseRequest(metadata));
+                        Activator.RequestItemEmphasis(sender, new EmphasiseRequest(metadata));
                 }
             };
         }
@@ -112,7 +111,7 @@ namespace Dashboard.Overview
                     int countManualLoadsuccessful = 0;
                     int countManualLoadFailure = 0;
                     
-                    foreach (LoadMetadata metadata in _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
+                    foreach (LoadMetadata metadata in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<LoadMetadata>())
                     {
                         try
                         {
@@ -275,7 +274,7 @@ namespace Dashboard.Overview
 
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
-            _activator = activator;
+            SetItemActivator(activator);
             _collection = (DataLoadsGraphObjectCollection)collection;
 
             if(IsHandleCreated && !IsDisposed)

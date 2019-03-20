@@ -21,7 +21,7 @@ namespace CatalogueManager.LogViewer.Tabs
         protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
             var tableId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
-            yield return new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataSource, new LogViewerFilter { Table = tableId });
+            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.DataSource, new LogViewerFilter { Table = tableId });
         }
 
         protected override LoggingTables GetTableEnum()

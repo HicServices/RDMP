@@ -107,10 +107,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private void AddControlToDockContent(IActivateItems activator, Control control,DockContent content, string label, Bitmap image)
         {
-            var repoUser = control as IRepositoryUser;
-            if(repoUser != null && repoUser.RepositoryLocator == null)
-                repoUser.RepositoryLocator = RepositoryLocator;
-
             control.Dock = DockStyle.Fill;
             content.Controls.Add(control);
             content.TabText = label;

@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Windows.Forms;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using ReusableUIComponents;
@@ -34,7 +35,7 @@ namespace DataExportManager.SimpleDialogs
         private readonly string _displayMember;
         private readonly string _valueMember;
 
-        public SelectWhichCohortToImport(ExternalCohortTable source)
+        public SelectWhichCohortToImport(IActivateItems activator,ExternalCohortTable source):base(activator)
         {
             _source = source;
             InitializeComponent();
@@ -58,7 +59,7 @@ namespace DataExportManager.SimpleDialogs
 
             var idUserPlansToImport = (int) dataGridView1.SelectedRows[0].Cells[_valueMember].Value;
 
-            var existing = RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableCohort>("ExternalCohortTable_ID" , _source.ID ,ExpressionType.AndAlso,  "OriginID" , idUserPlansToImport);
+            var existing = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWhere<ExtractableCohort>("ExternalCohortTable_ID" , _source.ID ,ExpressionType.AndAlso,  "OriginID" , idUserPlansToImport);
 
             if (existing.Any())
             {

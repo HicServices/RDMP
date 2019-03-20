@@ -81,7 +81,6 @@ namespace ResearchDataManagementPlatform.Menus
 
     public partial class RDMPTopMenuStrip : RDMPUserControl
     {
-        private IActivateItems _activator;
         private WindowManager _windowManager;
         
         private SaveMenuItem _saveToolStripMenuItem;
@@ -94,25 +93,24 @@ namespace ResearchDataManagementPlatform.Menus
         
         private void configureExternalServersToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ExecuteCommandConfigureDefaultServers(_activator).Execute();
+            new ExecuteCommandConfigureDefaultServers(Activator).Execute();
         }
 
         private void setTicketingSystemToolStripMenuItem_Click(object sender, EventArgs e)
         {
             TicketingSystemConfigurationUI ui = new TicketingSystemConfigurationUI();
-            ui.SetItemActivator(_activator);
-            _activator.ShowWindow(ui,true);
+            Activator.ShowWindow(ui, true);
         }
 
 
         private void governanceReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var generator = new GovernanceReport(new DatasetTimespanCalculator(), RepositoryLocator.CatalogueRepository);
+            var generator = new GovernanceReport(new DatasetTimespanCalculator(), Activator.RepositoryLocator.CatalogueRepository);
             generator.GenerateReport();
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandViewLoggedData(_activator,LoggingTables.DataLoadTask);
+            var cmd = new ExecuteCommandViewLoggedData(Activator, LoggingTables.DataLoadTask);
             cmd.Execute();
         }
         
@@ -124,15 +122,14 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandGenerateMetadataReport(_activator,null);
+            var cmd = new ExecuteCommandGenerateMetadataReport(Activator, null);
             cmd.Execute();
         }
 
 
         private void serverSpecReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var dialog = new DatabaseSizeReportUI();
-            dialog.RepositoryLocator = RepositoryLocator;
+            var dialog = new DatabaseSizeReportUI(Activator);
             dialog.Show();
         }
 
@@ -141,7 +138,7 @@ namespace ResearchDataManagementPlatform.Menus
             Form f = new Form();
             f.Text = "DITA Extraction of Catalogue Metadata";
             DitaExtractorUI d = new DitaExtractorUI();
-            d.RepositoryLocator = RepositoryLocator;
+            d.SetItemActivator(Activator);
             f.Width = d.Width + 10;
             f.Height = d.Height + 50;
             f.Controls.Add(d);
@@ -150,14 +147,13 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void launchDiagnosticsScreenToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            DiagnosticsScreen dialog = new DiagnosticsScreen(null);
-            dialog.RepositoryLocator = RepositoryLocator;
+            DiagnosticsScreen dialog = new DiagnosticsScreen(Activator, null);
             dialog.ShowDialog();
         }
 
         private void generateTestDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            new ExecuteCommandGenerateTestData(_activator).Execute();
+            new ExecuteCommandGenerateTestData(Activator).Execute();
         }
         
         private void showPerformanceCounterToolStripMenuItem_Click(object sender, EventArgs e)
@@ -193,17 +189,16 @@ namespace ResearchDataManagementPlatform.Menus
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
-            report.GenerateReport( _activator.RepositoryLocator.CatalogueRepository.CommentStore,
+            report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
                 new PopupChecksUI("Generating class summaries", false),
-                _activator.CoreIconProvider,
+                Activator.CoreIconProvider,
                 typeof(Catalogue).Assembly,
                 typeof(ExtractionConfiguration).Assembly);
         }
 
         private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var generator = new DocumentationReportFormsAndControlsUI(_activator);
-            generator.RepositoryLocator = RepositoryLocator;
+            var generator = new DocumentationReportFormsAndControlsUI(Activator);
             generator.Show();
         }
         
@@ -215,18 +210,19 @@ namespace ResearchDataManagementPlatform.Menus
             if(t == null)
                 return;
 
-            t.ShowHelp(_activator);
+            t.ShowHelp(Activator);
         }
 
         public void SetWindowManager(WindowManager windowManager)
         {
+            SetItemActivator(windowManager.ActivateItems);
+
             _windowManager = windowManager;
-            _activator = _windowManager.ActivateItems;
-            _atomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
+            _atomicCommandUIFactory = new AtomicCommandUIFactory(Activator);
             
 
             //top menu strip setup / adjustment
-            LocationsMenu.DropDownItems.Add(new DataExportMenu(_activator));
+            LocationsMenu.DropDownItems.Add(new DataExportMenu(Activator));
             _saveToolStripMenuItem = new SaveMenuItem
             {
                 Enabled = false,
@@ -237,9 +233,9 @@ namespace ResearchDataManagementPlatform.Menus
 
             _windowManager.TabChanged += WindowFactory_TabChanged;
 
-            var tracker = new TutorialTracker(_activator);
+            var tracker = new TutorialTracker(Activator);
             foreach (Tutorial t in tracker.TutorialsAvailable)
-                tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem, _activator, t, tracker));
+                tutorialsToolStripMenuItem.DropDownItems.Add(new LaunchTutorialMenuItem(tutorialsToolStripMenuItem, Activator, t, tracker));
 
             tutorialsToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
@@ -255,9 +251,9 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
 
             // Location menu
-            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(RepositoryLocator)));
+            LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)));
 
-            _activator.Theme.ApplyTo(menuStrip1);
+            Activator.Theme.ApplyTo(menuStrip1);
         }
 
         private void NewToolStripMenuItemOnDropDownOpening(object sender, EventArgs eventArgs)
@@ -266,30 +262,30 @@ namespace ResearchDataManagementPlatform.Menus
             newToolStripMenuItem.DropDownItems.Clear();
             
             //Catalogue commands
-            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
-            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
-            AddToNew(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
-            AddToNew(new ExecuteCommandCreateNewLoadMetadata(_activator));
-            AddToNew(new ExecuteCommandCreateNewStandardRegex(_activator));
+            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator));
+            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator, false));
+            AddToNew(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator));
+            AddToNew(new ExecuteCommandCreateNewLoadMetadata(Activator));
+            AddToNew(new ExecuteCommandCreateNewStandardRegex(Activator));
 
             //Saved cohorts database creation
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(Activator));
 
             //cohort creation
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator));
-            AddToNew(new ExecuteCommandCreateNewCohortFromFile(_activator));
-            AddToNew(new ExecuteCommandCreateNewCohortFromCatalogue(_activator));
+            AddToNew(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator));
+            AddToNew(new ExecuteCommandCreateNewCohortFromFile(Activator));
+            AddToNew(new ExecuteCommandCreateNewCohortFromCatalogue(Activator));
 
             //Data export commands
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(_activator));
-            AddToNew(new ExecuteCommandCreateNewDataExtractionProject(_activator));
-            AddToNew(new ExecuteCommandRelease(_activator) { OverrideCommandName = "New Release..." });
+            AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(Activator));
+            AddToNew(new ExecuteCommandCreateNewDataExtractionProject(Activator));
+            AddToNew(new ExecuteCommandRelease(Activator) { OverrideCommandName = "New Release..." });
 
             newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateANOVersion(_activator));
+            AddToNew(new ExecuteCommandCreateANOVersion(Activator));
         }
 
         private void AddToNew(IAtomicCommand cmd)
@@ -314,7 +310,7 @@ namespace ResearchDataManagementPlatform.Menus
 
             //if user wants to emphasise on tab change and theres an object we can emphasise associated with the control
             if (singleObject != null && UserSettings.EmphasiseOnTabChanged && singleObject.DatabaseObject != null)
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
+                Activator.RequestItemEmphasis(this, new EmphasiseRequest(singleObject.DatabaseObject));
 
             _saveToolStripMenuItem.Saveable = saveable;
 
@@ -324,8 +320,7 @@ namespace ResearchDataManagementPlatform.Menus
         
         private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            PluginManagementForm dialogue = new PluginManagementForm(_activator);
-            dialogue.RepositoryLocator = RepositoryLocator;
+            PluginManagementForm dialogue = new PluginManagementForm(Activator);
             dialogue.Show();
         }
 
@@ -361,8 +356,8 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void openToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var navigate = new NavigateToObjectUI(_activator);
-            navigate.CompletionAction = (o) => _activator.WindowArranger.SetupEditAnything(this, o);
+            var navigate = new NavigateToObjectUI(Activator);
+            navigate.CompletionAction = (o) => Activator.WindowArranger.SetupEditAnything(this, o);
             navigate.Show();
         }
 
@@ -370,7 +365,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var visibleCollection = _windowManager.GetFocusedCollection();
 
-            new NavigateToObjectUI(_activator, null, visibleCollection).Show();
+            new NavigateToObjectUI(Activator, null, visibleCollection).Show();
         }
 
         private void closeToolStripMenuItem_Click(object sender, EventArgs e)
@@ -380,7 +375,7 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void findAndReplaceToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            _activator.ShowWindow(new FindAndReplaceUI(_activator),true);
+            Activator.ShowWindow(new FindAndReplaceUI(Activator),true);
         }
 
         private void navigateBackwardToolStripMenuItem_Click(object sender, EventArgs e)

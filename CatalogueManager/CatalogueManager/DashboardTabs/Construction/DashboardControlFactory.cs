@@ -8,36 +8,29 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.DashboardTabs.Construction.Exceptions;
 using CatalogueManager.ItemActivation;
-using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
 
 namespace CatalogueManager.DashboardTabs.Construction
 {
     public class DashboardControlFactory
     {
         private readonly IActivateItems _activator;
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly Point _startLocationForNewControls;
 
-        public DashboardControlFactory(IActivateItems activator, IRDMPPlatformRepositoryServiceLocator repositoryLocator,Point startLocationForNewControls)
+        public DashboardControlFactory(IActivateItems activator, Point startLocationForNewControls)
         {
             _activator = activator;
-            _repositoryLocator = repositoryLocator;
             _startLocationForNewControls = startLocationForNewControls;
         }
 
         public Type[] GetAvailableControlTypes()
         {
             List<Exception> whoCares;
-            return _repositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares)
+            return _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares)
                 .Where(IsCompatibleType).ToArray();
         }
 
@@ -57,7 +50,7 @@ namespace CatalogueManager.DashboardTabs.Construction
         /// <returns></returns>
         public DashboardableControlHostPanel Create(DashboardControl toCreate)
         {
-            var controlType = _repositoryLocator.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(toCreate.ControlType);
+            var controlType = _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(toCreate.ControlType);
 
             var instance = CreateControl(controlType);
             
@@ -80,7 +73,7 @@ namespace CatalogueManager.DashboardTabs.Construction
             int w = instance.Width;
             int h = instance.Height;
 
-            var dbRecord = new DashboardControl(_repositoryLocator.CatalogueRepository, forLayout, t, _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
+            var dbRecord = new DashboardControl(_activator.RepositoryLocator.CatalogueRepository, forLayout, t, _startLocationForNewControls.X, _startLocationForNewControls.Y, w, h, "");
             theControlCreated = Hydrate((IDashboardableControl) instance, dbRecord);
 
             return dbRecord;
@@ -92,7 +85,7 @@ namespace CatalogueManager.DashboardTabs.Construction
             
             foreach (DashboardObjectUse objectUse in dbRecord.ObjectsUsed)
             {
-                var o =_repositoryLocator.GetArbitraryDatabaseObject(objectUse.ReferencedObjectRepositoryType, objectUse.ReferencedObjectType, objectUse.ReferencedObjectID);
+                var o = _activator.RepositoryLocator.GetArbitraryDatabaseObject(objectUse.ReferencedObjectRepositoryType, objectUse.ReferencedObjectType, objectUse.ReferencedObjectID);
                 emptyCollection.DatabaseObjects.Add(o);
             }
             try

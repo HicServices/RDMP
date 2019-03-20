@@ -54,9 +54,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             //and document the request
 
             //Get a new request for the source they are trying to populate
-            CohortCreationRequestUI requestUI = new CohortCreationRequestUI(ExternalCohortTable, Project);
-            requestUI.RepositoryLocator = Activator.RepositoryLocator;
-            requestUI.Activator = Activator;
+            CohortCreationRequestUI requestUI = new CohortCreationRequestUI(Activator,ExternalCohortTable, Project);
 
             if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
                 requestUI.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";

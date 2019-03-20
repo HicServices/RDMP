@@ -5,18 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 
@@ -51,10 +48,10 @@ namespace CatalogueManager.SimpleDialogs
 
         private void RefreshUIFromDatabase()
         {
-            if(RepositoryLocator == null || _catalogue == null)
+            if( _catalogue == null)
                 return;
 
-            var servers = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s => string.Equals(expectedDatabaseTypeString, s.CreatedByAssembly)).ToArray();
+            var servers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s => string.Equals(expectedDatabaseTypeString, s.CreatedByAssembly)).ToArray();
 
             ddLoggingServer.Items.Clear();
             ddLoggingServer.Items.AddRange(servers);
@@ -121,10 +118,9 @@ namespace CatalogueManager.SimpleDialogs
 
         protected override void OnLoad(EventArgs e)
         {
-            
             base.OnLoad(e);
 
-            if(RepositoryLocator == null)
+            if(Activator == null)
                 return;
             
             RefreshUIFromDatabase();
@@ -308,7 +304,7 @@ namespace CatalogueManager.SimpleDialogs
 
         private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)
         {
-            CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository,PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
             RefreshUIFromDatabase();
         }
 

@@ -183,7 +183,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
                         new JoinInfo(cataRepo,fks[i], pks[i], joinType, tbCollation.Text);
 
                     MessageBox.Show("Successfully Created Joins");
-                    _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_leftTableInfo));
+                    Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_leftTableInfo));
 
                     foreach (KeyDropLocationUI ui in new[] {pk1, pk2, pk3, fk1, fk2, fk3})
                         ui.Clear();
@@ -277,7 +277,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             var o = olv.SelectedObject as IMapsDirectlyToDatabaseTable;
             
             if(o != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(o));
         }
     }
 
