@@ -18,6 +18,7 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using NUnit.Framework;
 using ReusableUIComponents.CommandExecution.Proposals;
 
@@ -135,6 +136,13 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                     problems.Add("Found proposal called '" + proposalClass + "' but couldn't find a corresponding data class called '" + toLookFor + ".cs'");
             }
             
+            foreach(Type uiType in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => 
+                 (typeof(RDMPUserControl).IsAssignableFrom(t)||(typeof(RDMPForm).IsAssignableFrom(t))
+                 && !t.IsAbstract && !t.IsInterface)))
+                 if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
+                     problems.Add("Class " + uiType.Name + " does not end with UI");
+
+
             foreach (string problem in problems)
                 Console.WriteLine("FATAL ERROR PROBLEM:" + problem);
 
@@ -180,3 +188,4 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         }
     }
 }
+

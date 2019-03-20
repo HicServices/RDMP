@@ -219,7 +219,7 @@
       <DependentUpon>CohortIdentificationConfigurationUI.cs</DependentUpon>
     </Compile>
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewQueryCacheDatabase.cs" />
-    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraph.cs">
+    <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraphUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="SubComponents\Graphs\CohortSummaryAggregateGraphObjectCollection.cs" />
