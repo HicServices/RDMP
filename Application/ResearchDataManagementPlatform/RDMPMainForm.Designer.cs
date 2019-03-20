@@ -33,7 +33,7 @@ namespace ResearchDataManagementPlatform
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(RDMPMainForm));
             this.dockPanel1 = new WeifenLuo.WinFormsUI.Docking.DockPanel();
-            this._rdmpTopMenuStrip1 = new ResearchDataManagementPlatform.Menus.RDMPTopMenuStrip();
+            this._rdmpTopMenuStrip1 = new ResearchDataManagementPlatform.Menus.RDMPTopMenuStripUI();
             this.SuspendLayout();
             // 
             // dockPanel1
@@ -74,7 +74,7 @@ namespace ResearchDataManagementPlatform
 
         #endregion
 
-        private RDMPTopMenuStrip _rdmpTopMenuStrip1;
+        private RDMPTopMenuStripUI _rdmpTopMenuStrip1;
         private DockPanel dockPanel1;
     }
 }

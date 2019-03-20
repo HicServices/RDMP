@@ -80,11 +80,11 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         }
 
 
-        protected ConfigureAndExecutePipeline GetConfigureAndExecuteControl(CohortCreationRequest request, string description)
+        protected ConfigureAndExecutePipelineUI GetConfigureAndExecuteControl(CohortCreationRequest request, string description)
         {
             var catalogueRepository = Activator.RepositoryLocator.CatalogueRepository;
             
-            ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline(request,Activator);
+            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(request,Activator);
             configureAndExecuteDialog.Dock = DockStyle.Fill;
             
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);

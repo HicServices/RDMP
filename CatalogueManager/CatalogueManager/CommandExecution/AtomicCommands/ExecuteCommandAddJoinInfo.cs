@@ -51,7 +51,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var jc = Activator.Activate<JoinConfiguration, TableInfo>(_tableInfo);
+            var jc = Activator.Activate<JoinConfigurationUI, TableInfo>(_tableInfo);
 
             if (_otherTableInfo != null)
                 jc.SetOtherTableInfo(_otherTableInfo);

@@ -26,7 +26,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         private readonly IPipeline _pipeline;
         private readonly IPipelineUseCase _useCase;
         
-        private PipelineWorkArea _workArea;
+        private PipelineWorkAreaUI _workArea;
         
         public ConfigurePipelineUI(IPipeline pipeline, IPipelineUseCase useCase, CatalogueRepository repository)
         {
@@ -34,7 +34,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             _useCase = useCase;
             InitializeComponent();
             
-            _workArea = new PipelineWorkArea(pipeline, useCase,repository) {Dock = DockStyle.Fill};
+            _workArea = new PipelineWorkAreaUI(pipeline, useCase,repository) {Dock = DockStyle.Fill};
             panelWorkArea.Controls.Add(_workArea);
 
             tbName.Text = pipeline.Name;

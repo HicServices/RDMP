@@ -26,7 +26,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            ConfigureMetadataReport dialog = new ConfigureMetadataReport(Activator, _catalogue);
+            MetadataReportUI dialog = new MetadataReportUI(Activator, _catalogue);
             dialog.Show();
         }
 

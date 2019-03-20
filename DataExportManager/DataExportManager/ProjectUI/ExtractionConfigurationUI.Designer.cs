@@ -34,8 +34,8 @@ namespace DataExportManager.ProjectUI
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.tbCreated = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.tcRelease = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
-            this.tcRequest = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.tcRelease = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.tcRequest = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.pChooseExtractionPipeline = new System.Windows.Forms.Panel();
@@ -267,8 +267,8 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.TextBox tbCreated;
         private System.Windows.Forms.Label label5;
-        private TicketingControl tcRequest;
-        private TicketingControl tcRelease;
+        private TicketingControlUI tcRequest;
+        private TicketingControlUI tcRelease;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Panel pChooseExtractionPipeline;

@@ -30,7 +30,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            Activator.Activate<BulkProcessCatalogueItems, Catalogue>(_catalogue);
+            Activator.Activate<BulkProcessCatalogueItemsUI, Catalogue>(_catalogue);
         }
     }
 }

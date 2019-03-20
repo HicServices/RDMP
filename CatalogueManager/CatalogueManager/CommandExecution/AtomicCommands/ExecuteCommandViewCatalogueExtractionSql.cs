@@ -53,7 +53,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            Activator.Activate<ViewExtractionSql, Catalogue>(_catalogue);
+            Activator.Activate<ViewExtractionSqlUI, Catalogue>(_catalogue);
         }
     }
 }

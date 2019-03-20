@@ -36,7 +36,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var graph = Activator.Activate<AggregateGraph, AggregateConfiguration>(_aggregate);
+            var graph = Activator.Activate<AggregateGraphUI, AggregateConfiguration>(_aggregate);
             graph.LoadGraphAsync();
         }
 

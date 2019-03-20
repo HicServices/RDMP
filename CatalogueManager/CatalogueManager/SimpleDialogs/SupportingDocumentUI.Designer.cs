@@ -43,7 +43,7 @@ namespace CatalogueManager.SimpleDialogs
             this.cbIsGlobal = new System.Windows.Forms.CheckBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -221,7 +221,7 @@ namespace CatalogueManager.SimpleDialogs
         private System.Windows.Forms.Button btnOpen;
         private System.Windows.Forms.CheckBox cbExtractable;
         private System.Windows.Forms.CheckBox cbIsGlobal;
-        private TicketingControl ticketingControl1;
+        private TicketingControlUI ticketingControl1;
         private System.Windows.Forms.Button btnBrowse;
         private System.Windows.Forms.Panel panel1;
         

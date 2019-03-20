@@ -48,7 +48,7 @@ namespace CohortManager.SubComponents
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             this.btnAbortLoad = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -308,7 +308,7 @@ namespace CohortManager.SubComponents
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label lblName;
-        private CatalogueManager.LocationsMenu.Ticketing.TicketingControl ticket;
+        private CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI ticket;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.TextBox tbName;

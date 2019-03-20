@@ -54,7 +54,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if(_catalogue == null)
                 return;
 
-            Activator.Activate<ValidationSetupForm, Catalogue>(_catalogue);
+            Activator.Activate<ValidationSetupUI, Catalogue>(_catalogue);
         }
     }
 }

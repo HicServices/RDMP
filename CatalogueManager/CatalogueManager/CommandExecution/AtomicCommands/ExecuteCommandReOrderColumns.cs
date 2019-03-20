@@ -32,7 +32,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<ReOrderCatalogueItems, Catalogue>(_catalogue);
+            Activator.Activate<ReOrderCatalogueItemsUI, Catalogue>(_catalogue);
         }
     }
 }

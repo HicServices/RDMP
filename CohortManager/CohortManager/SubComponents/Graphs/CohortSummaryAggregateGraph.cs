@@ -35,11 +35,11 @@ namespace CohortManager.SubComponents.Graphs
     /// query).</para>
     ///  
     /// </summary>
-    public class CohortSummaryAggregateGraph:AggregateGraph, IObjectCollectionControl
+    public class CohortSummaryAggregateGraphUI:AggregateGraphUI, IObjectCollectionControl
     {
         private CohortSummaryAggregateGraphObjectCollection _collection;
 
-        public CohortSummaryAggregateGraph()
+        public CohortSummaryAggregateGraphUI()
         {
             AssociatedCollection = RDMPCollection.Cohort;
         }

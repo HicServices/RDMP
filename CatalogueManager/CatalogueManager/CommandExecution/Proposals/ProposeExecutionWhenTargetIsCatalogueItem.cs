@@ -32,7 +32,7 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(CatalogueItem target)
         {
-            ItemActivator.Activate<CatalogueItemTab, CatalogueItem>(target);
+            ItemActivator.Activate<CatalogueItemUI, CatalogueItem>(target);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, CatalogueItem target, InsertOption insertOption = InsertOption.Default)

@@ -219,20 +219,20 @@
     <Compile Include="WindowManagement\TabChangedHandler.cs" />
     <Compile Include="WindowManagement\TabPageContextMenus\RDMPSingleControlTabMenu.cs" />
     <Compile Include="WindowManagement\WindowManager.cs" />
-    <Compile Include="WindowManagement\TopBar\RDMPTaskBar.cs">
+    <Compile Include="WindowManagement\TopBar\RDMPTaskBarUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="WindowManagement\TopBar\RDMPTaskBar.Designer.cs">
-      <DependentUpon>RDMPTaskBar.cs</DependentUpon>
+    <Compile Include="WindowManagement\TopBar\RDMPTaskBarUI.Designer.cs">
+      <DependentUpon>RDMPTaskBarUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Menus\MenuItems\DisableTutorialsMenuItem.cs" />
     <Compile Include="Menus\MenuItems\LaunchTutorialMenuItem.cs" />
     <Compile Include="Menus\MenuItems\ResetTutorialsMenuItem.cs" />
-    <Compile Include="Menus\RDMPMenuStrip.cs">
+    <Compile Include="Menus\RDMPTopMenuStripUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Menus\RDMPMenuStrip.Designer.cs">
-      <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
+    <Compile Include="Menus\RDMPTopMenuStripUI.Designer.cs">
+      <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </Compile>
     <Compile Include="WindowManagement\UIObjectConstructor.cs" />
     <Compile Include="WindowManagement\WindowArranging\WindowArranger.cs" />
@@ -262,11 +262,11 @@
     <EmbeddedResource Include="WindowManagement\Licenses\LicenseUI.resx">
       <DependentUpon>LicenseUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="WindowManagement\TopBar\RDMPTaskBar.resx">
-      <DependentUpon>RDMPTaskBar.cs</DependentUpon>
+    <EmbeddedResource Include="WindowManagement\TopBar\RDMPTaskBarUI.resx">
+      <DependentUpon>RDMPTaskBarUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Menus\RDMPMenuStrip.resx">
-      <DependentUpon>RDMPMenuStrip.cs</DependentUpon>
+    <EmbeddedResource Include="Menus\RDMPTopMenuStripUI.resx">
+      <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\LICENSE">
       <Link>WindowManagement\Licenses\LICENSE</Link>

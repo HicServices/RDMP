@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var manageServers = new ManageExternalServers(Activator);
+            var manageServers = new ServerDefaultsUI(Activator);
             manageServers.Show();
         }
     }

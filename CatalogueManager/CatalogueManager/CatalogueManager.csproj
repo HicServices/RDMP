@@ -348,11 +348,11 @@
     <Compile Include="AggregationUIs\AggregateContinuousDateAxisUI.Designer.cs">
       <DependentUpon>AggregateContinuousDateAxisUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="AggregationUIs\AggregateGraph.cs">
+    <Compile Include="AggregationUIs\AggregateGraphUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AggregationUIs\AggregateGraph.Designer.cs">
-      <DependentUpon>AggregateGraph.cs</DependentUpon>
+    <Compile Include="AggregationUIs\AggregateGraphUI.Designer.cs">
+      <DependentUpon>AggregateGraphUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ANOEngineeringUIs\ANOTableUI.cs">
       <SubType>UserControl</SubType>
@@ -566,11 +566,11 @@
     <Compile Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.cs">
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.Designer.cs">
-      <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.Designer.cs">
+      <DependentUpon>ArgumentCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.cs">
       <SubType>UserControl</SubType>
@@ -629,11 +629,11 @@
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIArgs.cs" />
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
     <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
-    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs">
+    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.Designer.cs">
-      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
+    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.Designer.cs">
+      <DependentUpon>ConfigureAndExecutePipelineUI.cs</DependentUpon>
     </Compile>
     <Compile Include="PipelineUIs\Pipelines\ConfigurePipelineUI.cs">
       <SubType>Form</SubType>
@@ -649,11 +649,11 @@
     <Compile Include="PipelineUIs\Pipelines\Models\DividerLineControl.Designer.cs">
       <DependentUpon>DividerLineControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineDiagram.cs">
+    <Compile Include="PipelineUIs\Pipelines\PipelineDiagramUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineDiagram.Designer.cs">
-      <DependentUpon>PipelineDiagram.cs</DependentUpon>
+    <Compile Include="PipelineUIs\Pipelines\PipelineDiagramUI.Designer.cs">
+      <DependentUpon>PipelineDiagramUI.cs</DependentUpon>
     </Compile>
     <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
       <SubType>UserControl</SubType>
@@ -661,11 +661,11 @@
     <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.Designer.cs">
       <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineWorkArea.cs">
+    <Compile Include="PipelineUIs\Pipelines\PipelineWorkAreaUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineWorkArea.Designer.cs">
-      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
+    <Compile Include="PipelineUIs\Pipelines\PipelineWorkAreaUI.Designer.cs">
+      <DependentUpon>PipelineWorkAreaUI.cs</DependentUpon>
     </Compile>
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
@@ -806,25 +806,25 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.Designer.cs">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataQualityUIs\DQEExecutionControl.cs">
+    <Compile Include="DataQualityUIs\DQEExecutionControlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataQualityUIs\DQEExecutionControl.Designer.cs">
-      <DependentUpon>DQEExecutionControl.cs</DependentUpon>
+    <Compile Include="DataQualityUIs\DQEExecutionControlUI.Designer.cs">
+      <DependentUpon>DQEExecutionControlUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataViewing\Collections\ViewAggregateExtractUICollection.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\FilterGraph.cs">
+    <Compile Include="ExtractionUIs\FilterUIs\FilterGraphUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\FilterGraph.Designer.cs">
-      <DependentUpon>FilterGraph.cs</DependentUpon>
+    <Compile Include="ExtractionUIs\FilterUIs\FilterGraphUI.Designer.cs">
+      <DependentUpon>FilterGraphUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtractionUIs\FilterUIs\FilterGraphObjectCollection.cs" />
-    <Compile Include="ExtractionUIs\JoinsAndLookups\JoinConfiguration.cs">
+    <Compile Include="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\JoinConfiguration.Designer.cs">
-      <DependentUpon>JoinConfiguration.cs</DependentUpon>
+    <Compile Include="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.Designer.cs">
+      <DependentUpon>JoinConfigurationUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
       <SubType>UserControl</SubType>
@@ -892,11 +892,11 @@
     </Compile>
     <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\PatternPredictor.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressAnnotation.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagram.cs">
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagram.Designer.cs">
-      <DependentUpon>LoadProgressDiagram.cs</DependentUpon>
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.Designer.cs">
+      <DependentUpon>LoadProgressDiagramUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.cs">
       <SubType>UserControl</SubType>
@@ -910,11 +910,11 @@
     <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.Designer.cs">
       <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagram.cs">
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagram.Designer.cs">
-      <DependentUpon>LoadDiagram.cs</DependentUpon>
+    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.Designer.cs">
+      <DependentUpon>LoadDiagramUI.cs</DependentUpon>
     </Compile>
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramDatabaseNode.cs" />
     <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramServerNode.cs" />
@@ -948,17 +948,17 @@
     <Compile Include="DataLoadUIs\CreateNewLoadMetadataUI.Designer.cs">
       <DependentUpon>CreateNewLoadMetadataUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupConfiguration.cs">
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupConfiguration.Designer.cs">
-      <DependentUpon>LookupConfiguration.cs</DependentUpon>
+    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.Designer.cs">
+      <DependentUpon>LookupConfigurationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\ReOrderCatalogueItems.cs">
+    <Compile Include="ExtractionUIs\ReOrderCatalogueItemsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\ReOrderCatalogueItems.Designer.cs">
-      <DependentUpon>ReOrderCatalogueItems.cs</DependentUpon>
+    <Compile Include="ExtractionUIs\ReOrderCatalogueItemsUI.Designer.cs">
+      <DependentUpon>ReOrderCatalogueItemsUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtractionUIs\ExtractionInformationUI.cs">
       <SubType>UserControl</SubType>
@@ -988,11 +988,11 @@
       <DependentUpon>ParameterCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\Options\ParameterCollectionUIOptions.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControl.cs">
+    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControl.Designer.cs">
-      <DependentUpon>ParameterEditorScintillaControl.cs</DependentUpon>
+    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.Designer.cs">
+      <DependentUpon>ParameterEditorScintillaControlUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaSection.cs" />
     <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.cs">
@@ -1050,17 +1050,11 @@
     <Compile Include="PluginChildProvision\PluginChildProvider.cs" />
     <Compile Include="PluginManagement\CodeGeneration\CodeGenerationException.cs" />
     <Compile Include="PluginManagement\CodeGeneration\MapsDirectlyToDatabaseTableClassCodeGenerator.cs" />
-    <Compile Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTable.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTable.Designer.cs">
-      <DependentUpon>GenerateClassCodeFromTable.cs</DependentUpon>
-    </Compile>
-    <Compile Include="PluginManagement\CodeGeneration\PluginCodeGeneration.cs">
+    <Compile Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PluginManagement\CodeGeneration\PluginCodeGeneration.Designer.cs">
-      <DependentUpon>PluginCodeGeneration.cs</DependentUpon>
+    <Compile Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.Designer.cs">
+      <DependentUpon>GenerateClassCodeFromTableUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Refreshing\SelfDestructProtocol.cs" />
     <Compile Include="Refreshing\SubscriptionException.cs" />
@@ -1073,32 +1067,32 @@
     <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.Designer.cs">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingDataSourcesTab.cs">
+    <Compile Include="LogViewer\Tabs\LoggingDataSourcesTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingFatalErrorsTab.cs">
+    <Compile Include="LogViewer\Tabs\LoggingFatalErrorsTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingProgressMessagesTab.cs">
+    <Compile Include="LogViewer\Tabs\LoggingProgressMessagesTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingRunsTab.cs">
+    <Compile Include="LogViewer\Tabs\LoggingRunsTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingTab.cs">
+    <Compile Include="LogViewer\Tabs\LoggingTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingTasksTab.cs">
+    <Compile Include="LogViewer\Tabs\LoggingTasksTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingTableLoadsTab.cs">
+    <Compile Include="LogViewer\Tabs\LoggingTableLoadsTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueTab.cs">
+    <Compile Include="MainFormUITabs\CatalogueUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueTab.Designer.cs">
-      <DependentUpon>CatalogueTab.cs</DependentUpon>
+    <Compile Include="MainFormUITabs\CatalogueUI.Designer.cs">
+      <DependentUpon>CatalogueUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\CatalogueCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -1124,23 +1118,23 @@
     <Compile Include="Menus\CatalogueMenu.cs" />
     <Compile Include="Menus\TableInfoMenu.cs" />
     <Compile Include="ObjectVisualisation\CatalogueObjectVisualisation.cs" />
-    <Compile Include="PluginManagement\PluginDependencyVisualisation.cs">
+    <Compile Include="PluginManagement\PluginDependencyVisualisationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PluginManagement\PluginDependencyVisualisation.Designer.cs">
-      <DependentUpon>PluginDependencyVisualisation.cs</DependentUpon>
+    <Compile Include="PluginManagement\PluginDependencyVisualisationUI.Designer.cs">
+      <DependentUpon>PluginDependencyVisualisationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PluginManagement\PluginManagementForm.cs">
+    <Compile Include="PluginManagement\PluginManagementFormUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PluginManagement\PluginManagementForm.Designer.cs">
-      <DependentUpon>PluginManagementForm.cs</DependentUpon>
+    <Compile Include="PluginManagement\PluginManagementFormUI.Designer.cs">
+      <DependentUpon>PluginManagementFormUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainFormUITabs\SubComponents\ImportSQLTable.cs">
+    <Compile Include="MainFormUITabs\SubComponents\ImportSQLTableUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\SubComponents\ImportSQLTable.Designer.cs">
-      <DependentUpon>ImportSQLTable.cs</DependentUpon>
+    <Compile Include="MainFormUITabs\SubComponents\ImportSQLTableUI.Designer.cs">
+      <DependentUpon>ImportSQLTableUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Collections\TableInfoCollectionUI.cs">
       <SubType>UserControl</SubType>
@@ -1159,11 +1153,11 @@
     <Compile Include="SimpleControls\ExecutionEventArgs.cs" />
     <Compile Include="SimpleControls\ISaveableUI.cs" />
     <Compile Include="SimpleControls\ObjectSaverButton.cs" />
-    <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.cs">
+    <Compile Include="SimpleDialogs\BulkProcessCatalogueItemsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\BulkProcessCatalogueItems.Designer.cs">
-      <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\BulkProcessCatalogueItemsUI.Designer.cs">
+      <DependentUpon>BulkProcessCatalogueItemsUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
       <SubType>Form</SubType>
@@ -1190,11 +1184,11 @@
     <Compile Include="SimpleDialogs\PerformanceCounterUI.Designer.cs">
       <DependentUpon>PerformanceCounterUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationsMenu\ChoosePlatformDatabases.cs">
+    <Compile Include="LocationsMenu\ChoosePlatformDatabasesUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\ChoosePlatformDatabases.Designer.cs">
-      <DependentUpon>ChoosePlatformDatabases.cs</DependentUpon>
+    <Compile Include="LocationsMenu\ChoosePlatformDatabasesUI.Designer.cs">
+      <DependentUpon>ChoosePlatformDatabasesUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Governance\GovernanceDocumentUI.cs">
       <SubType>UserControl</SubType>
@@ -1226,29 +1220,29 @@
     <Compile Include="SimpleDialogs\Reports\DatabaseSizeReportUI.Designer.cs">
       <DependentUpon>DatabaseSizeReportUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Revertable\OfferChanceToSaveDialog.cs">
+    <Compile Include="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Revertable\OfferChanceToSaveDialog.Designer.cs">
-      <DependentUpon>OfferChanceToSaveDialog.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.Designer.cs">
+      <DependentUpon>OfferChanceToSaveDialogUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\ConfigureAccessRightsReport.cs">
+    <Compile Include="SimpleDialogs\Reports\WordAccessRightsByUserUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\ConfigureAccessRightsReport.Designer.cs">
-      <DependentUpon>ConfigureAccessRightsReport.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\Reports\WordAccessRightsByUserUI.Designer.cs">
+      <DependentUpon>WordAccessRightsByUserUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\ConfigureMetadataReport.cs">
+    <Compile Include="SimpleDialogs\Reports\MetadataReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\ConfigureMetadataReport.Designer.cs">
-      <DependentUpon>ConfigureMetadataReport.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\Reports\MetadataReportUI.Designer.cs">
+      <DependentUpon>MetadataReportUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolution.cs">
+    <Compile Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolution.Designer.cs">
-      <DependentUpon>ConfigurePrimaryKeyCollisionResolution.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.Designer.cs">
+      <DependentUpon>ConfigurePrimaryKeyCollisionResolverUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.cs">
       <SubType>UserControl</SubType>
@@ -1280,11 +1274,11 @@
     <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.Designer.cs">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueItemTab.cs">
+    <Compile Include="MainFormUITabs\CatalogueItemUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueItemTab.Designer.cs">
-      <DependentUpon>CatalogueItemTab.cs</DependentUpon>
+    <Compile Include="MainFormUITabs\CatalogueItemUI.Designer.cs">
+      <DependentUpon>CatalogueItemUI.cs</DependentUpon>
     </Compile>
     <Compile Include="MainFormUITabs\DitaExtractorUI.cs">
       <SubType>UserControl</SubType>
@@ -1299,23 +1293,23 @@
     <Compile Include="SimpleDialogs\ChooseLoggingTaskUI.Designer.cs">
       <DependentUpon>ChooseLoggingTaskUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationsMenu\ManageExternalServers.cs">
+    <Compile Include="LocationsMenu\ServerDefaultsUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\ManageExternalServers.Designer.cs">
-      <DependentUpon>ManageExternalServers.cs</DependentUpon>
+    <Compile Include="LocationsMenu\ServerDefaultsUI.Designer.cs">
+      <DependentUpon>ServerDefaultsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems.cs">
+    <Compile Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems.Designer.cs">
-      <DependentUpon>PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.Designer.cs">
+      <DependentUpon>PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ShowSQL.cs">
+    <Compile Include="SimpleDialogs\ShowSQLUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ShowSQL.Designer.cs">
-      <DependentUpon>ShowSQL.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\ShowSQLUI.Designer.cs">
+      <DependentUpon>ShowSQLUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\SupportingSQLTableUI.cs">
       <SubType>UserControl</SubType>
@@ -1335,17 +1329,17 @@
     <Compile Include="DataViewing\ViewSQLAndResultsWithDataGridUI.Designer.cs">
       <DependentUpon>ViewSQLAndResultsWithDataGridUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\ViewExtractionSql.cs">
+    <Compile Include="ExtractionUIs\ViewExtractionSqlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\ViewExtractionSql.Designer.cs">
-      <DependentUpon>ViewExtractionSql.cs</DependentUpon>
+    <Compile Include="ExtractionUIs\ViewExtractionSqlUI.Designer.cs">
+      <DependentUpon>ViewExtractionSqlUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationsMenu\Ticketing\TicketingControl.cs">
+    <Compile Include="LocationsMenu\Ticketing\TicketingControlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\Ticketing\TicketingControl.Designer.cs">
-      <DependentUpon>TicketingControl.cs</DependentUpon>
+    <Compile Include="LocationsMenu\Ticketing\TicketingControlUI.Designer.cs">
+      <DependentUpon>TicketingControlUI.cs</DependentUpon>
     </Compile>
     <Compile Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.cs">
       <SubType>UserControl</SubType>
@@ -1353,11 +1347,11 @@
     <Compile Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.Designer.cs">
       <DependentUpon>TicketingSystemConfigurationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\DiagnosticsScreen.cs">
+    <Compile Include="TestsAndSetup\DiagnosticsUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\DiagnosticsScreen.Designer.cs">
-      <DependentUpon>DiagnosticsScreen.cs</DependentUpon>
+    <Compile Include="TestsAndSetup\DiagnosticsUI.Designer.cs">
+      <DependentUpon>DiagnosticsUI.cs</DependentUpon>
     </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\INamedTab.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs" />
@@ -1414,11 +1408,11 @@
     <Compile Include="Validation\StandardRegexUI.Designer.cs">
       <DependentUpon>StandardRegexUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Validation\ResolveMissingTargetPropertiesForm.cs">
+    <Compile Include="Validation\ResolveMissingTargetPropertiesUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Validation\ResolveMissingTargetPropertiesForm.Designer.cs">
-      <DependentUpon>ResolveMissingTargetPropertiesForm.cs</DependentUpon>
+    <Compile Include="Validation\ResolveMissingTargetPropertiesUI.Designer.cs">
+      <DependentUpon>ResolveMissingTargetPropertiesUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Validation\SecondaryConstraintUI.cs">
       <SubType>UserControl</SubType>
@@ -1426,11 +1420,11 @@
     <Compile Include="Validation\SecondaryConstraintUI.Designer.cs">
       <DependentUpon>SecondaryConstraintUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Validation\ValidationSetupForm.cs">
+    <Compile Include="Validation\ValidationSetupUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Validation\ValidationSetupForm.Designer.cs">
-      <DependentUpon>ValidationSetupForm.cs</DependentUpon>
+    <Compile Include="Validation\ValidationSetupUI.Designer.cs">
+      <DependentUpon>ValidationSetupUI.cs</DependentUpon>
     </Compile>
     <None Include="..\..\App.config">
       <Link>App.config</Link>
@@ -1734,8 +1728,8 @@
     <EmbeddedResource Include="AggregationUIs\Advanced\AggregateEditor.resx">
       <DependentUpon>AggregateEditor.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\AggregateGraph.resx">
-      <DependentUpon>AggregateGraph.cs</DependentUpon>
+    <EmbeddedResource Include="AggregationUIs\AggregateGraphUI.resx">
+      <DependentUpon>AggregateGraphUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ANOEngineeringUIs\ANOTableUI.resx">
@@ -1792,8 +1786,8 @@
     <EmbeddedResource Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.resx">
       <DependentUpon>PipelineComponentVisualisation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollection.resx">
-      <DependentUpon>ArgumentCollection.cs</DependentUpon>
+    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
+      <DependentUpon>ArgumentCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.resx">
       <DependentUpon>ArgumentValueDictionaryUI.cs</DependentUpon>
@@ -1822,8 +1816,8 @@
     <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.resx">
       <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigureAndExecutePipeline.resx">
-      <DependentUpon>ConfigureAndExecutePipeline.cs</DependentUpon>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.resx">
+      <DependentUpon>ConfigureAndExecutePipelineUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigurePipelineUI.resx">
       <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
@@ -1831,14 +1825,14 @@
     <EmbeddedResource Include="PipelineUIs\Pipelines\Models\DividerLineControl.resx">
       <DependentUpon>DividerLineControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineDiagram.resx">
-      <DependentUpon>PipelineDiagram.cs</DependentUpon>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineDiagramUI.resx">
+      <DependentUpon>PipelineDiagramUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineSelectionUI.resx">
       <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineWorkArea.resx">
-      <DependentUpon>PipelineWorkArea.cs</DependentUpon>
+    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineWorkAreaUI.resx">
+      <DependentUpon>PipelineWorkAreaUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
@@ -1854,11 +1848,11 @@
       <DependentUpon>ExecuteLoadMetadataUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataQualityUIs\DQEExecutionControl.resx">
-      <DependentUpon>DQEExecutionControl.cs</DependentUpon>
+    <EmbeddedResource Include="DataQualityUIs\DQEExecutionControlUI.resx">
+      <DependentUpon>DQEExecutionControlUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\JoinConfiguration.resx">
-      <DependentUpon>JoinConfiguration.cs</DependentUpon>
+    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.resx">
+      <DependentUpon>JoinConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.resx">
       <DependentUpon>KeyDropLocationUI.cs</DependentUpon>
@@ -1880,8 +1874,8 @@
       <DependentUpon>ColumnInfoToANOTableConverterUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagram.resx">
-      <DependentUpon>LoadProgressDiagram.cs</DependentUpon>
+    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.resx">
+      <DependentUpon>LoadProgressDiagramUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.resx">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
@@ -1889,8 +1883,8 @@
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.resx">
       <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagram.resx">
-      <DependentUpon>LoadDiagram.cs</DependentUpon>
+    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.resx">
+      <DependentUpon>LoadDiagramUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.resx">
       <DependentUpon>LoadMetadataUI.cs</DependentUpon>
@@ -1907,11 +1901,11 @@
     <EmbeddedResource Include="DataLoadUIs\CreateNewLoadMetadataUI.resx">
       <DependentUpon>CreateNewLoadMetadataUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupConfiguration.resx">
-      <DependentUpon>LookupConfiguration.cs</DependentUpon>
+    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.resx">
+      <DependentUpon>LookupConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\ReOrderCatalogueItems.resx">
-      <DependentUpon>ReOrderCatalogueItems.cs</DependentUpon>
+    <EmbeddedResource Include="ExtractionUIs\ReOrderCatalogueItemsUI.resx">
+      <DependentUpon>ReOrderCatalogueItemsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="ExtractionUIs\ExtractionInformationUI.resx">
       <DependentUpon>ExtractionInformationUI.cs</DependentUpon>
@@ -1925,17 +1919,17 @@
     <EmbeddedResource Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterCollectionUI.resx">
       <DependentUpon>ParameterCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControl.resx">
-      <DependentUpon>ParameterEditorScintillaControl.cs</DependentUpon>
+    <EmbeddedResource Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.resx">
+      <DependentUpon>ParameterEditorScintillaControlUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\Tabs\LoggingTab.resx">
-      <DependentUpon>LoggingTab.cs</DependentUpon>
+    <EmbeddedResource Include="LogViewer\Tabs\LoggingTabUI.resx">
+      <DependentUpon>LoggingTabUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\CatalogueTab.resx">
-      <DependentUpon>CatalogueTab.cs</DependentUpon>
+    <EmbeddedResource Include="MainFormUITabs\CatalogueUI.resx">
+      <DependentUpon>CatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\CatalogueCollectionUI.resx">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
@@ -1951,20 +1945,17 @@
     <EmbeddedResource Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.resx">
       <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTable.resx">
-      <DependentUpon>GenerateClassCodeFromTable.cs</DependentUpon>
+    <EmbeddedResource Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.resx">
+      <DependentUpon>GenerateClassCodeFromTableUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginManagement\CodeGeneration\PluginCodeGeneration.resx">
-      <DependentUpon>PluginCodeGeneration.cs</DependentUpon>
+    <EmbeddedResource Include="PluginManagement\PluginDependencyVisualisationUI.resx">
+      <DependentUpon>PluginDependencyVisualisationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginManagement\PluginDependencyVisualisation.resx">
-      <DependentUpon>PluginDependencyVisualisation.cs</DependentUpon>
+    <EmbeddedResource Include="PluginManagement\PluginManagementFormUI.resx">
+      <DependentUpon>PluginManagementFormUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginManagement\PluginManagementForm.resx">
-      <DependentUpon>PluginManagementForm.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\SubComponents\ImportSQLTable.resx">
-      <DependentUpon>ImportSQLTable.cs</DependentUpon>
+    <EmbeddedResource Include="MainFormUITabs\SubComponents\ImportSQLTableUI.resx">
+      <DependentUpon>ImportSQLTableUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Collections\TableInfoCollectionUI.resx">
       <DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
@@ -1972,8 +1963,8 @@
     <EmbeddedResource Include="MainFormUITabs\SubComponents\TableInfoUI.resx">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItems.resx">
-      <DependentUpon>BulkProcessCatalogueItems.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItemsUI.resx">
+      <DependentUpon>BulkProcessCatalogueItemsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.resx">
       <DependentUpon>ConfigureCatalogueExtractabilityUI.cs</DependentUpon>
@@ -1987,8 +1978,8 @@
     <EmbeddedResource Include="SimpleDialogs\PerformanceCounterUI.resx">
       <DependentUpon>PerformanceCounterUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\ChoosePlatformDatabases.resx">
-      <DependentUpon>ChoosePlatformDatabases.cs</DependentUpon>
+    <EmbeddedResource Include="LocationsMenu\ChoosePlatformDatabasesUI.resx">
+      <DependentUpon>ChoosePlatformDatabasesUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceDocumentUI.resx">
       <DependentUpon>GovernanceDocumentUI.cs</DependentUpon>
@@ -2005,17 +1996,17 @@
     <EmbeddedResource Include="SimpleDialogs\Reports\DatabaseSizeReportUI.resx">
       <DependentUpon>DatabaseSizeReportUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Revertable\OfferChanceToSaveDialog.resx">
-      <DependentUpon>OfferChanceToSaveDialog.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.resx">
+      <DependentUpon>OfferChanceToSaveDialogUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\ConfigureAccessRightsReport.resx">
-      <DependentUpon>ConfigureAccessRightsReport.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\Reports\WordAccessRightsByUserUI.resx">
+      <DependentUpon>WordAccessRightsByUserUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\ConfigureMetadataReport.resx">
-      <DependentUpon>ConfigureMetadataReport.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\Reports\MetadataReportUI.resx">
+      <DependentUpon>MetadataReportUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolution.resx">
-      <DependentUpon>ConfigurePrimaryKeyCollisionResolution.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.resx">
+      <DependentUpon>ConfigurePrimaryKeyCollisionResolverUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.resx">
       <DependentUpon>ExerciseTestDataGeneratorUI.cs</DependentUpon>
@@ -2032,8 +2023,8 @@
     <EmbeddedResource Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.resx">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\CatalogueItemTab.resx">
-      <DependentUpon>CatalogueItemTab.cs</DependentUpon>
+    <EmbeddedResource Include="MainFormUITabs\CatalogueItemUI.resx">
+      <DependentUpon>CatalogueItemUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="MainFormUITabs\DitaExtractorUI.resx">
       <DependentUpon>DitaExtractorUI.cs</DependentUpon>
@@ -2051,14 +2042,14 @@
     <EmbeddedResource Include="SimpleDialogs\ChooseLoggingTaskUI.resx">
       <DependentUpon>ChooseLoggingTaskUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\ManageExternalServers.resx">
-      <DependentUpon>ManageExternalServers.cs</DependentUpon>
+    <EmbeddedResource Include="LocationsMenu\ServerDefaultsUI.resx">
+      <DependentUpon>ServerDefaultsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems.resx">
-      <DependentUpon>PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItems.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.resx">
+      <DependentUpon>PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ShowSQL.resx">
-      <DependentUpon>ShowSQL.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\ShowSQLUI.resx">
+      <DependentUpon>ShowSQLUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\SupportingSQLTableUI.resx">
       <DependentUpon>SupportingSQLTableUI.cs</DependentUpon>
@@ -2069,17 +2060,17 @@
     <EmbeddedResource Include="DataViewing\ViewSQLAndResultsWithDataGridUI.resx">
       <DependentUpon>ViewSQLAndResultsWithDataGridUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\ViewExtractionSql.resx">
-      <DependentUpon>ViewExtractionSql.cs</DependentUpon>
+    <EmbeddedResource Include="ExtractionUIs\ViewExtractionSqlUI.resx">
+      <DependentUpon>ViewExtractionSqlUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\Ticketing\TicketingControl.resx">
-      <DependentUpon>TicketingControl.cs</DependentUpon>
+    <EmbeddedResource Include="LocationsMenu\Ticketing\TicketingControlUI.resx">
+      <DependentUpon>TicketingControlUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.resx">
       <DependentUpon>TicketingSystemConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\DiagnosticsScreen.resx">
-      <DependentUpon>DiagnosticsScreen.cs</DependentUpon>
+    <EmbeddedResource Include="TestsAndSetup\DiagnosticsUI.resx">
+      <DependentUpon>DiagnosticsUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPForm.resx">
@@ -2110,14 +2101,14 @@
     <EmbeddedResource Include="Validation\StandardRegexUI.resx">
       <DependentUpon>StandardRegexUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Validation\ResolveMissingTargetPropertiesForm.resx">
-      <DependentUpon>ResolveMissingTargetPropertiesForm.cs</DependentUpon>
+    <EmbeddedResource Include="Validation\ResolveMissingTargetPropertiesUI.resx">
+      <DependentUpon>ResolveMissingTargetPropertiesUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Validation\SecondaryConstraintUI.resx">
       <DependentUpon>SecondaryConstraintUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Validation\ValidationSetupForm.resx">
-      <DependentUpon>ValidationSetupForm.cs</DependentUpon>
+    <EmbeddedResource Include="Validation\ValidationSetupUI.resx">
+      <DependentUpon>ValidationSetupUI.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="CatalogueManager_TemporaryKey.pfx" />
     <None Include="packages.config" />

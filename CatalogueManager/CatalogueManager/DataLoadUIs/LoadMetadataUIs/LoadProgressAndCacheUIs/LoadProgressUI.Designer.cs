@@ -39,7 +39,7 @@
             this.tbName = new System.Windows.Forms.TextBox();
             this.label2 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.loadProgressDiagram1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams.LoadProgressDiagram();
+            this.loadProgressDiagram1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams.LoadProgressDiagramUI();
             this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.nDefaultNumberOfDaysToLoadEachTime)).BeginInit();
             this.panel1.SuspendLayout();
@@ -212,7 +212,7 @@
         private System.Windows.Forms.NumericUpDown nDefaultNumberOfDaysToLoadEachTime;
         private System.Windows.Forms.Button btnEditLoadProgress;
         private System.Windows.Forms.TextBox tbOriginDate;
-        private Diagrams.LoadProgressDiagram loadProgressDiagram1;
+        private Diagrams.LoadProgressDiagramUI loadProgressDiagram1;
         private System.Windows.Forms.Label label3;
 
         private System.Windows.Forms.Panel panel1;

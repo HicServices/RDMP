@@ -301,7 +301,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null)
         {
-            var t = Activate<LookupConfiguration, Catalogue>(catalogue);
+            var t = Activate<LookupConfigurationUI, Catalogue>(catalogue);
             
             if(optionalLookupTableInfo != null)
                 t.SetLookupTableInfo(optionalLookupTableInfo);
@@ -323,7 +323,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return;
             }
 
-            Activate<FilterGraph>(collection);
+            Activate<FilterGraphUI>(collection);
         }
 
         public void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic)
@@ -338,7 +338,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
         {
-            return Activate<LoadDiagram, LoadMetadata>(loadMetadata);
+            return Activate<LoadDiagramUI, LoadMetadata>(loadMetadata);
         }
 
 

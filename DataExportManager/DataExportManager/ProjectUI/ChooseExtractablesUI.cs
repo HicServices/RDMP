@@ -239,7 +239,7 @@ namespace DataExportManager.ProjectUI
                         throw new NotSupportedException("There is no known server for SupportingSql " + sql);
 
                     var server = sql.ExternalDatabaseServer;
-                    DataTableViewer dtv = new DataTableViewer(server, sql.SQL, sql.Name);
+                    DataTableViewerUI dtv = new DataTableViewerUI(server, sql.SQL, sql.Name);
                     dtv.Show();
                 }
                 catch (Exception ex)

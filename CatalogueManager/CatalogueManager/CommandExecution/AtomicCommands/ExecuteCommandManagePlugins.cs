@@ -34,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var f = new PluginManagementForm(Activator);
+            var f = new PluginManagementFormUI(Activator);
             f.Show();
         }
     }

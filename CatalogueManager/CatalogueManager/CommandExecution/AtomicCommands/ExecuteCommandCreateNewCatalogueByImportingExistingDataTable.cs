@@ -32,7 +32,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var importTable = new ImportSQLTable(Activator,_allowImportAsCatalogue);
+            var importTable = new ImportSQLTableUI(Activator,_allowImportAsCatalogue);
             importTable.ShowDialog();
         }
 

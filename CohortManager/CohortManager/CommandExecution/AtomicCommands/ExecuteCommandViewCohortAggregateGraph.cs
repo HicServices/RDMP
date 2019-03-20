@@ -45,7 +45,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<CohortSummaryAggregateGraph>(_collection);
+            Activator.Activate<CohortSummaryAggregateGraphUI>(_collection);
         }
     }
 }

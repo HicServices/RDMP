@@ -331,7 +331,7 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
 
             if(preview != null)
             {
-                DataTableViewer dtv = new DataTableViewer(preview,"Preview");
+                DataTableViewerUI dtv = new DataTableViewerUI(preview,"Preview");
                 SingleControlForm.ShowDialog(dtv);
             }
         }

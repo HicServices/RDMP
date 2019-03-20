@@ -249,7 +249,7 @@ namespace Dashboard.PieCharts
                 dt.Rows.Add(g.Key.Name, missing.Count(), string.Join(",",missing.Select(m=>m.CatalogueItem.Name)));
             }
 
-            DataTableViewer dtv = new DataTableViewer(dt,"Catalogue Items Missing Descriptions");
+            DataTableViewerUI dtv = new DataTableViewerUI(dt,"Catalogue Items Missing Descriptions");
 
             var form = new SingleControlForm(dtv, true);
             form.Show();

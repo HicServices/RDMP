@@ -52,7 +52,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvCatalogues)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -315,7 +315,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private System.Windows.Forms.RadioButton rbExpiresOn;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.RadioButton rbNeverExpires;
-        private TicketingControl ticketingControl1;
+        private TicketingControlUI ticketingControl1;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.DateTimePicker dtpStartDate;
         private System.Windows.Forms.Label label3;

@@ -85,7 +85,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         {
             List<Type> toReturn = new List<Type>();
 
-            toReturn.AddRange(typeof (CatalogueTab).Assembly.GetTypes());
+            toReturn.AddRange(typeof (CatalogueUI).Assembly.GetTypes());
             toReturn.AddRange(typeof(ProjectUI).Assembly.GetTypes());
             toReturn.AddRange(typeof(RacewayRenderAreaUI).Assembly.GetTypes());
             toReturn.AddRange(typeof(CohortCompilerUI).Assembly.GetTypes());

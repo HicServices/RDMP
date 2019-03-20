@@ -43,7 +43,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.tpDesign = new System.Windows.Forms.TabPage();
             this.tpSql = new System.Windows.Forms.TabPage();
             this.hiParameters = new ReusableUIComponents.HelpIcon();
-            this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControl();
+            this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControlUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tpDesign.SuspendLayout();
@@ -206,7 +206,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         private OLVColumn olvValue;
         private OLVColumn olvComment;
         private System.Windows.Forms.ImageList imageList1;
-        private ParameterEditorScintillaControl parameterEditorScintillaControl1;
+        private ParameterEditorScintillaControlUI parameterEditorScintillaControl1;
         private OLVColumn olvOwner;
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpSql;

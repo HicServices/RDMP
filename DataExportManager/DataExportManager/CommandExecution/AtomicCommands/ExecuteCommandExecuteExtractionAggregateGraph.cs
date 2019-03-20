@@ -37,7 +37,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<ExtractionAggregateGraph>(_collection);
+            Activator.Activate<ExtractionAggregateGraphUI>(_collection);
         }
     }
 }

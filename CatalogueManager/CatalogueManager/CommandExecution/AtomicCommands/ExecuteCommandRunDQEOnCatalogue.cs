@@ -48,7 +48,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<DQEExecutionControl, Catalogue>(_catalogue);
+            Activator.Activate<DQEExecutionControlUI, Catalogue>(_catalogue);
         }
 
         public override string GetCommandName()

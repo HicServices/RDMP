@@ -256,18 +256,18 @@
     <Compile Include="DatabaseTypeUI.Designer.cs">
       <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataTableViewer.cs">
+    <Compile Include="DataTableViewerUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataTableViewer.Designer.cs">
-      <DependentUpon>DataTableViewer.cs</DependentUpon>
+    <Compile Include="DataTableViewerUI.Designer.cs">
+      <DependentUpon>DataTableViewerUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Dependencies\DependencyFinder.cs" />
-    <Compile Include="Dependencies\DependencyGraph.cs">
+    <Compile Include="Dependencies\DependencyGraphUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Dependencies\DependencyGraph.Designer.cs">
-      <DependentUpon>DependencyGraph.cs</DependentUpon>
+    <Compile Include="Dependencies\DependencyGraphUI.Designer.cs">
+      <DependentUpon>DependencyGraphUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Dependencies\Models\ByteComparer.cs" />
     <Compile Include="Dependencies\Models\ColorRequest.cs" />
@@ -467,11 +467,11 @@
     <EmbeddedResource Include="DatabaseTypeUI.resx">
       <DependentUpon>DatabaseTypeUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataTableViewer.resx">
-      <DependentUpon>DataTableViewer.cs</DependentUpon>
+    <EmbeddedResource Include="DataTableViewerUI.resx">
+      <DependentUpon>DataTableViewerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Dependencies\DependencyGraph.resx">
-      <DependentUpon>DependencyGraph.cs</DependentUpon>
+    <EmbeddedResource Include="Dependencies\DependencyGraphUI.resx">
+      <DependentUpon>DependencyGraphUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Dialogs\ExceptionViewer.resx">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>

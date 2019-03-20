@@ -45,7 +45,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
     /// </summary>
     public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveableUI
     {
-        private ArgumentCollection _argumentCollection;
+        private ArgumentCollectionUI _argumentCollection;
         private Type _underlyingType;
         private ProcessTask _processTask;
         private RAGSmileyToolStrip _ragSmiley;
@@ -67,7 +67,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             {
                 var repo = (CatalogueRepository) databaseObject.Repository;
 
-                _argumentCollection = new ArgumentCollection();
+                _argumentCollection = new ArgumentCollectionUI();
                 try
                 {
                     _underlyingType = repo.MEF.GetTypeByNameFromAnyLoadedAssembly(databaseObject.GetClassNameWhoArgumentsAreFor());
