@@ -304,11 +304,11 @@
     <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.Designer.cs">
       <DependentUpon>Screen2.cs</DependentUpon>
     </Compile>
-    <Compile Include="CohortUI\ExtractableCohortCollection.cs">
+    <Compile Include="CohortUI\ExtractableCohortCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CohortUI\ExtractableCohortCollection.Designer.cs">
-      <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>
+    <Compile Include="CohortUI\ExtractableCohortCollectionUI.Designer.cs">
+      <DependentUpon>ExtractableCohortCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="CohortUI\ImportCustomData\CohortCreationRequestUI.cs">
       <SubType>Form</SubType>
@@ -439,23 +439,23 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureDisclaimer.cs">
+    <Compile Include="SimpleDialogs\ConfigureDisclaimerUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureDisclaimer.Designer.cs">
-      <DependentUpon>ConfigureDisclaimer.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\ConfigureDisclaimerUI.Designer.cs">
+      <DependentUpon>ConfigureDisclaimerUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithm.cs">
+    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithmUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithm.Designer.cs">
-      <DependentUpon>ConfigureHashingAlgorithm.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithmUI.Designer.cs">
+      <DependentUpon>ConfigureHashingAlgorithmUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SelectWhichCohortToImport.cs">
+    <Compile Include="SimpleDialogs\SelectWhichCohortToImportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\SelectWhichCohortToImport.Designer.cs">
-      <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\SelectWhichCohortToImportUI.Designer.cs">
+      <DependentUpon>SelectWhichCohortToImportUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Wizard\CreateNewDataExtractionProjectUI.cs">
       <SubType>Form</SubType>
@@ -476,8 +476,8 @@
     <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">
       <DependentUpon>Screen2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CohortUI\ExtractableCohortCollection.resx">
-      <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>
+    <EmbeddedResource Include="CohortUI\ExtractableCohortCollectionUI.resx">
+      <DependentUpon>ExtractableCohortCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\ImportCustomData\CohortCreationRequestUI.resx">
       <DependentUpon>CohortCreationRequestUI.cs</DependentUpon>
@@ -528,14 +528,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SimpleDialogs\ConfigureDisclaimer.resx">
-      <DependentUpon>ConfigureDisclaimer.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\ConfigureDisclaimerUI.resx">
+      <DependentUpon>ConfigureDisclaimerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ConfigureHashingAlgorithm.resx">
-      <DependentUpon>ConfigureHashingAlgorithm.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\ConfigureHashingAlgorithmUI.resx">
+      <DependentUpon>ConfigureHashingAlgorithmUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\SelectWhichCohortToImport.resx">
-      <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\SelectWhichCohortToImportUI.resx">
+      <DependentUpon>SelectWhichCohortToImportUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Wizard\CreateNewDataExtractionProjectUI.resx">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>

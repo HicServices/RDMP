@@ -23,9 +23,9 @@ namespace Dashboard.CatalogueSummary
     /// Shows a longitudinal breakdown of all Data Quality Engine runs on the dataset including the ability to 'rewind' to look at the dataset quality graphs of previous
     /// runs of the DQE over time (e.g. before and after a data load).
     /// </summary>
-    public partial class CatalogueSummaryScreen : CatalogueSummaryScreen_Design
+    public partial class CatalogueDQEResultsUI : CatalogueSummaryScreen_Design
     {
-        public CatalogueSummaryScreen()
+        public CatalogueDQEResultsUI()
         {
             InitializeComponent();
 

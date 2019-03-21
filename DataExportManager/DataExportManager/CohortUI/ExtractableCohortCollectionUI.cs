@@ -5,13 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueManager.ItemActivation;
@@ -31,9 +26,9 @@ namespace DataExportManager.CohortUI
     /// If a project/global list includes more than one Cohort Source (e.g. you link NHS numbers to ReleaseIdentifiers but also link CHI numbers to ReleaseIdentifiers or if you have the same
     /// private identifier but different release identifier formats) then each seperate cohort source table will be listed along with the associated cohorts found by RDMP.
     /// </summary>
-    public partial class ExtractableCohortCollection : RDMPUserControl, ILifetimeSubscriber
+    public partial class ExtractableCohortCollectionUI : RDMPUserControl, ILifetimeSubscriber
     {
-        public ExtractableCohortCollection()
+        public ExtractableCohortCollectionUI()
         {
             InitializeComponent();
 

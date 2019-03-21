@@ -137,11 +137,11 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CatalogueSummary\CatalogueSummaryScreen.cs">
+    <Compile Include="CatalogueSummary\CatalogueDQEResultsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\CatalogueSummaryScreen.Designer.cs">
-      <DependentUpon>CatalogueSummaryScreen.cs</DependentUpon>
+    <Compile Include="CatalogueSummary\CatalogueDQEResultsUI.Designer.cs">
+      <DependentUpon>CatalogueDQEResultsUI.cs</DependentUpon>
     </Compile>
     <Compile Include="CatalogueSummary\DataQualityReporting\ColumnStatesChart.cs">
       <SubType>UserControl</SubType>
@@ -239,8 +239,8 @@
     <Compile Include="Raceway\RacewayRenderAreaUI.Designer.cs">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="CatalogueSummary\CatalogueSummaryScreen.resx">
-      <DependentUpon>CatalogueSummaryScreen.cs</DependentUpon>
+    <EmbeddedResource Include="CatalogueSummary\CatalogueDQEResultsUI.resx">
+      <DependentUpon>CatalogueDQEResultsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\ColumnStatesChart.resx">
       <DependentUpon>ColumnStatesChart.cs</DependentUpon>

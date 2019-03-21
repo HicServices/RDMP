@@ -79,7 +79,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<CatalogueSummaryScreen, Catalogue>(_catalogue);
+            Activator.Activate<CatalogueDQEResultsUI, Catalogue>(_catalogue);
         }
 
         private bool ServerHasAtLeastOneEvaluation(Catalogue c)

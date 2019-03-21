@@ -4,14 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
@@ -20,7 +12,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
     /// Describes what a cohort is in terms of the RDMP (a list of patient identifiers for a project with accompanying release identifiers).  It is important that you understand
     /// what a cohort is and how the RDMP will use the cohort database you are creating so that you can make the correct decisions in Screen2.
     /// </summary>
-    public partial class Screen1 : UserControl
+    partial class Screen1 : UserControl
     {
         public Screen1()
         {

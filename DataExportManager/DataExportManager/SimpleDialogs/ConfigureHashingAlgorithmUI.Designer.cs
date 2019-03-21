@@ -1,6 +1,6 @@
 ﻿namespace DataExportManager.SimpleDialogs
 {
-    partial class ConfigureHashingAlgorithm
+    partial class ConfigureHashingAlgorithmUI
     {
         /// <summary>
         /// Required designer variable.

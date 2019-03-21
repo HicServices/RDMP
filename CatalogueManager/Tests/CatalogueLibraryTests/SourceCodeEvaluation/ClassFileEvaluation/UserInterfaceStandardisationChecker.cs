@@ -10,15 +10,21 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.UsedByNodes;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.DashboardTabs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Dashboard.CatalogueSummary.DataQualityReporting;
+using Dashboard.CatalogueSummary.LoadEvents;
+using Dashboard.Overview;
+using DataExportManager.CohortUI.CohortSourceManagement.WizardScreens;
 using NUnit.Framework;
 using ReusableUIComponents.CommandExecution.Proposals;
 
@@ -47,7 +53,15 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
         private Type[] excusedUIClasses = new[]
         {
             typeof (RDMPUserControl),
-            typeof(RDMPSingleDatabaseObjectControl<>)
+            typeof (RDMPForm),
+            typeof(RDMPSingleDatabaseObjectControl<>),
+            typeof(DashboardableControlHostPanel),
+            typeof(TimePeriodicityChart),
+            typeof(LoadEventsTreeView),
+            
+            typeof(ResolveFatalErrors),
+            typeof(DataLoadsGraph)
+
         };
 
         public void FindProblems(List<string> csFilesList,MEF mef)
@@ -146,13 +160,23 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                     problems.Add("Found proposal called '" + proposalClass + "' but couldn't find a corresponding data class called '" + toLookFor + ".cs'");
             }
             
+            //Make sure all user interface classes have the suffix UI
             foreach(Type uiType in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => 
                  (typeof(RDMPUserControl).IsAssignableFrom(t)||(typeof(RDMPForm).IsAssignableFrom(t))
                  && !t.IsAbstract && !t.IsInterface)))
             {
                 
                 if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
+                {
+                    if (excusedUIClasses.Contains(uiType))
+                        continue;
+                    
+                    //also allow Screen1, Screen2 etc
+                    if(Regex.IsMatch(uiType.Name,@"Screen\d") && uiType.IsNotPublic)
+                        continue;
+
                     problems.Add("Class " + uiType.Name + " does not end with UI");
+                }
             }
 
 

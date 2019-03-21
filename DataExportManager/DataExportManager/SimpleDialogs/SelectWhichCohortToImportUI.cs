@@ -25,7 +25,7 @@ namespace DataExportManager.SimpleDialogs
     /// 
     /// <para>Only use this dialog if you have manually added a cohort into your cohort database yourself and RDMP does not show it in SavedCohortsCollectionUI.</para>
     /// </summary>
-    public partial class SelectWhichCohortToImport : RDMPForm
+    public partial class SelectWhichCohortToImportUI : RDMPForm
     {
         private readonly ExternalCohortTable _source;
         public int IDToImport { get; private set; }
@@ -35,7 +35,7 @@ namespace DataExportManager.SimpleDialogs
         private readonly string _displayMember;
         private readonly string _valueMember;
 
-        public SelectWhichCohortToImport(IActivateItems activator,ExternalCohortTable source):base(activator)
+        public SelectWhichCohortToImportUI(IActivateItems activator,ExternalCohortTable source):base(activator)
         {
             _source = source;
             InitializeComponent();

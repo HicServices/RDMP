@@ -1,6 +1,6 @@
 ﻿namespace DataExportManager.SimpleDialogs
 {
-    partial class SelectWhichCohortToImport
+    partial class SelectWhichCohortToImportUI
     {
         /// <summary>
         /// Required designer variable.

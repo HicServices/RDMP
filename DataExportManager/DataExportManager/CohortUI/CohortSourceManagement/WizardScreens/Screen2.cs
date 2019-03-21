@@ -35,7 +35,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
     /// <para>After you have chosen the correct private identifier you should choose a strategy for allocating release identifiers.  Because each agency handles governance and identifier assignment
     /// differently you can select 'Allow Null Release Identifiers' and provide allocate them yourself manually (e.g. through a stored proceedure).</para>
     /// </summary>
-    public partial class Screen2 : RDMPUserControl
+    partial class Screen2 : RDMPUserControl
     {
         public Screen2()
         {

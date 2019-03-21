@@ -60,8 +60,8 @@ namespace CatalogueManager.SimpleControls
         {
             control.CommonFunctionality.Add(btnSave);
             control.CommonFunctionality.Add(btnUndoRedo);
-
-            Form f = control as Form ?? control.ParentForm;
+            
+            Form f = control as Form ?? ((Control)control).FindForm();
 
             if (f == null)
                 throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
@@ -104,9 +104,10 @@ namespace CatalogueManager.SimpleControls
 
         public void Enable(bool b)
         {
-            if (_parent.InvokeRequired)
+            var c = (Control)_parent;
+            if (c.InvokeRequired)
             {
-               ((Control)_parent).Invoke(new MethodInvoker(() => Enable(b)));
+               c.Invoke(new MethodInvoker(() => Enable(b)));
                 return;
             }
 

@@ -1,6 +1,6 @@
 ﻿namespace DataExportManager.SimpleDialogs
 {
-    partial class ConfigureDisclaimer
+    partial class ConfigureDisclaimerUI
     {
         /// <summary>
         /// Required designer variable.

@@ -23,7 +23,7 @@ using ReusableUIComponents.Dialogs;
 namespace CatalogueManager.LogViewer.Tabs
 {
     /// <summary>
-    /// TECHNICAL:Base class for all the other logging tabs e.g. LoggingDataSourcesTab
+    /// TECHNICAL:Base class for all the other logging tabs e.g. <see cref="LoggingDataSourcesTabUI"/>
     ///
     /// <para>Displays all the activity going on within the RDMP that has been recorded in the logging database.  This includes data extractions, data loads, data quality runs etc.  This 
     /// information is stored in a relational database format including:</para>

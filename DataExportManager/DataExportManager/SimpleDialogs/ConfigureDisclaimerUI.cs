@@ -29,11 +29,11 @@ namespace DataExportManager.SimpleDialogs
     /// 
     /// <para>You can only have one message at a time and it is constant, we suggest something like "this data was supplied by blah, please accredit us and the NHS as the data provider... etc"</para>
     /// </summary> 
-    public partial class ConfigureDisclaimer : RDMPForm
+    public partial class ConfigureDisclaimerUI : RDMPForm
     {
         private bool _allowClose = false;
         
-        public ConfigureDisclaimer(IActivateItems activator):base(activator)
+        public ConfigureDisclaimerUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
         }

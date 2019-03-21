@@ -25,13 +25,13 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems
 
         private void ConfigureHashingAlgorithm(object sender, EventArgs e)
         {
-            var hash = new ConfigureHashingAlgorithm(_activator);
+            var hash = new ConfigureHashingAlgorithmUI(_activator);
             hash.ShowDialog();
         }
 
         private void ConfigureDisclaimer(object sender, EventArgs e)
         {
-            var disclaimer = new ConfigureDisclaimer(_activator);
+            var disclaimer = new ConfigureDisclaimerUI(_activator);
             disclaimer.ShowDialog();
         }
     }

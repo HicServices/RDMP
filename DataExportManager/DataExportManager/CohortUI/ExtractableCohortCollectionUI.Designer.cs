@@ -2,7 +2,7 @@
 
 namespace DataExportManager.CohortUI
 {
-    partial class ExtractableCohortCollection : ILifetimeSubscriber
+    partial class ExtractableCohortCollectionUI : ILifetimeSubscriber
     {
         /// <summary> 
         /// Required designer variable.

@@ -58,7 +58,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            var extractableCohortCollection = new ExtractableCohortCollection();
+            var extractableCohortCollection = new ExtractableCohortCollectionUI();
             extractableCohortCollection.SetItemActivator(Activator);
             Activator.ShowWindow(extractableCohortCollection, true);
 

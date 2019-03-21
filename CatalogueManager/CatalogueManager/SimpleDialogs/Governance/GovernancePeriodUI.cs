@@ -34,7 +34,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// <para>If you are doing yearly approvals you can import the dataset list from the last year as the basis of governanced datasets.</para>
     /// 
     /// <para>If a GovernancePeriod expires all datasets (Catalogues) in the period will be assumed to have expired governance and will appear in the Dashboard as expired unless there is a new
-    /// GovernancePeriod that is active (See GovernanceSummary).</para>
+    /// GovernancePeriod that is active.</para>
     /// </summary>
     public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
     {

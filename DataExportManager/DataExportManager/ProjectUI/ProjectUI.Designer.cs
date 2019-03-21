@@ -44,7 +44,7 @@ namespace DataExportManager.ProjectUI
             this.tbProjectNumber = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.extractableCohortCollection1 = new DataExportManager.CohortUI.ExtractableCohortCollection();
+            this.extractableCohortCollection1 = new DataExportManager.CohortUI.ExtractableCohortCollectionUI();
             this.tcMasterTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
@@ -266,7 +266,7 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbProjectNumber;
         private TicketingControlUI tcMasterTicket;
-        private CohortUI.ExtractableCohortCollection extractableCohortCollection1;
+        private CohortUI.ExtractableCohortCollectionUI extractableCohortCollection1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnBrowse;
         private Panel panel1;

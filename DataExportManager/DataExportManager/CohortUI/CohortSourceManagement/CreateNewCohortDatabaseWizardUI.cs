@@ -5,20 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI.CohortSourceManagement.WizardScreens;
-using DataExportLibrary.CohortDatabaseWizard;
 
 namespace DataExportManager.CohortUI.CohortSourceManagement
 {

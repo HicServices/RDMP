@@ -2,7 +2,7 @@
 
 namespace Dashboard.CatalogueSummary
 {
-    partial class CatalogueSummaryScreen
+    partial class CatalogueDQEResultsUI
     {
         /// <summary> 
         /// Required designer variable.
