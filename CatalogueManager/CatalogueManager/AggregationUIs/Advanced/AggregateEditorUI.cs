@@ -76,6 +76,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryHaving;
         
+        ErrorProvider _errorProviderAxis = new ErrorProvider();
+
         //Constructor
         public AggregateEditorUI()
         {
@@ -452,6 +454,23 @@ namespace CatalogueManager.AggregationUIs.Advanced
             ddAxisDimension.SelectedItem = axisIfAny;
             aggregateContinuousDateAxisUI1.Dimension = axisIfAny;
 
+            var col = axisIfAny.ColumnInfo;
+            if (col != null)
+            {
+                try
+                {
+                    var type = col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type);
+                    if(type != typeof(DateTime))
+                        _errorProviderAxis.SetError(ddAxisDimension,"Column is not a DateTime");
+                    else
+                        _errorProviderAxis.Clear();
+                }
+                catch (Exception)
+                {
+                    _errorProviderAxis.SetError(ddAxisDimension, "Could not determine column type");
+                }
+            }
+
         }
 
         private void ddAxisDimension_SelectedIndexChanged(object sender, EventArgs e)
@@ -497,6 +516,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             //also clear the pivot
             btnClearPivotDimension_Click(this,e);
 
+            _errorProviderAxis.Clear();
             ReloadUIFromDatabase();
         }
 

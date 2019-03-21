@@ -5,19 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Data;
-using System.Globalization;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Checks;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.DataHelper;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
 
 namespace CatalogueManager.AggregationUIs
@@ -34,6 +27,8 @@ namespace CatalogueManager.AggregationUIs
     {
         private AggregateDimension _dimension;
         private AggregateContinuousDateAxis _axis;
+
+        private ErrorProvider _errorProvider = new ErrorProvider();
 
         [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public AggregateDimension Dimension
@@ -83,10 +78,9 @@ namespace CatalogueManager.AggregationUIs
                 label3.Visible = true;
                 ddIncrement.Visible = true;
 
-                tbStartDate.Text = _axis.StartDate.ToString();
-                tbEndDate.Text = _axis.EndDate.ToString();
+                tbStartDate.Text = _axis.StartDate;
+                tbEndDate.Text = _axis.EndDate;
                 ddIncrement.SelectedItem = _axis.AxisIncrement;
-
             }
 
             updating = false;
@@ -116,6 +110,14 @@ namespace CatalogueManager.AggregationUIs
                 return;
 
             TextBox s = (TextBox) sender;
+
+            if (string.IsNullOrWhiteSpace(s.Text))
+            {
+                _errorProvider.SetError(s, "Field cannot be blank");
+                _errorProvider.Tag = s;
+            }
+            else if(_errorProvider.Tag == s)
+                _errorProvider.Clear();
 
             try
             {

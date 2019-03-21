@@ -56,7 +56,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.label2 = new System.Windows.Forms.Label();
             this._aggregateTopXui1 = new CatalogueManager.AggregationUIs.Advanced.AggregateTopXUI();
             this.selectColumnUI1 = new CatalogueManager.AggregationUIs.Advanced.SelectColumnUI();
-            
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
@@ -165,7 +164,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.ddAxisDimension.FormattingEnabled = true;
             this.ddAxisDimension.Location = new System.Drawing.Point(15, 19);
             this.ddAxisDimension.Name = "ddAxisDimension";
-            this.ddAxisDimension.Size = new System.Drawing.Size(539, 21);
+            this.ddAxisDimension.Size = new System.Drawing.Size(525, 21);
             this.ddAxisDimension.TabIndex = 0;
             this.ddAxisDimension.SelectedIndexChanged += new System.EventHandler(this.ddAxisDimension_SelectedIndexChanged);
             // 
@@ -215,7 +214,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.ddPivotDimension.FormattingEnabled = true;
             this.ddPivotDimension.Location = new System.Drawing.Point(15, 19);
             this.ddPivotDimension.Name = "ddPivotDimension";
-            this.ddPivotDimension.Size = new System.Drawing.Size(539, 21);
+            this.ddPivotDimension.Size = new System.Drawing.Size(525, 21);
             this.ddPivotDimension.Sorted = true;
             this.ddPivotDimension.TabIndex = 0;
             this.ddPivotDimension.SelectedIndexChanged += new System.EventHandler(this.ddPivotDimension_SelectedIndexChanged);
@@ -394,12 +393,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.panel2.Size = new System.Drawing.Size(706, 929);
             this.panel2.TabIndex = 30;
             // 
-            // AggregateEditor
+            // AggregateEditorUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.panel2);
-            this.Name = "AggregateEditor";
+            this.Name = "AggregateEditorUI";
             this.Size = new System.Drawing.Size(706, 929);
             this.gbDescription.ResumeLayout(false);
             this.gbDescription.PerformLayout();
