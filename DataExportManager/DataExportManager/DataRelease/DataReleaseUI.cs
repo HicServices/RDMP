@@ -218,8 +218,8 @@ namespace DataExportManager.DataRelease
                 _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
             }
 
-            Add(new ToolStripLabel("Release Pipeline:"));
-            Add(_pipelinePanel);
+            CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
+            CommonFunctionality.Add(_pipelinePanel);
             checkAndExecuteUI1.SetItemActivator(activator);
 
             var checkedBefore = tlvReleasePotentials.CheckedObjects;

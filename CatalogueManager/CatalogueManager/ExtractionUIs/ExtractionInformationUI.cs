@@ -138,13 +138,13 @@ namespace CatalogueManager.ExtractionUIs
 
             ObjectSaverButton1.BeforeSave += objectSaverButton1OnBeforeSave;
 
-            Add(ragSmiley1);
-            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.CatalogueItem),"Go To Description (CatalogueItem)");
-            AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo,0,true));
+            CommonFunctionality.Add(ragSmiley1);
+            CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.CatalogueItem), "Go To Description (CatalogueItem)");
+            CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, databaseObject.ColumnInfo, 0, true));
 
-            AddHelp(cbHashOnDataRelease, "IColumn.HashOnDataRelease", "Hash on Data Release");
-            AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier","Is Extraction Identifier");
-            AddHelp(cbIsPrimaryKey, "IColumn.IsPrimaryKey","Is Primary Key");
+            CommonFunctionality.AddHelp(cbHashOnDataRelease, "IColumn.HashOnDataRelease", "Hash on Data Release");
+            CommonFunctionality.AddHelp(cbIsExtractionIdentifier, "IColumn.IsExtractionIdentifier", "Is Extraction Identifier");
+            CommonFunctionality.AddHelp(cbIsPrimaryKey, "IColumn.IsPrimaryKey", "Is Primary Key");
         }
 
         private bool objectSaverButton1OnBeforeSave(DatabaseEntity databaseEntity)

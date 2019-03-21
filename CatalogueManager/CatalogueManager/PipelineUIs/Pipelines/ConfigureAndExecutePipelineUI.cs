@@ -89,9 +89,9 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             {
                 var de = o as DatabaseEntity;
                 if (o is DatabaseEntity)
-                    Add(new ExecuteCommandShow(activator,de,0,true));
+                    CommonFunctionality.Add(new ExecuteCommandShow(activator, de, 0, true));
                 else
-                    Add(o.ToString());
+                    CommonFunctionality.Add(o.ToString());
 
                 _initializationObjects.Add(o);
             }

@@ -194,19 +194,19 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             splitContainer1.Panel1Collapsed = !options.ParameterManager.ParametersFoundSoFarInQueryGeneration.Values.Any(v => v.Any());
 
             parameterCollectionUI1.SetUp(options);
-            
-            AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
-            AddToMenu(new ExecuteCommandViewFilterMatchData(Activator,databaseObject,ViewType.Aggregate));
-            AddToMenu(new ExecuteCommandViewFilterMatchGraph(Activator, databaseObject));
-            AddToMenu(new ExecuteCommandBrowseLookup(Activator, databaseObject));
-            AddToMenu(new ExecuteCommandPublishFilter(Activator,databaseObject,databaseObject.GetCatalogue()));
+
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.Aggregate));
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchGraph(Activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandBrowseLookup(Activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandPublishFilter(Activator, databaseObject, databaseObject.GetCatalogue()));
 
             FigureOutGlobalsAndAutoComplete();
             
             QueryEditor.Text = _extractionFilter.WhereSQL;
 
-            AddChecks(databaseObject);
-            StartChecking();
+            CommonFunctionality.AddChecks(databaseObject);
+            CommonFunctionality.StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ConcreteFilter databaseObject)

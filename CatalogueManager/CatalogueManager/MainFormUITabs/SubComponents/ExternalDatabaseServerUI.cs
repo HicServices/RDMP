@@ -64,7 +64,7 @@ namespace CatalogueManager.MainFormUITabs.SubComponents
 
                 pbServer.Image = Activator.CoreIconProvider.GetImage(_server);
 
-                AddChecks(databaseObject);
+                CommonFunctionality.AddChecks(databaseObject);
             }
             finally
             {

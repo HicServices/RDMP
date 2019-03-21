@@ -98,9 +98,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
             ReloadUIFromDatabase();
 
-            AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
+            CommonFunctionality.AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
 
-            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.LoadMetadata),"Execute Load");
+            CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.LoadMetadata), "Execute Load");
         }
 
 

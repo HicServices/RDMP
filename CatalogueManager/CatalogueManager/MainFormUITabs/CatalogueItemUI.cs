@@ -68,12 +68,12 @@ namespace CatalogueManager.MainFormUITabs
             _catalogueItem = databaseObject;
 
             if (_catalogueItem.ExtractionInformation != null)
-                AddToMenu(new ExecuteCommandActivate(activator, _catalogueItem.ExtractionInformation), "Go To Extraction Information");
+                CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, _catalogueItem.ExtractionInformation), "Go To Extraction Information");
             else
-                AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem), "Make Extractable");
+                CommonFunctionality.AddToMenu(new ExecuteCommandMakeCatalogueItemExtractable(activator, _catalogueItem), "Make Extractable");
 
             if (_catalogueItem.ColumnInfo_ID != null)
-                AddToMenu(new ExecuteCommandShow(activator, _catalogueItem.ColumnInfo, 0, true));
+                CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, _catalogueItem.ColumnInfo, 0, true));
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, CatalogueItem databaseObject)

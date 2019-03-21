@@ -55,8 +55,8 @@ namespace CatalogueManager.DataQualityUIs
             base.SetDatabaseObject(activator, databaseObject);
             _catalogue = databaseObject;
             checkAndExecuteUI1.SetItemActivator(activator);
-            
-            Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue),"Validation Rules...");
+
+            CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
             AddPluginCommands();
         }
         

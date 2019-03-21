@@ -52,8 +52,8 @@ namespace CatalogueManager.MainFormUITabs
                     .ExpectTable("ConnectionStringKeyword")
                     .GetFullyQualifiedName();
 
-            AddChecks(databaseObject);
-            StartChecking();
+            CommonFunctionality.AddChecks(databaseObject);
+            CommonFunctionality.StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ConnectionStringKeyword databaseObject)

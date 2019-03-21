@@ -38,8 +38,8 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             lblServer.Text = _anoTable.Server.Name;
 
-            AddChecks(databaseObject);
-            StartChecking();
+            CommonFunctionality.AddChecks(databaseObject);
+            CommonFunctionality.StartChecking();
 
             SetEnabledness();
         }

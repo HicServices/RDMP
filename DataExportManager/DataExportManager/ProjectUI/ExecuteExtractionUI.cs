@@ -295,13 +295,13 @@ namespace DataExportManager.ProjectUI
                 helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
             }
 
-            Add(new ToolStripLabel("Extraction Pipeline:"));
-            Add(_pipelinePanel);
+            CommonFunctionality.Add(new ToolStripLabel("Extraction Pipeline:"));
+            CommonFunctionality.Add(_pipelinePanel);
 
-            AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
+            CommonFunctionality.AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
 
-            Add(lblMaxConcurrent);
-            Add(tbMaxConcurrent);
+            CommonFunctionality.Add(lblMaxConcurrent);
+            CommonFunctionality.Add(tbMaxConcurrent);
 
             checkAndExecuteUI1.SetItemActivator(activator);
 

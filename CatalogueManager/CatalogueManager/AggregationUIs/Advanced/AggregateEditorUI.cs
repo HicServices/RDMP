@@ -64,7 +64,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
     /// <para>One (DATE!) column can be marked as an Axis.  See AggregateContinuousDateAxisUI for description.</para>
     /// 
     /// </summary>
-    public partial class AggregateEditor : AggregateEditor_Design,ISaveableUI
+    public partial class AggregateEditorUI : AggregateEditor_Design,ISaveableUI
     {
         private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
@@ -77,7 +77,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         public Scintilla QueryHaving;
         
         //Constructor
-        public AggregateEditor()
+        public AggregateEditorUI()
         {
             InitializeComponent();
             
@@ -511,18 +511,18 @@ namespace CatalogueManager.AggregationUIs.Advanced
             {
                 var cic = databaseObject.GetCohortIdentificationConfigurationIfAny();
                 if (cic != null)
-                    AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query...");
+                    CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, cic), "Open Cohort Query...");
             }
             else
-                AddToMenu(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0, true));
+                CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, databaseObject.Catalogue, 0, true));
 
-            Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject));
-            Add(new ExecuteCommandViewSample(activator, databaseObject));
+            CommonFunctionality.Add(new ExecuteCommandExecuteAggregateGraph(activator, databaseObject));
+            CommonFunctionality.Add(new ExecuteCommandViewSample(activator, databaseObject));
 
-            AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewSqlParameters(activator, databaseObject));
 
-            AddChecks(databaseObject);
-            StartChecking();
+            CommonFunctionality.AddChecks(databaseObject);
+            CommonFunctionality.StartChecking();
         }
 
 

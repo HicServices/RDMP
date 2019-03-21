@@ -302,7 +302,7 @@ namespace CohortManager.SubComponents
             }
 
             foreach (var c in _timeoutControls.GetControls())
-                Add(c);
+                CommonFunctionality.Add(c);
 
             _queryCachingServer = _cic.QueryCachingServer;
             Compiler.CohortIdentificationConfiguration = _cic;

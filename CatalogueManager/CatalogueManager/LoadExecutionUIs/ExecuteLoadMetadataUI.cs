@@ -69,10 +69,10 @@ namespace CatalogueManager.LoadExecutionUIs
 
             SetLoadProgressGroupBoxState();
 
-            Add(new ExecuteCommandViewLoadDiagram(activator,_loadMetadata));
+            CommonFunctionality.Add(new ExecuteCommandViewLoadDiagram(activator, _loadMetadata));
 
-            AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator,_loadMetadata));
-            AddToMenu(miDebugOptions);
+            CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
+            CommonFunctionality.AddToMenu(miDebugOptions);
 
             AddPluginCommands();
         }

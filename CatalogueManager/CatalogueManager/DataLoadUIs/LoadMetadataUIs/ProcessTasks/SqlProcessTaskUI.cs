@@ -54,7 +54,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             loadStageIconUI1.Setup(activator.CoreIconProvider, _processTask.LoadStage);
             loadStageIconUI1.Left = tbID.Right +2;
 
-            AddChecks(_processTask);
+            CommonFunctionality.AddChecks(_processTask);
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
@@ -91,7 +91,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 }
                 catch (Exception e)
                 {
-                    Fatal("Could not open file " + _processTask.Path,e);
+                    CommonFunctionality.Fatal("Could not open file " + _processTask.Path,e);
                 }
             }
             finally

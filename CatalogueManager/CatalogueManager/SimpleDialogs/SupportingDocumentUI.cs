@@ -59,8 +59,8 @@ namespace CatalogueManager.SimpleDialogs
             ticketingControl1.TicketText = _supportingDocument.Ticket;
             tbUrl.Text = _supportingDocument.URL != null ? _supportingDocument.URL.AbsoluteUri : "";
 
-            AddHelp(cbExtractable, "SupportingDocument.Extractable");
-            AddHelp(cbIsGlobal, "SupportingSqlTable.IsGlobal");
+            CommonFunctionality.AddHelp(cbExtractable, "SupportingDocument.Extractable");
+            CommonFunctionality.AddHelp(cbIsGlobal, "SupportingSqlTable.IsGlobal");
 
         }
 

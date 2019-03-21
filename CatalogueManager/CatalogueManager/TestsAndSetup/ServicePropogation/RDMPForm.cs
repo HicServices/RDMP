@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.ComponentModel;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
@@ -20,7 +19,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     /// able to propagate the locator to all child controls (RDMPUserControl).  
     /// </summary>
     [TechnicalUI]
-    public class RDMPForm : Form
+    public class RDMPForm : Form, IRDMPControl
     {
         /// <summary>
         /// Whether escape keystrokes should trigger form closing (defaults to true).
@@ -28,7 +27,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         public bool CloseOnEscape { get; set; }
         
         protected readonly bool VisualStudioDesignMode;
-        protected IActivateItems Activator { get; private set; }
+        public IActivateItems Activator { get; private set; }
+
+        public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
 
         /// <summary>
         /// Constructs the form without initializing the activator.  If you use this method you must call SetItemActivator manually later
@@ -39,6 +40,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             CloseOnEscape = true;
             VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             KeyDown += RDMPForm_KeyDown;
+            CommonFunctionality = new RDMPControlCommonFunctionality(this);
         }
 
         /// <summary>
@@ -67,6 +69,17 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 if (saveable != null)
                     saveable.GetObjectSaverButton().Save();
             }
+        }
+
+        /// <summary>
+        /// Returns this since RDMPForm is a Form and therefore a top level control
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="found">pass null when calling this</param>
+        /// <returns></returns>
+        public IRDMPControl GetTopmostRDMPUserControl()
+        {
+            return this;
         }
     }
 }

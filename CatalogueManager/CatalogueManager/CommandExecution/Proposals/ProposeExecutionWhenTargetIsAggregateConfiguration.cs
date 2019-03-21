@@ -31,7 +31,7 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(AggregateConfiguration target)
         {
-            ItemActivator.Activate<AggregateEditor, AggregateConfiguration>(target);
+            ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)

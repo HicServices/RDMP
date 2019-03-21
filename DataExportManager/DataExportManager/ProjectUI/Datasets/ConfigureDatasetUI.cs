@@ -309,10 +309,10 @@ namespace DataExportManager.ProjectUI.Datasets
 
             SortSelectedByOrder();
 
-            AddToMenu(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true),"Show Catalogue");
-            Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, databaseObject.ExtractableDataSet.Catalogue, 0, true), "Show Catalogue");
+            CommonFunctionality.Add(new ExecuteCommandExecuteExtractionConfiguration(activator, databaseObject));
 
-            AddChecks(new SelectedDataSetsChecker(SelectedDataSet, Activator.RepositoryLocator));
+            CommonFunctionality.AddChecks(new SelectedDataSetsChecker(SelectedDataSet, Activator.RepositoryLocator));
         }
 
         public override string GetTabName()

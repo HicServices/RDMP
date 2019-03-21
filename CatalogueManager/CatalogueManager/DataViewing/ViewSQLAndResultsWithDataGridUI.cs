@@ -92,7 +92,7 @@ namespace CatalogueManager.DataViewing
         {
             _collection = (IViewSQLAndResultsCollection) collection;
 
-            ClearToolStrip();
+            CommonFunctionality.ClearToolStrip();
 
             btnExecuteSql.Image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
 
@@ -110,14 +110,14 @@ namespace CatalogueManager.DataViewing
 
             SetItemActivator(activator);
             
-            Add(btnExecuteSql);
-            Add(btnResetSql);
+            CommonFunctionality.Add(btnExecuteSql);
+            CommonFunctionality.Add(btnResetSql);
 
             foreach (var c in _timeoutControls.GetControls())
-                Add(c);
+                CommonFunctionality.Add(c);
 
             foreach (DatabaseEntity d in _collection.GetToolStripObjects())
-                AddToMenu(new ExecuteCommandShow(activator, d, 0,true));
+                CommonFunctionality.AddToMenu(new ExecuteCommandShow(activator, d, 0, true));
             
             RefreshUIFromDatabase();
         }

@@ -324,11 +324,11 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\AggregateEditor.cs">
+    <Compile Include="AggregationUIs\Advanced\AggregateEditorUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\AggregateEditor.Designer.cs">
-      <DependentUpon>AggregateEditor.cs</DependentUpon>
+    <Compile Include="AggregationUIs\Advanced\AggregateEditorUI.Designer.cs">
+      <DependentUpon>AggregateEditorUI.cs</DependentUpon>
     </Compile>
     <Compile Include="AggregationUIs\Advanced\SelectColumnUI.cs">
       <SubType>UserControl</SubType>
@@ -1355,15 +1355,14 @@
     </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\INamedTab.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs" />
+    <Compile Include="TestsAndSetup\ServicePropogation\IRDMPControl.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IRDMPSingleDatabaseObjectControl.cs" />
     <Compile Include="TestsAndSetup\RDMPBootStrapper.cs" />
+    <Compile Include="TestsAndSetup\ServicePropogation\RDMPControlCommonFunctionality.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPForm.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControlPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControl.cs">
@@ -1725,8 +1724,8 @@
     <EmbeddedResource Include="AggregationUIs\AggregateContinuousDateAxisUI.resx">
       <DependentUpon>AggregateContinuousDateAxisUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\Advanced\AggregateEditor.resx">
-      <DependentUpon>AggregateEditor.cs</DependentUpon>
+    <EmbeddedResource Include="AggregationUIs\Advanced\AggregateEditorUI.resx">
+      <DependentUpon>AggregateEditorUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="AggregationUIs\AggregateGraphUI.resx">
       <DependentUpon>AggregateGraphUI.cs</DependentUpon>

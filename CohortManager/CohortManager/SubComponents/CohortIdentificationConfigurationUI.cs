@@ -118,16 +118,16 @@ namespace CohortManager.SubComponents
                 tlvCic.ExpandAll();
             }
 
-            AddToMenu(cbIncludeCumulative);
-            AddToMenu(new ToolStripSeparator());
-            AddToMenu(_miClearCache);
-            AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, _configuration));
-            AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator,_configuration));
-            
-            AddToMenu(new ToolStripSeparator());
-            AddToMenu(new ExecuteCommandShowXmlDoc(activator,"CohortIdentificationConfiguration.QueryCachingServer_ID", "Query Caching"),"Help (What is Query Caching)");
-            
-            Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator,null).SetTarget(_configuration),
+            CommonFunctionality.AddToMenu(cbIncludeCumulative);
+            CommonFunctionality.AddToMenu(new ToolStripSeparator());
+            CommonFunctionality.AddToMenu(_miClearCache);
+            CommonFunctionality.AddToMenu(new ExecuteCommandSetQueryCachingDatabase(Activator, _configuration));
+            CommonFunctionality.AddToMenu(new ExecuteCommandCreateNewQueryCacheDatabase(activator, _configuration));
+
+            CommonFunctionality.AddToMenu(new ToolStripSeparator());
+            CommonFunctionality.AddToMenu(new ExecuteCommandShowXmlDoc(activator, "CohortIdentificationConfiguration.QueryCachingServer_ID", "Query Caching"), "Help (What is Query Caching)");
+
+            CommonFunctionality.Add(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator, null).SetTarget(_configuration),
                 "Commit Cohort",
                 activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Add));
 

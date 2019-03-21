@@ -432,14 +432,14 @@ namespace Dashboard.CatalogueSummary.LoadEvents
 
             LoadMetadata = databaseObject;
 
-            Add(new ToolStripLabel("Filter:"));
-            Add(_tbFilterBox);
-            Add(_btnApplyFilter);
+            CommonFunctionality.Add(new ToolStripLabel("Filter:"));
+            CommonFunctionality.Add(_tbFilterBox);
+            CommonFunctionality.Add(_btnApplyFilter);
 
-            Add(new ToolStripSeparator());
-            Add(new ToolStripLabel("Fetch:"));
-            Add(_tbToFetch);
-            Add(_btnFetch);
+            CommonFunctionality.Add(new ToolStripSeparator());
+            CommonFunctionality.Add(new ToolStripLabel("Fetch:"));
+            CommonFunctionality.Add(_tbToFetch);
+            CommonFunctionality.Add(_btnFetch);
 
         }
     }

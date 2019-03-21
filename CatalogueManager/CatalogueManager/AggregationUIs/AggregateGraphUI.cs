@@ -681,18 +681,18 @@ namespace CatalogueManager.AggregationUIs
             {
                 base.SetDatabaseObject(activator,databaseObject);
                 menuInitialized = true;
-                
-                AddToMenu(new ExecuteCommandActivate(activator,databaseObject));
-                AddToMenu(new ToolStripSeparator());
 
-                AddToMenu(miSaveImages);
-                AddToMenu(miCopyToClipboard);
-                AddToMenu(btnCache);
+                CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject));
+                CommonFunctionality.AddToMenu(new ToolStripSeparator());
 
-                Add(btnResendQuery);
+                CommonFunctionality.AddToMenu(miSaveImages);
+                CommonFunctionality.AddToMenu(miCopyToClipboard);
+                CommonFunctionality.AddToMenu(btnCache);
+
+                CommonFunctionality.Add(btnResendQuery);
 
                 foreach (var c in _timeoutControls.GetControls())
-                    Add(c);
+                    CommonFunctionality.Add(c);
             }
 
             SetAggregate(activator,databaseObject);
@@ -724,9 +724,9 @@ namespace CatalogueManager.AggregationUIs
             foreach (var o in GetRibbonObjects())
             {
                 if (o is string)
-                    Add((string) o);
+                    CommonFunctionality.Add((string)o);
                 else if (o is DatabaseEntity)
-                    AddToMenu(new ExecuteCommandShow(Activator, (DatabaseEntity) o, 0, true));
+                    CommonFunctionality.AddToMenu(new ExecuteCommandShow(Activator, (DatabaseEntity)o, 0, true));
                 else
                     throw new NotSupportedException(
                         "GetRibbonObjects can only return strings or DatabaseEntity objects, object '" + o +

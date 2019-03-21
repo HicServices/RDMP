@@ -111,12 +111,12 @@ namespace CatalogueManager.MainFormUITabs
         {
             base.SetDatabaseObject(activator,databaseObject);
             _catalogue = databaseObject;
-            
-            AddHelp(tbFolder, "CatalogueFolder");
 
-            AddHelp(cbDeprecated, "IMightBeDeprecated.IsDeprecated");
-            AddHelp(cbColdStorage, "ICatalogue.IsColdStorageDataset");
-            AddHelp(cbInternal, "ICatalogue.IsInternalDataset");
+            CommonFunctionality.AddHelp(tbFolder, "CatalogueFolder");
+
+            CommonFunctionality.AddHelp(cbDeprecated, "IMightBeDeprecated.IsDeprecated");
+            CommonFunctionality.AddHelp(cbColdStorage, "ICatalogue.IsColdStorageDataset");
+            CommonFunctionality.AddHelp(cbInternal, "ICatalogue.IsInternalDataset");
 
 
             RefreshUIFromDatabase();

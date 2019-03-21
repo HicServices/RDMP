@@ -2,7 +2,7 @@
 
 namespace CatalogueManager.AggregationUIs.Advanced
 {
-    partial class AggregateEditor
+    partial class AggregateEditorUI
     {
         /// <summary> 
         /// Required designer variable.
@@ -31,7 +31,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private void InitializeComponent()
         {
             this.components = new System.ComponentModel.Container();
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AggregateEditor));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(AggregateEditorUI));
             this.gbDescription = new System.Windows.Forms.GroupBox();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.tbID = new System.Windows.Forms.TextBox();

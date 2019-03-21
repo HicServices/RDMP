@@ -51,8 +51,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
             SetupForFile();
 
-            AddChecks(GetRuntimeTask);
-            StartChecking();
+            CommonFunctionality.AddChecks(GetRuntimeTask);
+            CommonFunctionality.StartChecking();
         }
 
         private void SetupForFile()

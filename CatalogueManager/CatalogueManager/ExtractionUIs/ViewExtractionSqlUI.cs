@@ -185,12 +185,12 @@ namespace CatalogueManager.ExtractionUIs
             rbSpecialApproval.Image = CatalogueIcons.ExtractionInformation_SpecialApproval;
             rbInternal.Image = activator.CoreIconProvider.GetImage(CatalogueIcons.ExtractionInformation_SpecialApproval, OverlayKind.Internal);
 
-            Add(rbCore);
-            Add(rbSupplemental);
-            Add(rbSpecialApproval);
-            Add(rbInternal);
+            CommonFunctionality.Add(rbCore);
+            CommonFunctionality.Add(rbSupplemental);
+            CommonFunctionality.Add(rbSpecialApproval);
+            CommonFunctionality.Add(rbInternal);
 
-            AddToMenu(new ExecuteCommandReOrderColumns(Activator, _catalogue));
+            CommonFunctionality.AddToMenu(new ExecuteCommandReOrderColumns(Activator, _catalogue));
             
         }
         

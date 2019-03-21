@@ -87,13 +87,13 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
                 pArguments.Controls.Add(_argumentCollection);
             }
 
-            Add(_ragSmiley);
+            CommonFunctionality.Add(_ragSmiley);
 
             CheckComponent();
             
             loadStageIconUI1.Setup(Activator.CoreIconProvider,_processTask.LoadStage);
 
-            Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
+            CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)

@@ -40,6 +40,16 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             typeof(StandardPipelineUseCaseNode)
         };
 
+
+        /// <summary>
+        /// UI classes that are allowed not to end with the suffix UI
+        /// </summary>
+        private Type[] excusedUIClasses = new[]
+        {
+            typeof (RDMPUserControl),
+            typeof(RDMPSingleDatabaseObjectControl<>)
+        };
+
         public void FindProblems(List<string> csFilesList,MEF mef)
         {
             _csFilesList = csFilesList;
@@ -139,8 +149,11 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             foreach(Type uiType in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => 
                  (typeof(RDMPUserControl).IsAssignableFrom(t)||(typeof(RDMPForm).IsAssignableFrom(t))
                  && !t.IsAbstract && !t.IsInterface)))
-                 if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
-                     problems.Add("Class " + uiType.Name + " does not end with UI");
+            {
+                
+                if(!uiType.Name.EndsWith("UI") && !uiType.Name.EndsWith("_Design"))
+                    problems.Add("Class " + uiType.Name + " does not end with UI");
+            }
 
 
             foreach (string problem in problems)

@@ -47,8 +47,8 @@ namespace CatalogueManager.Validation
 
             _standardRegex = databaseObject;
 
-            AddChecks(_standardRegex);
-            StartChecking();
+            CommonFunctionality.AddChecks(_standardRegex);
+            CommonFunctionality.StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, StandardRegex databaseObject)

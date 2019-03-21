@@ -52,8 +52,8 @@ namespace CatalogueManager.LoadExecutionUIs
 
             _cacheProgress = databaseObject;
 
-            AddToMenu(new ExecuteCommandEditCacheProgress(activator, databaseObject), "Edit");
-            AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject),"View Cache Failures");
+            CommonFunctionality.AddToMenu(new ExecuteCommandEditCacheProgress(activator, databaseObject), "Edit");
+            CommonFunctionality.AddToMenu(new ExecuteCommandShowCacheFetchFailures(activator, databaseObject), "View Cache Failures");
             
             bool failures = _cacheProgress.CacheFetchFailures.Any(f => f.ResolvedOn == null);
             cbFailures.Enabled = failures;

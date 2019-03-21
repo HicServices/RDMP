@@ -56,12 +56,14 @@ namespace CatalogueManager.SimpleControls
         private bool _isEnabled;
         private bool _undo = true;
         
-        public void SetupFor(RDMPUserControl control, DatabaseEntity o, RefreshBus refreshBus)
+        public void SetupFor(IRDMPControl control, DatabaseEntity o, RefreshBus refreshBus)
         {
-            control.Add(btnSave);
-            control.Add(btnUndoRedo);
+            control.CommonFunctionality.Add(btnSave);
+            control.CommonFunctionality.Add(btnUndoRedo);
 
-            if (control.ParentForm == null)
+            Form f = control as Form ?? control.ParentForm;
+
+            if (f == null)
                 throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
 
             _parent = control;
@@ -78,8 +80,8 @@ namespace CatalogueManager.SimpleControls
             
             o.PropertyChanged += PropertyChanged;
 
-            control.ParentForm.Enter += ParentForm_Enter;
-            control.ParentForm.Leave += ParentFormOnLeave;
+            f.Enter += ParentForm_Enter;
+            f.Leave += ParentFormOnLeave;
             
             //the first time it is set up it could still be out of date!
             CheckForOutOfDateObjectAndOfferToFix();
@@ -104,7 +106,7 @@ namespace CatalogueManager.SimpleControls
         {
             if (_parent.InvokeRequired)
             {
-                _parent.Invoke(new MethodInvoker(() => Enable(b)));
+               ((Control)_parent).Invoke(new MethodInvoker(() => Enable(b)));
                 return;
             }
 
@@ -166,7 +168,7 @@ namespace CatalogueManager.SimpleControls
         }
 
         private RevertableObjectReport _undoneChanges;
-        private RDMPUserControl _parent;
+        private IRDMPControl _parent;
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {

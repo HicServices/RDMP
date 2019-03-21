@@ -59,8 +59,8 @@ namespace CatalogueManager.SimpleControls
 
             _factory = new RunnerFactory();
 
-            AddToMenu(new ExecuteCommandRunDetached(activator,Detatch_CommandGetter));
-            AddToMenu(new ExecuteCommandCopyRunCommandToClipboard(activator,Detatch_CommandGetter));
+            CommonFunctionality.AddToMenu(new ExecuteCommandRunDetached(activator, Detatch_CommandGetter));
+            CommonFunctionality.AddToMenu(new ExecuteCommandCopyRunCommandToClipboard(activator, Detatch_CommandGetter));
             
             loadProgressUI1.ApplyTheme(activator.Theme);
         }

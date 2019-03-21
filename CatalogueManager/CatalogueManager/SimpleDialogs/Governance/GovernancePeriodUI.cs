@@ -74,10 +74,10 @@ namespace CatalogueManager.SimpleDialogs.Governance
             //add related catalogues
             olvCatalogues.AddObjects(_governancePeriod.GovernedCatalogues.ToArray());
 
-            AddHelp(olvCatalogues,"GovernancePeriod.GovernedCatalogues");
+            CommonFunctionality.AddHelp(olvCatalogues, "GovernancePeriod.GovernedCatalogues");
 
-            AddChecks(_governancePeriod);
-            StartChecking();
+            CommonFunctionality.AddChecks(_governancePeriod);
+            CommonFunctionality.StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, GovernancePeriod databaseObject)

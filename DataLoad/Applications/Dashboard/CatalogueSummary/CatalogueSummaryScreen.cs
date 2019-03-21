@@ -93,8 +93,8 @@ namespace Dashboard.CatalogueSummary
                 evaluationTrackBar1.Evaluations = evaluations;
             }
 
-            Add(new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
-            Add(new ExecuteCommandRunDQEOnCatalogue(activator,databaseObject),"Run Data Quality Engine...");
+            CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(activator).SetTarget(databaseObject));
+            CommonFunctionality.Add(new ExecuteCommandRunDQEOnCatalogue(activator, databaseObject), "Run Data Quality Engine...");
         }
 
         public override string GetTabName()

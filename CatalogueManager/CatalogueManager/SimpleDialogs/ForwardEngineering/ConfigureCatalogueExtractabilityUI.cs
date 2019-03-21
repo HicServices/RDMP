@@ -68,8 +68,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
 
         private BinderWithErrorProviderFactory _binder;
-
-        RDMPUserControlPanel rdmpUserControlPanel = new RDMPUserControlPanel();
+        
         ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
 
         public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny):this(activator)
@@ -89,21 +88,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         private ConfigureCatalogueExtractabilityUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
-
-            //take panel1 out of us
-            this.Controls.Remove(panel1);
-
-            //and add it to the rdmp user control
-            rdmpUserControlPanel.Panel.Controls.Add(panel1);
-
-            //then put the user control in us
-            this.Controls.Add(rdmpUserControlPanel);
-            rdmpUserControlPanel.Dock = DockStyle.Fill;
-            panel1.Dock = DockStyle.Fill;
         }
 
         private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
         {
+            CommonFunctionality.SetItemActivator(activator);
+
             var cols = _tableInfo.ColumnInfos;
             
             var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
@@ -162,10 +152,9 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             ddIsExtractionIdentifier.Items.Add("<<None>>");
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
 
-            rdmpUserControlPanel.SetItemActivator(Activator);
-            rdmpUserControlPanel.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
+            CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
             
-            objectSaverButton1.SetupFor(rdmpUserControlPanel,_catalogue,Activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,_catalogue,Activator.RefreshBus);
         }
 
 
