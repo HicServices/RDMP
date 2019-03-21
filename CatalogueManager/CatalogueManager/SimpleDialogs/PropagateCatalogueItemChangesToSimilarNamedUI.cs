@@ -36,13 +36,13 @@ namespace CatalogueManager.SimpleDialogs
     /// No (Save only this one) - Only the original column description you were modifying will be saved
     /// Yes (Copy over changes) - The original column and ALL OTHER TICKED columns will all be set to have the same description (that you originally saved).</para>
     /// </summary>
-    public partial class PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI : RDMPForm
+    public partial class PropagateCatalogueItemChangesToSimilarNamedUI : RDMPForm
     {
         private readonly CatalogueItem _catalogueItemBeingSaved;
         private Scintilla previewOldValue;
         private Scintilla previewNewValue;
         
-        public PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
+        public PropagateCatalogueItemChangesToSimilarNamedUI(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
         {
             _catalogueItemBeingSaved = catalogueItemBeingSaved;
             InitializeComponent();
@@ -126,8 +126,13 @@ namespace CatalogueManager.SimpleDialogs
                 var r = pi[0].GetValue(rowobject);
                 if (r == null || r == DBNull.Value || string.IsNullOrWhiteSpace(r.ToString()))
                     return "Empty";
-                
-                return "Populated";
+
+                var beingChanged = pi[0].GetValue(_catalogueItemBeingSaved);
+
+                if (beingChanged != null && r.Equals(beingChanged))
+                    return "Identical";
+
+                return "Different";
             }
 
             return null;

@@ -2,7 +2,7 @@
 
 namespace CatalogueManager.SimpleDialogs
 {
-    partial class PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI
+    partial class PropagateCatalogueItemChangesToSimilarNamedUI
     {
         /// <summary>
         /// Required designer variable.
@@ -30,7 +30,7 @@ namespace CatalogueManager.SimpleDialogs
         /// </summary>
         private void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI));
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(PropagateCatalogueItemChangesToSimilarNamedUI));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();

@@ -1299,11 +1299,11 @@
     <Compile Include="LocationsMenu\ServerDefaultsUI.Designer.cs">
       <DependentUpon>ServerDefaultsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.cs">
+    <Compile Include="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.Designer.cs">
-      <DependentUpon>PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.Designer.cs">
+      <DependentUpon>PropagateCatalogueItemChangesToSimilarNamedUI.cs</DependentUpon>
     </Compile>
     <Compile Include="SimpleDialogs\ShowSQLUI.cs">
       <SubType>Form</SubType>
@@ -2044,8 +2044,8 @@
     <EmbeddedResource Include="LocationsMenu\ServerDefaultsUI.resx">
       <DependentUpon>ServerDefaultsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.resx">
-      <DependentUpon>PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.resx">
+      <DependentUpon>PropagateCatalogueItemChangesToSimilarNamedUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="SimpleDialogs\ShowSQLUI.resx">
       <DependentUpon>ShowSQLUI.cs</DependentUpon>
