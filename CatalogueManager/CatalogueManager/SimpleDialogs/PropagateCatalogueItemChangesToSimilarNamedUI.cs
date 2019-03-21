@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
+using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
@@ -256,6 +257,12 @@ namespace CatalogueManager.SimpleDialogs
             
         }
 
+        private void olv_ItemActivate(object sender, EventArgs e)
+        {
+            var olv = (ObjectListView)sender;
+            if(olv.SelectedObject != null)
+                olv.ToggleCheckObject(olv.SelectedObject);
+        }
         
     }
 }

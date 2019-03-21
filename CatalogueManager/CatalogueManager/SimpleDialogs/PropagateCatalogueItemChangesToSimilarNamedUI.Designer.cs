@@ -132,10 +132,11 @@ namespace CatalogueManager.SimpleDialogs
             this.olvCatalogues.Name = "olvCatalogues";
             this.olvCatalogues.RowHeight = 19;
             this.olvCatalogues.ShowGroups = false;
-            this.olvCatalogues.Size = new System.Drawing.Size(518, 290);
+            this.olvCatalogues.Size = new System.Drawing.Size(518, 296);
             this.olvCatalogues.TabIndex = 2;
             this.olvCatalogues.UseCompatibleStateImageBehavior = false;
             this.olvCatalogues.View = System.Windows.Forms.View.Details;
+            this.olvCatalogues.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
             this.olvCatalogues.SelectedIndexChanged += new System.EventHandler(this.clbCatalogues_SelectedIndexChanged);
             // 
             // olvCatalogueItemName
@@ -151,7 +152,7 @@ namespace CatalogueManager.SimpleDialogs
             // 
             this.cbSelectAllCatalogues.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.cbSelectAllCatalogues.AutoSize = true;
-            this.cbSelectAllCatalogues.Location = new System.Drawing.Point(457, 312);
+            this.cbSelectAllCatalogues.Location = new System.Drawing.Point(457, 318);
             this.cbSelectAllCatalogues.Name = "cbSelectAllCatalogues";
             this.cbSelectAllCatalogues.Size = new System.Drawing.Size(67, 17);
             this.cbSelectAllCatalogues.TabIndex = 6;
@@ -172,7 +173,7 @@ namespace CatalogueManager.SimpleDialogs
             // 
             this.cbSelectAllFields.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.cbSelectAllFields.AutoSize = true;
-            this.cbSelectAllFields.Location = new System.Drawing.Point(3, 312);
+            this.cbSelectAllFields.Location = new System.Drawing.Point(3, 318);
             this.cbSelectAllFields.Name = "cbSelectAllFields";
             this.cbSelectAllFields.Size = new System.Drawing.Size(67, 17);
             this.cbSelectAllFields.TabIndex = 7;
@@ -197,10 +198,11 @@ namespace CatalogueManager.SimpleDialogs
             this.olvProperties.Name = "olvProperties";
             this.olvProperties.RowHeight = 19;
             this.olvProperties.ShowGroups = false;
-            this.olvProperties.Size = new System.Drawing.Size(477, 290);
+            this.olvProperties.Size = new System.Drawing.Size(477, 296);
             this.olvProperties.TabIndex = 3;
             this.olvProperties.UseCompatibleStateImageBehavior = false;
             this.olvProperties.View = System.Windows.Forms.View.Details;
+            this.olvProperties.ItemActivate += new System.EventHandler(this.olv_ItemActivate);
             this.olvProperties.SelectedIndexChanged += new System.EventHandler(this.clbChangedProperties_SelectedIndexChanged);
             // 
             // olvPropertyName
@@ -260,13 +262,13 @@ namespace CatalogueManager.SimpleDialogs
             this.splitContainer2.SplitterDistance = 535;
             this.splitContainer2.TabIndex = 0;
             // 
-            // PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI
+            // PropagateCatalogueItemChangesToSimilarNamedUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1020, 782);
             this.Controls.Add(this.splitContainer1);
-            this.Name = "PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI";
+            this.Name = "PropagateCatalogueItemChangesToSimilarNamedUI";
             this.Text = "Propagate Changes To Other Catalogues?";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel2.ResumeLayout(false);
