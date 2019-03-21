@@ -6,19 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data.Common;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.Menus;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableUIComponents;
-
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -43,13 +39,9 @@ namespace CatalogueManager.SimpleDialogs
     public partial class PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI : RDMPForm
     {
         private readonly CatalogueItem _catalogueItemBeingSaved;
-        protected List<PropertyInfo>ChangedProperties;
-        private ScintillaNET.Scintilla previewOldValue;
-        private ScintillaNET.Scintilla previewNewValue;
-
-        Dictionary<string,CatalogueItem> FriendlyNamedListOfCatalogueItems = new Dictionary<string, CatalogueItem>();
-        Dictionary<string, PropertyInfo> FriendlyNamedListOfPropertiesChanged = new Dictionary<string, PropertyInfo>();
-
+        private Scintilla previewOldValue;
+        private Scintilla previewNewValue;
+        
         public PropagateSaveChangesToCatalogueItemToSimilarNamedCatalogueItemsUI(IActivateItems activator, CatalogueItem catalogueItemBeingSaved, out bool shouldDialogBeDisplayed): base(activator)
         {
             _catalogueItemBeingSaved = catalogueItemBeingSaved;
@@ -61,25 +53,25 @@ namespace CatalogueManager.SimpleDialogs
                 return;
             }
 
-            ChangedProperties = DetermineChangedProperties(catalogueItemBeingSaved);
+            olvCatalogueItemName.AspectGetter = CatalogueItemName_AspectGetter;
+            olvCatalogueItemState.AspectGetter = CatalogueItemState_AspectGetter;
+            olvCatalogueItemName.ImageGetter += ci=>activator.CoreIconProvider.GetImage(ci);
 
-            CatalogueItem[] OtherCatalogueItemsThatShareName = GetAllCatalogueItemsSharingNameWith(catalogueItemBeingSaved);
+            var changedProperties = DetermineChangedProperties(catalogueItemBeingSaved);
+
+            CatalogueItem[] otherCatalogueItemsThatShareName = GetAllCatalogueItemsSharingNameWith(catalogueItemBeingSaved);
 
             //if Name changed then they probably dont want to also rename all associated CatalogueItems
-            shouldDialogBeDisplayed = !ChangedProperties.Any(prop => prop.Name.Equals("Name"));
+            shouldDialogBeDisplayed = !changedProperties.Any(prop => prop.Name.Equals("Name"));
 
-            if (OtherCatalogueItemsThatShareName.Length == 0)
+            if (otherCatalogueItemsThatShareName.Length == 0)
                 shouldDialogBeDisplayed = false;
 
-            if (!ChangedProperties.Any())
+            if (!changedProperties.Any())
                 shouldDialogBeDisplayed = false;
 
             if(!shouldDialogBeDisplayed)
                 return;
-
-            setupCheckListBoxes(OtherCatalogueItemsThatShareName, ChangedProperties);
-
-            #region Query Editor setup
 
             previewOldValue = new ScintillaTextEditorFactory().Create();
             previewOldValue.ReadOnly = true;
@@ -89,33 +81,57 @@ namespace CatalogueManager.SimpleDialogs
 
             splitContainer2.Panel1.Controls.Add(previewOldValue);
             splitContainer2.Panel2.Controls.Add(previewNewValue);
-    
 
-            #endregion
+            olvProperties.AddObjects(changedProperties);
+            if (changedProperties.Count == 1)
+            {
+                olvProperties.CheckAll();
+                olvProperties.SelectedObject = changedProperties[0];
+            }
+
+            //Add the objects to the controls and set up default selection
+            olvCatalogues.AddObjects(otherCatalogueItemsThatShareName);
+            if (otherCatalogueItemsThatShareName.Length == 1)
+            {
+                olvCatalogues.CheckAll();
+                olvCatalogues.SelectedObject = otherCatalogueItemsThatShareName[0];
+            }
+            
+            olvCatalogues.CellRightClick += olvCatalogues_CellRightClick;
         }
 
-        private void setupCheckListBoxes(CatalogueItem[] otherCatalogueItemsThatShareName, List<PropertyInfo> changedProperties)
+
+        void olvCatalogues_CellRightClick(object sender, BrightIdeasSoftware.CellRightClickEventArgs e)
         {
-            //work out a suitable name to display on the UI for the catalogue items and changed properties ( all will have the same base name so lets specify it with the Catalogue too)
-            foreach (CatalogueItem catalogueItem in otherCatalogueItemsThatShareName)
-            {
-                Catalogue c = catalogueItem.Catalogue;
-                string nameToDisplay = c.Name + "." + catalogueItem.Name + " (ID=" + catalogueItem.ID+")";
+            var ci = olvCatalogues.SelectedObject as CatalogueItem;
+            if(ci == null)
+                return;
 
-                FriendlyNamedListOfCatalogueItems.Add(nameToDisplay, catalogueItem);
-            }
-
-            clbCatalogues.Items.AddRange(FriendlyNamedListOfCatalogueItems.Keys.ToArray());
-
-            foreach (PropertyInfo changedProperty in changedProperties)
-            {
-                string nameToDisplay = changedProperty.Name;
-                FriendlyNamedListOfPropertiesChanged.Add(nameToDisplay,changedProperty);
-            }
-
-            clbChangedProperties.Items.AddRange(FriendlyNamedListOfPropertiesChanged.Keys.ToArray());
+            var menu =  new CatalogueItemMenu(new RDMPContextMenuStripArgs(Activator), ci);
+            menu.Show(Cursor.Position);
         }
 
+        private object CatalogueItemName_AspectGetter(object rowObject)
+        {
+            var ci = rowObject as CatalogueItem;
+            return ci.Catalogue.Name + "." + ci.Name;
+        }
+
+
+        private object CatalogueItemState_AspectGetter(object rowobject)
+        {
+            var pi = olvProperties.Objects.Cast<PropertyInfo>().ToArray();
+            if (pi.Length == 1)
+            {
+                var r = pi[0].GetValue(rowobject);
+                if (r == null || r == DBNull.Value || string.IsNullOrWhiteSpace(r.ToString()))
+                    return "Empty";
+                
+                return "Populated";
+            }
+
+            return null;
+        }
 
         public static List<PropertyInfo> DetermineChangedProperties(CatalogueItem newVersionInMemory)
         {
@@ -145,17 +161,8 @@ namespace CatalogueManager.SimpleDialogs
         public void displayPreview()
         {
             
-            string piAsString = clbChangedProperties.SelectedItem as string;
-            string ciAsString = clbCatalogues.SelectedItem as string;
-
-            PropertyInfo pi = null;
-            CatalogueItem ci = null;
-
-            if (!string.IsNullOrWhiteSpace(piAsString))
-                pi = FriendlyNamedListOfPropertiesChanged[piAsString];
-
-            if (!string.IsNullOrWhiteSpace(ciAsString))
-                ci = FriendlyNamedListOfCatalogueItems[ciAsString];
+            var pi = olvProperties.SelectedObject as PropertyInfo;
+            var ci  = olvCatalogues.SelectedObject as CatalogueItem;
 
             if (pi != null && ci != null)
             {
@@ -174,14 +181,18 @@ namespace CatalogueManager.SimpleDialogs
 
         private void cbSelectAllCatalogues_CheckedChanged(object sender, EventArgs e)
         {
-            for (int i = 0; i < clbCatalogues.Items.Count; i++)
-                clbCatalogues.SetItemChecked(i, cbSelectAllCatalogues.Checked);
+            if(cbSelectAllCatalogues.Checked)
+                olvCatalogues.CheckAll();
+            else
+                olvCatalogues.UncheckAll();
         }
 
         private void cbSelectAllFields_CheckedChanged(object sender, EventArgs e)
         {
-            for (int i = 0; i < clbChangedProperties.Items.Count; i++)
-                clbChangedProperties.SetItemChecked(i, cbSelectAllFields.Checked);
+            if (cbSelectAllFields.Checked)
+                olvProperties.CheckAll();
+            else
+                olvProperties.UncheckAll();
         }
 
         private void highlightDifferencesBetweenPreviewPanes()
@@ -214,17 +225,12 @@ namespace CatalogueManager.SimpleDialogs
             this.DialogResult = DialogResult.Yes;
 
             
-            foreach (string catalogueItemAsString in clbCatalogues.CheckedItems)
+            foreach (CatalogueItem ci in olvCatalogues.CheckedObjects)
             {
-                CatalogueItem cataItem = FriendlyNamedListOfCatalogueItems[catalogueItemAsString];
+                foreach (PropertyInfo p in olvProperties.CheckedObjects)
+                    p.SetValue(ci, p.GetValue(_catalogueItemBeingSaved, null), null);
 
-                foreach (string propertyAsString in clbChangedProperties.CheckedItems)
-                {
-                    PropertyInfo p = FriendlyNamedListOfPropertiesChanged[propertyAsString];                 
-                    p.SetValue(cataItem,p.GetValue(_catalogueItemBeingSaved,null),null);
-                }
-
-                cataItem.SaveToDatabase();
+                ci.SaveToDatabase();
             }
 
             this.Close();
