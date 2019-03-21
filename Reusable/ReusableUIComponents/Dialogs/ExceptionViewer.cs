@@ -40,8 +40,12 @@ namespace ReusableUIComponents.Dialogs
 
             if(exception.InnerException != null)
                 longMessage = ExceptionHelper.ExceptionToListOfInnerMessages(exception.InnerException );
-            
-            ExceptionViewer ev = new ExceptionViewer(exception.Message,longMessage, exception);
+
+            ExceptionViewer ev;
+            if (longMessage == "")
+                ev = new ExceptionViewer(exception.GetType().Name,exception.Message, exception);
+            else
+                ev = new ExceptionViewer(exception.Message,longMessage, exception);
 
             if (isModalDialog)
                 ev.ShowDialog();

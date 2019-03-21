@@ -6,18 +6,15 @@
 
 using System;
 using System.ComponentModel;
-using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Common.Validation;
 using ReusableUIComponents;
 
 
@@ -31,7 +28,7 @@ namespace CatalogueManager.MainFormUITabs
     /// 
     /// <para>This control lets you view/edit the descriptive metadata of a CatalogueItem in a dataset (Catalogue).</para>
     /// </summary>
-    public partial class CatalogueItemUI : CatalogueItemTab_Design ,ISaveableUI
+    public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
     {
         public CatalogueItemUI()
         {
@@ -109,8 +106,8 @@ namespace CatalogueManager.MainFormUITabs
         }
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueItemTab_Design, UserControl>))]
-    public abstract class CatalogueItemTab_Design : RDMPSingleDatabaseObjectControl<CatalogueItem>
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueItemUI_Design, UserControl>))]
+    public abstract class CatalogueItemUI_Design : RDMPSingleDatabaseObjectControl<CatalogueItem>
     {
     }
 }
