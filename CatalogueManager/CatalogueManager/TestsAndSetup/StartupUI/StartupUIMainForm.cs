@@ -76,6 +76,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             DataExport.RequestRestart += () => StartOrRestart(true);
         }
 
+        public bool AppliedPatch { get; set; }
+
         void _startup_DatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
         {
             if(IsDisposed || !IsHandleCreated)
@@ -364,9 +366,15 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                     break;
                 case RDMPPlatformDatabaseStatus.RequiresPatching:
                     Warning();
-                    
-                    if(MessageBox.Show("Patching Required on database of type " + eventArgs.DatabaseType,"Patch",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                         PatchingUI.ShowIfRequired((SqlConnectionStringBuilder)eventArgs.Repository.ConnectionStringBuilder, eventArgs.Repository, eventArgs.DatabaseAssembly, eventArgs.HostAssembly);
+
+                    if (MessageBox.Show("Patching Required on database of type " + eventArgs.DatabaseType, "Patch",
+                            MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        PatchingUI.ShowIfRequired(
+                            (SqlConnectionStringBuilder) eventArgs.Repository.ConnectionStringBuilder,
+                            eventArgs.Repository, eventArgs.DatabaseAssembly, eventArgs.HostAssembly);
+                        AppliedPatch = true;
+                    }
                     else
                     {
                         llException.Visible = true;

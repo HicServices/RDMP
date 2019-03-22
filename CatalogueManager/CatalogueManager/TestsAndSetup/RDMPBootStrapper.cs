@@ -61,6 +61,9 @@ namespace CatalogueManager.TestsAndSetup
 
                 typeof (T).GetMethod("SetRepositoryLocator").Invoke(_mainForm,new object[]{startup.RepositoryLocator});
 
+                if (startupUI.AppliedPatch)
+                    return;
+
                 Application.Run(_mainForm);
             }
             catch (Exception e)
