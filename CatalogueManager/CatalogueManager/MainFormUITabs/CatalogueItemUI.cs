@@ -16,6 +16,8 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
+using ReusableUIComponents.ScintillaHelper;
+using ScintillaNET;
 
 
 namespace CatalogueManager.MainFormUITabs
@@ -30,6 +32,10 @@ namespace CatalogueManager.MainFormUITabs
     /// </summary>
     public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
     {
+        private bool _expand = true;
+        private Scintilla _scintillaDescription;
+        private CatalogueItem _catalogueItem;
+
         public CatalogueItemUI()
         {
             InitializeComponent();
@@ -37,10 +43,13 @@ namespace CatalogueManager.MainFormUITabs
             AssociatedCollection = RDMPCollection.Catalogue;
             
             ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
+            
+            var f = new ScintillaTextEditorFactory();
+            _scintillaDescription = f.Create(null, null, null, true, false);
+            _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
+            panel1.Controls.Add(_scintillaDescription);
         }
 
-        private CatalogueItem _catalogueItem;
-        
         bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
         {
             //see if we need to display the dialog that lets the user sync up descriptions of multiuse columns e.g. CHI
@@ -81,7 +90,7 @@ namespace CatalogueManager.MainFormUITabs
             Bind(ci_tbName, "Text", "Name", ci => ci.Name);
             Bind(ci_tbStatisticalConsiderations,"Text", "Statistical_cons",ci=>ci.Statistical_cons);
             Bind(ci_tbResearchRelevance, "Text", "Research_relevance", ci => ci.Research_relevance);
-            Bind(ci_tbDescription, "Text", "Description", ci => ci.Description);
+            Bind(_scintillaDescription, "Text", "Description", ci => ci.Description);
             Bind(ci_tbTopics, "Text", "Topic", ci => ci.Topic);
             Bind(ci_ddPeriodicity, "SelectedItem", "Periodicity", ci => ci.Periodicity);
             Bind(ci_tbAggregationMethod, "Text", "Agg_method", ci => ci.Agg_method);
@@ -90,7 +99,7 @@ namespace CatalogueManager.MainFormUITabs
         }
 
 
-        private bool _expand = true;
+        
 
         private void btnExpandOrCollapse_Click(object sender, EventArgs e)
         {

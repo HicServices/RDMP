@@ -44,7 +44,6 @@ namespace CatalogueManager.MainFormUITabs
             this.label32 = new System.Windows.Forms.Label();
             this.ci_tbAggregationMethod = new System.Windows.Forms.TextBox();
             this.label33 = new System.Windows.Forms.Label();
-            this.ci_tbDescription = new System.Windows.Forms.TextBox();
             this.label34 = new System.Windows.Forms.Label();
             this.ci_tbResearchRelevance = new System.Windows.Forms.TextBox();
             this.ci_ddPeriodicity = new System.Windows.Forms.ComboBox();
@@ -55,6 +54,7 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
             this.btnExpandOrCollapse = new System.Windows.Forms.Button();
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -177,18 +177,6 @@ namespace CatalogueManager.MainFormUITabs
             this.label33.TabIndex = 153;
             this.label33.Text = "Topic";
             // 
-            // ci_tbDescription
-            // 
-            this.ci_tbDescription.AcceptsReturn = true;
-            this.ci_tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ci_tbDescription.Location = new System.Drawing.Point(103, 60);
-            this.ci_tbDescription.Multiline = true;
-            this.ci_tbDescription.Name = "ci_tbDescription";
-            this.ci_tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.ci_tbDescription.Size = new System.Drawing.Size(699, 122);
-            this.ci_tbDescription.TabIndex = 139;
-            // 
             // label34
             // 
             this.label34.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
@@ -271,9 +259,9 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.panel1);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1.Controls.Add(this.btnExpandOrCollapse);
-            this.splitContainer1.Panel1.Controls.Add(this.ci_tbDescription);
             this.splitContainer1.Panel1.Controls.Add(this.ci_tbID);
             this.splitContainer1.Panel1.Controls.Add(this.ci_tbName);
             this.splitContainer1.Panel1.Controls.Add(this.label31);
@@ -322,12 +310,21 @@ namespace CatalogueManager.MainFormUITabs
             this.btnExpandOrCollapse.UseVisualStyleBackColor = true;
             this.btnExpandOrCollapse.Click += new System.EventHandler(this.btnExpandOrCollapse_Click);
             // 
-            // CatalogueItemTab
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Location = new System.Drawing.Point(103, 63);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(694, 124);
+            this.panel1.TabIndex = 161;
+            // 
+            // CatalogueItemUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
-            this.Name = "CatalogueItemTab";
+            this.Name = "CatalogueItemUI";
             this.Size = new System.Drawing.Size(805, 727);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -353,7 +350,6 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.Label label32;
         private System.Windows.Forms.TextBox ci_tbAggregationMethod;
         private System.Windows.Forms.Label label33;
-        private System.Windows.Forms.TextBox ci_tbDescription;
         private System.Windows.Forms.Label label34;
         private System.Windows.Forms.TextBox ci_tbResearchRelevance;
         private System.Windows.Forms.ComboBox ci_ddPeriodicity;
@@ -364,5 +360,6 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnExpandOrCollapse;
+        private System.Windows.Forms.Panel panel1;
     }
 }

@@ -4,34 +4,46 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
+using NHunspell;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents.CommandExecution;
+using ReusableUIComponents.Dialogs;
 using ScintillaNET;
 
 namespace ReusableUIComponents.ScintillaHelper
 {
     public class ScintillaTextEditorFactory
     {
+        private static bool DictionaryExceptionShown = false;
+
         /// <summary>
         /// Creates a new SQL (default) Scintilla editor with highlighting
         /// </summary>
         /// <param name="commandFactory">Unless your control is going to be 100% ReadOnly then you should supply an ICommandFactory e.g. RDMPCommandFactory to allow dragging and  
         /// dropping components into the window.  The ICommandFactory will decide whether the given object can be translated into an ICommand and hence into a unique bit of SQL
         /// to add to the editor</param>
-        /// <param name="language"></param>
+        /// <param name="language">Determines highlighting, options include mssql,csharp or null</param>
         /// <param name="syntaxHelper"></param>
+        /// <param name="spellCheck"></param>
         /// <returns></returns>
-        public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null)
+        public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true)
         {
             var toReturn =  new Scintilla();
             toReturn.Dock = DockStyle.Fill;
             toReturn.HScrollBar = true;
             toReturn.VScrollBar = true;
 
-            toReturn.Margins[0].Width = 40; //allows display of line numbers
+            if (lineNumbers)
+                toReturn.Margins[0].Width = 40; //allows display of line numbers
+            else
+                foreach (var margin in toReturn.Margins)
+                    margin.Width = 0;
+
             toReturn.ClearCmdKey(Keys.Control | Keys.S); //prevent Ctrl+S displaying ascii code
             toReturn.ClearCmdKey(Keys.Control | Keys.R); //prevent Ctrl+R displaying ascii code
             toReturn.ClearCmdKey(Keys.Control | Keys.W); //prevent Ctrl+W displaying ascii code
@@ -51,8 +63,48 @@ namespace ReusableUIComponents.ScintillaHelper
 
             toReturn.WrapMode = (WrapMode)UserSettings.WrapMode;
             toReturn.ContextMenuStrip = new ScintillaMenu(toReturn);
+            try
+            {
+                if(spellCheck)
+                {
+                    var hunspell = new Hunspell("en_us.aff", "en_us.dic");
+                    toReturn.TextChanged += (s,e)=>scintilla_TextChanged(s,e,hunspell);
+                    toReturn.Disposed += (s, e) => scintilla_Disposed(s, e, hunspell);
+                }
+            }
+            catch (Exception e)
+            {
+                if (!DictionaryExceptionShown)
+                {
+                    ExceptionViewer.Show("Could not load dictionary",e);
+                    DictionaryExceptionShown = true;
+                }
+            }
 
             return toReturn;
+        }
+
+        void scintilla_Disposed(object sender, EventArgs e, Hunspell hunspell)
+        {
+            hunspell.Dispose();
+        }
+
+        private void scintilla_TextChanged(object sender, EventArgs e, Hunspell hunspell)
+        {
+            var _scintilla = (Scintilla)sender;
+
+            if (string.IsNullOrWhiteSpace(_scintilla.Text))
+                return;
+
+                _scintilla.Indicators[8].Style = IndicatorStyle.Squiggle;
+                _scintilla.Indicators[8].ForeColor = Color.Red;
+                _scintilla.IndicatorCurrent = 8;
+                _scintilla.IndicatorClearRange(0, _scintilla.TextLength);
+
+                foreach (Match m in Regex.Matches(_scintilla.Text, @"\b\w*\b"))
+                    if (!hunspell.Spell(m.Value))
+                        _scintilla.IndicatorFillRange(m.Index, m.Length);
+            
         }
 
         private void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICommandFactory commandFactory)

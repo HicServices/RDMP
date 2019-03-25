@@ -51,7 +51,6 @@ namespace CatalogueManager.MainFormUITabs
             this.c_ddGranularity = new System.Windows.Forms.ComboBox();
             this.label21 = new System.Windows.Forms.Label();
             this.label64 = new System.Windows.Forms.Label();
-            this.c_tbDescription = new System.Windows.Forms.TextBox();
             this.c_tbID = new System.Windows.Forms.TextBox();
             this.label20 = new System.Windows.Forms.Label();
             this.label25 = new System.Windows.Forms.Label();
@@ -113,6 +112,7 @@ namespace CatalogueManager.MainFormUITabs
             this.tbAdministrativeContactName = new System.Windows.Forms.TextBox();
             this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
+            this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -279,18 +279,6 @@ namespace CatalogueManager.MainFormUITabs
             this.label64.Size = new System.Drawing.Size(57, 13);
             this.label64.TabIndex = 108;
             this.label64.Text = "Granularity";
-            // 
-            // c_tbDescription
-            // 
-            this.c_tbDescription.AcceptsReturn = true;
-            this.c_tbDescription.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.c_tbDescription.Location = new System.Drawing.Point(119, 75);
-            this.c_tbDescription.Multiline = true;
-            this.c_tbDescription.Name = "c_tbDescription";
-            this.c_tbDescription.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
-            this.c_tbDescription.Size = new System.Drawing.Size(595, 141);
-            this.c_tbDescription.TabIndex = 4;
             // 
             // c_tbID
             // 
@@ -639,6 +627,7 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // splitContainer1.Panel1
             // 
+            this.splitContainer1.Panel1.Controls.Add(this.panel1);
             this.splitContainer1.Panel1.Controls.Add(this.cbColdStorage);
             this.splitContainer1.Panel1.Controls.Add(this.cbInternal);
             this.splitContainer1.Panel1.Controls.Add(this.cbDeprecated);
@@ -651,7 +640,6 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Panel1.Controls.Add(this.c_tbName);
             this.splitContainer1.Panel1.Controls.Add(this.label2);
             this.splitContainer1.Panel1.Controls.Add(this.label25);
-            this.splitContainer1.Panel1.Controls.Add(this.c_tbDescription);
             this.splitContainer1.Panel1.Controls.Add(this.c_tbAcronym);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1MinSize = 274;
@@ -910,12 +898,22 @@ namespace CatalogueManager.MainFormUITabs
             // 
             this.errorProvider1.ContainerControl = this;
             // 
-            // CatalogueTab
+            // panel1
+            // 
+            this.panel1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.panel1.Location = new System.Drawing.Point(121, 75);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(570, 131);
+            this.panel1.TabIndex = 153;
+            // 
+            // CatalogueUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
-            this.Name = "CatalogueTab";
+            this.Name = "CatalogueUI";
             this.Size = new System.Drawing.Size(717, 940);
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
@@ -972,7 +970,6 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.Label label19;
         private System.Windows.Forms.TextBox c_tbDetailPageURL;
         private System.Windows.Forms.Label label20;
-        private System.Windows.Forms.TextBox c_tbDescription;
         private System.Windows.Forms.Label label21;
         private System.Windows.Forms.TextBox c_tbAcronym;
         private System.Windows.Forms.Label label22;
@@ -1010,5 +1007,6 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.CheckBox cbInternal;
         private System.Windows.Forms.CheckBox cbDeprecated;
         private System.Windows.Forms.ErrorProvider errorProvider1;
+        private Panel panel1;
     }
 }

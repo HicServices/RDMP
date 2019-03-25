@@ -17,6 +17,8 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
+using ReusableUIComponents.ScintillaHelper;
+using ScintillaNET;
 
 
 namespace CatalogueManager.MainFormUITabs
@@ -35,6 +37,12 @@ namespace CatalogueManager.MainFormUITabs
     /// </summary>
     public partial class CatalogueUI : CatalogueTab_Design, ISaveableUI
     {
+
+        private bool _expand = true;
+        private Scintilla _scintillaDescription;
+
+        private Catalogue _catalogue;
+
         public CatalogueUI()
         {
             InitializeComponent();
@@ -46,10 +54,13 @@ namespace CatalogueManager.MainFormUITabs
             c_ddType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
             c_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
             c_ddGranularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
+
+            var f = new ScintillaTextEditorFactory();
+            _scintillaDescription = f.Create(null, null, null,true,false);
+            _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
+            panel1.Controls.Add(_scintillaDescription);
         }
 
-        private Catalogue _catalogue;
-        
         void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
         {
             if (_catalogue != null)
@@ -129,7 +140,7 @@ namespace CatalogueManager.MainFormUITabs
             Bind(c_tbAcronym, "Text", "Acronym", c=>c.Acronym);
             Bind(c_tbName, "Text", "Name", c => c.Name);
             Bind(c_tbID,"Text","ID", c=>c.ID);
-            Bind(c_tbDescription,"Text","Description",c=>c.Description);
+            Bind(_scintillaDescription, "Text", "Description", c => c.Description);
             
             Bind(c_ddType,"SelectedItem","Type",c=>c.Type);
             Bind(c_ddGranularity,"SelectedItem","Granularity", c => c.Granularity);
@@ -199,7 +210,6 @@ namespace CatalogueManager.MainFormUITabs
             c_tbDetailPageURL.Text = _catalogue.Detail_Page_URL != null ? _catalogue.Detail_Page_URL.ToString() : "";
         }
 
-        private bool _expand = true;
 
         private void btnExpandOrCollapse_Click(object sender, EventArgs e)
         {
