@@ -37,7 +37,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// these up to a Catalogue or delete them if you decied you want to make the dataset extractable later on. </para>
     /// 
     /// <para>Alternatively you can create a new Catalogue, this will result in a Catalogue (dataset) of the same name as the table and a CatalogueItem being created for each ColumnInfo imported.
-    /// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand later on (in CatalogueItemTab).  It is likely that
+    /// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand later on (in CatalogueItemUI).  It is likely that
     /// you don't want to release every column in the dataset to researchers so make sure to review the extractability of the columns created. </para>
     /// 
     /// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e. 

@@ -24,7 +24,7 @@ using ReusableUIComponents.SingleControlForms;
 namespace Dashboard.PieCharts
 {
     /// <summary>
-    /// Part of OverviewScreen, shows a pie chart showing ow many extractable columns are there which do not yet have descriptions in the Data Catalogue Database (See CatalogueItemTab)
+    /// Part of OverviewScreen, shows a pie chart showing ow many extractable columns are there which do not yet have descriptions in the Data Catalogue Database (See CatalogueItemUI)
     /// 
     /// <para>Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)</para>
     /// 
