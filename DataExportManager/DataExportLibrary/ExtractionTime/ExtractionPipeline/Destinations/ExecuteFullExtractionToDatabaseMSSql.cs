@@ -227,9 +227,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 var catItem = extractionInformation.CatalogueItem;
 
                 //if we do not know the data type or the ei is a transform
-                if (catItem == null || catItem.ColumnInfo == null)
+                if (catItem == null || catItem.ColumnInfo == null || extractionInformation.IsProperTransform())
                     continue;
-                
+
                 string destinationType = GetDestinationDatabaseType(extractionInformation);
                 
                 //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
@@ -240,7 +240,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
                 
                 //if user wants to copy collation types and the destination server is the same type as the origin server
-                if (CopyCollations && _destinationDatabase.Server.DatabaseType == catItem.ColumnInfo.TableInfo.DatabaseType && !extractionInformation.IsProperTransform())
+                if (CopyCollations && _destinationDatabase.Server.DatabaseType == catItem.ColumnInfo.TableInfo.DatabaseType)
                     addedType.Collation = catItem.ColumnInfo.Collation;
             }
 
