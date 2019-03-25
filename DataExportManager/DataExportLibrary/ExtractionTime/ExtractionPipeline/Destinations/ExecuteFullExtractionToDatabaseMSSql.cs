@@ -29,6 +29,7 @@ using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -74,6 +75,9 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
         [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
         public int AlterTimeout { get; set; }
+
+        [DemandsInitialization("True to copy the column collations from the source database when creating the destination database.  Only works if both the source and destination have the same DatabaseType.  Excludes columns which feature a transform as part of extraction.",DefaultValue=false)]
+        public bool CopyCollations { get; set; }
 
         public TableLoadInfo TableLoadInfo { get; private set; }
         public DirectoryInfo DirectoryPopulated { get; private set; }
@@ -213,22 +217,31 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             
             if(datasetCommand == null)
                 return;
-            
+
             //for every extractable column in the Catalogue
-            foreach (var extractionInformation in datasetCommand.ColumnsToExtract.OfType<ExtractionInformation>())//.GetAllExtractionInformation(ExtractionCategory.Any))
+            foreach (var extractionInformation in datasetCommand.ColumnsToExtract.OfType<ExtractableColumn>().Select(ec=>ec.CatalogueExtractionInformation))//.GetAllExtractionInformation(ExtractionCategory.Any))
             {
+                if(extractionInformation == null)
+                    continue;
+
                 var catItem = extractionInformation.CatalogueItem;
 
                 //if we do not know the data type or the ei is a transform
                 if (catItem == null || catItem.ColumnInfo == null)
                     continue;
-
+                
+                string destinationType = GetDestinationDatabaseType(extractionInformation);
+                
                 //Tell the destination the datatype of the ColumnInfo that underlies the ExtractionInformation (this might be changed by the ExtractionInformation e.g. as a 
                 //transform but it is a good starting point.  We don't want to create a varchar(10) column in the destination if the origin dataset (Catalogue) is a varchar(100)
                 //since it will just confuse the user.  Bear in mind these data types can be degraded later by the destination
                 var columnName = extractionInformation.Alias ?? catItem.ColumnInfo.GetRuntimeName();
-                var addedType = _destination.AddExplicitWriteType(columnName, catItem.ColumnInfo.Data_type);
+                var addedType = _destination.AddExplicitWriteType(columnName, destinationType);
                 addedType.IsPrimaryKey = toProcess.PrimaryKey.Any(dc => dc.ColumnName == columnName);
+                
+                //if user wants to copy collation types and the destination server is the same type as the origin server
+                if (CopyCollations && _destinationDatabase.Server.DatabaseType == catItem.ColumnInfo.TableInfo.DatabaseType && !extractionInformation.IsProperTransform())
+                    addedType.Collation = catItem.ColumnInfo.Collation;
             }
 
             foreach (ReleaseIdentifierSubstitution sub in datasetCommand.QueryBuilder.SelectColumns.Where(sc => sc.IColumn is ReleaseIdentifierSubstitution).Select(sc => sc.IColumn))
@@ -240,6 +253,23 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
                 addedType.IsPrimaryKey = isPk;
                 addedType.AllowNulls = !isPk;
             }
+        }
+
+        private string GetDestinationDatabaseType(ConcreteColumn col)
+        {
+            //Make sure we know if we are going between database types
+            var fromDbType = _destinationDatabase.Server.DatabaseType;
+            var toDbType = col.ColumnInfo.TableInfo.DatabaseType;
+            if (fromDbType != toDbType)
+            {
+                var fromSyntax = col.ColumnInfo.GetQuerySyntaxHelper();
+                var toSyntax = _destinationDatabase.Server.GetQuerySyntaxHelper();
+
+                DatabaseTypeRequest intermediate = fromSyntax.TypeTranslater.GetDataTypeRequestForSQLDBType(col.ColumnInfo.Data_type);
+                return toSyntax.TypeTranslater.GetSQLDBTypeForCSharpType(intermediate);
+            }
+            
+            return col.ColumnInfo.Data_type;
         }
 
         private string GetTableName(string suffix = null)

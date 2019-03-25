@@ -216,7 +216,9 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Returns true if the SELECT SQL is different from the fully qualified underlying column name e.g. 'UPPER(MyCol)' would return true
+        /// Returns true if the SELECT SQL is different from the fully qualified underlying column name e.g. 'UPPER(MyCol)' would return true.
+        /// 
+        /// <para>Also returns true if the column is hashed</para>
         /// </summary>
         /// <returns></returns>
         public bool IsProperTransform()
@@ -226,6 +228,9 @@ namespace CatalogueLibrary.Data
 
             if (ColumnInfo == null)
                 return false;
+
+            if (HashOnDataRelease)
+                return true;
 
             //if the selct sql is different from the column underlying it then it is a proper transform (not just a copy paste)
             return !SelectSQL.Equals(ColumnInfo.Name);
