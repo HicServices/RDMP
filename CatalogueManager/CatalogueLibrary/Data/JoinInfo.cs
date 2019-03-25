@@ -181,16 +181,7 @@ namespace CatalogueLibrary.Data
         {
             return " " + ForeignKey.Name + " = " + PrimaryKey.Name;
         }
-
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((JoinInfo)obj);
-        }
-
+        
         /// <summary>
         /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of
         /// which have to appear on the SQL ON section of the query
