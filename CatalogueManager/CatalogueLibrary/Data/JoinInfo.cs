@@ -138,9 +138,8 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="r"></param>
-        internal JoinInfo(IRepository repository,DbDataReader r)
+        internal JoinInfo(IRepository repository,DbDataReader r):base(repository,r)
         {
-            Repository = repository;
             ForeignKey_ID = Convert.ToInt32(r["ForeignKey_ID"]);
             PrimaryKey_ID = Convert.ToInt32(r["PrimaryKey_ID"]);
 
