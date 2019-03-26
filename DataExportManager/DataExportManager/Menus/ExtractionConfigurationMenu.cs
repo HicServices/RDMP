@@ -6,12 +6,12 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;

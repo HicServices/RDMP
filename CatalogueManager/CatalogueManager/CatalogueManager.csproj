@@ -2139,10 +2139,6 @@
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>

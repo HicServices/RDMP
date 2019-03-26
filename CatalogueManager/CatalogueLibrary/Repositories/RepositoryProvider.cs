@@ -15,7 +15,7 @@ namespace CatalogueLibrary.Repositories
     /// </summary>
     public class RepositoryProvider : IRDMPPlatformRepositoryServiceLocator
     {
-        public CatalogueRepository CatalogueRepository { get; protected set; }
+        public ICatalogueRepository CatalogueRepository { get; protected set; }
         public IDataExportRepository DataExportRepository { get; protected set; }
         readonly Dictionary<string, Type> _cachedTypesByNameDictionary = new Dictionary<string, Type>();
 

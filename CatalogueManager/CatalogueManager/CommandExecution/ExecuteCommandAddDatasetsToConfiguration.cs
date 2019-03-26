@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;

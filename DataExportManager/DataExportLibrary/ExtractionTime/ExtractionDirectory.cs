@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime;
 using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.Progress;

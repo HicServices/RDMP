@@ -9,6 +9,7 @@ using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Tests.DataExtraction;
 using DataExportLibrary.Checks;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

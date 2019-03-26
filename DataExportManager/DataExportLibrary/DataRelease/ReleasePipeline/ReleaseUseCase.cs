@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
@@ -14,7 +15,6 @@ using CatalogueLibrary.Repositories.Construction;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace DataExportLibrary.DataRelease.ReleasePipeline
 {

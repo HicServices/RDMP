@@ -12,8 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data;
-using DataExportLibrary.Interfaces.Data.DataTables;
+
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;

@@ -6,13 +6,13 @@
 
 using System.Data;
 using System.IO;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.ExtractionTime.Commands;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 

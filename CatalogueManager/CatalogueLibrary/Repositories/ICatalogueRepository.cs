@@ -6,11 +6,14 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories.Managers;
 using CatalogueLibrary.Ticketing;
 using HIC.Logging;
@@ -116,5 +119,9 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
+
+        void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class, IMapsDirectlyToDatabaseTable;
+
+        void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject);
     }
 }

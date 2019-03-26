@@ -8,7 +8,6 @@ using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.DataAccess;
 
 namespace DataExportLibrary.DataRelease.Potential

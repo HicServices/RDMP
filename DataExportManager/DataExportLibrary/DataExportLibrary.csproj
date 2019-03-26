@@ -227,7 +227,7 @@
     <Compile Include="Checks\SupportingSQLTableChecker.cs" />
     <Compile Include="CohortCreationPipeline\CohortCreationRequest.cs" />
     <Compile Include="CohortCreationPipeline\CohortRefreshEngine.cs" />
-    <Compile Include="Exceptions\ProjectNumberException.cs" />
+    <Compile Include="DataRelease\Exceptions\ProjectNumberException.cs" />
     <Compile Include="CohortCreationPipeline\UseCases\CreateTableFromAggregateUseCase.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
     <Compile Include="CohortCreationPipeline\Destinations\IdentifierAllocation\GuidReleaseIdentifierAllocator.cs" />
@@ -267,9 +267,8 @@
     <Compile Include="Repositories\Managers\DataExportPropertyManager.cs" />
     <Compile Include="Data\DataTables\CohortDefinition.cs" />
     <Compile Include="Data\DataTables\CumulativeExtractionResults.cs" />
-    <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackageContents.cs" />
     <Compile Include="Data\DataTables\DeployedExtractionFilterFactory.cs" />
-    <Compile Include="Data\DataTables\DataSetPackages\ExtractableDataSetPackage.cs" />
+    <Compile Include="Data\DataTables\ExtractableDataSetPackage.cs" />
     <Compile Include="Data\DataTables\SupplementalExtractionResults.cs" />
     <Compile Include="Data\DataTables\SelectedDataSetsForcedJoin.cs" />
     <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
@@ -338,6 +337,8 @@
     <Compile Include="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
     <Compile Include="Repositories\Managers\DataExportFilterManager.cs" />
     <Compile Include="Repositories\DataExportRepository.cs" />
+    <Compile Include="Repositories\Managers\ExtractableDataSetPackageManager.cs" />
+    <Compile Include="Repositories\MemoryDataExportRepository.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\App.config">
@@ -388,10 +389,6 @@
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
       <Name>HIC.Common.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76d185e2-2b48-45b6-a2a9-74ff71d46c15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

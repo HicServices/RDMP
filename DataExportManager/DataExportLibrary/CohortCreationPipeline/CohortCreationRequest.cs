@@ -16,7 +16,6 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Exceptions;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;

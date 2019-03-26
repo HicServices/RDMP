@@ -29,7 +29,7 @@ namespace CatalogueManager.Copying.Commands
         public ExtractableDataSetCommand(ExtractableDataSetPackage extractableDataSetPackage)
         {
             var repository = (IDataExportRepository) extractableDataSetPackage.Repository;
-            var packagecontents = new ExtractableDataSetPackageContents(repository);
+            var packagecontents = new ExtractableDataSetPackageManager(repository);
             ExtractableDataSets = packagecontents.GetAllDataSets(extractableDataSetPackage,repository.GetAllObjects<ExtractableDataSet>());
         }
 

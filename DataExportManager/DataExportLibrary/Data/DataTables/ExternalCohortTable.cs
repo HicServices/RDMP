@@ -13,8 +13,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data;
-using DataExportLibrary.Interfaces.Data.DataTables;
+
 using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Connections;

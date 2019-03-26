@@ -28,6 +28,7 @@ using DataExportLibrary.Providers.Nodes;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportLibrary.Repositories;
+using DataExportLibrary.Repositories.Managers;
 using DataLoadEngine.PipelineUseCases;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
@@ -54,7 +55,7 @@ namespace DataExportLibrary.Providers
         public SelectedDataSets[] SelectedDataSets { get; private set; }
 
         public ExtractableDataSetPackage[] AllPackages { get; set; }
-        public ExtractableDataSetPackageContents PackageContents { get; set; }
+        public ExtractableDataSetPackageManager PackageContents { get; set; }
 
         public Project[] Projects { get; set; }
 
@@ -115,7 +116,7 @@ namespace DataExportLibrary.Providers
                     ds.InjectKnown(dictionary[ds.Catalogue_ID]);
                 
             AllPackages = GetAllObjects<ExtractableDataSetPackage>(dataExportRepository);
-            PackageContents = new ExtractableDataSetPackageContents(dataExportRepository);
+            PackageContents = new ExtractableDataSetPackageManager(dataExportRepository);
 
             Projects = GetAllObjects<Project>(dataExportRepository);
             ExtractionConfigurations = GetAllObjects<ExtractionConfiguration>(dataExportRepository);

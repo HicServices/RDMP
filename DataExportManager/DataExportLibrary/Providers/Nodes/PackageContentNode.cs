@@ -6,6 +6,7 @@
 
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Providers.Nodes
@@ -16,11 +17,11 @@ namespace DataExportLibrary.Providers.Nodes
     /// </summary>
     public class PackageContentNode:IDeleteable
     {
-        private readonly ExtractableDataSetPackageContents _contents;
+        private readonly ExtractableDataSetPackageManager _contents;
         public ExtractableDataSetPackage Package { get; set; }
         public ExtractableDataSet DataSet { get; set; }
 
-        public PackageContentNode(ExtractableDataSetPackage package, ExtractableDataSet dataSet,ExtractableDataSetPackageContents contents)
+        public PackageContentNode(ExtractableDataSetPackage package, ExtractableDataSet dataSet,ExtractableDataSetPackageManager contents)
         {
             _contents = contents;
             Package = package;

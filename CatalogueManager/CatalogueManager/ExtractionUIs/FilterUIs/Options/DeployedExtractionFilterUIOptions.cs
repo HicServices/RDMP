@@ -8,7 +8,6 @@ using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
 {

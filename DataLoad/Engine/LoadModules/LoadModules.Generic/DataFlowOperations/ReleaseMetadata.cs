@@ -16,7 +16,6 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

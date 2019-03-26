@@ -34,7 +34,7 @@ namespace DataExportLibrary.Tests.DataAccess
                 package.SaveToDatabase();
 
 
-                var packageContents = new ExtractableDataSetPackageContents(DataExportRepository);
+                var packageContents = new ExtractableDataSetPackageManager(DataExportRepository);
 
                 var results = packageContents.GetAllDataSets(package, null);
                 Assert.AreEqual(0,results.Length);

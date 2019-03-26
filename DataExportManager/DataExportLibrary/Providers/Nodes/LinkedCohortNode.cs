@@ -6,7 +6,6 @@
 
 using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Providers.Nodes

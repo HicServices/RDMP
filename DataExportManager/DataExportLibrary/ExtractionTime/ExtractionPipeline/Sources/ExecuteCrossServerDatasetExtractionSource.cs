@@ -16,7 +16,6 @@ using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;

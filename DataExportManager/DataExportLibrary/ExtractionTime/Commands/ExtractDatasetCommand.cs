@@ -9,12 +9,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.ExtractionTime.Commands;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data;
-using DataExportLibrary.Interfaces.Data.DataTables;
+
 using DataExportLibrary.Interfaces.ExtractionTime;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 using DataExportLibrary.Data;
 

@@ -15,7 +15,6 @@ using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
@@ -41,11 +40,14 @@ namespace DataExportLibrary.Repositories
         /// The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).  Some objects in this database
         /// contain references to objects in the CatalogueRepository.
         /// </summary>
-        public CatalogueRepository CatalogueRepository { get; private set; }
+        public ICatalogueRepository CatalogueRepository { get; private set; }
 
         public IFilterManager FilterManager { get; private set; }
 
         public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
+
+        public IExtractableDataSetPackageManager PackageManager { get; set; }
+
 
         public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
         {
@@ -54,6 +56,7 @@ namespace DataExportLibrary.Repositories
             FilterManager = new DataExportFilterManager(this);
 
             DataExportPropertyManager = new DataExportPropertyManager(false,this);
+            PackageManager = new ExtractableDataSetPackageManager(this);
 
             Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
             Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));

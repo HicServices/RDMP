@@ -20,7 +20,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportManager.CommandExecution.AtomicCommands;

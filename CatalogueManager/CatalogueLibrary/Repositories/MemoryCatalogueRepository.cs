@@ -8,12 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Governance;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery;
@@ -135,6 +138,16 @@ namespace CatalogueLibrary.Repositories
                         c =>
                             c.CatalogueItems.Any(
                                 ci => ci.ColumnInfo_ID != null && ci.ColumnInfo.TableInfo_ID == tableInfo.ID)).ToArray();
+        }
+
+        public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class, IMapsDirectlyToDatabaseTable
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
+        {
+            prop.SetValue(onObject,value);
         }
 
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)

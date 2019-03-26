@@ -16,9 +16,9 @@ namespace DataExportLibrary.Repositories.Managers
 {
     class DataExportFilterManager : IFilterManager
     {
-        private readonly IDataExportRepository _dataExportRepository;
+        private readonly DataExportRepository _dataExportRepository;
 
-        public DataExportFilterManager(IDataExportRepository dataExportRepository)
+        public DataExportFilterManager(DataExportRepository dataExportRepository)
         {
             _dataExportRepository = dataExportRepository;
         }

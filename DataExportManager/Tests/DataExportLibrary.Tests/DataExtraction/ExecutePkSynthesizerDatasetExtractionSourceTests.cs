@@ -17,7 +17,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories.Managers;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;

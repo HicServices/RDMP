@@ -22,7 +22,6 @@ using DataExportLibrary.Checks;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;

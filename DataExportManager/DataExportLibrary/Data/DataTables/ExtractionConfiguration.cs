@@ -16,7 +16,6 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
