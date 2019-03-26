@@ -39,7 +39,6 @@ namespace DataExportLibrary.Checks
     /// </summary>
     public class SelectedDataSetsChecker : ICheckable
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly bool _checkGlobals;
         private readonly IPipeline _alsoCheckPipeline;
 
@@ -52,12 +51,10 @@ namespace DataExportLibrary.Checks
         /// prepares to check the dataset as it is selected in an <see cref="ExtractionConfiguration"/>.  Optionally checks an extraction <see cref="Pipeline"/> and globals
         /// </summary>
         /// <param name="selectedDataSet"></param>
-        /// <param name="repositoryLocator"></param>
         /// <param name="checkGlobals"></param>
         /// <param name="alsoCheckPipeline"></param>
-        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
+        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
         {
-            _repositoryLocator = repositoryLocator;
             _checkGlobals = checkGlobals;
             _alsoCheckPipeline = alsoCheckPipeline;
             SelectedDataSet = selectedDataSet;
@@ -89,7 +86,7 @@ namespace DataExportLibrary.Checks
                 return;
             }
 
-            var request = new ExtractDatasetCommand(_repositoryLocator, config, cohort, new ExtractableDatasetBundle(ds),
+            var request = new ExtractDatasetCommand( config, cohort, new ExtractableDatasetBundle(ds),
                 selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config)) { TopX = 1 };
 
             try
@@ -188,7 +185,7 @@ namespace DataExportLibrary.Checks
                 }
             }
 
-            var cata = _repositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>((int)ds.Catalogue_ID);
+            var cata = ds.Catalogue;
             var fetchOptions = _checkGlobals ? FetchOptions.ExtractableGlobalsAndLocals : FetchOptions.ExtractableLocals;
 
             foreach (var supportingDocument in cata.GetAllSupportingDocuments(fetchOptions))

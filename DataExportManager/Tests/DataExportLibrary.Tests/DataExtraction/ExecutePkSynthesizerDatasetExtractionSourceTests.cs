@@ -228,7 +228,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             configuration.Cohort_ID = _extractableCohort.ID;
             configuration.SaveToDatabase();
 
-            return new ExtractDatasetCommand(RepositoryLocator, configuration, new ExtractableDatasetBundle(extractableDataSet));
+            return new ExtractDatasetCommand( configuration, new ExtractableDatasetBundle(extractableDataSet));
         }
 
         private void SetupDataExport(string testDbName, Catalogue catalogue, out ExtractionConfiguration extractionConfiguration, out IExtractableDataSet extractableDataSet, out Project project)

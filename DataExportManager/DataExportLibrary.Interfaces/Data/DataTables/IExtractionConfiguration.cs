@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Ticketing;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -28,6 +29,8 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
     /// </summary>
     public interface IExtractionConfiguration:INamed,IHasDependencies
     {
+        IDataExportRepository DataExportRepository { get; }
+
         /// <summary>
         /// When the configuration was created
         /// </summary>

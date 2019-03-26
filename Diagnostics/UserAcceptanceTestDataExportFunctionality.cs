@@ -446,7 +446,7 @@ GO
 
             try
             {
-                ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_extractionConfiguration,_extractableCohort,new ExtractableDatasetBundle(_extractableDataSet),_extractableColumns,new HICProjectSalt(_project), null);
+                ExtractDatasetCommand request = new ExtractDatasetCommand(_extractionConfiguration,_extractableCohort,new ExtractableDatasetBundle(_extractableDataSet),_extractableColumns,new HICProjectSalt(_project), null);
                 request.GenerateQueryBuilder();
 
                 ISqlQueryBuilder extractionCommand = request.QueryBuilder;

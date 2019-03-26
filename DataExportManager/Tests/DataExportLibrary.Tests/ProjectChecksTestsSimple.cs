@@ -31,7 +31,7 @@ namespace DataExportLibrary.Tests
 
             try
             {
-                var ex = Assert.Throws<Exception>(()=>new ProjectChecker(RepositoryLocator,p).Check(new ThrowImmediatelyCheckNotifier()));
+                var ex = Assert.Throws<Exception>(()=>new ProjectChecker(p).Check(new ThrowImmediatelyCheckNotifier()));
                 Assert.AreEqual("Project does not have any ExtractionConfigurations yet",ex.Message);
 
             }
@@ -100,7 +100,7 @@ namespace DataExportLibrary.Tests
                 Assert.IsTrue(remnantDir.Exists);
 
                 //resolve accepting deletion
-                new ProjectChecker(RepositoryLocator,p).Check(new AcceptAllCheckNotifier());
+                new ProjectChecker(p).Check(new AcceptAllCheckNotifier());
 
                 //boom remnant doesnt exist anymore (but parent does obviously)
                 Assert.IsTrue(dir.Exists);
@@ -175,7 +175,7 @@ namespace DataExportLibrary.Tests
         {
             try
             {
-                new ProjectChecker(RepositoryLocator,p).Check(notifier??new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
+                new ProjectChecker(p).Check(notifier??new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true });
             }
             finally
             {

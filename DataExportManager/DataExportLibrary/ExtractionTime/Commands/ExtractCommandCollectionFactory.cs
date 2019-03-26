@@ -53,7 +53,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
                 sqls.Where(sql => sql.IsGlobal == false).ToArray(),//all non global extractable sql (SupportingSQL)
                 lookupsFound.ToArray());//all lookups associated with the Catalogue (the one behind the ExtractableDataset)
 
-            return new ExtractDatasetCommand(repositoryLocator,configuration, bundle);
+            return new ExtractDatasetCommand(configuration, bundle);
         }
 
         public ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)

@@ -428,7 +428,7 @@ end
             globalP.Value = "1";
             globalP.SaveToDatabase();
             
-            var extractionCommand = new ExtractDatasetCommand(RepositoryLocator,config, new ExtractableDatasetBundle(tvfExtractable));
+            var extractionCommand = new ExtractDatasetCommand(config, new ExtractableDatasetBundle(tvfExtractable));
 
             var source = new ExecuteDatasetExtractionSource();
 

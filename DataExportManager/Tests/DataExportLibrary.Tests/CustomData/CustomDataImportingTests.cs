@@ -35,7 +35,7 @@ namespace DataExportLibrary.Tests.CustomData
 
             try
             {
-                _request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+                _request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
                 ExtractionPipelineUseCase useCase;
                 IExecuteDatasetExtractionDestination results;
                 Execute(out useCase, out results);
@@ -85,7 +85,7 @@ namespace DataExportLibrary.Tests.CustomData
             new JoinInfo(CatalogueRepository,idCol, otherIdCol,ExtractionJoinType.Left,null);
 
             //generate a new request (this will include the newly created column)
-            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
+            _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
 
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
             tbl.Truncate();
@@ -159,7 +159,7 @@ namespace DataExportLibrary.Tests.CustomData
             new SelectedDataSetsForcedJoin(DataExportRepository, _selectedDataSet, CustomTableInfo);
 
             //generate a new request (this will include the newly created column)
-            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
+            _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
             
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
             tbl.Truncate();

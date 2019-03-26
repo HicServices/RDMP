@@ -58,7 +58,7 @@ namespace DataExportLibrary.Tests.Cloning
                 param.Value = "'jormungander'";
                 param.SaveToDatabase();
 
-                ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(_extractableDataSet));
+                ExtractDatasetCommand request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(_extractableDataSet));
                 request.GenerateQueryBuilder();
                 Assert.AreEqual(
                     CollapseWhitespace(
@@ -95,7 +95,7 @@ AND
                 Assert.AreNotEqual(deepClone.ID,_configuration.ID);
                 try
                 {
-                    ExtractDatasetCommand request2 = new ExtractDatasetCommand(RepositoryLocator,deepClone, new ExtractableDatasetBundle(_extractableDataSet));
+                    ExtractDatasetCommand request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
                     request2.GenerateQueryBuilder();
                 
                     Assert.AreEqual(request.QueryBuilder.SQL,request2.QueryBuilder.SQL);

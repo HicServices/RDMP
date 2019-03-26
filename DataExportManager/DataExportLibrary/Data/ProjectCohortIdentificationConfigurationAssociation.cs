@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
@@ -17,13 +18,12 @@ using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Data
 {
-
     /// <summary>
     /// Records the fact that a given Cohort Identification Configuration (query that identifies a cohort) is associated with a given Project.  You can have multiple
     /// associated configurations in a given project (e.g. cases, controls, time based etc).  You can also associate the same configuration with multiple Projects if
     /// you need to.
     /// </summary>
-    public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IMasqueradeAs,IDeletableWithCustomMessage
+    public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IProjectCohortIdentificationConfigurationAssociation
     {
         #region Database Properties
 
@@ -31,9 +31,7 @@ namespace DataExportLibrary.Data
         private int _cohortIdentificationConfiguration_ID;
         #endregion
 
-        /// <summary>
-        /// The <see cref="IProject"/> to which the <see cref="CohortIdentificationConfiguration_ID"/> is associated with.
-        /// </summary>
+        /// <inheritdoc/>
         public int Project_ID
         {
             get { return _project_ID; }
@@ -55,11 +53,16 @@ namespace DataExportLibrary.Data
 
         /// <inheritdoc cref="Project_ID"/>
         [NoMappingToDatabase]
-        public Project Project { get { return Repository.GetObjectByID<Project>(Project_ID); } }
+        public IProject Project { get { return Repository.GetObjectByID<Project>(Project_ID); } }
 
         /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
         [NoMappingToDatabase]
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration { get { return ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID); } }
+        public CohortIdentificationConfiguration CohortIdentificationConfiguration {
+            get
+            {
+                //handles the object having been deleted and somehow that deletion is missed
+                return DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID", CohortIdentificationConfiguration_ID).SingleOrDefault();
+            } }
 
         #endregion
 
@@ -96,7 +99,8 @@ namespace DataExportLibrary.Data
         /// <returns></returns>
         public override string ToString()
         {
-            return GetCohortIdentificationConfigurationCached().Name;
+            var assoc = GetCohortIdentificationConfigurationCached();
+            return assoc == null ? "Orphan Association" :assoc.Name;
         }
 
         /// <inheritdoc/>

@@ -423,6 +423,7 @@
     <Compile Include="Repositories\Managers\ITableInfoCredentialsManager.cs" />
     <Compile Include="Repositories\Managers\JoinInfoType.cs" />
     <Compile Include="Repositories\MemoryCatalogueRepository.cs" />
+    <Compile Include="Repositories\RepositoryProvider.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
     <Compile Include="SynchronizationFailedException.cs" />
     <Compile Include="IEncryptStrings.cs" />

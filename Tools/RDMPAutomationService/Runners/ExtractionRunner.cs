@@ -134,13 +134,13 @@ namespace RDMPAutomationService.Runners
                 return new ICheckable[0];
             }
 
-            checkables.Add(new ProjectChecker(RepositoryLocator, _configuration.Project)
+            checkables.Add(new ProjectChecker(_configuration.Project)
             {
                 CheckDatasets = false,
                 CheckConfigurations = false
             });
 
-            checkables.Add(new ExtractionConfigurationChecker(RepositoryLocator, _configuration)
+            checkables.Add(new ExtractionConfigurationChecker( _configuration)
             {
                 CheckDatasets = false,
                 CheckGlobals = false
@@ -155,7 +155,7 @@ namespace RDMPAutomationService.Runners
                     checkables.Add(new GlobalExtractionChecker(_configuration, globalsCommand, _pipeline));
 
                 if (datasetCommand != null)
-                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator, false, _pipeline));
+                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets,  false, _pipeline));
             }
             
             return checkables.ToArray();

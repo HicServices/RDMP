@@ -4,24 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Diagnostics;
-using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
-using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
-using DataExportManager.CohortUI;
-using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CommandExecution.AtomicCommands;
-using MapsDirectlyToDatabaseTableUI;
-using ReusableUIComponents;
 
 namespace DataExportManager.Menus
 {
@@ -35,7 +21,6 @@ namespace DataExportManager.Menus
         {
             _project = project;
 
-            Add(new ExecuteCommandRunChecksInPopupWindow(_activator, new ProjectChecker(RepositoryLocator, _project)));
             Add(new ExecuteCommandRelease(_activator).SetTarget(project));
             Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(_project));
         }

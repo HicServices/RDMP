@@ -142,7 +142,7 @@ namespace DataExportManager.ProjectUI.Graphs
             var config = _collection.SelectedDataSets.ExtractionConfiguration;
             var ds = _collection.SelectedDataSets.ExtractableDataSet;
 
-            Request = new ExtractDatasetCommand(activator.RepositoryLocator, config, new ExtractableDatasetBundle(ds));
+            Request = new ExtractDatasetCommand( config, new ExtractableDatasetBundle(ds));
             Request.GenerateQueryBuilder();
 
             SetAggregate(activator,_collection.Graph);

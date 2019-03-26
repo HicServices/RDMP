@@ -52,7 +52,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             _extractableColumns.Add(newColumn);
             
             //recreate the extraction command so it gets updated with the new column too.
-            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
+            _request = new ExtractDatasetCommand(_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
                 _extractableColumns, new HICProjectSalt(_project), 
                 new ExtractionDirectory(@"C:\temp\", _configuration));
 

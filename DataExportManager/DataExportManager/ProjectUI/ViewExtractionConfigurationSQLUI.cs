@@ -58,7 +58,7 @@ namespace DataExportManager.ProjectUI
                     throw new Exception("No cohort has been defined for this ExtractionConfiguration");
 
                 //We are generating what the extraction SQL will be like, that only requires the dataset so empty bundle is fine
-                ExtractDatasetCommand request = new ExtractDatasetCommand(Activator.RepositoryLocator,_extractionConfiguration,new ExtractableDatasetBundle(_extractableDataSet));
+                ExtractDatasetCommand request = new ExtractDatasetCommand(_extractionConfiguration,new ExtractableDatasetBundle(_extractableDataSet));
                 request.GenerateQueryBuilder();
 
                 QueryEditor.ReadOnly = false;

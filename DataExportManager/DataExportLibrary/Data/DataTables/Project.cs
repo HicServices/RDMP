@@ -7,17 +7,17 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
+using DataExportLibrary.Checks;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Data.DataTables
 {
@@ -28,7 +28,7 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// <para>The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. </para>
     /// </summary>
-    public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString
+    public class Project : VersionedDatabaseEntity, IProject, ICustomSearchString,ICheckable
     {
         #region Database Properties
         private string _name;
@@ -80,6 +80,17 @@ namespace DataExportLibrary.Data.DataTables
                 return Repository.GetAllObjectsWithParent<ExtractionConfiguration>(this)
                     .Cast<IExtractionConfiguration>()
                     .ToArray();
+            }
+        }
+
+
+        /// <inheritdoc/>
+        [NoMappingToDatabase]
+        public IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations
+        {
+            get
+            {
+                return Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
             }
         }
         #endregion
@@ -139,6 +150,11 @@ namespace DataExportLibrary.Data.DataTables
         public override string ToString()
         {
             return Name;
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            new ProjectChecker(this).Check(notifier);
         }
 
         /// <summary>

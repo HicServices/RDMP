@@ -331,7 +331,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         
         private void StartAudit(string sql)
         {
-            var dataExportRepo = ((DataExportRepository) Request.RepositoryLocator.DataExportRepository);
+            var dataExportRepo = ((DataExportRepository) Request.DataExportRepository);
 
             var previousAudit = dataExportRepo.GetAllCumulativeExtractionResultsFor(Request.Configuration, Request.DatasetBundle.DataSet).ToArray();
 

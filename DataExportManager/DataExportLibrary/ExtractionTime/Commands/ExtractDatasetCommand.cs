@@ -11,15 +11,12 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Interfaces.Data;
 using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Interfaces.ExtractionTime;
 using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 using DataExportLibrary.Data;
-using DataExportLibrary.Repositories;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 {
@@ -30,8 +27,6 @@ namespace DataExportLibrary.ExtractionTime.Commands
     /// </summary>
     public class ExtractDatasetCommand : ExtractCommand, IExtractDatasetCommand
     {
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-
         public ISelectedDataSets SelectedDataSets { get; set; }
 
         private IExtractableDatasetBundle _datasetBundle;
@@ -48,9 +43,11 @@ namespace DataExportLibrary.ExtractionTime.Commands
                 if(value == null)
                     Catalogue = null;
                 else
-                    Catalogue = RepositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
+                    Catalogue = DataExportRepository.CatalogueRepository.GetObjectByID<Catalogue>(value.DataSet.Catalogue_ID);
             }
         }
+
+        public IDataExportRepository DataExportRepository { get; set; }
 
         public List<IColumn> ColumnsToExtract{get;set;} 
         public IHICProjectSalt Salt{get;set;}
@@ -65,9 +62,9 @@ namespace DataExportLibrary.ExtractionTime.Commands
         public List<IExtractionResults> ExtractionResults { get; private set; }
         public int TopX { get; set; }
 
-        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+        public ExtractDatasetCommand( IExtractionConfiguration configuration, IExtractableCohort extractableCohort, IExtractableDatasetBundle datasetBundle, List<IColumn> columnsToExtract, IHICProjectSalt salt, IExtractionDirectory directory, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
-            RepositoryLocator = repositoryLocator;
+            DataExportRepository = configuration.DataExportRepository;
             ExtractableCohort = extractableCohort;
             DatasetBundle = datasetBundle;
             ColumnsToExtract = columnsToExtract;
@@ -77,20 +74,19 @@ namespace DataExportLibrary.ExtractionTime.Commands
             TopX = -1;
         }
 
+        
+
         /// <summary>
         /// This version has less arguments because it goes back to the database and queries the configuration and explores who the cohort is etc, it will result in more database
         /// queries than the more explicit constructor
         /// </summary>
-        /// <param name="repositoryLocator"></param>
         /// <param name="configuration"></param>
         /// <param name="datasetBundle"></param>
         /// <param name="includeValidation"></param>
         /// <param name="includeLookups"></param>
-        public ExtractDatasetCommand(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
+        public ExtractDatasetCommand(IExtractionConfiguration configuration, IExtractableDatasetBundle datasetBundle, bool includeValidation = false, bool includeLookups = false):this(configuration,datasetBundle.DataSet)
         {
-            RepositoryLocator = repositoryLocator;
-            
-            RepositoryLocator = repositoryLocator;
+            DataExportRepository = configuration.DataExportRepository;
             //ExtractableCohort = ExtractableCohort.GetExtractableCohortByID((int) configuration.Cohort_ID);
             ExtractableCohort = configuration.GetExtractableCohort();
             DatasetBundle = datasetBundle;
@@ -124,7 +120,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
         public void GenerateQueryBuilder()
         {
             List<ReleaseIdentifierSubstitution> substitutions;
-            var host = new ExtractionQueryBuilder(RepositoryLocator.DataExportRepository);
+            var host = new ExtractionQueryBuilder(DataExportRepository);
             QueryBuilder = host.GetSQLCommandForFullExtractionSet(this,out substitutions);
             ReleaseIdentifierSubstitutions = substitutions;
         }

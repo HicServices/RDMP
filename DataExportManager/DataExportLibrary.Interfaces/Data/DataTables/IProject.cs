@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Ticketing;
 using MapsDirectlyToDatabaseTable;
@@ -39,6 +40,12 @@ namespace DataExportLibrary.Interfaces.Data.DataTables
         /// returns all current and frozen (released) configurations.
         /// </summary>
         IExtractionConfiguration[] ExtractionConfigurations { get; }
+
+        /// <summary>
+        /// Returns all association links to <see cref="CohortIdentificationConfiguration"/> (cohort queries that are associated with the project).  These are 
+        /// association objects not the actual configuration itself.
+        /// </summary>
+        IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations {get; }
 
         /// <summary>
         /// The database in which the object is persisted

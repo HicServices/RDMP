@@ -44,17 +44,9 @@ namespace DatabaseCreation
         {
             var cata = options.GetBuilder(DatabaseCreationProgram.DefaultCatalogueDatabaseName);
             var export = options.GetBuilder(DatabaseCreationProgram.DefaultDataExportDatabaseName);
+            
+            _linkedRepositoryProvider = new LinkedRepositoryProvider(cata.ConnectionString, export.ConnectionString);
 
-            Exception exCatalogue;
-            Exception exDataExport;
-
-            _linkedRepositoryProvider = new LinkedRepositoryProvider(cata.ConnectionString, export.ConnectionString, out exCatalogue, out exDataExport);
-
-            if(exCatalogue != null)
-                throw new Exception("There was a problem with the Catalogue connection string",exCatalogue);
-
-            if (exDataExport != null)
-                throw new Exception("There was a problem with the Data Export connection string", exDataExport);
         }
     }
 }
