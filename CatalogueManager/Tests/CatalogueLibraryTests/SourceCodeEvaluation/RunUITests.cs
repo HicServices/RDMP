@@ -26,7 +26,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             = new List<Type>(new[]
             {
                 typeof(ExecuteCommandExportObjectsToFileUI),
-                typeof(ExecuteCommandRunChecksInPopupWindow),
                 typeof(ExecuteCommandShow),
                 typeof(ExecuteCommandSetDataAccessContextForCredentials),
                 typeof(ExecuteCommandActivate),
