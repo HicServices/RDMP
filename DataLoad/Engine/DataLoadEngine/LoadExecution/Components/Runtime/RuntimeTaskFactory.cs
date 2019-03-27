@@ -20,9 +20,9 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
     /// </summary>
     public class RuntimeTaskFactory
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
-        public RuntimeTaskFactory(CatalogueRepository repository)
+        public RuntimeTaskFactory(ICatalogueRepository repository)
         {
             _repository = repository;
         }

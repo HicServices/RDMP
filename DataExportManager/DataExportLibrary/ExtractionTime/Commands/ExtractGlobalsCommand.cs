@@ -8,11 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 {

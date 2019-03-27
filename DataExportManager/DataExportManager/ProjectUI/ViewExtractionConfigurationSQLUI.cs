@@ -7,13 +7,13 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 

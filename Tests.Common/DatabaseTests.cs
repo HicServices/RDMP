@@ -18,6 +18,7 @@ using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DatabaseCreation;
+using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Implementation;
@@ -44,12 +45,12 @@ namespace Tests.Common
 
         public CatalogueRepository CatalogueRepository
         {
-            get { return RepositoryLocator.CatalogueRepository; }
+            get { return (CatalogueRepository) RepositoryLocator.CatalogueRepository; }
         }
         
-        public IDataExportRepository DataExportRepository 
+        public DataExportRepository DataExportRepository 
         {
-            get { return RepositoryLocator.DataExportRepository; }
+            get { return (DataExportRepository) RepositoryLocator.DataExportRepository; }
         }
         
         protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
@@ -65,7 +66,7 @@ namespace Tests.Common
 
         static DatabaseTests()
         {
-            CatalogueRepository.SuppressHelpLoading = true;
+            CatalogueLibrary.Repositories.CatalogueRepository.SuppressHelpLoading = true;
             
             ImplementationManager.Load(
                 typeof(MicrosoftSQLImplementation).Assembly,
@@ -110,11 +111,11 @@ namespace Tests.Common
             
             RepositoryLocator = new DatabaseCreationRepositoryFinder(opts);
 
-            Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.Name + " Database=" + RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(RepositoryLocator.CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
+            Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + CatalogueRepository.DiscoveredServer.Name + " Database=" + CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
+            Assert.IsTrue(CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
             Console.WriteLine("Found Catalogue");
 
-            Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + RepositoryLocator.DataExportRepository.DiscoveredServer.Name + " Database= " + RepositoryLocator.DataExportRepository.DiscoveredServer.GetCurrentDatabase());
+            Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + DataExportRepository.DiscoveredServer.Name + " Database= " + DataExportRepository.DiscoveredServer.GetCurrentDatabase());
             Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
             Console.WriteLine("Found DataExport");
             
@@ -207,7 +208,7 @@ namespace Tests.Common
         /// <param name="repositoryLocator"></param>
         protected void RunBlitzDatabases(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            using (var con = repositoryLocator.CatalogueRepository.GetConnection())
+            using (var con = CatalogueRepository.GetConnection())
             {
                 var catalogueDatabaseName = ((TableRepository) repositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
                 var dataExportDatabaseName = ((TableRepository) repositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();

@@ -10,7 +10,6 @@ using CatalogueLibrary.Data;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
 
 
 namespace DataExportLibrary.Data.DataTables

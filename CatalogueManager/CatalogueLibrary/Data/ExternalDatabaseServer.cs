@@ -278,6 +278,25 @@ namespace CatalogueLibrary.Data
             return databaseAssembly.GetName().Name == CreatedByAssembly;
         }
 
+        public bool WasCreatedByDatabaseAssembly(Tier2DatabaseType type)
+        {
+            switch (type)
+            {
+                case Tier2DatabaseType.Logging:
+                    return CreatedByAssembly == "HIC.Logging.Database";
+                case Tier2DatabaseType.DataQuality:
+                    return CreatedByAssembly == "DataQualityEngine.Database";
+                case Tier2DatabaseType.QueryCaching:
+                    return CreatedByAssembly == "QueryCaching.Database";
+                case Tier2DatabaseType.ANOStore:
+                    return CreatedByAssembly == "ANOStore.Database";
+                case Tier2DatabaseType.IdentifierDump:
+                    return CreatedByAssembly == "IdentifierDump.Database";
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
+        }
+
         /// <inheritdoc/>
         public DiscoveredDatabase Discover(DataAccessContext context)
         {

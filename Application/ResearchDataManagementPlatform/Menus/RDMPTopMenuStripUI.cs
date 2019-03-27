@@ -145,12 +145,6 @@ namespace ResearchDataManagementPlatform.Menus
             f.Show();
         }
 
-        private void launchDiagnosticsScreenToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            DiagnosticsUI dialog = new DiagnosticsUI(Activator, null);
-            dialog.ShowDialog();
-        }
-
         private void generateTestDataToolStripMenuItem_Click(object sender, EventArgs e)
         {
             new ExecuteCommandGenerateTestData(Activator).Execute();

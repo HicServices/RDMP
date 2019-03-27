@@ -29,9 +29,9 @@ namespace RDMPStartup.PluginManagement
     public class PluginProcessor
     {
         private readonly ICheckNotifier _notifier;
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
-        public PluginProcessor(ICheckNotifier notifier,CatalogueRepository repository)
+        public PluginProcessor(ICheckNotifier notifier,ICatalogueRepository repository)
         {
             _notifier = notifier;
             _repository = repository;

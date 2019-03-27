@@ -23,7 +23,6 @@ using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using FAnsi.Connections;
 using HIC.Logging;
 using ReusableLibraryCode;

@@ -26,9 +26,9 @@ namespace DataLoadEngine.LoadExecution.Components
         public readonly IEnumerable<IProcessTask> ProcessTasks;
         private readonly Dictionary<LoadStage, IStageArgs> _loadArgsDictionary;
         private readonly IEnumerable<ICatalogue> _cataloguesToLoad;
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
-        public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks, Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad, CatalogueRepository repository)
+        public RuntimeTaskPackager(IEnumerable<IProcessTask> processTasks, Dictionary<LoadStage, IStageArgs> loadArgsDictionary, IEnumerable<ICatalogue> cataloguesToLoad, ICatalogueRepository repository)
         {
             ProcessTasks = processTasks;
             _loadArgsDictionary = loadArgsDictionary;

@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using ReusableLibraryCode.Checks;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders

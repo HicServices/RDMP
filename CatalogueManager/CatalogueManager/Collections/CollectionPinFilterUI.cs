@@ -24,7 +24,6 @@ using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Providers;
 using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;

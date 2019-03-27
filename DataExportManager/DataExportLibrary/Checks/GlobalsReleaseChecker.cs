@@ -14,7 +14,6 @@ using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 

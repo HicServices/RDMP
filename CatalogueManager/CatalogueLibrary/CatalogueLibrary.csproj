@@ -297,8 +297,25 @@
     <Compile Include="Data\ConcreteContainer.cs" />
     <Compile Include="Data\Aggregation\IAggregateForcedJoinManager.cs" />
     <Compile Include="Data\CatalogueExtractabilityStatus.cs" />
+    <Compile Include="Data\DestinationType.cs" />
+    <Compile Include="Data\ICohortDefinition.cs" />
+    <Compile Include="Data\ICumulativeExtractionResults.cs" />
+    <Compile Include="Data\IExternalCohortTable.cs" />
+    <Compile Include="Data\IExtractableCohort.cs" />
+    <Compile Include="Data\IExtractableDataSet.cs" />
+    <Compile Include="Data\IExtractableDataSetPackage.cs" />
+    <Compile Include="Data\IExtractionConfiguration.cs" />
+    <Compile Include="Data\IExtractionResults.cs" />
+    <Compile Include="Data\IProject.cs" />
+    <Compile Include="Data\IProjectCohortIdentificationConfigurationAssociation.cs" />
+    <Compile Include="Data\IReleaseLog.cs" />
+    <Compile Include="Data\ISelectedDataSets.cs" />
+    <Compile Include="Data\ISelectedDataSetsForcedJoin.cs" />
+    <Compile Include="Data\ISupplementalExtractionResults.cs" />
     <Compile Include="Data\Defaults\PermissableDefaults.cs" />
     <Compile Include="Data\Defaults\PermissableDefaultsExtensions.cs" />
+    <Compile Include="Data\IExternalCohortDefinitionData.cs" />
+    <Compile Include="Data\IHICProjectSalt.cs" />
     <Compile Include="Data\ISupportingObject.cs" />
     <Compile Include="Data\Referencing\IReferenceOtherObjectWithPersist.cs" />
     <Compile Include="Exceptions\AmbiguousDatabaseTypeException.cs" />
@@ -332,7 +349,9 @@
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\WindowLayout.cs" />
-    <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
+    <Compile Include="Repositories\Managers\CommentStoreWithKeywords.cs" />
+    <Compile Include="Repositories\Managers\IPluginManager.cs" />
+    <Compile Include="Repositories\Managers\HighPerformance\FilterManagerFromChildProvider.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
@@ -350,6 +369,12 @@
     <Compile Include="Data\Serialization\ShareDefinition.cs" />
     <Compile Include="DublinCore\DublinCoreDefinition.cs" />
     <Compile Include="DublinCore\DublinCoreTranslater.cs" />
+    <Compile Include="ExtractionTime\Commands\ExtractCommandState.cs" />
+    <Compile Include="ExtractionTime\Commands\IExtractCommand.cs" />
+    <Compile Include="ExtractionTime\Commands\IExtractDatasetCommand.cs" />
+    <Compile Include="ExtractionTime\IExtractionDirectory.cs" />
+    <Compile Include="ExtractionTime\UserPicks\IBundledLookupTable.cs" />
+    <Compile Include="ExtractionTime\UserPicks\IExtractableDatasetBundle.cs" />
     <Compile Include="FilterImporting\Construction\AggregateFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\ExtractionFilterFactory.cs" />
     <Compile Include="FilterImporting\Construction\IFilterFactory.cs" />
@@ -401,6 +426,9 @@
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Nodes\UsedByNodes\IObjectUsedByOtherObjectNode.cs" />
     <Compile Include="Nodes\UsedByNodes\ObjectUsedByOtherObjectNode.cs" />
+    <Compile Include="CohortCreation\ICohortCreationRequest.cs" />
+    <Compile Include="CohortCreation\ICohortPipelineDestination.cs" />
+    <Compile Include="CohortCreation\IPluginCohortDestination.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
     <Compile Include="QueryBuilding\Options\AggregateBuilderBasicOptions.cs" />
@@ -413,6 +441,7 @@
     <Compile Include="Repositories\Managers\AggregateFilterManager.cs" />
     <Compile Include="Repositories\Managers\DataExportProperty.cs" />
     <Compile Include="Repositories\Managers\IDataExportPropertyManager.cs" />
+    <Compile Include="Repositories\Managers\IExtractableDataSetPackageManager.cs" />
     <Compile Include="Repositories\Managers\PasswordEncryptionKeyLocation.cs" />
     <Compile Include="Repositories\Managers\GovernanceManager.cs" />
     <Compile Include="Repositories\Managers\ICohortContainerManager.cs" />
@@ -422,6 +451,7 @@
     <Compile Include="Repositories\Managers\IJoinManager.cs" />
     <Compile Include="Repositories\Managers\ITableInfoCredentialsManager.cs" />
     <Compile Include="Repositories\Managers\JoinInfoType.cs" />
+    <Compile Include="Repositories\Managers\PluginManager.cs" />
     <Compile Include="Repositories\MemoryCatalogueRepository.cs" />
     <Compile Include="Repositories\RepositoryProvider.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />
@@ -458,7 +488,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Providers\CatalogueChildProvider.cs" />
-    <Compile Include="Data\PerformanceImprovement\CohortHierarchy.cs" />
+    <Compile Include="Repositories\Managers\HighPerformance\CohortContainerManagerFromChildProvider.cs" />
     <Compile Include="Nodes\ParametersNode.cs" />
     <Compile Include="Providers\DecryptionPrivateKeyNode.cs" />
     <Compile Include="Providers\DescendancyList.cs" />
@@ -668,6 +698,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
+    <Folder Include="Data\PerformanceImprovement\" />
     <Folder Include="Remoting\" />
   </ItemGroup>
   <ItemGroup>

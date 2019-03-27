@@ -7,8 +7,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Checks
@@ -91,7 +91,7 @@ namespace DataExportLibrary.Checks
 
             foreach (var assoc in _project.ProjectCohortIdentificationConfigurationAssociations)
             {
-                if (assoc.GetCohortIdentificationConfigurationCached() == null)
+                if (assoc.CohortIdentificationConfiguration == null)
                     if (notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Project contains a reference to a CohortIdentificationConfiguration which does not exist anymore",

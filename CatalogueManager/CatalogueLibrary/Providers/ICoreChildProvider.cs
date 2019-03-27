@@ -33,9 +33,12 @@ namespace CatalogueLibrary.Providers
         TableInfoServerNode[] AllServers { get; }
         TableInfo[] AllTableInfos { get;}
         CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
-        
+        CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
+        JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
+        JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
+
         Catalogue[] AllCatalogues { get; }
-        Dictionary<int, Catalogue> AllCatalogueDictionary { get; }
+        Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
 
         ExternalDatabaseServer[] AllExternalServers { get; }
 
@@ -67,6 +70,9 @@ namespace CatalogueLibrary.Providers
         AllGovernanceNode AllGovernanceNode { get; }
         GovernancePeriod[] AllGovernancePeriods { get; }
         GovernanceDocument[] AllGovernanceDocuments { get;}
+
+
+        AggregateFilterContainer[] AllAggregateContainers { get; }
 
         /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods"/>
         Dictionary<int, HashSet<int>> GovernanceCoverage { get;}

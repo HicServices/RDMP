@@ -174,7 +174,7 @@ namespace MapsDirectlyToDatabaseTableUI
             
         }
 
-        public static ExternalDatabaseServer CreateNewExternalServer(CatalogueRepository repository,PermissableDefaults defaultToSet, Assembly databaseAssembly)
+        public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, Assembly databaseAssembly)
         {
 
             CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(databaseAssembly);

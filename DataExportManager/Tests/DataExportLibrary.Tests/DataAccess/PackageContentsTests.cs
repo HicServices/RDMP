@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Repositories.Managers;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -34,7 +34,7 @@ namespace DataExportLibrary.Tests.DataAccess
                 package.SaveToDatabase();
 
 
-                var packageContents = new ExtractableDataSetPackageContents(DataExportRepository);
+                var packageContents = new ExtractableDataSetPackageManager(DataExportRepository);
 
                 var results = packageContents.GetAllDataSets(package, null);
                 Assert.AreEqual(0,results.Length);

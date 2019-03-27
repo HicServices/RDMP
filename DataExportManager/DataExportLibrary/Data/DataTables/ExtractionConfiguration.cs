@@ -16,7 +16,6 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
@@ -587,7 +586,7 @@ namespace DataExportLibrary.Data.DataTables
                 //failed to get a logging server correctly
 
                 //see if there is a default
-                var defaultGetter = new ServerDefaults(Project.DataExportRepository.CatalogueRepository);
+                var defaultGetter = Project.DataExportRepository.CatalogueRepository.GetServerDefaults();
                 var defaultLoggingServer = defaultGetter.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 //there is a default?

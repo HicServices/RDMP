@@ -23,9 +23,9 @@ namespace CatalogueLibrary.Reports
     public class GovernanceReport:DocXHelper
     {
         private readonly IDetermineDatasetTimespan _timespanCalculator;
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         
-        public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,CatalogueRepository repository)
+        public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,ICatalogueRepository repository)
         {
             _timespanCalculator = timespanCalculator;
             _repository = repository;

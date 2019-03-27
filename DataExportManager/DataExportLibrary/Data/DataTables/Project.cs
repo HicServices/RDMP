@@ -12,7 +12,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Checks;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
@@ -177,7 +176,7 @@ namespace DataExportLibrary.Data.DataTables
         public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
         {
             var associations = Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
-            return associations.Select(a => a.CohortIdentificationConfiguration).ToArray();
+            return associations.Select(a => a.CohortIdentificationConfiguration).Where(c=>c != null).ToArray();
         }
 
         /// <summary>

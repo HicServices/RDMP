@@ -20,7 +20,7 @@ namespace CatalogueLibrary.Repositories.Managers
             _catalogueRepository = catalogueRepository;
         }
 
-        public IContainer[] GetSubContainers(IContainer container)
+        public virtual IContainer[] GetSubContainers(IContainer container)
         {
             return 
                 _catalogueRepository.SelectAll<AggregateFilterContainer>("SELECT AggregateFilterContainer_ChildID FROM AggregateFilterSubContainer WHERE AggregateFilterContainer_ParentID=" + container.ID,
@@ -41,7 +41,7 @@ namespace CatalogueLibrary.Repositories.Managers
                 "AggregateFilterContainer_ParentID").SingleOrDefault();
         }
 
-        public IFilter[] GetFilters(IContainer container)
+        public virtual IFilter[] GetFilters(IContainer container)
         {
             return _catalogueRepository.GetAllObjectsWhere<AggregateFilter>("FilterContainer_ID", container.ID).ToArray();
         }

@@ -6,7 +6,7 @@
 
 using System;
 using System.Drawing;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
+using CatalogueLibrary.ExtractionTime.Commands;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 {

@@ -44,7 +44,7 @@ namespace CatalogueManager.Validation
     {
         private readonly string[] _otherColumns;
 
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
         /// <summary>
         /// this UI exists to modify this property, the secondary constraint, it is entirely driven by reflection so should handle any SecondaryConstraint you throw at it
@@ -61,7 +61,7 @@ namespace CatalogueManager.Validation
         
 
         private bool loadingComplete = false;
-        public SecondaryConstraintUI(CatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
+        public SecondaryConstraintUI(ICatalogueRepository repository,SecondaryConstraint secondaryConstriant, string[] otherColumns)
         {
             const int rowHeight = 30;
             //the amount of additional space required to accomodate description labels

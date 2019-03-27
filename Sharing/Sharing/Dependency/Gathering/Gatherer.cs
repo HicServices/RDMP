@@ -46,8 +46,8 @@ namespace Sharing.Dependency.Gathering
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
         {
-            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetEverySingleObjectInEntireDatabase();
-            var allDataExportObjects = ((DataExportRepository)_repositoryLocator.DataExportRepository).GetEverySingleObjectInEntireDatabase();
+            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetAllObjectsInDatabase();
+            var allDataExportObjects = _repositoryLocator.DataExportRepository.GetAllObjectsInDatabase();
             return allCatalogueObjects.Union(allDataExportObjects).ToArray();
         }
 

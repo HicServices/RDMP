@@ -6,7 +6,7 @@
 
 using System;
 using System.Linq;
-using DataExportLibrary.Interfaces.Data.DataTables;
+using CatalogueLibrary.Data;
 
 namespace DataExportLibrary.Data.DataTables
 {

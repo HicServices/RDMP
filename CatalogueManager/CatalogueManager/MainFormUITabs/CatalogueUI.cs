@@ -54,11 +54,6 @@ namespace CatalogueManager.MainFormUITabs
             c_ddType.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueType));
             c_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
             c_ddGranularity.DataSource = Enum.GetValues(typeof(Catalogue.CatalogueGranularity));
-
-            var f = new ScintillaTextEditorFactory();
-            _scintillaDescription = f.Create(null, null, null,true,false);
-            _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
-            panel1.Controls.Add(_scintillaDescription);
         }
 
         void ticketingControl1_TicketTextChanged(object sender, EventArgs e)
@@ -120,7 +115,16 @@ namespace CatalogueManager.MainFormUITabs
         
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
+            if (_scintillaDescription == null)
+            {
+                var f = new ScintillaTextEditorFactory();
+                _scintillaDescription = f.Create(null, null, null, true, false, activator.CurrentDirectory);
+                _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
+                panel1.Controls.Add(_scintillaDescription);
+            }
+
             base.SetDatabaseObject(activator,databaseObject);
+            
             _catalogue = databaseObject;
 
             CommonFunctionality.AddHelp(tbFolder, "CatalogueFolder");

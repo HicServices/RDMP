@@ -121,7 +121,7 @@ namespace CohortManager.Wizard
                 UnlockIdentifier(null);
             }
 
-            var allFilters = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExtractionFilter>("WHERE ExtractionInformation_ID IN (" + string.Join(",", allColumns.Select(c => c.ID.ToString())) + ")");
+            var allFilters = allColumns.SelectMany(c => c.ExtractionFilters).ToArray();
             ddAvailableFilters.DataSource = allFilters;
 
             _lastCatalogue = cata;

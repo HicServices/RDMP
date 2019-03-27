@@ -6,7 +6,7 @@
 
 using System;
 using System.Data.Common;
-using DataExportLibrary.Interfaces.Data;
+using CatalogueLibrary.Data;
 
 namespace DataExportLibrary.Data
 {

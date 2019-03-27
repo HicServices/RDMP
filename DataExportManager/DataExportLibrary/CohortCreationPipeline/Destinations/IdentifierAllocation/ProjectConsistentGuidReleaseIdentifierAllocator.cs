@@ -6,10 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using DataExportLibrary.Exceptions;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.Pipeline;
+using CatalogueLibrary.CohortCreation;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.DataRelease.Exceptions;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
 {

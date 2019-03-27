@@ -140,7 +140,7 @@ namespace CatalogueLibrary.Providers
                         expiredCatalogueIds.Remove(i);
             }
 
-            var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCatalogueDictionary[id]).Where(c => !(c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/)).ToArray();
+            var expiredCatalogues = expiredCatalogueIds.Select(id => _childProvider.AllCataloguesDictionary[id]).Where(c => !(c.IsDeprecated /* || c.IsColdStorage || c.IsInternal*/)).ToArray();
 
             if (expiredCatalogues.Any())
                 return "Governance Expired On:" +Environment.NewLine + string.Join(Environment.NewLine, expiredCatalogues.Take(5));

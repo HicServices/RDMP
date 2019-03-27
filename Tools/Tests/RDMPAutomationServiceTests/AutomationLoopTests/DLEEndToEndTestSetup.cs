@@ -39,7 +39,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
             UnitTestLoggingConnectionString = unitTestLoggingConnectionString;
             RepositoryLocator = repositoryLocator;
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = discoveredServerICanCreateRandomDatabasesAndTablesOn;
-            CatalogueRepository = repositoryLocator.CatalogueRepository;
+            CatalogueRepository = (CatalogueRepository) repositoryLocator.CatalogueRepository;
         }
 
         private UserAcceptanceTestEnvironment _stage1_setupCatalogue;

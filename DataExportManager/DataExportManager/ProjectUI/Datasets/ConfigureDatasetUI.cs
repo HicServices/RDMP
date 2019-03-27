@@ -24,7 +24,6 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI.Datasets.Node;
 using MapsDirectlyToDatabaseTable.Revertable;

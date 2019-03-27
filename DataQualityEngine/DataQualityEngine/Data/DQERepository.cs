@@ -33,9 +33,9 @@ namespace DataQualityEngine.Data
     /// </summary>
     public class DQERepository : TableRepository
     {
-        public CatalogueRepository CatalogueRepository { get; private set; }
+        public ICatalogueRepository CatalogueRepository { get; private set; }
 
-        public DQERepository(CatalogueRepository catalogueRepository)
+        public DQERepository(ICatalogueRepository catalogueRepository)
         {
             CatalogueRepository = catalogueRepository;
 

@@ -22,7 +22,6 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Nodes;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;

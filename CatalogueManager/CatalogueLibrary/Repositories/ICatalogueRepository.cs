@@ -6,11 +6,14 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories.Managers;
 using CatalogueLibrary.Ticketing;
 using HIC.Logging;
@@ -49,7 +52,7 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Stores class comments discovered at startup using NuDoq
         /// </summary>
-        CommentStore CommentStore { get; }
+        CommentStore CommentStore { get; set; }
 
         /// <summary>
         /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
@@ -70,6 +73,11 @@ namespace CatalogueLibrary.Repositories
         /// Manager for AND/OR WHERE containers and filters
         /// </summary>
         IFilterManager FilterManager {get;}
+
+        /// <summary>
+        /// Manager for identifying current active <see cref="Plugin"/>s
+        /// </summary>
+        IPluginManager PluginManager { get; }
 
         /// <summary>
         /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
@@ -116,5 +124,12 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
+
+        void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class, IMapsDirectlyToDatabaseTable;
+
+        void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject);
+
+        ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type);
+        
     }
 }

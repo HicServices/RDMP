@@ -11,7 +11,6 @@ using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;

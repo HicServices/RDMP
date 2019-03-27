@@ -14,7 +14,6 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

@@ -46,11 +46,8 @@ namespace CatalogueManager.MainFormUITabs
             tbID.Text = _keyword.ID.ToString();
 
             pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
-            
-            tbCommandToDelete.Text = "DELETE FROM " + 
-                activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase()
-                    .ExpectTable("ConnectionStringKeyword")
-                    .GetFullyQualifiedName();
+
+            tbCommandToDelete.Text = "DELETE FROM ConnectionStringKeyword";
 
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();

@@ -381,7 +381,7 @@ namespace Diagnostics
             if (anoIdentifierTable.Equals("ANOCHI"))
                 throw new Exception("Oops dont nuke this table name");
 
-            ANOTable toCleanup = repository.GetAllObjects<ANOTable>("WHERE TableName = '" + anoIdentifierTable+"'").SingleOrDefault();
+            ANOTable toCleanup = repository.GetAllObjectsWhere<ANOTable>("TableName", anoIdentifierTable).SingleOrDefault();
             
             if(toCleanup != null)
             {
@@ -1156,8 +1156,7 @@ namespace Diagnostics
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Exception occurred during import of the test table '" + TestTableName +
-                    "' into Data Catalogue (ConnectionString=" + repository.ConnectionString +
-                    ")", CheckResult.Fail, e));
+                    "' into Data Catalogue", CheckResult.Fail, e));
                 return false;
             }
         }

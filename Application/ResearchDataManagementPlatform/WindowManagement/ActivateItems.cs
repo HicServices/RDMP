@@ -394,6 +394,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
         }
 
+        public string CurrentDirectory { get { return Environment.CurrentDirectory; }}
+
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {

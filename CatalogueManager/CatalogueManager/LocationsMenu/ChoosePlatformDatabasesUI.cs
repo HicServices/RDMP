@@ -10,12 +10,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.ItemActivation;
 using DatabaseCreation;
+using DataExportLibrary.Repositories;
 using Diagnostics;
 using FAnsi;
+using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
@@ -53,6 +53,32 @@ namespace CatalogueManager.LocationsMenu
             new RecentHistoryOfControls(tbDataExportManagerConnectionString, new Guid("9ce952d8-d629-454a-ab9b-a1af97548be6"));
 
             SetState(State.PickNewOrExisting);
+
+            //are we dealing with a database object repository?
+            var cataDb = _repositoryLocator.CatalogueRepository as TableRepository;
+            var dataExportDb = _repositoryLocator.DataExportRepository as TableRepository;
+
+            //yes
+            if (cataDb != null)
+                tbCatalogueConnectionString.Text = cataDb.ConnectionString;
+            else
+            {
+                //no, disable connection strings, the repo must be on disk or in memory or something
+                tbCatalogueConnectionString.Enabled = false;
+                btnSaveAndClose.Enabled = false;
+            }
+
+            //yes
+            if (dataExportDb != null)
+                tbDataExportManagerConnectionString.Text = dataExportDb.ConnectionString;
+            else
+            {
+                //no, disable connection strings, the repo must be on disk or in memory or something
+                tbDataExportManagerConnectionString.Enabled = false;
+                btnSaveAndClose.Enabled = false;
+            }
+
+            
         }
 
         private void SetState(State newState)
@@ -107,20 +133,6 @@ namespace CatalogueManager.LocationsMenu
             ConnectToExisting
         }
 
-        protected override void OnLoad(EventArgs e)
-        {
-            if (_repositoryLocator == null)
-                return;
-
-            if (_repositoryLocator.CatalogueRepository != null)
-                tbCatalogueConnectionString.Text = _repositoryLocator.CatalogueRepository.ConnectionString;
-
-            if (_repositoryLocator.DataExportRepository != null)
-                tbDataExportManagerConnectionString.Text = _repositoryLocator.DataExportRepository.ConnectionString;
-            
-            base.OnLoad(e);
-        }
-
         private bool SaveConnectionStrings()
         {
             try
@@ -173,7 +185,7 @@ namespace CatalogueManager.LocationsMenu
         
         private MissingFieldsChecker CreateMissingFieldsChecker(MissingFieldsChecker.ThingToCheck thingToCheck)
         {
-            return new MissingFieldsChecker(thingToCheck, _repositoryLocator.CatalogueRepository, _repositoryLocator.DataExportRepository);
+            return new MissingFieldsChecker(thingToCheck, (CatalogueRepository)_repositoryLocator.CatalogueRepository, (DataExportRepository) _repositoryLocator.DataExportRepository);
         }
 
         private void btnSaveAndClose_Click(object sender, EventArgs e)

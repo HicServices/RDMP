@@ -160,5 +160,10 @@ namespace CatalogueManager.ItemActivation
         /// <param name="type"></param>
         /// <returns></returns>
         string GetDocumentation(Type type);
+
+        /// <summary>
+        /// Returns the current directory (e.g. <see cref="Environment.CurrentDirectory"/>).
+        /// </summary>
+        string CurrentDirectory { get; }
     }
 }

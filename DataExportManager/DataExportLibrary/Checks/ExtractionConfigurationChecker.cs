@@ -9,7 +9,6 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 

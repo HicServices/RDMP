@@ -27,7 +27,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     {
 
         private IPipelineUseCase _useCase;
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         
         private IPipeline _pipeline;
         public event Action PipelineDeleted = delegate { };
@@ -90,7 +90,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         }
         
         //IMPORTANT:Do not change this method signature, it is used in reflection (See ArgumentValuePipelineUI.cs for one)
-        public PipelineSelectionUI(IPipelineUseCase useCase, CatalogueRepository repository)
+        public PipelineSelectionUI(IPipelineUseCase useCase, ICatalogueRepository repository)
         {
             _useCase = useCase;
             _repository = repository;

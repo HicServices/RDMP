@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueManager.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 

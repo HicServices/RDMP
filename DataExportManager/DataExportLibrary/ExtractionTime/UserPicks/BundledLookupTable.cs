@@ -6,7 +6,7 @@
 
 using System;
 using CatalogueLibrary.Data;
-using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
+using CatalogueLibrary.ExtractionTime.UserPicks;
 
 namespace DataExportLibrary.ExtractionTime.UserPicks
 {

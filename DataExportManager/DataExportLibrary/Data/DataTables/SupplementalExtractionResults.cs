@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Referencing;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 

@@ -13,7 +13,6 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;

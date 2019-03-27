@@ -8,13 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Governance;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery;
 using HIC.Logging;
@@ -38,10 +42,11 @@ namespace CatalogueLibrary.Repositories
         public IEncryptionManager EncryptionManager { get { return this; }}
 
         public IFilterManager FilterManager { get { return this; }}
+        public IPluginManager PluginManager { get; private set; }
 
         public IJoinManager JoinManager { get; private set; }
         public MEF MEF { get; set; }
-        public CommentStore CommentStore { get; private set; }
+        public CommentStore CommentStore { get; set; }
 
         public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
         public string ConnectionString { get { return null; } }
@@ -53,6 +58,8 @@ namespace CatalogueLibrary.Repositories
         public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
         {
             JoinManager = new JoinManager(this);
+            PluginManager = new PluginManager(this);
+            CommentStore = new CommentStoreWithKeywords();
 
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
@@ -135,6 +142,21 @@ namespace CatalogueLibrary.Repositories
                         c =>
                             c.CatalogueItems.Any(
                                 ci => ci.ColumnInfo_ID != null && ci.ColumnInfo.TableInfo_ID == tableInfo.ID)).ToArray();
+        }
+
+        public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class, IMapsDirectlyToDatabaseTable
+        {
+            throw new NotImplementedException();
+        }
+
+        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
+        {
+            prop.SetValue(onObject,value);
+        }
+
+        public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
+        {
+            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedByDatabaseAssembly(type)).ToArray();
         }
 
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)
@@ -377,6 +399,7 @@ namespace CatalogueLibrary.Repositories
 
             _cohortContainerContents[parent].Add(new CohortContainerContent(child, child.Order));
         }
+
 
         #endregion
 

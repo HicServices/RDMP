@@ -15,7 +15,6 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTableUI;

@@ -193,6 +193,26 @@ namespace MapsDirectlyToDatabaseTable
             prop.SetValue(entity,propertyValue);
         }
 
+        public T[] GetAllObjectsCached<T>() where T : IMapsDirectlyToDatabaseTable
+        {
+            return GetAllObjects<T>();
+        }
+
+        public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
+        {
+            return Objects.ToArray();
+        }
+
+        public bool SupportsObjectType(Type type)
+        {
+            return typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(type);
+        }
+
+        public void TestConnection()
+        {
+            
+        }
+
         public virtual void Clear()
         {
             Objects.Clear();
