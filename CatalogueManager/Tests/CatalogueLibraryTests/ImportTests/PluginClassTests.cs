@@ -47,7 +47,7 @@ namespace CatalogueLibraryTests.ImportTests
             p2.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 5);
             p2.SaveToDatabase();
 
-            var plugins = CatalogueRepository.GetCompatiblePlugins();
+            var plugins = CatalogueRepository.PluginManager.GetCompatiblePlugins();
             Assert.That(plugins, Has.Length.EqualTo(1));
             Assert.That(plugins[0], Is.EqualTo(p2));
         }

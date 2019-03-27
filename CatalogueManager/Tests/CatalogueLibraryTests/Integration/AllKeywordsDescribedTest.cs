@@ -26,9 +26,7 @@ namespace CatalogueLibraryTests.Integration
         [OneTimeSetUp]
         public void SetupCommentStore()
         {
-            CatalogueRepository.SuppressHelpLoading = false;
-            CatalogueRepository.LoadHelp(TestContext.CurrentContext.WorkDirectory);
-            CatalogueRepository.SuppressHelpLoading = true;
+            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.WorkDirectory);
         }
 
         [Test]

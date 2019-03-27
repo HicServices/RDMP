@@ -6,15 +6,15 @@
 
 using System.Data;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 
-namespace DataExportLibrary.Interfaces.Pipeline
+namespace CatalogueLibrary.CohortCreation
 {
     /// <summary>
-    /// Destination component interface for Cohort Creation Pipelines.  Must fulfill the ICohortCreationRequest and populate the Cohort Source with the 
-    /// identifiers supplied in the DataTable.
+    /// MEF discoverble version of ICohortPipelineDestination (See ICohortPipelineDestination).  Implement this interface if you are writing a custom cohort
+    /// storage system and need to populate it with identifiers through the RDMP Cohort Creation Pipeline Processes.
     /// </summary>
-    public interface ICohortPipelineDestination : IDataFlowDestination<DataTable>, IPipelineRequirement<ICohortCreationRequest>
+    public interface IPluginCohortDestination : ICohortPipelineDestination, IPluginDataFlowComponent<DataTable>
     {
+
     }
 }

@@ -4,24 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Data.SqlClient;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using FAnsi.Connections;
-using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
+using System.Data;
+using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.DataFlowPipeline.Requirements;
 
-namespace DataExportLibrary.Interfaces.Pipeline
+namespace CatalogueLibrary.CohortCreation
 {
     /// <summary>
-    /// See CohortCreationRequest
-    ///  </summary>
-    public interface ICohortCreationRequest : ICheckable, IHasDesignTimeMode
+    /// Destination component interface for Cohort Creation Pipelines.  Must fulfill the ICohortCreationRequest and populate the Cohort Source with the 
+    /// identifiers supplied in the DataTable.
+    /// </summary>
+    public interface ICohortPipelineDestination : IDataFlowDestination<DataTable>, IPipelineRequirement<ICohortCreationRequest>
     {
-        IProject Project { get; }
-        ICohortDefinition NewCohortDefinition { get; set; }
-        
-        int ImportAsExtractableCohort(bool deprecateOldCohortOnSuccess);
-        void PushToServer(IManagedConnection transaction);
     }
 }

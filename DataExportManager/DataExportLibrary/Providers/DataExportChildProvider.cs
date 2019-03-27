@@ -20,7 +20,6 @@ using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.CohortCreationPipeline.UseCases;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;

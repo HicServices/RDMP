@@ -12,12 +12,9 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Annotations;
 
-namespace DataExportLibrary.Data.DataTables.DataSetPackages
+namespace DataExportLibrary.Data.DataTables
 {
-    /// <summary>
-    /// A collection of ExtractableDataSet which share a common concept e.g. 'Core datasets', 'Supplemental Datasets', 'Diabetes datasets' etc. These allow you to add a collection of 
-    /// datasets to a project extraction in one go and to standardise who gets what datasets.
-    /// </summary>
+    /// <inheritdoc/>
     public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackage
     {
         #region Database Properties

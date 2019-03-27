@@ -11,7 +11,6 @@ using CatalogueManager.CommandExecution;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;

@@ -13,7 +13,6 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories.Managers;

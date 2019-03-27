@@ -28,11 +28,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         [Test]
         public void AllUIControlsDocumented()
         {
-            CatalogueRepository.SuppressHelpLoading = false;
-            CatalogueRepository.LoadHelp(TestContext.CurrentContext.WorkDirectory);
-            CatalogueRepository.SuppressHelpLoading = true;
-
-
+            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.WorkDirectory);
+            
             List<string> undocumented = new List<string>();
 
             Console.WriteLine("////////////////////Documentation of UI Controls////////////////");

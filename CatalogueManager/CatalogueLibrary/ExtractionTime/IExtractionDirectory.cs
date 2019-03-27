@@ -7,7 +7,7 @@
 using System.IO;
 using CatalogueLibrary.Data;
 
-namespace DataExportLibrary.Interfaces.ExtractionTime
+namespace CatalogueLibrary.ExtractionTime
 {
     /// <summary>
     /// See ExtractionDirectory

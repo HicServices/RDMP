@@ -7,7 +7,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.ExtractionTime.Commands;
-using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 
 namespace DataExportLibrary.ExtractionTime.UserPicks
 {

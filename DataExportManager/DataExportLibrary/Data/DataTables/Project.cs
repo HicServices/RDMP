@@ -176,7 +176,7 @@ namespace DataExportLibrary.Data.DataTables
         public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
         {
             var associations = Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
-            return associations.Select(a => a.CohortIdentificationConfiguration).ToArray();
+            return associations.Select(a => a.CohortIdentificationConfiguration).Where(c=>c != null).ToArray();
         }
 
         /// <summary>

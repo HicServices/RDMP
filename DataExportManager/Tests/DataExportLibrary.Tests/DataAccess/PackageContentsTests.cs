@@ -11,7 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Repositories.Managers;
 using NUnit.Framework;
 using Tests.Common;
 

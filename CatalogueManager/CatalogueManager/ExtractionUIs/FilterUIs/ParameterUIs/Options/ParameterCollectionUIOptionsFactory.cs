@@ -18,7 +18,6 @@ using CatalogueLibrary.Repositories;
 using CatalogueManager.ExtractionUIs.FilterUIs.Options;
 using CohortManagerLibrary.QueryBuilding;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;

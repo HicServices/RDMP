@@ -426,9 +426,9 @@
     <Compile Include="Nodes\SharingNodes\AllObjectSharingNode.cs" />
     <Compile Include="Nodes\UsedByNodes\IObjectUsedByOtherObjectNode.cs" />
     <Compile Include="Nodes\UsedByNodes\ObjectUsedByOtherObjectNode.cs" />
-    <Compile Include="Pipeline\ICohortCreationRequest.cs" />
-    <Compile Include="Pipeline\ICohortPipelineDestination.cs" />
-    <Compile Include="Pipeline\IPluginCohortDestination.cs" />
+    <Compile Include="CohortCreation\ICohortCreationRequest.cs" />
+    <Compile Include="CohortCreation\ICohortPipelineDestination.cs" />
+    <Compile Include="CohortCreation\IPluginCohortDestination.cs" />
     <Compile Include="Providers\CatalogueProblemProvider.cs" />
     <Compile Include="Providers\IProblemProvider.cs" />
     <Compile Include="QueryBuilding\Options\AggregateBuilderBasicOptions.cs" />

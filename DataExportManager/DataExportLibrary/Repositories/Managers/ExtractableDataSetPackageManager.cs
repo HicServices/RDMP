@@ -8,16 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
-using IExtractableDataSetPackageManager = CatalogueLibrary.Repositories.Managers.IExtractableDataSetPackageManager;
 
 namespace DataExportLibrary.Repositories.Managers
 {
-    /// <summary>
-    /// Helper class for listing, adding and dropping ExtractableDataSets from ExtractableDataSetPackages (See ExtractableDataSetPackage)
-    /// </summary>
-    public class ExtractableDataSetPackageManager : CatalogueLibrary.Repositories.Managers.IExtractableDataSetPackageManager
+    /// <inheritdoc/>
+    public class ExtractableDataSetPackageManager : IExtractableDataSetPackageManager
     {
         private readonly DataExportRepository _repository;
         Dictionary<int,List<int>> _packageContentsDictionary = new Dictionary<int, List<int>>();

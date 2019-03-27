@@ -8,7 +8,7 @@ using System;
 using CatalogueLibrary.Data;
 using DataExportLibrary.Data;
 
-namespace DataExportLibrary.Exceptions
+namespace DataExportLibrary.DataRelease.Exceptions
 {
     /// <summary>
     /// Thrown when a given <see cref="IProject"/> doesn't have a <see cref="IProject.ProjectNumber"/> configured yet (null) or that number

@@ -6,7 +6,7 @@
 
 using CatalogueLibrary.Data;
 
-namespace DataExportLibrary.Interfaces.ExtractionTime.UserPicks
+namespace CatalogueLibrary.ExtractionTime.UserPicks
 {
     /// <summary>
     /// See BundledLookupTable

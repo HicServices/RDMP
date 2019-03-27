@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;

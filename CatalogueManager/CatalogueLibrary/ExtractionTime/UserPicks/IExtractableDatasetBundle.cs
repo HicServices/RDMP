@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.ExtractionTime.Commands;
 
-namespace DataExportLibrary.Interfaces.ExtractionTime.UserPicks
+namespace CatalogueLibrary.ExtractionTime.UserPicks
 {
     /// <summary>
     /// See ExtractableDatasetBundle

@@ -13,7 +13,6 @@ using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation;
 using DataExportLibrary.CohortDatabaseWizard;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Pipeline;
 using FAnsi;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;

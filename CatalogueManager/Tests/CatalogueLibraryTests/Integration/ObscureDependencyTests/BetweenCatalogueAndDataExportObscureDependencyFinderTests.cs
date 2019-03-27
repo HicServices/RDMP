@@ -58,7 +58,7 @@ namespace CatalogueLibraryTests.Integration.ObscureDependencyTests
         [Test]
         public void AllowDeletingWhenDataExportManagerIsNotSet()
         {
-            var noDataExportManagerExists = new LinkedRepositoryProvider(RepositoryLocator.CatalogueRepository.ConnectionString,null);
+            var noDataExportManagerExists = new LinkedRepositoryProvider(CatalogueRepository.ConnectionString,null);
 
             var obscura1 = new BetweenCatalogueAndDataExportObscureDependencyFinder(RepositoryLocator);
             var obscura2 = new BetweenCatalogueAndDataExportObscureDependencyFinder(noDataExportManagerExists);
