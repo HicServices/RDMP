@@ -32,7 +32,7 @@ namespace DataExportLibrary.Repositories.Managers
 
 
         /// <inheritdoc/>
-        public IContainer[] GetSubContainers(IContainer parent)
+        public virtual IContainer[] GetSubContainers(IContainer parent)
         {
             var subcontainers = _dataExportRepository.SelectAll<FilterContainer>(
                 "SELECT FilterContainerChildID FROM FilterContainerSubcontainers WHERE FilterContainer_ParentID=" + parent.ID,

@@ -18,6 +18,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Nodes;
+using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery;
 using HIC.Logging;
@@ -390,6 +391,7 @@ namespace CatalogueLibrary.Repositories
 
             _cohortContainerContents[parent].Add(new CohortContainerContent(child, child.Order));
         }
+
 
         #endregion
 

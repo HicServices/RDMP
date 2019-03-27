@@ -271,7 +271,7 @@
     <Compile Include="Data\DataTables\ExtractableDataSetPackage.cs" />
     <Compile Include="Data\DataTables\SupplementalExtractionResults.cs" />
     <Compile Include="Data\DataTables\SelectedDataSetsForcedJoin.cs" />
-    <Compile Include="Data\Hierarchy\DataExportFilterHierarchy.cs" />
+    <Compile Include="Repositories\Managers\HighPerformance\DataExportFilterManagerFromChildProvider.cs" />
     <Compile Include="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommand.cs" />
     <Compile Include="ExtractionTime\Commands\ExtractCommandCollection.cs" />

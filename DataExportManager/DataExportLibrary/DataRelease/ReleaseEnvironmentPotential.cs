@@ -43,7 +43,7 @@ namespace DataExportLibrary.DataRelease
         {
             Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
 
-            var configuration = _repository.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>("WHERE IsActive = 1").SingleOrDefault();
+            var configuration = _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive",1).SingleOrDefault();
             if (configuration == null) return;
 
             TicketingSystemFactory factory = new TicketingSystemFactory(_repository.CatalogueRepository);

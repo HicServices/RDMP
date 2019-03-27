@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
@@ -17,7 +16,6 @@ using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Nodes;
@@ -25,10 +23,10 @@ using CatalogueLibrary.Nodes.CohortNodes;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
-using CatalogueLibrary.Nodes.UsedByNodes;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
+using CatalogueLibrary.Repositories.Managers.HighPerformance;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 
@@ -52,17 +50,16 @@ namespace CatalogueLibrary.Providers
     {
         public static bool UseCaching { get; set; }
 
+        //Load System
         public LoadMetadata[] AllLoadMetadatas { get; set; }
         public ProcessTask[] AllProcessTasks { get; set; }
-
         public LoadProgress[] AllLoadProgresses { get; set; }
         public CacheProgress[] AllCacheProgresses { get; set; }
-
         public PermissionWindow[] AllPermissionWindows { get; set; }
-
+        
         //Catalogue side of things
         public Catalogue[] AllCatalogues { get; set; }
-        public Dictionary<int, Catalogue> AllCatalogueDictionary { get; private set; }
+        public Dictionary<int, Catalogue> AllCataloguesDictionary { get; private set; }
         
         public SupportingDocument[] AllSupportingDocuments { get; set; }
         public SupportingSQLTable[] AllSupportingSQL { get; set; }
@@ -137,11 +134,27 @@ namespace CatalogueLibrary.Providers
         protected Dictionary<int,ExtractionInformation> AllExtractionInformationsDictionary;
         protected Dictionary<int, ExtractionInformation> _extractionInformationsByCatalogueItem;
 
-        private readonly CatalogueFilterHierarchy _filterChildProvider;
+        private readonly IFilterManager _aggregateFilterManager;
 
-        private readonly CohortHierarchy _cohortContainerChildProvider;
+        //Filters for Aggregates (includes filter containers (AND/OR)
+        public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary;
+        public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray();}}
+
+        private AggregateFilter[] AllAggregateFilters;
+        private AggregateFilterParameter[] AllAggregateFilterParameters;
+
+        //Catalogue master filters (does not include any support for filter containers (AND/OR)
+        private ExtractionFilter[] AllCatalogueFilters;
+        public ExtractionFilterParameter[] AllCatalogueParameters;
+        public ExtractionFilterParameterSet[] AllCatalogueValueSets;
+        public ExtractionFilterParameterSetValue[] AllCatalogueValueSetValues;
+        
+        private readonly ICohortContainerManager _cohortContainerManager;
         
         public CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; private set; }
+        public CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
+        public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
+        public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
         public Dictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
@@ -158,15 +171,16 @@ namespace CatalogueLibrary.Providers
 
         public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
 
-        public CatalogueChildProvider(CatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
+        public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
             _commentStore = repository.CommentStore;
-
-            PluginChildProviders = pluginChildProviders;
             _errorsCheckNotifier = errorsCheckNotifier;
-            
-            AllMasqueraders = new Dictionary<object, HashSet<IMasqueradeAs>>();
 
+            // all the objects which are 
+            AllMasqueraders = new Dictionary<object, HashSet<IMasqueradeAs>>();
+            
+            PluginChildProviders = pluginChildProviders;
+            
             AllAnyTableParameters = GetAllObjects<AnyTableSqlParameter>(repository);
 
             AllANOTables = GetAllObjects<ANOTable>(repository);
@@ -174,7 +188,7 @@ namespace CatalogueLibrary.Providers
             AddChildren(AllANOTablesNode);
 
             AllCatalogues = GetAllObjects<Catalogue>(repository);
-            AllCatalogueDictionary = AllCatalogues.ToDictionary(i => i.ID, o => o);
+            AllCataloguesDictionary = AllCatalogues.ToDictionary(i => i.ID, o => o);
 
             AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
             AllProcessTasks = GetAllObjects<ProcessTask>(repository);
@@ -237,8 +251,25 @@ namespace CatalogueLibrary.Providers
 
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             
-            _filterChildProvider = new CatalogueFilterHierarchy(repository);
-            _cohortContainerChildProvider = new CohortHierarchy(repository,this);
+            AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(repository);
+            AllJoinables = GetAllObjects<JoinableCohortAggregateConfiguration>(repository);
+            AllJoinUses = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
+
+            AllAggregateContainersDictionary = GetAllObjects<AggregateFilterContainer>(repository).ToDictionary(o => o.ID, o2 => o2);
+            AllAggregateFilters = GetAllObjects<AggregateFilter>(repository);
+            AllAggregateFilterParameters = GetAllObjects<AggregateFilterParameter>(repository);
+
+            AllCatalogueFilters = GetAllObjects<ExtractionFilter>(repository);
+            AllCatalogueParameters = GetAllObjects<ExtractionFilterParameter>(repository);
+            AllCatalogueValueSets = GetAllObjects<ExtractionFilterParameterSet>(repository);
+            AllCatalogueValueSetValues = GetAllObjects<ExtractionFilterParameterSetValue>(repository);
+
+            //if we have a database repository then we should get asnwers from the caching version CohortContainerManagerFromChildProvider otherwise
+            //just use the one that is configured on the repository.
+            var cataRepo = repository as CatalogueRepository;
+            _aggregateFilterManager = cataRepo != null ? new FilterManagerFromChildProvider(cataRepo, this) : repository.FilterManager;
+            
+            _cohortContainerManager = cataRepo != null ? new CohortContainerManagerFromChildProvider(cataRepo, this) : repository.CohortContainerManager;
 
             AllLookups = GetAllObjects<Lookup>(repository);
 
@@ -292,7 +323,7 @@ namespace CatalogueLibrary.Providers
 
             //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
             //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
-            Dictionary<int, JoinableCohortAggregateConfiguration> joinableDictionaryByAggregateConfigurationId =  _cohortContainerChildProvider.AllJoinables.ToDictionary(j => j.AggregateConfiguration_ID,v=> v);
+            Dictionary<int, JoinableCohortAggregateConfiguration> joinableDictionaryByAggregateConfigurationId =  AllJoinables.ToDictionary(j => j.AggregateConfiguration_ID,v=> v);
 
             foreach (AggregateConfiguration ac in AllAggregateConfigurations)
             {
@@ -310,8 +341,6 @@ namespace CatalogueLibrary.Providers
 
             AddChildren(AllGovernanceNode);
         }
-
-        
 
         private void AddChildren(AllGovernanceNode allGovernanceNode)
         {
@@ -755,7 +784,7 @@ namespace CatalogueLibrary.Providers
             //really user wants to see it in CohortIdentificationCollectionUI
             if(aggregateConfiguration.RootFilterContainer_ID != null)
             {
-                var container = _filterChildProvider.AllAggregateContainers[(int) aggregateConfiguration.RootFilterContainer_ID];
+                var container = AllAggregateContainers[(int) aggregateConfiguration.RootFilterContainer_ID];
                 
                 AddChildren(container,descendancy.Add(container));
                 childrenObjects.Add(container);
@@ -768,8 +797,8 @@ namespace CatalogueLibrary.Providers
         {
             List<object> childrenObjects = new List<object>();
 
-            var subcontainers = _filterChildProvider.GetSubcontainers(container);
-            var filters = _filterChildProvider.GetFilters(container);
+            var subcontainers = _aggregateFilterManager.GetSubContainers(container);
+            var filters = AllAggregateFilters.Where(f => f.FilterContainer_ID == container.ID).ToArray();
 
             foreach (AggregateFilterContainer subcontainer in subcontainers)
             {
@@ -809,7 +838,7 @@ namespace CatalogueLibrary.Providers
         {
             var children = new HashSet<object>();
             
-            foreach (var filter in _filterChildProvider.GetFilters(extractionInformation))
+            foreach (var filter in AllCatalogueFilters.Where(f => f.ExtractionInformation_ID == extractionInformation.ID))
             {
                 //add the filter as a child of the 
                 children.Add(filter);
@@ -819,11 +848,21 @@ namespace CatalogueLibrary.Providers
             AddToDictionaries(children,descendancy);
         }
 
+        /*
+        public IEnumerable<AggregateFilterParameter> GetParameters(AggregateFilter filter)
+        {
+            return AllAggregateFilterParameters.Where(p => p.AggregateFilter_ID == filter.ID);
+        }
+        public IEnumerable<ExtractionFilterParameterSetValue> GetValueSetValues(ExtractionFilterParameterSet parameterSet)
+        {
+            return AllCatalogueValueSetValues.Where(v => v.ExtractionFilterParameterSet_ID == parameterSet.ID);
+        }*/
+
         private void AddChildren(ExtractionFilter filter, DescendancyList descendancy)
         {
             var children = new HashSet<object>();
-            var parameters = _filterChildProvider.GetParameters(filter).ToArray();
-            var parameterSets = _filterChildProvider.GetValueSets(filter);
+            var parameters = AllCatalogueParameters.Where(p => p.ExtractionFilter_ID == filter.ID).ToArray();
+            var parameterSets = AllCatalogueValueSets.Where(vs => vs.ExtractionFilter_ID == filter.ID);
 
             if (parameters.Any())
                 children.Add(new ParametersNode(filter, parameters));
@@ -861,14 +900,14 @@ namespace CatalogueLibrary.Providers
             //if it has a root container
             if (cic.RootCohortAggregateContainer_ID != null)
             {
-                var container = _cohortContainerChildProvider.AllContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
+                var container = AllCohortAggregateContainers.Single(c => c.ID == cic.RootCohortAggregateContainer_ID);
                 AddChildren(container, new DescendancyList(cic, container).SetBetterRouteExists());
                 children.Add(container);
             }
 
 
             //get the patient index tables
-            var joinableNode = new JoinableCollectionNode(cic, _cohortContainerChildProvider.AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
+            var joinableNode = new JoinableCollectionNode(cic, AllJoinables.Where(j => j.CohortIdentificationConfiguration_ID == cic.ID).ToArray());
             AddChildren(joinableNode, new DescendancyList(cic, joinableNode).SetBetterRouteExists());
             children.Add(joinableNode);
 
@@ -903,14 +942,14 @@ namespace CatalogueLibrary.Providers
             List<IOrderable> children = new List<IOrderable>();
 
             //get subcontainers
-            var subcontainers = _cohortContainerChildProvider.GetSubContainers(container);
+            var subcontainers = _cohortContainerManager.GetChildren(container).OfType<CohortAggregateContainer>().ToList();
 
             //if there are subcontainers
             foreach (CohortAggregateContainer subcontainer in subcontainers)
                 AddChildren(subcontainer,descendancy.Add(subcontainer));
 
             //get our configurations
-            var configurations = _cohortContainerChildProvider.GetAggregateConfigurations(container);
+            var configurations = _cohortContainerManager.GetChildren(container).OfType<AggregateConfiguration>().ToList();
 
             //record the configurations children including full descendancy
             foreach (AggregateConfiguration configuration in configurations)
@@ -1190,7 +1229,7 @@ namespace CatalogueLibrary.Providers
             return new HashSet<object>(_childDictionary.SelectMany(kvp => kvp.Value).Union(_childDictionary.Keys));
         }
 
-        protected T[] GetAllObjects<T>(TableRepository repository) where T : IMapsDirectlyToDatabaseTable
+        protected T[] GetAllObjects<T>(IRepository repository) where T : IMapsDirectlyToDatabaseTable
         {
             return UseCaching ? repository.GetAllObjectsCached<T>() : repository.GetAllObjects<T>();
         }

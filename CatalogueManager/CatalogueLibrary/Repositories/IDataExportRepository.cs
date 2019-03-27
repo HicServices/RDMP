@@ -18,7 +18,9 @@ namespace CatalogueLibrary.Repositories
     {
         ICatalogueRepository CatalogueRepository { get; }
         CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
-        
+
+        ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();
+
         /// <summary>
         /// Manager for AND/OR WHERE containers and filters
         /// </summary>

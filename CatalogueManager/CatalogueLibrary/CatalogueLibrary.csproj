@@ -349,7 +349,7 @@
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\WindowLayout.cs" />
-    <Compile Include="Data\PerformanceImprovement\CatalogueFilterHierarchy.cs" />
+    <Compile Include="Repositories\Managers\HighPerformance\FilterManagerFromChildProvider.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
     <Compile Include="Data\Pipelines\IPipelineUseCase.cs" />
@@ -485,7 +485,7 @@
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
     <Compile Include="Providers\CatalogueChildProvider.cs" />
-    <Compile Include="Data\PerformanceImprovement\CohortHierarchy.cs" />
+    <Compile Include="Repositories\Managers\HighPerformance\CohortContainerManagerFromChildProvider.cs" />
     <Compile Include="Nodes\ParametersNode.cs" />
     <Compile Include="Providers\DecryptionPrivateKeyNode.cs" />
     <Compile Include="Providers\DescendancyList.cs" />
@@ -695,6 +695,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
+    <Folder Include="Data\PerformanceImprovement\" />
     <Folder Include="Remoting\" />
   </ItemGroup>
   <ItemGroup>

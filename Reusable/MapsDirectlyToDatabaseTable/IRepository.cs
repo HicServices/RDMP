@@ -154,5 +154,7 @@ namespace MapsDirectlyToDatabaseTable
 
         void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,object propertyValue);
 
+        T[] GetAllObjectsCached<T>() where T : IMapsDirectlyToDatabaseTable;
+
     }
 }

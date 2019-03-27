@@ -108,13 +108,10 @@ namespace DataExportLibrary.Repositories
 
             return eds.GetCatalogueExtractabilityStatus();
         }
-
         
-
-        public SelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+        public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
         {
             return SelectAll<SelectedDataSets>(@"
-
 SELECT ID  FROM SelectedDataSets sds
 where not exists (
 select 1 FROM ExtractableColumn ec where 

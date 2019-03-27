@@ -28,6 +28,13 @@ namespace DataExportLibrary.Repositories
             return new CatalogueExtractabilityStatus(true, eds.Project_ID != null);
         }
 
+        public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+        {
+            var col = GetAllObjects<ExtractableColumn>().Where(ec => ec.IsExtractionIdentifier).ToArray();
+
+            return GetAllObjects<ISelectedDataSets>().Where(sds => col.All(c => c.ExtractableDataSet_ID != sds.ExtractableDataSet_ID)).ToArray();
+        }
+
         IExtractableDataSetPackageManager IDataExportRepository.PackageManager { get; set; }
 
         #region IDataExportPropertyManager
