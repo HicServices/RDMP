@@ -1,5 +1,4 @@
-﻿using System.Reflection;
-using System.Windows.Forms;
+﻿using System;
 using CatalogueLibrary.Data;
 using CatalogueManager.MainFormUITabs;
 using DataExportLibrary.Repositories;
@@ -8,24 +7,20 @@ using ScintillaNET;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class CatalogueUITests
+    public class CatalogueUITests : UITests
     {
         [Test]
-        public void TestCatalogueUI_Saving()
+        public void Test_CatalogueUI_SaveDescription()
         {
-            CatalogueUI ui = new CatalogueUI();
-              
+            //create catalogue
             var memory = new MemoryDataExportRepository();
-            
             var cata = new Catalogue(memory, "Mycata");
+            cata.SaveToDatabase();
 
-            Form f = new Form();
-
-            f.Controls.Add(ui);
-
+            var ui = GetSingleDatabaseObjectControlForm<CatalogueUI>();
             ui.SetDatabaseObject(new TestActivateItems(memory), cata);
 
-            var scintilla =  (Scintilla)typeof(CatalogueUI).GetField("_scintillaDescription", BindingFlags.NonPublic | BindingFlags.Instance).GetValue(ui);
+            var scintilla = GetPrivateField<Scintilla>(ui, "_scintillaDescription");
             scintilla.Text = "amagad zombies";
 
             var saver = ui.GetObjectSaverButton();
@@ -33,5 +28,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
             Assert.AreEqual("amagad zombies", cata.Description);
         }
+        
     }
 }

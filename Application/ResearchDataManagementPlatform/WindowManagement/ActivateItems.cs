@@ -395,6 +395,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         public string CurrentDirectory { get { return Environment.CurrentDirectory; }}
+        public DialogResult ShowDialog(Form form)
+        {
+            return form.ShowDialog();
+        }
 
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()

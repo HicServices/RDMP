@@ -56,8 +56,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_encryptedPasswordHost.Password,value))
                     return;
 
+                var old = _encryptedPasswordHost.Password;
                 _encryptedPasswordHost.Password = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
         

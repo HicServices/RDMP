@@ -43,11 +43,6 @@ namespace CatalogueManager.MainFormUITabs
             AssociatedCollection = RDMPCollection.Catalogue;
             
             ci_ddPeriodicity.DataSource = Enum.GetValues(typeof(Catalogue.CataloguePeriodicity));
-            
-            var f = new ScintillaTextEditorFactory();
-            _scintillaDescription = f.Create(null, null, null, true, false);
-            _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
-            panel1.Controls.Add(_scintillaDescription);
         }
 
         bool objectSaverButton1_BeforeSave(DatabaseEntity databaseEntity)
@@ -59,9 +54,7 @@ namespace CatalogueManager.MainFormUITabs
             //there are other CatalogueItems that share the same name as this one so give the user the option to propagate his changes to those too
             if (shouldDialogBeDisplayed)
             {
-                DialogResult dialogResult = propagate.ShowDialog(this);
-
-                if (dialogResult == DialogResult.Cancel)
+                if (Activator.ShowDialog(propagate) == DialogResult.Cancel)
                     return false;
             }
 
@@ -70,6 +63,14 @@ namespace CatalogueManager.MainFormUITabs
 
         public override void SetDatabaseObject(IActivateItems activator, CatalogueItem databaseObject)
         {
+            if (_scintillaDescription == null)
+            {
+                var f = new ScintillaTextEditorFactory();
+                _scintillaDescription = f.Create(null, null, null, true, false,activator.CurrentDirectory);
+                _scintillaDescription.Font = System.Drawing.SystemFonts.DefaultFont;
+                panel1.Controls.Add(_scintillaDescription);
+            }
+
             base.SetDatabaseObject(activator,databaseObject);
             _catalogueItem = databaseObject;
 

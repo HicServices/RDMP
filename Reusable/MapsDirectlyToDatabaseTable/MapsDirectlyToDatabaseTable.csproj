@@ -192,6 +192,7 @@
     <Compile Include="Attributes\RelationshipAttribute.cs" />
     <Compile Include="Attributes\SqlAttribute.cs" />
     <Compile Include="IMightBeDeprecated.cs" />
+    <Compile Include="Revertable\PropertyChangedExtendedEventArgs.cs" />
     <Compile Include="SqlDependencyTableMonitor.cs" />
     <Compile Include="TableRepository.cs" />
     <Compile Include="IObscureDependencyFinder.cs" />

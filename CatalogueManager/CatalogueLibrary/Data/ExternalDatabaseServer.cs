@@ -89,8 +89,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Server, value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Server;
                 _selfCertifyingDataAccessPoint.Server = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old,value);
             }
         }
 
@@ -103,8 +104,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Database,value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Database;
                 _selfCertifyingDataAccessPoint.Database = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -117,8 +119,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Username, value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Username;
                 _selfCertifyingDataAccessPoint.Username = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -131,8 +134,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Password, value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Password;
                 _selfCertifyingDataAccessPoint.Password = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -144,9 +148,10 @@ namespace CatalogueLibrary.Data
             {
                 if (Equals(_selfCertifyingDataAccessPoint.DatabaseType, value))
                     return;
-
+                
+                var old = _selfCertifyingDataAccessPoint.DatabaseType;
                 _selfCertifyingDataAccessPoint.DatabaseType = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 

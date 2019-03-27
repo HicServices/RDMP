@@ -22,6 +22,10 @@ namespace MapsDirectlyToDatabaseTable.Revertable
         {
             Differences = new List<RevertablePropertyDifference>();
         }
-        
+
+        public RevertableObjectReport(List<RevertablePropertyDifference> differences)
+        {
+            Differences = differences;
+        }
     }
 }

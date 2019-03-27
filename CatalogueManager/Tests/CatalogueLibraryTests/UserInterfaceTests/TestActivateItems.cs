@@ -21,6 +21,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Repositories;
+using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
@@ -33,6 +34,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     class TestActivateItems:IActivateItems, ITheme
     {
+        private static CommentStore _commentStore;
+
         public ITheme Theme { get {return this;}}
         public IServerDefaults ServerDefaults { get; private set; }
         public RefreshBus RefreshBus { get; private set; }
@@ -41,13 +44,24 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
+        public List<Control> WindowsShown = new List<Control>();
+
         public TestActivateItems(MemoryDataExportRepository repo)
         {
             RepositoryLocator = new RepositoryProvider(repo);
             RefreshBus = new RefreshBus();
-            CommentStore = new CommentStore();
-            CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
+
+            //don't load the comment store for every single test
+            if (_commentStore == null)
+            {
+                _commentStore = new CommentStore();
+                _commentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
+            }
+
+            CommentStore = _commentStore;
+
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+            CoreIconProvider = new DataExportIconProvider(null);
         }
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
@@ -148,6 +162,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         }
 
         public string CurrentDirectory { get { return TestContext.CurrentContext.TestDirectory; }}
+        public DialogResult ShowDialog(Form form)
+        {
+            WindowsShown.Add(form);
+            return DialogResult.OK;
+        }
 
         public void ApplyTo(ToolStrip item)
         {

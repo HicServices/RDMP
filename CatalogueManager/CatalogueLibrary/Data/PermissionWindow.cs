@@ -63,8 +63,9 @@ namespace CatalogueLibrary.Data
             get { return SerializePermissionWindowPeriods(); }
             set
             {
+                var old = SerializePermissionWindowPeriods();
                 DeserializePermissionWindowPeriods(value);
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 

@@ -379,8 +379,10 @@
     <Compile Include="Unit\SqlSyntaxHelperTests.cs" />
     <Compile Include="Integration\TableInfoTests.cs" />
     <Compile Include="Unit\TestAcronymGeneration.cs" />
+    <Compile Include="UserInterfaceTests\CatalogueItemUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueUITests.cs" />
     <Compile Include="UserInterfaceTests\TestActivateItems.cs" />
+    <Compile Include="UserInterfaceTests\UITests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj">

@@ -23,6 +23,7 @@ using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
@@ -165,5 +166,7 @@ namespace CatalogueManager.ItemActivation
         /// Returns the current directory (e.g. <see cref="Environment.CurrentDirectory"/>).
         /// </summary>
         string CurrentDirectory { get; }
+
+        DialogResult ShowDialog(Form form);
     }
 }

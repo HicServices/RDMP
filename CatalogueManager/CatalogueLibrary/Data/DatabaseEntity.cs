@@ -198,10 +198,10 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="propertyName"></param>
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (handler != null) handler(this, new PropertyChangedExtendedEventArgs(propertyName,oldValue,newValue));
         }
 
         /// <summary>
@@ -224,8 +224,10 @@ namespace CatalogueLibrary.Data
             if (_readonly)
                 throw new Exception("An attempt was made to modify Property '" + propertyName + "' of Database Object of Type '" + GetType().Name + "' while it was in read only mode.  Object was called '" + this + "'");
 
+            var old = field;
+
             field = value;
-            OnPropertyChanged(propertyName);
+            OnPropertyChanged(old, value, propertyName);
             return true;
         }
 

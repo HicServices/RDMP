@@ -72,8 +72,10 @@ namespace CatalogueLibrary.Data.Remoting
                 if (_encryptedPasswordHost.Password == value)
                     return;
 
+                var old = _encryptedPasswordHost.Password;
                 _encryptedPasswordHost.Password = value;
-                OnPropertyChanged();
+
+                OnPropertyChanged(old,value);
             }
         }
 

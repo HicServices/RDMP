@@ -317,8 +317,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Password, value))
                     return;
 
-                SelfCertifyingDataAccessPoint.Password = value; 
-                OnPropertyChanged();
+                var old = SelfCertifyingDataAccessPoint.Password;
+                SelfCertifyingDataAccessPoint.Password = value;
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -337,8 +338,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Username, value))
                     return;
 
+                var old = SelfCertifyingDataAccessPoint.Username;
                 SelfCertifyingDataAccessPoint.Username = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -351,8 +353,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Server, value))
                     return;
 
+                var old = SelfCertifyingDataAccessPoint.Server;
                 SelfCertifyingDataAccessPoint.Server = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -365,8 +368,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Database, value))
                     return;
 
-                SelfCertifyingDataAccessPoint.Database = value; 
-                OnPropertyChanged(); 
+                var old = SelfCertifyingDataAccessPoint.Database;
+                SelfCertifyingDataAccessPoint.Database = value;
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -379,8 +383,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.DatabaseType, value))
                     return;
 
+                var old = SelfCertifyingDataAccessPoint.DatabaseType;
                 SelfCertifyingDataAccessPoint.DatabaseType = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 

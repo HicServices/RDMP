@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
@@ -43,6 +44,30 @@ namespace MapsDirectlyToDatabaseTable
             toCreate.Repository = this;
             
             Objects.Add(toCreate);
+
+            toCreate.PropertyChanged += toCreate_PropertyChanged;
+        }
+
+        readonly Dictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new Dictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
+
+        void toCreate_PropertyChanged(object sender, PropertyChangedEventArgs e)
+        {
+            var changes = (PropertyChangedExtendedEventArgs)e;
+            var onObject = (IMapsDirectlyToDatabaseTable)sender;
+
+            //if we don't know about this object yet
+            if(!_propertyChanges.ContainsKey(onObject))
+                _propertyChanges.Add(onObject, new HashSet<PropertyChangedExtendedEventArgs>());
+
+            //if we already knew of a previous change
+            var collision = _propertyChanges[onObject].SingleOrDefault(c => c.PropertyName.Equals(changes.PropertyName));
+
+            //throw away that knowledge
+            if (collision != null)
+                _propertyChanges[onObject].Remove(collision);
+
+            //we know about this change now
+            _propertyChanges[onObject].Add(changes);
         }
 
 
@@ -105,22 +130,54 @@ namespace MapsDirectlyToDatabaseTable
 
         public void SaveToDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            
+            //forget about property changes (since it's 'saved' now)
+            if (_propertyChanges.ContainsKey(oTableWrapperObject))
+                _propertyChanges.Remove(oTableWrapperObject);
         }
 
         public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             Objects.Remove(oTableWrapperObject);
+
+            //forget about property changes (since it's been deleted)
+            if (_propertyChanges.ContainsKey(oTableWrapperObject))
+                _propertyChanges.Remove(oTableWrapperObject);
         }
 
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
         {
+            if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
+                return;
             
+            var type = mapsDirectlyToDatabaseTable.GetType();
+
+            foreach (var e in _propertyChanges[mapsDirectlyToDatabaseTable].ToArray()) //call ToArray to avoid cyclical events on SetValue
+            {
+                var prop = type.GetProperty(e.PropertyName);
+                prop.SetValue(mapsDirectlyToDatabaseTable,e.OldValue);//reset the old values
+            }
+
+            //forget about all changes now
+            _propertyChanges.Remove(mapsDirectlyToDatabaseTable);
         }
 
         public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
         {
-            return new RevertableObjectReport {Evaluation = ChangeDescription.NoChanges};
+            //if we don't know about it then it was deleted
+            if(!Objects.Contains(mapsDirectlyToDatabaseTable))
+                return new RevertableObjectReport(){Evaluation = ChangeDescription.DatabaseCopyWasDeleted};
+
+            //if it has no changes (since a save)
+            if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
+                return new RevertableObjectReport {Evaluation = ChangeDescription.NoChanges};
+
+            //we have local 'unsaved' changes
+            var type = mapsDirectlyToDatabaseTable.GetType();
+            var differences = _propertyChanges[mapsDirectlyToDatabaseTable].Select(
+                d => new RevertablePropertyDifference(type.GetProperty(d.PropertyName), d.NewValue, d.OldValue))
+                .ToList();
+
+            return new RevertableObjectReport(differences){Evaluation = ChangeDescription.DatabaseCopyDifferent};
         }
 
         /// <inheritdoc/>
