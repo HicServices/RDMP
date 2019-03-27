@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
@@ -31,7 +32,7 @@ namespace ReusableUIComponents.ScintillaHelper
         /// <param name="syntaxHelper"></param>
         /// <param name="spellCheck"></param>
         /// <returns></returns>
-        public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true)
+        public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
         {
             var toReturn =  new Scintilla();
             toReturn.Dock = DockStyle.Fill;
@@ -67,7 +68,21 @@ namespace ReusableUIComponents.ScintillaHelper
             {
                 if(spellCheck)
                 {
-                    var hunspell = new Hunspell("en_us.aff", "en_us.dic");
+                    string aff;
+                    string dic;
+
+                    if (currentDirectory == null)
+                    {
+                        aff = "en_us.aff";
+                        dic = "en_us.dic";
+                    }
+                    else
+                    {
+                        aff = Path.Combine(currentDirectory, "en_us.aff");
+                        dic = Path.Combine(currentDirectory, "en_us.dic");
+                    }
+
+                    var hunspell = new Hunspell(aff,dic);
                     toReturn.TextChanged += (s,e)=>scintilla_TextChanged(s,e,hunspell);
                     toReturn.Disposed += (s, e) => scintilla_Disposed(s, e, hunspell);
                 }
