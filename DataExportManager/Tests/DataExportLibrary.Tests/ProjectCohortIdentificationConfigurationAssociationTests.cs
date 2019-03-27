@@ -4,13 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Providers;
+using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportLibrary.Repositories;
 using NUnit.Framework;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Tests
 {
@@ -45,6 +49,18 @@ namespace DataExportLibrary.Tests
             //relationship from p should resolve to the cic
             Assert.IsEmpty( p.GetAssociatedCohortIdentificationConfigurations());
 
+            //error should be reported in top right of program
+            var ex = Assert.Throws<Exception>(()=>new DataExportChildProvider(new RepositoryProvider(memory), null, new ThrowImmediatelyCheckNotifier()));
+            StringAssert.IsMatch(@"Failed to find Associated Cohort Identification Configuration with ID \d+ which was supposed to be associated with my proj", ex.Message);
+
+            //but UI should still respond
+            var childProvider = new DataExportChildProvider(new RepositoryProvider(memory), null, new IgnoreAllErrorsCheckNotifier());
+
+            //the orphan cic should not appear in the tree view under Project=>Cohorts=>Associated Cics
+            var cohorts = (ProjectCohortsNode)childProvider.GetChildren(p).First();
+            var cics = (ProjectCohortIdentificationConfigurationAssociationsNode) childProvider.GetChildren(cohorts).First();
+            
+            Assert.IsEmpty(childProvider.GetChildren(cics));
         }
     }
 }
