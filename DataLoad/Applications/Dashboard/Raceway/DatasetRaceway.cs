@@ -257,7 +257,7 @@ namespace Dashboard.Raceway
             {
                 var packageToAdd = (ExtractableDataSetPackage) dialog.Selected;
 
-                var contents = dataExportChildProvider.PackageContents.GetAllDataSets(packageToAdd,dataExportChildProvider.ExtractableDataSets);
+                var contents = _activator.RepositoryLocator.DataExportRepository.PackageManager.GetAllDataSets(packageToAdd, dataExportChildProvider.ExtractableDataSets);
 
                 foreach (var cata in contents.Select(ds => ds.Catalogue))
                 {

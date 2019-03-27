@@ -46,7 +46,7 @@ namespace ANOStore.ANOEngineering
 
         public ForwardEngineerANOCatalogueEngine(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ForwardEngineerANOCataloguePlanManager planManager)
         {
-            _catalogueRepository = repositoryLocator.CatalogueRepository;
+            _catalogueRepository = (CatalogueRepository) repositoryLocator.CatalogueRepository;
             _shareManager = new ShareManager(repositoryLocator);
             _planManager = planManager;
             _allColumnsInfos = _catalogueRepository.GetAllObjects<ColumnInfo>();

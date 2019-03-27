@@ -784,7 +784,7 @@ namespace CatalogueLibrary.Providers
             //really user wants to see it in CohortIdentificationCollectionUI
             if(aggregateConfiguration.RootFilterContainer_ID != null)
             {
-                var container = AllAggregateContainers[(int) aggregateConfiguration.RootFilterContainer_ID];
+                var container = AllAggregateContainersDictionary[(int) aggregateConfiguration.RootFilterContainer_ID];
                 
                 AddChildren(container,descendancy.Add(container));
                 childrenObjects.Add(container);

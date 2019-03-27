@@ -31,7 +31,7 @@ namespace CatalogueLibrary
         //use http://sourceforge.net/projects/dita-ot/files/DITA-OT%20Stable%20Release/DITA%20Open%20Toolkit%201.8/DITA-OT1.8.M2_full_easy_install_bin.zip/download
         //to convert .dita files into html
         
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         private readonly DirectoryInfo _folderToCreateIn;
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace CatalogueLibrary
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="folderToCreateIn"></param>
-        public DitaCatalogueExtractor(CatalogueRepository repository, DirectoryInfo folderToCreateIn)
+        public DitaCatalogueExtractor(ICatalogueRepository repository, DirectoryInfo folderToCreateIn)
         {
             _repository = repository;
             _folderToCreateIn = folderToCreateIn;

@@ -34,7 +34,7 @@ namespace CatalogueLibrary.Reports
     /// </summary>
     public class MetadataReport:DocXHelper
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         private readonly MetadataReportArgs _args;
         
         HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new HashSet<TableInfo>();
@@ -47,7 +47,7 @@ namespace CatalogueLibrary.Reports
 
         
 
-        public MetadataReport(CatalogueRepository repository,MetadataReportArgs args)
+        public MetadataReport(ICatalogueRepository repository,MetadataReportArgs args)
         {
             _repository = repository;
             _args = args;

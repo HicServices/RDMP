@@ -187,7 +187,6 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ANOConfigurationChecker.cs" />
-    <Compile Include="CohortConfigurationChecker.cs" />
     <Compile Include="TestData\BulkTestsData.cs" />
     <Compile Include="TestData\Exercises\BiochemistryExerciseTestData.cs" />
     <Compile Include="TestData\Exercises\CarotidArteryScanReportExerciseTestData.cs" />

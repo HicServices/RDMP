@@ -16,6 +16,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Managers;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -55,7 +56,7 @@ namespace CatalogueManager.LocationsMenu
             if (VisualStudioDesignMode) //dont go looking up the key if you are visual studio in designer mode!
                 return;
 
-            _location = new PasswordEncryptionKeyLocation(Activator.RepositoryLocator.CatalogueRepository);
+            _location = new PasswordEncryptionKeyLocation((CatalogueRepository) Activator.RepositoryLocator.CatalogueRepository);
 
             SetEnabledness();
         }

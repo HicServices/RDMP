@@ -23,9 +23,9 @@ namespace CatalogueLibrary.Reports
     public class DatabaseSizeReport : DocXHelper, ICheckable
     {
         private readonly TableInfo[] _tableInfos;
-        private CatalogueRepository _repository;
+        private ICatalogueRepository _repository;
 
-        public DatabaseSizeReport(TableInfo[] tableInfos, CatalogueRepository repository)
+        public DatabaseSizeReport(TableInfo[] tableInfos, ICatalogueRepository repository)
         {
             _tableInfos = tableInfos;
             _repository = repository;
@@ -52,7 +52,7 @@ namespace CatalogueLibrary.Reports
                 if(toAddTo != null)
                     toAddTo.AddTableInfo(t); //add it as another table we know about in that database
                 else
-                    servers[key].Add(new DatabaseSizeFacts(_repository,t));//it is novel so add it as a new database we know only that table t is in
+                    servers[key].Add(new DatabaseSizeFacts(t));//it is novel so add it as a new database we know only that table t is in
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Identified dependencies of " + t, CheckResult.Success));
             }
@@ -147,7 +147,7 @@ namespace CatalogueLibrary.Reports
             public string DatabaseName { get; set; }
             public Dictionary<TableInfo,Catalogue[]> Tables { get; private set; }
 
-            public DatabaseSizeFacts(CatalogueRepository repository,TableInfo t)
+            public DatabaseSizeFacts(TableInfo t)
             {
                 DatabaseName = t.GetDatabaseRuntimeName();
                 Tables = new Dictionary<TableInfo, Catalogue[]>();

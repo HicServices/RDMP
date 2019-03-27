@@ -877,7 +877,7 @@ namespace MapsDirectlyToDatabaseTable
         }
 
         private Type[] _compatibleTypes;
-        public IMapsDirectlyToDatabaseTable[] GetEverySingleObjectInEntireDatabase()
+        public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
         {
             List<IMapsDirectlyToDatabaseTable> toReturn = new List<IMapsDirectlyToDatabaseTable>();
 

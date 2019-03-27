@@ -24,7 +24,6 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Properties;
 using CatalogueLibrary.Repositories.Construction;
 using CatalogueLibrary.Repositories.Managers;
 using HIC.Logging;
@@ -73,6 +72,7 @@ namespace CatalogueLibrary.Repositories
 
         public IEncryptionManager EncryptionManager { get; private set; }
 
+        public IPluginManager PluginManager { get; private set; }
 
         /// <summary>
         /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
@@ -83,7 +83,7 @@ namespace CatalogueLibrary.Repositories
 
         /// <inheritdoc/>
         public IFilterManager FilterManager { get; private set; }
-
+        
         /// <summary>
         /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
         /// </summary>
@@ -98,7 +98,10 @@ namespace CatalogueLibrary.Repositories
             MEF = new MEF();
             FilterManager = new AggregateFilterManager(this);
             EncryptionManager = new PasswordEncryptionKeyLocation(this);
-            
+            PluginManager = new PluginManager(this);
+
+            CommentStore = new CommentStoreWithKeywords();
+
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
             
             //Shortcuts to improve performance of ConstructEntity (avoids reflection)
@@ -157,44 +160,6 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(TicketingSystemConfiguration),(rep,r)=>new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
         }
-
-        /// <summary>
-        /// Initializes and loads <see cref="CommentStore"/> with all the xml doc/dll files found in the provided <paramref name="directories"/> 
-        /// </summary>
-        /// <param name="directories"></param>
-        public void LoadHelp(params string[] directories)
-        {
-            if (!SuppressHelpLoading)
-            {
-                CommentStore = new CommentStore();
-                CommentStore.ReadComments(directories);
-                AddToHelp(Resources.KeywordHelp);
-            }
-        }
-
-        private void AddToHelp(string keywordHelpFileContents)
-        {
-            //null is true for us loading help
-            if (SuppressHelpLoading)
-                return;
-
-            var lines = keywordHelpFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var split = line.Split(':');
-
-                if (split.Length != 2)
-                    throw new Exception("Malformed line in Resources.KeywordHelp, line is:" + Environment.NewLine + line + Environment.NewLine + "We expected it to have exactly one colon in it");
-
-                if (!CommentStore.ContainsKey(split[0]))
-                    CommentStore.Add(split[0], split[1]);
-            }
-        }
-        
         
         /// <inheritdoc/>
         public LogManager GetDefaultLogManager()
@@ -243,31 +208,7 @@ namespace CatalogueLibrary.Repositories
 
         public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
         {
-            var servers = GetAllObjects<ExternalDatabaseServer>();
-            string assembly;
-
-            switch (type)
-            {
-                case Tier2DatabaseType.Logging:
-                    assembly = "HIC.Logging.Database";
-                    break;
-                case Tier2DatabaseType.DataQuality:
-                    assembly = "DataQualityEngine.Database";
-                    break;
-                case Tier2DatabaseType.QueryCaching:
-                    assembly = "QueryCaching.Database";
-                    break;
-                case Tier2DatabaseType.ANOStore:
-                    assembly = "ANOStore.Database";
-                    break;
-                case Tier2DatabaseType.IdentifierDump:
-                    assembly = "IdentifierDump.Database";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
-
-            return servers.Where(s => s.CreatedByAssembly == assembly).ToArray();
+            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedByDatabaseAssembly(type)).ToArray();
         }
         
         public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
@@ -364,14 +305,6 @@ namespace CatalogueLibrary.Repositories
             }
         }
 
-        public Plugin[] GetCompatiblePlugins()
-        {
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-            var plugins = GetAllObjects<Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(new Version(version), 3));
-            var uniquePlugins = plugins.GroupBy(p => new { name = p.Name, ver = new Version(p.PluginVersion.Major, p.PluginVersion.Minor, p.PluginVersion.Build) })
-                                       .ToDictionary(g => g.Key, p => p.OrderByDescending(pv => pv.PluginVersion).First());
-            return uniquePlugins.Values.ToArray();
-        }
 
         public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
         {

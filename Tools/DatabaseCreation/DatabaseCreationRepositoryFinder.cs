@@ -20,7 +20,7 @@ namespace DatabaseCreation
     {
         private readonly LinkedRepositoryProvider _linkedRepositoryProvider;
 
-        public CatalogueRepository CatalogueRepository
+        public ICatalogueRepository CatalogueRepository
         {
             get { return _linkedRepositoryProvider.CatalogueRepository; }
         }

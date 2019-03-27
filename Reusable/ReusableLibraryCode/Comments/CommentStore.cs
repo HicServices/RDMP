@@ -36,7 +36,7 @@ namespace ReusableLibraryCode.Comments
             "nunit.framework.xml"
         };
         
-        public void ReadComments(params string[] directoriesToLookInForComments)
+        public virtual void ReadComments(params string[] directoriesToLookInForComments)
         {
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())

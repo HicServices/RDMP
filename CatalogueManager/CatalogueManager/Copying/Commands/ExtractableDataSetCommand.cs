@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.DataTables.DataSetPackages;
@@ -14,7 +15,7 @@ namespace CatalogueManager.Copying.Commands
 {
     public class ExtractableDataSetCommand : ICommand
     {
-        public ExtractableDataSet[] ExtractableDataSets { get; set; }
+        public IExtractableDataSet[] ExtractableDataSets { get; set; }
 
         public ExtractableDataSetCommand(ExtractableDataSet extractableDataSet)
         {
@@ -29,8 +30,7 @@ namespace CatalogueManager.Copying.Commands
         public ExtractableDataSetCommand(ExtractableDataSetPackage extractableDataSetPackage)
         {
             var repository = (IDataExportRepository) extractableDataSetPackage.Repository;
-            var packagecontents = new ExtractableDataSetPackageManager(repository);
-            ExtractableDataSets = packagecontents.GetAllDataSets(extractableDataSetPackage,repository.GetAllObjects<ExtractableDataSet>());
+            ExtractableDataSets = repository.PackageManager.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());
         }
 
         public string GetSqlString()

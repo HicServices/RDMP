@@ -17,13 +17,13 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
 {
     public class PipelineSelectionUIFactory
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         private readonly IPipelineUser _user;
         private readonly IPipelineUseCase _useCase;
 
         private IPipelineSelectionUI _pipelineSelectionUIInstance;
 
-        public PipelineSelectionUIFactory(CatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase)
+        public PipelineSelectionUIFactory(ICatalogueRepository repository, IPipelineUser user, IPipelineUseCase useCase)
         {
             _repository = repository;
             _user = user;

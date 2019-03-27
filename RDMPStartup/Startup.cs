@@ -90,11 +90,10 @@ namespace RDMPStartup
 
             try
             {
-                TableRepository catalogueRepository = RepositoryLocator.CatalogueRepository;
                 var hostAssembly = typeof(Catalogue).Assembly;
                 var dbAssembly = Assembly.Load("CatalogueLibrary.Database");
-                
-                foundCatalogue = Find(catalogueRepository,hostAssembly, dbAssembly,1, RDMPPlatformType.Catalogue);
+
+                foundCatalogue = Find((ITableRepository) RepositoryLocator.CatalogueRepository, hostAssembly, dbAssembly, 1, RDMPPlatformType.Catalogue);
             }
             catch (Exception e)
             {
@@ -143,14 +142,14 @@ namespace RDMPStartup
                     var hostAssembly = typeof(ExtractableDataSet).Assembly;
                     var dbAssembly = Assembly.Load("DataExportLibrary.Database");
 
-                    Find(dataExportRepository, hostAssembly, dbAssembly,1, RDMPPlatformType.DataExport);
+                    Find((ITableRepository) dataExportRepository, hostAssembly, dbAssembly,1, RDMPPlatformType.DataExport);
                 }
                 catch (Exception e)
                 {
                     DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,null,null,1, RDMPPlatformDatabaseStatus.Broken, RDMPPlatformType.DataExport,e));
                 }
 
-                FindTier3Databases(RepositoryLocator.CatalogueRepository);
+                FindTier3Databases((CatalogueRepository) RepositoryLocator.CatalogueRepository);
             }
 
             Validator.RefreshExtraTypes(mefCheckNotifier);
@@ -275,7 +274,7 @@ namespace RDMPStartup
 
         #region MEF
 
-        private void LoadMEF(CatalogueRepository catalogueRepository)
+        private void LoadMEF(ICatalogueRepository catalogueRepository)
         {
             DirectoryInfo downloadDirectory = catalogueRepository.MEF.DownloadDirectory;
              
@@ -283,7 +282,7 @@ namespace RDMPStartup
             if(!downloadDirectory.Exists)
                 downloadDirectory.Create();
 
-            var recordsInDatabase = catalogueRepository.GetCompatiblePlugins();
+            var recordsInDatabase = catalogueRepository.PluginManager.GetCompatiblePlugins();
 
             List<DirectoryInfo> dirs = new List<DirectoryInfo>();
 
@@ -364,7 +363,9 @@ namespace RDMPStartup
 
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
             var sw = Stopwatch.StartNew();
-            catalogueRepository.LoadHelp(Environment.CurrentDirectory);
+
+            if(!CatalogueRepository.SuppressHelpLoading)
+                catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory);
 
             sw.Stop();
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));

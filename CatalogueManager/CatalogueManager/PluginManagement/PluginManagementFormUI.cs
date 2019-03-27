@@ -276,7 +276,7 @@ namespace CatalogueManager.PluginManagement
             olvPlugins.ClearObjects();
             olvLegacyPlugins.ClearObjects();
 
-            compatiblePlugins = Activator.RepositoryLocator.CatalogueRepository.GetCompatiblePlugins().ToList();
+            compatiblePlugins = Activator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins().ToList();
             wrongPlugins = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Except(compatiblePlugins).ToList();
 
             olvPlugins.AddObjects(compatiblePlugins.SelectMany(p => p.LoadModuleAssemblies).ToArray());

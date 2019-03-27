@@ -53,7 +53,6 @@
             this.serverSpecReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dITAExtractionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.launchDiagnosticsScreenToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateTestDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.managePluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -274,7 +273,6 @@
             // testsToolStripMenuItem
             // 
             this.testsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.launchDiagnosticsScreenToolStripMenuItem,
             this.generateTestDataToolStripMenuItem,
             this.pluginsToolStripMenuItem,
             this.toolStripSeparator1,
@@ -283,14 +281,7 @@
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
             this.testsToolStripMenuItem.Text = "Diagnostics";
-            // 
-            // launchDiagnosticsScreenToolStripMenuItem
-            // 
-            this.launchDiagnosticsScreenToolStripMenuItem.Name = "launchDiagnosticsScreenToolStripMenuItem";
-            this.launchDiagnosticsScreenToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.D)));
-            this.launchDiagnosticsScreenToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
-            this.launchDiagnosticsScreenToolStripMenuItem.Text = "Launch Diagnostics Screen...";
-            this.launchDiagnosticsScreenToolStripMenuItem.Click += new System.EventHandler(this.launchDiagnosticsScreenToolStripMenuItem_Click);
+            
             // 
             // generateTestDataToolStripMenuItem
             // 
@@ -437,7 +428,6 @@
         private System.Windows.Forms.ToolStripMenuItem serverSpecReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dITAExtractionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem launchDiagnosticsScreenToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateTestDataToolStripMenuItem;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator1;
         private System.Windows.Forms.ToolStripMenuItem showPerformanceCounterToolStripMenuItem;

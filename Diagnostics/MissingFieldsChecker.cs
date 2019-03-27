@@ -24,7 +24,7 @@ namespace Diagnostics
     public class MissingFieldsChecker : ICheckable
     {
         private readonly CatalogueRepository _catalogueRepository;
-        private readonly IDataExportRepository _dataExportRepository;
+        private readonly DataExportRepository _dataExportRepository;
         private readonly string _assemblyName;
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
         private readonly Type[] _typesToCheck;
@@ -36,7 +36,7 @@ namespace Diagnostics
             DataExportManager
         }
 
-        public MissingFieldsChecker(ThingToCheck toCheck, CatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository)
+        public MissingFieldsChecker(ThingToCheck toCheck, CatalogueRepository catalogueRepository, DataExportRepository dataExportRepository)
         {
             _catalogueRepository = catalogueRepository;
             _dataExportRepository = dataExportRepository;

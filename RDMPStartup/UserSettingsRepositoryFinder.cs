@@ -22,7 +22,7 @@ namespace RDMPStartup
     {
         private LinkedRepositoryProvider _linkedRepositoryProvider;
 
-        public CatalogueRepository CatalogueRepository
+        public ICatalogueRepository CatalogueRepository
         {
             get
             {

@@ -49,7 +49,7 @@ namespace DataExportLibrary.Repositories
         public IExtractableDataSetPackageManager PackageManager { get; set; }
 
 
-        public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
+        public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
             

@@ -106,7 +106,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         
         public DataFlowPipelineEngineFactory PipelineFactory { get; private set; }
         
-        private void SetPipelineOptions(CatalogueRepository repository)
+        private void SetPipelineOptions(ICatalogueRepository repository)
         {
             if (_pipelineOptionsSet)
                 throw new Exception("CreateDatabase SetPipelineOptions has already been called, it should only be called once per instance lifetime");

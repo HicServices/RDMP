@@ -1347,12 +1347,6 @@
     <Compile Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.Designer.cs">
       <DependentUpon>TicketingSystemConfigurationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\DiagnosticsUI.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="TestsAndSetup\DiagnosticsUI.Designer.cs">
-      <DependentUpon>DiagnosticsUI.cs</DependentUpon>
-    </Compile>
     <Compile Include="TestsAndSetup\ServicePropogation\INamedTab.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IRDMPControl.cs" />
@@ -2067,10 +2061,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.resx">
       <DependentUpon>TicketingSystemConfigurationUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\DiagnosticsUI.resx">
-      <DependentUpon>DiagnosticsUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPForm.resx">
       <DependentUpon>RDMPForm.cs</DependentUpon>

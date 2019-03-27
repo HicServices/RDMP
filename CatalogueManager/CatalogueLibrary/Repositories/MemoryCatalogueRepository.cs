@@ -42,10 +42,11 @@ namespace CatalogueLibrary.Repositories
         public IEncryptionManager EncryptionManager { get { return this; }}
 
         public IFilterManager FilterManager { get { return this; }}
+        public IPluginManager PluginManager { get; private set; }
 
         public IJoinManager JoinManager { get; private set; }
         public MEF MEF { get; set; }
-        public CommentStore CommentStore { get; private set; }
+        public CommentStore CommentStore { get; set; }
 
         public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
         public string ConnectionString { get { return null; } }
@@ -57,6 +58,8 @@ namespace CatalogueLibrary.Repositories
         public MemoryCatalogueRepository(IServerDefaults currentDefaults = null)
         {
             JoinManager = new JoinManager(this);
+            PluginManager = new PluginManager(this);
+            CommentStore = new CommentStoreWithKeywords();
 
             //we need to know what the default servers for stuff are
             foreach (PermissableDefaults value in Enum.GetValues(typeof (PermissableDefaults)))
@@ -149,6 +152,11 @@ namespace CatalogueLibrary.Repositories
         public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
         {
             prop.SetValue(onObject,value);
+        }
+
+        public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
+        {
+            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedByDatabaseAssembly(type)).ToArray();
         }
 
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)

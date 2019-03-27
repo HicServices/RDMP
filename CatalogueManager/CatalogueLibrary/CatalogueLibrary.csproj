@@ -349,6 +349,8 @@
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\WindowLayout.cs" />
+    <Compile Include="Repositories\Managers\CommentStoreWithKeywords.cs" />
+    <Compile Include="Repositories\Managers\IPluginManager.cs" />
     <Compile Include="Repositories\Managers\HighPerformance\FilterManagerFromChildProvider.cs" />
     <Compile Include="Data\ITableInfo.cs" />
     <Compile Include="Data\Pipelines\IHasDesignTimeMode.cs" />
@@ -449,6 +451,7 @@
     <Compile Include="Repositories\Managers\IJoinManager.cs" />
     <Compile Include="Repositories\Managers\ITableInfoCredentialsManager.cs" />
     <Compile Include="Repositories\Managers\JoinInfoType.cs" />
+    <Compile Include="Repositories\Managers\PluginManager.cs" />
     <Compile Include="Repositories\MemoryCatalogueRepository.cs" />
     <Compile Include="Repositories\RepositoryProvider.cs" />
     <Compile Include="Spontaneous\SpontaneouslyInventedColumn.cs" />

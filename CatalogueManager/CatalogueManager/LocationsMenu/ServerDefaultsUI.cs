@@ -196,7 +196,6 @@ namespace CatalogueManager.LocationsMenu
         
         private void CreateNewExternalServer(PermissableDefaults defaultToSet, Assembly databaseAssembly)
         {
-
             if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository, defaultToSet, databaseAssembly) != null)
                 RefreshUIFromDatabase();
         }

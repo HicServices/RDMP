@@ -28,7 +28,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         
         private PipelineWorkAreaUI _workArea;
         
-        public ConfigurePipelineUI(IPipeline pipeline, IPipelineUseCase useCase, CatalogueRepository repository)
+        public ConfigurePipelineUI(IPipeline pipeline, IPipelineUseCase useCase, ICatalogueRepository repository)
         {
             _pipeline = pipeline;
             _useCase = useCase;
