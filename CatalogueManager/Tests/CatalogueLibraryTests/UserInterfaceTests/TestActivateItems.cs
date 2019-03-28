@@ -32,7 +32,7 @@ using ReusableUIComponents.Theme;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class TestActivateItems:IActivateItems, ITheme
+    public class TestActivateItems:IActivateItems, ITheme
     {
         private static CommentStore _commentStore;
 

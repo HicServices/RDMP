@@ -1,7 +1,6 @@
-﻿using System;
-using CatalogueLibrary.Data;
+﻿using CatalogueLibrary.Data;
 using CatalogueManager.MainFormUITabs;
-using DataExportLibrary.Repositories;
+using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using ScintillaNET;
 
@@ -12,22 +11,50 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         [Test, UITimeout(20000)]
         public void Test_CatalogueUI_SaveDescription()
         {
-            //create catalogue
-            var memory = new MemoryDataExportRepository();
-            var cata = new Catalogue(memory, "Mycata");
-            cata.SaveToDatabase();
+            var cata = WhenIHaveA<Catalogue>();
+            var ui = AndLaunch<CatalogueUI>(cata);
 
-            var ui = GetSingleDatabaseObjectControlForm<CatalogueUI>();
-            ui.SetDatabaseObject(new TestActivateItems(memory), cata);
+            //there no unsaved changes
+            Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
 
+            //but when I type text
             var scintilla = GetPrivateField<Scintilla>(ui, "_scintillaDescription");
             scintilla.Text = "amagad zombies";
 
+            //my class should get the typed text but it shouldn't be saved into the database yet
+            Assert.AreEqual("amagad zombies", cata.Description);
+            Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, cata.HasLocalChanges().Evaluation);
+
+            //when I press undo
             var saver = ui.GetObjectSaverButton();
+            saver.Undo();
+
+            //it should set the text editor back to blank
+            Assert.AreEqual("",scintilla.Text);
+            //and clear my class property
+            Assert.AreEqual(null, cata.Description);
+
+            //redo should update both the local class and text box
+            saver.Redo();
+            Assert.AreEqual("amagad zombies", scintilla.Text);
+            Assert.AreEqual("amagad zombies", cata.Description);
+
+            //undo a redo should still be valid
+            saver.Undo();
+            Assert.AreEqual("", scintilla.Text);
+            Assert.AreEqual(null, cata.Description);
+
+            saver.Redo();
+            Assert.AreEqual("amagad zombies", scintilla.Text);
+            Assert.AreEqual("amagad zombies", cata.Description);
+            
+            //when I save
             saver.Save();
 
+            //my class should have no changes (vs the database) and should have the proper description
+            Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
             Assert.AreEqual("amagad zombies", cata.Description);
         }
-        
+
     }
 }

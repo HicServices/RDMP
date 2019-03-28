@@ -1,5 +1,9 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
+using System.Text;
+using System.Threading;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using NUnit.Framework.Interfaces;
@@ -11,7 +15,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     [AttributeUsage(AttributeTargets.Method, AllowMultiple = false, Inherited = false)]
     class UITimeoutAttribute : NUnitAttribute, IWrapTestMethod
     {
-        private readonly TimeSpan _timeout;
+        private readonly int _timeout;
 
         /// <summary>
         /// Allows <paramref name="timeout"/> for the test to complete before calling <see cref="Process.CloseMainWindow"/> and failing the test
@@ -19,7 +23,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         /// <param name="timeout">timeout in milliseconds</param>
         public UITimeoutAttribute(int timeout)
         {
-            this._timeout = TimeSpan.FromMilliseconds(timeout);
+            this._timeout = timeout;
         }
 
         /// <inheritdoc/>
@@ -30,30 +34,96 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         private class TimeoutCommand : DelegatingTestCommand
         {
-            private readonly TimeSpan _timeout;
+            private int _timeout;
 
-            public TimeoutCommand(TestCommand innerCommand, TimeSpan timeout): base(innerCommand)
+            public TimeoutCommand(TestCommand innerCommand, int timeout): base(innerCommand)
             {
                 _timeout = timeout;
             }
 
+            [DllImport("user32.dll", CharSet = CharSet.Auto)]
+            private static extern IntPtr SendMessage(IntPtr hWnd, UInt32 Msg, int wParam, IntPtr lParam);
+
+            [DllImport("user32.dll", SetLastError = true, CharSet = CharSet.Auto)]
+            static extern int GetClassName(IntPtr hWnd, StringBuilder lpClassName, int nMaxCount);
+
+            [DllImport("user32.dll")]
+            static extern IntPtr GetDlgItem(IntPtr hDlg, int nIDDlgItem);
+
+            private string YesNoDialog = "#32770";
+
+            private const UInt32 WM_CLOSE = 0x0010;
+            private const UInt32 WM_COMMAND = 0x0111;
+            private int IDNO = 7;
+
+
             public override TestResult Execute(TestExecutionContext context)
             {
-                var t = Task.Run(() => this.innerCommand.Execute(context));
+                TestResult result = null;
+                Exception threadException = null;
 
+                Thread thread = new Thread(() =>
+                {
+                    try
+                    {
+                        result = innerCommand.Execute(context);
+                    }
+                    catch (Exception ex)
+                    {
+                        threadException = ex;
+                    }
+                });
+                thread.SetApartmentState(ApartmentState.STA);
+                thread.Start();
+                
                 try
                 {
                     if (!Debugger.IsAttached)
                     {
-                        Task.WaitAny(Task.Delay(_timeout), t);
-                        if(!t.IsCompleted)
+                        while (thread.IsAlive && _timeout > 0)
                         {
+                            Task.Delay(100).Wait();
+                            _timeout -= 100;
+                        }
+
+                        int closeAttempts = 10;
+
+                        if (_timeout <= 0)
+                        {
+                            //Sends WM_Close which closes any form except a YES/NO dialog box because yay
                             Process.GetCurrentProcess().CloseMainWindow();
-                            Assert.Fail("UI test did not complete after timeout");
+
+                            //if it still has a window handle then presumably needs further treatment
+                            IntPtr handle;
+                            
+                            while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
+                            {
+                                if(closeAttempts-- <=0)
+                                    throw new Exception("Failed to close all windows even after multiple attempts");
+
+                                StringBuilder sbClass = new StringBuilder(100);
+
+                                GetClassName(handle, sbClass, 100);
+                                
+                                //Is it a yes/no dialog
+                                if (sbClass.ToString() == YesNoDialog && GetDlgItem(handle, IDNO) != IntPtr.Zero)
+                                    //with a no button
+                                    SendMessage(handle, WM_COMMAND, IDNO, IntPtr.Zero); //click NO!
+                                else
+                                    SendMessage(handle, WM_CLOSE, 0, IntPtr.Zero); //click NO!
+                            }
+
+                            throw new Exception("UI test did not complete after timeout");
                         }
                     }
 
-                    return t.Result;
+                    if (threadException != null)
+                        throw threadException;
+
+                    if(result == null)
+                        throw new Exception("UI test did not produce a result");
+
+                    return result;
                 }
                 catch (AggregateException ae)
                 {

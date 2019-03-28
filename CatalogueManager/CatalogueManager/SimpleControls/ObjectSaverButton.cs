@@ -173,39 +173,42 @@ namespace CatalogueManager.SimpleControls
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {
-            if(_undo)
-            {
-                var changes = _o.HasLocalChanges();
-
-                //no changes anyway user must have made a change and then unapplyed it
-                if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
-                    return;
-
-                //reset to the database state
-                _o.RevertToDatabaseState();
-
-                //publish that the object has changed
-                _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-
-                //show the redo image
-                SetReadyToRedo(changes);
-
-                //publish probably disabled us
-                Enable(true);
-
-            }
+            if (_undo)
+                Undo();
             else
-            {
-                if(_undoneChanges != null && _undoneChanges.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                {
-                    foreach (var difference in _undoneChanges.Differences)
-                        difference.Property.SetValue(_o, difference.LocalValue);
+                Redo();
+        }
 
-                    _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-                    
-                    SetReadyToUndo();
-                }
+        public void Redo()
+        {
+            if (_undoneChanges != null && _undoneChanges.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+            {
+                foreach (var difference in _undoneChanges.Differences)
+                    difference.Property.SetValue(_o, difference.LocalValue);
+                
+                SetReadyToUndo();
             }
+        }
+
+        public void Undo()
+        {
+            var changes = _o.HasLocalChanges();
+
+            //no changes anyway user must have made a change and then unapplyed it
+            if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
+                return;
+
+            //reset to the database state
+            _o.RevertToDatabaseState();
+
+            //publish that the object has changed
+            _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+
+            //show the redo image
+            SetReadyToRedo(changes);
+
+            //publish probably disabled us
+            Enable(true);
         }
 
         private void SetReadyToRedo(RevertableObjectReport changes)
