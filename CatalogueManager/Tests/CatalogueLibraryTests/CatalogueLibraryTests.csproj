@@ -383,6 +383,7 @@
     <Compile Include="UserInterfaceTests\CatalogueUITests.cs" />
     <Compile Include="UserInterfaceTests\TestActivateItems.cs" />
     <Compile Include="UserInterfaceTests\UITests.cs" />
+    <Compile Include="UserInterfaceTests\UITimeoutAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj">

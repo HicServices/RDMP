@@ -9,7 +9,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     public class CatalogueUITests : UITests
     {
-        [Test]
+        [Test, UITimeout(20000)]
         public void Test_CatalogueUI_SaveDescription()
         {
             //create catalogue

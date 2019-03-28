@@ -1,7 +1,5 @@
-﻿using System.Diagnostics;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
+﻿using System.Linq;
+using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.SimpleDialogs;
@@ -13,7 +11,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     class CatalogueItemUITests:UITests
     {
-        [Test]
+        [Test, UITimeout(20000)]
         public void Test_CatalogueItemUI_DescriptionPropogation()
         {
             //create two catalogues that share a field with the same name
@@ -44,16 +42,17 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         }
     }
 
+    /*
     class Test
     {
-        /*
+        
         //does not work
-        [Test, Timeout(5000)]
+        [Test, UITimeout(5000)]
         public void Test1()
         {
             //blocks test and timeout is not respected
             MessageBox.Show("It went wrong");
-        }*/
+        }
 
         //works but is ugly
         [Test]
@@ -74,5 +73,5 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 Assert.Fail("Test did not complete after timeout");
             }
         }
-    }
+    }*/
 }
