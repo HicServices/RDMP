@@ -78,44 +78,42 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 
                 try
                 {
-                    if (!Debugger.IsAttached)
+                    while (thread.IsAlive && _timeout > 0  || Debugger.IsAttached)
                     {
-                        while (thread.IsAlive && _timeout > 0)
-                        {
-                            Task.Delay(100).Wait();
-                            _timeout -= 100;
-                        }
-
-                        int closeAttempts = 10;
-
-                        if (_timeout <= 0)
-                        {
-                            //Sends WM_Close which closes any form except a YES/NO dialog box because yay
-                            Process.GetCurrentProcess().CloseMainWindow();
-
-                            //if it still has a window handle then presumably needs further treatment
-                            IntPtr handle;
-                            
-                            while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
-                            {
-                                if(closeAttempts-- <=0)
-                                    throw new Exception("Failed to close all windows even after multiple attempts");
-
-                                StringBuilder sbClass = new StringBuilder(100);
-
-                                GetClassName(handle, sbClass, 100);
-                                
-                                //Is it a yes/no dialog
-                                if (sbClass.ToString() == YesNoDialog && GetDlgItem(handle, IDNO) != IntPtr.Zero)
-                                    //with a no button
-                                    SendMessage(handle, WM_COMMAND, IDNO, IntPtr.Zero); //click NO!
-                                else
-                                    SendMessage(handle, WM_CLOSE, 0, IntPtr.Zero); //click NO!
-                            }
-
-                            throw new Exception("UI test did not complete after timeout");
-                        }
+                        Task.Delay(100).Wait();
+                        _timeout -= 100;
                     }
+
+                    int closeAttempts = 10;
+
+                    if (_timeout <= 0)
+                    {
+                        //Sends WM_Close which closes any form except a YES/NO dialog box because yay
+                        Process.GetCurrentProcess().CloseMainWindow();
+
+                        //if it still has a window handle then presumably needs further treatment
+                        IntPtr handle;
+                            
+                        while((handle = Process.GetCurrentProcess().MainWindowHandle) != IntPtr.Zero)
+                        {
+                            if(closeAttempts-- <=0)
+                                throw new Exception("Failed to close all windows even after multiple attempts");
+
+                            StringBuilder sbClass = new StringBuilder(100);
+
+                            GetClassName(handle, sbClass, 100);
+                                
+                            //Is it a yes/no dialog
+                            if (sbClass.ToString() == YesNoDialog && GetDlgItem(handle, IDNO) != IntPtr.Zero)
+                                //with a no button
+                                SendMessage(handle, WM_COMMAND, IDNO, IntPtr.Zero); //click NO!
+                            else
+                                SendMessage(handle, WM_CLOSE, 0, IntPtr.Zero); //click NO!
+                        }
+
+                        throw new Exception("UI test did not complete after timeout");
+                    }
+                    
 
                     if (threadException != null)
                         throw threadException;

@@ -62,6 +62,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
             CoreIconProvider = new DataExportIconProvider(null);
+            FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
         }
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)

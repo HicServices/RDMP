@@ -5,13 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using FAnsi;
-using ReusableLibraryCode;
 
 namespace CatalogueLibrary.Nodes
 {
@@ -20,10 +15,12 @@ namespace CatalogueLibrary.Nodes
         public readonly DatabaseType DatabaseType;
         public string ServerName { get; private set; }
 
+        public const string NullServerNode = "Null Server";
+
         public TableInfoServerNode(string serverName, DatabaseType databaseType)
         {
             DatabaseType = databaseType;
-            ServerName = serverName;
+            ServerName = serverName ?? NullServerNode;
         }
 
         public override string ToString()
@@ -33,7 +30,7 @@ namespace CatalogueLibrary.Nodes
 
         protected bool Equals(TableInfoServerNode other)
         {
-            return DatabaseType == other.DatabaseType && string.Equals(ServerName, other.ServerName);
+            return DatabaseType == other.DatabaseType && string.Equals(ServerName, other.ServerName,StringComparison.CurrentCultureIgnoreCase);
         }
 
         public override bool Equals(object obj)
@@ -48,14 +45,15 @@ namespace CatalogueLibrary.Nodes
         {
             unchecked
             {
-                return ((int) DatabaseType*397) ^ (ServerName != null ? ServerName.GetHashCode() : 0);
+
+                return ((int)DatabaseType * 397) ^ (ServerName != null ? StringComparer.CurrentCultureIgnoreCase.GetHashCode(ServerName) : 0);
             }
         }
 
         public bool IsSameServer(TableInfo tableInfo)
         {
             return
-                ServerName.Equals(tableInfo.Server)
+                ServerName.Equals(tableInfo.Server ?? NullServerNode,StringComparison.CurrentCultureIgnoreCase)
                 &&
                 DatabaseType == tableInfo.DatabaseType;
 

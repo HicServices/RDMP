@@ -382,6 +382,7 @@
     <Compile Include="UserInterfaceTests\AggregateEditorUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueItemUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueUITests.cs" />
+    <Compile Include="UserInterfaceTests\ChildProviderTests.cs" />
     <Compile Include="UserInterfaceTests\TestActivateItems.cs" />
     <Compile Include="UserInterfaceTests\UITests.cs" />
     <Compile Include="UserInterfaceTests\UITimeoutAttribute.cs" />
