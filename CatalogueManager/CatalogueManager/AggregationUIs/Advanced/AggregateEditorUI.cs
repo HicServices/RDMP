@@ -9,10 +9,12 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
+using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueLibrary.Exceptions;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Options;
 using CatalogueLibrary.Repositories;
@@ -523,8 +525,16 @@ namespace CatalogueManager.AggregationUIs.Advanced
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
+            try
+            {
+                _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
+            }
+            catch (AmbiguousDatabaseTypeException e)
+            {
+                activator.KillForm(ParentForm,e);
+                return;
+            }
 
-            _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
             SetAggregate(activator, databaseObject);
             
             if (databaseObject.IsCohortIdentificationAggregate)

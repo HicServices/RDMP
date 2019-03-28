@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -49,6 +50,9 @@ namespace CatalogueManager.AggregationUIs.Advanced
         
         private List<IColumn> _availableColumns;
         private List<IColumn> _includedColumns;
+
+        internal IReadOnlyCollection<IColumn> AvailableColumns { get { return new ReadOnlyCollection<IColumn>(_availableColumns);} }
+        internal IReadOnlyCollection<IColumn> IncludedColumns { get { return new ReadOnlyCollection<IColumn>(_includedColumns); } }
 
         public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
 

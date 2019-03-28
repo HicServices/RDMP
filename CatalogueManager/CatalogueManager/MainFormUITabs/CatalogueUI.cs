@@ -39,7 +39,7 @@ namespace CatalogueManager.MainFormUITabs
     {
 
         private bool _expand = true;
-        private Scintilla _scintillaDescription;
+        internal Scintilla _scintillaDescription;
 
         private Catalogue _catalogue;
 

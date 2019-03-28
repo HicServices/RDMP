@@ -18,8 +18,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
 
             //but when I type text
-            var scintilla = GetPrivateField<Scintilla>(ui, "_scintillaDescription");
-            scintilla.Text = "amagad zombies";
+            ui._scintillaDescription.Text = "amagad zombies";
 
             //my class should get the typed text but it shouldn't be saved into the database yet
             Assert.AreEqual("amagad zombies", cata.Description);
@@ -30,22 +29,22 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             saver.Undo();
 
             //it should set the text editor back to blank
-            Assert.AreEqual("",scintilla.Text);
+            Assert.AreEqual("", ui._scintillaDescription.Text);
             //and clear my class property
             Assert.AreEqual(null, cata.Description);
 
             //redo should update both the local class and text box
             saver.Redo();
-            Assert.AreEqual("amagad zombies", scintilla.Text);
+            Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
             Assert.AreEqual("amagad zombies", cata.Description);
 
             //undo a redo should still be valid
             saver.Undo();
-            Assert.AreEqual("", scintilla.Text);
+            Assert.AreEqual("", ui._scintillaDescription.Text);
             Assert.AreEqual(null, cata.Description);
 
             saver.Redo();
-            Assert.AreEqual("amagad zombies", scintilla.Text);
+            Assert.AreEqual("amagad zombies", ui._scintillaDescription.Text);
             Assert.AreEqual("amagad zombies", cata.Description);
             
             //when I save

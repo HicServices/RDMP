@@ -1,9 +1,8 @@
-﻿using System.Collections.Generic;
+﻿using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs.Advanced;
-using DataExportLibrary.Repositories;
-using FAnsi.Implementation;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
@@ -20,11 +19,32 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var ui = AndLaunch<AggregateEditorUI>(config);
 
             //The selected columns ui
-            var colsUi = GetPrivateField<SelectColumnUI>(ui, "selectColumnUI1");
+            var colsUi = ui.selectColumnUI1;
             
             //should show two available columns
-            var available = GetPrivateField<List<IColumn>>(colsUi, "_availableColumns");
+            var available = colsUi.AvailableColumns;
             Assert.AreEqual(2,available.Count);
+        }
+
+
+        [Test, UITimeout(5000)]
+        public void Test_AggregateEditorUI_NoExtractableColumns()
+        {
+            LoadDatabaseImplementations();
+
+            var cata = WhenIHaveA<Catalogue>();
+            var config = new AggregateConfiguration(Repository,cata,"my config");
+            config.SaveToDatabase();
+
+            var cmd = new ExecuteCommandAddNewAggregateGraph(ItemActivator, cata);
+            Assert.IsTrue(cmd.IsImpossible);
+            StringAssert.Contains("no extractable columns",cmd.ReasonCommandImpossible);
+            
+            var ui = AndLaunch<AggregateEditorUI>(config);
+
+            var killed = ItemActivator.Results.KilledForms.Single();
+            Assert.AreEqual(ui.ParentForm,killed.Key);
+            StringAssert.Contains("no extractable columns", killed.Value.Message);
         }
     }
 }

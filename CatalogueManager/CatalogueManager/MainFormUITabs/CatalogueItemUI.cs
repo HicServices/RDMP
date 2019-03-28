@@ -33,7 +33,7 @@ namespace CatalogueManager.MainFormUITabs
     public partial class CatalogueItemUI : CatalogueItemUI_Design, ISaveableUI
     {
         private bool _expand = true;
-        private Scintilla _scintillaDescription;
+        internal Scintilla _scintillaDescription;
         private CatalogueItem _catalogueItem;
 
         public CatalogueItemUI()

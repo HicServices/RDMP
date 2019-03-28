@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Exceptions;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -168,5 +169,13 @@ namespace CatalogueManager.ItemActivation
         string CurrentDirectory { get; }
 
         DialogResult ShowDialog(Form form);
+        
+        /// <summary>
+        /// Closes the Form <paramref name="f"/> and reports the <paramref name="reason"/> to the user
+        /// in a highly visible way
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="reason"></param>
+        void KillForm(Form f, Exception reason);
     }
 }

@@ -44,10 +44,15 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
-        public List<Control> WindowsShown = new List<Control>();
+        /// <summary>
+        /// All the activities that you might want to know happened during tests.  (not a member of <see cref="IActivateItems"/>)
+        /// </summary>
+        public TestActivateItemsResults Results { get; private set; }
 
         public TestActivateItems(MemoryDataExportRepository repo)
         {
+            Results = new TestActivateItemsResults();
+
             RepositoryLocator = new RepositoryProvider(repo);
             RefreshBus = new RefreshBus();
 
@@ -165,8 +170,14 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         public string CurrentDirectory { get { return TestContext.CurrentContext.TestDirectory; }}
         public DialogResult ShowDialog(Form form)
         {
-            WindowsShown.Add(form);
+            Results.WindowsShown.Add(form);
             return DialogResult.OK;
+        }
+
+        
+        public void KillForm(Form f, Exception reason)
+        {
+            Results.KilledForms.Add(f,reason);
         }
 
         public void ApplyTo(ToolStrip item)
@@ -175,5 +186,14 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         }
 
         public bool ApplyThemeToMenus { get; set; }
+
+        public class TestActivateItemsResults
+        {
+            public List<Control> WindowsShown = new List<Control>();
+            public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
+            
+        }
     }
+
+    
 }

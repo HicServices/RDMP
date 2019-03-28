@@ -14,11 +14,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
         protected TestActivateItems ItemActivator;
         
-        protected T GetPrivateField<T>(Control c, string field)
-        {
-            return (T)c.GetType().GetField(field, BindingFlags.NonPublic | BindingFlags.Instance).GetValue(c);
-        }
-        
         protected T WhenIHaveA<T>() where T:DatabaseEntity
         {
             T toReturn = null;

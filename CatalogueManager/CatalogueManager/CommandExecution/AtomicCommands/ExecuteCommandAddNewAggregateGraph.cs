@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Icons.IconProvision;
@@ -22,6 +23,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandAddNewAggregateGraph(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
+
+            if(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei=>ei.ColumnInfo == null))
+                SetImpossible("Catalogue has no extractable columns");
         }
 
         public override string GetCommandHelp()

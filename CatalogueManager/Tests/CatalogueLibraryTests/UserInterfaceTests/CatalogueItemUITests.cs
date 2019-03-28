@@ -19,7 +19,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var ui = AndLaunch<CatalogueItemUI>(catalogueItem);
 
             //when I change the description of the first
-            var scintilla = GetPrivateField<Scintilla>(ui, "_scintillaDescription");
+            var scintilla = ui._scintillaDescription;
             scintilla.Text = "what is in the column";
 
             //and save it
@@ -30,8 +30,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Assert.AreEqual("what is in the column", catalogueItem.Description);
 
             //and the UI should have shown the Propagate changes dialog
-            Assert.AreEqual(1, ItemActivator.WindowsShown.Count);
-            Assert.IsInstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI),ItemActivator.WindowsShown.Single());
+            Assert.AreEqual(1, ItemActivator.Results.WindowsShown.Count);
+            Assert.IsInstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI),ItemActivator.Results.WindowsShown.Single());
         }
     }
 }

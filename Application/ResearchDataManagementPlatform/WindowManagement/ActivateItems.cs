@@ -400,6 +400,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return form.ShowDialog();
         }
 
+        public void KillForm(Form f, Exception reason)
+        {
+            f.Close();
+            ExceptionViewer.Show(reason);
+        }
+
         ///<inheritdoc/>
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {

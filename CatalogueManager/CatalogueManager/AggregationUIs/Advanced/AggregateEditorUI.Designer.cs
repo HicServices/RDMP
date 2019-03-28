@@ -436,7 +436,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.GroupBox gbDescription;
         private System.Windows.Forms.TextBox tbDescription;
-        private SelectColumnUI selectColumnUI1;
+        internal SelectColumnUI selectColumnUI1;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Label label2;
         private AggregateTopXUI _aggregateTopXui1;

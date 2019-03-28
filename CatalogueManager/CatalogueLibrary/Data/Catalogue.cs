@@ -14,6 +14,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Exceptions;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using FAnsi;
@@ -1113,7 +1114,7 @@ namespace CatalogueLibrary.Data
             if (type.Length == 1)
                 return type[0];
 
-            throw new Exception("The Catalogue '" + this + "' has TableInfos belonging to multiple DatabaseTypes (" + string.Join(",",tables.Select(t=>t.GetRuntimeName()  +"(ID=" +t.ID + " is " + t.DatabaseType +")")));
+            throw new AmbiguousDatabaseTypeException("The Catalogue '" + this + "' has TableInfos belonging to multiple DatabaseTypes (" + string.Join(",",tables.Select(t=>t.GetRuntimeName()  +"(ID=" +t.ID + " is " + t.DatabaseType +")")));
         }
 
         /// <summary>
@@ -1291,7 +1292,7 @@ namespace CatalogueLibrary.Data
             var type = GetDistinctLiveDatabaseServerType();
 
             if(type == null)
-                throw new Exception("Catalogue '" + this +"' does not have a single Distinct Live Database Type");
+                throw new AmbiguousDatabaseTypeException("Catalogue '" + this +"' has no extractable columns so no Database Type could be determined");
             
             return f.Create(type.Value);
         }
