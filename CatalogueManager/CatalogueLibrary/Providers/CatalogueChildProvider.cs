@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Windows.Input;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
@@ -159,6 +160,7 @@ namespace CatalogueLibrary.Providers
         public Dictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
         public readonly IChildProvider[] PluginChildProviders;
+        private readonly ICatalogueRepository _catalogueRepository;
         private readonly ICheckNotifier _errorsCheckNotifier;
         private readonly List<IChildProvider> _blacklistedPlugins = new List<IChildProvider>();
 
@@ -174,6 +176,7 @@ namespace CatalogueLibrary.Providers
         public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
             _commentStore = repository.CommentStore;
+            _catalogueRepository = repository;
             _errorsCheckNotifier = errorsCheckNotifier;
 
             // all the objects which are 
@@ -522,8 +525,13 @@ namespace CatalogueLibrary.Providers
         private void AddChildren(AllDataAccessCredentialsNode allDataAccessCredentialsNode)
         {
             HashSet<object> children = new HashSet<object>();
-            
-            children.Add(new DecryptionPrivateKeyNode());
+
+            bool isKeyMissing = false;
+            var keyLocation = _catalogueRepository.EncryptionManager as PasswordEncryptionKeyLocation;
+            if (keyLocation != null)
+                isKeyMissing = string.IsNullOrWhiteSpace(keyLocation.GetKeyFileLocation());
+
+            children.Add(new DecryptionPrivateKeyNode(isKeyMissing));
 
             foreach (var creds in AllDataAccessCredentials)
                 children.Add(creds);

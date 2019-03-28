@@ -82,6 +82,17 @@ namespace CatalogueLibrary.Providers
             if (o is AggregateConfiguration)
                 return DescribeProblem((AggregateConfiguration) o);
 
+            if (o is DecryptionPrivateKeyNode)
+                return DescribeProblem((DecryptionPrivateKeyNode) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(DecryptionPrivateKeyNode decryptionPrivateKeyNode)
+        {
+            if (decryptionPrivateKeyNode.KeyNotSpecified)
+                return "No RSA encryption key has been created yet";
+
             return null;
         }
 

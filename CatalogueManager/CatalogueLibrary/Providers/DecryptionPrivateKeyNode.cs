@@ -13,8 +13,11 @@ namespace CatalogueLibrary.Providers
     /// </summary>
     public class DecryptionPrivateKeyNode:SingletonNode
     {
-        public DecryptionPrivateKeyNode() : base("Decryption Certificate")
+        public bool KeyNotSpecified { get; private set; }
+
+        public DecryptionPrivateKeyNode(bool keyNotSpecified) : base("Decryption Certificate")
         {
+            KeyNotSpecified = keyNotSpecified;
         }
     }
 }
