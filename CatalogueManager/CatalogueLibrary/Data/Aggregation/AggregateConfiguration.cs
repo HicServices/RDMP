@@ -40,7 +40,11 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>,IDisableable,IKnowWhatIAm
+    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, 
+        IInjectKnown<JoinableCohortAggregateConfiguration>,
+        IInjectKnown<AggregateDimension[]>,
+        IInjectKnown<Catalogue>,
+        IDisableable,IKnowWhatIAm
     {
         #region Database Properties
         private string _countSQL;
@@ -189,7 +193,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public Catalogue Catalogue
         {
-            get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
+            get { return _knownCatalogue.Value; }
         }
 
         /// <inheritdoc cref="RootFilterContainer_ID"/>
@@ -263,7 +267,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public AggregateDimension[] AggregateDimensions
         {
-            get { return Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray(); }
+            get { return _knownAggregateDimensions.Value; }
         }
 
 
@@ -399,7 +403,8 @@ namespace CatalogueLibrary.Data.Aggregation
         }
 
         private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
-
+        private Lazy<AggregateDimension[]> _knownAggregateDimensions;
+        private Lazy<Catalogue> _knownCatalogue;
 
         /// <summary>
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
@@ -415,6 +420,18 @@ namespace CatalogueLibrary.Data.Aggregation
         public void ClearAllInjections()
         {
             _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
+            _knownAggregateDimensions = new Lazy<AggregateDimension[]>(()=>Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray()); 
+            _knownCatalogue = new Lazy<Catalogue>(()=>Repository.GetObjectByID<Catalogue>(Catalogue_ID));
+        }
+
+        public void InjectKnown(AggregateDimension[] instance)
+        {
+            _knownAggregateDimensions = new Lazy<AggregateDimension[]>(() => instance);
+        }
+
+        public void InjectKnown(Catalogue instance)
+        {
+            _knownCatalogue = new Lazy<Catalogue>(() => instance);
         }
 
         /// <summary>
@@ -445,10 +462,10 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="basedOnColumn"></param>
         public AggregateDimension AddDimension(ExtractionInformation basedOnColumn)
         {
+            ClearAllInjections();
             return new AggregateDimension((ICatalogueRepository) basedOnColumn.Repository, basedOnColumn, this);
         }
-
-
+        
         /// <summary>
         /// Sets up a new <see cref="AggregateBuilder"/> with all the columns (See <see cref="AggregateDimensions"/>), WHERE logic (See <see cref="RootFilterContainer"/>, Pivot
         /// etc.
@@ -544,6 +561,10 @@ namespace CatalogueLibrary.Data.Aggregation
             if(IsCohortIdentificationAggregate)
                 return;
 
+            //if it's a normal aggregate then don't let the user have more than 2 columns
+            if (AggregateDimensions.Length > 2)
+                throw new QueryBuildingException("Too many columns, You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
+
             try
             {
                 var qb = GetQueryBuilder();
@@ -561,6 +582,8 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _rootFilterContainerID;
         
         private bool orderFetchAttempted;
+        
+
 
         /// <summary>
         /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container

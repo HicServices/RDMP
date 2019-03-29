@@ -146,6 +146,11 @@ namespace MapsDirectlyToDatabaseTable
 
         public void RevertToDatabaseState(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)
         {
+            //Mark any cached data as out of date
+            var inject = mapsDirectlyToDatabaseTable as IInjectKnown;
+            if (inject != null)
+                inject.ClearAllInjections();
+
             if (!_propertyChanges.ContainsKey(mapsDirectlyToDatabaseTable))
                 return;
             
@@ -159,6 +164,7 @@ namespace MapsDirectlyToDatabaseTable
 
             //forget about all changes now
             _propertyChanges.Remove(mapsDirectlyToDatabaseTable);
+            
         }
 
         public RevertableObjectReport HasLocalChanges(IMapsDirectlyToDatabaseTable mapsDirectlyToDatabaseTable)

@@ -62,6 +62,7 @@ namespace CohortManagerTests.QueryTests
         {
             //delete the first dimension (chi)
             aggregate1.AggregateDimensions.First().DeleteInDatabase();
+            aggregate1.ClearAllInjections();
 
             var ex = Assert.Throws<NotSupportedException>(()=>new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1));
             Assert.AreEqual("Cannot make aggregate UnitTestAggregate1 into a Joinable aggregate because it has 0 columns marked IsExtractionIdentifier", ex.Message);
@@ -154,6 +155,7 @@ namespace CohortManagerTests.QueryTests
             var joinable = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate1);
 
             aggregate2.AggregateDimensions.First().DeleteInDatabase();
+            aggregate2.ClearAllInjections();
 
             try
             {
@@ -439,6 +441,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             builder.CacheServer = queryCachingDatabaseServer;
             try
             {
+                
                var builderForCaching = new CohortQueryBuilder(aggregate2, null, true);
 
                 var cacheDt = new DataTable();

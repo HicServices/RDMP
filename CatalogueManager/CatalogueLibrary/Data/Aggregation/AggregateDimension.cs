@@ -14,6 +14,7 @@ using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -24,7 +25,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// want to create an aggregate configuration (when patients were admitted) over time.  However the class also allows you to specify new SelectSQL which can change how the field
     /// is extracted e.g. you might want to change "[MyDatabase].[MyTable].[AdmissionDate]" into "YEAR([MyDatabase].[MyTable].[AdmissionDate]) as AdmissionDate" 
     /// </summary>
-    public class AggregateDimension : VersionedDatabaseEntity, ISaveable, IDeleteable, IColumn,IHasDependencies
+    public class AggregateDimension : VersionedDatabaseEntity, ISaveable, IDeleteable, IColumn, IHasDependencies, IInjectKnown<ExtractionInformation>
     {
         #region Database Properties
 
@@ -33,6 +34,7 @@ namespace CatalogueLibrary.Data.Aggregation
         private string _alias;
         private string _selectSQL;
         private int _order;
+        
 
         /// <summary>
         /// An <see cref="AggregateDimension"/> is a column in the SELECT, GROUP BY and ORDER BY sections of an <see cref="AggregateConfiguration"/>.  This property returns
@@ -92,26 +94,24 @@ namespace CatalogueLibrary.Data.Aggregation
         }
         #endregion
 
-        //IExtractableColumn stuff (which references the underlying extractionInformation - does not appear in table but fetches it from the other objects table)
-        private ExtractionInformation _extractionInformation;
         
         #region Relationships
 
         /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.HashOnDataRelease"/>
         [NoMappingToDatabase]
-        public bool HashOnDataRelease { get{CacheExtractionInformation(); return _extractionInformation.HashOnDataRelease; } }
+        public bool HashOnDataRelease { get { return _knownExtractionInformation.Value.HashOnDataRelease; } }
 
         /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.IsExtractionIdentifier"/>
         [NoMappingToDatabase]
-        public bool IsExtractionIdentifier { get { CacheExtractionInformation(); return _extractionInformation.IsExtractionIdentifier; } }
+        public bool IsExtractionIdentifier { get { return _knownExtractionInformation.Value.IsExtractionIdentifier; } }
 
         /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.IsPrimaryKey"/>
         [NoMappingToDatabase]
-        public bool IsPrimaryKey { get { CacheExtractionInformation(); return _extractionInformation.IsPrimaryKey; } }
+        public bool IsPrimaryKey { get { return _knownExtractionInformation.Value.IsPrimaryKey; } }
 
         /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.ColumnInfo"/>
         [NoMappingToDatabase]
-        public ColumnInfo ColumnInfo { get { CacheExtractionInformation(); return _extractionInformation.ColumnInfo; } }
+        public ColumnInfo ColumnInfo { get { return _knownExtractionInformation.Value.ColumnInfo; } }
 
         /// <summary>
         /// An <see cref="AggregateConfiguration"/> can have a single <see cref="AggregateContinuousDateAxis"/> declared on it (if it is not functioning in a cohort identification
@@ -157,6 +157,8 @@ namespace CatalogueLibrary.Data.Aggregation
                 {"Alias", alias},
                 {"Order", basedOnColumn.Order}
             });
+
+            ClearAllInjections();
         }
 
         internal AggregateDimension(ICatalogueRepository repository,DbDataReader r) : base(repository,r)
@@ -168,12 +170,27 @@ namespace CatalogueLibrary.Data.Aggregation
             Alias = r["Alias"] as string;
 
             Order = int.Parse(r["Order"].ToString());
+            
+            ClearAllInjections();
         }
 
         /// <inheritdoc/>
         public string GetRuntimeName()
         {
             return RDMPQuerySyntaxHelper.GetRuntimeName(this);
+        }
+
+        
+        private Lazy<ExtractionInformation> _knownExtractionInformation;
+
+        public void InjectKnown(ExtractionInformation instance)
+        {
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(()=>instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownExtractionInformation = new Lazy<ExtractionInformation>(() => Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID));
         }
 
         /// <inheritdoc/>
@@ -193,13 +210,6 @@ namespace CatalogueLibrary.Data.Aggregation
         public void Check(ICheckNotifier notifier)
         {
             new ColumnSyntaxChecker(this).Check(notifier);
-        }
-
-        private void CacheExtractionInformation()
-        {
-            if (_extractionInformation == null)
-                //there is a cascade delete on the relationship between extraction informations down into dimensions that should prevent the user deleting the extraction information and it leaving an orphans defined in an aggregate.
-                _extractionInformation = Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID);
         }
 
         /// <inheritdoc/>

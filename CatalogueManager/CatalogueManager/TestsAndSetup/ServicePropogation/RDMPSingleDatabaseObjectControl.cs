@@ -193,10 +193,21 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             return "Unamed Tab";
         }
-        
+
+        /// <summary>
+        /// Triggers an application refresh because a change has been made to <paramref name="e"/>
+        /// </summary>
         public void Publish(DatabaseEntity e)
         {
             Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
+        }
+
+        /// <summary>
+        /// Triggers an application refresh because a change has been made to the forms main <see cref="DatabaseObject"/>
+        /// </summary>
+        public void Publish()
+        {
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(DatabaseObject));
         }
 
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}

@@ -6,16 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Providers;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.MainFormUITabs.SubComponents;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Data.DataTables;
-using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueManager.Refreshing
 {
@@ -29,6 +25,9 @@ namespace CatalogueManager.Refreshing
         private event RefreshObjectEventHandler RefreshObject;
 
         public bool PublishInProgress { get; private set; }
+
+        public ICoreChildProvider ChildProvider { get; set; }
+
         private object oPublishLock = new object();
 
         public void Publish(object sender, RefreshObjectEventArgs e)
@@ -42,6 +41,14 @@ namespace CatalogueManager.Refreshing
                     BeforePublish(sender, e);
 
                 PublishInProgress = true;
+
+                //refresh it from the child provider
+                if (e.Exists)
+                    if (ChildProvider != null)
+                        e.Object = ChildProvider.GetLatestCopyOf(e.Object);
+                    else
+                        e.Object.RevertToDatabaseState();
+
                 try
                 {
                     if (RefreshObject != null)

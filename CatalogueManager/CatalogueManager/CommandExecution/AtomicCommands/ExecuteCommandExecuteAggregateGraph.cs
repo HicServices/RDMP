@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -24,9 +26,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             if (aggregate.IsCohortIdentificationAggregate) 
                 SetImpossible("AggregateConfiguration is a Cohort aggregate");
+            
+            SetImpossibleIfFailsChecks(aggregate);
 
             UseTripleDotSuffix = true;
         }
+
         public override string GetCommandHelp()
         {
             return "Assembles and runs the graph query and renders the results as a graph";

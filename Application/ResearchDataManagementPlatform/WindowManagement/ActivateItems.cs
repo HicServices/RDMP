@@ -173,6 +173,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
 
             CoreChildProvider.GetPluginChildren();
+            RefreshBus.ChildProvider = CoreChildProvider;
         }
 
         public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control,DatabaseEntity objectOfTypeT)

@@ -110,13 +110,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     if (importableColumn != null)
                     {
 
-                        //if it's a normal aggregate then don't let the user have more than 2 columns
-                        if (!_aggregate.IsCohortIdentificationAggregate && _includedColumns.OfType<AggregateDimension>().Count() >= 2)
-                        {
-                            WideMessageBox.Show("Too many columns","You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
-                            return;
-                        }
-
                         var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueRepository, importableColumn, _aggregate);
 
                         _availableColumns.Remove(importableColumn);

@@ -115,17 +115,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             var joiner = ((CatalogueRepository)_aggregate.Repository).AggregateForcedJoinManager;
             
-
             //user is trying to use a joinable something
             if (newvalue == CheckState.Checked)
             {
                 //user is trying to turn on usage of a TableInfo
                 if(ti != null)
                 {
-
                     joiner.CreateLinkBetween(_aggregate, ti);
                     _forcedJoins.Add(ti);
-                    Publish();
                 }
 
                 if (patientIndexTable != null)
@@ -133,7 +130,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     var joinUse = patientIndexTable.AddUser(_aggregate);
                     olvJoin.RemoveObject(patientIndexTable);
                     olvJoin.AddObject(joinUse);
-                    Publish();
                 }
             }
             else
@@ -143,7 +139,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 {
                     joiner.BreakLinkBetween(_aggregate, ti);
                     _forcedJoins.Remove(ti);
-                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                 }
 
                 if(patientIndexTableUse != null)
@@ -153,20 +148,16 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     patientIndexTableUse.DeleteInDatabase();
                     olvJoin.RemoveObject(patientIndexTableUse);
                     olvJoin.AddObject(joinable);
-
-                    Publish();
                 }
             }
+
+            SetDatabaseObject(Activator, _aggregate);
+            Publish();
 
             return newvalue;
 
         }
-
-        private void Publish()
-        {
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
-        }
-
+        
         private CheckState ForceJoinCheckStateGetter(object rowObject)
         {
             if (_forcedJoins == null)
@@ -185,16 +176,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         }
 
-        public void SetAggregate(IActivateItems activator,AggregateConfiguration configuration, IAggregateBuilderOptions options = null)
-        {
-            SetItemActivator(activator);
-            _aggregate = configuration;
-            _options = options ?? new AggregateBuilderOptionsFactory().Create(configuration);
-            
-            selectColumnUI1.SetItemActivator(activator);
-
-            ReloadUIFromDatabase();
-        }
 
         private void ReloadUIFromDatabase()
         {
@@ -535,7 +516,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 return;
             }
 
-            SetAggregate(activator, databaseObject);
+            _aggregate = databaseObject;
+            _options = new AggregateBuilderOptionsFactory().Create(_aggregate);
+
+            selectColumnUI1.SetItemActivator(activator);
+
+            ReloadUIFromDatabase();
             
             if (databaseObject.IsCohortIdentificationAggregate)
             {
