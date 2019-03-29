@@ -330,14 +330,14 @@ Yes.  You can read more about the DQE in the [technical implementation](./Valida
 ## User Interface Programming
 
 <a name="uioverview"></a>
-### [How are user interfaces implemented in RDMP?]
+### How are user interfaces implemented in RDMP?
 RDMP uses Windows Forms with the [Dock Panel Suite](https://github.com/dockpanelsuite/dockpanelsuite) framework for docking.  It uses [Scintilla.Net](https://github.com/jacobslusser/ScintillaNET) for text editors (e.g. viewing SQL) and [ObjectListView](http://objectlistview.sourceforge.net/cs/index.html) for the advanced navigation tree/list views.
 
 User interfaces in RDMP follow a standard testable design which is described in the [user interface overview](./UserInterfaceOverview.md).
 
 <a name="abstractDesignerPattern"></a>
 ### Whats with the _Design user interface classes?
-Any user interface class which includes an abstract base class in it's hierarchy (e.g. `CatalogueUI`) has an accompanying class `CatalogueUI_Design`.  This class exists solely facilitate using the visual studio forms designer (which [doesn't support abstract base classes](https://stackoverflow.com/a/6817281/4824531).  Even with this workaround visual studio will sometimes fail to show the designer for these controls, restarting visual studio usually solves this problem.
+Any user interface class which includes an abstract base class in it's hierarchy (e.g. `CatalogueUI`) has an accompanying class `CatalogueUI_Design`.  This class exists solely facilitate using the visual studio forms designer (which [doesn't support abstract base classes](https://stackoverflow.com/a/6817281/4824531)).  Even with this workaround visual studio will sometimes fail to show the designer for these controls, restarting visual studio usually solves this problem.
 
 <a name="reorder"></a>
 ### How do I stop some nodes being reordered in RDMPCollectionUIs?

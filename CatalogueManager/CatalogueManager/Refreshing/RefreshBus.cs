@@ -45,7 +45,14 @@ namespace CatalogueManager.Refreshing
                 //refresh it from the child provider
                 if (e.Exists)
                     if (ChildProvider != null)
-                        e.Object = ChildProvider.GetLatestCopyOf(e.Object);
+                    {
+                        var fresh = ChildProvider.GetLatestCopyOf(e.Object);
+
+                        if (fresh != null)
+                            e.Object = fresh;
+                        else
+                            e.Object.RevertToDatabaseState();
+                    }
                     else
                         e.Object.RevertToDatabaseState();
 

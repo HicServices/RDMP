@@ -1246,7 +1246,7 @@ namespace CatalogueLibrary.Providers
 
         public DatabaseEntity GetLatestCopyOf(DatabaseEntity e)
         {
-            return _childDictionary.Keys.OfType<DatabaseEntity>().SingleOrDefault(k=>k.Equals(e));
+            return _descendancyDictionary.Keys.OfType<DatabaseEntity>().SingleOrDefault(k => k.Equals(e));
         }
 
         private HashSet<object> GetAllObjects()
