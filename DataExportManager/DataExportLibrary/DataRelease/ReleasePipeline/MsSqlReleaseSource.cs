@@ -81,7 +81,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             firstTime = true;
         }
 
-        protected override void RunSpecificChecks(ICheckNotifier notifier)
+        protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
         {
             if (!_releaseData.ReleaseGlobals || _releaseData.ReleaseState == ReleaseState.DoingPatch)
                 notifier.OnCheckPerformed(new CheckEventArgs("You cannot untick globals or release a subset of datasets when releasing from a DB", CheckResult.Fail));
@@ -179,7 +179,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                                                                                       null,
                                                                                       "Are you sure you want to continue the release process?")))
             {
-                throw new Exception("Release aborted by user.");
+                if (!isRunTime)
+                    throw new Exception("Release aborted by user.");
             }
 
             DirectoryInfo sourceFolder = GetSourceFolder();
@@ -203,7 +204,8 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
                 }
                 else
                 {
-                    throw new Exception("Release aborted by user.");
+                    if (!isRunTime)
+                        throw new Exception("Release aborted by user.");
                 }
             }
         }
