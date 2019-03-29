@@ -13,11 +13,9 @@ RDMP is a large application with many complicated user interfaces.  In order to 
 
 All the logic for how these controls operate is defined in `RDMPCollectionCommonFunctionality`.  The hierarchy of objects is determined up front by `ICoreChildProvider`.  The hierarchy is updated whenever any [Publish](#publishing) occurs.
 
-<div style="clear:both;"></div>
+---
 
 ## Single Object Control Tabs
-
-
 
 Where possible RDMP associates any top level tab (that isn't a [collection](#collections)) with a single object.  This is done by subclassing `RDMPSingleDatabaseObjectControl<T>` with the `DatabaseEntity` class being managed.  The flow of control for these tabs is:
 

@@ -36,7 +36,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
             return "View the hierarchical audit log of all executions of the data load configuration";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Logging);
         }

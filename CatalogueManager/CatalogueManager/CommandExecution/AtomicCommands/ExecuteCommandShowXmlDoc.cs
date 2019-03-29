@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if(string.IsNullOrWhiteSpace(_help))
                 SetImpossible("No help available for keyword '" + classOrProperty+"'");
         }
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Help);
         }

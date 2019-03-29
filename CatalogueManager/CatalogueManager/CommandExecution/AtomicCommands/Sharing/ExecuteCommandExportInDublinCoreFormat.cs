@@ -36,10 +36,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
             using (var stream = File.OpenWrite(_toExport.FullName))
                 _definition.WriteXml(stream);
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

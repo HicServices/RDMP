@@ -82,10 +82,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 MessageBox.Show("Publish successful");
             }
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

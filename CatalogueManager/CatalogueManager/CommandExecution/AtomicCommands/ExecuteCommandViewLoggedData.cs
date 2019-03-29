@@ -79,10 +79,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             return UsefulStuff.PascalCaseStringToHumanReadable(_target.ToString());
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

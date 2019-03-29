@@ -40,7 +40,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return _commandName;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AllObjectSharingNode);
         }

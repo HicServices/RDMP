@@ -42,7 +42,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activate(newAggregate);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
         }

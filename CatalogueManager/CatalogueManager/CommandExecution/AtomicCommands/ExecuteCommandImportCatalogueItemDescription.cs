@@ -53,11 +53,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         /// <summary>
         /// Copies all properties (Description etc) from one CatalogueItem into another (except ID properties).
         /// </summary>

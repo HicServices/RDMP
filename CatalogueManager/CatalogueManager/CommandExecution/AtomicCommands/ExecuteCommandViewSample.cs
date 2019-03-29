@@ -60,7 +60,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activator.ViewDataSample(collection);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Execute);
         }

@@ -29,10 +29,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             MetadataReportUI dialog = new MetadataReportUI(Activator, _catalogue);
             dialog.Show();
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

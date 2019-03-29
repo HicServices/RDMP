@@ -31,11 +31,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _deletable = deletable;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override void Execute()
         {
             base.Execute();

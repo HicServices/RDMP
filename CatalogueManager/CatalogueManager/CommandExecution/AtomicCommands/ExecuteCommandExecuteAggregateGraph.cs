@@ -45,7 +45,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             graph.LoadGraphAsync();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.Graph;
         }

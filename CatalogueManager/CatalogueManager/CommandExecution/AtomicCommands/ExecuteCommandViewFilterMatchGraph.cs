@@ -45,7 +45,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _compatibleGraphs = compatibleGraphs;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Filter);
         }

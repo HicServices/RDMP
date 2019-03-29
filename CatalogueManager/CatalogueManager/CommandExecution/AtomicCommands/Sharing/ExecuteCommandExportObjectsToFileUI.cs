@@ -40,7 +40,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
             return "Creates a share file with definitions for the supplied objects and all children";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return FamFamFamIcons.page_white_put;
         }

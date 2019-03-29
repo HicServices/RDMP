@@ -63,7 +63,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 SetImpossible("There are no cohorts currently configured with ProjectNumber " + project.ProjectNumber.Value);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
         }

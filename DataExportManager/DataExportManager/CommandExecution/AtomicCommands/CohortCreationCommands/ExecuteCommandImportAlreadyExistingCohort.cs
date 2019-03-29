@@ -47,7 +47,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             }
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CohortAggregate, OverlayKind.Import);
         }

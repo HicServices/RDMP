@@ -47,11 +47,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return _newContext.ToString();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override void Execute()
         {
             base.Execute();

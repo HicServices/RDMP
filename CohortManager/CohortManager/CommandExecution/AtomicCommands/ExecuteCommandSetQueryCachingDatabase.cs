@@ -57,7 +57,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
             return _cic.QueryCachingServer_ID == null ? "Set Query Cache":"Change Query Cache";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer,OverlayKind.Link);
         }

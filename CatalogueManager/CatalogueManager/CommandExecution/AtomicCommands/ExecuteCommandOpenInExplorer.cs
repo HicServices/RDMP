@@ -53,7 +53,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_dir);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CatalogueFolder);
         }

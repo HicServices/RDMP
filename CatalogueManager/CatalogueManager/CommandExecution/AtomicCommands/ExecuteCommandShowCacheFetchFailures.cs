@@ -50,7 +50,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activator.ShowWindow(ui, true);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(_cacheProgress);
         }

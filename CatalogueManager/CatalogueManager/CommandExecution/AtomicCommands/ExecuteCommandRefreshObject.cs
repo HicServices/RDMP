@@ -39,7 +39,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Publish(_databaseEntity);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return FamFamFamIcons.arrow_refresh;
         }

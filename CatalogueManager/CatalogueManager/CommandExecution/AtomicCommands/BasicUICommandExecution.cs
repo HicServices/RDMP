@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -19,11 +20,13 @@ using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public abstract class BasicUICommandExecution:BasicCommandExecution
+    public abstract class BasicUICommandExecution:BasicCommandExecution,IAtomicCommand
     {
         protected readonly IActivateItems Activator;
 
@@ -227,6 +230,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
                 SetImpossible(ExceptionHelper.ExceptionToListOfInnerMessages(e));
             }
+        }
+
+        public virtual Image GetImage(IIconProvider iconProvider)
+        {
+            return null;
         }
     }
 }

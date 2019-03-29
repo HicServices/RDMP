@@ -67,7 +67,7 @@ provides a description for (a given TableInfo can be a Lookup for many columns i
             }
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Lookup, OverlayKind.Add);
         }

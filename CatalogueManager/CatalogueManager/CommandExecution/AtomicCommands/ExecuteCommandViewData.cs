@@ -52,11 +52,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _collection = new ViewTableInfoExtractUICollection(tableInfo,_viewType);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override void Execute()
         {
             Activator.ViewDataSample(_collection);

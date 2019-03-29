@@ -28,7 +28,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activator.Activate<CacheProgressUI, CacheProgress>(_cacheProgress);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(_cacheProgress);
         }

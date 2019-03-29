@@ -25,7 +25,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             UseTripleDotSuffix = true;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ParametersNode);
         }

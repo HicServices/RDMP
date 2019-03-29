@@ -36,7 +36,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
             return _collection.Graph.Name;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph);
         }

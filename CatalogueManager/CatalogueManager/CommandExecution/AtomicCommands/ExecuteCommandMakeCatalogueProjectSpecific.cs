@@ -69,7 +69,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Publish(_catalogue);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.ProjectCatalogue;
         }

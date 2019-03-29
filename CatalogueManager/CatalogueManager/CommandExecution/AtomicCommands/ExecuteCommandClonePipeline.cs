@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Publish(_pipeline);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Pipeline, OverlayKind.Link);
         }

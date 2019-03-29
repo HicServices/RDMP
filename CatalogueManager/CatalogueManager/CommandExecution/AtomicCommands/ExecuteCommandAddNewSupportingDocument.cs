@@ -91,7 +91,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             foreach (var doc in created)
                 Activate(doc);
         }
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
         }
