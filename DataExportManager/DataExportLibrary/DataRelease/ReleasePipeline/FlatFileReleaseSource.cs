@@ -36,7 +36,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             firstTime = true;
         }
 
-        protected override void RunSpecificChecks(ICheckNotifier notifier)
+        protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
         {
             
         }
