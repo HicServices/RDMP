@@ -35,7 +35,7 @@ namespace CatalogueManager.MainFormUITabs
     /// <para>There is also a box for storing a ticket number, this will let you reference a ticket in your ticketing system (e.g. Jira, Fogbugz etc).  This requires selecting/writing a compatible
     /// plugin for your ticketing system and configuring it (see TicketingSystemConfigurationUI)</para>
     /// </summary>
-    public partial class CatalogueUI : CatalogueTab_Design, ISaveableUI
+    public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
 
         private bool _expand = true;
@@ -263,8 +263,8 @@ namespace CatalogueManager.MainFormUITabs
         }
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueTab_Design, UserControl>))]
-    public abstract class CatalogueTab_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
+    public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
     {
         
     }

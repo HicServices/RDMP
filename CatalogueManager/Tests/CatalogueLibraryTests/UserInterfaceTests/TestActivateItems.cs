@@ -193,13 +193,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         public bool ApplyThemeToMenus { get; set; }
 
-        public class TestActivateItemsResults
-        {
-            public List<Control> WindowsShown = new List<Control>();
-            public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
-            
-        }
+        
     }
 
-    
+    public class TestActivateItemsResults
+    {
+        public List<Control> WindowsShown = new List<Control>();
+        public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
+
+    }
 }

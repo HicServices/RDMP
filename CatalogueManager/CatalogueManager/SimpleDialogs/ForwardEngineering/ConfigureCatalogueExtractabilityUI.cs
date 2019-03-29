@@ -377,7 +377,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-
             var eis = GetExtractionInformations();
 
             if (!eis.Any())
@@ -396,6 +395,10 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             _choicesFinalised = true;
             DialogResult = DialogResult.OK;
+            
+            if (CatalogueCreatedIfAny != null)
+                objectSaverButton1.CheckForUnsavedChangesAnOfferToSave();
+
             Close();
         }
 

@@ -47,7 +47,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
         {
             var ui = Controls.OfType<RDMPCollectionUI>().Single();
 
-            var pin = ui.CommonFunctionality.CurrentlyPinned as IMapsDirectlyToDatabaseTable;
+            var pin = ui.CommonTreeFunctionality.CurrentlyPinned as IMapsDirectlyToDatabaseTable;
 
             var args = new Dictionary<string, string>();
             args.Add("Toolbox",CollectionType.ToString());

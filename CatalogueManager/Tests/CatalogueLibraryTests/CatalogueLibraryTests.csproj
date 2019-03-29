@@ -485,6 +485,7 @@
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
+    <None Include="UserInterfaceTests\UserInterfaceTesting.cd" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestResources.resx">
