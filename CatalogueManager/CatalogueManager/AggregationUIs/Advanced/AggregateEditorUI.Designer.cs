@@ -428,8 +428,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
         private System.Windows.Forms.CheckBox cbExtractable;
         private System.Windows.Forms.Label lblFromTable;
         private System.Windows.Forms.Button btnClearPivotDimension;
-        private System.Windows.Forms.ComboBox ddPivotDimension;
-        private System.Windows.Forms.ComboBox ddAxisDimension;
+        internal System.Windows.Forms.ComboBox ddPivotDimension;
+        internal System.Windows.Forms.ComboBox ddAxisDimension;
         private System.Windows.Forms.Button btnClearAxis;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label label4;

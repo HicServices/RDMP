@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Repositories;
 using FAnsi.Implementation;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
@@ -25,50 +26,57 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             T toReturn = null;
 
             if (typeof (T) == typeof (Catalogue))
-                toReturn = (T)(object) new Catalogue(Repository, "Mycata");
+                return (T)(object) Save(new Catalogue(Repository, "Mycata"));
 
             if (typeof(T) == typeof(CatalogueItem))
             {
                 var cata = new Catalogue(Repository, "Mycata");
-                toReturn = (T)(object)new CatalogueItem(Repository, cata, "MyCataItem");
+                return (T)(object)Save((T)(object)new CatalogueItem(Repository, cata, "MyCataItem"));
             }
 
             if (typeof (T) == typeof (TableInfo))
             {
                 var table = new TableInfo(Repository, "My_Table");
-                toReturn = (T)(object)table;
+                return  (T)(object)Save(table);
             }
 
             if (typeof (T) == typeof (ColumnInfo))
             {
                 var ti = WhenIHaveA<TableInfo>();
                 var col = new ColumnInfo(Repository,"My_Col","varchar(10)",ti);
-                toReturn = (T) (object) col;
+                return (T)(object)Save(col);
             }
 
             if (typeof (T) == typeof (AggregateConfiguration))
             {
-                var ti = WhenIHaveA<TableInfo>();
-                var dateCol = new ColumnInfo(Repository, "MyDateCol", "datetime2", ti);
-                var otherCol = new ColumnInfo(Repository, "MyOtherCol", "varchar(10)", ti);
-
-                var cata = WhenIHaveA<Catalogue>();
-                var dateCi = new CatalogueItem(Repository, cata, dateCol.Name);
-                var dateEi = new ExtractionInformation(Repository, dateCi, dateCol, dateCol.Name);
-                var otherCi = new CatalogueItem(Repository, cata, otherCol.Name);
-                var otherEi = new ExtractionInformation(Repository, otherCi, otherCol, otherCol.Name);
-                
-                toReturn = (T)(object)new AggregateConfiguration(Repository, cata, "My graph");
+                ExtractionInformation dateEi;
+                ExtractionInformation otherEi;
+                return (T)(object)WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
             }
 
-            if (toReturn == null)
-                throw new NotSupportedException();
+            throw new NotSupportedException();
 
-            toReturn.SaveToDatabase();
-            return toReturn;
-            //create catalogue
         }
 
+        protected AggregateConfiguration WhenIHaveA<T>(out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
+        {
+            var ti = WhenIHaveA<TableInfo>();
+            var dateCol = new ColumnInfo(Repository, "MyDateCol", "datetime2", ti);
+            var otherCol = new ColumnInfo(Repository, "MyOtherCol", "varchar(10)", ti);
+
+            var cata = WhenIHaveA<Catalogue>();
+            var dateCi = new CatalogueItem(Repository, cata, dateCol.Name);
+            dateEi = new ExtractionInformation(Repository, dateCi, dateCol, dateCol.Name);
+            var otherCi = new CatalogueItem(Repository, cata, otherCol.Name);
+            otherEi = new ExtractionInformation(Repository, otherCi, otherCol, otherCol.Name);
+            return Save(new AggregateConfiguration(Repository, cata, "My graph"));
+        }
+
+        private T Save<T>(T s) where T:ISaveable
+        {
+            s.SaveToDatabase();
+            return s;
+        }
 
         protected T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {

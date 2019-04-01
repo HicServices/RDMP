@@ -214,9 +214,46 @@ Where multiple objects have very similar/identical menus then it is permissable 
     }
 ```
 
-# Commands
+## Commands
 Where possible RDMP likes to encapsulate all atomic operations that the user can perform in an `IAtomicCommand` implementation e.g. `ExecuteCommandCreateNewFilter`.  You should inherit from `BasicUICommandExecution` and override the required methods.
 
 `IAtomicCommand` objects can be displayed in several ways and are the preferred way of offering options to the user.
 
 If (based on constructor parameters) a command is found to be impossible you should call `SetImpossible` with a description of why.  This will be presented to the user in an appropriate way (e.g. grey out a menu item and add a tool tip).
+
+## Tests
+
+Unit tests for user interface classes can be written by subclassing `UITests`.  Tests run without ever showing UI components but do execute within an STA Thread.  The sequence for UI tests is as follows:
+
+1. Add the attribute `UITimeout` to your test (this ensures an STA thread and prevents tests hanging due to modal dialogs)
+1. Create your object(s) using `WhenIHaveA<X>`
+1. 'Launch' your UI by calling `AndLaunch<XUI>`
+1. Perform operations
+1. Check results using `ItemActivator.Results`
+ 
+For example the following test checks that only date columns are advertised for axis dimension selection in `AggregateEditorUI`.
+ 
+```csharp
+[Test, UITimeout(5000)]
+public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
+{
+	ExtractionInformation dateEi;
+	ExtractionInformation otherEi;
+	var config = WhenIHaveA<AggregateConfiguration>(out dateEi,out otherEi);
+
+	var dimDate = new AggregateDimension(Repository, dateEi, config);
+	var dimOther = new AggregateDimension(Repository, otherEi, config);
+	
+	var ui = AndLaunch<AggregateEditorUI>(config);
+
+	//only date should be an option for axis dimension
+	Assert.AreEqual(1, ui.ddAxisDimension.Items.Count);
+	Assert.AreEqual(dimDate,ui.ddAxisDimension.Items[0]);
+
+	//dates are not valid for pivots
+	Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
+	Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
+}
+```
+
+A limitation of this testing approach is that it requires private fields (e.g. `ddAxisDimension`) to be accessible to the test assembly.  Fields (in UI code only) that need to be tested in this way should be made internal (and the testing assembly marked as `InternalsVisibleTo`).

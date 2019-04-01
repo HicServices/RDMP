@@ -348,7 +348,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
             if (axisIfAny != null && !axisIfAny.Equals(pivotIfAny))//<- if this second thing is the case then the graph is totally messed up!
                 dimensions = dimensions.Except(new[] {axisIfAny}).ToArray();//don't offer the axis as a pivot dimension!
 
-            ddPivotDimension.Items.AddRange(dimensions);
+            //don't let them pivot on a date, that's just a bad idea
+            ddPivotDimension.Items.AddRange(dimensions.Where(d=>!IsDate(d)).ToArray());
             
             if(pivotIfAny != null)
                 ddPivotDimension.SelectedItem = pivotIfAny;
@@ -412,7 +413,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 allDimensions = allDimensions.Except(new[] {pivotIfAny}).ToArray();
             
             ddAxisDimension.Items.Clear();
-            ddAxisDimension.Items.AddRange(allDimensions);
+            ddAxisDimension.Items.AddRange(allDimensions.Where(IsDate).ToArray());
 
             //should only be one
             var axisDimensions = allDimensions.Where(d => d.AggregateContinuousDateAxis != null).ToArray();
@@ -437,23 +438,28 @@ namespace CatalogueManager.AggregationUIs.Advanced
             ddAxisDimension.SelectedItem = axisIfAny;
             aggregateContinuousDateAxisUI1.Dimension = axisIfAny;
 
-            var col = axisIfAny.ColumnInfo;
-            if (col != null)
-            {
-                try
-                {
-                    var type = col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type);
-                    if(type != typeof(DateTime))
-                        _errorProviderAxis.SetError(ddAxisDimension,"Column is not a DateTime");
-                    else
-                        _errorProviderAxis.Clear();
-                }
-                catch (Exception)
-                {
-                    _errorProviderAxis.SetError(ddAxisDimension, "Could not determine column type");
-                }
-            }
+            if(!IsDate(axisIfAny))
+                _errorProviderAxis.SetError(ddAxisDimension, "Column is not a DateTime");
+            else
+                _errorProviderAxis.Clear();
+        }
 
+        bool IsDate(AggregateDimension dimension)
+        {
+            var col = dimension.ColumnInfo;
+            
+            if (col == null)
+                return false;
+
+            try
+            {
+                return col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) == typeof(DateTime);
+            }
+            catch (Exception)
+            {
+                //it's some kind of wierd type eh?
+                return false;
+            }
         }
 
         private void ddAxisDimension_SelectedIndexChanged(object sender, EventArgs e)

@@ -7,6 +7,7 @@
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueManager.AggregationUIs;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Refreshing;
@@ -16,12 +17,15 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     class AggregateEditorUITests:UITests
     {
+        [SetUp]
+        public void CallLoadDatabaseImplementations()
+        {
+            LoadDatabaseImplementations();
+        }
 
         [Test,UITimeout(5000)]
         public void Test_AggregateEditorUI()
         {
-            LoadDatabaseImplementations();
-
             var config = WhenIHaveA<AggregateConfiguration>();
             var ui = AndLaunch<AggregateEditorUI>(config);
 
@@ -63,10 +67,29 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         }
 
         [Test, UITimeout(5000)]
+        public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
+        {
+            ExtractionInformation dateEi;
+            ExtractionInformation otherEi;
+            var config = WhenIHaveA<AggregateConfiguration>(out dateEi,out otherEi);
+
+            var dimDate = new AggregateDimension(Repository, dateEi, config);
+            var dimOther = new AggregateDimension(Repository, otherEi, config);
+            
+            var ui = AndLaunch<AggregateEditorUI>(config);
+
+            //only date should be an option for axis dimension
+            Assert.AreEqual(1, ui.ddAxisDimension.Items.Count);
+            Assert.AreEqual(dimDate,ui.ddAxisDimension.Items[0]);
+
+            //dates are not valid for pivots
+            Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
+            Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
+        }
+
+        [Test, UITimeout(5000)]
         public void Test_AggregateEditorUI_NoExtractableColumns()
         {
-            LoadDatabaseImplementations();
-
             //Create a Catalogue with an AggregateConfiguration that doesn't have any extractable columns yet
             var cata = WhenIHaveA<Catalogue>();
             var config = new AggregateConfiguration(Repository,cata,"my config");
