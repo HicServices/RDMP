@@ -6,8 +6,9 @@ RDMP is a large application with many complicated user interfaces.  In order to 
 ![user interface class diagram](Images/UserInterfaceOverview/ClassDiagram.png) 
 
 ## Collections
-
-<img align="left" width="240" height="450" src="Images/UserInterfaceOverview/ExampleCollection.png">
+<p align="center">
+  <img width="240" height="450" src="Images/UserInterfaceOverview/ExampleCollection.png">
+</p>
 
 `RDMPCollectionUI` is responsible for hosting tree views depicting all objects associated with a given area of the program (Extraction,Cohort Building, Loading etc).  There can only be one instance of any given `RDMPCollectionUI` at once (like the Solution Explorer in Visual Studio).
 
@@ -81,14 +82,141 @@ Since the Equality comparer of `DatabaseEntity` considers only the `ID` and `Rep
 
 ## Double Clicking
 
+Double clicking an objects in a Tree Views should result in activating it (if possible).  This is dealt with through the `RDMPCommandExecutionProposal<T>` class (which also deals with [drop operations](#drag-and-drop)).  There should be only one implementation per `Type`.  If a `Type` doesn't have a proposal then it doesn't support activation.
+
+The following conventions are enforced:
+
+1. The command must be called `ProposeExecutionWhenTargetIsX` where X is the Type of the object that supports activation
+2. The command must be in the namespace `CommandExecution.Proposals` (it can be in any project)
+
+A typical proposal looks like:
+```csharp
+
+class ProposeExecutionWhenTargetIsProject:RDMPCommandExecutionProposal<Project>
+{
+	public ProposeExecutionWhenTargetIsProject(IActivateItems itemActivator) : base(itemActivator)
+	{
+	}
+
+	public override bool CanActivate(Project target)
+	{
+		//All Projects can be activated
+		return true;
+	}
+
+	public override void Activate(Project target)
+	{
+		//When activated we show the ProjectUI 
+		ItemActivator.Activate<ProjectUI.ProjectUI, Project>(target);
+	}
+
+	public override ICommandExecution ProposeExecution(ICommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
+	{
+		//return null if you don't support objects being dropped on your object
+		return null;
+	}
+}
+
+```
+
 ## Drag and Drop
 
+Drag and drop in tree views is handled through the `RDMPCommandExecutionProposal<T>` class (which also deals with [double clicking](#double-clicking)).  All dragged objects are encapsulated in an `ICommand` which is generated when a drag operation begins in the program.  The sequence is:
+
+1. Drag operation starts
+1. ICommand created
+1. ICommand loaded with relevant facts about object being dragged
+1. User drags object around and hovers over various other objects
+1. Each object hovered over has it's `RDMPCommandExecutionProposal<T>.ProposeExecution` consulted for drop legality
+1. User drops object
+1. If the ``RDMPCommandExecutionProposal<T>.ProposeExecution` returned a command that was not `IsImpossible` then command is executed
+
+![drop operation example](Images/UserInterfaceOverview/ExampleDropOperation.png) 
+
+This advantages of this are as follows:
+
+1. Centralises all drop logic for a class in one place
+1. Front loads expensive queries at the start of the drag operation (when populating `ICommand`)
+1. Reuses `ICommandExecution` atomic commands which already exist for encapsulating atomic operations (in menus, HomeUI etc)
+1. Provides feedback to the user about the operation they are about to perform
+1. Allows unit testing of drag and drop conditions
+
+
+Here is an example drop implementation for `Project`
+
+```csharp
+public override ICommandExecution ProposeExecution(ICommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
+{
+	//if user is dropping a cohort builder query
+	var cicCommand = cmd as CohortIdentificationConfigurationCommand;
+	if(cicCommand != null)
+		return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
+
+    //if user is dropping a Catalogue they probably want to make it 
+	var cataCommand = cmd as CatalogueCommand;
+	if (cataCommand != null)
+		return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
+
+	//if a file is being dropped (e.g. a csv file)
+	var file = cmd as FileCollectionCommand;
+
+	//Import the file as a new Catalogue and associate it with the Project
+	if(file != null)
+		return new ExecuteCommandCreateNewCatalogueByImportingFile(ItemActivator,file).SetTarget(project);
+
+	//if the object being dragged is something else then no operation is possible
+	return null;
+}
+```
+
+Adding support for dragging a new object (not currently draggable) involves creating a new `ICommand` and implementing it's construction logic in `RDMPCommandFactory`
+
 ## Menus
+
+Right click menus for objects are created by subclassing `RDMPContextMenuStrip`.  Once a menu has been created it will be automatically shown when right clicking.  Menus must be in the `Menus` namespace of a project and should be named XMenu where X is the object for whom the menu is shown e.g. `CatalogueMenu`.
+
+Build your menu by adding `IAtomicCommand` instances, for example:
+
+```csharp
+[System.ComponentModel.DesignerCategory("")]
+class CatalogueItemMenu : RDMPContextMenuStrip
+{
+	public CatalogueItemMenu(RDMPContextMenuStripArgs args, CatalogueItem catalogueItem): base(args, catalogueItem)
+	{
+		Add(new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, catalogueItem));
+		Add(new ExecuteCommandMakeCatalogueItemExtractable(_activator, catalogueItem));
+		Add(new ExecuteCommandImportCatalogueItemDescription(_activator, catalogueItem), Keys.Control | Keys.I);
+	}
+}
+```
+
+![right click menu of a CatalogueItem](Images/UserInterfaceOverview/ExampleMenu.png) 
+
+Where multiple objects have very similar/identical menus then it is permissable (though still not recommended) to include them in the same class via constructor overloading.  It is the constructor signature which defines what menu is shown for a given object(if any) not the class name.  For example:
+
+```csharp
+    [System.ComponentModel.DesignerCategory("")]
+    class CohortIdentificationConfigurationMenu :RDMPContextMenuStrip
+    {
+		//constructor for cics
+        public CohortIdentificationConfigurationMenu(RDMPContextMenuStripArgs args, CohortIdentificationConfiguration cic): base(args, cic)
+        {
+            //Build menu
+        }
+
+		//constructor for associated cics
+        public CohortIdentificationConfigurationMenu(RDMPContextMenuStripArgs args, ProjectCohortIdentificationConfigurationAssociation association) 
+				//invoke other constructor with the underlying cic
+				: this(args,association.CohortIdentificationConfiguration)
+        {
+            //Build more menu
+        }
+    }
+```
 
 # Commands
 Where possible RDMP likes to encapsulate all atomic operations that the user can perform in an `IAtomicCommand` implementation e.g. `ExecuteCommandCreateNewFilter`.  You should inherit from `BasicUICommandExecution` and override the required methods.
 
 `IAtomicCommand` objects can be displayed in several ways and are the preferred way of offering options to the user.
 
-
-
+If (based on constructor parameters) a command is found to be impossible you should call `SetImpossible` with a description of why.  This will be presented to the user in an appropriate way (e.g. grey out a menu item and add a tool tip).
