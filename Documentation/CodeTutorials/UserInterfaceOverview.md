@@ -257,3 +257,34 @@ public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
 ```
 
 A limitation of this testing approach is that it requires private fields (e.g. `ddAxisDimension`) to be accessible to the test assembly.  Fields (in UI code only) that need to be tested in this way should be made internal (and the testing assembly marked as `InternalsVisibleTo`).
+
+## Error Programming
+
+When your UI has an object in an illegal state or causing a crash/error message then follow the following process:
+
+1. If the condition is associated with a specific control on the UI (e.g. a `TextBox`)
+   1. Add an `ErrorProvider` to the UI control
+   1. Reset/Clear the `ErrorProvider` in the `SetDatabase` method so when the user fixes and saves it clears the error
+   ![example single control tab](Images/UserInterfaceOverview/ErrorProvider.png)     
+1. If the condition can be detected at object level
+   1. Make the object `ICheckable` (if it isn't already)
+   1. Add check for condition to the objects `ICheckable.Check` method
+   1. Ensure UI has a call to `CommonFunctionality.AddChecks`
+   1. Ensure UI still loads and exposes the check failure without crashing   
+   ![example single control tab](Images/UserInterfaceOverview/ChecksError.png)     
+1. If the condition cannot be detected at object level and is only surfaced in UI logic
+   1. Add a call to `CommonFunctionality`.`Fatal`
+1. If UI no longer makes sense in the state and the UI has no way to salvage the object
+   1. Add a call to `IActivateItems.KillForm` and return out of any executing methods
+
+ 
+   
+## UI Checklist
+
+- [ ] Does UI have a `<summary>` tag that makes sense to the user when they hit F1
+- [ ] Do all subcomponents that are not immediately obvious have a Help (See `CommonFunctionality.AddHelp`)
+- [ ] Is there a Unit test under `UserInterfaceTests` namespace
+  
+
+
+

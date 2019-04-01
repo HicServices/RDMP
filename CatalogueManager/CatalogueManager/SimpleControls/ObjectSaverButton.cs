@@ -70,16 +70,21 @@ namespace CatalogueManager.SimpleControls
 
             Enable(false);
 
+            //if it is a fresh instance
+            if(!ReferenceEquals(_o,o))
+            {
+                //subscribe to property change events
+                o.PropertyChanged += PropertyChanged;
+                _o = o;
+            }
+            
             //already set up before
-            if(_o != null)
+            if (_refreshBus != null)
                 return;
 
-            _o = o;
             _refreshBus = refreshBus;
             _refreshBus.Subscribe(this);
             
-            o.PropertyChanged += PropertyChanged;
-
             f.Enter += ParentForm_Enter;
             f.Leave += ParentFormOnLeave;
             

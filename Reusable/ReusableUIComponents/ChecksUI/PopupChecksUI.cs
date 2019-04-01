@@ -86,8 +86,8 @@ namespace ReusableUIComponents.ChecksUI
         public void StartChecking(ICheckable checkable)
         {
             this.Show();
-            checksUI1.StartChecking(checkable);
             checksUI1.AllChecksComplete += AllChecksComplete;
+            checksUI1.StartChecking(checkable);
         }
 
         public CheckResult GetWorst()
