@@ -19,7 +19,7 @@ namespace ReusableUIComponents.Dialogs
     {
         private readonly Exception _exception;
         
-        private ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,exception.StackTrace,null,WideMessageBoxTheme.Exception))
+        private ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,exception.StackTrace??Environment.StackTrace,null,WideMessageBoxTheme.Exception))
         {
             _exception = exception;
 
@@ -84,12 +84,9 @@ namespace ReusableUIComponents.Dialogs
         protected override void OnViewStackTrace()
         {
             if (ExceptionViewerStackTraceWithHyperlinks.IsSourceCodeAvailable(_exception))
-            {
                 ExceptionViewerStackTraceWithHyperlinks.Show(_exception);
-                return;
-            }
-            string exceptionAsString = ExceptionHelper.ExceptionToListOfInnerMessages(_exception, true);
-            Show("Stack Trace",exceptionAsString,null,false,null,WideMessageBoxTheme.Help);
+            else
+                base.OnViewStackTrace();
         }
     }
 }

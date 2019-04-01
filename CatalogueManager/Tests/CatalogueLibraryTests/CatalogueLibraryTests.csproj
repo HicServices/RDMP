@@ -380,6 +380,7 @@
     <Compile Include="Integration\TableInfoTests.cs" />
     <Compile Include="Unit\TestAcronymGeneration.cs" />
     <Compile Include="UserInterfaceTests\AggregateEditorUITests.cs" />
+    <Compile Include="UserInterfaceTests\ANOTableUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueItemUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueUITests.cs" />
     <Compile Include="UserInterfaceTests\ChildProviderTests.cs" />
@@ -388,6 +389,10 @@
     <Compile Include="UserInterfaceTests\UITimeoutAttribute.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj">
+      <Project>{9de66727-51cf-44f8-adf3-00ddb262dc1c}</Project>
+      <Name>ANOStore.Database</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj">
       <Project>{63E1D23E-F82C-4325-B0F7-9638C3753A46}</Project>
       <Name>ANOStore</Name>

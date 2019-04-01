@@ -8,10 +8,14 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using CommandLine;
+using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
@@ -24,6 +28,7 @@ namespace CatalogueManager.ANOEngineeringUIs
     public partial class ANOTableUI : ANOTableUI_Design
     {
         private ANOTable _anoTable;
+        internal ErrorProvider ServerErrorProvider = new ErrorProvider();
 
         public ANOTableUI()
         {
@@ -36,12 +41,23 @@ namespace CatalogueManager.ANOEngineeringUIs
             _anoTable = databaseObject;
             base.SetDatabaseObject(activator, databaseObject);
 
-            lblServer.Text = _anoTable.Server.Name;
+            llServer.Text = _anoTable.Server.Name;
 
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
-
+            
             SetEnabledness();
+
+            CommonFunctionality.AddHelp(tbSuffix,"ANOTable.Suffix");
+            CommonFunctionality.AddHelp(llServer, "ANOTable.Server_ID");
+            CommonFunctionality.AddStringHelp(tbInputDataType,"DataType", "Datatype for private identifiers being mapped e.g. varchar(100)");
+            CommonFunctionality.AddHelp(nIntegers, "ANOTable.NumberOfIntegersToUseInAnonymousRepresentation");
+            CommonFunctionality.AddHelp(nCharacters, "ANOTable.NumberOfCharactersToUseInAnonymousRepresentation");
+
+            if (!_anoTable.Server.WasCreatedByDatabaseAssembly(Tier2DatabaseType.ANOStore))
+                ServerErrorProvider.SetError(llServer, "Server is not an ANO server");
+            else
+                ServerErrorProvider.Clear();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ANOTable databaseObject)
@@ -57,7 +73,17 @@ namespace CatalogueManager.ANOEngineeringUIs
 
         private void SetEnabledness()
         {
-            var pushedTable = _anoTable.GetPushedTable();
+            DiscoveredTable pushedTable;
+            try
+            {
+                pushedTable = _anoTable.GetPushedTable();
+            }
+            catch (Exception e)
+            {
+                CommonFunctionality.Fatal("Could not reach ANO Server",e);
+                return;
+            }
+
             bool isPushed = pushedTable != null;
 
             nIntegers.Enabled = !isPushed;
@@ -113,6 +139,12 @@ namespace CatalogueManager.ANOEngineeringUIs
         private void nCharacters_ValueChanged(object sender, EventArgs e)
         {
             _anoTable.NumberOfCharactersToUseInAnonymousRepresentation = (int)nCharacters.Value;
+        }
+
+        private void llServer_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
+        {
+            var cmd = new ExecuteCommandShow(Activator, _anoTable.Server, 0);
+            cmd.Execute();
         }
     }
     

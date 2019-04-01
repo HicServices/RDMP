@@ -50,12 +50,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         private readonly ToolStripButton _runChecksToolStripButton = new ToolStripButton("Run Checks", FamFamFamIcons.arrow_refresh);
         private ICheckable _checkable;
         private IActivateItems _activator;
-        
-        
-        /// <summary>
-        /// All keywords added via <see cref="AddHelp"/>
-        /// </summary>
-        private readonly HashSet<string> _helpAdded = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+
 
         public RDMPControlCommonFunctionality(IRDMPControl hostControl)
         {
@@ -182,6 +177,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             _ragSmileyToolStrip.StartChecking(_checkable);
         }
+
         /// <summary>
         /// Reports the supplied exception in the RAG checks smiley on the top toolbar.  This will result in rag checks becomming 
         /// visible if it was not visible before.
@@ -200,6 +196,11 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         }
 
         /// <summary>
+        /// All keywords added via <see cref="AddHelp"/>
+        /// </summary>
+        private readonly HashSet<Control> _helpAdded = new HashSet<Control>();
+
+        /// <summary>
         /// Adds a <see cref="HelpIcon"/> on the right of the control with documentation for the listed property
         /// </summary>
         /// <param name="c">The control you want the help to appear beside</param>
@@ -214,13 +215,30 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             if (c.Parent == null)
                 throw new NotSupportedException("Control is not in a container.  HelpIcon cannot be added to top level controls");
 
-            _helpAdded.Add(propertyName);
-
             title = title ?? propertyName;
             string body = _activator.CommentStore.GetDocumentationIfExists(propertyName, false, true);
 
             if (body == null)
                 return;
+
+            AddStringHelp(c,title,body,anchor);
+        }
+
+        /// <summary>
+        /// Adds a <see cref="HelpIcon"/> on the right of the control with the pvorided help text
+        /// </summary>
+        /// <param name="c">The control you want the help to appear beside</param>
+        /// <param name="title">The textual header you want shown</param>
+        /// <param name="body">The text you want displayed on hover (under the title)</param>
+        /// <param name="anchor">Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
+        ///  be chosen based on the control <paramref name="c"/></param>
+        public void AddStringHelp(Control c, string title, string body, AnchorStyles anchor = AnchorStyles.None)
+        {
+            //don't add help to the control more than once
+            if (_helpAdded.Contains(c))
+                return;
+
+            _helpAdded.Add(c);
 
             var help = new HelpIcon();
             help.SetHelpText(title, body);
@@ -238,8 +256,9 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 help.Anchor = anchor;
 
             c.Parent.Controls.Add(help);
-        }
 
+
+        }
 
         public void ClearToolStrip()
         {
@@ -337,5 +356,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             if(ToolStripAddedToHost != null)
                 ToolStripAddedToHost(this,new EventArgs());
         }
+
     }
 }

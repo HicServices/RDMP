@@ -9,10 +9,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Repositories;
 using FAnsi.Implementation;
 using MapsDirectlyToDatabaseTable;
+using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
@@ -54,6 +56,12 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 return (T)(object)WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
             }
 
+            if (typeof (T) == typeof (ANOTable))
+            {
+                ExternalDatabaseServer server;
+                return (T)(object)WhenIHaveA<ANOTable>(out server);
+            }
+
             throw new NotSupportedException();
 
         }
@@ -70,6 +78,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var otherCi = new CatalogueItem(Repository, cata, otherCol.Name);
             otherEi = new ExtractionInformation(Repository, otherCi, otherCol, otherCol.Name);
             return Save(new AggregateConfiguration(Repository, cata, "My graph"));
+        }
+
+        protected DatabaseEntity WhenIHaveA<T>(out ExternalDatabaseServer server) where T:ANOTable
+        {
+            server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(ANOStore.Database.Class1).Assembly);
+            var anoTable = new ANOTable(Repository, server, "ANOFish", "F");
+            return anoTable;
         }
 
         private T Save<T>(T s) where T:ISaveable
@@ -90,9 +105,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             return ui;
         }
 
+        
         /// <summary>
         /// Loads FAnsi implementations for all supported DBMS platforms into memory
         /// </summary>
+        [SetUp]
         protected void LoadDatabaseImplementations()
         {
             ImplementationManager.Load(

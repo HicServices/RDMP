@@ -404,7 +404,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void KillForm(Form f, Exception reason)
         {
             f.Close();
-            ExceptionViewer.Show(reason);
+            ExceptionViewer.Show("Window Closed",reason);
         }
 
         ///<inheritdoc/>

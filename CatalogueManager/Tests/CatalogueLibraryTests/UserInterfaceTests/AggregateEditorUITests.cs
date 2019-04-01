@@ -7,7 +7,6 @@
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueManager.AggregationUIs;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Refreshing;
@@ -17,12 +16,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     class AggregateEditorUITests:UITests
     {
-        [SetUp]
-        public void CallLoadDatabaseImplementations()
-        {
-            LoadDatabaseImplementations();
-        }
-
         [Test,UITimeout(5000)]
         public void Test_AggregateEditorUI()
         {
@@ -108,5 +101,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Assert.AreEqual(ui.ParentForm,killed.Key);
             StringAssert.Contains("no extractable columns", killed.Value.Message);
         }
+
     }
 }
