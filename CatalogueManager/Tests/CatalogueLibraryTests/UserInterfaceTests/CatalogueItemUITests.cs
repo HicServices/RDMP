@@ -16,7 +16,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     class CatalogueItemUITests:UITests
     {
         [Test, UITimeout(20000)]
-        public void Test_CatalogueItemUI_DescriptionPropogation()
+        public void Test_CatalogueItemUI_NormalState()
         {
             //when I have two CatalogueItems that have the same name
             var catalogueItem = WhenIHaveA<CatalogueItem>();
@@ -38,6 +38,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //and the UI should have shown the Propagate changes dialog
             Assert.AreEqual(1, ItemActivator.Results.WindowsShown.Count);
             Assert.IsInstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI),ItemActivator.Results.WindowsShown.Single());
+
+            AssertNoCrash();
         }
     }
 }

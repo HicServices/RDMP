@@ -9,17 +9,15 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     class ANOTableUITests:UITests
     {
         [Test, UITimeout(5000)]
-        public void Test_NoServer()
+        public void Test_ANOTableUI_NormalState()
         {
             var anoTable = WhenIHaveA<ANOTable>();
-            var ui = AndLaunch<ANOTableUI>(anoTable);
-
-            //no exceptions
-            Assert.AreEqual(0,ItemActivator.Results.KilledForms.Count);
+            AndLaunch<ANOTableUI>(anoTable);
+            AssertNoCrash();
         }
 
         [Test, UITimeout(5000)]
-        public void Test_Server_WrongType()
+        public void Test_ANOTableUI_ServerWrongType()
         {
             ExternalDatabaseServer srv;
             var anoTable = WhenIHaveA<ANOTable>(out srv);
@@ -29,7 +27,9 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var ui = AndLaunch<ANOTableUI>(anoTable);
             
             //no exceptions
-            Assert.AreEqual(0, ItemActivator.Results.KilledForms.Count);
+            AssertNoCrash();
+
+            //but there should be an error on this UI element
             Assert.AreEqual("Server is not an ANO server", ui.ServerErrorProvider.GetError(ui.llServer));
         }
 

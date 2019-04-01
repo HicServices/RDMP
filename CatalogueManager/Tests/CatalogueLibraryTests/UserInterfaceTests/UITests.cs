@@ -10,11 +10,14 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Repositories;
 using FAnsi.Implementation;
+using LoadModules.Generic.Mutilators.Dilution.Operations;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
@@ -22,6 +25,17 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     {
         protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
         protected TestActivateItems ItemActivator;
+
+        protected MEF MEF;
+
+        /// <summary>
+        /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
+        /// </summary>
+        protected void SetupMEF()
+        {
+            MEF = new MEF();
+            MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
+        }
         
         protected T WhenIHaveA<T>() where T:DatabaseEntity
         {
@@ -96,7 +110,10 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         protected T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
             if (ItemActivator == null)
+            {
                 ItemActivator = new TestActivateItems(Repository);
+                ItemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
+            }
 
             Form f = new Form();
             T ui = new T();
@@ -116,6 +133,25 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 typeof(FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation).Assembly,
                 typeof(FAnsi.Implementations.MySql.MySqlImplementation).Assembly,
                 typeof(FAnsi.Implementations.Oracle.OracleImplementation).Assembly);
+        }
+
+        /// <summary>
+        /// Asserts that the given command is impossible for the <paramref name="expectedReason"/>
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="expectedReason">The reason it should be impossible - uses StringAssert.Contains</param>
+        protected void AssertImpossibleBecause(IAtomicCommand cmd, string expectedReason)
+        {
+            Assert.IsTrue(cmd.IsImpossible);
+            StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
+        }
+
+        /// <summary>
+        /// Asserts that no calls have been made to KillForm (the last resort termination of a UI).
+        /// </summary>
+        protected void AssertNoCrash()
+        {
+            Assert.AreEqual(0,ItemActivator.Results.KilledForms.Count);
         }
     }
 }

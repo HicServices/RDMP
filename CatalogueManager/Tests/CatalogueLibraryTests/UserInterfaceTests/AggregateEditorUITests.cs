@@ -17,7 +17,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     class AggregateEditorUITests:UITests
     {
         [Test,UITimeout(5000)]
-        public void Test_AggregateEditorUI()
+        public void Test_AggregateEditorUI_NormalState()
         {
             var config = WhenIHaveA<AggregateConfiguration>();
             var ui = AndLaunch<AggregateEditorUI>(config);
@@ -57,6 +57,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //should now be possible to launch the graph
             cmdExecuteGraph = new ExecuteCommandExecuteAggregateGraph(ItemActivator, config);
             Assert.IsFalse(cmdExecuteGraph.IsImpossible);
+
+            AssertNoCrash();
         }
 
         [Test, UITimeout(5000)]
@@ -78,6 +80,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //dates are not valid for pivots
             Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
             Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
+            
+            AssertNoCrash();
         }
 
         [Test, UITimeout(5000)]

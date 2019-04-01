@@ -84,7 +84,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 
                 try
                 {
-                    while (thread.IsAlive && _timeout > 0  || Debugger.IsAttached)
+                    while (thread.IsAlive && (_timeout > 0  || Debugger.IsAttached))
                     {
                         Task.Delay(100).Wait();
                         _timeout -= 100;

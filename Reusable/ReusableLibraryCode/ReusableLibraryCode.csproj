@@ -266,6 +266,7 @@
     <Compile Include="CommandExecution\ICommandExecution.cs" />
     <Compile Include="CommandExecution\ICommandSource.cs" />
     <Compile Include="CommandExecution\ImpossibleCommand.cs" />
+    <Compile Include="Exceptions\ImpossibleException.cs" />
     <Compile Include="Comments\CommentStore.cs" />
     <Compile Include="Comments\CommentsVisitor.cs" />
     <Compile Include="DataAccess\DataAccessContext.cs" />

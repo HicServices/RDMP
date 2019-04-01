@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using ReusableLibraryCode.Exceptions;
 
 namespace ReusableLibraryCode.CommandExecution
 {
@@ -32,7 +33,7 @@ namespace ReusableLibraryCode.CommandExecution
         public virtual void Execute()
         {
             if(IsImpossible)
-                throw new NotSupportedException("Command is marked as IsImpossible and should not be Executed.  Reason ReasonCommandImpossible is:" + ReasonCommandImpossible);
+                throw new ImpossibleException(this, ReasonCommandImpossible);
         }
 
 

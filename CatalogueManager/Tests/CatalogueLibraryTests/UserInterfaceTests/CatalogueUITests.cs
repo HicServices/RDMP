@@ -8,14 +8,13 @@ using CatalogueLibrary.Data;
 using CatalogueManager.MainFormUITabs;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
-using ScintillaNET;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
     public class CatalogueUITests : UITests
     {
         [Test, UITimeout(20000)]
-        public void Test_CatalogueUI_SaveDescription()
+        public void Test_CatalogueUI_NormalState()
         {
             var cata = WhenIHaveA<Catalogue>();
             var ui = AndLaunch<CatalogueUI>(cata);
@@ -59,6 +58,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //my class should have no changes (vs the database) and should have the proper description
             Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
             Assert.AreEqual("amagad zombies", cata.Description);
+            
+            AssertNoCrash();
         }
 
     }

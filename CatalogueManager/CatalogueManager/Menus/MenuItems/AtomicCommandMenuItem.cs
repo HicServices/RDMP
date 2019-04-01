@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Exceptions;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
@@ -43,6 +44,10 @@ namespace CatalogueManager.Menus.MenuItems
             try
             {
                 _command.Execute();
+            }
+            catch (ImpossibleException ex)
+            {
+                ExceptionViewer.Show("Command Impossible", ex.ReasonCommandImpossible);
             }
             catch (Exception ex)
             {
