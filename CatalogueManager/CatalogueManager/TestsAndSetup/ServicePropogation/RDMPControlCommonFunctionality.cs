@@ -173,7 +173,13 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 return;
 
             if(BeforeChecking != null)
-                BeforeChecking(this,new EventArgs());
+            {
+                var e = new BeforeCheckingEventArgs(_ragSmileyToolStrip, _checkable);
+                BeforeChecking(this,e);
+
+                if(e.Cancel)
+                    return;
+            }
 
             _ragSmileyToolStrip.StartChecking(_checkable);
         }

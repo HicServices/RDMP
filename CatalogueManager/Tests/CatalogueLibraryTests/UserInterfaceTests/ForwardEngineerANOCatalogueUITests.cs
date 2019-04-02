@@ -26,7 +26,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //and if we are depersisting it that should be angry
             AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
 
-            AssertNoCrash();
+            AssertErrorWasShown(ExpectedErrorType.Fatal,"No columns");
         }
+
     }
 }

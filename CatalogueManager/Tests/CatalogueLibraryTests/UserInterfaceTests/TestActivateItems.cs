@@ -24,6 +24,7 @@ using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Repositories;
@@ -186,6 +187,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Results.KilledForms.Add(f,reason);
         }
 
+        public void OnRuleRegistered(IBinderRule rule)
+        {
+            Results.RegisteredRules.Add(rule);
+        }
+
         public void ApplyTo(ToolStrip item)
         {
             
@@ -200,6 +206,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     {
         public List<Control> WindowsShown = new List<Control>();
         public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
-
+        public List<IBinderRule> RegisteredRules = new List<IBinderRule>();
     }
 }

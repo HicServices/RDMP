@@ -19,7 +19,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         {
             var anoTable = WhenIHaveA<ANOTable>();
             AndLaunch<ANOTableUI>(anoTable);
-            AssertNoCrash();
+            AssertNoErrors(ExpectedErrorType.Any);
         }
 
         [Test, UITimeout(5000)]
@@ -33,7 +33,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var ui = AndLaunch<ANOTableUI>(anoTable);
             
             //no exceptions
-            AssertNoCrash();
+            AssertNoErrors(ExpectedErrorType.Any);
 
             //but there should be an error on this UI element
             Assert.AreEqual("Server is not an ANO server", ui.ServerErrorProvider.GetError(ui.llServer));

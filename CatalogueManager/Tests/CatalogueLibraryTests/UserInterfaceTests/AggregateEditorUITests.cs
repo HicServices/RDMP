@@ -44,7 +44,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var dim = new AggregateDimension(Repository, ei, config);
             
             //publish a refresh
-            ItemActivator.RefreshBus.Publish(this, new RefreshObjectEventArgs(config));
+            Publish(config);
 
             //should show one available columns
             available = colsUi.AvailableColumns;
@@ -58,7 +58,9 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             cmdExecuteGraph = new ExecuteCommandExecuteAggregateGraph(ItemActivator, config);
             Assert.IsFalse(cmdExecuteGraph.IsImpossible);
 
-            AssertNoCrash();
+            //todo shouldnt really need this
+            //ItemActivator.RefreshBus.Publish(this,new RefreshObjectEventArgs(config));
+            AssertNoErrors(ExpectedErrorType.Any);
         }
 
         [Test, UITimeout(5000)]
@@ -80,8 +82,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //dates are not valid for pivots
             Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
             Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
-            
-            AssertNoCrash();
+
+            AssertNoErrors(ExpectedErrorType.Any);
         }
 
         [Test, UITimeout(5000)]

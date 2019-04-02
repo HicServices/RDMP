@@ -58,9 +58,14 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //my class should have no changes (vs the database) and should have the proper description
             Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
             Assert.AreEqual("amagad zombies", cata.Description);
-            
-            AssertNoCrash();
-        }
 
+            AssertNoErrors(ExpectedErrorType.Any);
+
+            //clear the name
+            cata.Name = null;
+            AssertErrorWasShown(ExpectedErrorType.ErrorProvider, "Value cannot be null");
+            cata.Name = "omg";
+            AssertNoErrors(ExpectedErrorType.Any);
+        }
     }
 }

@@ -670,6 +670,7 @@
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
     <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
     <Compile Include="Rules\BinderRule.cs" />
+    <Compile Include="Rules\IBinderRule.cs" />
     <Compile Include="Rules\NotNullRule.cs" />
     <Compile Include="Rules\UniqueRule.cs" />
     <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
@@ -1347,6 +1348,7 @@
     <Compile Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.Designer.cs">
       <DependentUpon>TicketingSystemConfigurationUI.cs</DependentUpon>
     </Compile>
+    <Compile Include="TestsAndSetup\ServicePropogation\BeforeCheckingEventArgs.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\INamedTab.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs" />
     <Compile Include="TestsAndSetup\ServicePropogation\IRDMPControl.cs" />

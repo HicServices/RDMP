@@ -5,19 +5,25 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Repositories;
 using FAnsi.Implementation;
-using LoadModules.Generic.Mutilators.Dilution.Operations;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableUIComponents.ChecksUI;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
@@ -107,6 +113,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             return s;
         }
 
+        
+
         protected T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
             if (ItemActivator == null)
@@ -114,15 +122,18 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 ItemActivator = new TestActivateItems(Repository);
                 ItemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
             }
-
+            
             Form f = new Form();
             T ui = new T();
+
             f.Controls.Add(ui);
             ui.SetDatabaseObject(ItemActivator, o);
+            ui.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
+            _userInterfaceLaunched = ui;
             return ui;
         }
 
-        
+
         /// <summary>
         /// Loads FAnsi implementations for all supported DBMS platforms into memory
         /// </summary>
@@ -146,12 +157,173 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
         }
 
-        /// <summary>
-        /// Asserts that no calls have been made to KillForm (the last resort termination of a UI).
-        /// </summary>
-        protected void AssertNoCrash()
+
+        private ToMemoryCheckNotifier _checkResults;
+        private Control _userInterfaceLaunched;
+
+        private void CommonFunctionalityOnBeforeChecking(object sender, EventArgs eventArgs)
         {
-            Assert.AreEqual(0,ItemActivator.Results.KilledForms.Count);
+            //intercept checking and replace with our own in memory checks
+            var e = (BeforeCheckingEventArgs) eventArgs;
+
+            _checkResults = new ToMemoryCheckNotifier();
+            e.Checkable.Check(_checkResults);
+            e.Cancel = true;
+
         }
+
+
+
+        protected void AssertNoErrors(ExpectedErrorType expectedErrorLevel)
+        {
+            switch (expectedErrorLevel)
+            {
+                case ExpectedErrorType.KilledForm:
+                    Assert.IsEmpty(ItemActivator.Results.KilledForms);
+                    break;
+                case ExpectedErrorType.Fatal:
+                    break;
+                case ExpectedErrorType.FailedCheck:
+                    
+                    //there must have been something checked that failed with the provided message
+                    if (_checkResults != null)
+                        Assert.IsEmpty(_checkResults.Messages.Where(m => m.Result == CheckResult.Fail));
+                    break;
+                case ExpectedErrorType.ErrorProvider:
+                    Assert.IsEmpty(GetAllErrorProviderErrorsShown());
+                    
+                    break;
+                case ExpectedErrorType.Any:
+                    AssertNoErrors(ExpectedErrorType.KilledForm);
+                    AssertNoErrors(ExpectedErrorType.Fatal);
+                    AssertNoErrors(ExpectedErrorType.FailedCheck);
+                    AssertNoErrors(ExpectedErrorType.ErrorProvider);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("expectedErrorLevel");
+            }
+        }
+
+        /// <summary>
+        /// Checks that the given <paramref name="expectedContainsText"/> was displayed to the user at the 
+        /// given prominence
+        /// </summary>
+        /// <param name="expectedErrorLevel"></param>
+        /// <param name="expectedContainsText"></param>
+        protected void AssertErrorWasShown(ExpectedErrorType expectedErrorLevel, string expectedContainsText)
+        {
+            switch (expectedErrorLevel)
+            {
+                case ExpectedErrorType.KilledForm:
+                    Assert.IsTrue(ItemActivator.Results.KilledForms.Values.Any(v=>v.Message.Contains(expectedContainsText)));
+                    break;
+                case ExpectedErrorType.Fatal:
+                    break;
+                case ExpectedErrorType.FailedCheck:
+
+                    //there must have been something checked that failed with the provided message
+                    Assert.IsTrue(_checkResults.Messages.Any(m=>m.Message.Contains(expectedContainsText) && m.Result == CheckResult.Fail));
+
+                    break;
+                case ExpectedErrorType.ErrorProvider:
+
+                    Assert.IsTrue(GetAllErrorProviderErrorsShown().Any(m => m.Contains(expectedContainsText)));
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException("expectedErrorLevel");
+            }
+        }
+        private List<string> GetAllErrorProviderErrorsShown()
+        {
+
+            var errorProviders =
+                //get all controls with ErrorProvider fields
+                GetControl<Control>().SelectMany(GetErrorProviders)
+                //and any we registered through the BinderWithErrorProviderFactory
+                .Union(ItemActivator.Results.RegisteredRules.Select(r => r.ErrorProvider))
+                .ToList();
+
+            //get the error messages that have been shown from any of these
+            return errorProviders.SelectMany(GetErrorProviderErrorsShown).ToList();
+        }
+
+        private List<string> GetErrorProviderErrorsShown(ErrorProvider errorProvider)
+        {
+            List<string> toReturn = new List<string>();
+
+            var hashtable = (Hashtable) typeof (ErrorProvider).GetField("items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);
+
+            foreach (var entry in hashtable.Values)
+                toReturn.Add((string)entry.GetType().GetField("error", BindingFlags.Instance | BindingFlags.NonPublic).GetValue(entry));
+
+            return toReturn;
+        }
+
+        private List<ErrorProvider> GetErrorProviders(Control arg)
+        {
+            List<ErrorProvider> toReturn = new List<ErrorProvider>();
+
+            
+            var errorProviderFields = arg.GetType().GetFields().Where(f => f.FieldType == typeof (ErrorProvider));
+            
+            foreach (FieldInfo f in errorProviderFields)
+            {
+                var instance = f.GetValue(arg);
+                if(instance != null)
+                    toReturn.Add((ErrorProvider)instance);
+            }
+
+            return toReturn;
+        }
+
+        protected List<T> GetControl<T>() where T:Control
+        {
+            return GetControl<T>(_userInterfaceLaunched, new List<T>());
+        }
+
+        private List<T> GetControl<T>(Control c, List<T> list) where T:Control
+        {
+            if(c is T)
+                list.Add((T)c);
+
+            foreach (Control child in c.Controls)
+                GetControl(child, list);
+
+            return list;
+        }
+
+        protected void Publish(DatabaseEntity o)
+        {
+            ItemActivator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
+        }
+    }
+
+    public enum ExpectedErrorType
+    {
+        /// <summary>
+        /// Form must have been made a request to be forceably closed (this is the highest level of error a form can instigate).
+        /// </summary>
+        KilledForm,
+
+        /// <summary>
+        /// Form decided to notify user of a problem outside the scope of the object ICheckable
+        /// </summary>
+        Fatal,
+
+        /// <summary>
+        /// ICheckable object was checked and failed checks in the UI
+        /// </summary>
+        FailedCheck,
+
+        /// <summary>
+        /// An ErrorProvider icon was shown next to some control
+        /// </summary>
+        ErrorProvider,
+
+        /// <summary>
+        /// An error at any level
+        /// </summary>
+        Any
     }
 }

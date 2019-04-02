@@ -81,8 +81,8 @@ namespace CatalogueManager.MainFormUITabs
         private void tbName_TextChanged(object sender, EventArgs e)
         {
             string reasonInvalid;
-            if (!Catalogue.IsAcceptableName(c_tbName.Text, out reasonInvalid))
-                errorProvider1.SetError(c_tbName, reasonInvalid);
+            if (!Catalogue.IsAcceptableName(tbName.Text, out reasonInvalid))
+                errorProvider1.SetError(tbName, reasonInvalid);
             else
                 errorProvider1.Clear();
         }
@@ -142,7 +142,7 @@ namespace CatalogueManager.MainFormUITabs
             base.SetBindings(rules,databaseObject);
 
             Bind(c_tbAcronym, "Text", "Acronym", c=>c.Acronym);
-            Bind(c_tbName, "Text", "Name", c => c.Name);
+            Bind(tbName, "Text", "Name", c => c.Name);
             Bind(c_tbID,"Text","ID", c=>c.ID);
             Bind(_scintillaDescription, "Text", "Description", c => c.Description);
             

@@ -39,7 +39,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Assert.AreEqual(1, ItemActivator.Results.WindowsShown.Count);
             Assert.IsInstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI),ItemActivator.Results.WindowsShown.Single());
 
-            AssertNoCrash();
+            AssertNoErrors(ExpectedErrorType.Any);
         }
     }
 }

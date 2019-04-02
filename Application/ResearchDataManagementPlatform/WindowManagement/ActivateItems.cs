@@ -32,6 +32,7 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
@@ -405,6 +406,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             f.Close();
             ExceptionViewer.Show("Window Closed",reason);
+        }
+
+        public void OnRuleRegistered(IBinderRule rule)
+        {
+            //no special action required
         }
 
         ///<inheritdoc/>
