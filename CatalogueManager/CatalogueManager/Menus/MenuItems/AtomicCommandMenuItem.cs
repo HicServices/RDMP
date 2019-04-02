@@ -45,7 +45,7 @@ namespace CatalogueManager.Menus.MenuItems
             {
                 _command.Execute();
             }
-            catch (ImpossibleException ex)
+            catch (ImpossibleCommandException ex)
             {
                 ExceptionViewer.Show("Command Impossible", ex.ReasonCommandImpossible);
             }

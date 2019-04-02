@@ -31,7 +31,7 @@ Whenever a Publish event occurs `SetDatabaseObject` is invoked again with the la
 
 You can instigate this process by calling `IActivateItems.Activate<T, T2>(T2 databaseObject)`  Where `T` is the object that should be shown in the UI control of Type `T2`
 
-Only one instance of a given UI Type can be open at once per databaseObject (i.e. you cannot have two `CatalogeUI` tabs showing the same `Catalogue`).  If you try to do this the `IActivateItems` will just bring the existing instance to the front.
+Only one instance of a given UI Type can be open at once per databaseObject (i.e. you cannot have two `CatalogueUI` tabs showing the same `Catalogue`).  If you try to do this the `IActivateItems` will just bring the existing instance to the front.
 
 Tabs are automatically persisted when exiting the program by recording the Type of the UI and the ID of the object being hosted.
 
@@ -264,7 +264,7 @@ When your UI has an object in an illegal state or causing a crash/error message 
 
 1. If the condition is associated with a specific control on the UI (e.g. a `TextBox`)
    1. Add an `ErrorProvider` to the UI control
-   1. Reset/Clear the `ErrorProvider` in the `SetDatabase` method so when the user fixes and saves it clears the error
+   1. Reset/Clear the `ErrorProvider` in the `SetDatabaseObject` method so when the user fixes and saves it clears the error
    ![example single control tab](Images/UserInterfaceOverview/ErrorProvider.png)     
 1. If the condition can be detected at object level
    1. Make the object `ICheckable` (if it isn't already)

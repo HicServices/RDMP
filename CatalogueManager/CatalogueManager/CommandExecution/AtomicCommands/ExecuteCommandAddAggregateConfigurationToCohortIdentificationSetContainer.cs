@@ -7,13 +7,10 @@
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
+using CatalogueManager.ItemActivation;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer :BasicUICommandExecution
     {

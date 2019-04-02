@@ -6,14 +6,10 @@
 
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.Nodes;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
+using CatalogueManager.ItemActivation;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicUICommandExecution
     {

@@ -6,15 +6,11 @@
 
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using DataExportLibrary.Data.DataTables;
 using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution;
+using CatalogueManager.ItemActivation;
+using DataExportLibrary.Data.DataTables;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddDatasetsToConfiguration : BasicUICommandExecution
     {

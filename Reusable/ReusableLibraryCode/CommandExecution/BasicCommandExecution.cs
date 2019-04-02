@@ -33,7 +33,7 @@ namespace ReusableLibraryCode.CommandExecution
         public virtual void Execute()
         {
             if(IsImpossible)
-                throw new ImpossibleException(this, ReasonCommandImpossible);
+                throw new ImpossibleCommandException(this, ReasonCommandImpossible);
         }
 
 

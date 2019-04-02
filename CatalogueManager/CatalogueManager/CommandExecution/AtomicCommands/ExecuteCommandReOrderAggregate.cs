@@ -6,14 +6,11 @@
 
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
+using CatalogueManager.ItemActivation;
 using ReusableUIComponents.CommandExecution;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandReOrderAggregate : BasicUICommandExecution
     {

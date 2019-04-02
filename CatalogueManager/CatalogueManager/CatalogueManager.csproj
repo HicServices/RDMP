@@ -731,8 +731,8 @@
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
     <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
     <Compile Include="CommandExecution\CachedDropTarget.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandChangeLoadStage.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandReOrderProcessTask.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeLoadStage.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderProcessTask.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAggregateConfiguration.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogue.cs" />
     <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortAggregateContainer.cs" />
@@ -862,21 +862,21 @@
     <Compile Include="Collections\RDMPCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CommandExecution\ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandAddCatalogueToCohortIdentificationSetContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandAddCohortToExtractionConfiguration.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandAddDatasetsToConfiguration.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandMoveAggregateIntoContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandMoveCohortAggregateContainerIntoSubContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandMoveContainerIntoContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandMoveFilterIntoContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandPutCatalogueIntoCatalogueFolder.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandReOrderAggregate.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandReOrderAggregateContainer.cs" />
-    <Compile Include="CommandExecution\ExecuteCommandUseCredentialsToAccessTableInfoData.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationSetContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCohortToExtractionConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddDatasetsToConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveAggregateIntoContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveCohortAggregateContainerIntoSubContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveContainerIntoContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveFilterIntoContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPutCatalogueIntoCatalogueFolder.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderAggregate.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderAggregateContainer.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUseCredentialsToAccessTableInfoData.cs" />
     <Compile Include="CommandExecution\RDMPCommandExecutionFactory.cs" />
     <Compile Include="CredentialsUIs\DataAccessCredentialsUI.cs">
       <SubType>UserControl</SubType>
