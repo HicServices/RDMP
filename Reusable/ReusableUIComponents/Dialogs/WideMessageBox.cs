@@ -42,6 +42,8 @@ namespace ReusableUIComponents.Dialogs
         public static CommentStore CommentStore;
         #endregion
         
+        Regex className = new Regex(@"^\w+$");
+
         public WideMessageBox(WideMessageBoxArgs args)
         {
             InitializeComponent();
@@ -65,6 +67,15 @@ namespace ReusableUIComponents.Dialogs
                 this.WindowState = FormWindowState.Maximized;
 
             richTextBox1.LinkClicked += richTextBox1_LinkClicked;
+
+            //if it's a class name we are showing
+            if (className.IsMatch(args.Title) && args.Theme == WideMessageBoxTheme.Help &&
+                ViewSourceCodeDialog.SourceCodeIsAvailableFor(args.Title + ".cs"))
+            {
+                btnViewSourceCode.Enabled = true;
+                btnViewSourceCode.Click += (s,e)=>new ViewSourceCodeDialog(args.Title + ".cs").Show();
+            }
+            
         }
 
         private void Setup(WideMessageBoxArgs args)
