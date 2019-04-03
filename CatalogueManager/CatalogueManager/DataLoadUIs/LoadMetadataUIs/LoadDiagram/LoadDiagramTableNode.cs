@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Windows.Forms.DataVisualization.Charting;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.DataLoad.Extensions;
@@ -14,11 +15,12 @@ using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using CatalogueManager.Copying.Commands;
 using FAnsi.Discovery;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramTableNode:ICommandSource, IHasLoadDiagramState, IMasqueradeAs
+    public class LoadDiagramTableNode:ICommandSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
     {
         private readonly LoadDiagramDatabaseNode _databaseNode;
         public readonly TableInfo TableInfo;
@@ -145,6 +147,31 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 hashCode = (hashCode*397) ^ (int) Bubble;
                 hashCode = (hashCode*397) ^ (TableName != null ? TableName.GetHashCode() : 0);
                 return hashCode;
+            }
+        }
+
+        public string WhatIsThis()
+        {
+            switch (State)
+            {
+                case LoadDiagramState.Different:
+                case LoadDiagramState.Anticipated:
+                case LoadDiagramState.Found:
+                    switch (Bubble)
+                    {
+                        case LoadBubble.Raw:
+                            return
+                                "A Table that will be created in the RAW bubble when the load is run, this table will not have any constraints (not nulls, referential integrity ect)";
+                        case LoadBubble.Staging:
+                            return "A Table that will be created in the STAGING bubble when the load is run, this table will have normal constraints that match LIVE";
+                    }
+                    return "A Table that is involved in the load (based on the Catalogues associated with the load)";
+                case LoadDiagramState.NotFound:
+                    return "A Table that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
+                case LoadDiagramState.New:
+                    return "A Table that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
+                default:
+                    throw new ArgumentOutOfRangeException();
             }
         }
 
