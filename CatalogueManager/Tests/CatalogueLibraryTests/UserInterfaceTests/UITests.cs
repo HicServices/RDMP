@@ -294,6 +294,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         private List<string> GetErrorProviderErrorsShown(ErrorProvider errorProvider)
         {
+            //https://referencesource.microsoft.com/#system.windows.forms/winforms/Managed/System/WinForms/ErrorProvider.cs.html,11db4fca371f280c
             List<string> toReturn = new List<string>();
 
             var hashtable = (Hashtable) typeof (ErrorProvider).GetField("items",BindingFlags.Instance | BindingFlags.NonPublic).GetValue(errorProvider);

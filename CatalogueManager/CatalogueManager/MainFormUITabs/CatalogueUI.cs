@@ -141,7 +141,7 @@ namespace CatalogueManager.MainFormUITabs
         {
             base.SetBindings(rules,databaseObject);
 
-            Bind(c_tbAcronym, "Text", "Acronym", c=>c.Acronym);
+            Bind(tbAcronym, "Text", "Acronym", c=>c.Acronym);
             Bind(tbName, "Text", "Name", c => c.Name);
             Bind(c_tbID,"Text","ID", c=>c.ID);
             Bind(_scintillaDescription, "Text", "Description", c => c.Description);

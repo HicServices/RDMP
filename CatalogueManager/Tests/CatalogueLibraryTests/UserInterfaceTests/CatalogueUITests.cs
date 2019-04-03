@@ -67,5 +67,41 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             cata.Name = "omg";
             AssertNoErrors(ExpectedErrorType.Any);
         }
+
+        [Test, UITimeout(5000)]
+        public void Test_CatalogueUI_AcronymDuplicates()
+        {
+            var cata1 = WhenIHaveA<Catalogue>();
+            var cata2 = WhenIHaveA<Catalogue>();
+
+            cata1.Name = "hey";
+            cata1.Acronym = null;
+            cata1.SaveToDatabase();
+
+            cata2.Name = "fish";
+            cata2.Acronym = null;
+            cata2.SaveToDatabase();
+            
+            var ui = AndLaunch<CatalogueUI>(cata1);
+            AssertNoErrors(ExpectedErrorType.Any);
+
+            //now cata 2 has an acronym
+            cata2.Acronym = "AB";
+            cata2.SaveToDatabase();
+
+            AssertNoErrors(ExpectedErrorType.Any);
+
+            //when I type the Acronym of another Catalogue
+            ui.tbAcronym.Text = "AB";
+
+            //it tells me that I have to make it unique
+            AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Must be unique");
+            
+            //so I make it unique
+            ui.tbAcronym.Text = "ABC";
+            
+            //and all is good again
+            AssertNoErrors(ExpectedErrorType.Any);
+        }
     }
 }
