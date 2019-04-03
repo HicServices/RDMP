@@ -153,8 +153,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
 
             CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
-            
-            objectSaverButton1.SetupFor(this,_catalogue,Activator.RefreshBus);
         }
 
 

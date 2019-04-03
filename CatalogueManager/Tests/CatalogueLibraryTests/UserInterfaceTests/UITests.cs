@@ -7,6 +7,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
@@ -96,6 +97,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 return (T)(object)WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
             }
 
+            if (typeof (T) == typeof (ExternalDatabaseServer))
+            {
+                return (T) (object) Save(new ExternalDatabaseServer(Repository,"My Server"));
+            }
+
             if (typeof (T) == typeof (ANOTable))
             {
                 ExternalDatabaseServer server;
@@ -157,8 +163,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             
             Form f = new Form();
             T ui = new T();
-
             f.Controls.Add(ui);
+            CreateControls(ui);
             ui.SetDatabaseObject(ItemActivator, o);
             ui.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
             _userInterfaceLaunched = ui;
@@ -343,6 +349,24 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         protected void Publish(DatabaseEntity o)
         {
             ItemActivator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
+        }
+
+        private static void CreateControls(Control control)
+        {
+            CreateControl(control);
+            foreach (Control subcontrol in control.Controls)
+            {
+                CreateControl(subcontrol);
+            }
+        }
+        private static void CreateControl(Control control)
+        {
+            var method = control.GetType().GetMethod("CreateControl", BindingFlags.Instance | BindingFlags.NonPublic);
+            var parameters = method.GetParameters();
+            Debug.Assert(parameters.Length == 1, "Looking only for the method with a single parameter");
+            Debug.Assert(parameters[0].ParameterType == typeof(bool), "Single parameter is not of type boolean");
+
+            method.Invoke(control, new object[] { true });
         }
     }
 

@@ -384,6 +384,7 @@
     <Compile Include="UserInterfaceTests\CatalogueItemUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueUITests.cs" />
     <Compile Include="UserInterfaceTests\ChildProviderTests.cs" />
+    <Compile Include="UserInterfaceTests\ExternalDatabaseServerUITests.cs" />
     <Compile Include="UserInterfaceTests\ForwardEngineerANOCatalogueUITests.cs" />
     <Compile Include="UserInterfaceTests\TestActivateItems.cs" />
     <Compile Include="UserInterfaceTests\UITests.cs" />
