@@ -32,8 +32,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         protected MEF MEF;
 
+        private ToMemoryCheckNotifier _checkResults;
+        private Control _userInterfaceLaunched;
+
         /// <summary>
         /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
+        /// 
+        /// <para>This must be called before you 'launch' your ui</para>
         /// </summary>
         protected void SetupMEF()
         {
@@ -41,6 +46,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
         }
         
+        /// <summary>
+        /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
+        /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
+        /// </summary>
+        /// <typeparam name="T">Type of object you want to create</typeparam>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
         protected T WhenIHaveA<T>() where T:DatabaseEntity
         {
             T toReturn = null;
@@ -81,9 +93,9 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             }
 
             throw new NotSupportedException();
-
         }
 
+        /// <inheritdoc cref="WhenIHaveA{T}()"/>
         protected AggregateConfiguration WhenIHaveA<T>(out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
         {
             var ti = WhenIHaveA<TableInfo>();
@@ -97,7 +109,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             otherEi = new ExtractionInformation(Repository, otherCi, otherCol, otherCol.Name);
             return Save(new AggregateConfiguration(Repository, cata, "My graph"));
         }
-
+        
+        /// <inheritdoc cref="WhenIHaveA{T}()"/>
         protected DatabaseEntity WhenIHaveA<T>(out ExternalDatabaseServer server) where T:ANOTable
         {
             server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(ANOStore.Database.Class1).Assembly);
@@ -111,10 +124,21 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             return s;
         }
 
-        
-
+        /// <summary>
+        /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
+        /// visibly appear but will be mounted on a Form and generally should behave like live ones.
+        /// 
+        /// <para>Test should only call this method once.</para>
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
         protected T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
+            if (_userInterfaceLaunched != null)
+                throw new NotSupportedException("AndLaunch called multiple times");
+
             if (ItemActivator == null)
             {
                 ItemActivator = new TestActivateItems(Repository);
@@ -145,6 +169,9 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
             if(ItemActivator != null)
                 ItemActivator.Results.Clear();
+
+            _checkResults = null;
+            _userInterfaceLaunched = null;
         }
 
         /// <summary>
@@ -157,11 +184,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Assert.IsTrue(cmd.IsImpossible);
             StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
         }
-
-
-        private ToMemoryCheckNotifier _checkResults;
-        private Control _userInterfaceLaunched;
-
+        
         private void CommonFunctionalityOnBeforeChecking(object sender, EventArgs eventArgs)
         {
             //intercept checking and replace with our own in memory checks
@@ -173,8 +196,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         }
 
-
-
+        /// <summary>
+        /// Checks the recorded errors up to this point in the test and fails the test if there are errors
+        /// at the given <paramref name="expectedErrorLevel"/>
+        /// </summary>
+        /// <param name="expectedErrorLevel"></param>
         protected void AssertNoErrors(ExpectedErrorType expectedErrorLevel)
         {
             switch (expectedErrorLevel)
@@ -207,10 +233,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         /// <summary>
         /// Checks that the given <paramref name="expectedContainsText"/> was displayed to the user at the 
-        /// given prominence
+        /// given <paramref name="expectedErrorLevel"/>
         /// </summary>
-        /// <param name="expectedErrorLevel"></param>
+        /// <param name="expectedErrorLevel">The error level to be checked.  Do not pass 'Any'</param>
         /// <param name="expectedContainsText"></param>
+        /// <exception cref="ArgumentOutOfRangeException">If <paramref name="expectedErrorLevel"/> is not supported e.g. Any</exception>
         protected void AssertErrorWasShown(ExpectedErrorType expectedErrorLevel, string expectedContainsText)
         {
             switch (expectedErrorLevel)
@@ -278,6 +305,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             return toReturn;
         }
 
+        /// <summary>
+        /// Returns all controls of type T that are in the currently shown user interface 
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
         protected List<T> GetControl<T>() where T:Control
         {
             return GetControl<T>(_userInterfaceLaunched, new List<T>());
@@ -294,6 +326,10 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             return list;
         }
 
+        /// <summary>
+        /// Triggers a refresh message for the given <paramref name="o"/>.  This will update any user interfaces displaying it.
+        /// </summary>
+        /// <param name="o"></param>
         protected void Publish(DatabaseEntity o)
         {
             ItemActivator.RefreshBus.Publish(this, new RefreshObjectEventArgs(o));
