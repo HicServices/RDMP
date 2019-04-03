@@ -66,13 +66,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
 
             if (_binder == null)
-            {
                 _binder = new BinderWithErrorProviderFactory(activator);
-                SetBindings(_binder,databaseObject);
-            }
 
-            SetItemActivator(activator);
-
+            SetBindings(_binder, databaseObject);
+            
             if(this is ISaveableUI)
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator.RefreshBus);
 
