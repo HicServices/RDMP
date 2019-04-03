@@ -207,6 +207,13 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(DatabaseObject));
         }
 
+        /// <summary>
+        /// Triggers a refresh only of this form (calls <see cref="SetDatabaseObject(CatalogueManager.ItemActivation.IActivateItems,T)"/>)
+        /// </summary>
+        protected void PublishToSelfOnly()
+        {
+            SetDatabaseObject(Activator, DatabaseObject);
+        }
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
 
 

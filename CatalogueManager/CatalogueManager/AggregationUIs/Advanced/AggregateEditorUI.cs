@@ -93,7 +93,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             gbHaving.Controls.Add(QueryHaving);
 
             QueryHaving.TextChanged += HavingTextChanged;
-            aggregateContinuousDateAxisUI1.AxisSaved += ReloadUIFromDatabase;
+            aggregateContinuousDateAxisUI1.AxisSaved += PublishToSelfOnly;
 
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
@@ -174,41 +174,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             
             return CheckState.Indeterminate;
 
-        }
-
-
-        private void ReloadUIFromDatabase()
-        {
-            isRefreshing = true;
-            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
-            cbExtractable.Checked = _aggregate.IsExtractable;
-
-            gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
-            gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
-
-            selectColumnUI1.SetUp(Activator, _options, _aggregate);
-            
-            tbID.Text = _aggregate.ID.ToString();
-
-            SetNameText();
-            
-            DetermineFromTables();
-
-            PopulateHavingText();
-
-            var axisIfAny = _aggregate.GetAxisIfAny();
-            var _axisDimensionIfAny = axisIfAny != null ? axisIfAny.AggregateDimension:null;
-            var _pivotIfAny = _aggregate.PivotDimension;
-
-            PopulatePivotDropdown(_axisDimensionIfAny,_pivotIfAny);
-
-            PopulateAxis(_axisDimensionIfAny,_pivotIfAny);
-
-            PopulateTopX();
-
-            isRefreshing = false;
-
-            ObjectSaverButton1.Enable(false);
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)
@@ -295,12 +260,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
                             ExceptionViewer.Show(ex);
                         }
                         
-                        ReloadUIFromDatabase();
+                        PublishToSelfOnly();
                     }
             }
         }
  
-        private bool isRefreshing;
+        
        
         private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
         {
@@ -371,7 +336,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
             }
 
-            ReloadUIFromDatabase();
+            PublishToSelfOnly();
         }
 
         private void EnsurePivotHasAlias(AggregateDimension dimension)
@@ -485,16 +450,16 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     existing.DeleteInDatabase();
                 else
                 {
-                    ReloadUIFromDatabase();//user chose to abandon the change
+                    PublishToSelfOnly();//user chose to abandon the change
                     return;
                 }
 
             var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension);
             axis.AxisIncrement = AxisIncrement.Month;
             axis.SaveToDatabase();
-            ReloadUIFromDatabase();
-
+            PublishToSelfOnly();
         }
+
 
         private void btnClearAxis_Click(object sender, EventArgs e)
         {
@@ -506,12 +471,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
             btnClearPivotDimension_Click(this,e);
 
             _errorProviderAxis.Clear();
-            ReloadUIFromDatabase();
+            PublishToSelfOnly();
         }
+        private bool isRefreshing;
 
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
+
             try
             {
                 _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
@@ -521,13 +488,39 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 activator.KillForm(ParentForm,e);
                 return;
             }
+            isRefreshing = true;
 
             _aggregate = databaseObject;
+            
+            //find out what is legal for the aggregate
             _options = new AggregateBuilderOptionsFactory().Create(_aggregate);
+            
+            //set enablednesss based on legality
+            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
+            cbExtractable.Checked = _aggregate.IsExtractable;
+            gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
+            gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
 
-            selectColumnUI1.SetItemActivator(activator);
+            //add included/excluded dimensions
+            selectColumnUI1.SetUp(Activator, _options, _aggregate);
 
-            ReloadUIFromDatabase();
+            tbID.Text = _aggregate.ID.ToString();
+
+            SetNameText();
+
+            DetermineFromTables();
+
+            PopulateHavingText();
+
+            var axisIfAny = _aggregate.GetAxisIfAny();
+            var _axisDimensionIfAny = axisIfAny != null ? axisIfAny.AggregateDimension : null;
+            var _pivotIfAny = _aggregate.PivotDimension;
+
+            PopulatePivotDropdown(_axisDimensionIfAny, _pivotIfAny);
+
+            PopulateAxis(_axisDimensionIfAny, _pivotIfAny);
+
+            PopulateTopX();
             
             if (databaseObject.IsCohortIdentificationAggregate)
             {
@@ -545,6 +538,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
+
+            isRefreshing = false;
+        }
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            selectColumnUI1.SetItemActivator(activator);
         }
 
 
