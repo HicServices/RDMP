@@ -15,7 +15,6 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Refreshing;
-using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Repositories;
 using FAnsi.Implementation;
@@ -23,7 +22,6 @@ using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents.ChecksUI;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
@@ -144,6 +142,9 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 typeof(FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation).Assembly,
                 typeof(FAnsi.Implementations.MySql.MySqlImplementation).Assembly,
                 typeof(FAnsi.Implementations.Oracle.OracleImplementation).Assembly);
+
+            if(ItemActivator != null)
+                ItemActivator.Results.Clear();
         }
 
         /// <summary>

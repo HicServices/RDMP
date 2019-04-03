@@ -9,7 +9,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Refreshing;
 using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
@@ -58,8 +57,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             cmdExecuteGraph = new ExecuteCommandExecuteAggregateGraph(ItemActivator, config);
             Assert.IsFalse(cmdExecuteGraph.IsImpossible);
 
-            //todo shouldnt really need this
-            //ItemActivator.RefreshBus.Publish(this,new RefreshObjectEventArgs(config));
             AssertNoErrors(ExpectedErrorType.Any);
         }
 

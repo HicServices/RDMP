@@ -207,5 +207,12 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         public List<Control> WindowsShown = new List<Control>();
         public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
         public List<IBinderRule> RegisteredRules = new List<IBinderRule>();
+
+        public void Clear()
+        {
+            WindowsShown = new List<Control>();
+            KilledForms = new Dictionary<Form, Exception>();
+            RegisteredRules = new List<IBinderRule>();
+        }
     }
 }
