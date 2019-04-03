@@ -15,6 +15,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Repositories;
@@ -108,6 +109,24 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 return (T)WhenIHaveA<ANOTable>(out server);
             }
 
+            if (typeof (T) == typeof (LoadMetadata))
+            {
+                //creates the table, column, catalogue, catalogue item and extraction information
+                var ei = WhenIHaveA<ExtractionInformation>();
+                var cata = ei.CatalogueItem.Catalogue;
+
+                var ti = ei.ColumnInfo.TableInfo;
+                ti.Server = "localhost";
+                ti.Database = "mydb";
+                ti.SaveToDatabase();
+
+                var lmd = new LoadMetadata(Repository, "MyLoad");
+                cata.LoadMetadata_ID = lmd.ID;
+                cata.SaveToDatabase();
+                return (T)(object)Save(lmd);
+            }
+
+
             throw new NotSupportedException();
         }
 
@@ -165,8 +184,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             T ui = new T();
             f.Controls.Add(ui);
             CreateControls(ui);
-            ui.SetDatabaseObject(ItemActivator, o);
+
             ui.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
+            ui.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
+            ui.SetDatabaseObject(ItemActivator, o);
+
             _userInterfaceLaunched = ui;
             return ui;
         }
@@ -195,10 +217,25 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         /// </summary>
         /// <param name="cmd"></param>
         /// <param name="expectedReason">The reason it should be impossible - uses StringAssert.Contains</param>
-        protected void AssertImpossibleBecause(IAtomicCommand cmd, string expectedReason)
+        protected void AssertCommandIsImpossible(IAtomicCommand cmd, string expectedReason)
         {
             Assert.IsTrue(cmd.IsImpossible);
             StringAssert.Contains(expectedReason, cmd.ReasonCommandImpossible);
+        }
+        /// <summary>
+        /// Asserts that the given command is not marked IsImpossible
+        /// </summary>
+        /// <param name="cmd"></param>
+        protected void AssertCommandIsPossible(IAtomicCommand cmd)
+        {
+            //if it isn't marked impossible
+            if(!cmd.IsImpossible)
+                return;
+
+            if(string.IsNullOrWhiteSpace(cmd.ReasonCommandImpossible))
+                Assert.Fail("Command was impossible but no reason was given!!!");
+
+            Assert.Fail("Command was Impossible because:" + cmd.ReasonCommandImpossible);
         }
         
         private void CommonFunctionalityOnBeforeChecking(object sender, EventArgs eventArgs)
@@ -209,8 +246,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             _checkResults = new ToMemoryCheckNotifier();
             e.Checkable.Check(_checkResults);
             e.Cancel = true;
-
         }
+
+        private void CommonFunctionalityOnFatal(object sender, CheckEventArgs e)
+        {
+            ItemActivator.Results.FatalCalls.Add(e);
+        }
+
 
         /// <summary>
         /// Checks the recorded errors up to this point in the test and fails the test if there are errors
@@ -225,6 +267,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                     Assert.IsEmpty(ItemActivator.Results.KilledForms);
                     break;
                 case ExpectedErrorType.Fatal:
+                    Assert.IsEmpty(ItemActivator.Results.FatalCalls);
                     break;
                 case ExpectedErrorType.FailedCheck:
                     
@@ -262,8 +305,12 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                     Assert.IsTrue(ItemActivator.Results.KilledForms.Values.Any(v=>v.Message.Contains(expectedContainsText)));
                     break;
                 case ExpectedErrorType.Fatal:
+                    Assert.IsTrue(ItemActivator.Results.FatalCalls.Any(c => c.Message.Contains(expectedContainsText)));
                     break;
                 case ExpectedErrorType.FailedCheck:
+
+                    if (_checkResults == null)
+                        throw new Exception("Could not check for Checks error because control did not register an ICheckable");
 
                     //there must have been something checked that failed with the provided message
                     Assert.IsTrue(_checkResults.Messages.Any(m=>m.Message.Contains(expectedContainsText) && m.Result == CheckResult.Fail));
@@ -309,8 +356,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         {
             List<ErrorProvider> toReturn = new List<ErrorProvider>();
 
-            
-            var errorProviderFields = arg.GetType().GetFields().Where(f => f.FieldType == typeof (ErrorProvider));
+
+            var errorProviderFields = arg.GetType().GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType == typeof(ErrorProvider));
             
             foreach (FieldInfo f in errorProviderFields)
             {
@@ -369,6 +416,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
             method.Invoke(control, new object[] { true });
         }
+
     }
 
     public enum ExpectedErrorType

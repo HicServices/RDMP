@@ -19,7 +19,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         {
             var anoTable = WhenIHaveA<ANOTable>();
             AndLaunch<ANOTableUI>(anoTable);
-            AssertNoErrors(ExpectedErrorType.Any);
+
+            //not much we can do about this without mocking the data access layer
+            AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
+
+            //but form was not killed and server is not in error
+            AssertNoErrors(ExpectedErrorType.KilledForm);
+            AssertNoErrors(ExpectedErrorType.ErrorProvider);
         }
 
         [Test, UITimeout(5000)]
@@ -32,11 +38,12 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
             var ui = AndLaunch<ANOTableUI>(anoTable);
             
-            //no exceptions
-            AssertNoErrors(ExpectedErrorType.Any);
-
-            //but there should be an error on this UI element
-            Assert.AreEqual("Server is not an ANO server", ui.ServerErrorProvider.GetError(ui.llServer));
+            //should be an error on the server showing that it is misconfigured
+            AssertErrorWasShown(ExpectedErrorType.ErrorProvider,"Server is not an ANO server");
+            AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not reach ANO Server");
+            
+            //but form was not killed
+            AssertNoErrors(ExpectedErrorType.KilledForm);
         }
 
         

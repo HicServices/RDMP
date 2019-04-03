@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using System.Linq;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -20,6 +21,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public ExecuteCommandViewLoadDiagram(IActivateItems activator, LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
+            
+            if(!_loadMetadata.GetAllCatalogues().Any())
+                SetImpossible("Load does not have any associated Catalogues (no tables are loaded by the load)");
+
         }
 
         public override Image GetImage(IIconProvider iconProvider)

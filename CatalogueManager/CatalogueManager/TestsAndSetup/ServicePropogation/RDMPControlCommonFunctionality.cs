@@ -31,6 +31,12 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// Occurs before checking the <see cref="ICheckable"/> (see  <see cref="StartChecking"/>
         /// </summary>
         public event EventHandler BeforeChecking;
+        
+        /// <summary>
+        /// Occurs when a call to <see cref="Fatal"/> is made.  This will result in the form showing an error
+        /// icon (but not closing itself).
+        /// </summary>
+        public event EventHandler<CheckEventArgs> OnFatal;
 
         /// <summary>
         /// Event occurs when the <see cref="ToolStrip"/> is added to the hosting Control
@@ -192,19 +198,26 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="exception"></param>
         public void Fatal(string s, Exception exception)
         {
+            var args = new CheckEventArgs(s, CheckResult.Fail, exception);
+
+            if (OnFatal != null)
+                OnFatal(this, args);
+
             if (_ragSmileyToolStrip == null)
                 _ragSmileyToolStrip = new RAGSmileyToolStrip((Control) _hostControl);
 
             if (_ragSmileyToolStrip.GetCurrentParent() == null)
                 Add(_ragSmileyToolStrip);
 
-            _ragSmileyToolStrip.OnCheckPerformed(new CheckEventArgs(s, CheckResult.Fail, exception));
+            _ragSmileyToolStrip.OnCheckPerformed(args);
         }
 
         /// <summary>
         /// All keywords added via <see cref="AddHelp"/>
         /// </summary>
         private readonly HashSet<Control> _helpAdded = new HashSet<Control>();
+
+        
 
         /// <summary>
         /// Adds a <see cref="HelpIcon"/> on the right of the control with documentation for the listed property
@@ -363,5 +376,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 ToolStripAddedToHost(this,new EventArgs());
         }
 
+        public void ResetChecks()
+        {
+            if (_ragSmileyToolStrip != null)
+                _ragSmileyToolStrip.Reset();
+        }
     }
 }

@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers.Copying;
 using CatalogueManager.CommandExecution;
@@ -22,7 +21,6 @@ using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.DataViewing.Collections.Arbitrary;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -56,8 +54,13 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         DragDropProvider _dragDropProvider;
         private LoadDiagramServerNode _raw;
 
-        RDMPCollectionCommonFunctionality _commonFunctionality = new RDMPCollectionCommonFunctionality();
+        readonly RDMPCollectionCommonFunctionality _collectionCommonFunctionality = new RDMPCollectionCommonFunctionality();
 
+        readonly ToolStripButton _btnFetchData = new ToolStripButton("Fetch State",CatalogueIcons.DatabaseRefresh)
+        {
+            DisplayStyle = ToolStripItemDisplayStyle.ImageAndText
+        };
+        
         public LoadDiagramUI()
         {
             InitializeComponent();
@@ -68,8 +71,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             tlvLoadedTables.CellToolTipGetter += CellToolTipGetter;
             olvDataType.AspectGetter = olvDataType_AspectGetter;
 
-            helpIconDiscoverTables.SetHelpText("Table Discovery", "The LoadDiagram window above shows the 'anticipated' state of tables during a DLE load, this includes the RAW, STAGING and LIVE tables (of which initially only the LIVE tables exist).  During the data load the other stages will be created and destroyed, new columns/tables can be created/altered by your load scripts / plugins.  Running 'Discover Tables' during a load or after a failed load will update the diagram to show the actual state of tables");
-
             olvState.AspectGetter = olvState_AspectGetter;
 
             tlvLoadedTables.UseCellFormatEvents = true;
@@ -77,6 +78,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             tlvLoadedTables.ItemActivate += tlvLoadedTables_ItemActivate;
 
             AssociatedCollection = RDMPCollection.DataLoad;
+
+            _btnFetchData.Click += btnFetch_Click;
         }
 
         void tlvLoadedTables_ItemActivate(object sender, EventArgs e)
@@ -255,8 +258,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             if(_loadMetadata == null)
                 return;
 
-            ragSmiley1.Reset();
-
             TableInfo[] allTables;
             HICDatabaseConfiguration config;
 
@@ -270,7 +271,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             }
             catch (Exception e)
             {
-                ragSmiley1.Fatal(e);
+                CommonFunctionality.Fatal("Could not fetch data",e);
                 tlvLoadedTables.Visible = false;
                 return;
             }
@@ -311,8 +312,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            if (!_commonFunctionality.IsSetup)
-                _commonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings()
+            if (!_collectionCommonFunctionality.IsSetup)
+                _collectionCommonFunctionality.SetUp(RDMPCollection.None, tlvLoadedTables,activator,null,null,new RDMPCollectionCommonFunctionalitySettings()
                 {
                     AddFavouriteColumn = false,
                     AddIDColumn = false,
@@ -327,6 +328,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             
             _loadMetadata = databaseObject;
             RefreshUIFromDatabase();
+
+            CommonFunctionality.Add(_btnFetchData);
         }
 
         public override string GetTabName()
@@ -335,14 +338,14 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         }
 
         private Task taskDiscoverState;
-        private void btnDiscoverTables_Click(object sender, EventArgs e)
+        private void btnFetch_Click(object sender, EventArgs e)
         {
             //execution is already underway
             if(taskDiscoverState != null && !taskDiscoverState.IsCompleted)
                 return;
 
-            ragSmiley1.Reset();
-            btnDiscoverTables.Enabled = false;
+            CommonFunctionality.ResetChecks();
+            _btnFetchData.Enabled = false;
             pbLoading.Visible = true;
             taskDiscoverState = Task.Run(() => DiscoverStates()).ContinueWith(UpdateStatesUI,TaskScheduler.FromCurrentSynchronizationContext());
         }
@@ -369,18 +372,22 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             }
             catch (Exception exception)
             {
-                ragSmiley1.Fatal(exception);
+                CommonFunctionality.Fatal("Failed to fetch status of load tables",exception);
             }
             finally
             {
                 pbLoading.Visible = false;
-                btnDiscoverTables.Enabled = true;
+                _btnFetchData.Enabled = true;
             }
 
         }
 
         private void DiscoverStates()
         {
+            if (tlvLoadedTables.Objects == null || !tlvLoadedTables.Objects.Cast<Object>().Any())
+                CommonFunctionality.Fatal("There are no tables loaded by the load",null);
+
+
             //update the states of the objects (do UI code happens here)
             foreach (LoadDiagramServerNode root in tlvLoadedTables.Objects)
                 root.DiscoverState();
@@ -390,29 +397,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         {
             tlvLoadedTables.UseFiltering = true;
             tlvLoadedTables.ModelFilter = new TextMatchFilter(tlvLoadedTables,tbFilter.Text,StringComparison.CurrentCultureIgnoreCase);
-        }
-
-        private bool _expand = true;
-        private void btnExpandOrCollapse_Click(object sender, EventArgs e)
-        {
-
-            if (_expand)
-            {
-                tlvLoadedTables.ExpandAll();
-                _expand = false;
-
-                if (btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Collapse";
-
-            }
-            else
-            {
-                tlvLoadedTables.CollapseAll();
-                _expand = true;
-                if (btnExpandOrCollapse != null)
-                    btnExpandOrCollapse.Text = "Expand";
-            }
-
         }
     }
 

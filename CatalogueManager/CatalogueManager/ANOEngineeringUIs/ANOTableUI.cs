@@ -28,7 +28,7 @@ namespace CatalogueManager.ANOEngineeringUIs
     public partial class ANOTableUI : ANOTableUI_Design
     {
         private ANOTable _anoTable;
-        internal ErrorProvider ServerErrorProvider = new ErrorProvider();
+        private readonly ErrorProvider _serverErrorProvider = new ErrorProvider();
 
         public ANOTableUI()
         {
@@ -55,9 +55,9 @@ namespace CatalogueManager.ANOEngineeringUIs
             CommonFunctionality.AddHelp(nCharacters, "ANOTable.NumberOfCharactersToUseInAnonymousRepresentation");
 
             if (!_anoTable.Server.WasCreatedByDatabaseAssembly(Tier2DatabaseType.ANOStore))
-                ServerErrorProvider.SetError(llServer, "Server is not an ANO server");
+                _serverErrorProvider.SetError(llServer, "Server is not an ANO server");
             else
-                ServerErrorProvider.Clear();
+                _serverErrorProvider.Clear();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ANOTable databaseObject)

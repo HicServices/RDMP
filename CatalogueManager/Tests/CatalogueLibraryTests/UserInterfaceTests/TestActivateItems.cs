@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -42,6 +43,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     public class TestActivateItems:IActivateItems, ITheme
     {
         private static CommentStore _commentStore;
+        private List<IProblemProvider> _problemProviders;
 
         public ITheme Theme { get {return this;}}
         public IServerDefaults ServerDefaults { get; private set; }
@@ -75,6 +77,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
             CoreIconProvider = new DataExportIconProvider(null);
             FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
+
+            _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
+            {
+                new CatalogueProblemProvider(),
+                new DataExportProblemProvider()
+            });
+
         }
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
@@ -156,12 +165,12 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         public bool HasProblem(object model)
         {
-            throw new NotImplementedException();
+            return _problemProviders.Any(p=>p.HasProblem(model));
         }
 
         public string DescribeProblemIfAny(object model)
         {
-            throw new NotImplementedException();
+            return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob=>prob != null);
         }
 
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
@@ -207,12 +216,14 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         public List<Control> WindowsShown = new List<Control>();
         public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
         public List<IBinderRule> RegisteredRules = new List<IBinderRule>();
+        public List<CheckEventArgs> FatalCalls = new List<CheckEventArgs>();
 
         public void Clear()
         {
             WindowsShown = new List<Control>();
             KilledForms = new Dictionary<Form, Exception>();
             RegisteredRules = new List<IBinderRule>();
+            FatalCalls = new List<CheckEventArgs>();
         }
     }
 }

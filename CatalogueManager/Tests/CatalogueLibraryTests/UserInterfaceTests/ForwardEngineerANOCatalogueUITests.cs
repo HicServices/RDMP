@@ -34,12 +34,12 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var cata = WhenIHaveA<Catalogue>();
 
             //shouldn't be possible to launch the UI
-            AssertImpossibleBecause(new ExecuteCommandCreateANOVersion(ItemActivator, cata), "does not have any Extractable Columns");
+            AssertCommandIsImpossible(new ExecuteCommandCreateANOVersion(ItemActivator, cata), "does not have any Extractable Columns");
 
             //and if we are depersisting it that should be angry
             AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
 
-            AssertErrorWasShown(ExpectedErrorType.Fatal, "No columns");
+            AssertErrorWasShown(ExpectedErrorType.Fatal, "Could not generate a valid query for the Catalogue");
         }
 
     }

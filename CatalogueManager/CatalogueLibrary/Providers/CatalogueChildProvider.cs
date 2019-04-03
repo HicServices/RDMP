@@ -685,15 +685,13 @@ namespace CatalogueLibrary.Providers
         {
             HashSet<object> chilObjects = new HashSet<object>();
 
-            var usedCatalogues = AllCatalogues.Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID);
+            var usedCatalogues = AllCatalogues.Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID).ToList();
 
 
             foreach (Catalogue catalogue in usedCatalogues)
-            {
                 chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,catalogue));
-                
-            }
-            
+
+            allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
 
             AddToDictionaries(chilObjects,descendancy);
         }

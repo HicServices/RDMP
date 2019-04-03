@@ -4,11 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.DataLoad;
@@ -22,6 +18,8 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
     public class AllCataloguesUsedByLoadMetadataNode : IOrderable
     {
         public LoadMetadata LoadMetadata { get; private set; }
+        public int Order { get { return 1; } set { } }
+        public List<Catalogue> UsedCatalogues { get; set; }
 
         public AllCataloguesUsedByLoadMetadataNode(LoadMetadata lmd)
         {
@@ -50,7 +48,5 @@ namespace CatalogueLibrary.Nodes.LoadMetadataNodes
         {
             return (LoadMetadata != null ? LoadMetadata.GetHashCode() : 0);
         }
-
-        public int Order { get { return 1; } set{} }
     }
 }
