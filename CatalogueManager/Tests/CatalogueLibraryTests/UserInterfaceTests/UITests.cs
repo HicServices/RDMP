@@ -63,7 +63,17 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             if (typeof(T) == typeof(CatalogueItem))
             {
                 var cata = new Catalogue(Repository, "Mycata");
-                return (T)(object)Save((T)(object)new CatalogueItem(Repository, cata, "MyCataItem"));
+                return (T)(object)Save(new CatalogueItem(Repository, cata, "MyCataItem"));
+            }
+
+            if (typeof(T) == typeof(ExtractionInformation))
+            {
+                var col = WhenIHaveA<ColumnInfo>();
+
+                var cata = new Catalogue(Repository, "Mycata");
+                var ci = new CatalogueItem(Repository, cata, "MyCataItem");
+                var ei = new ExtractionInformation(Repository, ci, col, "MyCataItem");
+                return (T)(object)Save(ei);
             }
 
             if (typeof (T) == typeof (TableInfo))
@@ -89,7 +99,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             if (typeof (T) == typeof (ANOTable))
             {
                 ExternalDatabaseServer server;
-                return (T)(object)WhenIHaveA<ANOTable>(out server);
+                return (T)WhenIHaveA<ANOTable>(out server);
             }
 
             throw new NotSupportedException();

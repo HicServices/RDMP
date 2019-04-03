@@ -18,6 +18,19 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         {
             SetupMEF();
 
+            var eiChi = WhenIHaveA<ExtractionInformation>();
+            var cata = eiChi.CatalogueItem.Catalogue;
+            
+            AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
+
+            AssertNoErrors(ExpectedErrorType.Any);
+        }
+
+        [Test, UITimeout(50000)]
+        public void Test_ForwardEngineerANOCatalogueUI_NoColumns()
+        {
+            SetupMEF();
+
             var cata = WhenIHaveA<Catalogue>();
 
             //shouldn't be possible to launch the UI
@@ -26,7 +39,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //and if we are depersisting it that should be angry
             AndLaunch<ForwardEngineerANOCatalogueUI>(cata);
 
-            AssertErrorWasShown(ExpectedErrorType.Fatal,"No columns");
+            AssertErrorWasShown(ExpectedErrorType.Fatal, "No columns");
         }
 
     }
