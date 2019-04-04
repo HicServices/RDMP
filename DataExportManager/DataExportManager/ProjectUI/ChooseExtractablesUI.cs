@@ -25,6 +25,7 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
@@ -222,7 +223,7 @@ namespace DataExportManager.ProjectUI
             if (doc != null)
                 try
                 {
-                    Process.Start(doc.URL.ToString());
+                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(doc.GetFileName());
                 }
                 catch (Exception ex)
                 {

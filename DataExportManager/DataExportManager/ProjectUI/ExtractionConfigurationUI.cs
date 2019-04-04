@@ -119,6 +119,13 @@ namespace DataExportManager.ProjectUI
             Bind(tbDescription,"Text","Description",c=>c.Description);
         }
 
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            tcRelease.SetItemActivator(activator);
+            tcRequest.SetItemActivator(activator);
+        }
+
         private void SetupCohortIdentificationConfiguration()
         {
             cbxCohortIdentificationConfiguration.DataSource = Activator.CoreChildProvider.AllCohortIdentificationConfigurations;

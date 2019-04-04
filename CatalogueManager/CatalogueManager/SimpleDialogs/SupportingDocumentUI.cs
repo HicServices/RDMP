@@ -64,6 +64,12 @@ namespace CatalogueManager.SimpleDialogs
 
         }
 
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            ticketingControl1.SetItemActivator(activator);
+        }
+
         protected override void SetBindings(BinderWithErrorProviderFactory rules, SupportingDocument databaseObject)
         {
             base.SetBindings(rules, databaseObject);
@@ -85,8 +91,7 @@ namespace CatalogueManager.SimpleDialogs
             if (_supportingDocument != null)
                 try
                 {
-                    var f = new FileInfo(_supportingDocument.URL.AbsolutePath);
-                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(f);
+                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_supportingDocument.GetFileName());
                 }
                 catch (Exception ex)
                 {

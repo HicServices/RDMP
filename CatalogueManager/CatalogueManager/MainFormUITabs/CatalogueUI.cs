@@ -178,6 +178,12 @@ namespace CatalogueManager.MainFormUITabs
             Bind(c_tbAccessOptions,"Text", "Access_options",c=>c.Access_options);
         }
 
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            ticketingControl1.SetItemActivator(activator);
+        }
+
         private void RefreshUIFromDatabase()
         {
             try

@@ -49,6 +49,7 @@ namespace DataExportManager.ProjectUI
             this.label2 = new System.Windows.Forms.Label();
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.label3 = new System.Windows.Forms.Label();
             this.gbCohortRefreshing.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbCic)).BeginInit();
             this.panel1.SuspendLayout();
@@ -125,9 +126,9 @@ namespace DataExportManager.ProjectUI
             // 
             // pChooseExtractionPipeline
             // 
-            this.pChooseExtractionPipeline.Location = new System.Drawing.Point(7, 360);
+            this.pChooseExtractionPipeline.Location = new System.Drawing.Point(107, 360);
             this.pChooseExtractionPipeline.Name = "pChooseExtractionPipeline";
-            this.pChooseExtractionPipeline.Size = new System.Drawing.Size(826, 37);
+            this.pChooseExtractionPipeline.Size = new System.Drawing.Size(726, 37);
             this.pChooseExtractionPipeline.TabIndex = 49;
             // 
             // gbCohortRefreshing
@@ -226,6 +227,7 @@ namespace DataExportManager.ProjectUI
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.label3);
             this.panel1.Controls.Add(this.label6);
             this.panel1.Controls.Add(this.tbDescription);
             this.panel1.Controls.Add(this.label4);
@@ -243,6 +245,15 @@ namespace DataExportManager.ProjectUI
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(852, 492);
             this.panel1.TabIndex = 54;
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(4, 371);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(97, 13);
+            this.label3.TabIndex = 54;
+            this.label3.Text = "Extraction Pipeline:";
             // 
             // ExtractionConfigurationUI
             // 
@@ -282,5 +293,6 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.TextBox tbDescription;
         private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1Refresh;
         private System.Windows.Forms.Panel panel1;
+        private System.Windows.Forms.Label label3;
     }
 }
