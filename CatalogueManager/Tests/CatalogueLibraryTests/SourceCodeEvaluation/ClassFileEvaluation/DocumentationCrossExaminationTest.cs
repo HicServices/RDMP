@@ -228,7 +228,10 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "LoadRunID",
             "HelpDocs",
             "HicServices",
-            "FAnsiSql"
+            "FAnsiSql",
+            "ProposeExecutionWhenTargetIsX",
+            "InternalsVisibleTo",
+            "AxisDimension"
 
         };
 

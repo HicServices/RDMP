@@ -92,7 +92,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return _existingColumnInfos.Contains(candidate.ID);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
         }

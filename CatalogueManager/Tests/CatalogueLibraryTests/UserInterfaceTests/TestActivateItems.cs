@@ -1,5 +1,12 @@
-﻿using System;
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
@@ -18,6 +25,7 @@ using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Repositories;
@@ -35,6 +43,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
     public class TestActivateItems:IActivateItems, ITheme
     {
         private static CommentStore _commentStore;
+        private List<IProblemProvider> _problemProviders;
 
         public ITheme Theme { get {return this;}}
         public IServerDefaults ServerDefaults { get; private set; }
@@ -68,6 +77,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
             CoreIconProvider = new DataExportIconProvider(null);
             FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
+
+            _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
+            {
+                new CatalogueProblemProvider(),
+                new DataExportProblemProvider()
+            });
+
         }
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
@@ -149,12 +165,12 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         public bool HasProblem(object model)
         {
-            throw new NotImplementedException();
+            return _problemProviders.Any(p=>p.HasProblem(model));
         }
 
         public string DescribeProblemIfAny(object model)
         {
-            throw new NotImplementedException();
+            return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob=>prob != null);
         }
 
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
@@ -180,6 +196,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Results.KilledForms.Add(f,reason);
         }
 
+        public void OnRuleRegistered(IBinderRule rule)
+        {
+            Results.RegisteredRules.Add(rule);
+        }
+
         public void ApplyTo(ToolStrip item)
         {
             
@@ -187,13 +208,22 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         public bool ApplyThemeToMenus { get; set; }
 
-        public class TestActivateItemsResults
-        {
-            public List<Control> WindowsShown = new List<Control>();
-            public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
-            
-        }
+        
     }
 
-    
+    public class TestActivateItemsResults
+    {
+        public List<Control> WindowsShown = new List<Control>();
+        public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
+        public List<IBinderRule> RegisteredRules = new List<IBinderRule>();
+        public List<CheckEventArgs> FatalCalls = new List<CheckEventArgs>();
+
+        public void Clear()
+        {
+            WindowsShown = new List<Control>();
+            KilledForms = new Dictionary<Form, Exception>();
+            RegisteredRules = new List<IBinderRule>();
+            FatalCalls = new List<CheckEventArgs>();
+        }
+    }
 }

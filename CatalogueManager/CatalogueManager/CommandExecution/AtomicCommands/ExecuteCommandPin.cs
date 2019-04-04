@@ -27,11 +27,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("Object is not a Pinnable Type");
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override void Execute()
         {
             base.Execute();

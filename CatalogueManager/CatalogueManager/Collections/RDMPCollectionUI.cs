@@ -19,17 +19,17 @@ namespace CatalogueManager.Collections
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI, UserControl>))]
     public abstract class RDMPCollectionUI : RDMPCollectionUI_Design,IConsultableBeforeClosing
     {
-        public RDMPCollectionCommonFunctionality CommonFunctionality { get; private set; }
+        public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; private set; }
         
         protected RDMPCollectionUI()
         {
-            CommonFunctionality = new RDMPCollectionCommonFunctionality();
+            CommonTreeFunctionality = new RDMPCollectionCommonFunctionality();
         }
 
 
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
-            CommonFunctionality.TearDown();
+            CommonTreeFunctionality.TearDown();
         }
 
     }

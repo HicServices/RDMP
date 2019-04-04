@@ -262,11 +262,18 @@ namespace RDMPStartup
 
             foreach (IExternalDatabaseServer server in dbs)
             {
-                var builder = DataAccessPortal.GetInstance()
-                    .ExpectServer(server, DataAccessContext.InternalDataProcessing)
-                    .Builder;
+                try
+                {
+                    var builder = DataAccessPortal.GetInstance()
+                        .ExpectServer(server, DataAccessContext.InternalDataProcessing)
+                        .Builder;
 
-                Find(new CatalogueRepository(builder), hostAssembly, dbAssembly,tier,type);
+                    Find(new CatalogueRepository(builder), hostAssembly, dbAssembly,tier,type);
+                }
+                catch (Exception e)
+                {
+                    _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not resolve ExternalDatabaseServer '" + server + "'",CheckResult.Warning,e));
+                }
             }
         }
         #endregion

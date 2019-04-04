@@ -98,7 +98,9 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <summary>
-        /// Once it is created you shouldn't be able to edit it's Suffix incase it is pushed and if it isn't pushed why didnt you just create it with the correct suffix in the first place?
+        /// The letter that appears on the end of all anonymous identifiers generated e.g. AAB11_GP would have the suffix "GP"
+        /// 
+        /// <para>Once you have started using the <see cref="ANOTable"/> to anonymise identifiers you should not change the Suffix</para>
         /// </summary>
         public string Suffix
         {
@@ -227,6 +229,9 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <returns></returns>
         public DiscoveredTable GetPushedTable()
         {
+            if (!Server.WasCreatedByDatabaseAssembly(Tier2DatabaseType.ANOStore))
+                throw new Exception(string.Format("ANOTable's Server '{0}' is not an ANOStore.  ANOTable was '{1}'",Server,this));
+
             var tables = DataAccessPortal.GetInstance()
                 .ExpectDatabase(Server, DataAccessContext.DataLoad)
                 .DiscoverTables(false);

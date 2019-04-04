@@ -41,7 +41,7 @@ namespace CohortManager.Collections
             base.SetItemActivator(activator);
 
             //important to register the setup before the lifetime subscription so it gets priority on events
-            CommonFunctionality.SetUp(
+            CommonTreeFunctionality.SetUp(
                 RDMPCollection.Cohort, 
                 tlvCohortIdentificationConfigurations,
                 Activator,
@@ -49,23 +49,23 @@ namespace CohortManager.Collections
                 olvName//column that can be renamed
                 
                 );
-            CommonFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
+            CommonTreeFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
             
             var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
 
             if (dataExportChildProvider == null)
             {
-                CommonFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
+                CommonTreeFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
                 tlvCohortIdentificationConfigurations.AddObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
             }
             else
             {
-                CommonFunctionality.MaintainRootObjects = new Type[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
+                CommonTreeFunctionality.MaintainRootObjects = new Type[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
                 tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllProjectCohortIdentificationConfigurationsNode);
                 tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllFreeCohortIdentificationConfigurationsNode);
             }
 
-            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
 
             Activator.RefreshBus.EstablishLifetimeSubscription(this);
             

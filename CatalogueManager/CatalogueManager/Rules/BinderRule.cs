@@ -8,24 +8,28 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
+using CommandLine;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.Rules
 {
-    abstract class BinderRule<T> where T : IMapsDirectlyToDatabaseTable
+    abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTable
     {
         protected readonly IActivateItems Activator;
         protected readonly T ToTest;
-        protected readonly ErrorProvider ErrorProvider = new ErrorProvider();
+        public ErrorProvider ErrorProvider { get; private set; }
         protected readonly Func<T, object> PropertyToCheck;
         protected readonly Control Control;
 
-        public BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control)
+        protected BinderRule(IActivateItems activator, T toTest, Func<T, object> propertyToCheck, Control control)
         {
+            ErrorProvider = new ErrorProvider();
             Activator = activator;
             ToTest = toTest;
             PropertyToCheck = propertyToCheck;
             Control = control;
+
+            activator.OnRuleRegistered(this);
 
             toTest.PropertyChanged += ToTest_PropertyChanged;
         }

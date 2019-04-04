@@ -19,11 +19,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override string GetCommandHelp()
         {
             return "Change which server is the default for a given use case e.g. Logging, DQE etc";

@@ -40,12 +40,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             foreach (var doc in allExisting)
             {
-                string filename = doc.GetFileName();
+                FileInfo filename = doc.GetFileName();
                 
                 if(filename == null)
                     continue;
 
-                var collisions = _fileCollectionCommand.Files.FirstOrDefault(f => f.Name.Equals(filename));
+                var collisions = _fileCollectionCommand.Files.FirstOrDefault(f => f.FullName.Equals(filename.FullName,StringComparison.CurrentCultureIgnoreCase));
                 
                 if(collisions != null)
                     SetImpossible("File '" + collisions.Name +"' is already a SupportingDocument (ID=" + doc.ID + " - '"+doc.Name+"')");
@@ -91,7 +91,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             foreach (var doc in created)
                 Activate(doc);
         }
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SupportingDocument, OverlayKind.Add);
         }

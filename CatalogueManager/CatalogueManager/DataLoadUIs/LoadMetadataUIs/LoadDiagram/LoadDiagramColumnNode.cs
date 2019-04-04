@@ -5,26 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.DataLoad.Extensions;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Copying;
 using CatalogueManager.Copying.Commands;
 using FAnsi.Discovery;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramColumnNode : ICommandSource, IHasLoadDiagramState
+    public class LoadDiagramColumnNode : ICommandSource, IHasLoadDiagramState, IKnowWhatIAm
     {
         private readonly LoadDiagramTableNode _tableNode;
         private readonly IHasStageSpecificRuntimeName _column;
@@ -126,6 +119,33 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return hashCode;
             }
         }
+
+        public string WhatIsThis()
+        {
+            switch (State)
+            {
+                case LoadDiagramState.Different:
+                case LoadDiagramState.Anticipated:
+                case LoadDiagramState.Found:
+                    switch (_bubble)
+                    {
+                        case LoadBubble.Raw:
+                            return
+                                "A Column that will be created in the RAW bubble when the load is run, this will not have any constraints (not nulls, referential integrity ect)";
+                        case LoadBubble.Staging:
+                            return "A Column that will be created in the STAGING bubble when the load is run, this will have normal constraints that match LIVE";
+                    }
+                    return "A Column that is involved in the load (based on the Catalogues associated with the load)";
+                case LoadDiagramState.NotFound:
+                    return "A Column that was expected to exist in the given load stage but didn't.  This is probably because no load is currently underway/crashed.";
+                case LoadDiagramState.New:
+                    return "A Column that was NOT expected to exist in the given load stage but did.  This may be a working table created by load scripts or a table that is part of another ongoing/crashed load";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        
+        }
+
         #endregion
     }
 }

@@ -42,10 +42,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _o.SaveToDatabase();
             Publish((DatabaseEntity)_o);
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

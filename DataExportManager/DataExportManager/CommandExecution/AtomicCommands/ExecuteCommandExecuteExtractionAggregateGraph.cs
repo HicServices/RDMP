@@ -28,7 +28,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return "Shows a subset of the main graph as it applies to the records that will be extracted";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph);
         }

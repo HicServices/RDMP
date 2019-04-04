@@ -7,14 +7,11 @@
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
+using CatalogueManager.ItemActivation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain : BasicUICommandExecution
     {

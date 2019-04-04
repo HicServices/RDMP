@@ -47,7 +47,7 @@ namespace CatalogueManager.MainFormUITabs
             this.label23 = new System.Windows.Forms.Label();
             this.label22 = new System.Windows.Forms.Label();
             this.c_ddOverrideChildren = new System.Windows.Forms.Button();
-            this.c_tbAcronym = new System.Windows.Forms.TextBox();
+            this.tbAcronym = new System.Windows.Forms.TextBox();
             this.c_ddGranularity = new System.Windows.Forms.ComboBox();
             this.label21 = new System.Windows.Forms.Label();
             this.label64 = new System.Windows.Forms.Label();
@@ -58,7 +58,7 @@ namespace CatalogueManager.MainFormUITabs
             this.label19 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.c_tbGeographicalCoverage = new System.Windows.Forms.TextBox();
-            this.c_tbName = new System.Windows.Forms.TextBox();
+            this.tbName = new System.Windows.Forms.TextBox();
             this.label18 = new System.Windows.Forms.Label();
             this.label16 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -248,10 +248,10 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // c_tbAcronym
             // 
-            this.c_tbAcronym.Location = new System.Drawing.Point(119, 49);
-            this.c_tbAcronym.Name = "c_tbAcronym";
-            this.c_tbAcronym.Size = new System.Drawing.Size(263, 20);
-            this.c_tbAcronym.TabIndex = 2;
+            this.tbAcronym.Location = new System.Drawing.Point(119, 49);
+            this.tbAcronym.Name = "tbAcronym";
+            this.tbAcronym.Size = new System.Drawing.Size(263, 20);
+            this.tbAcronym.TabIndex = 2;
             // 
             // c_ddGranularity
             // 
@@ -343,13 +343,13 @@ namespace CatalogueManager.MainFormUITabs
             // 
             // c_tbName
             // 
-            this.c_tbName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.c_tbName.Location = new System.Drawing.Point(119, 25);
-            this.c_tbName.Name = "c_tbName";
-            this.c_tbName.Size = new System.Drawing.Size(263, 20);
-            this.c_tbName.TabIndex = 1;
-            this.c_tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
+            this.tbName.Location = new System.Drawing.Point(119, 25);
+            this.tbName.Name = "tbName";
+            this.tbName.Size = new System.Drawing.Size(263, 20);
+            this.tbName.TabIndex = 1;
+            this.tbName.TextChanged += new System.EventHandler(this.tbName_TextChanged);
             // 
             // label18
             // 
@@ -637,10 +637,10 @@ namespace CatalogueManager.MainFormUITabs
             this.splitContainer1.Panel1.Controls.Add(this.btnExpandOrCollapse);
             this.splitContainer1.Panel1.Controls.Add(this.c_tbID);
             this.splitContainer1.Panel1.Controls.Add(this.label3);
-            this.splitContainer1.Panel1.Controls.Add(this.c_tbName);
+            this.splitContainer1.Panel1.Controls.Add(this.tbName);
             this.splitContainer1.Panel1.Controls.Add(this.label2);
             this.splitContainer1.Panel1.Controls.Add(this.label25);
-            this.splitContainer1.Panel1.Controls.Add(this.c_tbAcronym);
+            this.splitContainer1.Panel1.Controls.Add(this.tbAcronym);
             this.splitContainer1.Panel1.Controls.Add(this.label1);
             this.splitContainer1.Panel1MinSize = 274;
             // 
@@ -934,7 +934,7 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.TextBox c_tbID;
         private System.Windows.Forms.Label label25;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox c_tbName;
+        internal System.Windows.Forms.TextBox tbName;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label4;
@@ -971,7 +971,7 @@ namespace CatalogueManager.MainFormUITabs
         private System.Windows.Forms.TextBox c_tbDetailPageURL;
         private System.Windows.Forms.Label label20;
         private System.Windows.Forms.Label label21;
-        private System.Windows.Forms.TextBox c_tbAcronym;
+        internal System.Windows.Forms.TextBox tbAcronym;
         private System.Windows.Forms.Label label22;
         private System.Windows.Forms.Label label23;
         private System.Windows.Forms.Label label6;

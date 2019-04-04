@@ -36,7 +36,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             importTable.ShowDialog();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
         }

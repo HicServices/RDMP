@@ -43,7 +43,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             }
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.UnfreezeExtractionConfiguration;
         }

@@ -132,9 +132,14 @@ namespace CohortManager.SubComponents
                 activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableCohort,OverlayKind.Add));
 
             CohortCompilerUI1.SetDatabaseObject(activator, databaseObject);
-
         }
-        
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            ticket.SetItemActivator(activator);
+        }
+
         public override string GetTabName()
         {
             return "Execute:" + base.GetTabName();

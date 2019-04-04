@@ -9,9 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.UsedByNodes;
@@ -24,8 +22,8 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Dashboard.CatalogueSummary.DataQualityReporting;
 using Dashboard.CatalogueSummary.LoadEvents;
 using Dashboard.Overview;
-using DataExportManager.CohortUI.CohortSourceManagement.WizardScreens;
 using NUnit.Framework;
+using ResearchDataManagementPlatform;
 using ReusableUIComponents.CommandExecution.Proposals;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
@@ -60,7 +58,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             typeof(LoadEventsTreeView),
             
             typeof(ResolveFatalErrors),
-            typeof(DataLoadsGraph)
+            typeof(DataLoadsGraph),
+            typeof(RDMPMainForm)
 
         };
 

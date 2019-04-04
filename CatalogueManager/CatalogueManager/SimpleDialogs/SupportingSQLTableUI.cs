@@ -102,6 +102,13 @@ namespace CatalogueManager.SimpleDialogs
             Bind(cbGlobal,"Checked","IsGlobal",s=>s.IsGlobal);
         }
 
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            tcTicket.SetItemActivator(activator);
+        }
+
+
         private void RefreshUIFromDatabase()
         {
             ddExternalServers.Items.Clear();

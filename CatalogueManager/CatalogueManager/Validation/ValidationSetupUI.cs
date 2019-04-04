@@ -169,8 +169,7 @@ namespace CatalogueManager.Validation
 
         private void lbColumns_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (olvColumns.SelectedItem != null)
-                PopulateFormForSelectedColumn();
+            PopulateFormForSelectedColumn();
         }
 
 

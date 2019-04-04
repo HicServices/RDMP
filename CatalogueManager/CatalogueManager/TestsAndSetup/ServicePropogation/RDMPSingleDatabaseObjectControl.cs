@@ -66,13 +66,10 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
 
             if (_binder == null)
-            {
                 _binder = new BinderWithErrorProviderFactory(activator);
-                SetBindings(_binder,databaseObject);
-            }
 
-            SetItemActivator(activator);
-
+            SetBindings(_binder, databaseObject);
+            
             if(this is ISaveableUI)
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator.RefreshBus);
 
@@ -193,12 +190,30 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             return "Unamed Tab";
         }
-        
+
+        /// <summary>
+        /// Triggers an application refresh because a change has been made to <paramref name="e"/>
+        /// </summary>
         public void Publish(DatabaseEntity e)
         {
             Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
 
+        /// <summary>
+        /// Triggers an application refresh because a change has been made to the forms main <see cref="DatabaseObject"/>
+        /// </summary>
+        public void Publish()
+        {
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(DatabaseObject));
+        }
+
+        /// <summary>
+        /// Triggers a refresh only of this form (calls <see cref="SetDatabaseObject(CatalogueManager.ItemActivation.IActivateItems,T)"/>)
+        /// </summary>
+        protected void PublishToSelfOnly()
+        {
+            SetDatabaseObject(Activator, DatabaseObject);
+        }
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
 
 

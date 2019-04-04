@@ -153,8 +153,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
 
             CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
-            
-            objectSaverButton1.SetupFor(this,_catalogue,Activator.RefreshBus);
         }
 
 
@@ -377,7 +375,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-
             var eis = GetExtractionInformations();
 
             if (!eis.Any())
@@ -396,6 +393,10 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             _choicesFinalised = true;
             DialogResult = DialogResult.OK;
+            
+            if (CatalogueCreatedIfAny != null)
+                objectSaverButton1.CheckForUnsavedChangesAnOfferToSave();
+
             Close();
         }
 

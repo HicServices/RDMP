@@ -85,6 +85,17 @@ namespace CatalogueLibrary.Providers
             if (o is DecryptionPrivateKeyNode)
                 return DescribeProblem((DecryptionPrivateKeyNode) o);
 
+            if (o is AllCataloguesUsedByLoadMetadataNode)
+                return DescribeProblem((AllCataloguesUsedByLoadMetadataNode) o);
+
+            return null;
+        }
+
+        public string DescribeProblem(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode)
+        {
+            if (!allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any())
+                return "Load has no Catalogues therefore loads no tables";
+            
             return null;
         }
 

@@ -35,7 +35,7 @@ namespace CatalogueManager.MainFormUITabs
     /// <para>There is also a box for storing a ticket number, this will let you reference a ticket in your ticketing system (e.g. Jira, Fogbugz etc).  This requires selecting/writing a compatible
     /// plugin for your ticketing system and configuring it (see TicketingSystemConfigurationUI)</para>
     /// </summary>
-    public partial class CatalogueUI : CatalogueTab_Design, ISaveableUI
+    public partial class CatalogueUI : CatalogueUI_Design, ISaveableUI
     {
 
         private bool _expand = true;
@@ -81,8 +81,8 @@ namespace CatalogueManager.MainFormUITabs
         private void tbName_TextChanged(object sender, EventArgs e)
         {
             string reasonInvalid;
-            if (!Catalogue.IsAcceptableName(c_tbName.Text, out reasonInvalid))
-                errorProvider1.SetError(c_tbName, reasonInvalid);
+            if (!Catalogue.IsAcceptableName(tbName.Text, out reasonInvalid))
+                errorProvider1.SetError(tbName, reasonInvalid);
             else
                 errorProvider1.Clear();
         }
@@ -141,8 +141,8 @@ namespace CatalogueManager.MainFormUITabs
         {
             base.SetBindings(rules,databaseObject);
 
-            Bind(c_tbAcronym, "Text", "Acronym", c=>c.Acronym);
-            Bind(c_tbName, "Text", "Name", c => c.Name);
+            Bind(tbAcronym, "Text", "Acronym", c=>c.Acronym);
+            Bind(tbName, "Text", "Name", c => c.Name);
             Bind(c_tbID,"Text","ID", c=>c.ID);
             Bind(_scintillaDescription, "Text", "Description", c => c.Description);
             
@@ -176,6 +176,12 @@ namespace CatalogueManager.MainFormUITabs
             Bind(tbSourceOfDataCollection,"Text", "Source_of_data_collection",c=>c.Source_of_data_collection);
             Bind(c_tbAttributionCitation,"Text", "Attribution_citation",c=>c.Attribution_citation);
             Bind(c_tbAccessOptions,"Text", "Access_options",c=>c.Access_options);
+        }
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            ticketingControl1.SetItemActivator(activator);
         }
 
         private void RefreshUIFromDatabase()
@@ -263,8 +269,8 @@ namespace CatalogueManager.MainFormUITabs
         }
     }
 
-    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueTab_Design, UserControl>))]
-    public abstract class CatalogueTab_Design : RDMPSingleDatabaseObjectControl<Catalogue>
+    [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<CatalogueUI_Design, UserControl>))]
+    public abstract class CatalogueUI_Design : RDMPSingleDatabaseObjectControl<Catalogue>
     {
         
     }

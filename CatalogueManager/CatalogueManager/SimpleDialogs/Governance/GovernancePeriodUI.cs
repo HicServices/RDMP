@@ -89,6 +89,13 @@ namespace CatalogueManager.SimpleDialogs.Governance
             Bind(tbDescription, "Text", "Description", g => g.Description);
         }
 
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            ticketingControl1.SetItemActivator(activator);
+        }
+
+
         private void rbNeverExpires_CheckedChanged(object sender, EventArgs e)
         {
             dtpEndDate.Enabled = !rbNeverExpires.Checked;

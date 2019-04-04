@@ -87,5 +87,7 @@ namespace CatalogueLibrary.Providers
         /// <param name="o"></param>
         /// <returns></returns>
         IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
+
+        DatabaseEntity GetLatestCopyOf(DatabaseEntity e);
     }
 }

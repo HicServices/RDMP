@@ -51,10 +51,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             return _target.IsDisabled ? "Enable" : "Disable";
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

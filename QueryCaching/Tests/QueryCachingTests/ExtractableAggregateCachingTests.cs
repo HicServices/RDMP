@@ -90,6 +90,7 @@ namespace QueryCachingTests
             _extractionInformation.SaveToDatabase();
 
             AggregateDimension dim = new AggregateDimension(CatalogueRepository, _extractionInformation, _config);
+            _config.ClearAllInjections();
 
             var ex3 = Assert.Throws<NotSupportedException>(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 
@@ -99,6 +100,7 @@ namespace QueryCachingTests
 
             _extractionInformation.IsExtractionIdentifier = false;
             _extractionInformation.SaveToDatabase();
+            _config.ClearAllInjections();
 
             Assert.DoesNotThrow(() => _manager.CommitResults(new CacheCommitExtractableAggregate(_config, "I've got a lovely bunch of coconuts", dt, 30)));
 

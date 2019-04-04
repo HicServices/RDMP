@@ -60,7 +60,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
             }
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExternalDatabaseServer, OverlayKind.Add);
         }

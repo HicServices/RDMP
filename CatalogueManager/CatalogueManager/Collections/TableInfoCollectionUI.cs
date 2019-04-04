@@ -112,7 +112,7 @@ namespace CatalogueManager.Collections
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
-            CommonFunctionality.SetUp(
+            CommonTreeFunctionality.SetUp(
                 RDMPCollection.Tables, 
                 tlvTableInfos,
                 activator,
@@ -120,7 +120,7 @@ namespace CatalogueManager.Collections
                 olvColumn1
                 );
 
-            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a, false),
                 new ExecuteCommandBulkImportTableInfos(a)

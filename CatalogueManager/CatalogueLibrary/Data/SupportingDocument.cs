@@ -155,15 +155,15 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Returns the name of the file referenced by <see cref="URL"/>
+        /// Returns the name of the file referenced by <see cref="URL"/> or null if it is not a file URL
         /// </summary>
         /// <returns></returns>
-        public string GetFileName()
+        public FileInfo GetFileName()
         {
             if (URL == null || string.IsNullOrWhiteSpace(URL.AbsoluteUri) || !URL.IsFile)
                 return null;
 
-            return Path.GetFileName(URL.AbsoluteUri);
+            return new FileInfo(Uri.UnescapeDataString(URL.AbsolutePath));
         }
     }
 }

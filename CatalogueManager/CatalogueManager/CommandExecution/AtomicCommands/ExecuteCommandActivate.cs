@@ -30,7 +30,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("Object cannot be Activated");
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             if (_o == null)
                 return null;

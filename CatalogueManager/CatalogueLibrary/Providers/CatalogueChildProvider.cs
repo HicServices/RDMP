@@ -79,6 +79,7 @@ namespace CatalogueLibrary.Providers
         private readonly Dictionary<int,ColumnInfo> _allColumnInfos;
         
         public AggregateConfiguration[] AllAggregateConfigurations { get; private set; }
+        public AggregateDimension[] AllAggregateDimensions { get; private set; }
         
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
@@ -253,7 +254,17 @@ namespace CatalogueLibrary.Providers
             }
 
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
-            
+            AllAggregateDimensions = GetAllObjects<AggregateDimension>(repository);
+
+            foreach (AggregateConfiguration configuration in AllAggregateConfigurations)
+            {
+                configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
+                configuration.InjectKnown(AllAggregateDimensions.Where(d=>d.AggregateConfiguration_ID == configuration.ID).ToArray());
+            }
+
+            foreach (AggregateDimension d in AllAggregateDimensions)
+                d.InjectKnown(AllExtractionInformationsDictionary[d.ExtractionInformation_ID]);
+
             AllCohortAggregateContainers = GetAllObjects<CohortAggregateContainer>(repository);
             AllJoinables = GetAllObjects<JoinableCohortAggregateConfiguration>(repository);
             AllJoinUses = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
@@ -344,6 +355,8 @@ namespace CatalogueLibrary.Providers
 
             AddChildren(AllGovernanceNode);
         }
+
+        
 
         private void AddChildren(AllGovernanceNode allGovernanceNode)
         {
@@ -672,15 +685,13 @@ namespace CatalogueLibrary.Providers
         {
             HashSet<object> chilObjects = new HashSet<object>();
 
-            var usedCatalogues = AllCatalogues.Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID);
+            var usedCatalogues = AllCatalogues.Where(c => c.LoadMetadata_ID == allCataloguesUsedByLoadMetadataNode.LoadMetadata.ID).ToList();
 
 
             foreach (Catalogue catalogue in usedCatalogues)
-            {
                 chilObjects.Add(new CatalogueUsedByLoadMetadataNode(allCataloguesUsedByLoadMetadataNode.LoadMetadata,catalogue));
-                
-            }
-            
+
+            allCataloguesUsedByLoadMetadataNode.UsedCatalogues = usedCatalogues;
 
             AddToDictionaries(chilObjects,descendancy);
         }
@@ -1229,6 +1240,11 @@ namespace CatalogueLibrary.Providers
                 return AllMasqueraders[o];
 
             return new IMasqueradeAs[0];
+        }
+
+        public DatabaseEntity GetLatestCopyOf(DatabaseEntity e)
+        {
+            return _descendancyDictionary.Keys.OfType<DatabaseEntity>().SingleOrDefault(k => k.Equals(e));
         }
 
         private HashSet<object> GetAllObjects()

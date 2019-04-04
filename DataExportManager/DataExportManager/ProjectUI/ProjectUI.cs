@@ -113,7 +113,11 @@ namespace DataExportManager.ProjectUI
             SetCohorts();
         }
 
-        
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            tcMasterTicket.SetItemActivator(activator);
+        }
 
         private DataTable LoadDatagridFor(Project value)
         {

@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Threading;
 using CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
@@ -44,8 +45,8 @@ namespace CatalogueLibrary
         {
             if(!supportingDocument.IsReleasable())
                 throw new Exception("Cannot extract SupportingDocument " + supportingDocument + " because it was not evaluated as IsReleasable()");
-            
-            FileInfo toCopy = new FileInfo(supportingDocument.URL.LocalPath);
+
+            FileInfo toCopy = supportingDocument.GetFileName();
 
             if (!Directory.Exists(Path.Combine(directory.FullName, "SupportingDocuments")))
                 Directory.CreateDirectory(Path.Combine(directory.FullName, "SupportingDocuments"));
@@ -74,16 +75,20 @@ namespace CatalogueLibrary
                 notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument has not been set", CheckResult.Fail));
                 return;
             }
-
+            
             try
             {
-                FileInfo toCopy = new FileInfo(document.URL.LocalPath);
-                if (toCopy.Exists)
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists",
-                        CheckResult.Success));
+                var toCopy = document.GetFileName();
+
+                if (toCopy != null && toCopy.Exists)
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs("Found SupportingDocument " + toCopy.Name + " and it exists",
+                            CheckResult.Success));
                 else
-                    notifier.OnCheckPerformed(new CheckEventArgs("SupportingDocument " + document + "(ID=" + document.ID +
-                                                                 ") does not map to an existing file despite being flagged as Extractable", CheckResult.Fail));
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs("SupportingDocument " + document + "(ID=" + document.ID +
+                                           ") does not map to an existing file despite being flagged as Extractable",
+                            CheckResult.Fail));
             }
             catch (Exception e)
             {

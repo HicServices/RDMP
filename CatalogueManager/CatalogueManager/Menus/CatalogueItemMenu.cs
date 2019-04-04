@@ -13,18 +13,11 @@ namespace CatalogueManager.Menus
     [System.ComponentModel.DesignerCategory("")]
     class CatalogueItemMenu : RDMPContextMenuStrip
     {
-        private readonly CatalogueItem _catalogueItem;
-
         public CatalogueItemMenu(RDMPContextMenuStripArgs args, CatalogueItem catalogueItem): base(args, catalogueItem)
         {
-            _catalogueItem = catalogueItem;
-
             Add(new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, catalogueItem));
-
-            //it does not yet have extractability
             Add(new ExecuteCommandMakeCatalogueItemExtractable(_activator, catalogueItem));
-
-            Add(new ExecuteCommandImportCatalogueItemDescription(_activator,_catalogueItem),Keys.Control | Keys.I);
+            Add(new ExecuteCommandImportCatalogueItemDescription(_activator, catalogueItem), Keys.Control | Keys.I);
         }
     }
 }

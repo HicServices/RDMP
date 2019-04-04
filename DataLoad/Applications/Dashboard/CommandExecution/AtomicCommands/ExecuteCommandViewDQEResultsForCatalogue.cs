@@ -39,7 +39,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
             return "View the results of all data quality engine runs that have ever been run on the dataset";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.DQE;
         }

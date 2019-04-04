@@ -43,10 +43,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
             
             Publish(_target);
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

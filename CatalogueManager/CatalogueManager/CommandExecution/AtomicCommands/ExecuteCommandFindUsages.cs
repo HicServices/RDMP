@@ -43,10 +43,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             cmd.Execute();
             
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

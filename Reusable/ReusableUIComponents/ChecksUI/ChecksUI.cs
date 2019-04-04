@@ -121,8 +121,8 @@ namespace ReusableUIComponents.ChecksUI
                 }
                 catch (Exception e)
                 {
-                    
-                    OnCheckPerformed(new CheckEventArgs("Entire checking process crashed",CheckResult.Fail, e));
+
+                    listener.OnCheckPerformed(new CheckEventArgs("Entire checking process crashed", CheckResult.Fail, e));
                     CheckingInProgress = false;
 
                     if (AllChecksComplete != null)

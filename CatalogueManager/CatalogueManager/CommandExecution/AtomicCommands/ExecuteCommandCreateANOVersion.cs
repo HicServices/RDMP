@@ -5,7 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel.Composition;
 using System.Drawing;
+using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
 using CatalogueManager.ANOEngineeringUIs;
@@ -19,10 +21,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     {
         private Catalogue _catalogue;
 
-        public ExecuteCommandCreateANOVersion(IActivateItems activator,Catalogue catalogue) : base(activator)
+        [ImportingConstructor]
+        public ExecuteCommandCreateANOVersion(IActivateItems activator,Catalogue catalogue) : this(activator)
         {
-            _catalogue = catalogue;
-            UseTripleDotSuffix = true;
+            SetTarget(catalogue);
         }
 
         public ExecuteCommandCreateANOVersion(IActivateItems activator) : base(activator)
@@ -30,7 +32,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             UseTripleDotSuffix = true;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOTable);
         }
@@ -38,6 +40,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
             _catalogue = (Catalogue) target;
+
+            if(!_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any())
+                SetImpossible("Catalogue does not have any Extractable Columns");
+
             return this;
         }
 
@@ -48,13 +54,13 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            base.Execute();
-
             if (_catalogue == null)
-                _catalogue = SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues);
+                SetTarget(SelectOne<Catalogue>(Activator.CoreChildProvider.AllCatalogues));
 
             if(_catalogue == null)
                 return;
+            
+            base.Execute();
 
             Activator.Activate<ForwardEngineerANOCatalogueUI, Catalogue>(_catalogue);
         }

@@ -48,10 +48,10 @@
             this.lblPublic = new System.Windows.Forms.Label();
             this.lblANOTableName = new System.Windows.Forms.Label();
             this.lblRowCount = new System.Windows.Forms.Label();
-            this.lblServer = new System.Windows.Forms.Label();
             this.pbServer = new System.Windows.Forms.PictureBox();
             this.gbPushedTable = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.llServer = new System.Windows.Forms.LinkLabel();
             ((System.ComponentModel.ISupportInitialize)(this.nCharacters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.nIntegers)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbServer)).BeginInit();
@@ -79,7 +79,7 @@
             // label10
             // 
             this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(229, 116);
+            this.label10.Location = new System.Drawing.Point(254, 116);
             this.label10.Name = "label10";
             this.label10.Size = new System.Drawing.Size(87, 13);
             this.label10.TabIndex = 11;
@@ -96,7 +96,7 @@
             // 
             // nCharacters
             // 
-            this.nCharacters.Location = new System.Drawing.Point(318, 114);
+            this.nCharacters.Location = new System.Drawing.Point(343, 114);
             this.nCharacters.Name = "nCharacters";
             this.nCharacters.Size = new System.Drawing.Size(120, 20);
             this.nCharacters.TabIndex = 10;
@@ -238,15 +238,6 @@
             this.lblRowCount.Text = "label4";
             this.lblRowCount.TextAlign = System.Drawing.ContentAlignment.MiddleLeft;
             // 
-            // lblServer
-            // 
-            this.lblServer.AutoSize = true;
-            this.lblServer.Location = new System.Drawing.Point(36, 201);
-            this.lblServer.Name = "lblServer";
-            this.lblServer.Size = new System.Drawing.Size(38, 13);
-            this.lblServer.TabIndex = 18;
-            this.lblServer.Text = "Server";
-            // 
             // pbServer
             // 
             this.pbServer.Image = ((System.Drawing.Image)(resources.GetObject("pbServer.Image")));
@@ -271,12 +262,12 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.llServer);
             this.panel1.Controls.Add(this.label12);
             this.panel1.Controls.Add(this.gbPushedTable);
             this.panel1.Controls.Add(this.nCharacters);
             this.panel1.Controls.Add(this.pbServer);
             this.panel1.Controls.Add(this.nIntegers);
-            this.panel1.Controls.Add(this.lblServer);
             this.panel1.Controls.Add(this.label9);
             this.panel1.Controls.Add(this.btnDropANOTable);
             this.panel1.Controls.Add(this.label10);
@@ -294,6 +285,17 @@
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(493, 323);
             this.panel1.TabIndex = 21;
+            // 
+            // llServer
+            // 
+            this.llServer.AutoSize = true;
+            this.llServer.Location = new System.Drawing.Point(36, 201);
+            this.llServer.Name = "llServer";
+            this.llServer.Size = new System.Drawing.Size(38, 13);
+            this.llServer.TabIndex = 21;
+            this.llServer.TabStop = true;
+            this.llServer.Text = "Server";
+            this.llServer.LinkClicked += new System.Windows.Forms.LinkLabelLinkClickedEventHandler(this.llServer_LinkClicked);
             // 
             // ANOTableUI
             // 
@@ -333,9 +335,9 @@
         private System.Windows.Forms.Label lblPublic;
         private System.Windows.Forms.Label lblANOTableName;
         private System.Windows.Forms.Label lblRowCount;
-        private System.Windows.Forms.Label lblServer;
         private System.Windows.Forms.PictureBox pbServer;
         private System.Windows.Forms.GroupBox gbPushedTable;
         private System.Windows.Forms.Panel panel1;
+        internal System.Windows.Forms.LinkLabel llServer;
     }
 }

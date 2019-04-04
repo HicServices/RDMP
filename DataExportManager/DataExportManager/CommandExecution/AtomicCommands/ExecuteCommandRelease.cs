@@ -34,7 +34,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return "Gather all the extracted files into one releasable package and freeze the extraction configuration";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Release);
         }

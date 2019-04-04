@@ -24,7 +24,7 @@ namespace CatalogueManager.SimpleControls
     /// and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single method on that interface so that shortcuts
     /// are correctly routed to this control.
     /// </summary>
-    public partial class ObjectSaverButton : IRefreshBusSubscriber
+    public partial class ObjectSaverButton
     {
         private Bitmap _undoImage;
         private Bitmap _redoImage;
@@ -70,16 +70,22 @@ namespace CatalogueManager.SimpleControls
 
             Enable(false);
 
+            //if it is a fresh instance
+            if(!ReferenceEquals(_o,o))
+            {
+                //subscribe to property change events
+                if(_o != null)
+                    _o.PropertyChanged -= PropertyChanged;
+                _o = o;
+                _o.PropertyChanged += PropertyChanged;
+            }
+            
             //already set up before
-            if(_o != null)
+            if (_refreshBus != null)
                 return;
 
-            _o = o;
             _refreshBus = refreshBus;
-            _refreshBus.Subscribe(this);
             
-            o.PropertyChanged += PropertyChanged;
-
             f.Enter += ParentForm_Enter;
             f.Leave += ParentFormOnLeave;
             
@@ -136,33 +142,7 @@ namespace CatalogueManager.SimpleControls
             if(AfterSave != null)
                 AfterSave();
         }
-
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            //pick up new instances of the object from the database
-            if (e.Object.Equals(_o))
-            {
-                _o.PropertyChanged -= PropertyChanged;//unsubscribe from local property change events on stale object
-                _o = e.Object;  //record the new fresh object
-                _o.PropertyChanged += PropertyChanged;//and subscribe to it's events
-            }
-
-            //anytime any publish event ever fires (not just to our object)
-            CheckForLocalChanges();
-
-        }
-
-        private void CheckForLocalChanges()
-        {
-            
-            bool isDifferent = IsDifferent();
-            
-            btnSave.Enabled = isDifferent;
-            btnUndoRedo.Enabled = isDifferent;
-            
-            _isEnabled = isDifferent;
-        }
-
+        
         private void btnSave_Click(object sender, EventArgs e)
         {
             Save();

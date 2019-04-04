@@ -37,7 +37,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 SetImpossible("There are Filters declard in Catalogue '" + catalogue +"'");
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Filter, OverlayKind.Add);
         }

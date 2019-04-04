@@ -30,7 +30,6 @@ namespace MapsDirectlyToDatabaseTable
         void ClearUpdateCommandCache();
         int? ObjectToNullableInt(object o);
         DateTime? ObjectToNullableDateTime(object o);
-        void TestConnection();
         
         IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable;
 

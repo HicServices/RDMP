@@ -31,7 +31,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
             
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Edit);
         }

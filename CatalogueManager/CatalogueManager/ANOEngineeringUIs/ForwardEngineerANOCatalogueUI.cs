@@ -325,8 +325,15 @@ namespace CatalogueManager.ANOEngineeringUIs
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-
-            _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator, databaseObject);
+            try
+            {
+                _planManager = new ForwardEngineerANOCataloguePlanManager(activator.RepositoryLocator, databaseObject);
+            }
+            catch (QueryBuildingException e)
+            {
+                CommonFunctionality.Fatal("Could not generate a valid query for the Catalogue",e);
+                return;
+            }
 
             if (!_setup)
             {

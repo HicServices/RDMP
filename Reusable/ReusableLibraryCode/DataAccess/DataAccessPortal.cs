@@ -60,6 +60,9 @@ namespace ReusableLibraryCode.DataAccess
         {
             IDataAccessCredentials credentials = dataAccessPoint.GetCredentialsIfExists(context);
             
+            if(string.IsNullOrWhiteSpace(dataAccessPoint.Server))
+                throw new NullReferenceException("Could not get connection string because Server was null on dataAccessPoint '" + dataAccessPoint +"'");
+
             return DatabaseCommandHelper.For(dataAccessPoint.DatabaseType).GetConnectionStringBuilder(
                 dataAccessPoint.Server,
                 setInitialDatabase ? dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database) : "",

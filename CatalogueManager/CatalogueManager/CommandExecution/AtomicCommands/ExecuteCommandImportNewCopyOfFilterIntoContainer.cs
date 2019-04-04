@@ -4,17 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.Copying.Commands;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using DataExportLibrary.Data.DataTables;
-using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandImportNewCopyOfFilterIntoContainer : BasicUICommandExecution
     {

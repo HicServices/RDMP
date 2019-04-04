@@ -39,7 +39,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return "Shows the SQL that will be executed for the given dataset when it is extracted including the linkage with the cohort table";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL,OverlayKind.Execute);
         }

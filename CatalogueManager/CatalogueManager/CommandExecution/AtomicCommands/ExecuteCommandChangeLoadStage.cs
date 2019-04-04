@@ -6,13 +6,10 @@
 
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes.LoadMetadataNodes;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
+using CatalogueManager.ItemActivation;
 
-namespace CatalogueManager.CommandExecution
+namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandChangeLoadStage : BasicUICommandExecution
     {

@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -15,12 +17,16 @@ using CatalogueManager.Refreshing;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
-    public abstract class BasicUICommandExecution:BasicCommandExecution
+    public abstract class BasicUICommandExecution:BasicCommandExecution,IAtomicCommand
     {
         protected readonly IActivateItems Activator;
 
@@ -207,6 +213,28 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         protected bool TypeText(string header, string prompt, out string text)
         {
             return TypeText(header, prompt, 500, null, out text);
+        }
+
+        /// <summary>
+        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="SetImpossible"/> if there are any failures
+        /// </summary>
+        /// <param name="checkable"></param>
+        protected void SetImpossibleIfFailsChecks(ICheckable checkable)
+        {
+            try
+            {
+                checkable.Check(new ThrowImmediatelyCheckNotifier());
+            }
+            catch (Exception e)
+            {
+
+                SetImpossible(ExceptionHelper.ExceptionToListOfInnerMessages(e));
+            }
+        }
+
+        public virtual Image GetImage(IIconProvider iconProvider)
+        {
+            return null;
         }
     }
 }

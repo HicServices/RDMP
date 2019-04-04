@@ -34,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
         }

@@ -51,7 +51,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Publish(_cacheProgress);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.PermissionWindow, OverlayKind.Link);
         }

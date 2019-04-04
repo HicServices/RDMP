@@ -451,6 +451,8 @@ namespace Diagnostics
             }
             
             _anoServer = SetupExternalServer(ANOIdentifiers,notifier);
+            _anoServer.CreatedByAssembly = "ANOStore.Database";
+            _anoServer.SaveToDatabase();
             _identifierDumpServer = SetupExternalServer(IdentifierDump, notifier);
             
             return true;

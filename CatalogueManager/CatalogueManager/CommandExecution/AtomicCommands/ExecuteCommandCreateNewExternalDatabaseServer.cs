@@ -112,7 +112,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activate(ServerCreatedIfAny);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             if(_databaseAssembly != null)
             {

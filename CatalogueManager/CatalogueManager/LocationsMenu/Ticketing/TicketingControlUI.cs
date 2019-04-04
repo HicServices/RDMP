@@ -6,9 +6,8 @@
 
 using System;
 using CatalogueLibrary.Ticketing;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using Color = System.Drawing.Color;
 
@@ -47,10 +46,10 @@ namespace CatalogueManager.LocationsMenu.Ticketing
             InitializeComponent();
         }
 
-        protected override void OnLoad(EventArgs e)
+        public override void SetItemActivator(IActivateItems activator)
         {
-            base.OnLoad(e);
-            
+            base.SetItemActivator(activator);
+
             ReCheckTicketingSystemInCatalogue();
         }
 

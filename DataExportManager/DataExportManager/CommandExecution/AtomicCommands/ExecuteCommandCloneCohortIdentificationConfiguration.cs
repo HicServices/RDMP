@@ -44,7 +44,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             this.activator = activator;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
         }

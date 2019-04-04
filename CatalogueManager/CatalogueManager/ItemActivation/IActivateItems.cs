@@ -24,6 +24,7 @@ using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
@@ -177,5 +178,11 @@ namespace CatalogueManager.ItemActivation
         /// <param name="c"></param>
         /// <param name="reason"></param>
         void KillForm(Form f, Exception reason);
+
+        /// <summary>
+        /// Called when an ErrorProvider validation rule is registered
+        /// </summary>
+        /// <param name="rule"></param>
+        void OnRuleRegistered(IBinderRule rule);
     }
 }

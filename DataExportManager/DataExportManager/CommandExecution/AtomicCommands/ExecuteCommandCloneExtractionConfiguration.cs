@@ -36,7 +36,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return "Creates an exact copy of the Extraction Configuration including the cohort selection, all selected datasets, parameters, filter containers, filters etc";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.CloneExtractionConfiguration;
         }

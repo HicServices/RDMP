@@ -78,7 +78,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Set Column Info" + (_catalogueItem.ColumnInfo_ID == null ? "(Currently MISSING)" : "");
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Problem);
         }

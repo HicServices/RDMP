@@ -32,6 +32,7 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
@@ -173,6 +174,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
 
             CoreChildProvider.GetPluginChildren();
+            RefreshBus.ChildProvider = CoreChildProvider;
         }
 
         public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control,DatabaseEntity objectOfTypeT)
@@ -403,7 +405,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void KillForm(Form f, Exception reason)
         {
             f.Close();
-            ExceptionViewer.Show(reason);
+            ExceptionViewer.Show("Window Closed",reason);
+        }
+
+        public void OnRuleRegistered(IBinderRule rule)
+        {
+            //no special action required
         }
 
         ///<inheritdoc/>

@@ -93,7 +93,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             gbHaving.Controls.Add(QueryHaving);
 
             QueryHaving.TextChanged += HavingTextChanged;
-            aggregateContinuousDateAxisUI1.AxisSaved += ReloadUIFromDatabase;
+            aggregateContinuousDateAxisUI1.AxisSaved += PublishToSelfOnly;
 
             olvJoin.CheckStateGetter += ForceJoinCheckStateGetter;
             olvJoin.CheckStatePutter += ForceJoinCheckStatePutter;
@@ -115,17 +115,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             var joiner = ((CatalogueRepository)_aggregate.Repository).AggregateForcedJoinManager;
             
-
             //user is trying to use a joinable something
             if (newvalue == CheckState.Checked)
             {
                 //user is trying to turn on usage of a TableInfo
                 if(ti != null)
                 {
-
                     joiner.CreateLinkBetween(_aggregate, ti);
                     _forcedJoins.Add(ti);
-                    Publish();
                 }
 
                 if (patientIndexTable != null)
@@ -133,7 +130,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     var joinUse = patientIndexTable.AddUser(_aggregate);
                     olvJoin.RemoveObject(patientIndexTable);
                     olvJoin.AddObject(joinUse);
-                    Publish();
                 }
             }
             else
@@ -143,7 +139,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 {
                     joiner.BreakLinkBetween(_aggregate, ti);
                     _forcedJoins.Remove(ti);
-                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                 }
 
                 if(patientIndexTableUse != null)
@@ -153,20 +148,16 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     patientIndexTableUse.DeleteInDatabase();
                     olvJoin.RemoveObject(patientIndexTableUse);
                     olvJoin.AddObject(joinable);
-
-                    Publish();
                 }
             }
+
+            SetDatabaseObject(Activator, _aggregate);
+            Publish();
 
             return newvalue;
 
         }
-
-        private void Publish()
-        {
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
-        }
-
+        
         private CheckState ForceJoinCheckStateGetter(object rowObject)
         {
             if (_forcedJoins == null)
@@ -183,51 +174,6 @@ namespace CatalogueManager.AggregationUIs.Advanced
             
             return CheckState.Indeterminate;
 
-        }
-
-        public void SetAggregate(IActivateItems activator,AggregateConfiguration configuration, IAggregateBuilderOptions options = null)
-        {
-            SetItemActivator(activator);
-            _aggregate = configuration;
-            _options = options ?? new AggregateBuilderOptionsFactory().Create(configuration);
-            
-            selectColumnUI1.SetItemActivator(activator);
-
-            ReloadUIFromDatabase();
-        }
-
-        private void ReloadUIFromDatabase()
-        {
-            isRefreshing = true;
-            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
-            cbExtractable.Checked = _aggregate.IsExtractable;
-
-            gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
-            gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
-
-            selectColumnUI1.SetUp(Activator, _options, _aggregate);
-            
-            tbID.Text = _aggregate.ID.ToString();
-
-            SetNameText();
-            
-            DetermineFromTables();
-
-            PopulateHavingText();
-
-            var axisIfAny = _aggregate.GetAxisIfAny();
-            var _axisDimensionIfAny = axisIfAny != null ? axisIfAny.AggregateDimension:null;
-            var _pivotIfAny = _aggregate.PivotDimension;
-
-            PopulatePivotDropdown(_axisDimensionIfAny,_pivotIfAny);
-
-            PopulateAxis(_axisDimensionIfAny,_pivotIfAny);
-
-            PopulateTopX();
-
-            isRefreshing = false;
-
-            ObjectSaverButton1.Enable(false);
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, AggregateConfiguration databaseObject)
@@ -314,12 +260,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
                             ExceptionViewer.Show(ex);
                         }
                         
-                        ReloadUIFromDatabase();
+                        PublishToSelfOnly();
                     }
             }
         }
  
-        private bool isRefreshing;
+        
        
         private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
         {
@@ -367,7 +313,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
             if (axisIfAny != null && !axisIfAny.Equals(pivotIfAny))//<- if this second thing is the case then the graph is totally messed up!
                 dimensions = dimensions.Except(new[] {axisIfAny}).ToArray();//don't offer the axis as a pivot dimension!
 
-            ddPivotDimension.Items.AddRange(dimensions);
+            //don't let them pivot on a date, that's just a bad idea
+            ddPivotDimension.Items.AddRange(dimensions.Where(d=>!IsDate(d)).ToArray());
             
             if(pivotIfAny != null)
                 ddPivotDimension.SelectedItem = pivotIfAny;
@@ -389,7 +336,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
             }
 
-            ReloadUIFromDatabase();
+            PublishToSelfOnly();
         }
 
         private void EnsurePivotHasAlias(AggregateDimension dimension)
@@ -431,7 +378,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 allDimensions = allDimensions.Except(new[] {pivotIfAny}).ToArray();
             
             ddAxisDimension.Items.Clear();
-            ddAxisDimension.Items.AddRange(allDimensions);
+            ddAxisDimension.Items.AddRange(allDimensions.Where(IsDate).ToArray());
 
             //should only be one
             var axisDimensions = allDimensions.Where(d => d.AggregateContinuousDateAxis != null).ToArray();
@@ -456,23 +403,28 @@ namespace CatalogueManager.AggregationUIs.Advanced
             ddAxisDimension.SelectedItem = axisIfAny;
             aggregateContinuousDateAxisUI1.Dimension = axisIfAny;
 
-            var col = axisIfAny.ColumnInfo;
-            if (col != null)
-            {
-                try
-                {
-                    var type = col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type);
-                    if(type != typeof(DateTime))
-                        _errorProviderAxis.SetError(ddAxisDimension,"Column is not a DateTime");
-                    else
-                        _errorProviderAxis.Clear();
-                }
-                catch (Exception)
-                {
-                    _errorProviderAxis.SetError(ddAxisDimension, "Could not determine column type");
-                }
-            }
+            if(!IsDate(axisIfAny))
+                _errorProviderAxis.SetError(ddAxisDimension, "Column is not a DateTime");
+            else
+                _errorProviderAxis.Clear();
+        }
 
+        bool IsDate(AggregateDimension dimension)
+        {
+            var col = dimension.ColumnInfo;
+            
+            if (col == null)
+                return false;
+
+            try
+            {
+                return col.GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(col.Data_type) == typeof(DateTime);
+            }
+            catch (Exception)
+            {
+                //it's some kind of wierd type eh?
+                return false;
+            }
         }
 
         private void ddAxisDimension_SelectedIndexChanged(object sender, EventArgs e)
@@ -498,16 +450,16 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     existing.DeleteInDatabase();
                 else
                 {
-                    ReloadUIFromDatabase();//user chose to abandon the change
+                    PublishToSelfOnly();//user chose to abandon the change
                     return;
                 }
 
             var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension);
             axis.AxisIncrement = AxisIncrement.Month;
             axis.SaveToDatabase();
-            ReloadUIFromDatabase();
-
+            PublishToSelfOnly();
         }
+
 
         private void btnClearAxis_Click(object sender, EventArgs e)
         {
@@ -519,12 +471,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
             btnClearPivotDimension_Click(this,e);
 
             _errorProviderAxis.Clear();
-            ReloadUIFromDatabase();
+            PublishToSelfOnly();
         }
+        private bool isRefreshing;
 
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
+
             try
             {
                 _querySyntaxHelper = databaseObject.GetQuerySyntaxHelper();
@@ -534,8 +488,39 @@ namespace CatalogueManager.AggregationUIs.Advanced
                 activator.KillForm(ParentForm,e);
                 return;
             }
+            isRefreshing = true;
 
-            SetAggregate(activator, databaseObject);
+            _aggregate = databaseObject;
+            
+            //find out what is legal for the aggregate
+            _options = new AggregateBuilderOptionsFactory().Create(_aggregate);
+            
+            //set enablednesss based on legality
+            cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
+            cbExtractable.Checked = _aggregate.IsExtractable;
+            gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
+            gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
+
+            //add included/excluded dimensions
+            selectColumnUI1.SetUp(Activator, _options, _aggregate);
+
+            tbID.Text = _aggregate.ID.ToString();
+
+            SetNameText();
+
+            DetermineFromTables();
+
+            PopulateHavingText();
+
+            var axisIfAny = _aggregate.GetAxisIfAny();
+            var _axisDimensionIfAny = axisIfAny != null ? axisIfAny.AggregateDimension : null;
+            var _pivotIfAny = _aggregate.PivotDimension;
+
+            PopulatePivotDropdown(_axisDimensionIfAny, _pivotIfAny);
+
+            PopulateAxis(_axisDimensionIfAny, _pivotIfAny);
+
+            PopulateTopX();
             
             if (databaseObject.IsCohortIdentificationAggregate)
             {
@@ -553,6 +538,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
+
+            isRefreshing = false;
+        }
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            selectColumnUI1.SetItemActivator(activator);
         }
 
 
