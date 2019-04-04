@@ -36,7 +36,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Blah.zip"));
             File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
 
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             var tripart = new Version(version);
 
             Plugin p = new Plugin(CatalogueRepository, fi);
