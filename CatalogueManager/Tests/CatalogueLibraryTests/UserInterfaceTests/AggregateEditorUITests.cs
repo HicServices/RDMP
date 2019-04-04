@@ -15,7 +15,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     class AggregateEditorUITests:UITests
     {
-        [Test,UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_NormalState()
         {
             var config = WhenIHaveA<AggregateConfiguration>();
@@ -60,7 +60,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             AssertNoErrors(ExpectedErrorType.Any);
         }
 
-        [Test, UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
         {
             ExtractionInformation dateEi;
@@ -83,7 +83,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             AssertNoErrors(ExpectedErrorType.Any);
         }
 
-        [Test, UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_NoExtractableColumns()
         {
             //Create a Catalogue with an AggregateConfiguration that doesn't have any extractable columns yet
