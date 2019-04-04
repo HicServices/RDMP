@@ -169,7 +169,7 @@ namespace CatalogueLibrary.Data
             {
                 {"ForeignKey_ID",foreignKey.ID},
                 {"PrimaryKey_ID",primaryKey.ID},
-                {"ExtractionJoinType",type},
+                {"ExtractionJoinType",type.ToString()},
                 {"Collation",collation}
             });
 

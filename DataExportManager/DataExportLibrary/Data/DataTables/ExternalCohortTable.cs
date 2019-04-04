@@ -130,7 +130,7 @@ namespace DataExportLibrary.Data.DataTables
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name ?? "NewExternalSource" + Guid.NewGuid()},
-                {"DatabaseType",databaseType}
+                {"DatabaseType",databaseType.ToString()}
             });
         }
 

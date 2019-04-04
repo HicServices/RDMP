@@ -12,6 +12,7 @@ using System.Reflection;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
@@ -37,6 +38,22 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
             Catalogue dbCatalogue = new Catalogue(CatalogueRepository,"My New Catalogue");
             
             AssertAreEqual(memCatalogue,dbCatalogue);
+        }
+
+        [Test]
+        public void TestMemoryVsDatabaseRepository_ProcessTaskConstructor()
+        {
+            var memoryRepository = new MemoryCatalogueRepository(CatalogueRepository.GetServerDefaults());
+
+            var memLmd = new LoadMetadata(memoryRepository, "My New Load");
+            var dbLmd = new LoadMetadata(CatalogueRepository, "My New Load");
+
+            AssertAreEqual(memLmd, dbLmd);
+
+            var memPt = new ProcessTask(memoryRepository, memLmd, LoadStage.AdjustRaw) { Name = "MyPt" };
+            var dbPt = new ProcessTask(CatalogueRepository, dbLmd, LoadStage.AdjustRaw) { Name = "MyPt" };
+            
+            AssertAreEqual(memPt, dbPt);
         }
 
 

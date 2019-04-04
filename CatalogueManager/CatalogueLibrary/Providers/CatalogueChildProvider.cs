@@ -139,7 +139,7 @@ namespace CatalogueLibrary.Providers
         private readonly IFilterManager _aggregateFilterManager;
 
         //Filters for Aggregates (includes filter containers (AND/OR)
-        public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary;
+        public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
         public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray();}}
 
         private AggregateFilter[] AllAggregateFilters;

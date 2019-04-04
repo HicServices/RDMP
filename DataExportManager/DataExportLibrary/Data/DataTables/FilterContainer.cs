@@ -31,7 +31,7 @@ namespace DataExportLibrary.Data.DataTables
             Repository = repository;
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"Operation", operation}
+                {"Operation", operation.ToString()}
             });
         }
 

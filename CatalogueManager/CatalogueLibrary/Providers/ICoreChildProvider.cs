@@ -71,8 +71,7 @@ namespace CatalogueLibrary.Providers
         GovernancePeriod[] AllGovernancePeriods { get; }
         GovernanceDocument[] AllGovernanceDocuments { get;}
 
-
-        AggregateFilterContainer[] AllAggregateContainers { get; }
+        Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; }
 
         /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods"/>
         Dictionary<int, HashSet<int>> GovernanceCoverage { get;}

@@ -55,7 +55,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="operation"></param>
         public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterManager)
         {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation}});
+            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
         }
 
 

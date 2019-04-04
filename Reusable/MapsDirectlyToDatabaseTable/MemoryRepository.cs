@@ -38,7 +38,13 @@ namespace MapsDirectlyToDatabaseTable
                     val = null;
 
                 var prop = toCreate.GetType().GetProperty(kvp.Key);
-                prop.SetValue(toCreate,val);
+
+                var strVal = kvp.Value as string;
+
+                if (prop.PropertyType.IsEnum && strVal != null)
+                    prop.SetValue(toCreate, Enum.Parse(prop.PropertyType,strVal));
+                else
+                    prop.SetValue(toCreate,val);
             }
 
             toCreate.Repository = this;

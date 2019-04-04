@@ -121,7 +121,7 @@ namespace CatalogueLibrary.Data
             {
                 {"SelectSQL", string.IsNullOrWhiteSpace(selectSQL) ? column.Name : selectSQL},
                 {"Order", 1},
-                {"ExtractionCategory", ExtractionCategory.Core},
+                {"ExtractionCategory", ExtractionCategory.Core.ToString()},
                 {"CatalogueItem_ID",catalogueItem.ID}
             });
 

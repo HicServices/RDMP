@@ -40,7 +40,7 @@ namespace CatalogueLibrary.Repositories.Managers.HighPerformance
                     if(!_subcontainers.ContainsKey(parentId))
                         _subcontainers.Add(parentId,new List<AggregateFilterContainer>());
 
-                    _subcontainers[parentId].Add(childProvider.AllAggregateContainers[subcontainerId]);
+                    _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
                 }
                 r.Close();
             }
