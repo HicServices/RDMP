@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
@@ -178,9 +179,12 @@ namespace CatalogueLibrary.Data.Cohort
         /// <param name="name"></param>
         public CohortIdentificationConfiguration(ICatalogueRepository repository, string name)
         {
+            var queryCache = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
+
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
-                {"Name", name}
+                {"Name", name},
+                {"QueryCachingServer_ID",queryCache == null ? (object) DBNull.Value:queryCache.ID}
             });
         }
 

@@ -19,7 +19,6 @@ namespace CatalogueLibraryTests.Integration
         {
 
             ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
-            var originalTestLoggingServer = defaults.GetDefaultFor(PermissableDefaults.TestLoggingServer_ID);
 
             var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme");
 
@@ -34,24 +33,14 @@ namespace CatalogueLibraryTests.Integration
                 databaseServer.Server = "Bob";
                 databaseServer.Database = "TEST";
                 databaseServer.SaveToDatabase();
-
-                defaults.SetDefault(PermissableDefaults.TestLoggingServer_ID,databaseServer);
+                
                 Catalogue cata = new Catalogue(CatalogueRepository, "TestCatalogueFor_CreateNewExternalServerAndConfigureItAsDefault");
-
-                Assert.AreEqual(databaseServer.ID, cata.TestLoggingServer_ID);
                 cata.DeleteInDatabase();
 
             }
             finally
             {
                 databaseServer.DeleteInDatabase();
-
-                //Although we have not expressedly cleared the default, we have deleted the server which should cascade into the defaults table
-                Assert.IsNull(defaults.GetDefaultFor(PermissableDefaults.TestLoggingServer_ID));
-
-                //reset the original one
-                if (originalTestLoggingServer != null)
-                    defaults.SetDefault(PermissableDefaults.TestLoggingServer_ID, originalTestLoggingServer);
             }
 
         }

@@ -69,8 +69,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             {
                 case PermissableDefaults.LiveLoggingServer_ID:
                     return "Creates a database for auditing all flows of data (data load, extraction etc) including tables for errors, progress tables/record count loaded etc";
-                case PermissableDefaults.TestLoggingServer_ID:
-                    return "Deprecated, do not create TestLoggingServers";
                 case PermissableDefaults.IdentifierDumpServer_ID:
                     return "Creates a database for storing the values of intercepted columns that are discarded during data load because they contain identifiable data";
                 case PermissableDefaults.DQE:

@@ -29,18 +29,15 @@
         private void InitializeComponent()
         {
             this.groupBox2 = new System.Windows.Forms.GroupBox();
+            this.btnClearLive = new System.Windows.Forms.Button();
+            this.btnCreateNewLoggingServer = new System.Windows.Forms.Button();
             this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
-            this.ddTestLoggingServer = new System.Windows.Forms.ComboBox();
             this.ddLoggingServer = new System.Windows.Forms.ComboBox();
             this.btnCreateNewLoggingTask = new System.Windows.Forms.Button();
             this.btnRefresh = new System.Windows.Forms.Button();
-            this.label3 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.label1 = new System.Windows.Forms.Label();
             this.cbxDataLoadTasks = new System.Windows.Forms.ComboBox();
-            this.btnCreateNewLoggingServer = new System.Windows.Forms.Button();
-            this.btnClearLive = new System.Windows.Forms.Button();
-            this.btnClearTest = new System.Windows.Forms.Button();
             this.groupBox2.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -48,24 +45,43 @@
             // 
             this.groupBox2.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
             | System.Windows.Forms.AnchorStyles.Right)));
-            this.groupBox2.Controls.Add(this.btnClearTest);
             this.groupBox2.Controls.Add(this.btnClearLive);
             this.groupBox2.Controls.Add(this.btnCreateNewLoggingServer);
             this.groupBox2.Controls.Add(this.ragSmiley1);
-            this.groupBox2.Controls.Add(this.ddTestLoggingServer);
             this.groupBox2.Controls.Add(this.ddLoggingServer);
             this.groupBox2.Controls.Add(this.btnCreateNewLoggingTask);
             this.groupBox2.Controls.Add(this.btnRefresh);
-            this.groupBox2.Controls.Add(this.label3);
             this.groupBox2.Controls.Add(this.label2);
             this.groupBox2.Controls.Add(this.label1);
             this.groupBox2.Controls.Add(this.cbxDataLoadTasks);
             this.groupBox2.Location = new System.Drawing.Point(12, 12);
             this.groupBox2.Name = "groupBox2";
-            this.groupBox2.Size = new System.Drawing.Size(1015, 123);
+            this.groupBox2.Size = new System.Drawing.Size(1015, 80);
             this.groupBox2.TabIndex = 1;
             this.groupBox2.TabStop = false;
             this.groupBox2.Text = "Logging Architecture";
+            // 
+            // btnClearLive
+            // 
+            this.btnClearLive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnClearLive.Location = new System.Drawing.Point(786, 49);
+            this.btnClearLive.Name = "btnClearLive";
+            this.btnClearLive.Size = new System.Drawing.Size(52, 23);
+            this.btnClearLive.TabIndex = 8;
+            this.btnClearLive.Text = "Clear";
+            this.btnClearLive.UseVisualStyleBackColor = true;
+            this.btnClearLive.Click += new System.EventHandler(this.btnClear_Click);
+            // 
+            // btnCreateNewLoggingServer
+            // 
+            this.btnCreateNewLoggingServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnCreateNewLoggingServer.Location = new System.Drawing.Point(841, 48);
+            this.btnCreateNewLoggingServer.Name = "btnCreateNewLoggingServer";
+            this.btnCreateNewLoggingServer.Size = new System.Drawing.Size(168, 23);
+            this.btnCreateNewLoggingServer.TabIndex = 7;
+            this.btnCreateNewLoggingServer.Text = "Create New Logging Server...";
+            this.btnCreateNewLoggingServer.UseVisualStyleBackColor = true;
+            this.btnCreateNewLoggingServer.Click += new System.EventHandler(this.btnCreateNewLoggingServer_Click);
             // 
             // ragSmiley1
             // 
@@ -77,18 +93,6 @@
             this.ragSmiley1.Name = "ragSmiley1";
             this.ragSmiley1.Size = new System.Drawing.Size(37, 38);
             this.ragSmiley1.TabIndex = 6;
-            // 
-            // ddTestLoggingServer
-            // 
-            this.ddTestLoggingServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddTestLoggingServer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddTestLoggingServer.FormattingEnabled = true;
-            this.ddTestLoggingServer.Location = new System.Drawing.Point(118, 82);
-            this.ddTestLoggingServer.Name = "ddTestLoggingServer";
-            this.ddTestLoggingServer.Size = new System.Drawing.Size(838, 21);
-            this.ddTestLoggingServer.TabIndex = 5;
-            this.ddTestLoggingServer.SelectedIndexChanged += new System.EventHandler(this.ddTestLoggingServer_SelectedIndexChanged);
             // 
             // ddLoggingServer
             // 
@@ -123,16 +127,6 @@
             this.btnRefresh.Text = "Refresh";
             this.btnRefresh.UseVisualStyleBackColor = true;
             this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(6, 85);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(106, 13);
-            this.label3.TabIndex = 1;
-            this.label3.Text = "Test Logging Server:";
-            this.label3.Click += new System.EventHandler(this.label1_Click);
             // 
             // label2
             // 
@@ -170,46 +164,13 @@
             this.cbxDataLoadTasks.KeyUp += new System.Windows.Forms.KeyEventHandler(this.cbxDataLoadTasks_KeyUp);
             this.cbxDataLoadTasks.Leave += new System.EventHandler(this.cbxDataLoadTasks_Leave);
             // 
-            // btnCreateNewLoggingServer
-            // 
-            this.btnCreateNewLoggingServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateNewLoggingServer.Location = new System.Drawing.Point(841, 48);
-            this.btnCreateNewLoggingServer.Name = "btnCreateNewLoggingServer";
-            this.btnCreateNewLoggingServer.Size = new System.Drawing.Size(168, 23);
-            this.btnCreateNewLoggingServer.TabIndex = 7;
-            this.btnCreateNewLoggingServer.Text = "Create New Logging Server...";
-            this.btnCreateNewLoggingServer.UseVisualStyleBackColor = true;
-            this.btnCreateNewLoggingServer.Click += new System.EventHandler(this.btnCreateNewLoggingServer_Click);
-            // 
-            // btnClearLive
-            // 
-            this.btnClearLive.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearLive.Location = new System.Drawing.Point(786, 49);
-            this.btnClearLive.Name = "btnClearLive";
-            this.btnClearLive.Size = new System.Drawing.Size(52, 23);
-            this.btnClearLive.TabIndex = 8;
-            this.btnClearLive.Text = "Clear";
-            this.btnClearLive.UseVisualStyleBackColor = true;
-            this.btnClearLive.Click += new System.EventHandler(this.btnClear_Click);
-            // 
-            // btnClearTest
-            // 
-            this.btnClearTest.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearTest.Location = new System.Drawing.Point(962, 80);
-            this.btnClearTest.Name = "btnClearTest";
-            this.btnClearTest.Size = new System.Drawing.Size(52, 23);
-            this.btnClearTest.TabIndex = 9;
-            this.btnClearTest.Text = "Clear";
-            this.btnClearTest.UseVisualStyleBackColor = true;
-            this.btnClearTest.Click += new System.EventHandler(this.btnClear_Click);
-            // 
             // ChooseLoggingTaskUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.groupBox2);
             this.Name = "ChooseLoggingTaskUI";
-            this.Size = new System.Drawing.Size(1039, 144);
+            this.Size = new System.Drawing.Size(1039, 99);
             this.groupBox2.ResumeLayout(false);
             this.groupBox2.PerformLayout();
             this.ResumeLayout(false);
@@ -222,14 +183,11 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.ComboBox cbxDataLoadTasks;
         private System.Windows.Forms.Button btnRefresh;
-        private System.Windows.Forms.ComboBox ddTestLoggingServer;
         private System.Windows.Forms.ComboBox ddLoggingServer;
-        private System.Windows.Forms.Label label3;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.Button btnCreateNewLoggingTask;
         private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnCreateNewLoggingServer;
-        private System.Windows.Forms.Button btnClearTest;
         private System.Windows.Forms.Button btnClearLive;
     }
 }

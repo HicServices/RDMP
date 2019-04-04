@@ -448,9 +448,7 @@ namespace DataExportLibrary.Data.DataTables
 
                 var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
 
-                int? loggingServer = testLoggingServer
-                    ? catalogue.TestLoggingServer_ID
-                    : catalogue.LiveLoggingServer_ID;
+                int? loggingServer = catalogue.LiveLoggingServer_ID;
 
                 if ( loggingServer == null)
                     throw new Exception("Catalogue " + catalogue.Name + " does not have a "+(testLoggingServer?"test":"")+" logging server configured");

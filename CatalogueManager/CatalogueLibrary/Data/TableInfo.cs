@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.DataLoad.Extensions;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
@@ -187,9 +188,13 @@ namespace CatalogueLibrary.Data
         public TableInfo(ICatalogueRepository repository, string name)
         {
             _catalogueRepository = repository;
+
+            var dumpServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.IdentifierDumpServer_ID);
+
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"Name", name}
+                {"Name", name},
+                {"IdentifierDumpServer_ID",dumpServer == null ? (object) DBNull.Value:dumpServer.ID}
             });
 
             ClearAllInjections();

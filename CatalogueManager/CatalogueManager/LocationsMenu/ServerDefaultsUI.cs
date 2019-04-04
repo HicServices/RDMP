@@ -57,7 +57,6 @@ namespace CatalogueManager.LocationsMenu
                 var allServers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().ToArray();
                 
                 InitializeServerDropdown(ddDefaultLoggingServer, PermissableDefaults.LiveLoggingServer_ID, allServers);
-                InitializeServerDropdown(ddDefaultTestLoggingServer, PermissableDefaults.TestLoggingServer_ID, allServers);
                 InitializeServerDropdown(ddDQEServer, PermissableDefaults.DQE, allServers);
                 InitializeServerDropdown(ddWebServiceQueryCacheServer, PermissableDefaults.WebServiceQueryCachingServer_ID, allServers);
                 InitializeServerDropdown(ddCohortIdentificationQueryCacheServer, PermissableDefaults.CohortIdentificationQueryCachingServer_ID, allServers);
@@ -117,8 +116,6 @@ namespace CatalogueManager.LocationsMenu
             else
             if (sender == ddDefaultLoggingServer)
                 toChange = PermissableDefaults.LiveLoggingServer_ID;
-            else if (sender == ddDefaultTestLoggingServer)
-                toChange = PermissableDefaults.TestLoggingServer_ID;
             else if(sender == ddOverrideRawServer)
                 toChange = PermissableDefaults.RAWDataLoadServer;
             else if (sender == ddDefaultANOStore)
@@ -143,13 +140,6 @@ namespace CatalogueManager.LocationsMenu
         {
             PermissableDefaults toClear;
 
-            if(sender == btnClearTestLoggingServer)
-            {
-                toClear = PermissableDefaults.TestLoggingServer_ID;
-                ddDefaultTestLoggingServer.SelectedItem = null;
-
-            }
-            else
             if(sender == btnClearLoggingServer)
             {
                 toClear = PermissableDefaults.LiveLoggingServer_ID;
@@ -220,12 +210,7 @@ namespace CatalogueManager.LocationsMenu
         {
             CreateNewExternalServer(PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
         }
-
-        private void btnCreateNewTestLoggingServer_Click(object sender, EventArgs e)
-        {
-            CreateNewExternalServer(PermissableDefaults.TestLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
-        }
-
+        
         private void btnCreateNewIdentifierDump_Click(object sender, EventArgs e)
         {
             CreateNewExternalServer(PermissableDefaults.IdentifierDumpServer_ID, typeof(IdentifierDump.Database.Class1).Assembly);

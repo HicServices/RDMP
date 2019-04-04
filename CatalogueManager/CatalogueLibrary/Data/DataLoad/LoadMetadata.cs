@@ -270,28 +270,6 @@ namespace CatalogueLibrary.Data.DataLoad
             return toReturn;
         }
         
-        /// <summary>
-        /// Do not use, just assume true
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
-        public bool AreLiveAndTestLoggingDifferent()
-        {
-            Catalogue[] catalogues = GetAllCatalogues().Cast<Catalogue>().ToArray();
-
-            if (catalogues.Length == 0)
-                return true;
-
-            int? liveID = catalogues.Select(c => c.LiveLoggingServer_ID).Distinct().Single();
-            int? testID = catalogues.Select(c => c.TestLoggingServer_ID).Distinct().Single();
-
-            //theres a live configured but no test so we should just use the live one
-            if (liveID != null && testID == null)
-                return false;
-            
-            return liveID != testID ;
-        }
-
         /// <inheritdoc/>
         public DiscoveredServer GetDistinctLiveDatabaseServer()
         {

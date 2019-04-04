@@ -80,8 +80,7 @@ namespace CatalogueLibrary.Data
         private bool _isInternalDataset;
         private bool _isColdStorageDataset;
         private int? _liveLoggingServerID;
-        private int? _testLoggingServerID;
-
+        
         private Lazy<CatalogueItem[]> _knownCatalogueItems;
         
         
@@ -481,19 +480,7 @@ namespace CatalogueLibrary.Data
             get { return _liveLoggingServerID; }
             set { SetField(ref  _liveLoggingServerID, value); }
         }
-
-        /// <summary>
-        /// Obsolete
-        /// </summary>
-        [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
-        [Relationship(typeof(ExternalDatabaseServer), RelationshipType.LocalReference)]
-        [DoNotExtractProperty]
-        public int? TestLoggingServer_ID
-        {
-            get { return _testLoggingServerID; }
-            set { SetField(ref  _testLoggingServerID, value); }
-        }
-
+        
         /// <inheritdoc/>
         public DateTime? DatasetStartDate
         {
@@ -560,19 +547,7 @@ namespace CatalogueLibrary.Data
                     : Repository.GetObjectByID<ExternalDatabaseServer>((int)LiveLoggingServer_ID);
             }
         }
-
-        /// <inheritdoc cref="TestLoggingServer_ID"/>
-        [NoMappingToDatabase]
-        public ExternalDatabaseServer TestLoggingServer
-        {
-            get
-            {
-                return TestLoggingServer_ID == null
-                    ? null
-                    : Repository.GetObjectByID<ExternalDatabaseServer>((int)TestLoggingServer_ID);
-            }
-        }
-
+        
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public ExtractionInformation TimeCoverage_ExtractionInformation {
@@ -725,9 +700,12 @@ namespace CatalogueLibrary.Data
         /// <param name="name"></param>
         public Catalogue(ICatalogueRepository repository, string name)
         {
+            var loggingServer = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+
             repository.InsertAndHydrate(this,new Dictionary<string, object>()
             {
-                {"Name",name}
+                {"Name",name},
+                {"LiveLoggingServer_ID",loggingServer == null ? (object) DBNull.Value:loggingServer.ID}
             });
 
             if (ID == 0 || string.IsNullOrWhiteSpace(Name) || Repository != repository)
@@ -773,11 +751,6 @@ namespace CatalogueLibrary.Data
                 LiveLoggingServer_ID = null;
             else
                 LiveLoggingServer_ID = (int) r["LiveLoggingServer_ID"];
-            
-            if (r["TestLoggingServer_ID"] == DBNull.Value)
-                TestLoggingServer_ID = null;
-            else
-                TestLoggingServer_ID = (int)r["TestLoggingServer_ID"];
             
             ////Type - with handling for invalid enum values listed in database
             object type = r["Type"];
