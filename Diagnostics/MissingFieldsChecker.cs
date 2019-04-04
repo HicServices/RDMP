@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using FAnsi.Discovery;
@@ -84,6 +85,9 @@ namespace Diagnostics
                 return;
 
             if (type.IsAbstract)
+                return;
+
+            if (typeof(SpontaneousObject).IsAssignableFrom(type))
                 return;
 
             if(type.Name.StartsWith("Spontaneous"))
