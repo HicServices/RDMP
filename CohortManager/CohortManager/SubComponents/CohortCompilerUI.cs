@@ -285,21 +285,13 @@ namespace CohortManager.SubComponents
 
         #endregion
 
-        private bool _haveSubscribed = false;
         private CohortCompilerRunner _runner;
-
-
+        
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             _cic = databaseObject;
-
+            
             base.SetDatabaseObject(activator, databaseObject);
-
-            if (!_haveSubscribed)
-            {
-                activator.RefreshBus.Subscribe(this);
-                _haveSubscribed = true;
-            }
 
             foreach (var c in _timeoutControls.GetControls())
                 CommonFunctionality.Add(c);

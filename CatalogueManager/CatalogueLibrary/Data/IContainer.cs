@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using CatalogueLibrary.Data.Aggregation;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueLibrary.Data
 {
@@ -33,7 +34,7 @@ namespace CatalogueLibrary.Data
     /// ('result is clinically significant').  Each subcontainer / IFilter are seperated with the Operation (See FilterContainerOperation) when building SQL
     /// (See SqlQueryBuilderHelper).
     /// </summary>
-    public interface IContainer:IDeleteable,ISaveable,IMapsDirectlyToDatabaseTable
+    public interface IContainer: IRevertable
     {
 
         /// <summary>
