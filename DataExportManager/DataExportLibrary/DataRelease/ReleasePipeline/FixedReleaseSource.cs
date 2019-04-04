@@ -124,7 +124,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             if (_releaseData.ConfigurationsForRelease.Any(kvp => kvp.Key.Project_ID != projects.First()))
                 notifier.OnCheckPerformed(new CheckEventArgs("Mismatch between project passed into constructor and DoRelease projects", CheckResult.Fail));
 
-            RunSpecificChecks(notifier);
+            RunSpecificChecks(notifier, isRunTime);
         }
 
         public void Check(ICheckNotifier notifier)
@@ -132,7 +132,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             Check(notifier, false);
         }
 
-        protected abstract void RunSpecificChecks(ICheckNotifier notifier);
+        protected abstract void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime);
 
         protected virtual DirectoryInfo PrepareSourceGlobalFolder()
         {

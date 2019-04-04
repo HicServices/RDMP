@@ -73,7 +73,11 @@ namespace DataExportLibrary.DataRelease
         public void Check(ICheckNotifier notifier)
         {
             MakeAssessment();
-            
+
+            var message = "Environment Releasability is " + Assesment;
+            if (!String.IsNullOrWhiteSpace(Reason))
+                message += " - " + Reason;
+
             notifier.OnCheckPerformed(new CheckEventArgs("Environment Releasability is " + Assesment, GetCheckResultFor(Assesment), Exception));
         }
 

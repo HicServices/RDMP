@@ -32,7 +32,7 @@ namespace DataExportLibrary.DataRelease.ReleasePipeline
             throw new NotImplementedException();
         }
 
-        protected override void RunSpecificChecks(ICheckNotifier notifier)
+        protected override void RunSpecificChecks(ICheckNotifier notifier, bool isRunTime)
         {
         }
 
