@@ -26,7 +26,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Finally you can tie in the Ticketing system so that you can audit time spent curating the document etc.</para>
     /// </summary>
-    public class SupportingDocument : VersionedDatabaseEntity,INamed, ISupportingObject
+    public class SupportingDocument : DatabaseEntity,INamed, ISupportingObject
     {
         #region Database Properties
         private string _name;

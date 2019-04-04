@@ -173,16 +173,7 @@ namespace CatalogueLibrary.Repositories
         {
             _defaults[toChange] = externalDatabaseServer;
         }
-
-        public override void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
-        {
-            base.InsertAndHydrate(toCreate, constructorParameters);
-
-            var v = toCreate as VersionedDatabaseEntity;
-            if(v != null)
-                v.SoftwareVersion = GetVersion().ToString();
-        }
-
+        
         public override void Clear()
         {
             base.Clear();

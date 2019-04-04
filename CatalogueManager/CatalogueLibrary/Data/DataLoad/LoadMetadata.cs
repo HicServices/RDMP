@@ -54,7 +54,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <para>A LoadMetadata also allows you to override various settings such as forcing a specific alternate server to load - for when you want to overule
     /// the location that TableInfo thinks data is on e.g. into a test environment mirror of live.</para>
     /// </summary>
-    public class LoadMetadata : VersionedDatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
+    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
     {
 
         #region Database Properties

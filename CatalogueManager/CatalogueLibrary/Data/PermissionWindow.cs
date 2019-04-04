@@ -25,7 +25,7 @@ namespace CatalogueLibrary.Data
     /// disrupt routine hospital use).  Also serves as a Locking point for job control.  Once an IPermissionWindow is in use by a process (e.g. Caching Pipeline) then it
     /// is not available to other processes (e.g. loading or other caching pipelines that share the same IPermissionWindow).
     /// </summary>
-    public class PermissionWindow : VersionedDatabaseEntity, IPermissionWindow
+    public class PermissionWindow : DatabaseEntity, IPermissionWindow
     {
         #region Database Properties
 

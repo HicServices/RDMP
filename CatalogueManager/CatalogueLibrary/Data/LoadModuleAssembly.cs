@@ -30,7 +30,7 @@ namespace CatalogueLibrary.Data
     /// requires specific code to execute.  You would make a class for dealing with the file format and make it implement IPluginAttacher.  Upload your dll along with any
     /// dependency dlls and the next time a DataAnalyst is building a load configuration your attacher will be displayed along with all the 'out of the box' attachers (CSV, Excel etc)</para>
     /// </summary>
-    public class LoadModuleAssembly : VersionedDatabaseEntity, IInjectKnown<Plugin>
+    public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     {
         /// <summary>
         /// List of dlls which will not be packaged up if present in your plugins bin directory since they already form part of the RDMP core architecture

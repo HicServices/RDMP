@@ -17,7 +17,7 @@ using MapsDirectlyToDatabaseTable.Injection;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class ExtractableDataSet : VersionedDatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
+    public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
     {
         #region Database Properties
         private int _catalogue_ID;

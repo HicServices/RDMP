@@ -32,7 +32,7 @@ using ReusableLibraryCode.DataAccess;
 namespace CatalogueLibrary.Data
 {
     /// <inheritdoc cref="ICatalogue"/>
-    public class Catalogue : VersionedDatabaseEntity, IComparable, ICatalogue, ICheckable, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
+    public class Catalogue : DatabaseEntity, IComparable, ICatalogue, ICheckable, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
     {
         #region Database Properties
         
@@ -1260,6 +1260,9 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository)
         {
+            if (dataExportRepository == null)
+                return new CatalogueExtractabilityStatus(false,false);
+
             if (_extractabilityStatus != null)
                 return _extractabilityStatus;
 

@@ -26,7 +26,7 @@ using ReusableLibraryCode.DataAccess;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class ExtractionConfiguration : VersionedDatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
+    public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
     {
         #region Database Properties
         private DateTime? _dtCreated;

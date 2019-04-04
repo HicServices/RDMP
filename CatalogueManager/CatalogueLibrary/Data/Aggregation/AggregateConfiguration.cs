@@ -40,7 +40,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, 
+    public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, 
         IInjectKnown<JoinableCohortAggregateConfiguration>,
         IInjectKnown<AggregateDimension[]>,
         IInjectKnown<Catalogue>,

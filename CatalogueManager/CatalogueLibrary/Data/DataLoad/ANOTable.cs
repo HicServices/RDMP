@@ -40,7 +40,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// off the ANOStore server (see DeleteANOTableInANOStore method which will let you do this for empty tables)</para>
     /// 
     /// </summary>
-    public class ANOTable : VersionedDatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
+    public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
     {
         /// <summary>
         /// Prefix to put on anonymous columns

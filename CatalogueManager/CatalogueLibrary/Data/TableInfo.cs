@@ -39,7 +39,7 @@ namespace CatalogueLibrary.Data
     /// <para>This class represents a constant for the RDMP and allows the system to detect when data analysts have randomly dropped/renamed columns without 
     /// telling anybody and present this information in a rational context to the systems user (see TableInfoSynchronizer).</para>
     /// </summary>
-    public class TableInfo : VersionedDatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
+    public class TableInfo : DatabaseEntity,ITableInfo,INamed, IHasFullyQualifiedNameToo, IInjectKnown<ColumnInfo[]>,ICheckable
     {
 
         

@@ -31,7 +31,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
     /// to write plugin classes to easily handle freaky source file types or complex/bespoke data load requirements.</para>
     /// </summary>
-    public class ProcessTask : VersionedDatabaseEntity, IProcessTask, ITableInfoCollectionHost, IOrderable,INamed, ICheckable
+    public class ProcessTask : DatabaseEntity, IProcessTask, ITableInfoCollectionHost, IOrderable,INamed, ICheckable
     {
         #region Database Properties
 

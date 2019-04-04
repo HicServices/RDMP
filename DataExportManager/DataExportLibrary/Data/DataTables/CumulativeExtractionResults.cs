@@ -19,7 +19,7 @@ using ReusableLibraryCode;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class CumulativeExtractionResults : VersionedDatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>
+    public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>
     {
         #region Database Properties
         private int _extractionConfiguration_ID;

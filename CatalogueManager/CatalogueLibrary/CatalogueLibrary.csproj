@@ -402,7 +402,6 @@
     <Compile Include="Data\Pipelines\IPipelineComponentArgument.cs" />
     <Compile Include="Data\Plugin.cs" />
     <Compile Include="Data\SelfCertifyingDataAccessPoint.cs" />
-    <Compile Include="Data\VersionedDatabaseEntity.cs" />
     <Compile Include="ExternalDatabaseServerPatching\ANOStoreDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IdentifierDumpDatabasePatcher.cs" />
     <Compile Include="ExternalDatabaseServerPatching\IPluginPatcher.cs" />

@@ -25,7 +25,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// how a given filter works.  E.g. if you have a filter 'Prescribed after @startDate' you would have an AggregateFilterParameter called @startDate with an appropriate
     /// user friendly description.
     /// </summary>
-    public class AggregateFilterParameter : VersionedDatabaseEntity, ISqlParameter
+    public class AggregateFilterParameter : DatabaseEntity, ISqlParameter
     {
         #region Database Properties
         private int _aggregateFilterID;

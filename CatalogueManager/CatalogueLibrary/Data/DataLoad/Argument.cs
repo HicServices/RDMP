@@ -34,7 +34,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <para>This allows simple UI driven population and persistence of configuration settings for plugin and system core components as they are used in all pipeline and
     /// dle activities.  See ArgumentCollection for UI logic.</para>
     /// </summary>
-    public abstract class Argument : VersionedDatabaseEntity, IArgument
+    public abstract class Argument : DatabaseEntity, IArgument
     {
 
         /// <summary>

@@ -16,7 +16,7 @@ using ReusableLibraryCode;
 namespace CatalogueLibrary.Data.Pipelines
 {
     /// <inheritdoc cref="IPipelineComponent"/>
-    public class PipelineComponent : VersionedDatabaseEntity, IPipelineComponent
+    public class PipelineComponent : DatabaseEntity, IPipelineComponent
     {
         #region Database Properties
 

@@ -27,7 +27,7 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// <para>The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. </para>
     /// </summary>
-    public class Project : VersionedDatabaseEntity, IProject, ICustomSearchString,ICheckable
+    public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable
     {
         #region Database Properties
         private string _name;

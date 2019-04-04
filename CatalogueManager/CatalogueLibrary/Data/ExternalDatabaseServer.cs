@@ -40,7 +40,7 @@ namespace CatalogueLibrary.Data
     /// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
     /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
     /// </summary>
-    public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
+    public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
     {
         #region Database Properties
 

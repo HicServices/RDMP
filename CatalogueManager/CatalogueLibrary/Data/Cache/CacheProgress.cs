@@ -22,7 +22,7 @@ namespace CatalogueLibrary.Data.Cache
     /// Records the progress of fetching and caching data from a remote source e.g. a Webservice or Imaging file host.  Each CacheProgress
     /// is tied to a LoadProgress (which itself is tied to a LoadMetadata).  
     /// </summary>
-    public class CacheProgress : VersionedDatabaseEntity, ICacheProgress
+    public class CacheProgress : DatabaseEntity, ICacheProgress
     {
         #region Database Properties
 

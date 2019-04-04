@@ -25,7 +25,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Provides an implementation of IColumn whilst still being a DatabaseEntity (saveable / part of a database repository etc)</para>
     /// </summary>
-    public abstract class ConcreteColumn : VersionedDatabaseEntity, IColumn,IOrderable,IComparable
+    public abstract class ConcreteColumn : DatabaseEntity, IColumn,IOrderable,IComparable
     {
         #region Database Properties
  

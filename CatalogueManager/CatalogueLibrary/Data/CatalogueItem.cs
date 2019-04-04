@@ -37,7 +37,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
-    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
+    public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
     {
         #region Database Properties
         
