@@ -68,7 +68,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             AssertNoErrors(ExpectedErrorType.Any);
         }
 
-        [Test, UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_CatalogueUI_AcronymDuplicates()
         {
             var cata1 = WhenIHaveA<Catalogue>();

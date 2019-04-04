@@ -14,7 +14,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     class ANOTableUITests:UITests
     {
-        [Test, UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_ANOTableUI_NormalState()
         {
             var anoTable = WhenIHaveA<ANOTable>();
@@ -28,7 +28,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             AssertNoErrors(ExpectedErrorType.ErrorProvider);
         }
 
-        [Test, UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_ANOTableUI_ServerWrongType()
         {
             ExternalDatabaseServer srv;
