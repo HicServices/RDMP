@@ -27,6 +27,10 @@ namespace CatalogueLibraryTests
             "DQEGraphAnnotation"
         });
             
+        /// <summary>
+        /// Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()"/> supports all <see cref="DatabaseEntity"/> classes (except
+        /// those listed in <see cref="_skipTheseTypes"/>) and returns a valid value.
+        /// </summary>
         [Test]
         public void TestAllSupported()
         {

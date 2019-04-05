@@ -28,6 +28,10 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             "WindowLayout"
         });
 
+        /// <summary>
+        /// Tests that all DatabaseEntity objects can be constructed with <see cref="UnitTests.WhenIHaveA{T}()"/> and that if <see cref="ExecuteCommandActivate"/>  says
+        /// they can be activated then they can be (without blowing up in a major way).
+        /// </summary>
         [Test,UITimeout(50000)]
         public void Test_ExecuteCommandActivate_AllObjectsActivateable()
         {

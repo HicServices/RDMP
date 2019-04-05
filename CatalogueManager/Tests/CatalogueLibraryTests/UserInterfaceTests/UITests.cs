@@ -77,6 +77,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
         public T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
+            Console.WriteLine("Launched " + typeof(T).Name);
+
             //clear the old results
             ClearResults();
             
