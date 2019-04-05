@@ -349,6 +349,7 @@
     <Compile Include="Data\ImportExport\ObjectExport.cs" />
     <Compile Include="Data\ImportExport\ObjectImport.cs" />
     <Compile Include="Data\WindowLayout.cs" />
+    <Compile Include="Exceptions\MissingColumnInfoException.cs" />
     <Compile Include="Repositories\Managers\CommentStoreWithKeywords.cs" />
     <Compile Include="Repositories\Managers\IPluginManager.cs" />
     <Compile Include="Repositories\Managers\HighPerformance\FilterManagerFromChildProvider.cs" />

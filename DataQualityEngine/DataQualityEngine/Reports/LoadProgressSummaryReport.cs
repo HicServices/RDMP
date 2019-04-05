@@ -56,7 +56,7 @@ namespace DataQualityEngine.Reports
 
             try
             {
-                dqeRepository = new DQERepository((CatalogueRepository) loadProgress.Repository);
+                dqeRepository = new DQERepository(loadProgress.CatalogueRepository);
             }
             catch (NotSupportedException)
             {

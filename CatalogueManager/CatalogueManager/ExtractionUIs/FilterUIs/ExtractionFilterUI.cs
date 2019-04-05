@@ -24,6 +24,7 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
@@ -187,8 +188,18 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             Catalogue = databaseObject.GetCatalogue();
             _extractionFilter = databaseObject;
 
-            var factory = new ParameterCollectionUIOptionsFactory();
-            var options = factory.Create(databaseObject);
+            ParameterCollectionUIOptionsFactory factory = null;
+            ParameterCollectionUIOptions options = null;
+            try
+            {
+                factory = new ParameterCollectionUIOptionsFactory();
+                options = factory.Create(databaseObject);
+            }
+            catch (Exception e)
+            {
+                Activator.KillForm(ParentForm,e);
+                return;
+            }
 
             //collapse panel 1 unless there are parameters
             splitContainer1.Panel1Collapsed = !options.ParameterManager.ParametersFoundSoFarInQueryGeneration.Values.Any(v => v.Any());

@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Checks.SyntaxChecking;
+using CatalogueLibrary.Exceptions;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using FAnsi;
@@ -155,6 +156,8 @@ namespace CatalogueLibrary.Data
             else
                 _cachedDatabaseTypeAnswer = GetCatalogue().GetDistinctLiveDatabaseServerType();
 
+            if (!_cachedDatabaseTypeAnswer.HasValue)
+                throw new AmbiguousDatabaseTypeException("Unable to determine DatabaseType for Filter '" + this +"'");
             
             return _cachedDatabaseTypeAnswer.Value;
         }

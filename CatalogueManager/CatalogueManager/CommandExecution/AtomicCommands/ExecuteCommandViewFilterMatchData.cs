@@ -44,7 +44,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 return;
             }
 
-            _candidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Distinct().ToArray();
+            _candidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Where(c=>c != null).Distinct().ToArray();
 
             if (!_candidates.Any())
                 SetImpossible("No ColumnInfo is associated with filter '" + filter + "'");
