@@ -1,3 +1,9 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
 using System;
 using System.IO;
 using System.Linq;
@@ -20,15 +26,11 @@ using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.Repositories;
-using DataQualityEngine.Data;
 using FAnsi;
 using FAnsi.Implementation;
 using LoadModules.Generic.DataFlowOperations;
-using LoadModules.Generic.DataFlowOperations.Aliases;
 using MapsDirectlyToDatabaseTable;
-using MySqlX.XDevAPI.Relational;
 using NUnit.Framework;
-using RDMPStartup;
 
 namespace Tests.Common
 {
@@ -198,13 +200,13 @@ namespace Tests.Common
             }
             
             if (typeof (T) == typeof(WindowLayout))
-	            return (T)(object)new WindowLayout(Repository,"My window arrangement","<html><body>ignore this</body></html>");
+                return (T)(object)new WindowLayout(Repository,"My window arrangement","<html><body>ignore this</body></html>");
 
             if (typeof (T) == typeof(RemoteRDMP))
-	            return (T)(object)new RemoteRDMP(Repository);
+                return (T)(object)new RemoteRDMP(Repository);
             
             if (typeof (T) == typeof(CohortIdentificationConfiguration))
-	            return (T)(object)new CohortIdentificationConfiguration(Repository,"My cic");
+                return (T)(object)new CohortIdentificationConfiguration(Repository,"My cic");
 
             if (typeof (T) == typeof(JoinableCohortAggregateConfiguration))
             {
@@ -222,7 +224,7 @@ namespace Tests.Common
             }
             
             if (typeof (T) == typeof(Plugin))
-	            return (T)(object)new Plugin(Repository,new FileInfo("bob.zip"));
+                return (T)(object)new Plugin(Repository,new FileInfo("bob.zip"));
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
@@ -247,7 +249,7 @@ namespace Tests.Common
             }
             
             if (typeof (T) == typeof(AggregateDimension))
-	            return (T)(object) WhenIHaveA<AggregateConfiguration>().AggregateDimensions[0];
+                return (T)(object) WhenIHaveA<AggregateConfiguration>().AggregateDimensions[0];
             
             if (typeof (T) == typeof(AggregateFilterContainer))
             {
@@ -276,10 +278,10 @@ namespace Tests.Common
                 return (T) (object) new LoadProgress(Repository, WhenIHaveA<LoadMetadata>());
 
             if (typeof (T) == typeof(CacheProgress))
-	            return (T)(object)new CacheProgress(Repository,WhenIHaveA<LoadProgress>());
+                return (T)(object)new CacheProgress(Repository,WhenIHaveA<LoadProgress>());
 
             if (typeof (T) == typeof(CacheFetchFailure))
-	            return (T)(object)new CacheFetchFailure(Repository,WhenIHaveA<CacheProgress>(),DateTime.Now.Subtract(new TimeSpan(1,0,0,0)),DateTime.Now,new Exception("It didn't work"));
+                return (T)(object)new CacheFetchFailure(Repository,WhenIHaveA<CacheProgress>(),DateTime.Now.Subtract(new TimeSpan(1,0,0,0)),DateTime.Now,new Exception("It didn't work"));
             
             if (typeof (T) == typeof(CohortAggregateContainer))
             {
@@ -295,10 +297,10 @@ namespace Tests.Common
             }
 
             if (typeof (T) == typeof(DataAccessCredentials))
-	            return (T)(object)new DataAccessCredentials(Repository,"My credentials");
+                return (T)(object)new DataAccessCredentials(Repository,"My credentials");
             
             if (typeof (T) == typeof(GovernancePeriod))
-	            return (T)(object)new GovernancePeriod(Repository);
+                return (T)(object)new GovernancePeriod(Repository);
             
             if (typeof (T) == typeof(GovernanceDocument))
             {
@@ -307,7 +309,7 @@ namespace Tests.Common
             }
 
             if (typeof (T) == typeof(PermissionWindow))
-	            return (T)(object)new PermissionWindow(Repository);
+                return (T)(object)new PermissionWindow(Repository);
             
 
             if (typeof (T) == typeof(JoinInfo))
@@ -338,7 +340,7 @@ namespace Tests.Common
                 return (T)(object)new LookupCompositeJoinInfo(Repository,lookup,otherJoinFk,otherJoinPk);
             }
             if (typeof (T) == typeof(Pipeline))
-	            return (T)(object)new Pipeline(Repository,"My Pipeline");
+                return (T)(object)new Pipeline(Repository,"My Pipeline");
 
             if (typeof (T) == typeof(PipelineComponent))
                 return (T)(object)new PipelineComponent(Repository, WhenIHaveA<Pipeline>(), typeof(ColumnBlacklister),0,"My Component");
@@ -350,33 +352,33 @@ namespace Tests.Common
             }
 
             if (typeof (T) == typeof(PreLoadDiscardedColumn))
-	            return (T)(object)new PreLoadDiscardedColumn(Repository,WhenIHaveA<TableInfo>(),"MyDiscardedColum");
+                return (T)(object)new PreLoadDiscardedColumn(Repository,WhenIHaveA<TableInfo>(),"MyDiscardedColum");
                         
                        
             if (typeof (T) == typeof(ProcessTask))
-	            return (T)(object)new ProcessTask(Repository,WhenIHaveA<LoadMetadata>(),LoadStage.AdjustRaw);
+                return (T)(object)new ProcessTask(Repository,WhenIHaveA<LoadMetadata>(),LoadStage.AdjustRaw);
 
             if (typeof (T) == typeof(ProcessTaskArgument))
-	            return (T)(object)new ProcessTaskArgument(Repository,WhenIHaveA<ProcessTask>());
+                return (T)(object)new ProcessTaskArgument(Repository,WhenIHaveA<ProcessTask>());
 
                 
             if (typeof (T) == typeof(StandardRegex))
-	            return (T)(object)new StandardRegex(Repository);
+                return (T)(object)new StandardRegex(Repository);
 
             if (typeof (T) == typeof(SupportingSQLTable))
-	            return (T)(object)new SupportingSQLTable(Repository,WhenIHaveA<Catalogue>(),"Some Handy Query");
+                return (T)(object)new SupportingSQLTable(Repository,WhenIHaveA<Catalogue>(),"Some Handy Query");
 
             if (typeof (T) == typeof(TicketingSystemConfiguration))
-	            return (T)(object)new TicketingSystemConfiguration(Repository,"My Ticketing System");
+                return (T)(object)new TicketingSystemConfiguration(Repository,"My Ticketing System");
 
             if (typeof (T) == typeof(SupportingDocument))
                 return (T)(object)new SupportingDocument(Repository,WhenIHaveA<Catalogue>(),"HelpFile.docx");
 
             if (typeof (T) == typeof(Project))
-	            return (T)(object)new Project(Repository,"My Project");
+                return (T)(object)new Project(Repository,"My Project");
             
             if (typeof (T) == typeof(ExtractionConfiguration))
-	            return (T)(object)new ExtractionConfiguration(Repository,WhenIHaveA<Project>());
+                return (T)(object)new ExtractionConfiguration(Repository,WhenIHaveA<Project>());
             
             if (typeof (T) == typeof(ExtractableDataSet))
             {
@@ -387,7 +389,7 @@ namespace Tests.Common
             }
             
             if (typeof (T) == typeof(CumulativeExtractionResults))
-	            return (T)(object)new CumulativeExtractionResults(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),"SELECT * FROM Anywhere");
+                return (T)(object)new CumulativeExtractionResults(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),"SELECT * FROM Anywhere");
             
             if (typeof (T) == typeof(SelectedDataSets))
                 return (T)(object)new SelectedDataSets(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),null);
@@ -403,15 +405,15 @@ namespace Tests.Common
 
                 return (T)(object)new ReleaseLog(Repository,
                     potential,
-                        new ReleaseEnvironmentPotential(sds.ExtractionConfiguration),
-                        false,
-                        new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
-                        new FileInfo(file));
+                    new ReleaseEnvironmentPotential(sds.ExtractionConfiguration),
+                    false,
+                    new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
+                    new FileInfo(file));
                         
             }
 
             if (typeof (T) == typeof(ExtractableDataSetPackage))
-	            return (T)(object)new ExtractableDataSetPackage(Repository,"My Cool Package");
+                return (T)(object)new ExtractableDataSetPackage(Repository,"My Cool Package");
             
             
             if (typeof (T) == typeof(SupplementalExtractionResults))
@@ -423,16 +425,16 @@ namespace Tests.Common
                 return (T)(object)new SelectedDataSetsForcedJoin(Repository,WhenIHaveA<SelectedDataSets>(),WhenIHaveA<TableInfo>());
             
             if (typeof (T) == typeof(ProjectCohortIdentificationConfigurationAssociation))
-	            return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(Repository,WhenIHaveA<Project>(),WhenIHaveA<CohortIdentificationConfiguration>());
+                return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(Repository,WhenIHaveA<Project>(),WhenIHaveA<CohortIdentificationConfiguration>());
             
             if (typeof (T) == typeof(ExternalCohortTable))
-	            return (T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer);
+                return (T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer);
 
             if (typeof (T) == typeof(ExtractableCohort))
-	            throw new NotSupportedException("You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");
+                throw new NotSupportedException("You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");
 
             if (typeof (T) == typeof(GlobalExtractionFilterParameter))
-	            return (T)(object)new GlobalExtractionFilterParameter(Repository,WhenIHaveA<ExtractionConfiguration>(),"DECLARE @ExtractionGlobal as varchar(100)");
+                return (T)(object)new GlobalExtractionFilterParameter(Repository,WhenIHaveA<ExtractionConfiguration>(),"DECLARE @ExtractionGlobal as varchar(100)");
 
 
             if (typeof (T) == typeof(ExtractableColumn))
@@ -540,9 +542,5 @@ namespace Tests.Common
             s.SaveToDatabase();
             return s;
         }
-    }
-
-    public class TestCaseNotWrittenYetException : Exception
-    {
     }
 }

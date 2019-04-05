@@ -381,7 +381,7 @@
     <Compile Include="Integration\TableInfoTests.cs" />
     <Compile Include="Unit\TestAcronymGeneration.cs" />
     <Compile Include="UserInterfaceTests\AggregateEditorUITests.cs" />
-    <Compile Include="UserInterfaceTests\AllFormsLaunchableTest.cs" />
+    <Compile Include="UserInterfaceTests\ExecuteCommandActivateTests.cs" />
     <Compile Include="UserInterfaceTests\ANOTableUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueItemUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueUITests.cs" />

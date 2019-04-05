@@ -183,12 +183,13 @@
     </Compile>
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="RDMPUnitTest.cs" />
+    <Compile Include="TestCaseNotWrittenYetException.cs" />
     <Compile Include="SimpleExampleTests.cs" />
     <Compile Include="TestableTableValuedFunction.cs" />
     <Compile Include="TestDatabasesSettings.cs" />
     <Compile Include="TestLoadDirectory.cs" />
     <Compile Include="TestDirectoryHelper.cs" />
+    <Compile Include="UnitTests.cs" />
     <Compile Include="UserAcceptanceTestEnvironmentHelper.cs" />
   </ItemGroup>
   <ItemGroup>

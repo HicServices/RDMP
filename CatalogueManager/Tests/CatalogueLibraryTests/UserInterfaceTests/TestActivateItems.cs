@@ -87,7 +87,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 new DataExportProblemProvider()
             });
 
-            CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
             PluginUserInterfaces = new List<IPluginUserInterface>();
         }
 
@@ -105,7 +104,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         public ICoreIconProvider CoreIconProvider { get; private set; }
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
         public ICommandFactory CommandFactory { get; private set; }
-        public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
+        public ICommandExecutionFactory CommandExecutionFactory { get; set; }
         public CommentStore CommentStore { get; private set; }
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {

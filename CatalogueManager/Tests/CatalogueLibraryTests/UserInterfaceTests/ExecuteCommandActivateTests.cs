@@ -1,20 +1,22 @@
-﻿using System;
+﻿// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    internal class AllFormsLaunchableTest : UITests
+    internal class ExecuteCommandActivateTests: UITests
     {
 
         //These types do not have to be supported by the method WhenIHaveA
@@ -27,7 +29,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         });
 
         [Test,UITimeout(50000)]
-        public void TestAllSupported()
+        public void Test_ExecuteCommandActivate_AllObjectsActivateable()
         {
             SetupMEF();
             
@@ -37,8 +39,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
             var methods = typeof (UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
             var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
-
-            List<Type> notSupported = new List<Type>();
 
             foreach (Type t in types)
             {
@@ -65,12 +65,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                         throw new Exception("Could not Activate Type:" + t.Name,e);
                     }
                 }
-
             }
-
-            Assert.IsEmpty(notSupported,
-                "The following Types were not supported by WhenIHaveA<T>:" + Environment.NewLine +
-                string.Join(Environment.NewLine, notSupported.Select(t => t.Name)));
         }
     }
 }

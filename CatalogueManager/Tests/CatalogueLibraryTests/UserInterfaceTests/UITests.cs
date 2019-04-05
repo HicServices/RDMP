@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
@@ -36,6 +37,10 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 {
                     _itemActivator = new TestActivateItems(this,Repository);
                     _itemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
+                    
+                    //if mef was loaded for this test then this is supported otherwise not
+                    if(MEF != null)
+                        _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
                 }
 
                 return _itemActivator;
