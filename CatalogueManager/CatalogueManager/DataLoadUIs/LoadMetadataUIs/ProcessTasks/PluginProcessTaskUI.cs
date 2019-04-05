@@ -65,7 +65,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
             if(_argumentCollection == null)
             {
-                var repo = (CatalogueRepository) databaseObject.Repository;
+                var repo = databaseObject.CatalogueRepository;
 
                 _argumentCollection = new ArgumentCollectionUI();
                 try

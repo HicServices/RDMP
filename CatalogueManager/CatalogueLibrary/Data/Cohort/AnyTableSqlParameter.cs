@@ -158,7 +158,7 @@ namespace CatalogueLibrary.Data.Cohort
         {
             var type = typeof (Catalogue).Assembly.GetTypes().Single(t=>t.Name.Equals(ReferencedObjectType));
 
-            return ((CatalogueRepository)Repository).GetObjectByID(type,ReferencedObjectID);
+            return Repository.GetObjectByID(type,ReferencedObjectID);
         }
 
         /// <inheritdoc/>

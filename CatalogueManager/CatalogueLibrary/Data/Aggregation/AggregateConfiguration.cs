@@ -637,7 +637,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public AggregateConfiguration CreateClone()
         {
-            var cataRepo = (CatalogueRepository) Repository;
+            var cataRepo = CatalogueRepository;
             var clone = ShallowClone();
             
             if(clone.PivotOnDimensionID != null)

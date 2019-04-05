@@ -78,7 +78,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
                             new ArgumentValueComboBoxUI(
                                 Enum.GetValues(argumentType).Cast<object>().ToArray());
                     }
-                    else if (typeof (CatalogueRepository).IsAssignableFrom(argumentType))
+                    else if (typeof (ICatalogueRepository).IsAssignableFrom(argumentType))
                     {
                         toReturn = new ArgumentValueLabelUI("<this value cannot be set manually>");
                     }
@@ -145,7 +145,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         }
 
 
-        private object[] GetAdvertisedColumnInfos(CatalogueRepository repository,IArgumentHost parent, bool relatedOnlyToLoadMetadata)
+        private object[] GetAdvertisedColumnInfos(ICatalogueRepository repository,IArgumentHost parent, bool relatedOnlyToLoadMetadata)
         {
             return relatedOnlyToLoadMetadata
                 ? GetAllColumnInfosAssociatedWithLoadMetadata(repository, parent).ToArray()

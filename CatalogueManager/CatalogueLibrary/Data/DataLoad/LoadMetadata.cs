@@ -320,7 +320,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
             if (catalogue.LiveLoggingServer_ID == null)
             {
-                loggingServer = new ServerDefaults((CatalogueRepository) Repository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 if (loggingServer != null)
                     catalogue.LiveLoggingServer_ID = loggingServer.ID;

@@ -81,7 +81,7 @@ namespace Tests.Common
 
             if (typeof(T) == typeof(TableInfo))
             {
-                var table = new TableInfo(Repository, "My_Table");
+                var table = new TableInfo(Repository, "My_Table"){DatabaseType = DatabaseType.MicrosoftSQLServer};
                 return (T)(object)table;
             }
 
@@ -379,7 +379,12 @@ namespace Tests.Common
 	            return (T)(object)new ExtractionConfiguration(Repository,WhenIHaveA<Project>());
             
             if (typeof (T) == typeof(ExtractableDataSet))
-	            return (T)(object)new ExtractableDataSet(Repository,WhenIHaveA<Catalogue>());
+            {
+                var ei = WhenIHaveA<ExtractionInformation>();
+                ei.IsExtractionIdentifier = true;
+                ei.SaveToDatabase();
+                return (T)(object)new ExtractableDataSet(Repository,ei.CatalogueItem.Catalogue);
+            }
             
             if (typeof (T) == typeof(CumulativeExtractionResults))
 	            return (T)(object)new CumulativeExtractionResults(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),"SELECT * FROM Anywhere");

@@ -113,7 +113,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             var patientIndexTable = rowobject as JoinableCohortAggregateConfiguration;
             var patientIndexTableUse = rowobject as JoinableCohortAggregateConfigurationUse;
 
-            var joiner = ((CatalogueRepository)_aggregate.Repository).AggregateForcedJoinManager;
+            var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
             
             //user is trying to use a joinable something
             if (newvalue == CheckState.Checked)

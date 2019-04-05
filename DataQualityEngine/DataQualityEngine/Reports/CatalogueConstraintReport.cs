@@ -55,7 +55,7 @@ namespace DataQualityEngine.Reports
             
         }
 
-        private void SetupLogging(CatalogueRepository repository)
+        private void SetupLogging(ICatalogueRepository repository)
         {
             //if we have already setup logging successfully then don't worry about doing it again
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
@@ -83,7 +83,7 @@ namespace DataQualityEngine.Reports
 
         public override void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken)
         {
-            SetupLogging((CatalogueRepository) c.Repository);
+            SetupLogging(c.CatalogueRepository);
 
             var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask, "DQE evaluation of " + c);
 
@@ -92,7 +92,7 @@ namespace DataQualityEngine.Reports
             try
             {
                 _catalogue = c;
-                var dqeRepository = new DQERepository((CatalogueRepository) c.Repository);
+                var dqeRepository = new DQERepository(c.CatalogueRepository);
 
                 byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
                 byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
@@ -279,7 +279,7 @@ namespace DataQualityEngine.Reports
             }
             try
             {
-                var dqeRepository = new DQERepository((CatalogueRepository)_catalogue.Repository);
+                var dqeRepository = new DQERepository(_catalogue.CatalogueRepository);
                 notifier.OnCheckPerformed(new CheckEventArgs("Found DQE reporting server " + dqeRepository.DiscoveredServer.Name, CheckResult.Success));
             }
             catch (Exception e)
@@ -292,7 +292,7 @@ namespace DataQualityEngine.Reports
 
             try
             {
-                SetupLogging((CatalogueRepository)_catalogue.Repository);
+                SetupLogging(_catalogue.CatalogueRepository);
             }
             catch (Exception e)
             {

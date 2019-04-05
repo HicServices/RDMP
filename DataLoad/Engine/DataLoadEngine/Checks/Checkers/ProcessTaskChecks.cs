@@ -47,7 +47,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
 
 
-            var factory = new RuntimeTaskFactory((CatalogueRepository) _loadMetadata.Repository);
+            var factory = new RuntimeTaskFactory(_loadMetadata.CatalogueRepository);
             var created = factory.Create(processTask, dictionary.LoadArgs[processTask.LoadStage]);
 
             created.Check(notifier);

@@ -210,7 +210,7 @@ namespace DataQualityEngine.Reports
         {
             try
             {
-                dqeRepository = new DQERepository((CatalogueRepository)_loadProgress.Repository);
+                dqeRepository = new DQERepository((ICatalogueRepository)_loadProgress.Repository);
             }
             catch (Exception ex)
             {

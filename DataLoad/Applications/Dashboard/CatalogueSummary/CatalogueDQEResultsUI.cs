@@ -76,7 +76,7 @@ namespace Dashboard.CatalogueSummary
             try
             {
                 //try to get the dqe server
-                dqeRepository = new DQERepository((CatalogueRepository)databaseObject.Repository);
+                dqeRepository = new DQERepository(databaseObject.CatalogueRepository);
             }
             catch (Exception)
             {

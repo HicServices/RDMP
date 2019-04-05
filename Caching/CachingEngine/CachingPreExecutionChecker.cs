@@ -5,20 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CachingEngine.Factories;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
 using CatalogueLibrary.Checks;
-using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -31,12 +21,10 @@ namespace CachingEngine
     public class CachingPreExecutionChecker : ICheckable
     {
         private readonly ICacheProgress _cacheProgress;
-        private CatalogueRepository _repository;
         
         public CachingPreExecutionChecker(ICacheProgress cacheProgress)
         {
             _cacheProgress = cacheProgress;
-            _repository = (CatalogueRepository) _cacheProgress.Repository;
         }
 
         public void Check(ICheckNotifier notifier)

@@ -129,7 +129,7 @@ namespace CatalogueLibrary.Data.Pipelines
         /// <inheritdoc/>
         public Type GetClassAsSystemType()
         {
-            return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(Class);
+            return CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(Class);
         }
 
         /// <inheritdoc/>

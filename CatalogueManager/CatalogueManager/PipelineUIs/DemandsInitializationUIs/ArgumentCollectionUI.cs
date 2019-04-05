@@ -153,7 +153,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
             args.InitialValue = argument.GetValueAsSystemType();
             args.Type = argument.GetSystemType();
             args.Required = required;
-            args.CatalogueRepository = (CatalogueRepository) argument.Repository;
+            args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
             args.Setter = (v) =>
             {
                 ragSmiley.Reset();

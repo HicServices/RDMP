@@ -169,8 +169,8 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
                     joinType = ExtractionJoinType.Inner;
                 else
                     throw new Exception("You must select an Extraction Join direction");
-                
-                var cataRepo = (CatalogueRepository) _leftTableInfo.Repository;
+
+                var cataRepo = _leftTableInfo.CatalogueRepository;
 
                 for (int i = 0; i < pks.Length; i++)
                     if (cataRepo.GetAllObjects<JoinInfo>().Any(j => j.PrimaryKey_ID == pks[i].ID && j.ForeignKey_ID == fks[i].ID))

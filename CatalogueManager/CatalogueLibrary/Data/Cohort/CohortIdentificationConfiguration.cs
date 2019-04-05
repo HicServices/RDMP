@@ -323,6 +323,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
         {
+            //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
             var cataRepo = ((CatalogueRepository) Repository);
             //start a new super transaction
             using (cataRepo.BeginNewTransactedConnection())
@@ -416,7 +417,7 @@ namespace CatalogueLibrary.Data.Cohort
 
         private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
         {
-            var cataRepo = (CatalogueRepository)Repository;
+            var cataRepo = CatalogueRepository;
 
             //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve it's freakyness
             ExtractionInformation underlyingExtractionInformation;

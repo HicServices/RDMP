@@ -33,7 +33,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         private Type _typeOfUnderlyingClass;
 
 
-        public ArgumentValuePipelineUI(CatalogueRepository catalogueRepository, IArgumentHost parent, Type argumentType)
+        public ArgumentValuePipelineUI(ICatalogueRepository catalogueRepository, IArgumentHost parent, Type argumentType)
         {
             InitializeComponent();
 

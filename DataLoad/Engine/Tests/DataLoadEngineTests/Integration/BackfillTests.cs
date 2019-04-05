@@ -100,7 +100,7 @@ namespace DataLoadEngineTests.Integration
         {
             foreach (TableInfo tableInfo in _catalogue.GetTableInfoList(true))
             {
-                var joinInfos = ((CatalogueRepository)tableInfo.Repository).JoinManager.GetAllJoinInfosWhereTableContains(tableInfo, JoinInfoType.AnyKey);
+                var joinInfos = tableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(tableInfo, JoinInfoType.AnyKey);
 
                 foreach (JoinInfo j in joinInfos)
                     j.DeleteInDatabase();
