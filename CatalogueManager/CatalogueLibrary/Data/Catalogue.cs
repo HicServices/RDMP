@@ -1233,9 +1233,6 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public CatalogueExtractabilityStatus GetExtractabilityStatus(IDataExportRepository dataExportRepository)
         {
-            if (dataExportRepository == null)
-                return new CatalogueExtractabilityStatus(false,false);
-
             if (_extractabilityStatus != null)
                 return _extractabilityStatus;
 

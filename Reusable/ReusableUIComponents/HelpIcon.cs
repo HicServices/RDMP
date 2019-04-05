@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ReusableUIComponents.Dialogs;
@@ -20,6 +21,8 @@ namespace ReusableUIComponents
         private string _hoverText;
         private string _title;
         private HelpWorkflow _workFlow;
+        private string _originalHoverText;
+        private ToolTip tt;
 
         public HelpIcon()
         {
@@ -31,30 +34,23 @@ namespace ReusableUIComponents
             _workFlow = workflow;
             _title = title;
             _hoverText = hoverText;
+            _originalHoverText = hoverText;
             Visible = !String.IsNullOrWhiteSpace(_hoverText);
 
             Regex rgx = new Regex("(.{150}\\s)");
             _hoverText = rgx.Replace(hoverText, "$1\n");
 
-            Cursor = Cursors.Hand;
-        }
-
-        private void HelpIcon_MouseHover(object sender, EventArgs e)
-        {
-            if (!String.IsNullOrWhiteSpace(_hoverText))
+            tt = new ToolTip
             {
-                var tt = new ToolTip
-                {
-                    AutoPopDelay = 15000,  // Warning! MSDN states this is Int32, but anything over 32767 will fail.
-                    ShowAlways = true,
-                    ToolTipTitle = _title,
-                    InitialDelay = 200,
-                    ReshowDelay = 200,
-                    UseAnimation = true
-                };
-                tt.SetToolTip(this, _hoverText);
-            }
-
+                AutoPopDelay = 15000,  // Warning! MSDN states this is Int32, but anything over 32767 will fail.
+                ShowAlways = true,
+                ToolTipTitle = _title,
+                InitialDelay = 200,
+                ReshowDelay = 200,
+                UseAnimation = true
+            };
+            tt.SetToolTip(this, _hoverText);
+            Cursor = Cursors.Hand;
         }
 
         private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
@@ -62,7 +58,7 @@ namespace ReusableUIComponents
             if (_workFlow != null)
                 _workFlow.Start(true);
             else
-                WideMessageBox.Show(_title, _hoverText, WideMessageBoxTheme.Help);
+                WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
         }
     }
 }

@@ -50,7 +50,7 @@ namespace CatalogueManager.ANOEngineeringUIs
 
             CommonFunctionality.AddHelp(tbSuffix,"ANOTable.Suffix");
             CommonFunctionality.AddHelp(llServer, "ANOTable.Server_ID");
-            CommonFunctionality.AddStringHelp(tbInputDataType,"DataType", "Datatype for private identifiers being mapped e.g. varchar(100)");
+            CommonFunctionality.AddHelpString(tbInputDataType,"DataType", "Datatype for private identifiers being mapped e.g. varchar(100)");
             CommonFunctionality.AddHelp(nIntegers, "ANOTable.NumberOfIntegersToUseInAnonymousRepresentation");
             CommonFunctionality.AddHelp(nCharacters, "ANOTable.NumberOfCharactersToUseInAnonymousRepresentation");
 
