@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    public class CatalogueUIUnitTestses : UIUnitTestses
+    public class CatalogueUITests : UITests
     {
         [Test, UITimeout(20000)]
         public void Test_CatalogueUI_NormalState()

@@ -13,12 +13,17 @@ using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class AggregateEditorUIUnitTestses:UIUnitTestses
+    class AggregateEditorUITests:UITests
     {
         [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_NormalState()
         {
             var config = WhenIHaveA<AggregateConfiguration>();
+            
+            //remove any existing dimensions
+            foreach (var d in config.AggregateDimensions)
+                d.DeleteInDatabase();
+            
             var ui = AndLaunch<AggregateEditorUI>(config);
 
             //The selected columns ui
@@ -66,6 +71,10 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             ExtractionInformation dateEi;
             ExtractionInformation otherEi;
             var config = WhenIHaveA<AggregateConfiguration>(out dateEi,out otherEi);
+            
+            //remove any existing dimensions
+            foreach (var d in config.AggregateDimensions)
+                d.DeleteInDatabase();
 
             var dimDate = new AggregateDimension(Repository, dateEi, config);
             var dimOther = new AggregateDimension(Repository, otherEi, config);

@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class ANOTableUIUnitTestses:UIUnitTestses
+    class ANOTableUITests : UITests
     {
         [Test, UITimeout(50000)]
         public void Test_ANOTableUI_NormalState()

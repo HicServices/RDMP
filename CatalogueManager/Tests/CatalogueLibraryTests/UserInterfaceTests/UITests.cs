@@ -24,9 +24,23 @@ using Tests.Common;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    public class UIUnitTestses : UnitTests
+    public class UITests : UnitTests
     {
-        protected TestActivateItems ItemActivator;
+        private TestActivateItems _itemActivator;
+
+        protected TestActivateItems ItemActivator
+        {
+            get
+            {
+                if (_itemActivator == null)
+                {
+                    _itemActivator = new TestActivateItems(this,Repository);
+                    _itemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
+                }
+
+                return _itemActivator;
+            }
+        }
 
         protected MEF MEF;
 
@@ -42,6 +56,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         {
             MEF = new MEF();
             MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
+            Repository.CatalogueRepository.MEF = MEF;
         }
         
 
@@ -49,22 +64,16 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
         /// visibly appear but will be mounted on a Form and generally should behave like live ones.
         /// 
-        /// <para>Test should only call this method once.</para>
+        /// <para>Method only tracks one set of results at once, so if you call this method more than once then expect old Errors to disapear.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="o"></param>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
-        protected T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
+        public T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
-            if (_userInterfaceLaunched != null)
-                throw new NotSupportedException("AndLaunch called multiple times");
-
-            if (ItemActivator == null)
-            {
-                ItemActivator = new TestActivateItems(Repository);
-                ItemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
-            }
+            //clear the old results
+            ClearResults();
             
             Form f = new Form();
             T ui = new T();
@@ -81,13 +90,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
 
         /// <summary>
-        /// Sets up the ItemActivator and ui fields
+        /// Clears the ItemActivator and ui fields
         /// </summary>
         [SetUp]
-        protected void SetUpActivator()
+        protected void ClearResults()
         {
-            if(ItemActivator != null)
-                ItemActivator.Results.Clear();
+            if(_itemActivator != null)
+                _itemActivator.Results.Clear();
 
             _checkResults = null;
             _userInterfaceLaunched = null;
@@ -124,7 +133,14 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var e = (BeforeCheckingEventArgs) eventArgs;
 
             _checkResults = new ToMemoryCheckNotifier();
-            e.Checkable.Check(_checkResults);
+            try
+            {
+                e.Checkable.Check(_checkResults);
+            }
+            catch (Exception ex)
+            {
+                _checkResults.OnCheckPerformed(new CheckEventArgs("Checks threw exception", CheckResult.Fail, ex));
+            }
             e.Cancel = true;
         }
 

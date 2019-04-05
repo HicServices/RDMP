@@ -12,7 +12,7 @@ using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    public class LoadDiagramUIUnitTestses : UIUnitTestses
+    public class LoadDiagramUITests : UITests
     {
         [Test, UITimeout(50000)]
         public void Test_LoadDiagramUITests_NormalState()
