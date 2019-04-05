@@ -12,24 +12,20 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Repositories;
 using FAnsi.Implementation;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using Tests.Common;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    public class UITests
+    public class UIUnitTestses : UnitTests
     {
-        protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
         protected TestActivateItems ItemActivator;
 
         protected MEF MEF;
@@ -48,116 +44,6 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
         }
         
-        /// <summary>
-        /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
-        /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
-        /// </summary>
-        /// <typeparam name="T">Type of object you want to create</typeparam>
-        /// <returns></returns>
-        /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
-        protected T WhenIHaveA<T>() where T:DatabaseEntity
-        {
-            T toReturn = null;
-
-            if (typeof (T) == typeof (Catalogue))
-                return (T)(object) Save(new Catalogue(Repository, "Mycata"));
-
-            if (typeof(T) == typeof(CatalogueItem))
-            {
-                var cata = new Catalogue(Repository, "Mycata");
-                return (T)(object)Save(new CatalogueItem(Repository, cata, "MyCataItem"));
-            }
-
-            if (typeof(T) == typeof(ExtractionInformation))
-            {
-                var col = WhenIHaveA<ColumnInfo>();
-
-                var cata = new Catalogue(Repository, "Mycata");
-                var ci = new CatalogueItem(Repository, cata, "MyCataItem");
-                var ei = new ExtractionInformation(Repository, ci, col, "MyCataItem");
-                return (T)(object)Save(ei);
-            }
-
-            if (typeof (T) == typeof (TableInfo))
-            {
-                var table = new TableInfo(Repository, "My_Table");
-                return  (T)(object)Save(table);
-            }
-
-            if (typeof (T) == typeof (ColumnInfo))
-            {
-                var ti = WhenIHaveA<TableInfo>();
-                var col = new ColumnInfo(Repository,"My_Col","varchar(10)",ti);
-                return (T)(object)Save(col);
-            }
-
-            if (typeof (T) == typeof (AggregateConfiguration))
-            {
-                ExtractionInformation dateEi;
-                ExtractionInformation otherEi;
-                return (T)(object)WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
-            }
-
-            if (typeof (T) == typeof (ExternalDatabaseServer))
-            {
-                return (T) (object) Save(new ExternalDatabaseServer(Repository,"My Server"));
-            }
-
-            if (typeof (T) == typeof (ANOTable))
-            {
-                ExternalDatabaseServer server;
-                return (T)WhenIHaveA<ANOTable>(out server);
-            }
-
-            if (typeof (T) == typeof (LoadMetadata))
-            {
-                //creates the table, column, catalogue, catalogue item and extraction information
-                var ei = WhenIHaveA<ExtractionInformation>();
-                var cata = ei.CatalogueItem.Catalogue;
-
-                var ti = ei.ColumnInfo.TableInfo;
-                ti.Server = "localhost";
-                ti.Database = "mydb";
-                ti.SaveToDatabase();
-
-                var lmd = new LoadMetadata(Repository, "MyLoad");
-                cata.LoadMetadata_ID = lmd.ID;
-                cata.SaveToDatabase();
-                return (T)(object)Save(lmd);
-            }
-
-
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc cref="WhenIHaveA{T}()"/>
-        protected AggregateConfiguration WhenIHaveA<T>(out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
-        {
-            var ti = WhenIHaveA<TableInfo>();
-            var dateCol = new ColumnInfo(Repository, "MyDateCol", "datetime2", ti);
-            var otherCol = new ColumnInfo(Repository, "MyOtherCol", "varchar(10)", ti);
-
-            var cata = WhenIHaveA<Catalogue>();
-            var dateCi = new CatalogueItem(Repository, cata, dateCol.Name);
-            dateEi = new ExtractionInformation(Repository, dateCi, dateCol, dateCol.Name);
-            var otherCi = new CatalogueItem(Repository, cata, otherCol.Name);
-            otherEi = new ExtractionInformation(Repository, otherCi, otherCol, otherCol.Name);
-            return Save(new AggregateConfiguration(Repository, cata, "My graph"));
-        }
-        
-        /// <inheritdoc cref="WhenIHaveA{T}()"/>
-        protected DatabaseEntity WhenIHaveA<T>(out ExternalDatabaseServer server) where T:ANOTable
-        {
-            server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(ANOStore.Database.Class1).Assembly);
-            var anoTable = new ANOTable(Repository, server, "ANOFish", "F");
-            return anoTable;
-        }
-
-        private T Save<T>(T s) where T:ISaveable
-        {
-            s.SaveToDatabase();
-            return s;
-        }
 
         /// <summary>
         /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
@@ -195,23 +81,17 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
 
         /// <summary>
-        /// Loads FAnsi implementations for all supported DBMS platforms into memory
+        /// Sets up the ItemActivator and ui fields
         /// </summary>
         [SetUp]
-        protected void LoadDatabaseImplementations()
+        protected void SetUpActivator()
         {
-            ImplementationManager.Load(
-                typeof(FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation).Assembly,
-                typeof(FAnsi.Implementations.MySql.MySqlImplementation).Assembly,
-                typeof(FAnsi.Implementations.Oracle.OracleImplementation).Assembly);
-
             if(ItemActivator != null)
                 ItemActivator.Results.Clear();
 
             _checkResults = null;
             _userInterfaceLaunched = null;
         }
-
         /// <summary>
         /// Asserts that the given command is impossible for the <paramref name="expectedReason"/>
         /// </summary>

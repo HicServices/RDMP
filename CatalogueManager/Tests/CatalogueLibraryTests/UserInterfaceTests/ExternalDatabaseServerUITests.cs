@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class ExternalDatabaseServerUITests:UITests
+    class ExternalDatabaseServerUIUnitTestses:UIUnitTestses
     {
         [Test, UITimeout(50000)]
         public void Test_ExternalDatabaseServerUITests_NormalState()

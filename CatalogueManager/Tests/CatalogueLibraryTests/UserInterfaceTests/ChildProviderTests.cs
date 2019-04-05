@@ -12,7 +12,7 @@ using ReusableLibraryCode.Checks;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class ChildProviderTests : UITests
+    class ChildProviderUnitTestses : UIUnitTestses
     {
         [Test]
         public void ChildProviderGiven_TableInfoWith_NullServer()

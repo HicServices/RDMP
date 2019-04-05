@@ -13,7 +13,7 @@ using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class AggregateEditorUITests:UITests
+    class AggregateEditorUIUnitTestses:UIUnitTestses
     {
         [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_NormalState()

@@ -13,7 +13,7 @@ using ScintillaNET;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class CatalogueItemUITests:UITests
+    class CatalogueItemUIUnitTestses:UIUnitTestses
     {
         [Test, UITimeout(20000)]
         public void Test_CatalogueItemUI_NormalState()

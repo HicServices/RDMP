@@ -283,15 +283,15 @@ namespace CatalogueLibrary.Data
         /// <param name="parent"></param>
         public ColumnInfo(ICatalogueRepository repository, string name, string type, TableInfo parent)
         {
+            //defaults
+            DuplicateRecordResolutionIsAscending = true;
+
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"Name", name != null ? (object) name : DBNull.Value},
                 {"Data_type", type != null ? (object) type : DBNull.Value},
                 {"TableInfo_ID", parent.ID}
             });
-
-            //defaults
-            DuplicateRecordResolutionIsAscending = true;
 
             ClearAllInjections();
         }

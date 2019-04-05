@@ -349,6 +349,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TestResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UnitTestsAllObjectsSupported.cs" />
     <Compile Include="Unit\CacheFetchRequestProviderTests.cs" />
     <Compile Include="Unit\CacheLagPeriodUnitTests.cs" />
     <Compile Include="Unit\CatalogueNamingTests.cs" />

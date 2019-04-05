@@ -11,7 +11,7 @@ using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    class ForwardEngineerANOCatalogueUITests : UITests
+    class ForwardEngineerANOCatalogueUIUnitTestses : UIUnitTestses
     {
         [Test,UITimeout(50000)]
         public void Test_ForwardEngineerANOCatalogueUI_NormalState()

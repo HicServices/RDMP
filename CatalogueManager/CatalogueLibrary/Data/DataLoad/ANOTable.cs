@@ -203,6 +203,7 @@ namespace CatalogueLibrary.Data.DataLoad
             
             if (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation == 0)
                 notifier.OnCheckPerformed(new CheckEventArgs("Anonymous representations must have at least 1 integer or character", CheckResult.Fail));
+            
             try
             {
                 if (!IsTablePushed())

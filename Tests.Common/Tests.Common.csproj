@@ -183,6 +183,7 @@
     </Compile>
     <Compile Include="DatabaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="RDMPUnitTest.cs" />
     <Compile Include="SimpleExampleTests.cs" />
     <Compile Include="TestableTableValuedFunction.cs" />
     <Compile Include="TestDatabasesSettings.cs" />
@@ -222,6 +223,10 @@
     <ProjectReference Include="..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
       <Name>DataExportLibrary</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
+      <Project>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</Project>
+      <Name>LoadModules.Generic</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
       <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
