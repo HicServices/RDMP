@@ -11,7 +11,7 @@ using System.Runtime.CompilerServices;
 using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.DataHelper;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;

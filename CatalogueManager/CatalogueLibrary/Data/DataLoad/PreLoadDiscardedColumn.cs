@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;

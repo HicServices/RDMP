@@ -22,7 +22,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;

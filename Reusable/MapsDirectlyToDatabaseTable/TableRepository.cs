@@ -731,7 +731,7 @@ namespace MapsDirectlyToDatabaseTable
             if (ongoingConnection != null && ongoingConnection.Connection.State == ConnectionState.Open)//as long as it hasn't timed out or been disposed etc
                     return ongoingConnection;
 
-            ongoingConnection = new ManagedConnection(DiscoveredServer, ongoingTransaction);
+            ongoingConnection = DiscoveredServer.GetManagedConnection(ongoingTransaction);
 
             //record as the active connection on this thread
             ongoingConnections[Thread.CurrentThread] = ongoingConnection;

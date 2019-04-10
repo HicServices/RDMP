@@ -11,7 +11,7 @@ using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Spontaneous;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using NUnit.Framework;

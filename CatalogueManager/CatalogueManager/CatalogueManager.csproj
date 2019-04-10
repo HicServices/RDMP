@@ -251,7 +251,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="AutocompleteMenu-ScintillaNET, Version=1.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoCompleteMenu-ScintillaNET.1.5.0\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
+      <HintPath>..\..\packages\AutoCompleteMenu-ScintillaNET.1.6.1\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="CommandLine, Version=2.3.0.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
@@ -262,20 +262,20 @@
       <HintPath>..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+    <Reference Include="FAnsi, Version=0.9.0.7, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.7\lib\net452\FAnsi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.7\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi.Implementations.MySql">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.7\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.7\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">

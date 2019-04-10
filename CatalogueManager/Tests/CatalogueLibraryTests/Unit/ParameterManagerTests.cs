@@ -8,7 +8,7 @@ using System.Linq;
 using System.Reflection.Emit;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.QueryBuilding.Parameters;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 
 namespace CatalogueLibraryTests.Unit

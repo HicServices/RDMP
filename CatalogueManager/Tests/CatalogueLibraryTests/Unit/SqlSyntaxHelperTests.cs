@@ -6,7 +6,7 @@
 
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 

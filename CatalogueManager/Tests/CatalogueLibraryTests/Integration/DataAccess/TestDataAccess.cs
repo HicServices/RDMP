@@ -18,7 +18,7 @@ using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Managers;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
