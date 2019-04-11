@@ -498,7 +498,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             //set enablednesss based on legality
             cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
             cbExtractable.Checked = _aggregate.IsExtractable;
-            gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
+            ddPivotDimension.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
             gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
 
             //add included/excluded dimensions

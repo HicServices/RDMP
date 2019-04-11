@@ -565,6 +565,9 @@ namespace CatalogueLibrary.Data.Aggregation
             if (AggregateDimensions.Length > 2)
                 throw new QueryBuildingException("Too many columns, You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
 
+            if(AggregateDimensions.Length == 2 && !PivotOnDimensionID.HasValue)
+                throw new QueryBuildingException("In order to have 2 columns, one must be selected as a pivot");
+
             try
             {
                 var qb = GetQueryBuilder();

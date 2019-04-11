@@ -325,6 +325,8 @@ namespace CatalogueManager.AggregationUIs
         private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
         {
             bool haveSetSource = false;
+            if(chart1.Legends.Count == 0) 
+                chart1.Legends.Add(new Legend());
 
             //last column is always the X axis, then for each column before it add a series with Y values coming from that column
             for (int i = 0; i < _dt.Columns.Count - 1; i++)
