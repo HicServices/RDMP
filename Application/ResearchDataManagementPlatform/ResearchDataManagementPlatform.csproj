@@ -237,6 +237,12 @@
     <Compile Include="WindowManagement\UIObjectConstructor.cs" />
     <Compile Include="WindowManagement\WindowArranging\WindowArranger.cs" />
     <Compile Include="WindowManagement\WindowFactory.cs" />
+    <Content Include="..\..\Reusable\ReusableUIComponents\Hunspellx64.dll">
+      <Link>Hunspellx64.dll</Link>
+    </Content>
+    <Content Include="..\..\Reusable\ReusableUIComponents\Hunspellx86.dll">
+      <Link>Hunspellx86.dll</Link>
+    </Content>
     <Content Include="Icon\main.png">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
@@ -278,6 +284,18 @@
     <None Include="..\..\App.config">
       <Link>App.config</Link>
     </None>
+    <Content Include="..\..\Reusable\ReusableUIComponents\en_US.aff">
+      <Link>en_US.aff</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Reusable\ReusableUIComponents\en_US.dic">
+      <Link>en_US.dic</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="..\..\Reusable\ReusableUIComponents\hyph_en_US.dic">
+      <Link>hyph_en_US.dic</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
     <None Include="DockingInfrastructure.cd" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
