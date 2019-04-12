@@ -216,7 +216,10 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                         throw new Exception("Could not check for Checks error because control did not register an ICheckable");
 
                     //there must have been something checked that failed with the provided message
-                    Assert.IsTrue(_checkResults.Messages.Any(m=>m.Message.Contains(expectedContainsText) && m.Result == CheckResult.Fail));
+                    Assert.IsTrue(_checkResults.Messages.Any(m=>
+                        m.Message.Contains(expectedContainsText) || 
+                        (m.Ex != null && m.Ex.Message.Contains(expectedContainsText))
+                        && m.Result == CheckResult.Fail));
 
                     break;
                 case ExpectedErrorType.ErrorProvider:

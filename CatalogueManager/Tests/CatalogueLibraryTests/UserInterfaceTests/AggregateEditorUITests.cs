@@ -70,7 +70,8 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             
             var dimDate = new AggregateDimension(Repository, dateEi, config);
             var dimOther = new AggregateDimension(Repository, otherEi, config);
-            
+            config.ClearAllInjections();
+
             var ui = AndLaunch<AggregateEditorUI>(config);
 
             //only date should be an option for axis dimension
@@ -80,6 +81,13 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             //dates are not valid for pivots
             Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
             Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
+
+            //it wants us to pick either a pivot or an axis
+            AssertErrorWasShown(ExpectedErrorType.FailedCheck,"In order to have 2 columns, one must be selected as a pivot");
+            config.PivotOnDimensionID = dimOther.ID;
+            config.SaveToDatabase();
+
+            Publish(config);
 
             AssertNoErrors(ExpectedErrorType.Any);
         }
