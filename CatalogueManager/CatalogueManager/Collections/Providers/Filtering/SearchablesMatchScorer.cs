@@ -24,7 +24,7 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
         public SearchablesMatchScorer()
         {
-            TypeNames = new HashSet<string>();
+            TypeNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
         }
 
         public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken)
@@ -38,10 +38,10 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
             if (TypeNames != null)
             {
-                explicitTypesRequested = TypeNames.Intersect(tokens);
+                explicitTypesRequested = TypeNames.Intersect(tokens,StringComparer.CurrentCultureIgnoreCase);
 
                 //else it's a regex
-                foreach (string token in tokens.Except(TypeNames))
+                foreach (string token in tokens.Except(TypeNames,StringComparer.CurrentCultureIgnoreCase))
                     regexes.Add(new Regex(Regex.Escape(token), RegexOptions.IgnoreCase));
 
             }

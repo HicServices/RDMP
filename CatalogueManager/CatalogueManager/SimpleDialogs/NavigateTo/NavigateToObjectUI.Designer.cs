@@ -1,4 +1,6 @@
-﻿namespace CatalogueManager.SimpleDialogs.NavigateTo
+﻿using System.Windows.Forms;
+
+namespace CatalogueManager.SimpleDialogs.NavigateTo
 {
     partial class NavigateToObjectUI
     {
@@ -29,17 +31,28 @@
         private void InitializeComponent()
         {
             this.panel1 = new System.Windows.Forms.Panel();
+            this.textBox1 = new System.Windows.Forms.TextBox();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
+            this.panel1.SuspendLayout();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.textBox1);
             this.panel1.Location = new System.Drawing.Point(25, 28);
             this.panel1.Name = "panel1";
             this.panel1.Size = new System.Drawing.Size(631, 20);
             this.panel1.TabIndex = 1;
+            // 
+            // textBox1
+            // 
+            this.textBox1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.textBox1.Location = new System.Drawing.Point(0, 0);
+            this.textBox1.Name = "textBox1";
+            this.textBox1.Size = new System.Drawing.Size(631, 20);
+            this.textBox1.TabIndex = 0;
             // 
             // toolStrip1
             // 
@@ -47,7 +60,7 @@
             this.toolStripLabel1});
             this.toolStrip1.Location = new System.Drawing.Point(0, 0);
             this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(1275, 25);
+            this.toolStrip1.Size = new System.Drawing.Size(660, 25);
             this.toolStrip1.TabIndex = 2;
             this.toolStrip1.Text = "toolStrip1";
             // 
@@ -62,7 +75,7 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.SystemColors.ActiveBorder;
-            this.ClientSize = new System.Drawing.Size(1275, 639);
+            this.ClientSize = new System.Drawing.Size(660, 639);
             this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
@@ -70,6 +83,8 @@
             this.Text = "NavigateToObjectUI";
             this.TransparencyKey = System.Drawing.Color.Magenta;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NavigateToObjectUI_FormClosed);
+            this.panel1.ResumeLayout(false);
+            this.panel1.PerformLayout();
             this.toolStrip1.ResumeLayout(false);
             this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
@@ -82,6 +97,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripLabel toolStripLabel1;
+        private TextBox textBox1;
 
     }
 }
