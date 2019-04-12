@@ -29,7 +29,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestNoMDFFileFoundException()
         {
-            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var testDir = workingDir.CreateSubdirectory("MDFAttacherTests");
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException",true);
 
@@ -55,14 +55,14 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestLocations_NoNetworkPath()
         {
-            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.WorkDirectory, "MyFile*.mdf"))
+            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
                 File.Delete(remnant);
 
-            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.WorkDirectory, "MyFile*.ldf"))
+            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
                 File.Delete(remnant);
 
-            var mdf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile.mdf");
-            var ldf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile_log.ldf");
+            var mdf = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile.mdf");
+            var ldf = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile_log.ldf");
 
             try
             {
@@ -70,7 +70,7 @@ namespace DataLoadEngineTests.Unit
                 File.WriteAllText(ldf, "fish");
 
                 string serverDatabasePath = @"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
-                var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), serverDatabasePath, null);
+                var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
                 
 
                 Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
@@ -91,17 +91,17 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestTwoFiles()
         {
-            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.WorkDirectory, "MyFile*.mdf"))
+            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
                 File.Delete(remnant);
 
-            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.WorkDirectory, "MyFile*.ldf"))
+            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
                 File.Delete(remnant);
 
-            var mdf1 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile1.mdf");
-            var mdf2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile2.mdf");
+            var mdf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1.mdf");
+            var mdf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2.mdf");
             
-            var ldf1 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile1_log.ldf");
-            var ldf2 = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile2_log.ldf");
+            var ldf1 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile1_log.ldf");
+            var ldf2 = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile2_log.ldf");
             try
             {
                 File.WriteAllText(mdf1, "fish");
@@ -110,7 +110,7 @@ namespace DataLoadEngineTests.Unit
                 File.WriteAllText(ldf2, "fish");
 
                 string serverDatabasePath = @"c:\temp\";
-                Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), serverDatabasePath, null));
+                Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
                 
             }
             finally
@@ -125,7 +125,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void ConnectToServer()
         {
-            var hicProjDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"MDFAttacherTest", true);
+            var hicProjDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"MDFAttacherTest", true);
 
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("MyImaginaryDB_RAW");
             Assert.IsFalse(db.Exists());
@@ -156,14 +156,14 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestLocations_NetworkPath()
         {
-            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.WorkDirectory, "MyFile*.mdf"))
+            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.mdf"))
                 File.Delete(remnant);
 
-            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.WorkDirectory, "MyFile*.ldf"))
+            foreach (string remnant in Directory.EnumerateFiles(TestContext.CurrentContext.TestDirectory, "MyFile*.ldf"))
                 File.Delete(remnant);
 
-            var mdf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile.mdf");
-            var ldf = Path.Combine(TestContext.CurrentContext.WorkDirectory, "MyFile_log.ldf");
+            var mdf = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile.mdf");
+            var ldf = Path.Combine(TestContext.CurrentContext.TestDirectory, "MyFile_log.ldf");
 
             try
             {
@@ -171,7 +171,7 @@ namespace DataLoadEngineTests.Unit
                 File.WriteAllText(ldf, "fish");
 
                 string serverDatabasePath = @"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
-                var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), serverDatabasePath, @"\\MyDbServer1\Share\Database");
+                var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, @"\\MyDbServer1\Share\Database");
 
 
                 Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
@@ -255,7 +255,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestFactory()
         {
-            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
             var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 

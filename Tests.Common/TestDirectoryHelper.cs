@@ -25,7 +25,7 @@ namespace Tests.Common
             if (Directory != null)
                 throw new Exception("You should only call SetUp once");
 
-            var rootDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
+            var rootDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             Directory = rootDir.CreateSubdirectory(_type.FullName);
         }
 

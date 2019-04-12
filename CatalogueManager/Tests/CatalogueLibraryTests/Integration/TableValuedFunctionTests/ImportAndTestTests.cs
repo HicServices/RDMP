@@ -97,12 +97,8 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
                 //drop function - outside of transaction
                 db.Server.GetCommand("drop function MyAwesomeFunction", con).ExecuteNonQuery();
 
-                //now begin transaction
-                DbTransaction t = null;
-                
                 //create it within the scope of the transaction
                 var cmd = db.Server.GetCommand(_function.CreateFunctionSQL.Substring(_function.CreateFunctionSQL.IndexOf("GO") + 3), con);
-                cmd.Transaction = t;
                 cmd.ExecuteNonQuery();
 
                 Assert.IsTrue(db.DiscoverTableValuedFunctions(con.ManagedTransaction).Any(tbv => tbv.GetRuntimeName().Equals("MyAwesomeFunction")));

@@ -28,7 +28,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         [SetUp]
         public void CreateTestFile()
         {
-            filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "DelimitedFileSourceTests.txt");
+            filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests.txt");
 
             if(File.Exists(filename))
                 File.Delete(filename);

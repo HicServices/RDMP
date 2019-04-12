@@ -365,7 +365,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
             {
                 _aggregate.PivotOnDimensionID = null;
                 ddPivotDimension.SelectedItem = null;
+
+                if(sender == btnClearPivotDimension)
+                {
+                    _aggregate.SaveToDatabase();
+                    Publish();
+                }
             }
+
         }
         #endregion
 

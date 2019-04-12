@@ -36,7 +36,7 @@ namespace DataLoadEngineTests.Integration
         [SetUp]
         public void CreateTestDatabase()
         {
-            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
             parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
             DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));

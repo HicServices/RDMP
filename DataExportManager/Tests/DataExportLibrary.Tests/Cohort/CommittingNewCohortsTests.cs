@@ -29,7 +29,7 @@ namespace DataExportLibrary.Tests.Cohort
         [SetUp]
         public void GenerateFileToLoad()
         {
-            filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "CommittingNewCohorts.csv");
+            filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
 
             StreamWriter sw = new StreamWriter(filename);    
             sw.WriteLine("PrivateID,ReleaseID,SomeHeader");

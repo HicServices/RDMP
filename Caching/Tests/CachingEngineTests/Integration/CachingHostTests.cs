@@ -49,7 +49,7 @@ namespace CachingEngineTests.Integration
         [Test]
         public void CacheHostOutwithPermissionWindow()
         {
-            var rootDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
+            var rootDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var testDir = rootDir.CreateSubdirectory("C");
 
             if (testDir.Exists)

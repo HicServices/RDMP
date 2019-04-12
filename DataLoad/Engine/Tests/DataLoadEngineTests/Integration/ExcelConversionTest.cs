@@ -29,7 +29,7 @@ namespace DataLoadEngineTests.Integration
         [OneTimeSetUp]
         public void SetUp()
         {
-            var testDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
+            var testDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
             _dirsToCleanUp.Push(_parentDir);
         }

@@ -66,7 +66,7 @@ namespace DataLoadEngineTests.Integration
             //stage2 is to run the data load
             //stage3 is to setup the extraction 
             //stage4 is to perform the extraction
-            var rootFolder = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
+            var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var testFolder = rootFolder.CreateSubdirectory("TestTheTestDatasetSetup");
             var datasetFolder = testFolder.CreateSubdirectory("TestDataset");
             

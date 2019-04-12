@@ -28,7 +28,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         [Test]
         public void AllUIControlsDocumented()
         {
-            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.WorkDirectory);
+            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
             
             List<string> undocumented = new List<string>();
 

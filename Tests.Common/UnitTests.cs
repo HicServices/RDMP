@@ -228,7 +228,7 @@ namespace Tests.Common
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
-                var dll = Path.Combine(TestContext.CurrentContext.WorkDirectory,"a.dll");
+                var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.dll");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
                 return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Plugin>());
@@ -304,7 +304,7 @@ namespace Tests.Common
             
             if (typeof (T) == typeof(GovernanceDocument))
             {
-                var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "myfile.txt"));
+                var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "myfile.txt"));
                 return (T)(object)new GovernanceDocument(Repository,WhenIHaveA<GovernancePeriod>(),fi);
             }
 
@@ -396,7 +396,7 @@ namespace Tests.Common
 
             if (typeof (T) == typeof(ReleaseLog))
             {
-                var file = Path.Combine(TestContext.CurrentContext.WorkDirectory,"myDataset.csv");
+                var file = Path.Combine(TestContext.CurrentContext.TestDirectory,"myDataset.csv");
                 File.WriteAllText(file,"omg rows");
                 
                 var sds = WhenIHaveA<SelectedDataSets>();
@@ -407,7 +407,7 @@ namespace Tests.Common
                     potential,
                     new ReleaseEnvironmentPotential(sds.ExtractionConfiguration),
                     false,
-                    new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),
+                    new DirectoryInfo(TestContext.CurrentContext.TestDirectory),
                     new FileInfo(file));
                         
             }

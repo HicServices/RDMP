@@ -26,7 +26,7 @@ namespace CatalogueLibraryTests.Integration
         [OneTimeSetUp]
         public void SetupCommentStore()
         {
-            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.WorkDirectory);
+            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
         }
 
         [Test]
