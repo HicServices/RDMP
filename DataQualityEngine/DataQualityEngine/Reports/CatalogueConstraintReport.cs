@@ -41,6 +41,8 @@ namespace DataQualityEngine.Reports
         private Validator _validator;
         private bool _containsDataLoadID;
 
+        public static int MaximumPivotValues = 5000;
+
         private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new Dictionary<string, DQEStateOverDataLoadRunId>();
         private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new Dictionary<string, PeriodicityCubesOverTime>();
 
@@ -165,10 +167,9 @@ namespace DataQualityEngine.Reports
                             if (!byPivotCategoryCubesOverTime.ContainsKey(pivotValue))
                             {
                                 //we will need to expand the dictionaries 
-                                if (byPivotCategoryCubesOverTime.Keys.Count > 30)
-                                    //IMPORTANT: this value of 30 is in the documentation, dont change it without also changing UserManual.docx
+                                if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
                                     throw new OverflowException(
-                                        "Encountered more than 30 values for the pivot column " + _pivotCategory +
+                                        "Encountered more than "+MaximumPivotValues+" values for the pivot column " + _pivotCategory +
                                         " this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
 
                                 //expand both the time periodicity and the state results
