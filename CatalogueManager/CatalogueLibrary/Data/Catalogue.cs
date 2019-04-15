@@ -492,7 +492,7 @@ namespace CatalogueLibrary.Data
 
         /// <inheritdoc/>
         [DoNotExtractProperty]
-        [Relationship(typeof(LoadMetadata), RelationshipType.IgnoreableLocalReference)]
+        [Relationship(typeof(LoadMetadata), RelationshipType.OptionalSharedObject)]
         public int? LoadMetadata_ID
         {
             get { return _loadMetadataId; }

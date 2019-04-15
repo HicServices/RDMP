@@ -89,22 +89,18 @@ namespace Sharing.Dependency.Gathering
 
         public GatheredObject GatherDependencies(LoadMetadata loadMetadata)
         {
+            //Share the LoadMetadata
             var root = new GatheredObject(loadMetadata);
 
-            foreach (var cata in loadMetadata.GetAllCatalogues())
-            {
-                throw new NotImplementedException();
-            }
+            //and the catalogues behind the load
+            foreach (var cata in loadMetadata.GetAllCatalogues()) 
+                root.Children.Add(GatherDependencies(cata));
 
+            //and the load operations
             foreach (IProcessTask processTask in loadMetadata.ProcessTasks)
             {
                 throw new NotImplementedException();
             }
-
-            if(loadMetadata.OverrideRAWServer_ID.HasValue)
-                throw new NotImplementedException();
-
-
 
             return root;
         }

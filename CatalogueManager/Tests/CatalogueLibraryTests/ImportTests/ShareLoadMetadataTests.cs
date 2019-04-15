@@ -1,4 +1,5 @@
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
@@ -15,7 +16,7 @@ namespace CatalogueLibraryTests.ImportTests
         public void GatherAndShare_LoadMetadata_EmptyLoadMetadata()
         {
             //create an object
-            var lmd = new LoadMetadata(Repository, "MyLmd");
+            LoadMetadata lmd = new LoadMetadata(Repository, "MyLmd");
 
             var lmd2 = ShareToNewRepository(lmd);
             
@@ -24,7 +25,23 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual(lmd.Name, lmd2.Name);
         }
 
+        [Test]
+        public void GatherAndShare_LoadMetadata_WithCatalogue()
+        {
+            //create an object
+            LoadMetadata lmd1;
+            var lmd2 = ShareToNewRepository(lmd1 = WhenIHaveA<LoadMetadata>());
+            
+            var cata1 = lmd1.GetAllCatalogues().Single();
+            var cata2 = lmd2.GetAllCatalogues().Single();
 
+            //different repos so not identical
+            Assert.IsFalse(ReferenceEquals(lmd1,lmd2));
+            Assert.IsFalse(ReferenceEquals(cata1,cata2));
+
+            Assert.AreEqual(lmd1.Name, lmd2.Name);
+            Assert.AreEqual(cata1.Name, cata2.Name);
+        }
 
         private LoadMetadata ShareToNewRepository(LoadMetadata lmd)
         {

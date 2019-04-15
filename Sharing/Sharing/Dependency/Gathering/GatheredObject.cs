@@ -82,17 +82,22 @@ namespace Sharing.Dependency.Gathering
                 RelationshipAttribute attribute = relationshipFinder.GetAttribute(property);
 
                 //if it's a relationship to a shared object
-                if (attribute != null && attribute.Type == RelationshipType.SharedObject)
+                if (attribute != null && (attribute.Type == RelationshipType.SharedObject || attribute.Type == RelationshipType.OptionalSharedObject))
                 {
                     var idOfParent = property.GetValue(Object);
                     Type typeOfParent = attribute.Cref;
 
                     var parent = branchParents.SingleOrDefault(d => d.Type == typeOfParent && d.ID.Equals(idOfParent));
 
+                    //if the parent is not being shared along with us
                     if(parent == null)
-                        throw new SharingException("Property " + property + " on Type " + Object.GetType() + " is marked [Relationship] but we found no ShareDefinition amongst the current objects parents to satisfy this property");
-
-                    relationshipProperties.Add(attribute, parent.SharingGuid);
+                    {
+                        //if a reference is required (i.e. not optional)
+                        if(attribute.Type != RelationshipType.OptionalSharedObject)
+                            throw new SharingException("Property " + property + " on Type " + Object.GetType() + " is marked [Relationship] but we found no ShareDefinition amongst the current objects parents to satisfy this property");
+                    }
+                    else
+                        relationshipProperties.Add(attribute, parent.SharingGuid);
                 }
                 else
                     properties.Add(property.Name, property.GetValue(Object));

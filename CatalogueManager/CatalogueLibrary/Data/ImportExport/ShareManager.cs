@@ -515,10 +515,20 @@ namespace CatalogueLibrary.Data.ImportExport
 
                         switch (relationshipAttribute.Type)
                         {
+                            case RelationshipType.OptionalSharedObject:
                             case RelationshipType.SharedObject:
+                                
                                 //Confirm that the share definition includes the knowledge that theres a parent class to this object
                                 if (!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
-                                    throw new Exception("Share Definition for object of Type " + typeof(T) + " is missing an expected RelationshipProperty called " + property.Name);
+                                    //if it doesn't but the field is optional, ignore it
+                                    if(relationshipAttribute.Type == RelationshipType.OptionalSharedObject)
+                                    {
+                                        newValue = null;
+                                        break;
+                                    }
+                                    else
+                                        //otherwise we are missing a required shared object being referenced. That's bad news.
+                                        throw new Exception("Share Definition for object of Type " + typeof(T) + " is missing an expected RelationshipProperty called " + property.Name);
 
                                 //Get the SharingUID of the parent for this property
                                 Guid importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
@@ -526,10 +536,18 @@ namespace CatalogueLibrary.Data.ImportExport
                                 //Confirm that we have a local import of the parent
                                 var parentImport = GetExistingImport(importGuidOfParent);
 
+                                //if we don't have a share reference
                                 if (parentImport == null)
-                                    throw new Exception("Cannot import an object of type " + typeof(T) + " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " + relationshipAttribute.Cref + " with a SharingUID of " + importGuidOfParent);
-
-                                newValue = parentImport.ReferencedObjectID;
+                                    //and it isn't optional
+                                    if (relationshipAttribute.Type == RelationshipType.SharedObject)
+                                        throw new Exception("Cannot import an object of type " + typeof(T) +
+                                                           " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " +
+                                                            relationshipAttribute.Cref + " with a SharingUID of " +
+                                                            importGuidOfParent);
+                                    else
+                                        newValue = null; //it was optional and missing so just set to null
+                                else
+                                    newValue = parentImport.ReferencedObjectID; //we have the shared object
                                 break;
                             case RelationshipType.LocalReference:
                                 newValue = GetLocalReference(property, relationshipAttribute, shareDefinition);
