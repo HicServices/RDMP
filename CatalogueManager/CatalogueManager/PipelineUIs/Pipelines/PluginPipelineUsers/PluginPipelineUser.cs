@@ -42,7 +42,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
             ExplicitSource = _useCase.ExplicitSource;
             ExplicitDestination = _useCase.ExplicitDestination;
             
-            foreach (var o in GetInitializationObjects())
+            foreach (var o in _useCase.GetInitializationObjects())
                 AddInitializationObject(o);
 
             GenerateContext();
