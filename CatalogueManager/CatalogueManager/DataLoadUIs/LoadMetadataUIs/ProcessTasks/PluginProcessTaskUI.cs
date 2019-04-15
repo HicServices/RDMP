@@ -60,8 +60,8 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
         {
-            base.SetDatabaseObject(activator, databaseObject);
             _processTask = databaseObject;
+            base.SetDatabaseObject(activator, databaseObject);
 
             if(_argumentCollection == null)
             {
