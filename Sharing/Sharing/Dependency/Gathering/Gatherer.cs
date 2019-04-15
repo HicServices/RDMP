@@ -39,6 +39,8 @@ namespace Sharing.Dependency.Gathering
             _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
             _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
 
+            _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
+
             _functions.Add(typeof(ExtractionFilter), o => GatherDependencies((IFilter)o));
             _functions.Add(typeof(DeployedExtractionFilter), o => GatherDependencies((IFilter)o));
             _functions.Add(typeof(AggregateFilter), o => GatherDependencies((IFilter)o));
@@ -84,6 +86,29 @@ namespace Sharing.Dependency.Gathering
             
             return root;
         }
+
+        public GatheredObject GatherDependencies(LoadMetadata loadMetadata)
+        {
+            var root = new GatheredObject(loadMetadata);
+
+            foreach (var cata in loadMetadata.GetAllCatalogues())
+            {
+                throw new NotImplementedException();
+            }
+
+            foreach (IProcessTask processTask in loadMetadata.ProcessTasks)
+            {
+                throw new NotImplementedException();
+            }
+
+            if(loadMetadata.OverrideRAWServer_ID.HasValue)
+                throw new NotImplementedException();
+
+
+
+            return root;
+        }
+
         public GatheredObject GatherDependencies(Catalogue catalogue)
         {
             var root = new GatheredObject(catalogue);

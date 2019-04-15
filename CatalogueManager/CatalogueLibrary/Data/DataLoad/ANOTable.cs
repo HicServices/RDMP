@@ -152,7 +152,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         internal ANOTable(ShareManager shareManager, ShareDefinition shareDefinition)
         {
-            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+            shareManager.UpsertAndHydrate(this,shareDefinition);
         }
 
         /// <summary>

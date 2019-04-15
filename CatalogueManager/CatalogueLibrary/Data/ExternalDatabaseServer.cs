@@ -189,7 +189,7 @@ namespace CatalogueLibrary.Data
             Repository = repo;
             _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
 
-            repo.UpsertAndHydrate(this,shareManager, shareDefinition);
+            shareManager.UpsertAndHydrate(this, shareDefinition);
         }
 
         internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r): base(repository, r)

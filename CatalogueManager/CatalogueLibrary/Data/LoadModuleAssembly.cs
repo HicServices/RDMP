@@ -265,7 +265,7 @@ namespace CatalogueLibrary.Data
         
         internal LoadModuleAssembly(ShareManager shareManager, ShareDefinition shareDefinition)
         {
-            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this, shareManager, shareDefinition);
+            shareManager.UpsertAndHydrate(this, shareDefinition);
             ClearAllInjections();
         }
 

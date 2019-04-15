@@ -19,6 +19,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Repositories;
+using DatabaseCreation;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
@@ -40,7 +41,12 @@ namespace Tests.Common
     public class UnitTests
     {
         protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
+        protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
 
+        public UnitTests()
+        {
+            RepositoryLocator = new RepositoryProvider(Repository);
+        }
         /// <summary>
         /// Loads FAnsi implementations for all supported DBMS platforms into memory
         /// </summary>

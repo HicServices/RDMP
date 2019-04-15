@@ -271,7 +271,7 @@ namespace CatalogueLibrary.Data
 
         internal CatalogueItem(ShareManager shareManager, ShareDefinition shareDefinition)
         {
-            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+            shareManager.UpsertAndHydrate(this,shareDefinition);
         }
 
         /// <inheritdoc/>

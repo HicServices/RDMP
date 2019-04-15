@@ -10,6 +10,8 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -178,7 +180,12 @@ namespace CatalogueLibrary.Data.DataLoad
             CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
             OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         }
-        
+
+        internal LoadMetadata(ShareManager shareManager,ShareDefinition shareDefinition):base()
+        {
+            shareManager.UpsertAndHydrate(this,shareDefinition);
+        }
+
         /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
