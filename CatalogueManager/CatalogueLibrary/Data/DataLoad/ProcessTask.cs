@@ -12,6 +12,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -47,6 +49,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <summary>
         /// The load the process task exists as part of
         /// </summary>
+        [Relationship(typeof(LoadMetadata),RelationshipType.SharedObject)]
         public int LoadMetadata_ID
         {
             get { return _loadMetadataID; }
@@ -176,6 +179,11 @@ namespace CatalogueLibrary.Data.DataLoad
                 throw new Exception("Could not parse LoadStage:" + r["LoadStage"]);
 
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
+        }
+         
+        internal ProcessTask(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.UpsertAndHydrate(this,shareDefinition);
         }
 
         /// <inheritdoc/>

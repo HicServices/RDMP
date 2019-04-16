@@ -16,6 +16,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using CatalogueLibraryTests.UserInterfaceTests;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
@@ -26,9 +27,6 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
 {
     class MemoryRepositoryVsDatabaseRepository:DatabaseTests
     {
-        //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
-        private static readonly string[] IgnorePropertiesWhenDiffing = new[] {"ID","Repository","CatalogueRepository","SoftwareVersion"};
-        
         [Test]
         public void TestMemoryVsDatabaseRepository_CatalogueConstructor()
         {
@@ -37,7 +35,7 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
             Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");
             Catalogue dbCatalogue = new Catalogue(CatalogueRepository,"My New Catalogue");
             
-            AssertAreEqual(memCatalogue,dbCatalogue);
+            UnitTests.AssertAreEqual(memCatalogue,dbCatalogue);
         }
 
         [Test]
@@ -48,12 +46,12 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
             var memLmd = new LoadMetadata(memoryRepository, "My New Load");
             var dbLmd = new LoadMetadata(CatalogueRepository, "My New Load");
 
-            AssertAreEqual(memLmd, dbLmd);
+            UnitTests.AssertAreEqual(memLmd, dbLmd);
 
             var memPt = new ProcessTask(memoryRepository, memLmd, LoadStage.AdjustRaw) { Name = "MyPt" };
             var dbPt = new ProcessTask(CatalogueRepository, dbLmd, LoadStage.AdjustRaw) { Name = "MyPt" };
             
-            AssertAreEqual(memPt, dbPt);
+            UnitTests.AssertAreEqual(memPt, dbPt);
         }
 
 
@@ -68,7 +66,7 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
             var memAggregate = new AggregateConfiguration(memoryRepository, memCatalogue, "My New Aggregate");
             var dbAggregate = new AggregateConfiguration(CatalogueRepository, dbCatalogue, "My New Aggregate");
 
-            AssertAreEqual(memAggregate, dbAggregate);
+            UnitTests.AssertAreEqual(memAggregate, dbAggregate);
         }
         
         [Test]
@@ -124,89 +122,18 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
             forwardEngineer2.ExecuteForwardEngineering(out dbCatalogue, out dbCatalogueItems, out dbExtractionInformations);
 
 
-            AssertAreEqual(memCatalogue,dbCatalogue);
-            AssertAreEqual(memTableInfo,dbTableInfo);
+            UnitTests.AssertAreEqual(memCatalogue,dbCatalogue);
+            UnitTests.AssertAreEqual(memTableInfo,dbTableInfo);
 
-            AssertAreEqual(memCatalogue.CatalogueItems,dbCatalogue.CatalogueItems);
-            AssertAreEqual(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any), dbCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
+            UnitTests.AssertAreEqual(memCatalogue.CatalogueItems,dbCatalogue.CatalogueItems);
+            UnitTests.AssertAreEqual(memCatalogue.GetAllExtractionInformation(ExtractionCategory.Any), dbCatalogue.GetAllExtractionInformation(ExtractionCategory.Any));
 
-            AssertAreEqual(memCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo), dbCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo));
+            UnitTests.AssertAreEqual(memCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo), dbCatalogue.CatalogueItems.Select(ci => ci.ColumnInfo));
 
         }
 
-        Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new Dictionary<PropertyInfo, HashSet<object>>();
+        
 
-        private void AssertAreEqual(IEnumerable<IMapsDirectlyToDatabaseTable> memObjects, IEnumerable<IMapsDirectlyToDatabaseTable> dbObjects)
-        {
-            var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
-            var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
-
-            Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
-
-            for (int i = 0; i < memObjectsArr.Count(); i++)
-                AssertAreEqual(memObjectsArr[i], dbObjectsArr[i]);
-        }
-
-        private void AssertAreEqual(IMapsDirectlyToDatabaseTable memObj, IMapsDirectlyToDatabaseTable dbObj)
-        {
-            foreach (PropertyInfo property in memObj.GetType().GetProperties())
-            {
-                if (IgnorePropertiesWhenDiffing.Contains(property.Name) || property.Name.EndsWith("_ID"))
-                    continue;
-
-                if (!_alreadyChecked.ContainsKey(property))
-                    _alreadyChecked.Add(property,new HashSet<object>());
-
-                //if we have already checked this property
-                if(_alreadyChecked[property].Contains(memObj))
-                    return; //don't check it again
-
-                _alreadyChecked[property].Add(memObj);
-
-                object memValue = null;
-                object dbValue = null;
-                try
-                {
-                    memValue = property.GetValue(memObj);
-                }
-                catch (Exception e)
-                {
-                    Assert.Fail("{0} Property {1} could not be read from Memory:\r\n{2}", memObj.GetType().Name, property.Name,e);
-                }
-                try
-                {
-                    dbValue = property.GetValue(dbObj);
-                }
-                catch (Exception e)
-                {
-                    Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name, property.Name, e);
-                }
-
-                if(memValue is IMapsDirectlyToDatabaseTable)
-                {
-                    AssertAreEqual((IMapsDirectlyToDatabaseTable)memValue, (IMapsDirectlyToDatabaseTable)dbValue);
-                    return;
-                }
-                if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable>)
-                {
-                    AssertAreEqual((IEnumerable<IMapsDirectlyToDatabaseTable>)memValue, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue);
-                    return;
-                }
-
-                if (memValue is DateTime && dbValue is DateTime)
-                    if (!AreAboutTheSameTime((DateTime) memValue, (DateTime) dbValue))
-                        Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memValue, dbValue);
-                    else
-                        return;
-
-                //all other properties should be legit
-                Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,property.Name, memValue, dbValue);
-            }
-        }
-
-        private bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
-        {
-            return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < 10;
-        }
+        
     }
 }

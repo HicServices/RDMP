@@ -7,7 +7,9 @@
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.Icons.IconProvision;
+using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus
@@ -20,7 +22,9 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandViewLoadDiagram(_activator,loadMetadata));
 
             Add(new ExecuteCommandEditLoadMetadataDescription(_activator, loadMetadata));
-            
+
+            Add(new ExecuteCommandExportObjectsToFileUI(_activator, new IMapsDirectlyToDatabaseTable[] {loadMetadata}));
+
             Items.Add(new ToolStripSeparator());
 
             Add(new ExecuteCommandOverrideRawServer(_activator, loadMetadata));

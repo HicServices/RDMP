@@ -47,22 +47,11 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             }
         }
 
-        protected MEF MEF;
+        
 
         private ToMemoryCheckNotifier _checkResults;
         private Control _userInterfaceLaunched;
-
-        /// <summary>
-        /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
-        /// 
-        /// <para>This must be called before you 'launch' your ui</para>
-        /// </summary>
-        protected void SetupMEF()
-        {
-            MEF = new MEF();
-            MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
-            Repository.CatalogueRepository.MEF = MEF;
-        }
+        
         
 
         /// <summary>

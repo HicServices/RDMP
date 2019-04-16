@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -37,6 +39,12 @@ namespace CatalogueLibrary.Data.DataLoad
             set { SetField(ref _processTask_ID, value); }
         }
 
+        /// <inheritdoc cref="ProcessTask_ID"/>
+        [NoMappingToDatabase]
+        public ProcessTask ProcessTask {get{
+            return Repository.GetObjectByID<ProcessTask>(ProcessTask_ID);
+        }}
+
         #endregion
 
         /// <summary>
@@ -64,7 +72,11 @@ namespace CatalogueLibrary.Data.DataLoad
             Value = r["Value"] as string;
             Description = r["Description"] as string;
         }
-        
+
+        internal ProcessTaskArgument(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.UpsertAndHydrate(this,shareDefinition);
+        }
         /// <inheritdoc/>
         public override string ToString()
         {

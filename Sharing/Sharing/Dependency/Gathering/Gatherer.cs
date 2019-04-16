@@ -99,7 +99,14 @@ namespace Sharing.Dependency.Gathering
             //and the load operations
             foreach (IProcessTask processTask in loadMetadata.ProcessTasks)
             {
-                throw new NotImplementedException();
+                var gpt = new GatheredObject(processTask);
+                root.Children.Add(gpt);
+
+                foreach (IArgument a in processTask.GetAllArguments())
+                {
+                    var ga = new GatheredObject(a);
+                    gpt.Children.Add(ga);
+                }
             }
 
             return root;

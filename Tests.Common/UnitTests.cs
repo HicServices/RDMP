@@ -5,8 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using ANOStore.Database;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
@@ -29,6 +32,9 @@ using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MySql;
+using FAnsi.Implementations.Oracle;
 using LoadModules.Generic.DataFlowOperations;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
@@ -54,9 +60,9 @@ namespace Tests.Common
         protected void SetUpDatabaseTypes()
         {
             ImplementationManager.Load(
-                typeof(FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation).Assembly,
-                typeof(FAnsi.Implementations.MySql.MySqlImplementation).Assembly,
-                typeof(FAnsi.Implementations.Oracle.OracleImplementation).Assembly);
+                typeof(MicrosoftSQLImplementation).Assembly,
+                typeof(MySqlImplementation).Assembly,
+                typeof(OracleImplementation).Assembly);
         }
 
         /// <summary>
@@ -531,7 +537,7 @@ namespace Tests.Common
         /// <inheritdoc cref="WhenIHaveA{T}()"/>
         protected ANOTable WhenIHaveA<T>(out ExternalDatabaseServer server) where T : ANOTable
         {
-            server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(ANOStore.Database.Class1).Assembly);
+            server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(Class1).Assembly);
             var anoTable = new ANOTable(Repository, server, "ANOFish", "F");
             return anoTable;
         }
@@ -547,6 +553,106 @@ namespace Tests.Common
         {
             s.SaveToDatabase();
             return s;
+        }
+        
+        protected MEF MEF;
+
+        /// <summary>
+        /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
+        /// 
+        /// <para>This must be called before you 'launch' your ui</para>
+        /// </summary>
+        protected void SetupMEF()
+        {
+            MEF = new MEF();
+            MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
+            Repository.CatalogueRepository.MEF = MEF;
+        }
+
+        //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
+        private static readonly string[] IgnorePropertiesWhenDiffing = new[] {"ID","Repository","CatalogueRepository","SoftwareVersion"};
+        public static Dictionary<PropertyInfo,HashSet<object>> _alreadyChecked = new Dictionary<PropertyInfo, HashSet<object>>();
+
+        /// <summary>
+        /// Asserts that the two objects are basically the same except for IDs/Repositories.  This includes checking all public properties
+        /// that are not in the <see cref="IgnorePropertiesWhenDiffing"/> list.  Date fields will be validated as equal if they are within
+        /// 10 seconds of each other (<see cref="AreAboutTheSameTime"/>).
+        /// </summary>
+        /// <param name="memObj"></param>
+        /// <param name="dbObj"></param>
+        /// <param name="firstIteration"></param>
+        public static void AssertAreEqual(IMapsDirectlyToDatabaseTable memObj, IMapsDirectlyToDatabaseTable dbObj,bool firstIteration = true)
+        {
+            if(firstIteration)
+                _alreadyChecked.Clear();
+
+            foreach (PropertyInfo property in memObj.GetType().GetProperties())
+            {
+                if (IgnorePropertiesWhenDiffing.Contains(property.Name) || property.Name.EndsWith("_ID"))
+                    continue;
+
+                if (!_alreadyChecked.ContainsKey(property))
+                    _alreadyChecked.Add(property,new HashSet<object>());
+
+                //if we have already checked this property
+                if(_alreadyChecked[property].Contains(memObj))
+                    return; //don't check it again
+
+                _alreadyChecked[property].Add(memObj);
+
+                object memValue = null;
+                object dbValue = null;
+                try
+                {
+                    memValue = property.GetValue(memObj);
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail("{0} Property {1} could not be read from Memory:\r\n{2}", memObj.GetType().Name, property.Name,e);
+                }
+                try
+                {
+                    dbValue = property.GetValue(dbObj);
+                }
+                catch (Exception e)
+                {
+                    Assert.Fail("{0} Property {1} could not be read from Database:\r\n{2}", dbObj.GetType().Name, property.Name, e);
+                }
+
+                if(memValue is IMapsDirectlyToDatabaseTable)
+                {
+                    AssertAreEqual((IMapsDirectlyToDatabaseTable)memValue, (IMapsDirectlyToDatabaseTable)dbValue,false);
+                    return;
+                }
+                if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable>)
+                {
+                    AssertAreEqual((IEnumerable<IMapsDirectlyToDatabaseTable>)memValue, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue);
+                    return;
+                }
+
+                if (memValue is DateTime && dbValue is DateTime)
+                    if (!AreAboutTheSameTime((DateTime) memValue, (DateTime) dbValue))
+                        Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memValue, dbValue);
+                    else
+                        return;
+
+                //all other properties should be legit
+                Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,property.Name, memValue, dbValue);
+            }
+        }
+        public static void AssertAreEqual(IEnumerable<IMapsDirectlyToDatabaseTable> memObjects, IEnumerable<IMapsDirectlyToDatabaseTable> dbObjects)
+        {
+            var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
+            var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
+
+            Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
+
+            for (int i = 0; i < memObjectsArr.Count(); i++)
+                UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i]);
+        }
+        private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
+        {
+            return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < 10;
         }
     }
 }
