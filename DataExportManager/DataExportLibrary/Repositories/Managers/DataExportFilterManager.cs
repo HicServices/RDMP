@@ -42,7 +42,7 @@ namespace DataExportLibrary.Repositories.Managers
         }
 
         /// <inheritdoc/>
-        public IFilter[] GetFilters(IContainer container)
+        public virtual IFilter[] GetFilters(IContainer container)
         {
             var filters = _dataExportRepository.GetAllObjectsWhere<DeployedExtractionFilter>("FilterContainer_ID" , container.ID);
             return filters.Cast<IFilter>().ToArray();

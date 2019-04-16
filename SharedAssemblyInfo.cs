@@ -8,8 +8,8 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 // These should be replaced with correct values by the release process
-[assembly: AssemblyVersion("2.13.0.6")]
-[assembly: AssemblyFileVersion("2.13.0.6")]
-[assembly: AssemblyInformationalVersion("2.13.0.6")]
+[assembly: AssemblyVersion("2.13.0.7")]
+[assembly: AssemblyFileVersion("2.13.0.7")]
+[assembly: AssemblyInformationalVersion("2.13.0.7")]
 
 [assembly:InternalsVisibleTo("CatalogueManager")]

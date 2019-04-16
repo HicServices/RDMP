@@ -90,7 +90,11 @@ namespace DataExportLibrary.Providers
         /// All AND/OR containers found during construction (in the data export database).  The Key is the ID of the container (for rapid random access)
         /// </summary>
         public readonly Dictionary<int, FilterContainer> AllContainers;
-        private readonly DeployedExtractionFilter[] _allFilters;
+
+        /// <summary>
+        /// All data export filters that existed when this child provider was constructed
+        /// </summary>
+        public DeployedExtractionFilter[] AllDeployedExtractionFilters { get; private set; }
         private readonly DeployedExtractionFilterParameter[] _allParameters;
         
         private IDataExportRepository dataExportRepository;
@@ -131,7 +135,7 @@ namespace DataExportLibrary.Providers
             AllGlobalExtractionFilterParameters = GetAllObjects<GlobalExtractionFilterParameter>(dataExportRepository);
 
             AllContainers = GetAllObjects<FilterContainer>(dataExportRepository).ToDictionary(o => o.ID, o => o);
-            _allFilters = GetAllObjects<DeployedExtractionFilter>(dataExportRepository);
+            AllDeployedExtractionFilters = GetAllObjects<DeployedExtractionFilter>(dataExportRepository);
             _allParameters = GetAllObjects<DeployedExtractionFilterParameter>(dataExportRepository);
 
             //if we are using a database repository then we can make use of the caching class DataExportFilterManagerFromChildProvider to speed up
