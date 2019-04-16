@@ -90,7 +90,7 @@ namespace CatalogueLibrary.Data.Referencing
         /// </summary>
         /// <param name="repositoryLocator"></param>
         /// <returns></returns>
-        public IMapsDirectlyToDatabaseTable GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public virtual IMapsDirectlyToDatabaseTable GetReferencedObject(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             return repositoryLocator.GetArbitraryDatabaseObject(ReferencedObjectRepositoryType, ReferencedObjectType, ReferencedObjectID);
         }

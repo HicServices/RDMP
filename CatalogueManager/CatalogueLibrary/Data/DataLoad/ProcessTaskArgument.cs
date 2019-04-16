@@ -24,7 +24,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// 
     /// <para>This all happens transparently by reflection and is handled at design time through PluginProcessTaskUI seamlessly</para>
     /// </summary>
-    public class ProcessTaskArgument : Argument
+    public sealed class ProcessTaskArgument : Argument
     {
         #region Database Properties
         private int _processTask_ID;
@@ -76,6 +76,29 @@ namespace CatalogueLibrary.Data.DataLoad
         internal ProcessTaskArgument(ShareManager shareManager, ShareDefinition shareDefinition)
         {
             shareManager.UpsertAndHydrate(this,shareDefinition);
+            try
+            {
+
+                //if the import is into a repository other than the master original repository
+                if(!shareManager.IsExportedObject(this.ProcessTask.LoadMetadata))
+                {
+                    //and we are a reference type e.g. to a ColumnInfo or something
+                    var t = GetConcreteSystemType();
+
+                    if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) || typeof(IEnumerable<IMapsDirectlyToDatabaseTable>).IsAssignableFrom(t))
+                    {
+                        //then use the value Null because whatever ID is stored in us won't be pointing to the same object
+                        //as when we were exported!
+                        Value = null;
+                        SaveToDatabase();
+                    }
+                }
+            }
+            catch (Exception e)
+            {
+                //couldn't work out the Type, maybe it is broken or something, or otherwise someone elses problem
+                Console.WriteLine(e);
+            }
         }
         /// <inheritdoc/>
         public override string ToString()

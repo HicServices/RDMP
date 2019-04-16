@@ -354,6 +354,17 @@ namespace CatalogueLibrary.Providers
             GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
 
             AddChildren(AllGovernanceNode);
+
+
+            var searchables = _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>().ToArray();
+            
+            foreach (ObjectExport e in AllExports)
+            {
+                var known = searchables.FirstOrDefault(s => e.IsReferenceTo(s));
+                if(known != null)
+                e.InjectKnown(known);
+            }
+            
         }
 
         

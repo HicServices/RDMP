@@ -10,6 +10,7 @@ using System.Data.Common;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 
 namespace CatalogueLibrary.Data.ImportExport
 {
@@ -18,7 +19,7 @@ namespace CatalogueLibrary.Data.ImportExport
     /// allows multiple external users to access and import the shared object (and any dependant objects).  Having an ObjectExport declared on an object prevents it from
     /// being deleted (see ObjectSharingObscureDependencyFinder) since this would leave external users with orphaned objects.
     /// </summary>
-    public class ObjectExport : ReferenceOtherObjectDatabaseEntity
+    public class ObjectExport : ReferenceOtherObjectDatabaseEntity, IInjectKnown<IMapsDirectlyToDatabaseTable>
     {
         #region Database Properties
 
@@ -58,6 +59,8 @@ namespace CatalogueLibrary.Data.ImportExport
 
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
+
+            ClearAllInjections();
         }
 
         /// <inheritdoc/>
@@ -67,10 +70,24 @@ namespace CatalogueLibrary.Data.ImportExport
             SharingUID = r["SharingUID"].ToString();
         }
 
+        public void InjectKnown(IMapsDirectlyToDatabaseTable instance)
+        {
+            _knownReferenceTo = new Lazy<IMapsDirectlyToDatabaseTable>(()=>instance);
+        }
+
         /// <inheritdoc/>
         public override string ToString()
         {
+            if (_knownReferenceTo != null)
+                return "E::" + _knownReferenceTo.Value;
+
             return "E::" + ReferencedObjectType +"::" + SharingUID;
+        }
+
+        private Lazy<IMapsDirectlyToDatabaseTable> _knownReferenceTo;
+        public void ClearAllInjections()
+        {
+            _knownReferenceTo = null;
         }
     }
 }

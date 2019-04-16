@@ -1,3 +1,4 @@
+using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
@@ -7,7 +8,11 @@ using CatalogueLibraryTests.Mocks;
 using DataExportLibrary.Repositories;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
+using FAnsi;
+using FAnsi.Discovery;
+using FAnsi.Implementations.MicrosoftSQL;
 using LoadModules.Generic.Attachers;
+using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 using Rhino.Mocks;
 using Sharing.Dependency.Gathering;
@@ -52,7 +57,7 @@ namespace CatalogueLibraryTests.ImportTests
         /// Tests sharing a basic process task load metadata
         /// </summary>
         [Test]
-        public void GatherAndShare_LoadMetadata_WithProcessTasks1()
+        public void GatherAndShare_LoadMetadata_WithProcessTask()
         {
             //create an object
             LoadMetadata lmd1;
@@ -76,7 +81,7 @@ namespace CatalogueLibraryTests.ImportTests
         /// Tests sharing a more advanced loadmetadata with an actual class behind the ProcessTask
         /// </summary>
         [Test]
-        public void GatherAndShare_LoadMetadata_WithProcessTasks2()
+        public void GatherAndShare_LoadMetadata_WithRealProcessTask()
         {
             //create an object
             LoadMetadata lmd1 = WhenIHaveA<LoadMetadata>();
@@ -114,9 +119,56 @@ namespace CatalogueLibraryTests.ImportTests
             stg.Stub(x => x.LoadStage).Return(LoadStage.Mounting);
 
             f.Create(pt1, stg);
-
         }
 
+        
+        /// <summary>
+        /// Tests sharing a <see cref="LoadMetadata"/> with a <see cref="ProcessTask"/> which has a reference argument (to
+        /// another object in the database.
+        /// </summary>
+        [Test]
+        public void GatherAndShare_LoadMetadata_WithReferenceProcessTaskArgument()
+        {
+            //create an object
+            LoadMetadata lmd1 = WhenIHaveA<LoadMetadata>();
+
+            //setup Reflection / MEF
+            SetupMEF();
+            RuntimeTaskFactory f = new RuntimeTaskFactory(Repository);
+            var stg = MockRepository.GenerateMock<IStageArgs>();
+            stg.Stub(x => x.LoadStage).Return(LoadStage.Mounting);
+            stg.Stub(x => x.DbInfo)
+                .Return(new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
+            
+            //create a single process task for the load
+            var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting);
+            pt1.ProcessTaskType = ProcessTaskType.MutilateDataTable;
+            pt1.LoadStage = LoadStage.AdjustRaw;
+            pt1.Path = typeof(SafePrimaryKeyCollisionResolverMutilation).FullName;
+            pt1.SaveToDatabase();
+
+            //give it a reference to an (unshared) object (ColumnInfo)
+            pt1.CreateArgumentsForClassIfNotExists(typeof(SafePrimaryKeyCollisionResolverMutilation));
+            var pta = pt1.ProcessTaskArguments.Single(pt => pt.Name == "ColumnToResolveOn");
+            pta.SetValue(WhenIHaveA<ColumnInfo>());
+            pta.SaveToDatabase();
+
+            //check that reflection can assemble the master ProcessTask
+            MutilateDataTablesRuntimeTask t = (MutilateDataTablesRuntimeTask) f.Create(pt1, stg);
+            Assert.IsNotNull(((SafePrimaryKeyCollisionResolverMutilation)t.MEFPluginClassInstance).ColumnToResolveOn);
+            
+            //share to the second repository (which won't have that ColumnInfo)
+            var lmd2 = ShareToNewRepository(lmd1);
+            
+            //create a new reflection factory for the new repo
+            RuntimeTaskFactory f2 = new RuntimeTaskFactory(lmd2.CatalogueRepository);
+            lmd2.CatalogueRepository.MEF = MEF;
+            
+            //when we create the shared instance it should not have a valid value for ColumnInfo (since it wasn't - and shouldn't be shared)
+            MutilateDataTablesRuntimeTask t2 = (MutilateDataTablesRuntimeTask) f2.Create(lmd2.ProcessTasks.Single(), stg);
+            Assert.IsNull(((SafePrimaryKeyCollisionResolverMutilation)t2.MEFPluginClassInstance).ColumnToResolveOn);
+
+        }
 
         private LoadMetadata ShareToNewRepository(LoadMetadata lmd)
         {
