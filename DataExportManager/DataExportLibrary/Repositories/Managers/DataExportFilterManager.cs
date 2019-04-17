@@ -67,7 +67,7 @@ namespace DataExportLibrary.Repositories.Managers
             _dataExportRepository.Delete("DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID", new Dictionary<string, object>
             {
                 {"FilterContainerChildID", container.ID}
-            });
+            },false);
         }
         public void AddChild(IContainer container, IFilter filter)
         {
