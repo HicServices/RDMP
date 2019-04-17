@@ -356,13 +356,25 @@ namespace CatalogueLibrary.Providers
             AddChildren(AllGovernanceNode);
 
 
-            var searchables = _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>().ToArray();
+            var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
+
+            foreach (IMapsDirectlyToDatabaseTable o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
+            {
+                if(!searchables.ContainsKey(o.ID))
+                    searchables.Add(o.ID,new HashSet<IMapsDirectlyToDatabaseTable>());
+
+                searchables[o.ID].Add(o);
+            }
             
             foreach (ObjectExport e in AllExports)
             {
-                var known = searchables.FirstOrDefault(s => e.IsReferenceTo(s));
+                if(!searchables.ContainsKey(e.ReferencedObjectID))
+                    continue;
+                
+                var known = searchables[e.ReferencedObjectID].FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
+
                 if(known != null)
-                e.InjectKnown(known);
+                    e.InjectKnown(known);
             }
             
         }
