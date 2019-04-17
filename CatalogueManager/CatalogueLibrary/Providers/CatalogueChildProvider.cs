@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Windows.Input;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -74,6 +75,8 @@ namespace CatalogueLibrary.Providers
 
 
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
+        
+        private From1ToM<Catalogue,CatalogueItem> _catalogueToCatalogueItems;
         public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
 
         private readonly Dictionary<int,ColumnInfo> _allColumnInfos;
@@ -112,6 +115,7 @@ namespace CatalogueLibrary.Providers
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
+        private From1ToM<TableInfo, ColumnInfo> _tableInfosToColumnInfos;
         public ColumnInfo[] AllColumnInfos { get; private set; }
         public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
@@ -142,7 +146,7 @@ namespace CatalogueLibrary.Providers
         public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
         public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray();}}
 
-        private AggregateFilter[] AllAggregateFilters;
+        public AggregateFilter[] AllAggregateFilters { get; private set; }
         private AggregateFilterParameter[] AllAggregateFilterParameters;
 
         //Catalogue master filters (does not include any support for filter containers (AND/OR)
@@ -220,6 +224,7 @@ namespace CatalogueLibrary.Providers
             AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
             
             AllColumnInfos = GetAllObjects<ColumnInfo>(repository);
+            _tableInfosToColumnInfos = new From1ToM<TableInfo, ColumnInfo>(c=>c.TableInfo_ID,AllColumnInfos);
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
             AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
@@ -229,6 +234,7 @@ namespace CatalogueLibrary.Providers
             AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
             AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
+            _catalogueToCatalogueItems = new From1ToM<Catalogue, CatalogueItem>(ci=>ci.Catalogue_ID,AllCatalogueItems);
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
             
             //Inject known ColumnInfos into CatalogueItems
@@ -785,9 +791,7 @@ namespace CatalogueLibrary.Providers
                     AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
             }
             
-            var cis = AllCatalogueItems
-                .Where(ci => ci.Catalogue_ID == c.ID)
-                .ToArray();
+            var cis = _catalogueToCatalogueItems[c].ToArray();
 
             //tell the CatalogueItems that we are are their parent
             foreach (CatalogueItem ci in cis)
@@ -840,7 +844,7 @@ namespace CatalogueLibrary.Providers
             List<object> childrenObjects = new List<object>();
 
             var subcontainers = _aggregateFilterManager.GetSubContainers(container);
-            var filters = AllAggregateFilters.Where(f => f.FilterContainer_ID == container.ID).ToArray();
+            var filters = _aggregateFilterManager.GetFilters(container);
 
             foreach (AggregateFilterContainer subcontainer in subcontainers)
             {
@@ -1062,7 +1066,7 @@ namespace CatalogueLibrary.Providers
             }
 
             //next add the column infos
-            foreach (ColumnInfo c in AllColumnInfos.Where(ci => ci.TableInfo_ID == tableInfo.ID))
+            foreach (ColumnInfo c in _tableInfosToColumnInfos[tableInfo])
             {
                 children.Add(c);
                 c.InjectKnown(tableInfo);
@@ -1289,4 +1293,30 @@ namespace CatalogueLibrary.Providers
         }
     }
 
+    internal class From1ToM<T, T1>:Dictionary<int,HashSet<T1>> where T:IMapsDirectlyToDatabaseTable where T1:IMapsDirectlyToDatabaseTable
+    {
+        public From1ToM(Func<T1,int> idSelector, IEnumerable<T1> collection)
+        {
+            foreach (var o in collection)
+            {
+                int id = idSelector(o);
+
+                if(!Keys.Contains(id))
+                    Add(id,new HashSet<T1>());
+
+                this[id].Add(o);
+            }
+        }
+
+        public IEnumerable<T1> this[T parent]
+        {
+            get
+            {
+                if(this.ContainsKey(parent.ID))
+                    return this[parent.ID];
+
+                return Enumerable.Empty<T1>();
+            }
+        }
+    }
 }
