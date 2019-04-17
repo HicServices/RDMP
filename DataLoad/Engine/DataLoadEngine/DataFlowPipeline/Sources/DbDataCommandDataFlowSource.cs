@@ -14,10 +14,8 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Sources
 {
-    /// <summary>
-    /// Reads records in Batches (of size BatchSize) from the remote database (DbConnectionStringBuilder builder) by executing the specified _sql.
-    /// </summary>
-    public class DbDataCommandDataFlowSource : IDataFlowSource<DataTable>
+    /// <inheritdoc/>
+    public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     {
         private readonly string _sql;
         private DbDataReader _reader;
@@ -122,10 +120,7 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
 
         private DataTable _peekDataTable = null;
 
-        /// <summary>
-        /// Reads and returns a single row.  GetChunk must have been called at least once to function
-        /// </summary>
-        /// <returns></returns>
+        /// <inheritdoc/>
         public DataRow ReadOneRow()
         {
             if(_peekDataTable == null)

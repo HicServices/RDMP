@@ -267,6 +267,7 @@
     <Compile Include="DataFlowPipeline\Components\Anonymisation\ColumnInfoToANOTableConverter.cs" />
     <Compile Include="DataFlowPipeline\Destinations\DataTableUploadDestination.cs" />
     <Compile Include="DataFlowPipeline\Sources\DbDataCommandDataFlowSource.cs" />
+    <Compile Include="DataFlowPipeline\Sources\IDbDataCommandDataFlowSource.cs" />
     <Compile Include="DataProvider\FromCache\ArchiveExtractor.cs" />
     <Compile Include="DataProvider\FromCache\CachedFileRetriever.cs" />
     <Compile Include="DataProvider\FromCache\DeleteCachedFilesOperation.cs" />

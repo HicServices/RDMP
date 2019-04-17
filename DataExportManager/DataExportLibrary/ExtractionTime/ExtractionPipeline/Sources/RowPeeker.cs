@@ -24,25 +24,32 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
             //if we have a peeked record
             if (_peekedRecord != null)
             {
-                //if we are at the end of the batch
-                if (chunk == null)
+                try
                 {
-                    //create a 1 row batch
-                    var itemArray = _peekedRecord.ItemArray;
-                    var tbl = _peekedRecord.Table;
-                    tbl.Clear();
-                    tbl.Rows.Add(itemArray);
-                    return tbl;
+
+                    //if we are at the end of the batch
+                    if (chunk == null)
+                    {
+                        //create a 1 row batch
+                        var itemArray = _peekedRecord.ItemArray;
+                        var tbl = _peekedRecord.Table;
+                        tbl.Clear();
+                        tbl.Rows.Add(itemArray);
+                        return tbl;
+                    }
+
+                    DataRow newRow = chunk.NewRow();
+                    // We "clone" the row
+                    newRow.ItemArray = _peekedRecord.ItemArray;
+                    //add the peeked record
+                    chunk.Rows.InsertAt(newRow,0);
                 }
-
-                DataRow newRow = chunk.NewRow();
-                // We "clone" the row
-                newRow.ItemArray = _peekedRecord.ItemArray;
-                //add the peeked record
-                chunk.Rows.InsertAt(newRow,0);
-
-                //clear the peek
-                _peekedRecord = null;
+                finally
+                {
+                    //clear the peek
+                    if(clearPeek)
+                        _peekedRecord = null;
+                }
             }
 
             return chunk;
@@ -56,7 +63,7 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         /// <param name="source"></param>
         /// <param name="equalityFunc"></param>
         /// <param name="chunk"></param>
-        public void AddWhile(DbDataCommandDataFlowSource source, Func<DataRow,bool> equalityFunc,DataTable chunk)
+        public void AddWhile(IDbDataCommandDataFlowSource source, Func<DataRow,bool> equalityFunc,DataTable chunk)
         {
             if(_peekedRecord != null)
                 throw new Exception("Cannot AddWhile when there is an existing peeked record, call AddPeekedRowsIfAny to drain the Peek");
