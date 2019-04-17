@@ -89,6 +89,10 @@ namespace ReusableLibraryCode
 
             string[] split = text.Split(new char[] { '\r', '\n', ',' }, StringSplitOptions.RemoveEmptyEntries);
 
+
+            //trim off [db]..[tbl] 1 
+            for (int i = 0; i < split.Length; i++)
+                split[i] = Regex.Replace(split[i], @"\s+[\d\s]*$", "");    
             
             //identifies the last word in a collection of multiple words (requires you .Trim() so we dont get ending whitespace match)
             Regex regexLastWord = new Regex("\\s[^\\s]*$");
