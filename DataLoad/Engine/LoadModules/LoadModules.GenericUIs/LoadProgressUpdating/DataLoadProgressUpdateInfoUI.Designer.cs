@@ -156,7 +156,7 @@
             this.Controls.Add(this.ddStrategy);
             this.Controls.Add(this.label2);
             this.Name = "DataLoadProgressUpdateInfoUI";
-            this.Text = "DataLoadProgressUpdateInfoUI";
+            this.Text = "Data LoadProgress Update";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.DataLoadProgressUpdateInfoUI_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

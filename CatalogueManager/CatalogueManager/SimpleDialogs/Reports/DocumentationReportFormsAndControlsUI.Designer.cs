@@ -73,7 +73,7 @@
             this.Controls.Add(this.checksUI1);
             this.Controls.Add(this.btnGenerateReport);
             this.Name = "DocumentationReportFormsAndControlsUI";
-            this.Text = "ControlDocumentationGeneratorUI";
+            this.Text = "Documentation Generator";
             this.ResumeLayout(false);
             this.PerformLayout();
 

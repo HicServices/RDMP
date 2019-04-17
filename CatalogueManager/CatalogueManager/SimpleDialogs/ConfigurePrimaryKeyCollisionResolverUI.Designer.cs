@@ -212,7 +212,7 @@
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label1);
             this.Name = "ConfigurePrimaryKeyCollisionResolution";
-            this.Text = "ConfigurePrimaryKeyCollisionResolution";
+            this.Text = "Configure Primary Key Collision Resolution";
             this.splitContainer1.Panel1.ResumeLayout(false);
             this.splitContainer1.Panel1.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();

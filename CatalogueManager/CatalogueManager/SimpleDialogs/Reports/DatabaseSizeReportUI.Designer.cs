@@ -60,7 +60,7 @@
             this.Controls.Add(this.btnStart);
             this.Controls.Add(this.checksUI1);
             this.Name = "DatabaseSizeReportUI";
-            this.Text = "DatabaseSizeReportUI";
+            this.Text = "Database Size Report";
             this.ResumeLayout(false);
 
         }

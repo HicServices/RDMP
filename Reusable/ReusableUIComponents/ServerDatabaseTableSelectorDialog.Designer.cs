@@ -135,7 +135,7 @@
             this.ClientSize = new System.Drawing.Size(684, 281);
             this.Controls.Add(this.flowLayoutPanel1);
             this.Name = "ServerDatabaseTableSelectorDialog";
-            this.Text = "Form1";
+            this.Text = "Select Server";
             this.flowLayoutPanel1.ResumeLayout(false);
             this.flowLayoutPanel1.PerformLayout();
             this.panel1.ResumeLayout(false);

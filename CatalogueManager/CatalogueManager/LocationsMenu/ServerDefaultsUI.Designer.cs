@@ -417,7 +417,7 @@
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
             this.Name = "ServerDefaultsUI";
-            this.Text = "ManageExternalServers";
+            this.Text = "Server Defaults";
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);

@@ -471,7 +471,7 @@ namespace DataExportManager.Wizard
             this.Controls.Add(this.tbProjectNumber);
             this.Controls.Add(this.tbProjectName);
             this.Name = "CreateNewDataExtractionProjectUI";
-            this.Text = "CreateNewDataExtractionProjectUI";
+            this.Text = "New Project";
             this.Load += new System.EventHandler(this.CreateNewDataExtractionProjectUI_Load);
             ((System.ComponentModel.ISupportInitialize)(this.olvDatasets)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCohort)).EndInit();

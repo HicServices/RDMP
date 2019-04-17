@@ -80,7 +80,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             this.Controls.Add(this.panel1);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Name = "NavigateToObjectUI";
-            this.Text = "NavigateToObjectUI";
+            this.Text = "Find";
             this.TransparencyKey = System.Drawing.Color.Magenta;
             this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.NavigateToObjectUI_FormClosed);
             this.panel1.ResumeLayout(false);

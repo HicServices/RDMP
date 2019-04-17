@@ -105,7 +105,7 @@
             this.Controls.Add(this.tableLayoutPanel1);
             this.KeyPreview = true;
             this.Name = "ExceptionViewerStackTraceWithHyperlinks";
-            this.Text = "ExceptionViewerStackTraceWithHyperlinks";
+            this.Text = "Exception Viewer";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ExceptionViewerStackTraceWithHyperlinks_KeyUp);
             this.ResumeLayout(false);
 

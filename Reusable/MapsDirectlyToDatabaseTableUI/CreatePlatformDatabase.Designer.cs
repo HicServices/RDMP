@@ -152,7 +152,7 @@
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label3);
             this.Name = "CreatePlatformDatabase";
-            this.Text = "CreatePlatformDatabase";
+            this.Text = "Create Database";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CreatePlatformDatabase_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

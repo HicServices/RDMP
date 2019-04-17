@@ -90,7 +90,7 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.pbExplanation);
             this.Name = "ResolveFatalErrors";
-            this.Text = "ResolveFatalErrors";
+            this.Text = "Resolve Fatal Errors";
             this.ResumeLayout(false);
             this.PerformLayout();
 

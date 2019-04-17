@@ -113,7 +113,7 @@
             this.Controls.Add(this.btnReferenceColumn);
             this.Controls.Add(this.panel2);
             this.Name = "ConfigureHashingAlgorithm";
-            this.Text = "ConfigureHashingAlgorithm";
+            this.Text = "Configure Hashing Algorithm";
             this.ResumeLayout(false);
             this.PerformLayout();
 

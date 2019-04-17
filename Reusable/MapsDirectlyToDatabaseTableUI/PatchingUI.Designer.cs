@@ -138,7 +138,7 @@
             this.Controls.Add(this.lblHostAssembly);
             this.Controls.Add(this.label1);
             this.Name = "PatchingUI";
-            this.Text = "PatchingUI";
+            this.Text = "Patching";
             this.ResumeLayout(false);
             this.PerformLayout();
 

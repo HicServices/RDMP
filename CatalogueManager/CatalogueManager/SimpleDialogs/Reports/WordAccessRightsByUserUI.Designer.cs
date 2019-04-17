@@ -161,8 +161,8 @@
             this.Controls.Add(this.btnDisplayPrerequisites);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label1);
-            this.Name = "ConfigureAccessRightsReport";
-            this.Text = "ConfigureAccessRightsReport";
+            this.Name = "WordAccessRightsByUserUI";
+            this.Text = "Database Access Report";
             this.Load += new System.EventHandler(this.ConfigureAccessRightsReport_Load);
             this.ResumeLayout(false);
             this.PerformLayout();

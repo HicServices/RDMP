@@ -62,7 +62,7 @@
             this.Controls.Add(this.flowLayoutPanel1);
             this.Controls.Add(this.btnDone);
             this.Name = "AdjustColumnDataTypesUI";
-            this.Text = "AdjustColumnDataTypesUI";
+            this.Text = "Adjust Column Data Types";
             this.ResumeLayout(false);
 
         }

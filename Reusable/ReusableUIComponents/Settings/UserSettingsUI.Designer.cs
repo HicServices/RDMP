@@ -182,8 +182,8 @@
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbShowHomeOnStartup);
-            this.Name = "UserSettingsFileUI";
-            this.Text = "UserSettingsUI";
+            this.Name = "UserSettingsUI";
+            this.Text = "User Settings";
             this.ResumeLayout(false);
             this.PerformLayout();
 

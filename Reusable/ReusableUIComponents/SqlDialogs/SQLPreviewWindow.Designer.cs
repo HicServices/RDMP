@@ -98,7 +98,7 @@
             this.Controls.Add(this.panel1);
             this.Controls.Add(this.lblMessage);
             this.Name = "SQLPreviewWindow";
-            this.Text = "SQLPreviewWindow";
+            this.Text = "SQL Preview";
             this.ResumeLayout(false);
             this.PerformLayout();
 

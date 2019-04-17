@@ -116,7 +116,7 @@
             this.KeyPreview = true;
             this.Name = "OfferChanceToSaveDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "OfferChanceToSaveDialog";
+            this.Text = "Save Changes?";
             this.ResumeLayout(false);
             this.PerformLayout();
 

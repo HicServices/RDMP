@@ -90,7 +90,7 @@
             this.Controls.Add(this.btnSaveAndClose);
             this.Controls.Add(this.tb);
             this.Name = "ConfigureDisclaimer";
-            this.Text = "ConfigureDisclaimer";
+            this.Text = "Configure Disclaimer";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfigureDisclaimer_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();
