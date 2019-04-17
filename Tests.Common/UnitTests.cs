@@ -626,7 +626,7 @@ namespace Tests.Common
                 }
                 if (memValue is IEnumerable<IMapsDirectlyToDatabaseTable>)
                 {
-                    AssertAreEqual((IEnumerable<IMapsDirectlyToDatabaseTable>)memValue, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue);
+                    AssertAreEqual((IEnumerable<IMapsDirectlyToDatabaseTable>)memValue, (IEnumerable<IMapsDirectlyToDatabaseTable>)dbValue,false);
                     return;
                 }
 
@@ -640,7 +640,7 @@ namespace Tests.Common
                 Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,property.Name, memValue, dbValue);
             }
         }
-        public static void AssertAreEqual(IEnumerable<IMapsDirectlyToDatabaseTable> memObjects, IEnumerable<IMapsDirectlyToDatabaseTable> dbObjects)
+        public static void AssertAreEqual(IEnumerable<IMapsDirectlyToDatabaseTable> memObjects, IEnumerable<IMapsDirectlyToDatabaseTable> dbObjects,bool firstIteration=true)
         {
             var memObjectsArr = memObjects.OrderBy(o => o.ID).ToArray();
             var dbObjectsArr = dbObjects.OrderBy(o => o.ID).ToArray();
@@ -648,7 +648,7 @@ namespace Tests.Common
             Assert.AreEqual(memObjectsArr.Count(), dbObjectsArr.Count());
 
             for (int i = 0; i < memObjectsArr.Count(); i++)
-                UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i]);
+                UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
         }
         private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
         {

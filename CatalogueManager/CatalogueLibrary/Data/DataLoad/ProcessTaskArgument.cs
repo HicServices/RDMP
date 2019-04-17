@@ -38,13 +38,16 @@ namespace CatalogueLibrary.Data.DataLoad
             get { return _processTask_ID; }
             set { SetField(ref _processTask_ID, value); }
         }
+        
+        #endregion
+
+        #region Relationships
 
         /// <inheritdoc cref="ProcessTask_ID"/>
         [NoMappingToDatabase]
         public ProcessTask ProcessTask {get{
             return Repository.GetObjectByID<ProcessTask>(ProcessTask_ID);
         }}
-
         #endregion
 
         /// <summary>
