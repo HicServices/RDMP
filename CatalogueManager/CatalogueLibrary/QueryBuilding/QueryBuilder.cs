@@ -103,7 +103,7 @@ namespace CatalogueLibrary.QueryBuilding
             _salt = salt;
         }
 
-        private void SetLimitationSQL(string limitationSQL)
+        public void SetLimitationSQL(string limitationSQL)
         {
             if(limitationSQL != null && limitationSQL.Contains("top"))
                 throw new Exception("Use TopX property instead of limitation SQL to acheive this");

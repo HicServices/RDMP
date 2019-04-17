@@ -264,6 +264,8 @@
     <Compile Include="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseData.cs" />
     <Compile Include="DataRelease\ReleasePipeline\ReleaseState.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Sources\DistinctStrategy.cs" />
+    <Compile Include="ExtractionTime\ExtractionPipeline\Sources\RowPeeker.cs" />
     <Compile Include="Repositories\Managers\DataExportPropertyManager.cs" />
     <Compile Include="Data\DataTables\CohortDefinition.cs" />
     <Compile Include="Data\DataTables\CumulativeExtractionResults.cs" />

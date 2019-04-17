@@ -71,15 +71,13 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
             {
                 DataTable chunk = GetChunkSchema(_reader);
                 
+                //clear peeked records
+                _peekDataTable = null;
                 
                 while (_reader.Read())
                 {
-                    object[] values = new object[_numberOfColumns];
-
-                    _reader.GetValues(values);
-                    chunk.LoadDataRow(values, LoadOption.Upsert);
+                    AddRowToDataTable(chunk, _reader);
                     readThisBatch ++;
-                    TotalRowsRead++;
 
                     //we reached batch limit
                     if (readThisBatch == BatchSize)
@@ -111,6 +109,30 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
                 job.OnProgress(this, new ProgressEventArgs(_taskBeingPerformed, new ProgressMeasurement(TotalRowsRead, ProgressType.Records), timer.Elapsed));
 
             }
+        }
+
+        private DataRow AddRowToDataTable(DataTable chunk, DbDataReader reader)
+        {
+            object[] values = new object[_numberOfColumns];
+
+            reader.GetValues(values);
+            TotalRowsRead++;
+            return chunk.LoadDataRow(values, LoadOption.Upsert);
+        }
+
+        private DataTable _peekDataTable = null;
+
+        /// <summary>
+        /// Reads and returns a single row.  GetChunk must have been called at least once to function
+        /// </summary>
+        /// <returns></returns>
+        public DataRow ReadOneRow()
+        {
+            if(_peekDataTable == null)
+                _peekDataTable = GetChunkSchema(_reader);
+            
+            //return null if there are no more records to read
+            return _reader.Read() ? AddRowToDataTable(_peekDataTable, _reader): null;
         }
 
         private DataTable GetChunkSchema(DbDataReader reader)
