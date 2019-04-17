@@ -69,9 +69,6 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
             {
                 DataTable chunk = GetChunkSchema(_reader);
                 
-                //clear peeked records
-                _peekDataTable = null;
-                
                 while (_reader.Read())
                 {
                     AddRowToDataTable(chunk, _reader);
@@ -118,16 +115,11 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
             return chunk.LoadDataRow(values, LoadOption.Upsert);
         }
 
-        private DataTable _peekDataTable = null;
-
         /// <inheritdoc/>
         public DataRow ReadOneRow()
         {
-            if(_peekDataTable == null)
-                _peekDataTable = GetChunkSchema(_reader);
-            
             //return null if there are no more records to read
-            return _reader.Read() ? AddRowToDataTable(_peekDataTable, _reader): null;
+            return _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
         }
 
         private DataTable GetChunkSchema(DbDataReader reader)
