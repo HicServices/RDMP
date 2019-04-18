@@ -172,5 +172,16 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
             throw new NotSupportedException("Cannot populate LoadProgress selection list because type " + parent.GetType().Name + " does not support the " + typeof(ILoadProgressHost).Name + " interface");
 
         }
+
+        /// <summary>
+        /// Returns true if the <see cref="IArgumentValueUI"/> for the given <paramref name="argsType"/> supports being
+        /// sent illegal string values (e.g. "fish" for typeof(int)).
+        /// </summary>
+        /// <param name="argsType"></param>
+        /// <returns></returns>
+        public bool CanHandleInvalidStringData(Type argsType)
+        {
+            return argsType.IsValueType && !typeof(bool).IsAssignableFrom(argsType)&& !typeof(Enum).IsAssignableFrom(argsType);
+        }
     }
 }

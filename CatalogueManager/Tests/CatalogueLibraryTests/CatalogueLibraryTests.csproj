@@ -390,6 +390,7 @@
     <Compile Include="UserInterfaceTests\ExternalDatabaseServerUITests.cs" />
     <Compile Include="UserInterfaceTests\ForwardEngineerANOCatalogueUITests.cs" />
     <Compile Include="UserInterfaceTests\LoadDiagramUITests.cs" />
+    <Compile Include="UserInterfaceTests\PluginProcessTaskUITests.cs" />
     <Compile Include="UserInterfaceTests\TestActivateItems.cs" />
     <Compile Include="UserInterfaceTests\UITests.cs" />
     <Compile Include="UserInterfaceTests\UITimeoutAttribute.cs" />

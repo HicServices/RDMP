@@ -194,7 +194,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             switch (expectedErrorLevel)
             {
                 case ExpectedErrorType.KilledForm:
-                    Assert.IsTrue(ItemActivator.Results.KilledForms.Values.Any(v=>v.Message.Contains(expectedContainsText)));
+                    Assert.IsTrue(ItemActivator.Results.KilledForms.Values.Any(v=>v.Message.Contains(expectedContainsText)),"Failed to find expected Exception, Exceptions were:\r\n" +string.Join(Environment.NewLine,ItemActivator.Results.KilledForms.Values.Select(v=>v.ToString())) );
                     break;
                 case ExpectedErrorType.Fatal:
                     Assert.IsTrue(ItemActivator.Results.FatalCalls.Any(c => c.Message.Contains(expectedContainsText)));
