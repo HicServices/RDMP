@@ -258,10 +258,5 @@ namespace ResearchDataManagementPlatform
 
             return null;
         }
-
-        private void RDMPMainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            SqlDependencyTableMonitor.Stop();
-        }
     }
 }

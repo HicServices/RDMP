@@ -154,9 +154,6 @@ namespace MapsDirectlyToDatabaseTable
 
         void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,object propertyValue);
 
-        T[] GetAllObjectsCached<T>() where T : IMapsDirectlyToDatabaseTable;
-
-
         /// <summary>
         /// Returns all objects held in the repository.  This method is likely to be slow for large databases
         /// </summary>

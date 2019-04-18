@@ -65,7 +65,6 @@ namespace ResearchDataManagementPlatform
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "RDMPMainForm";
             this.Text = "RDMPMainForm";
-            this.FormClosed += new System.Windows.Forms.FormClosedEventHandler(this.RDMPMainForm_FormClosed);
             this.Load += new System.EventHandler(this.RDMPMainForm_Load);
             this.ResumeLayout(false);
             this.PerformLayout();
