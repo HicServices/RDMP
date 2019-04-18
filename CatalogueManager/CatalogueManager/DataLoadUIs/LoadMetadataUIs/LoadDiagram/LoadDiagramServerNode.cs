@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using FAnsi.Discovery;
@@ -15,7 +17,7 @@ using ReusableLibraryCode;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm
+    public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         private readonly LoadBubble _bubble;
         private readonly DiscoveredDatabase _database;
@@ -135,5 +137,9 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         }
 
         #endregion
+
+        public int Order
+        {
+            get { return (int) _bubble;} set{} }
     }
 }

@@ -206,25 +206,31 @@ namespace CatalogueManager.Collections
             Tree.FormatRow += Tree_FormatRow;
             Tree.CellToolTipGetter += Tree_CellToolTipGetter;
 
-            if (Tree.PrimarySortColumn == null)
-                Tree.PrimarySortColumn = Tree.AllColumns.FirstOrDefault(c => c.IsVisible);
-
-            //persist user sort orders
-            if (TreeGuids.ContainsKey(_collection))
+            if(Settings.AllowSorting)
             {
-                //if we know the sort order fo this collection last time
-                var lastSort = UserSettings.GetLastColumnSortForCollection(TreeGuids[_collection]);
+                if (Tree.PrimarySortColumn == null)
+                    Tree.PrimarySortColumn = Tree.AllColumns.FirstOrDefault(c => c.IsVisible && c.Sortable);
 
-                //reestablish that sort order
-                if (lastSort != null && Tree.AllColumns.Any(c => c.Text == lastSort.Item1))
+                //persist user sort orders
+                if (TreeGuids.ContainsKey(_collection))
                 {
-                    Tree.PrimarySortColumn = Tree.GetColumn(lastSort.Item1);
-                    Tree.PrimarySortOrder = lastSort.Item2 ? SortOrder.Ascending : SortOrder.Descending;
-                }
+                    //if we know the sort order fo this collection last time
+                    var lastSort = UserSettings.GetLastColumnSortForCollection(TreeGuids[_collection]);
 
-                //and track changes to the sort order
-                Tree.AfterSorting += TreeOnAfterSorting;
+                    //reestablish that sort order
+                    if (lastSort != null && Tree.AllColumns.Any(c => c.Text == lastSort.Item1))
+                    {
+                        Tree.PrimarySortColumn = Tree.GetColumn(lastSort.Item1);
+                        Tree.PrimarySortOrder = lastSort.Item2 ? SortOrder.Ascending : SortOrder.Descending;
+                    }
+
+                    //and track changes to the sort order
+                    Tree.AfterSorting += TreeOnAfterSorting;
+                }
             }
+            else
+                foreach (OLVColumn c in Tree.AllColumns)
+                    c.Sortable = false;
         }
 
         void Tree_KeyPress(object sender, KeyPressEventArgs e)
