@@ -220,10 +220,12 @@ namespace CatalogueLibrary.Providers
             AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
             AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
             
-            //which TableInfos use which Credentials under which DataAccessContexts
-            AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
+            Task.WaitAll(
+                //which TableInfos use which Credentials under which DataAccessContexts
+                Task.Factory.StartNew(() => { AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,AllTableInfos);}),
+                Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
+                );
             
-            AllColumnInfos = GetAllObjects<ColumnInfo>(repository);
             _tableInfosToColumnInfos = new From1ToM<TableInfo, ColumnInfo>(c=>c.TableInfo_ID,AllColumnInfos);
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
@@ -238,7 +240,7 @@ namespace CatalogueLibrary.Providers
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
             
             //Inject known ColumnInfos into CatalogueItems
-            foreach (CatalogueItem ci in AllCatalogueItems)
+            Parallel.ForEach(AllCatalogueItems, (ci) =>
             {
                 ColumnInfo col = null;
 
@@ -246,7 +248,7 @@ namespace CatalogueLibrary.Providers
                     col = _allColumnInfos[ci.ColumnInfo_ID.Value];
 
                 ci.InjectKnown(col);
-            }
+            });
 
             AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(repository).ToDictionary(i => i.ID, o => o);
             _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionary(k=>k.CatalogueItem_ID,v=>v);
@@ -550,12 +552,14 @@ namespace CatalogueLibrary.Providers
                 AddToDictionaries(new HashSet<object>(tableInfos), new DescendancyList(AllServersNode, kvp.Key));
                 
                 //record the children of the table infos (mostly column infos)
-                foreach (var t in tableInfos)
-                    AddChildren(t, 
-                        
-                        //t descends from :
-                        //the all servers node=>the TableInfoServerNode => the t
-                        new DescendancyList(AllServersNode, kvp.Key, t));
+                var kvp1 = kvp;
+                Parallel.ForEach(tableInfos, (t) =>
+                {
+                    //t descends from :
+                    //the all servers node=>the TableInfoServerNode => the t
+                    AddChildren(t,new DescendancyList(AllServersNode, kvp1.Key, t));
+                });
+
             }
 
             //record the fact that all the servers are children of the all servers node
@@ -1298,19 +1302,20 @@ namespace CatalogueLibrary.Providers
         }
     }
 
-    internal class From1ToM<T, T1>:Dictionary<int,HashSet<T1>> where T:IMapsDirectlyToDatabaseTable where T1:IMapsDirectlyToDatabaseTable
+    internal class From1ToM<T, T1>:ConcurrentDictionary<int,ConcurrentBag<T1>> where T:IMapsDirectlyToDatabaseTable where T1:IMapsDirectlyToDatabaseTable
     {
         public From1ToM(Func<T1,int> idSelector, IEnumerable<T1> collection)
         {
-            foreach (var o in collection)
-            {
-                int id = idSelector(o);
+            Parallel.ForEach(collection, (o) =>
+                {
+                    int id = idSelector(o);
 
-                if(!Keys.Contains(id))
-                    Add(id,new HashSet<T1>());
+                    if (!Keys.Contains(id))
+                        AddOrUpdate(id, new ConcurrentBag<T1>(),(i, set) => set);
 
-                this[id].Add(o);
-            }
+                    this[id].Add(o);
+                }
+            );
         }
 
         public IEnumerable<T1> this[T parent]
