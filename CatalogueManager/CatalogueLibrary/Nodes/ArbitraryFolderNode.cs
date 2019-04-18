@@ -4,22 +4,20 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueLibrary.Nodes
 {
     /// <summary>
     /// Folder Node that can be added to TreeListViews.  You can only add one folder of each name because they inherit from <see cref="SingletonNode"/>.
     /// </summary>
-    public class ArbitraryFolderNode:SingletonNode
+    public class ArbitraryFolderNode:SingletonNode,IOrderable
     {
-        public ArbitraryFolderNode(string caption) : base(caption)
-        {
+        public int Order { get; set; }
 
+        public ArbitraryFolderNode(string caption, int order) : base(caption)
+        {
+            Order = order;
         }
     }
 }

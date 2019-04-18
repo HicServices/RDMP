@@ -66,7 +66,7 @@ namespace DataExportManager.DataRelease
         private IMapsDirectlyToDatabaseTable[] _globals;
         private DataExportChildProvider _childProvider;
         
-        private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
+        private ArbitraryFolderNode _globalsNode = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME,-500);
 
 
         private bool _isExecuting;

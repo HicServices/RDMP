@@ -34,11 +34,11 @@ namespace CatalogueManager.Collections.Providers.Filtering
             var regexes = new List<Regex>();
             
             //any token that 100% matches a type name is an explicitly typed token
-            IEnumerable<string> explicitTypesRequested;
+            string[] explicitTypesRequested;
 
             if (TypeNames != null)
             {
-                explicitTypesRequested = TypeNames.Intersect(tokens,StringComparer.CurrentCultureIgnoreCase);
+                explicitTypesRequested = TypeNames.Intersect(tokens,StringComparer.CurrentCultureIgnoreCase).ToArray();
 
                 //else it's a regex
                 foreach (string token in tokens.Except(TypeNames,StringComparer.CurrentCultureIgnoreCase))
@@ -50,10 +50,10 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
             if (cancellationToken.IsCancellationRequested)
                 return null;
-
+            
             return searchables.ToDictionary(
            s => s,
-           score => ScoreMatches(score, regexes,explicitTypesRequested.ToArray(), cancellationToken)
+           score => ScoreMatches(score, regexes,explicitTypesRequested, cancellationToken)
            );
         }
 

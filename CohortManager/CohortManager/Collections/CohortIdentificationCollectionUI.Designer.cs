@@ -43,6 +43,7 @@ namespace CohortManager.Collections
             this.tlvCohortIdentificationConfigurations.CellEditUseWholeCell = false;
             this.tlvCohortIdentificationConfigurations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvName});
+            this.tlvCohortIdentificationConfigurations.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvCohortIdentificationConfigurations.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvCohortIdentificationConfigurations.Location = new System.Drawing.Point(0, 0);
             this.tlvCohortIdentificationConfigurations.Name = "tlvCohortIdentificationConfigurations";
@@ -57,6 +58,7 @@ namespace CohortManager.Collections
             // 
             this.olvName.AspectName = "ToString";
             this.olvName.FillsFreeSpace = true;
+            this.olvName.Sortable = false;
             this.olvName.Text = "Cohort Identification Configurations";
             // 
             // CohortIdentificationCollectionUI
