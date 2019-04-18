@@ -48,6 +48,13 @@ namespace CatalogueManager.Collections
         /// </summary>
         public bool AddCheckColumn { get; set; }
 
+        /// <summary>
+        /// False to prevent the user sorting columns (including any new columns created by <see cref="RDMPCollectionCommonFunctionality"/>)
+        /// 
+        /// <para>Defaults to true</para>
+        /// </summary>
+        public bool AllowSorting { get; set; }
+
         public RDMPCollectionCommonFunctionalitySettings()
         {
             AddFavouriteColumn = true;
@@ -56,6 +63,7 @@ namespace CatalogueManager.Collections
             SuppressChildrenAdder = false;
             SuppressActivate = false;
             AddCheckColumn = true;
+            AllowSorting = true;
         }
     }
 }

@@ -62,9 +62,9 @@ namespace DataExportManager.ProjectUI
         private const string CoreDatasets = "Core";
         private const string ProjectSpecificDatasets = "Project Specific";
 
-        private ArbitraryFolderNode _coreDatasetsFolder = new ArbitraryFolderNode(CoreDatasets);
-        private ArbitraryFolderNode _projectSpecificDatasetsFolder = new ArbitraryFolderNode(ProjectSpecificDatasets);
-        private ArbitraryFolderNode _globalsFolder = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME);
+        private ArbitraryFolderNode _coreDatasetsFolder = new ArbitraryFolderNode(CoreDatasets,1);
+        private ArbitraryFolderNode _projectSpecificDatasetsFolder = new ArbitraryFolderNode(ProjectSpecificDatasets,2);
+        private ArbitraryFolderNode _globalsFolder = new ArbitraryFolderNode(ExtractionDirectory.GLOBALS_DATA_NAME,0);
         
         private ToolStripControlHost _pipelinePanel;
 
