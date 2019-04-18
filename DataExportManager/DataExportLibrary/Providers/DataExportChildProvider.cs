@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using CachingEngine.Factories;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
@@ -58,6 +59,7 @@ namespace DataExportLibrary.Providers
         
         public Project[] Projects { get; set; }
 
+        private Dictionary<int,HashSet<ExtractableCohort>> _cohortsByOriginId;
         public ExtractableCohort[] Cohorts { get; private set; }
 
         public ExtractionConfiguration[] ExtractionConfigurations { get; private set; }
@@ -144,7 +146,16 @@ namespace DataExportLibrary.Providers
             _dataExportFilterManager = dbRepo == null ? dataExportRepository.FilterManager : new DataExportFilterManagerFromChildProvider(dbRepo, this);
 
             Cohorts = GetAllObjects<ExtractableCohort>(dataExportRepository);
-            
+            _cohortsByOriginId = new Dictionary<int,HashSet<ExtractableCohort>>();
+
+            foreach (ExtractableCohort c in Cohorts)
+            {
+                if(!_cohortsByOriginId.ContainsKey(c.OriginID))
+                    _cohortsByOriginId.Add(c.OriginID,new HashSet<ExtractableCohort>());
+
+                _cohortsByOriginId[c.OriginID].Add(c);
+            }
+
             _configurationToDatasetMapping = new Dictionary<ExtractionConfiguration, SelectedDataSets[]>();
 
             GetCohortAvailability();
@@ -408,17 +419,19 @@ namespace DataExportLibrary.Providers
 
         private void GetCohortAvailability()
         {
-            foreach (ExternalCohortTable source in CohortSources.Except(BlackListedSources))
-            {
-                DiscoveredServer server = null;
+            Parallel.ForEach(CohortSources.Except(BlackListedSources), GetCohortAvailability);
+        }
+
+        private void GetCohortAvailability(ExternalCohortTable source)
+        {
+            DiscoveredServer server = null;
 
                 Exception ex = null;
 
                 //it obviously hasn't been initialised properly yet
                 if (string.IsNullOrWhiteSpace(source.Server) || string.IsNullOrWhiteSpace(source.Database))
-                    continue;
-
-
+                    return;
+            
                 try
                 {
                     server = DataAccessPortal.GetInstance().ExpectDatabase(source, DataAccessContext.DataExport).Server;
@@ -431,7 +444,7 @@ namespace DataExportLibrary.Providers
                 if (server == null || !server.RespondsWithinTime(3, out ex) || !source.IsFullyPopulated())
                 {
                     Blacklist(source,ex);
-                    continue;
+                    return;
                 }
 
                 try
@@ -448,25 +461,23 @@ namespace DataExportLibrary.Providers
                         while (r.Read())
                         {
                             //really should be only one here but still they might for some reason have 2 references to the same external cohort
-                            var cohorts = Cohorts.Where(
-                                c => c.OriginID == Convert.ToInt32(r["OriginID"]) && c.ExternalCohortTable_ID == source.ID)
-                                .ToArray();
+                            
+                            if(_cohortsByOriginId.ContainsKey((int)r["OriginID"]))
+                                //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
+                                foreach (ExtractableCohort c in _cohortsByOriginId[(int)r["OriginID"]].Where(c=> c.ExternalCohortTable_ID == source.ID))
+                                {
+                                    //load external data from the result set
+                                    var externalData = new ExternalCohortDefinitionData(r, source.Name);
 
-                            //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
-                            foreach (ExtractableCohort c in cohorts)
-                            {
-                                //load external data from the result set
-                                var externalData = new ExternalCohortDefinitionData(r, source.Name);
+                                    //tell the cohort about the data
+                                    c.InjectKnown(externalData);
 
-                                //tell the cohort about the data
-                                c.InjectKnown(externalData);
+                                    //for performance also keep a dictionary of project number => compatible cohorts
+                                    if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
+                                        ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
 
-                                //for performance also keep a dictionary of project number => compatible cohorts
-                                if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
-                                    ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
-
-                                ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
-                            }
+                                    ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
+                                }
                         }
                     }
                 }
@@ -474,7 +485,6 @@ namespace DataExportLibrary.Providers
                 {
                     Blacklist(source,e);
                 }
-            }
         }
 
         private void Blacklist(ExternalCohortTable source,Exception ex)

@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Providers;
 using CatalogueLibrary.Reports;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -334,7 +335,6 @@ namespace ResearchDataManagementPlatform.Menus
         {
             var settings = new UserSettingsFileUI();
             settings.Show();
-
         }
 
         private void licenseToolStripMenuItem_Click(object sender, EventArgs e)

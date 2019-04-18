@@ -206,6 +206,9 @@ namespace CatalogueManager.Collections
             Tree.FormatRow += Tree_FormatRow;
             Tree.CellToolTipGetter += Tree_CellToolTipGetter;
 
+            if (Tree.PrimarySortColumn == null)
+                Tree.PrimarySortColumn = Tree.AllColumns.FirstOrDefault(c => c.IsVisible);
+
             //persist user sort orders
             if (TreeGuids.ContainsKey(_collection))
             {

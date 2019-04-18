@@ -4,9 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueManager.Collections
@@ -29,6 +31,12 @@ namespace CatalogueManager.Collections
 
         public int Compare(object x, object y)
         {
+            var xCatalogue = x as Catalogue;
+            var yCatalogue = y as Catalogue;
+
+            if (xCatalogue != null && yCatalogue != null)
+                return String.Compare(xCatalogue.Name, yCatalogue.Name, StringComparison.CurrentCultureIgnoreCase);
+
             var explicitOrderX = GetExplicitOrder(x);
             var explicitOrderY = GetExplicitOrder(y);
 
