@@ -734,7 +734,30 @@ namespace CatalogueLibrary.Providers
             var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
             var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
             var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
+
+            //get all the CatalogueItems for this Catalogue
+            var cis = _catalogueToCatalogueItems[c].ToArray();
+
+            //tell the CatalogueItems that we are are their parent
+            foreach (CatalogueItem ci in cis)
+                ci.InjectKnown(c);
             
+            //add a new CatalogueItemNode (can be empty)
+            var catalogueItemsNode = new CatalogueItemsNode(c, cis);
+
+            //if there are at least 1 catalogue items inject them into Catalogue and add a recording that the CatalogueItemsNode has these children (otherwise node has no children)
+            if (cis.Any())
+            {
+                c.InjectKnown(cis);
+
+                var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
+                AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
+
+                foreach (CatalogueItem ci in cis)
+                    AddChildren(ci,ciNodeDescendancy.Add(ci));
+                
+            }
+
             //do we have any foreign key fields into this lookup table
             var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
             
@@ -791,28 +814,9 @@ namespace CatalogueLibrary.Providers
                     AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
             }
             
-            var cis = _catalogueToCatalogueItems[c].ToArray();
-
-            //tell the CatalogueItems that we are are their parent
-            foreach (CatalogueItem ci in cis)
-                ci.InjectKnown(c);
-
-            //add a new CatalogueItemNode (can be empty)
-            var catalogueItemsNode = new CatalogueItemsNode(c, cis);
             childObjects.Add(catalogueItemsNode);
 
-            //if there are at least 1 catalogue items inject them into Catalogue and add a recording that the CatalogueItemsNode has these children (otherwise node has no children)
-            if (cis.Any())
-            {
-                c.InjectKnown(cis);
-
-                var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
-                AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
-
-                foreach (CatalogueItem ci in cis)
-                    AddChildren(ci,ciNodeDescendancy.Add(ci));
-                
-            }
+            
             //finalise
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
         }
