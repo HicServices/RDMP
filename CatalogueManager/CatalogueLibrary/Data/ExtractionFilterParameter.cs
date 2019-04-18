@@ -25,13 +25,9 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>See the description of ExtractionFilter to see how filters are cloned and adjusted depending on usage context</para>
     /// </summary>
-    public class ExtractionFilterParameter : VersionedDatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
+    public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
     {
         #region Database Properties
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ParameterSQL_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Value_MaxLength = -1;
 
         private string _value;
         private string _comment;

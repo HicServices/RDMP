@@ -34,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Runs the data quality engine on the dataset using the currently configured validation rules and stores the results in the default DQE results database";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Execute);
         }
@@ -48,7 +48,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            Activator.Activate<DQEExecutionControl, Catalogue>(_catalogue);
+            Activator.Activate<DQEExecutionControlUI, Catalogue>(_catalogue);
         }
 
         public override string GetCommandName()

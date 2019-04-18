@@ -11,6 +11,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using LoadModules.Generic.DataFlowOperations.Aliases;
 using LoadModules.Generic.DataFlowOperations.Aliases.Exceptions;
@@ -183,14 +184,16 @@ False - Drop the row from the DataTable (and issue a warning)",DefaultValue=true
 
         private string GetMappingTableSql()
         {
+            var repo = new MemoryCatalogueRepository();
+
             var qb = new QueryBuilder("DISTINCT", null, null);
-            qb.AddColumn(new ColumnInfoToIColumn(MappingFromColumn));
-            qb.AddColumn(new ColumnInfoToIColumn(MappingToColumn));
+            qb.AddColumn(new ColumnInfoToIColumn(repo,MappingFromColumn));
+            qb.AddColumn(new ColumnInfoToIColumn(repo,MappingToColumn));
 
             if (!string.IsNullOrWhiteSpace(WHERELogic))
             {
-                var container = new SpontaneouslyInventedFilterContainer(null, null, FilterContainerOperation.AND);
-                var filter = new SpontaneouslyInventedFilter(container, WHERELogic, "WHERELogic", null, null);
+                var container = new SpontaneouslyInventedFilterContainer(repo,null, null, FilterContainerOperation.AND);
+                var filter = new SpontaneouslyInventedFilter(repo,container, WHERELogic, "WHERELogic", null, null);
                 container.AddChild(filter);
 
                 qb.RootFilterContainer = container;

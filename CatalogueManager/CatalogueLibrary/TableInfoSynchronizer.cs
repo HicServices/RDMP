@@ -26,7 +26,7 @@ namespace CatalogueLibrary
     {
         private readonly TableInfo _tableToSync;
         private DiscoveredServer _toSyncTo;
-        private CatalogueRepository _repository;
+        private ICatalogueRepository _repository;
 
         public HashSet<Catalogue> ChangedCatalogues  = new HashSet<Catalogue>();
 
@@ -38,7 +38,7 @@ namespace CatalogueLibrary
         public TableInfoSynchronizer(TableInfo tableToSync)
         {
             _tableToSync = tableToSync;
-            _repository = (CatalogueRepository)_tableToSync.Repository;
+            _repository = _tableToSync.CatalogueRepository;
 
             _toSyncTo = DataAccessPortal.GetInstance().ExpectServer(tableToSync, DataAccessContext.InternalDataProcessing);
         }

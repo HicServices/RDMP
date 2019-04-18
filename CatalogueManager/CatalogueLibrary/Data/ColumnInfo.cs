@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
@@ -36,25 +37,9 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
+    public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
     {
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Data_type_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Format_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Digitisation_specs_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Source_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int RegexPattern_MaxLength;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ValidationRules_MaxLength;
-
+        
         #region Database Properties
 
         private int _tableInfoID;
@@ -298,6 +283,9 @@ namespace CatalogueLibrary.Data
         /// <param name="parent"></param>
         public ColumnInfo(ICatalogueRepository repository, string name, string type, TableInfo parent)
         {
+            //defaults
+            DuplicateRecordResolutionIsAscending = true;
+
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"Name", name != null ? (object) name : DBNull.Value},
@@ -487,7 +475,7 @@ namespace CatalogueLibrary.Data
 
             //also join infoslookups are dependent on us
             dependantObjects.AddRange(
-                ((CatalogueRepository) Repository).JoinInfoFinder.GetAllJoinInfos().Where(j =>
+                Repository.GetAllObjects<JoinInfo>().Where(j =>
                 j.ForeignKey_ID == ID ||
                 j.PrimaryKey_ID == ID));
 
@@ -521,22 +509,14 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         public Lookup[] GetAllLookupForColumnInfoWhereItIsA(LookupType type)
         {
-            string sql;
             if (type == LookupType.Description)
-                sql = "SELECT * FROM Lookup WHERE Description_ID=" + ID;
-            else if (type == LookupType.AnyKey)
-                sql = "SELECT * FROM Lookup WHERE ForeignKey_ID=" + ID + " OR PrimaryKey_ID=" + ID;
-            else if (type == LookupType.ForeignKey)
-                sql = "SELECT * FROM Lookup WHERE ForeignKey_ID=" + ID;
-            else
-                throw new NotImplementedException("Unrecognised LookupType " + type);
-
-            var lookups = Repository.SelectAll<Lookup>(sql, "ID").ToArray();
-
-            if (lookups.Select(l => l.PrimaryKey_ID).Distinct().Count() > 1 && type == LookupType.ForeignKey)
-                throw new Exception("Column " + this + " is configured as a foreign key to more than 1 primary key (only 1 is allowed), the Lookups are:" + string.Join(",", lookups.Select(l => l.PrimaryKey)));
-
-            return lookups.ToArray();
+                return Repository.GetAllObjectsWhere<Lookup>("Description_ID", ID);
+            if (type == LookupType.AnyKey)
+                return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID,ExpressionType.OrElse,"PrimaryKey_ID",ID);      
+            if (type == LookupType.ForeignKey)
+                return Repository.GetAllObjectsWhere<Lookup>("ForeignKey_ID", ID);
+            
+            throw new NotImplementedException("Unrecognised LookupType " + type);
         }
 
         ///<inheritdoc/>
@@ -549,6 +529,26 @@ namespace CatalogueLibrary.Data
         public void ClearAllInjections()
         {
             _knownTableInfo = new Lazy<TableInfo>(() => Repository.GetObjectByID<TableInfo>(TableInfo_ID));
+        }
+
+        /// <summary>
+        /// Returns true if the Data_type is numerical (decimal or int) according to the DBMS it resides in.  Returns
+        /// false if the the Data_type is not found to be numerical or if the datatype is unknown, missing or anything 
+        /// else goes wrong resolving the Type.
+        /// </summary>
+        /// <returns></returns>
+        public bool IsNumerical()
+        {
+            try
+            {
+                //is it numerical?
+                var cSharpType = GetQuerySyntaxHelper().TypeTranslater.GetCSharpTypeForSQLDBType(Data_type);
+                return (cSharpType == typeof (decimal) || cSharpType == typeof (int));
+            }
+            catch (Exception)
+            {
+                return false;
+            }
         }
     }
 }

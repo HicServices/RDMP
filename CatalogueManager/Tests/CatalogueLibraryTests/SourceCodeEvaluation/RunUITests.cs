@@ -26,7 +26,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             = new List<Type>(new[]
             {
                 typeof(ExecuteCommandExportObjectsToFileUI),
-                typeof(ExecuteCommandRunChecksInPopupWindow),
                 typeof(ExecuteCommandShow),
                 typeof(ExecuteCommandSetDataAccessContextForCredentials),
                 typeof(ExecuteCommandActivate),
@@ -57,6 +56,27 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandRunDetached),
                 
                 typeof(ExecuteCommandShowXmlDoc),
+
+     
+typeof(ExecuteCommandChangeLoadStage),
+typeof(ExecuteCommandReOrderProcessTask),
+typeof(ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer),
+typeof(ExecuteCommandAddCatalogueToCohortIdentificationSetContainer),
+typeof(ExecuteCommandAddCohortToExtractionConfiguration),
+typeof(ExecuteCommandAddDatasetsToConfiguration),
+typeof(ExecuteCommandConvertAggregateConfigurationToPatientIndexTable),
+typeof(ExecuteCommandImportNewCopyOfFilterIntoContainer),
+typeof(ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain),
+typeof(ExecuteCommandMoveAggregateIntoContainer),
+typeof(ExecuteCommandMoveCohortAggregateContainerIntoSubContainer),
+typeof(ExecuteCommandMoveContainerIntoContainer),
+typeof(ExecuteCommandMoveFilterIntoContainer),
+typeof(ExecuteCommandPutCatalogueIntoCatalogueFolder),
+typeof(ExecuteCommandReOrderAggregate),
+typeof(ExecuteCommandReOrderAggregateContainer),
+typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
+
+
 
             });
 

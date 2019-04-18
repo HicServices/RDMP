@@ -69,10 +69,9 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
         {
             base.SetDatabaseObject(activator, databaseObject);
             
-            AddChecks(databaseObject);
-            StartChecking();
-
-            AddToMenu(new SetDumpServerMenuItem(_activator, databaseObject.TableInfo));
+            CommonFunctionality.AddChecks(databaseObject);
+            CommonFunctionality.StartChecking();
+            CommonFunctionality.AddToMenu(new SetDumpServerMenuItem(Activator, databaseObject.TableInfo));
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, PreLoadDiscardedColumn databaseObject)

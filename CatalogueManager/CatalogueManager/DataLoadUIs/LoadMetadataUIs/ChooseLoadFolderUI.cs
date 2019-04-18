@@ -41,7 +41,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
         {
             InitializeComponent();
             
-            var help = ((CatalogueRepository)loadMetadata.Repository).CommentStore.GetDocumentationIfExists("ILoadMetadata.LocationOfFlatFiles",false,true);
+            var help = loadMetadata.CatalogueRepository.CommentStore.GetDocumentationIfExists("ILoadMetadata.LocationOfFlatFiles",false,true);
             
             helpIcon1.SetHelpText("Location Of Flat Files",help);
         }

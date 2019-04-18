@@ -57,7 +57,7 @@ namespace CatalogueManager.MainFormUITabs
                             file.Delete();
                 }
 
-                DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(RepositoryLocator.CatalogueRepository,outputPath);
+                DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, outputPath);
                 extractor.Extract(progressBarsUI1);
             }
             catch (Exception ex)
@@ -82,7 +82,7 @@ namespace CatalogueManager.MainFormUITabs
         {
             var popup = new PopupChecksUI("Checking Dita extraction",false);
 
-            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(RepositoryLocator.CatalogueRepository,null);
+            DitaCatalogueExtractor extractor = new DitaCatalogueExtractor(Activator.RepositoryLocator.CatalogueRepository, null);
             popup.StartChecking(extractor);
         }
     }

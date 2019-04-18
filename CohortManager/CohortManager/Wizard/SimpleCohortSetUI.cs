@@ -6,22 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.Providers;
 using CatalogueManager.CommandExecution;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
 using CatalogueManager.Copying.Commands;
 
 namespace CohortManager.Wizard
@@ -50,7 +45,6 @@ namespace CohortManager.Wizard
             _linkImage = FamFamFamIcons.link;
             _unlinkImage = FamFamFamIcons.link_break;
 
-            cbxCatalogues.PropertySelector = collection => collection.Cast<Catalogue>().Select(c => c.Name);
             cbxColumns.PropertySelector = collection => collection.Cast<ExtractionInformation>().Select(i => i.ToString());
 
             btnLockExtractionIdentifier.Image = _linkImage;
@@ -62,7 +56,7 @@ namespace CohortManager.Wizard
         public void SetupFor(IActivateItems activator)
         {
             _activator = activator;
-            cbxCatalogues.DataSource = activator.CoreChildProvider.AllCatalogues;
+            cbxCatalogues.SetUp(activator.CoreChildProvider.AllCatalogues);
             pbCatalogue.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue);
             pbExtractionIdentifier.Image = activator.CoreIconProvider.GetImage(RDMPConcept.ExtractionInformation);
             pbFilters.Image = activator.CoreIconProvider.GetImage(RDMPConcept.Filter);
@@ -128,7 +122,7 @@ namespace CohortManager.Wizard
                 UnlockIdentifier(null);
             }
 
-            var allFilters = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExtractionFilter>("WHERE ExtractionInformation_ID IN (" + string.Join(",", allColumns.Select(c => c.ID.ToString())) + ")");
+            var allFilters = allColumns.SelectMany(c => c.ExtractionFilters).ToArray();
             ddAvailableFilters.DataSource = allFilters;
 
             _lastCatalogue = cata;
@@ -222,7 +216,7 @@ namespace CohortManager.Wizard
 
         public void Clear()
         {
-            cbxCatalogues.DataSource = null;
+            cbxCatalogues.SelectedItem = null;
         }
 
         public void CreateCohortSet(CohortIdentificationConfiguration cic, CohortAggregateContainer targetContainer, int order)

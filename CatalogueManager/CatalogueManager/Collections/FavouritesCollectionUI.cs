@@ -38,8 +38,8 @@ namespace CatalogueManager.Collections
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
-            CommonFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,_activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings {AllowPinning = false});
-            CommonFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
+            CommonTreeFunctionality.SetUp(RDMPCollection.Favourites,tlvFavourites,_activator,olvName,olvName,new RDMPCollectionCommonFunctionalitySettings {AllowPinning = false});
+            CommonTreeFunctionality.AxeChildren = new Type[] { typeof(CohortIdentificationConfiguration) };
 
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             

@@ -355,6 +355,8 @@ namespace DataLoadEngine.DataFlowPipeline.Destinations
             {
                 _loggingDatabaseSettings = DataAccessPortal.GetInstance().ExpectServer(LoggingServer, DataAccessContext.Logging);
                 var logManager = new LogManager(_loggingDatabaseSettings);
+                logManager.CreateNewLoggingTaskIfNotExists("Internal");
+
                 _dataLoadInfo = (DataLoadInfo) logManager.CreateDataLoadInfo("Internal", GetType().Name, "Loading table " + tableName, "", false);
                 _loggingDatabaseListener = new ToLoggingDatabaseDataLoadEventListener(logManager, _dataLoadInfo);
             }

@@ -23,7 +23,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _loadMetadata = loadMetadata;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.LoadMetadata,OverlayKind.Edit);
         }

@@ -43,7 +43,7 @@ namespace CatalogueManager.SimpleDialogs
             this.ddExternalServers = new System.Windows.Forms.ComboBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.tcTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.tcTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -223,7 +223,7 @@ namespace CatalogueManager.SimpleDialogs
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.CheckBox cbGlobal;
         private System.Windows.Forms.ComboBox ddExternalServers;
-        private TicketingControl tcTicket;
+        private TicketingControlUI tcTicket;
         
         private System.Windows.Forms.Button btnAdd;
         private System.Windows.Forms.Panel panel1;

@@ -10,14 +10,14 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class ExtractableDataSet : VersionedDatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
+    public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
     {
         #region Database Properties
         private int _catalogue_ID;
@@ -61,14 +61,10 @@ namespace DataExportLibrary.Data.DataTables
         {
             get
             {
-                return Repository.SelectAllWhere<ExtractionConfiguration>(
-                    "SELECT * FROM SelectedDataSets WHERE ExtractableDataSet_ID = @ExtractableDataSet_ID",
-                    "ExtractionConfiguration_ID", new Dictionary<string, object>
-                    {
-                        {"ExtractableDataSet_ID", ID}
-                    })
-                    .Cast<IExtractionConfiguration>()
-                    .ToArray();
+                return
+                    Repository.GetAllObjectsWithParent<SelectedDataSets>(this)
+                        .Select(sds => sds.ExtractionConfiguration)
+                        .ToArray();
             }
         }
 
@@ -81,7 +77,7 @@ namespace DataExportLibrary.Data.DataTables
         /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
         /// </summary>
         /// <returns></returns>
-        public ExtractableDataSet(IDataExportRepository repository, Catalogue catalogue, int disableExtraction = 0)
+        public ExtractableDataSet(IDataExportRepository repository, Catalogue catalogue, bool disableExtraction =false)
         {
             Repository = repository;
             Repository.InsertAndHydrate(this, new Dictionary<string, object>

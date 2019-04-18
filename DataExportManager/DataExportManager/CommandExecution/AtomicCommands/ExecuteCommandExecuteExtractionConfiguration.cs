@@ -47,7 +47,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return "Extract all the datasets in the configuration linking each against the configuration's cohort";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration,OverlayKind.Execute);
         }

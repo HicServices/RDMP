@@ -87,7 +87,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
             return null;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return FamFamFamIcons.page_white_get;
         }

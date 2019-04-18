@@ -46,43 +46,38 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
             var server = SelectOne(_loggingServers);
 
-            LoggingTab loggingTab = null;
+            LoggingTabUI loggingTabUI = null;
 
             if(server != null)
                 switch (_target)
                 {
                     case LoggingTables.DataLoadTask:
-                        loggingTab = Activator.Activate<LoggingTasksTab, ExternalDatabaseServer>(server);
+                        loggingTabUI = Activator.Activate<LoggingTasksTabUI, ExternalDatabaseServer>(server);
                         break;
                     case LoggingTables.DataLoadRun:
-                        loggingTab = Activator.Activate<LoggingRunsTab, ExternalDatabaseServer>(server);
+                        loggingTabUI = Activator.Activate<LoggingRunsTabUI, ExternalDatabaseServer>(server);
                         break;
                     case LoggingTables.ProgressLog:
-                        loggingTab = Activator.Activate<LoggingProgressMessagesTab, ExternalDatabaseServer>(server);
+                        loggingTabUI = Activator.Activate<LoggingProgressMessagesTabUI, ExternalDatabaseServer>(server);
                         break;
                     case LoggingTables.FatalError:
-                        loggingTab = Activator.Activate<LoggingFatalErrorsTab, ExternalDatabaseServer>(server);
+                        loggingTabUI = Activator.Activate<LoggingFatalErrorsTabUI, ExternalDatabaseServer>(server);
                         break;
                     case LoggingTables.TableLoadRun:
-                        loggingTab = Activator.Activate<LoggingTableLoadsTab, ExternalDatabaseServer>(server);
+                        loggingTabUI = Activator.Activate<LoggingTableLoadsTabUI, ExternalDatabaseServer>(server);
                         break;
                     case LoggingTables.DataSource:
-                        loggingTab = Activator.Activate<LoggingDataSourcesTab, ExternalDatabaseServer>(server);
+                        loggingTabUI = Activator.Activate<LoggingDataSourcesTabUI, ExternalDatabaseServer>(server);
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
                 }
-            loggingTab.SetFilter(_filter);
+            loggingTabUI.SetFilter(_filter);
         }
 
         public override string GetCommandName()
         {
             return UsefulStuff.PascalCaseStringToHumanReadable(_target.ToString());
-        }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
         }
     }
 }

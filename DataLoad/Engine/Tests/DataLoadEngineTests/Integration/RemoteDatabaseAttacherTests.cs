@@ -10,6 +10,7 @@ using System.Data;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using FAnsi;
@@ -65,7 +66,7 @@ namespace DataLoadEngineTests.Integration
             job.Stub(p => p.RegularTablesToLoad).Return(new List<ITableInfo> {ti});
             job.Stub(p => p.LookupTablesToLoad).Return(new List<ITableInfo>());
             
-            var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
+            var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
             lm.CreateNewLoggingTaskIfNotExists("amagad");
             var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 

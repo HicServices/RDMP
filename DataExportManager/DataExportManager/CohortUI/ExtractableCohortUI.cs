@@ -9,12 +9,12 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using CatalogueManager.Copying;
 using DataExportLibrary.Providers;
@@ -139,7 +139,7 @@ namespace DataExportManager.CohortUI
 
             GenerateSQLPreview();
             
-            var dx = _activator.CoreChildProvider as DataExportChildProvider;
+            var dx = Activator.CoreChildProvider as DataExportChildProvider;
 
             if (!_commonFunctionality1.IsSetup)
             {
@@ -212,19 +212,19 @@ namespace DataExportManager.CohortUI
 
         private void btnShowProject_Click(object sender, EventArgs e)
         {
-            var dx = (DataExportChildProvider) _activator.CoreChildProvider;
+            var dx = (DataExportChildProvider) Activator.CoreChildProvider;
 
             var projects = dx.Projects.Where(p => p.ProjectNumber == _extractableCohort.ExternalProjectNumber).ToArray();
 
             if (!projects.Any())
                 MessageBox.Show("No Projects exist with ProjectNumber " + _extractableCohort.ExternalProjectNumber);
             else if (projects.Length == 1)
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
+                Activator.RequestItemEmphasis(this, new EmphasiseRequest(projects.Single(), 1));
             else
             {
                 SelectIMapsDirectlyToDatabaseTableDialog dialog = new SelectIMapsDirectlyToDatabaseTableDialog(projects,false,false);
                 if(dialog.ShowDialog() == DialogResult.OK)
-                    _activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
+                    Activator.RequestItemEmphasis(this, new EmphasiseRequest(dialog.Selected, 1));
             }
         }
 

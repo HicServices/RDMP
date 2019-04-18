@@ -26,7 +26,7 @@ namespace CatalogueLibrary.Reports
     /// containing comments, object type name and corresponding icon within RDMP.  This allows the user to see what a Project is and the icon what an ExtractionConfiguration
     /// is etc and for those descriptions/icons to always match 100% the live/installed version of RDMP.
     /// </summary>
-    public class DocumentationReportMapsDirectlyToDatabaseOfficeBit : RequiresMicrosoftOffice
+    public class DocumentationReportMapsDirectlyToDatabaseOfficeBit : DocXHelper
     {
         private DocumentationReportMapsDirectlyToDatabase _report;
 

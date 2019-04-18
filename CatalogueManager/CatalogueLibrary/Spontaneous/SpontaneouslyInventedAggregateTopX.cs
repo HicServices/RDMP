@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CatalogueLibrary.Data;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -29,7 +30,7 @@ namespace CatalogueLibrary.Spontaneous
         /// <param name="topX"></param>
         /// <param name="orderByDirection"></param>
         /// <param name="orderByColumn"></param>
-        public SpontaneouslyInventedAggregateTopX(int topX, AggregateTopXOrderByDirection orderByDirection, IColumn orderByColumn)
+        public SpontaneouslyInventedAggregateTopX(MemoryRepository repo,int topX, AggregateTopXOrderByDirection orderByDirection, IColumn orderByColumn):base(repo)
         {
             TopX = topX;
             OrderByDirection = orderByDirection;

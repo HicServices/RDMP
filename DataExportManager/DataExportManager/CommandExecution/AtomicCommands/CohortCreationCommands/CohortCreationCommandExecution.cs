@@ -10,6 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.CohortCreationPipeline;
@@ -53,9 +54,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
             //and document the request
 
             //Get a new request for the source they are trying to populate
-            CohortCreationRequestUI requestUI = new CohortCreationRequestUI(ExternalCohortTable, Project);
-            requestUI.RepositoryLocator = Activator.RepositoryLocator;
-            requestUI.Activator = Activator;
+            CohortCreationRequestUI requestUI = new CohortCreationRequestUI(Activator,ExternalCohortTable, Project);
 
             if(!string.IsNullOrWhiteSpace(cohortInitialDescription))
                 requestUI.CohortDescription = cohortInitialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
@@ -81,17 +80,17 @@ namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationComman
         }
 
 
-        protected ConfigureAndExecutePipeline GetConfigureAndExecuteControl(CohortCreationRequest request, string description)
+        protected ConfigureAndExecutePipelineUI GetConfigureAndExecuteControl(CohortCreationRequest request, string description)
         {
             var catalogueRepository = Activator.RepositoryLocator.CatalogueRepository;
             
-            ConfigureAndExecutePipeline configureAndExecuteDialog = new ConfigureAndExecutePipeline(request,Activator);
+            ConfigureAndExecutePipelineUI configureAndExecuteDialog = new ConfigureAndExecutePipelineUI(request,Activator);
             configureAndExecuteDialog.Dock = DockStyle.Fill;
             
             configureAndExecuteDialog.PipelineExecutionFinishedsuccessfully += (o, args) => OnCohortCreatedSuccessfully(configureAndExecuteDialog, request);
 
             //add in the logging server
-            var loggingServer = new ServerDefaults(catalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            var loggingServer = catalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
             if (loggingServer != null)
             {

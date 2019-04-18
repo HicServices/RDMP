@@ -21,9 +21,6 @@ namespace CohortManager.SubComponents
                 components.Dispose();
             }
 
-            if (_activator != null && _haveSubscribed)
-                _activator.RefreshBus.Unsubscribe(this);
-
             base.Dispose(disposing);
         }
 

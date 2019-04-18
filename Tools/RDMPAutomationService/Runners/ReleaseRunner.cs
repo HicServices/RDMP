@@ -18,7 +18,6 @@ using DataExportLibrary.DataRelease;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options;

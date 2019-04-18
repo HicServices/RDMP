@@ -55,7 +55,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             for (var i = 0; i < 7; ++i)
                 PopulatePeriodTextBoxForDay(textBoxes[i], i, periodsByDay);
 
-            AddHelp(tbMonday, "IPermissionWindow.PermissionWindowPeriods");
+            CommonFunctionality.AddHelp(tbMonday, "IPermissionWindow.PermissionWindowPeriods");
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, PermissionWindow databaseObject)

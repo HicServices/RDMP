@@ -15,9 +15,10 @@ using System.Threading;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
@@ -200,7 +201,7 @@ namespace CatalogueLibraryTests.Integration.DataAccess
                 }
                 finally
                 {
-                    var linker = new TableInfoToCredentialsLinker(CatalogueRepository);
+                    var linker = new TableInfoCredentialsManager(CatalogueRepository);
                     linker.BreakAllLinksBetween(creds, t);
                     creds.DeleteInDatabase();
                 }

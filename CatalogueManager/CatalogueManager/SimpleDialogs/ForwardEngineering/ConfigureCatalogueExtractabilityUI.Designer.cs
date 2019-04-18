@@ -402,7 +402,7 @@
             this.ClientSize = new System.Drawing.Size(819, 568);
             this.Controls.Add(this.panel1);
             this.Name = "ConfigureCatalogueExtractabilityUI";
-            this.Text = "ConfigureCatalogueExtractabilityUI";
+            this.Text = "Configure Extractability";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfigureCatalogueExtractabilityUI_FormClosing);
             this.Load += new System.EventHandler(this.ConfigureCatalogueExtractabilityUI_Load);
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).EndInit();

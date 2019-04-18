@@ -74,7 +74,7 @@
             this.Controls.Add(this.button2);
             this.Controls.Add(this.button1);
             this.Name = "SetSQLDialog";
-            this.Text = "SetSQLDialog";
+            this.Text = "Set SQL";
             this.ResumeLayout(false);
 
         }

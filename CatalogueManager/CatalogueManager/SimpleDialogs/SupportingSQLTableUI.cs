@@ -9,6 +9,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
@@ -84,8 +85,8 @@ namespace CatalogueManager.SimpleDialogs
 
             _bLoading = false;
 
-            AddHelp(cbExtractable, "SupportingSQLTable.Extractable");
-            AddHelp(cbGlobal,"SupportingSqlTable.IsGlobal");
+            CommonFunctionality.AddHelp(cbExtractable, "SupportingSQLTable.Extractable");
+            CommonFunctionality.AddHelp(cbGlobal, "SupportingSqlTable.IsGlobal");
 
             RefreshUIFromDatabase();
         }
@@ -100,6 +101,13 @@ namespace CatalogueManager.SimpleDialogs
             Bind(cbExtractable,"Checked","Extractable",s=>s.Extractable);
             Bind(cbGlobal,"Checked","IsGlobal",s=>s.IsGlobal);
         }
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            tcTicket.SetItemActivator(activator);
+        }
+
 
         private void RefreshUIFromDatabase()
         {
@@ -171,7 +179,7 @@ namespace CatalogueManager.SimpleDialogs
         
         private void btnAdd_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, null, ServerDefaults.PermissableDefaults.None);
+            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(Activator, null, PermissableDefaults.None);
             cmd.Execute();
             RefreshUIFromDatabase();
         }

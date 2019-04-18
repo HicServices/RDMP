@@ -24,7 +24,7 @@ namespace CatalogueManager.SimpleControls
     /// and call SetupFor on the DatabaseObject.  You should also mark your control as ISaveableUI and implement the single method on that interface so that shortcuts
     /// are correctly routed to this control.
     /// </summary>
-    public partial class ObjectSaverButton : IRefreshBusSubscriber
+    public partial class ObjectSaverButton
     {
         private Bitmap _undoImage;
         private Bitmap _redoImage;
@@ -56,30 +56,38 @@ namespace CatalogueManager.SimpleControls
         private bool _isEnabled;
         private bool _undo = true;
         
-        public void SetupFor(RDMPUserControl control, DatabaseEntity o, RefreshBus refreshBus)
+        public void SetupFor(IRDMPControl control, DatabaseEntity o, RefreshBus refreshBus)
         {
-            control.Add(btnSave);
-            control.Add(btnUndoRedo);
+            control.CommonFunctionality.Add(btnSave);
+            control.CommonFunctionality.Add(btnUndoRedo);
+            
+            Form f = control as Form ?? ((Control)control).FindForm();
 
-            if (control.ParentForm == null)
+            if (f == null)
                 throw new NotSupportedException("Cannot call SetupFor before the control has been added to it's parent form");
 
             _parent = control;
 
             Enable(false);
 
+            //if it is a fresh instance
+            if(!ReferenceEquals(_o,o))
+            {
+                //subscribe to property change events
+                if(_o != null)
+                    _o.PropertyChanged -= PropertyChanged;
+                _o = o;
+                _o.PropertyChanged += PropertyChanged;
+            }
+            
             //already set up before
-            if(_o != null)
+            if (_refreshBus != null)
                 return;
 
-            _o = o;
             _refreshBus = refreshBus;
-            _refreshBus.Subscribe(this);
             
-            o.PropertyChanged += PropertyChanged;
-
-            control.ParentForm.Enter += ParentForm_Enter;
-            control.ParentForm.Leave += ParentFormOnLeave;
+            f.Enter += ParentForm_Enter;
+            f.Leave += ParentFormOnLeave;
             
             //the first time it is set up it could still be out of date!
             CheckForOutOfDateObjectAndOfferToFix();
@@ -102,9 +110,10 @@ namespace CatalogueManager.SimpleControls
 
         public void Enable(bool b)
         {
-            if (_parent.InvokeRequired)
+            var c = (Control)_parent;
+            if (c.InvokeRequired)
             {
-                _parent.Invoke(new MethodInvoker(() => Enable(b)));
+               c.Invoke(new MethodInvoker(() => Enable(b)));
                 return;
             }
 
@@ -133,76 +142,53 @@ namespace CatalogueManager.SimpleControls
             if(AfterSave != null)
                 AfterSave();
         }
-
-        public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
-        {
-            //pick up new instances of the object from the database
-            if (e.Object.Equals(_o))
-            {
-                _o.PropertyChanged -= PropertyChanged;//unsubscribe from local property change events on stale object
-                _o = e.Object;  //record the new fresh object
-                _o.PropertyChanged += PropertyChanged;//and subscribe to it's events
-            }
-
-            //anytime any publish event ever fires (not just to our object)
-            CheckForLocalChanges();
-
-        }
-
-        private void CheckForLocalChanges()
-        {
-            
-            bool isDifferent = IsDifferent();
-            
-            btnSave.Enabled = isDifferent;
-            btnUndoRedo.Enabled = isDifferent;
-            
-            _isEnabled = isDifferent;
-        }
-
+        
         private void btnSave_Click(object sender, EventArgs e)
         {
             Save();
         }
 
         private RevertableObjectReport _undoneChanges;
-        private RDMPUserControl _parent;
+        private IRDMPControl _parent;
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {
-            if(_undo)
-            {
-                var changes = _o.HasLocalChanges();
-
-                //no changes anyway user must have made a change and then unapplyed it
-                if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
-                    return;
-
-                //reset to the database state
-                _o.RevertToDatabaseState();
-
-                //publish that the object has changed
-                _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-
-                //show the redo image
-                SetReadyToRedo(changes);
-
-                //publish probably disabled us
-                Enable(true);
-
-            }
+            if (_undo)
+                Undo();
             else
-            {
-                if(_undoneChanges != null && _undoneChanges.Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                {
-                    foreach (var difference in _undoneChanges.Differences)
-                        difference.Property.SetValue(_o, difference.LocalValue);
+                Redo();
+        }
 
-                    _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
-                    
-                    SetReadyToUndo();
-                }
+        public void Redo()
+        {
+            if (_undoneChanges != null && _undoneChanges.Evaluation == ChangeDescription.DatabaseCopyDifferent)
+            {
+                foreach (var difference in _undoneChanges.Differences)
+                    difference.Property.SetValue(_o, difference.LocalValue);
+                
+                SetReadyToUndo();
             }
+        }
+
+        public void Undo()
+        {
+            var changes = _o.HasLocalChanges();
+
+            //no changes anyway user must have made a change and then unapplyed it
+            if (changes.Evaluation != ChangeDescription.DatabaseCopyDifferent)
+                return;
+
+            //reset to the database state
+            _o.RevertToDatabaseState();
+
+            //publish that the object has changed
+            _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+
+            //show the redo image
+            SetReadyToRedo(changes);
+
+            //publish probably disabled us
+            Enable(true);
         }
 
         private void SetReadyToRedo(RevertableObjectReport changes)

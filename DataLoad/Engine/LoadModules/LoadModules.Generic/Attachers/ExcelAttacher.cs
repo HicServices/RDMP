@@ -14,11 +14,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using DataLoadEngine.Job;
-using LoadModules.Generic.Checks;
 using LoadModules.Generic.DataFlowSources;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
 
 namespace LoadModules.Generic.Attachers
 {
@@ -176,12 +173,5 @@ namespace LoadModules.Generic.Attachers
                 colsInTarget.Except(colsInSource).ToList());
         }
 
-        public override void Check(ICheckNotifier notifier)
-        {
-            base.Check(notifier);
-
-            var excelChecks = new ExcelInstalledChecker();
-            excelChecks.Check(notifier);
-        }
     }
 }

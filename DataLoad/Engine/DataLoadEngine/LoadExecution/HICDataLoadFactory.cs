@@ -28,13 +28,13 @@ namespace DataLoadEngine.LoadExecution
     {
         private readonly HICDatabaseConfiguration _databaseConfiguration;
         private readonly HICLoadConfigurationFlags _loadConfigurationFlags;
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         private readonly ILogManager _logManager;
         private readonly IList<ICatalogue> _cataloguesToLoad;
 
         public ILoadMetadata LoadMetadata { get; private set; }
 
-        public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags, CatalogueRepository repository, ILogManager logManager)
+        public HICDataLoadFactory(ILoadMetadata loadMetadata, HICDatabaseConfiguration databaseConfiguration, HICLoadConfigurationFlags loadConfigurationFlags, ICatalogueRepository repository, ILogManager logManager)
         {
             _databaseConfiguration = databaseConfiguration;
             _loadConfigurationFlags = loadConfigurationFlags;

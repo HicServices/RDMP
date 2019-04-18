@@ -11,6 +11,6 @@ namespace CatalogueLibrary.Repositories
     /// </summary>
     public interface ICatalogueRepositoryServiceLocator
     {
-        CatalogueRepository CatalogueRepository { get; }
+        ICatalogueRepository CatalogueRepository { get; }
     }
 }

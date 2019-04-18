@@ -11,7 +11,6 @@ using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.NavigateTo;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -103,7 +102,7 @@ namespace DataExportManager.Collections
         {
             _activator = activator;
 
-            CommonFunctionality.SetUp(
+            CommonTreeFunctionality.SetUp(
                 RDMPCollection.DataExport, 
                 tlvDataExport,
                 _activator,
@@ -111,13 +110,13 @@ namespace DataExportManager.Collections
                 olvName
                 );
 
-            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter =(a)=> new IAtomicCommand[]
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter =(a)=> new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewDataExtractionProject(a),
                 new ExecuteCommandCreateNewExtractableDataSetPackage(a)
             };
             
-            CommonFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};
+            CommonTreeFunctionality.MaintainRootObjects = new Type[]{typeof(ExtractableDataSetPackage),typeof(Project)};
 
             var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
 

@@ -56,8 +56,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_encryptedPasswordHost.Password,value))
                     return;
 
+                var old = _encryptedPasswordHost.Password;
                 _encryptedPasswordHost.Password = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
         
@@ -116,7 +117,7 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         public Dictionary<DataAccessContext, List<TableInfo>> GetAllTableInfosThatUseThis()
         {
-            return ((CatalogueRepository)Repository).TableInfoToCredentialsLinker.GetAllTablesUsingCredentials(this);
+            return CatalogueRepository.TableInfoCredentialsManager.GetAllTablesUsingCredentials(this);
         }
 
         /// <inheritdoc/>

@@ -31,7 +31,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
     public class CreateNewCohortDatabaseWizard
     {
         public bool AllowNullReleaseIdentifiers { get; set; }
-        private readonly CatalogueRepository _catalogueRepository;
+        private readonly ICatalogueRepository _catalogueRepository;
         private readonly IDataExportRepository _dataExportRepository;
         private readonly DiscoveredDatabase _targetDatabase;
 
@@ -39,7 +39,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
         private string _definitionTableForeignKeyField = "cohortDefinition_id";
         
 
-        public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase,CatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository,bool allowNullReleaseIdentifiers)
+        public CreateNewCohortDatabaseWizard(DiscoveredDatabase targetDatabase,ICatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository,bool allowNullReleaseIdentifiers)
         {
             AllowNullReleaseIdentifiers = allowNullReleaseIdentifiers;
             _catalogueRepository = catalogueRepository;
@@ -109,7 +109,7 @@ namespace DataExportLibrary.CohortDatabaseWizard
 
                 
                 notifier.OnCheckPerformed(new CheckEventArgs("About to create pointer to the source", CheckResult.Success));
-                var pointer = new ExternalCohortTable(_dataExportRepository, "",_targetDatabase.Server.DatabaseType)
+                var pointer = new ExternalCohortTable(_dataExportRepository, "TestExternalCohort", _targetDatabase.Server.DatabaseType)
                 {
                     Server = _targetDatabase.Server.Name,
                     Database = _targetDatabase.GetRuntimeName(),

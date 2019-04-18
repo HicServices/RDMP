@@ -16,7 +16,7 @@ namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
     /// Generates a historic report of which user accounts have access to which databases by database (requires AccessRightsReportPrerequisites to have been run on 
     /// your database server an for the snapshotting stored proceedure to have been called at least once)
     /// </summary>
-    public class WordAccessRightsByDatabase:RequiresMicrosoftOffice
+    public class WordAccessRightsByDatabase:DocXHelper
     {
         private readonly string _database;
         

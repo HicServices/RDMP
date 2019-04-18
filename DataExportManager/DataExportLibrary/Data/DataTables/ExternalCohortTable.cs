@@ -13,8 +13,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data;
-using DataExportLibrary.Interfaces.Data.DataTables;
+
 using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Connections;
@@ -31,7 +30,7 @@ using ReusableLibraryCode.DataAccess;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class ExternalCohortTable : VersionedDatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
+    public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
     {
         #region Database Properties
         private string _name;
@@ -131,7 +130,7 @@ namespace DataExportLibrary.Data.DataTables
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name ?? "NewExternalSource" + Guid.NewGuid()},
-                {"DatabaseType",databaseType}
+                {"DatabaseType",databaseType.ToString()}
             });
         }
 
@@ -143,7 +142,6 @@ namespace DataExportLibrary.Data.DataTables
         internal ExternalCohortTable(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
-            SoftwareVersion = r["SoftwareVersion"].ToString();
             Name = r["Name"] as string;
             var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 
@@ -318,8 +316,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Password, value))
                     return;
 
-                SelfCertifyingDataAccessPoint.Password = value; 
-                OnPropertyChanged();
+                var old = SelfCertifyingDataAccessPoint.Password;
+                SelfCertifyingDataAccessPoint.Password = value;
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -338,8 +337,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Username, value))
                     return;
 
+                var old = SelfCertifyingDataAccessPoint.Username;
                 SelfCertifyingDataAccessPoint.Username = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -352,8 +352,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Server, value))
                     return;
 
+                var old = SelfCertifyingDataAccessPoint.Server;
                 SelfCertifyingDataAccessPoint.Server = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -366,8 +367,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.Database, value))
                     return;
 
-                SelfCertifyingDataAccessPoint.Database = value; 
-                OnPropertyChanged(); 
+                var old = SelfCertifyingDataAccessPoint.Database;
+                SelfCertifyingDataAccessPoint.Database = value;
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -380,8 +382,9 @@ namespace DataExportLibrary.Data.DataTables
                 if (Equals(SelfCertifyingDataAccessPoint.DatabaseType, value))
                     return;
 
+                var old = SelfCertifyingDataAccessPoint.DatabaseType;
                 SelfCertifyingDataAccessPoint.DatabaseType = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 

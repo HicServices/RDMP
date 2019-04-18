@@ -47,15 +47,19 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return _newContext.ToString();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override void Execute()
         {
             base.Execute();
-            Activator.RepositoryLocator.CatalogueRepository.TableInfoToCredentialsLinker.SetContextFor(_node, _newContext);
+
+            //don't bother if it is already at that context
+            if (_node.Context == _newContext)
+                return;
+
+            var linker = Activator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager;
+
+            linker.BreakLinkBetween(_node.Credentials, _node.TableInfo, _node.Context);
+            linker.CreateLinkBetween(_node.Credentials, _node.TableInfo, _newContext);
+
             Publish(_node.TableInfo);
         }
     }

@@ -11,7 +11,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
@@ -19,6 +19,7 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
+using DataExportLibrary.Repositories.Managers;
 using DataLoadEngine.DatabaseManagement.Operations;
 using Diagnostics.TestData;
 using FAnsi;
@@ -324,7 +325,7 @@ GO
         private bool CreateProjectAndExtractionConfiguration(ICheckNotifier notifier)
         {
             var repository = RepositoryLocator.DataExportRepository;
-            Project projectToCleanUp = repository.GetAllObjects<Project>("WHERE ProjectNumber = " + _projectNumber).SingleOrDefault();
+            Project projectToCleanUp = repository.GetAllObjectsWhere<Project>("ProjectNumber" , _projectNumber).SingleOrDefault();
 
             if(projectToCleanUp != null)
             {
@@ -332,7 +333,7 @@ GO
                 {
                     
                     //extractable dataset
-                    var toCleanupDataset = repository.GetAllObjects<ExtractableDataSet>("WHERE Catalogue_ID = " + _catalogue.ID).SingleOrDefault();
+                    var toCleanupDataset = repository.GetAllObjectsWhere<ExtractableDataSet>("Catalogue_ID", _catalogue.ID).SingleOrDefault();
                  
                     if(toCleanupDataset != null)
                     {
@@ -444,7 +445,7 @@ GO
 
             try
             {
-                ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_extractionConfiguration,_extractableCohort,new ExtractableDatasetBundle(_extractableDataSet),_extractableColumns,new HICProjectSalt(_project), null);
+                ExtractDatasetCommand request = new ExtractDatasetCommand(_extractionConfiguration,_extractableCohort,new ExtractableDatasetBundle(_extractableDataSet),_extractableColumns,new HICProjectSalt(_project), null);
                 request.GenerateQueryBuilder();
 
                 ISqlQueryBuilder extractionCommand = request.QueryBuilder;
@@ -466,7 +467,7 @@ GO
 
         private bool CreateHospitalAdmissionsIfPresent(ICheckNotifier notifier)
         {
-            Catalogue hospitalAdmissionsCatalogue = RepositoryLocator.CatalogueRepository.GetAllCatalogues()
+            Catalogue hospitalAdmissionsCatalogue = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>()
                 .SingleOrDefault(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName));
 
             if (hospitalAdmissionsCatalogue == null)
@@ -523,7 +524,7 @@ GO
             var repository = RepositoryLocator.DataExportRepository;
             try
             {
-                ExternalCohortTable toCleanup = repository.GetAllObjects<ExternalCohortTable>("WHERE Name = '" + _cohortDatabaseName + "'").SingleOrDefault();
+                ExternalCohortTable toCleanup = repository.GetAllObjectsWhere<ExternalCohortTable>("Name",_cohortDatabaseName).SingleOrDefault();
                 if(toCleanup != null)
                 {
                     toCleanup.DeleteInDatabase();
@@ -541,7 +542,7 @@ GO
 
             try
             {
-                _externalCohortTable = new ExternalCohortTable(repository, "",DatabaseType.MicrosoftSQLServer)
+                _externalCohortTable = new ExternalCohortTable(repository, "TestExternalCohort", DatabaseType.MicrosoftSQLServer)
                 {
                     Server = _liveDataServer.Name,
                     Database = _cohortDatabaseName,
@@ -579,14 +580,14 @@ GO
         private bool ImportAsExtractableCohort(ICheckNotifier notifier)
         {
             var repository = RepositoryLocator.DataExportRepository;
-            ExtractableCohort oldExtractableCohort = repository.GetAllObjects<ExtractableCohort>("WHERE OriginID = " + _cohortForcedIdentity).SingleOrDefault();
+            ExtractableCohort oldExtractableCohort = repository.GetAllObjectsWhere<ExtractableCohort>("OriginID" ,_cohortForcedIdentity).SingleOrDefault();
 
             try
             {
                 if(oldExtractableCohort != null)
                 {
                     ExternalCohortTable oldExternalCohortTableSource = repository.GetObjectByID<ExternalCohortTable>(oldExtractableCohort.ExternalCohortTable_ID);
-                    ExtractableCohort[] otherCohortsUsingOldSource = repository.GetAllObjects<ExtractableCohort>("WHERE ExternalCohortTable_ID = " + oldExternalCohortTableSource.ID).ToArray();
+                    ExtractableCohort[] otherCohortsUsingOldSource = repository.GetAllObjectsWhere<ExtractableCohort>("ExternalCohortTable_ID" , oldExternalCohortTableSource.ID).ToArray();
 
                     if (otherCohortsUsingOldSource.Length > 1)
                         throw new Exception("Could not cleanup old reference to an external cohort table with ID=" + oldExternalCohortTableSource.ID + " because it is used by the following cohorts: " + otherCohortsUsingOldSource.Aggregate("", (s, n) => s + "'" + n +"' ") + " you must delete these cohorts before you can delete the source");
@@ -720,13 +721,11 @@ GO
 
         private bool CheckWeCanCreateBasicSQLWithQueryBuilder(ICheckNotifier notifier)
         {
-            var repository = RepositoryLocator.DataExportRepository;
-
             try
             {
                 //Create a query builder and give it all columns from the Catalogue (this is the extractio SQL before it is linked to a cohort and should have already been setup by SetupTestEnvironment
                 QueryBuilder qb = new QueryBuilder(null,
-                    new ConfigurationProperties(false, repository).TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern)
+                    RepositoryLocator.DataExportRepository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern)
                     );
 
                 

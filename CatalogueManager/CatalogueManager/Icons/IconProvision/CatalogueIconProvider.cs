@@ -48,7 +48,6 @@ namespace CatalogueManager.Icons.IconProvision
             StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());
             StateBasedIconProviders.Add(new CohortAggregateContainerStateBasedIconProvider());
             StateBasedIconProviders.Add(new SupportingObjectStateBasedIconProvider());
-            StateBasedIconProviders.Add(new CatalogueItemIssueStateBasedIconProvider());
             StateBasedIconProviders.Add(new ColumnInfoStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new TableInfoStateBasedIconProvider());
             StateBasedIconProviders.Add(new AggregateConfigurationStateBasedIconProvider(OverlayProvider));

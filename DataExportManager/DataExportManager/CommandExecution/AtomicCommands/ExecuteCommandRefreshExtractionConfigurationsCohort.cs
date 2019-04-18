@@ -79,7 +79,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
         }

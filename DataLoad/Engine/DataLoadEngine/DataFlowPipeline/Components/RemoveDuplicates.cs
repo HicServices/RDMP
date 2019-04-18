@@ -26,6 +26,11 @@ namespace DataLoadEngine.DataFlowPipeline.Components
         private int totalDuplicatesFound = 0;
 
         Dictionary<int, List<DataRow>> unqiueHashesSeen = new Dictionary<int, List<DataRow>>();
+        
+        /// <summary>
+        /// Turns off notify messages about number of duplicates found/replaced
+        /// </summary>
+        public bool NoLogging { get; set; }
 
         public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
@@ -61,9 +66,11 @@ namespace DataLoadEngine.DataFlowPipeline.Components
             
             sw.Stop();
 
-            listener.OnProgress(this, new ProgressEventArgs("Evaluating For Duplicates", new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
-            listener.OnProgress(this,new ProgressEventArgs("Discarding Duplicates",new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records),sw.Elapsed));
-            
+            if(!NoLogging)
+            {
+                listener.OnProgress(this, new ProgressEventArgs("Evaluating For Duplicates", new ProgressMeasurement(totalRecordsProcessed, ProgressType.Records), sw.Elapsed));
+                listener.OnProgress(this,new ProgressEventArgs("Discarding Duplicates",new ProgressMeasurement(totalDuplicatesFound, ProgressType.Records),sw.Elapsed));
+            }
             return toReturn;
         }
         

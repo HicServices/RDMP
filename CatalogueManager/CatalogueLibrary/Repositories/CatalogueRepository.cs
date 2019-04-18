@@ -17,14 +17,15 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Referencing;
 using CatalogueLibrary.Data.Remoting;
 using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Properties;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueLibrary.Repositories.Managers;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -42,21 +43,21 @@ namespace CatalogueLibrary.Repositories
     /// 
     /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Catalogue database.  </para>
     /// 
-    /// <para>It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. AggregateForcedJoiner</para>
+    /// <para>It also includes helper properties for setting up relationships and controling records in the non DatabaseEntity tables in the database e.g. <see cref="AggregateForcedJoinManager"/></para>
     /// </summary>
     public class CatalogueRepository : TableRepository, ICatalogueRepository
     {
         /// <inheritdoc/>
-        public AggregateForcedJoin AggregateForcedJoiner { get; set; }
+        public IAggregateForcedJoinManager AggregateForcedJoinManager { get; private set; }
 
         /// <inheritdoc/>
-        public TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
+        public IGovernanceManager GovernanceManager { get; private set; }
 
         /// <inheritdoc/>
-        public PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
-
+        public ITableInfoCredentialsManager TableInfoCredentialsManager { get; private set; }
+        
         /// <inheritdoc/>
-        public JoinInfoFinder JoinInfoFinder { get; set; }
+        public IJoinManager JoinManager { get; set; }
 
         /// <inheritdoc/>
         public MEF MEF { get; set; }
@@ -65,7 +66,14 @@ namespace CatalogueLibrary.Repositories
 
         /// <inheritdoc/>
         public CommentStore CommentStore { get; set; }
-        
+
+        /// <inheritdoc/>
+        public ICohortContainerManager CohortContainerManager { get; private set; }
+
+        public IEncryptionManager EncryptionManager { get; private set; }
+
+        public IPluginManager PluginManager { get; private set; }
+
         /// <summary>
         /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
         /// them obviously this affects test performance so set this to true if you want it to skip this process.  Note where this is turned on, it's in the static constructor
@@ -73,18 +81,27 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         public static bool SuppressHelpLoading;
 
+        /// <inheritdoc/>
+        public IFilterManager FilterManager { get; private set; }
+        
         /// <summary>
         /// Sets up an <see cref="IRepository"/> which connects to the database <paramref name="catalogueConnectionString"/> to fetch/create <see cref="DatabaseEntity"/> objects.
         /// </summary>
         /// <param name="catalogueConnectionString"></param>
         public CatalogueRepository(DbConnectionStringBuilder catalogueConnectionString): base(null,catalogueConnectionString)
         {
-            AggregateForcedJoiner = new AggregateForcedJoin(this);
-            TableInfoToCredentialsLinker = new TableInfoToCredentialsLinker(this);
-            PasswordEncryptionKeyLocation = new PasswordEncryptionKeyLocation(this);
-            JoinInfoFinder = new JoinInfoFinder(this);
+            AggregateForcedJoinManager = new AggregateForcedJoin(this);
+            GovernanceManager = new GovernanceManager(this);
+            TableInfoCredentialsManager = new TableInfoCredentialsManager(this);
+            JoinManager = new JoinManager(this);
+            CohortContainerManager = new CohortContainerManager(this);
             MEF = new MEF();
-            
+            FilterManager = new AggregateFilterManager(this);
+            EncryptionManager = new PasswordEncryptionKeyLocation(this);
+            PluginManager = new PluginManager(this);
+
+            CommentStore = new CommentStoreWithKeywords();
+
             ObscureDependencyFinder = new CatalogueObscureDependencyFinder(this);
             
             //Shortcuts to improve performance of ConstructEntity (avoids reflection)
@@ -104,7 +121,6 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(AggregateFilterContainer),(rep,r)=>new AggregateFilterContainer((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(AggregateFilterParameter),(rep,r)=>new AggregateFilterParameter((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(CatalogueItem),(rep,r)=>new CatalogueItem((ICatalogueRepository)rep, r));
-            Constructors.Add(typeof(CatalogueItemIssue),(rep,r)=>new CatalogueItemIssue((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ColumnInfo),(rep,r)=>new ColumnInfo((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(JoinableCohortAggregateConfiguration),(rep,r)=>new JoinableCohortAggregateConfiguration((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(JoinableCohortAggregateConfigurationUse),(rep,r)=>new JoinableCohortAggregateConfigurationUse((ICatalogueRepository)rep, r));
@@ -112,7 +128,6 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(ExtractionFilter),(rep,r)=>new ExtractionFilter((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionFilterParameter),(rep,r)=>new ExtractionFilterParameter((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionInformation),(rep,r)=>new ExtractionInformation((ICatalogueRepository)rep, r));
-            Constructors.Add(typeof(IssueSystemUser),(rep,r)=>new IssueSystemUser((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionFilterParameterSet),(rep,r)=>new ExtractionFilterParameterSet((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(LoadMetadata),(rep,r)=>new LoadMetadata((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ExtractionFilterParameterSetValue),(rep,r)=>new ExtractionFilterParameterSetValue((ICatalogueRepository)rep, r));
@@ -144,89 +159,13 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(PermissionWindow),(rep,r)=>new PermissionWindow((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(TicketingSystemConfiguration),(rep,r)=>new TicketingSystemConfiguration((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(CacheFetchFailure), (rep, r) => new CacheFetchFailure((ICatalogueRepository)rep, r));
-
         }
-
-        /// <summary>
-        /// Initializes and loads <see cref="CommentStore"/> with all the xml doc/dll files found in the provided <paramref name="directories"/> 
-        /// </summary>
-        /// <param name="directories"></param>
-        public void LoadHelp(params string[] directories)
-        {
-            if (!SuppressHelpLoading)
-            {
-                CommentStore = new CommentStore();
-                CommentStore.ReadComments(directories);
-                AddToHelp(Resources.KeywordHelp);
-            }
-        }
-
-        private void AddToHelp(string keywordHelpFileContents)
-        {
-            //null is true for us loading help
-            if (SuppressHelpLoading)
-                return;
-
-            var lines = keywordHelpFileContents.Split(new[] { Environment.NewLine }, StringSplitOptions.RemoveEmptyEntries);
-
-            foreach (var line in lines)
-            {
-                if (string.IsNullOrWhiteSpace(line))
-                    continue;
-
-                var split = line.Split(':');
-
-                if (split.Length != 2)
-                    throw new Exception("Malformed line in Resources.KeywordHelp, line is:" + Environment.NewLine + line + Environment.NewLine + "We expected it to have exactly one colon in it");
-
-                if (!CommentStore.ContainsKey(split[0]))
-                    CommentStore.Add(split[0], split[1]);
-            }
-        }
-        
-        /// <summary>
-        /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        public int? GetOrderIfExistsFor(AggregateConfiguration configuration)
-        {
-            if (configuration.Repository != this)
-                if (((CatalogueRepository)configuration.Repository).ConnectionString != ConnectionString)
-                    throw new NotSupportedException("AggregateConfiguration is from a different repository than this with a different connection string");
-
-            using (var con = GetConnection())
-            {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT [Order] FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID", con.Connection, con.Transaction);
-
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
-                cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
-
-                return ObjectToNullableInt(cmd.ExecuteScalar());
-            }
-        }
-        
         
         /// <inheritdoc/>
         public LogManager GetDefaultLogManager()
         {
             ServerDefaults defaults = new ServerDefaults(this);
-            return new LogManager(defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID));
-        }
-
-        /// <inheritdoc/>
-        public Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false)
-        {
-            return GetAllObjects<Catalogue>().Where(cata => (!cata.IsDeprecated) || includeDeprecatedCatalogues).ToArray();
-        }
-
-        /// <inheritdoc/>
-        public Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem()
-        {
-            return
-                GetAllObjects<Catalogue>(
-                    @"WHERE exists (select 1 from CatalogueItem ci where Catalogue_ID = Catalogue.ID AND exists (select 1 from ExtractionInformation where CatalogueItem_ID = ci.ID)) ")
-                    .ToArray();
+            return new LogManager(defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
         }
 
         /// <inheritdoc/>
@@ -269,160 +208,9 @@ namespace CatalogueLibrary.Repositories
 
         public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
         {
-            var servers = GetAllObjects<ExternalDatabaseServer>();
-            string assembly;
-
-            switch (type)
-            {
-                case Tier2DatabaseType.Logging:
-                    assembly = "HIC.Logging.Database";
-                    break;
-                case Tier2DatabaseType.DataQuality:
-                    assembly = "DataQualityEngine.Database";
-                    break;
-                case Tier2DatabaseType.QueryCaching:
-                    assembly = "QueryCaching.Database";
-                    break;
-                case Tier2DatabaseType.ANOStore:
-                    assembly = "ANOStore.Database";
-                    break;
-                case Tier2DatabaseType.IdentifierDump:
-                    assembly = "IdentifierDump.Database";
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
-
-            return servers.Where(s => s.CreatedByAssembly == assembly).ToArray();
+            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedByDatabaseAssembly(type)).ToArray();
         }
         
-        public void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class,IMapsDirectlyToDatabaseTable
-        {
-            //Make a dictionary of the normal properties we are supposed to be importing
-            Dictionary<string,object> propertiesDictionary = shareDefinition.GetDictionaryForImport();
-
-            //for finding properties decorated with [Relationship]
-            var finder = new AttributePropertyFinder<RelationshipAttribute>(toCreate);
-            
-            //If we have already got a local copy of this shared object?
-            //either as an import or as an export
-            T actual = (T)shareManager.GetExistingImportObject(shareDefinition.SharingGuid) ?? (T)shareManager.GetExistingExportObject(shareDefinition.SharingGuid);
-            
-            //we already have a copy imported of the shared object
-            if (actual != null)
-            {
-                //It's an UPDATE i.e. take the new shared properties and apply them to the database copy / memory copy
-
-                //copy all the values out of the share definition / database copy
-                foreach (PropertyInfo prop in GetPropertyInfos(typeof(T)))
-                {
-                    //don't update any ID columns or any with relationships on UPDATE
-                    if (propertiesDictionary.ContainsKey(prop.Name) && finder.GetAttribute(prop) == null)
-                    {
-                        SetValue(prop, propertiesDictionary[prop.Name], toCreate);
-                    }
-                    else
-                        prop.SetValue(toCreate, prop.GetValue(actual)); //or use the database one if it isn't shared (e.g. ID, MyParent_ID etc)
-
-                }
-
-                toCreate.Repository = actual.Repository;
-                
-                //commit the updated values to the database
-                SaveToDatabase(toCreate);
-            }
-            else
-            {
-                //It's an INSERT i.e. create a new database copy with the correct foreign key values and update the memory copy
-                
-                //for each relationship property on the class we are trying to hydrate
-                foreach (PropertyInfo property in GetPropertyInfos(typeof(T)))
-                {
-                    RelationshipAttribute relationshipAttribute = finder.GetAttribute(property);
-
-                    //if it has a relationship attribute then we would expect the ShareDefinition to include a dependency relationship with the sharing UID of the parent
-                    //and also that we had already imported it since dependencies must be imported in order
-                    if(relationshipAttribute != null)
-                    {
-                        int? newValue;
-
-                        switch (relationshipAttribute.Type)
-                        {
-                            case RelationshipType.SharedObject:
-                                //Confirm that the share definition includes the knowledge that theres a parent class to this object
-                                if (!shareDefinition.RelationshipProperties.ContainsKey(relationshipAttribute))
-                                    throw new Exception("Share Definition for object of Type " + typeof(T) + " is missing an expected RelationshipProperty called " + property.Name);
-
-                                //Get the SharingUID of the parent for this property
-                                Guid importGuidOfParent = shareDefinition.RelationshipProperties[relationshipAttribute];
-
-                                //Confirm that we have a local import of the parent
-                                var parentImport = shareManager.GetExistingImport(importGuidOfParent);
-
-                                if (parentImport == null)
-                                    throw new Exception("Cannot import an object of type " + typeof(T) + " because the ShareDefinition specifies a relationship to an object that has not yet been imported (A " + relationshipAttribute.Cref + " with a SharingUID of " + importGuidOfParent);
-
-                                newValue = parentImport.ReferencedObjectID;
-                                break;
-                            case RelationshipType.LocalReference:
-                                newValue = shareManager.GetLocalReference(property, relationshipAttribute, shareDefinition);
-                                break;
-                            case RelationshipType.IgnoreableLocalReference:
-                                newValue = null;
-                                break;
-                            default:
-                                throw new ArgumentOutOfRangeException();
-                        }
-                        
-                        //get the ID of the local import of the parent
-                        if (propertiesDictionary.ContainsKey(property.Name))
-                            propertiesDictionary[property.Name] = newValue;
-                        else
-                            propertiesDictionary.Add(property.Name,newValue);
-                    }
-                }
-
-                //insert the full dictionary into the database under the Type
-                InsertAndHydrate(toCreate,propertiesDictionary);
-
-                //document that a local import of the share now exists and should be updated/reused from now on when that same GUID comes in / gets used by child objects
-                shareManager.GetImportAs(shareDefinition.SharingGuid.ToString(), toCreate);
-            }
-        }
-
-        public Plugin[] GetCompatiblePlugins()
-        {
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-            var plugins = GetAllObjects<Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(new Version(version), 3));
-            var uniquePlugins = plugins.GroupBy(p => new { name = p.Name, ver = new Version(p.PluginVersion.Major, p.PluginVersion.Minor, p.PluginVersion.Build) })
-                                       .ToDictionary(g => g.Key, p => p.OrderByDescending(pv => pv.PluginVersion).First());
-            return uniquePlugins.Values.ToArray();
-        }
-
-        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
-        {
-            //sometimes json decided to swap types on you e.g. int64 for int32
-            var propertyType = prop.PropertyType;
-
-            //if it is a nullable int etc
-            if (propertyType.IsGenericType && propertyType.GetGenericTypeDefinition() == typeof (Nullable<>))
-                propertyType = propertyType.GetGenericArguments()[0]; //lets pretend it's just int / whatever
-
-            if (value != null && value != DBNull.Value && !propertyType.IsInstanceOfType(value))
-                if (propertyType == typeof(CatalogueFolder))
-                {
-                    //will be passed as a string
-                    value = value is string ? new CatalogueFolder((Catalogue)onObject, (string)value):(CatalogueFolder) value;
-                }
-                else
-                    if (typeof(Enum).IsAssignableFrom(propertyType))
-                        value = Enum.ToObject(propertyType, value);//if the property is an enum
-                    else
-                        value = Convert.ChangeType(value, propertyType); //the property is not an enum
-
-            prop.SetValue(onObject, value); //if it's a shared property (most properties) use the new shared value being imported
-        }
-
 
         /// <summary>
         /// Returns all objects of Type T which reference the supplied object <paramref name="o"/>
@@ -432,6 +220,38 @@ namespace CatalogueLibrary.Repositories
         public T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity
         {
             return GetAllObjects<T>("WHERE ReferencedObjectID = " + o.ID + " AND ReferencedObjectType = '" + o.GetType().Name + "' AND ReferencedObjectRepositoryType = '" + o.Repository.GetType().Name + "'");
+        }
+
+        public IServerDefaults GetServerDefaults()
+        {
+            return new ServerDefaults(this);
+        }
+
+        public bool IsLookupTable(ITableInfo tableInfo)
+        {
+            using (var con = GetConnection())
+            {
+                DbCommand cmd = DatabaseCommandHelper.GetCommand(
+@"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
+select 1
+else
+select 0", con.Connection, con.Transaction);
+
+                DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
+                return Convert.ToBoolean(cmd.ExecuteScalar());
+            }
+        }
+
+        public Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo)
+        {
+
+            return GetAllObjects<Catalogue>(
+                string.Format(@"Where
+  Catalogue.ID in (Select CatalogueItem.Catalogue_ID from
+  CatalogueItem join
+  ColumnInfo on ColumnInfo_ID = ColumnInfo.ID
+  where
+  TableInfo_ID = {0} )", tableInfo.ID)).ToArray();
         }
     }
 

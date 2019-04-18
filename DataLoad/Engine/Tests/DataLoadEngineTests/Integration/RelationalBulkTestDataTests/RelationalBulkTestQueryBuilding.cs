@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
-using Diagnostics.TestData.Relational;
+using DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -41,7 +41,7 @@ namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
 
                 //add a join info
                 var fk1 = colsFromTable2.Single(e => e.GetRuntimeName().Equals("PKFKAgencyCodename"));
-                CatalogueRepository.JoinInfoFinder.AddJoinInfo(fk1.ColumnInfo, pk1.ColumnInfo, ExtractionJoinType.Right, null);
+                new JoinInfo(CatalogueRepository,fk1.ColumnInfo, pk1.ColumnInfo, ExtractionJoinType.Right, null);
 
                 //reset the query builder
                 qb.RegenerateSQL();
@@ -69,7 +69,7 @@ FROM
                 //now make it a combo join but in wrong direction
                 var pk2 = bulkData.CIATestEventCatalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("PKClearenceLevel"));
                 var fk2 = colsFromTable2.Single(e => e.GetRuntimeName().Equals("PKFKClearenceLevel"));
-                CatalogueRepository.JoinInfoFinder.AddJoinInfo(fk2.ColumnInfo, pk2.ColumnInfo, ExtractionJoinType.Left, null);//notice they are in different directions
+                new JoinInfo(CatalogueRepository,fk2.ColumnInfo, pk2.ColumnInfo, ExtractionJoinType.Left, null);//notice they are in different directions
 
                 QueryBuildingException ex2 = Assert.Throws<QueryBuildingException>(qb.RegenerateSQL);
 
@@ -82,9 +82,9 @@ FROM
 
 
                 //now delete it and recreate it in the right direction
-                var j2 = CatalogueRepository.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(fk2.ColumnInfo).Single();
+                var j2 = CatalogueRepository.GetAllObjects<JoinInfo>().Single(j => j.ForeignKey_ID == fk2.ColumnInfo.ID);
                 j2.DeleteInDatabase();
-                CatalogueRepository.JoinInfoFinder.AddJoinInfo(fk2.ColumnInfo, pk2.ColumnInfo, ExtractionJoinType.Right, null);//notice they are in different directions
+                new JoinInfo(CatalogueRepository,fk2.ColumnInfo, pk2.ColumnInfo, ExtractionJoinType.Right, null);//notice they are in different directions
 
                 qb.RegenerateSQL();
                 Assert.DoesNotThrow(() => sql = qb.SQL);
@@ -94,8 +94,8 @@ FROM
 ));
 
                 //clean it up to allow for deletes in cleanup phase
-                CatalogueRepository.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(fk1.ColumnInfo).Single().DeleteInDatabase();
-                CatalogueRepository.JoinInfoFinder.GetAllJoinInfoForColumnInfoWhereItIsAForeignKey(fk2.ColumnInfo).Single().DeleteInDatabase();
+                CatalogueRepository.GetAllObjects<JoinInfo>().Single(j => j.ForeignKey_ID == fk1.ColumnInfo.ID).DeleteInDatabase();
+                CatalogueRepository.GetAllObjects<JoinInfo>().Single(j => j.ForeignKey_ID == fk2.ColumnInfo.ID).DeleteInDatabase();
 
             }
             finally

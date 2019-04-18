@@ -4,13 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Linq;
-using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable.Revertable;
 
 namespace CatalogueManager.Refreshing
 {
@@ -53,13 +50,7 @@ namespace CatalogueManager.Refreshing
             }
             
             if (o != null && o.ID == OriginalObject.ID && o.GetType() == OriginalObject.GetType())//object was refreshed, probably an update to some fields in it
-            {
-                //make sure the object is up-to-date with the database saved state.
-                if (o.Exists())
-                    o.RevertToDatabaseState();
-
                 User.SetDatabaseObject(_activator, o); //give it the new object
-            }
         }
 
     }

@@ -18,7 +18,7 @@ using ReusableLibraryCode.Annotations;
 namespace CatalogueLibrary.Data
 {
     /// <inheritdoc cref="ILoadProgress"/>
-    public class LoadProgress : VersionedDatabaseEntity, ILoadProgress
+    public class LoadProgress : DatabaseEntity, ILoadProgress
     {
         #region Database Properties
         private bool _isDisabled;

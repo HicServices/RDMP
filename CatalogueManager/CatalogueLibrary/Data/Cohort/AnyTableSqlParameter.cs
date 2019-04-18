@@ -35,7 +35,6 @@ namespace CatalogueLibrary.Data.Cohort
         private string _parameterSQL;
         private string _value;
         private string _comment;
-        private string _softwareVersion;
         
         /// <inheritdoc/>
         [Sql]
@@ -58,16 +57,6 @@ namespace CatalogueLibrary.Data.Cohort
         {
             get { return _comment; }
             set { SetField(ref  _comment, value); }
-        }
-
-        /// <summary>
-        /// The version of RDMP that was running when the object was created
-        /// </summary>
-        [DoNotExtractProperty]
-        public string SoftwareVersion
-        {
-            get { return _softwareVersion; }
-            set { SetField(ref  _softwareVersion, value); }
         }
 
         #endregion
@@ -101,7 +90,6 @@ namespace CatalogueLibrary.Data.Cohort
         internal AnyTableSqlParameter(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
-            SoftwareVersion = r["SoftwareVersion"].ToString();
             Value = r["Value"] as string;
             ParameterSQL = r["ParameterSQL"] as string;
             Comment = r["Comment"] as string;
@@ -170,7 +158,7 @@ namespace CatalogueLibrary.Data.Cohort
         {
             var type = typeof (Catalogue).Assembly.GetTypes().Single(t=>t.Name.Equals(ReferencedObjectType));
 
-            return ((CatalogueRepository)Repository).GetObjectByID(type,ReferencedObjectID);
+            return Repository.GetObjectByID(type,ReferencedObjectID);
         }
 
         /// <inheritdoc/>

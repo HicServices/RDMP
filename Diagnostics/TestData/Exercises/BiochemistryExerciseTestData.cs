@@ -6,16 +6,13 @@
 
 using System;
 using System.IO;
-using System.Text;
-using System.Threading.Tasks;
-using DataExportLibrary;
-using ReusableLibraryCode.Progress;
 
 namespace Diagnostics.TestData.Exercises
 {
     public class BiochemistryExerciseTestData : ExerciseTestDataGenerator
     {
         private Random r = new Random();
+
         protected override object[] GenerateTestDataRow(TestPerson p)
         {
             object[] results = new object[10];

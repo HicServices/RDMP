@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Repositories;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
@@ -48,7 +48,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// LIVE columns created in the RAW bubble but also the dropped columns described in PreLoadDiscardedColumn instances.  This allows the live system state to drive required formats/fields
     /// for data load resulting in a stricter/more maintainable data load model.</para>
     /// </summary>
-    public class PreLoadDiscardedColumn : VersionedDatabaseEntity, IPreLoadDiscardedColumn, ICheckable, IInjectKnown<ITableInfo>
+    public class PreLoadDiscardedColumn : DatabaseEntity, IPreLoadDiscardedColumn, ICheckable, IInjectKnown<ITableInfo>
     {
         #region Database Properties
 

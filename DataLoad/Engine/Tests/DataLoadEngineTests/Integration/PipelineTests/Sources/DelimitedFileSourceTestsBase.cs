@@ -19,7 +19,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
     {
         protected FlatFileToLoad CreateTestFile(params string[] contents)
         {
-            var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "DelimitedFileSourceTests.txt");
+            var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests.txt");
 
             if (File.Exists(filename))
                 File.Delete(filename);
@@ -31,7 +31,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 
         protected void AssertDivertFileIsExactly(string expectedContents)
         {
-            var filename = Path.Combine(TestContext.CurrentContext.WorkDirectory, "DelimitedFileSourceTests_Errors.txt");
+            var filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests_Errors.txt");
 
             if(!File.Exists(filename))
                 Assert.Fail("No Divert file was generated at expected path " + filename);

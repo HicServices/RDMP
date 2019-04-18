@@ -24,11 +24,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _databaseEntity = databaseEntity;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override void Execute()
         {
             base.Execute();

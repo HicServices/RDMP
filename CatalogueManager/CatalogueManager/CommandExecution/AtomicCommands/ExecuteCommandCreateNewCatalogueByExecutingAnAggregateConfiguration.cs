@@ -88,7 +88,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
             var useCase = new CreateTableFromAggregateUseCase(_aggregateConfiguration,_cohort,_table);
 
-            var ui = new ConfigureAndExecutePipeline(useCase,Activator);
+            var ui = new ConfigureAndExecutePipelineUI(useCase,Activator);
             ui.PipelineExecutionFinishedsuccessfully += ui_PipelineExecutionFinishedsuccessfully;
 
             Activator.ShowWindow(ui, true);
@@ -106,7 +106,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         }
 
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Execute);
         }

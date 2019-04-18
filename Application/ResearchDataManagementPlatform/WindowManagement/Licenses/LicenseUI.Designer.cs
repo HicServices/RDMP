@@ -109,7 +109,7 @@
             this.Controls.Add(this.rtThirdPartyLicense);
             this.Controls.Add(this.rtLicense);
             this.Name = "LicenseUI";
-            this.Text = "LicenseUI";
+            this.Text = "License";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.LicenseUI_FormClosing);
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -28,7 +28,7 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(Catalogue c)
         {
-            ItemActivator.Activate<CatalogueTab, Catalogue>(c);
+            ItemActivator.Activate<CatalogueUI, Catalogue>(c);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, Catalogue targetCatalogue, InsertOption insertOption = InsertOption.Default)

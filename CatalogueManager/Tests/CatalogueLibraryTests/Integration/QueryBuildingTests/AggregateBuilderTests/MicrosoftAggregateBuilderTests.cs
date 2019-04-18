@@ -35,7 +35,27 @@ Col1
 order by 
 Col1"),CollapseWhitespace(builder.SQL));
         }
+        
+        /// <summary>
+        /// Tests the systems ability to figure out the alias of the count column when it has " AS " (e.g. in a cast scalar function)
+        /// </summary>
+        [Test]
+        public void TestAggregateBuilding_AS_InCount()
+        {
+            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(cast(1 AS int))", null);
+            builder.AddColumn(_dimension1);
 
+            Assert.AreEqual(CollapseWhitespace(@"/**/
+SELECT 
+Col1,
+count(cast(1 AS int)) AS MyCount
+FROM 
+T1
+group by 
+Col1
+order by 
+Col1"),CollapseWhitespace(builder.SQL));
+        }
 
         [Test]
         public void TestAggregateBuilding_NoConfigurationTwoDimension()

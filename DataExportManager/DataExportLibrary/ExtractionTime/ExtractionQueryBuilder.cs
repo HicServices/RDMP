@@ -10,12 +10,13 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Exceptions;
-using DataExportLibrary.Interfaces.Data.DataTables;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.DataRelease.Exceptions;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
+using DataExportLibrary.Repositories.Managers;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
@@ -54,6 +55,8 @@ namespace DataExportLibrary.ExtractionTime
                 throw new NullReferenceException("No Cohort selected");
 
             substitutions = new List<ReleaseIdentifierSubstitution>();
+
+            var memoryRepository = new MemoryRepository();
             
             switch (request.ColumnsToExtract.Count(c => c.IsExtractionIdentifier))
             { 
@@ -61,19 +64,17 @@ namespace DataExportLibrary.ExtractionTime
                 case 0: throw new Exception("There are no Columns in this dataset ("+request+") marked as IsExtractionIdentifier"); 
                     
                 //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
-                case 1: substitutions.Add(new ReleaseIdentifierSubstitution(request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false));
+                case 1: substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository,request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false));
                     break;
 
                 //multiple extraction identifiers e.g. Mother X had Babies A, B, C where A,B and C are all CHIs that must be subbed for ProCHIs
                 default:
                     foreach (IColumn columnToSubstituteForReleaseIdentifier in request.ColumnsToExtract.Where(c=>c.IsExtractionIdentifier))
-                        substitutions.Add(new ReleaseIdentifierSubstitution(columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true));
+                        substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true));
                     break;
             }
-
-            var configurationProperties = new ConfigurationProperties(false, _repository);
             
-            string hashingAlgorithm = configurationProperties.TryGetValue(ConfigurationProperties.ExpectedProperties.HashingAlgorithmPattern);
+            string hashingAlgorithm = _repository.DataExportPropertyManager.GetValue(DataExportProperty.HashingAlgorithmPattern);
             if (string.IsNullOrWhiteSpace(hashingAlgorithm))
                 hashingAlgorithm = null;
 

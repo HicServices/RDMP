@@ -10,10 +10,11 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Ticketing;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease.Audit;
 using DataExportLibrary.ExtractionTime;
@@ -35,7 +36,7 @@ namespace DataExportLibrary.DataRelease
     public class ReleaseEngine
     {
         protected readonly IDataLoadEventListener _listener;
-        protected readonly IRepository _repository;
+        protected readonly IDataExportRepository _repository;
         public Project Project { get; private set; }
         public bool ReleaseSuccessful { get; protected set; }
         public List<IExtractionConfiguration> ConfigurationsReleased { get; private set; }
@@ -47,7 +48,7 @@ namespace DataExportLibrary.DataRelease
 
         public ReleaseEngine(Project project, ReleaseEngineSettings settings, IDataLoadEventListener listener, ReleaseAudit releaseAudit)
         {
-            _repository = project.Repository;
+            _repository = project.DataExportRepository;
             Project = project;
             ReleaseSuccessful = false;
             ConfigurationsReleased = new List<IExtractionConfiguration>();
@@ -214,8 +215,6 @@ namespace DataExportLibrary.DataRelease
 
         protected void AuditProperRelease(ReleasePotential rp, ReleaseEnvironmentPotential environment, DirectoryInfo rpDirectory, bool isPatch)
         {
-            var releaseLogWriter = new ReleaseLogWriter(rp, environment, _repository);
-
             FileInfo datasetFile = null;
             
             if (rp.ExtractFile != null)
@@ -228,7 +227,8 @@ namespace DataExportLibrary.DataRelease
                 }
             }
 
-            releaseLogWriter.GenerateLogEntry(isPatch, rpDirectory, datasetFile);
+            //creates a new one in the database
+            new ReleaseLog(_repository,rp, environment,isPatch, rpDirectory, datasetFile);
         }
 
         protected DirectoryInfo ThrowIfCustomDataConflictElseReturnFirstCustomDataFolder(KeyValuePair<IExtractionConfiguration, List<ReleasePotential>> toRelease)

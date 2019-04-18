@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
+using CatalogueLibrary.Data;
+using CatalogueLibrary.ExtractionTime.Commands;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 {

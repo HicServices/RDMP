@@ -480,7 +480,7 @@ namespace DataExportManager.CohortUI.ImportCustomData
             this.Controls.Add(this.groupBox2);
             this.Name = "CohortCreationRequestUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "CohortCreationRequestUI";
+            this.Text = "Create Cohort";
             this.Load += new System.EventHandler(this.CohortCreationRequestUI_Load);
             this.gbRevisedCohort.ResumeLayout(false);
             this.gbRevisedCohort.PerformLayout();

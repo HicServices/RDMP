@@ -10,10 +10,8 @@ using CatalogueLibrary.Checks.SyntaxChecking;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Spontaneous;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.ExtractionTime
@@ -51,7 +49,7 @@ namespace DataExportLibrary.ExtractionTime
         public bool IsExtractionIdentifier { get { return OriginalDatasetColumn.IsExtractionIdentifier; } }
         public bool IsPrimaryKey { get { return OriginalDatasetColumn.IsPrimaryKey; } }
 
-        public ReleaseIdentifierSubstitution(IColumn extractionIdentifierToSubFor, IExtractableCohort extractableCohort, bool isPartOfMultiCHISubstitution)
+        public ReleaseIdentifierSubstitution(MemoryRepository repo,IColumn extractionIdentifierToSubFor, IExtractableCohort extractableCohort, bool isPartOfMultiCHISubstitution):base(repo)
         {
             if(!extractionIdentifierToSubFor.IsExtractionIdentifier)
                 throw new Exception("Column " + extractionIdentifierToSubFor + " is not marked IsExtractionIdentifier so cannot be substituted for a ReleaseIdentifier");

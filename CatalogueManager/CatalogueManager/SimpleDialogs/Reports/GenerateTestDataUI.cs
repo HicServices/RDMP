@@ -6,24 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
+using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
 using Diagnostics.TestData.Exercises;
-using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
@@ -44,24 +37,32 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// <para>Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
     /// interesting/realistic).</para>
     /// </summary>
-    public partial class GenerateTestDataUI : Form, IHelpWorkflowUser
+    public partial class GenerateTestDataUI : RDMPForm, IHelpWorkflowUser
     {
-        private readonly IActivateItems _activator;
         public HelpWorkflow HelpWorkflow { get; private set; }
 
-        public GenerateTestDataUI(IActivateItems activator, ICommandExecution command)
+        public GenerateTestDataUI(IActivateItems activator, ICommandExecution command):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
 
-            PrescribingExerciseTestData prescribing = new PrescribingExerciseTestData();
-            sizePrescribing.Generator = prescribing;
+            ObjectConstructor constructor = new ObjectConstructor();
 
-            BiochemistryExerciseTestData biochemistry = new BiochemistryExerciseTestData();
-            sizeBiochemistry.Generator = biochemistry;
+            int yLoc = 0;
 
-            DemographyExerciseTestData demography = new DemographyExerciseTestData();
-            sizeDemography.Generator = demography;
+            foreach (Type generator in Activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<IExerciseTestDataGenerator>())
+            {
+                if(generator.IsAbstract || generator.IsInterface)
+                    continue;
+
+                var instance = (IExerciseTestDataGenerator)constructor.Construct(generator);
+
+                var ui = new ExerciseTestDataGeneratorUI();
+                ui.Generator = instance;
+                ui.Location = new Point(0,yLoc);
+                yLoc += ui.Height;
+                pDatasets.Controls.Add(ui);
+            }
+            
 
             lblDirectory.Visible = false;
 
@@ -69,50 +70,30 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             if(command != null)
                 BuildHelpWorkflow(command);
+
+            helpIcon1.SetHelpText("Tutorial","Click for tutorial",HelpWorkflow);
         }
 
         private void BuildHelpWorkflow(ICommandExecution command)
         {
-            
-            HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(_activator));
 
-            var _bio =
-                new HelpStage(gbBiochemistry,
-                    "This control will allow you to create 3 flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in the biochemistry dataset e.g. 1,000,000");
-            var _pres =
-                new HelpStage(gbPrescribing, "Now do the same for Prescriptions");
+            HelpWorkflow = new HelpWorkflow(this, command, new TutorialTracker(Activator));
 
-            var _demog =
-                new HelpStage(gbDemography,"Now do the same for Demography.  This dataset is 'known addresses' for patients.  So will have multiple records per person");
-
-            var _pop =
+            var ds =
+                new HelpStage(pDatasets,
+                    "This control will allow you to create flat comma separated files with fictional data for a shared pool of patient identifiers.  Start by choosing the number of rows you want in each dataset e.g. 1,000,000");
+            var pop =
                 new HelpStage(pPopulationSize, "Now choose how many unique identifiers you want generated.  If your population pool is smaller than the number of records per dataset there will be a large overlap of patients between datasets while if it is larger the crossover will be sparser.");
 
-            var _location = new HelpStage(pOutputDirectory,@"Click browse to select a directory to create the 3 files in");
+            var location = new HelpStage(pOutputDirectory,@"Click browse to select a directory to create the 3 files in");
 
-            var _execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
+            var execute = new HelpStage(btnGenerate, "Click to start generating the flat files");
 
-            HelpWorkflow.RootStage = _bio;
+            ds.SetOption(">>", pop);
+            pop.SetOption(">>", location);
+            location.SetOption(">>", execute);
 
-            sizeBiochemistry.TrackBarMouseUp += ()=>HelpWorkflow.ShowStage(_pres);
-            sizePrescribing.TrackBarMouseUp += () => HelpWorkflow.ShowStage(_demog);
-            sizeDemography.TrackBarMouseUp += () => tbPopulationSize.Focus();
-
-            tbPopulationSize.GotFocus += (s, e) => HelpWorkflow.ShowStage(_pop);
-            tbPopulationSize.LostFocus += (s, e) =>
-            {
-                if (!ragSmileyPopulation.IsFatal())
-                    btnBrowse.Focus();
-            };
-
-            btnBrowse.GotFocus += (s, e) => HelpWorkflow.ShowStage(_location);
-            btnBrowse.LostFocus += (s, e) =>
-            {
-                if (ragSmileyDirectory.Visible)
-                {
-                    HelpWorkflow.ShowStage(_execute);
-                }
-            };
+            HelpWorkflow.RootStage = ds;
         }
 
         protected override void OnLoad(EventArgs e)
@@ -121,9 +102,6 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
             ragSmileyPopulation.Visible = false;
             ragSmileyDirectory.Visible = false;
-
-            if (HelpWorkflow != null)
-                HelpWorkflow.Start();
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)
@@ -170,15 +148,12 @@ namespace CatalogueManager.SimpleDialogs.Reports
 
         private bool started = false;
         
-        private List<TestDataGenerator> Executing = new List<TestDataGenerator>();
+        private List<ExerciseTestDataGeneratorUI> Executing = new List<ExerciseTestDataGeneratorUI>();
         private DirectoryInfo _extractDirectory;
 
         private void btnGenerate_Click(object sender, EventArgs e)
         {
-
-            //we are done
-            HelpWorkflow.Abandon();
-
+            
             try
             {
                 if (started)
@@ -192,23 +167,18 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 ExerciseTestIdentifiers identifiers = new ExerciseTestIdentifiers();
                 identifiers.GeneratePeople(populationSize);
 
-                string biochem = Path.Combine(_extractDirectory.FullName, "biochemistry.csv");
-                string prescribing = Path.Combine(_extractDirectory.FullName, "prescribing.csv");
-                string demography = Path.Combine(_extractDirectory.FullName, "demography.csv");
+                if(cbLookups.Checked)
+                    ExerciseTestDataGenerator.WriteLookups(_extractDirectory);
 
-                Executing.Add(sizeBiochemistry);
-                Executing.Add(sizePrescribing);
-                Executing.Add(sizeDemography);
-
-                sizeBiochemistry.BeginGeneration(identifiers, new FileInfo(biochem));
-                sizePrescribing.BeginGeneration(identifiers, new FileInfo(prescribing));
-                sizeDemography.BeginGeneration(identifiers, new FileInfo(demography));
-
+                foreach (ExerciseTestDataGeneratorUI ui in pDatasets.Controls)
+                {
+                    Executing.Add(ui);
+                    ui.BeginGeneration(identifiers, _extractDirectory);
+                    ExerciseTestDataGeneratorUI ui1 = ui;
+                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
+                }
+                
                 UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_extractDirectory);
-
-                sizeBiochemistry.Completed += () => { Executing.Remove(sizeBiochemistry); AnnounceIfComplete(); };
-                sizePrescribing.Completed += () => { Executing.Remove(sizePrescribing); AnnounceIfComplete(); };
-                sizeDemography.Completed += () => { Executing.Remove(sizeDemography); AnnounceIfComplete(); };
 
             }
             catch (Exception exception)
@@ -233,27 +203,13 @@ namespace CatalogueManager.SimpleDialogs.Reports
                 return;
 
             //warn them and cancel if any of them are still generating data
-            if (Executing.Contains(sizeBiochemistry))
-            {
-                MessageBox.Show("Biochemistry is still generating data");
-                e.Cancel = true;
-                return;
-            }
+            var stillRunning = Executing.FirstOrDefault();
 
-            if (Executing.Contains(sizePrescribing))
+            if (stillRunning != null)
             {
-                MessageBox.Show("Prescribing is still generating data");
+                MessageBox.Show(stillRunning.Generator.GetName() + " is still generating data");
                 e.Cancel = true;
-                return;
             }
-
-            if (Executing.Contains(sizeDemography))
-            {
-                MessageBox.Show("Demography is still generating data");
-                e.Cancel = true;
-                return;
-            }
-
         }
         
         private void btnBrowse_Click(object sender, EventArgs e)

@@ -7,20 +7,14 @@
 using System;
 using System.ComponentModel;
 using System.Drawing;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
@@ -45,7 +39,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         
         private void ReloadUIFromDatabase()
         {
-            loadProgressDiagram1.SetLoadProgress(_loadProgress, _activator);
+            loadProgressDiagram1.SetLoadProgress(_loadProgress, Activator);
             loadProgressDiagram1.Visible = true;
 
             tbDataLoadProgress.ReadOnly = true;
@@ -100,11 +94,13 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
             base.SetDatabaseObject(activator, databaseObject);
             _loadProgress = databaseObject;
             
+            loadProgressDiagram1.SetItemActivator(activator);
+
             ReloadUIFromDatabase();
 
-            AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
+            CommonFunctionality.AddHelp(nDefaultNumberOfDaysToLoadEachTime, "ILoadProgress.DefaultNumberOfDaysToLoadEachTime");
 
-            AddToMenu(new ExecuteCommandActivate(activator,databaseObject.LoadMetadata),"Execute Load");
+            CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, databaseObject.LoadMetadata), "Execute Load");
         }
 
 

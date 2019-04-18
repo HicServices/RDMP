@@ -23,7 +23,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _catalogue = catalogue;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ReOrder);
         }
@@ -32,7 +32,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<ReOrderCatalogueItems, Catalogue>(_catalogue);
+            Activator.Activate<ReOrderCatalogueItemsUI, Catalogue>(_catalogue);
         }
     }
 }

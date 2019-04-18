@@ -18,7 +18,7 @@ namespace CatalogueLibrary.Data
     /// <para>This is only the case if you have a given lookup code which changes meaning based on another column e.g. testcode X means a different thing
     /// in healthboard A vs healthboard B</para>
     /// </summary>
-    public class LookupCompositeJoinInfo : VersionedDatabaseEntity, ISupplementalJoin
+    public class LookupCompositeJoinInfo : DatabaseEntity, ISupplementalJoin
     {
         #region Database Properties
         private int _originalLookup_ID;

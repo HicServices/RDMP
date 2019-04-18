@@ -43,7 +43,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Opens the containing toolbox collection and shows the object";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return _useIconAndTypeName? iconProvider.GetImage(_objectToShow):null;
         }

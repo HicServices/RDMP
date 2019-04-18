@@ -4,15 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
@@ -24,9 +20,8 @@ namespace DataExportLibrary.Checks
     /// </summary>
     public class ExtractionConfigurationChecker:ICheckable
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private IExtractionConfiguration _config;
-        
+
         /// <summary>
         /// True to fetch all <see cref="ISelectedDataSets"/> and check with <see cref="SelectedDataSetsChecker"/>
         /// </summary>
@@ -40,11 +35,9 @@ namespace DataExportLibrary.Checks
         /// <summary>
         /// Prepares checking of the given <paramref name="config"/>
         /// </summary>
-        /// <param name="repositoryLocator"></param>
         /// <param name="config"></param>
-        public ExtractionConfigurationChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator,IExtractionConfiguration config)
+        public ExtractionConfigurationChecker(IExtractionConfiguration config)
         {
-            _repositoryLocator = repositoryLocator;
             _config = config;
         }
 
@@ -141,7 +134,7 @@ namespace DataExportLibrary.Checks
 
             if (CheckDatasets)
                 foreach (ISelectedDataSets s in _config.SelectedDataSets)
-                    new SelectedDataSetsChecker(s, _repositoryLocator).Check(notifier);
+                    new SelectedDataSetsChecker(s).Check(notifier);
 
             //globals
             if (CheckGlobals)

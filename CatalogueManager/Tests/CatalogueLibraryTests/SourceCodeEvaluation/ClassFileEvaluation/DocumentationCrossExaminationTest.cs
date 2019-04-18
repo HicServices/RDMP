@@ -143,8 +143,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "DependingOnThis",
             "ProposedFixes",
             "PropertyX",
-            "PropertyX_MaxLength",
-            "Property_MaxLength",
             "FamilyMembers",
             
             //CreatingANewCollectionTreeNode.md
@@ -228,7 +226,12 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
             "TypeTranslaterTests",
             "DatatypeComputerTests",
             "LoadRunID",
-            "HelpDocs"
+            "HelpDocs",
+            "HicServices",
+            "FAnsiSql",
+            "ProposeExecutionWhenTargetIsX",
+            "InternalsVisibleTo",
+            "AxisDimension"
 
         };
 

@@ -22,7 +22,6 @@ using DataExportLibrary.Checks;
 using DataExportLibrary.DataRelease.Potential;
 using DataExportLibrary.DataRelease.ReleasePipeline;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Providers;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.DataRelease;
@@ -105,7 +104,7 @@ namespace DataExportManager.DataRelease
             if (_isExecuting && !checkAndExecuteUI1.IsExecuting)
             {
                 //if it was executing before and now no longer executing the status of the ExtractionConfigurations / Projects might have changed
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
+                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_project));
             }
 
             _isExecuting = checkAndExecuteUI1.IsExecuting;
@@ -114,7 +113,7 @@ namespace DataExportManager.DataRelease
         private object Releaseability_ImageGetter(object rowObject)
         {
             var state = GetState(rowObject);
-            return state == null ? null : _activator.CoreIconProvider.GetImage(state);
+            return state == null ? null : Activator.CoreIconProvider.GetImage(state);
         }
 
         private object Releaseability_AspectGetter(object rowObject)
@@ -192,7 +191,7 @@ namespace DataExportManager.DataRelease
             base.SetDatabaseObject(activator, databaseObject);
             
             if(!_commonFunctionality.IsSetup)
-                _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, _activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
+                _commonFunctionality.SetUp(RDMPCollection.None, tlvReleasePotentials, Activator, olvName, null, new RDMPCollectionCommonFunctionalitySettings
                 {
                     AddFavouriteColumn = false,
                     AllowPinning = false,
@@ -200,7 +199,7 @@ namespace DataExportManager.DataRelease
                     AddCheckColumn = false
                 });
 
-            _childProvider = (DataExportChildProvider)_activator.CoreChildProvider;
+            _childProvider = (DataExportChildProvider)Activator.CoreChildProvider;
             _project = databaseObject;
 
             //figure out the globals
@@ -210,7 +209,7 @@ namespace DataExportManager.DataRelease
             if (_pipelineSelectionUI1 == null)
             {
                 var context = ReleaseUseCase.DesignTime();
-                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill);
+                _pipelineSelectionUI1 = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, context).Create("Release", DockStyle.Fill);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
                 _pipelineSelectionUI1.Pipeline = null;
                 _pipelineSelectionUI1.PipelineChanged += ResetChecksUI;
@@ -218,8 +217,10 @@ namespace DataExportManager.DataRelease
                 _pipelinePanel = new ToolStripControlHost((Control)_pipelineSelectionUI1);
             }
 
-            Add(new ToolStripLabel("Release Pipeline:"));
-            Add(_pipelinePanel);
+            CommonFunctionality.Add(new ToolStripLabel("Release Pipeline:"));
+            CommonFunctionality.Add(_pipelinePanel);
+            CommonFunctionality.AddHelpStringToToolStrip("Release Pipeline", "The sequence of components that will be executed in order to gather the extracted artifacts and assemble them into a single release folder/database. This will start with a source component that gathers the artifacts (from wherever they were extracted to) followed by subsequent components (if any) and then a destination component that generates the final releasable file/folder.");
+            
             checkAndExecuteUI1.SetItemActivator(activator);
 
             var checkedBefore = tlvReleasePotentials.CheckedObjects;

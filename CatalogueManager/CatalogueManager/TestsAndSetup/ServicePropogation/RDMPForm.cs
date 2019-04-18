@@ -4,10 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Repositories;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using ReusableUIComponents;
 
@@ -20,59 +19,42 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     /// able to propagate the locator to all child controls (RDMPUserControl).  
     /// </summary>
     [TechnicalUI]
-    public class RDMPForm : Form, IRepositoryUser, IKnowIfImHostedByVisualStudio
+    public class RDMPForm : Form, IRDMPControl
     {
-        private IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        
         /// <summary>
         /// Whether escape keystrokes should trigger form closing (defaults to true).
         /// </summary>
-        public bool CloseOnEscape { get; set; } 
+        public bool CloseOnEscape { get; set; }
+        
+        protected readonly bool VisualStudioDesignMode;
+        public IActivateItems Activator { get; private set; }
 
+        public RDMPControlCommonFunctionality CommonFunctionality { get; private set; }
+
+        /// <summary>
+        /// Constructs the form without initializing the activator.  If you use this method you must call SetItemActivator manually later
+        /// </summary>
         public RDMPForm()
         {
             KeyPreview = true;
             CloseOnEscape = true;
             VisualStudioDesignMode = (LicenseManager.UsageMode == LicenseUsageMode.Designtime);
             KeyDown += RDMPForm_KeyDown;
+            CommonFunctionality = new RDMPControlCommonFunctionality(this);
         }
 
-        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator
+        /// <summary>
+        /// Constructs the form and initializes the activator
+        /// </summary>
+        /// <param name="activator"></param>
+        public RDMPForm(IActivateItems activator):this()
         {
-            get { return _repositoryLocator; }
-            set
-            {
-                _repositoryLocator = value;
-                new ServiceLocatorPropagatorToChildControls(this).PropagateRecursively(new[] { this }, VisualStudioDesignMode);
-                
-                if (value != null)
-                    OnRepositoryLocatorAvailable();
-            }
+            SetItemActivator(activator);
         }
 
-        protected virtual void OnRepositoryLocatorAvailable()
+        public void SetItemActivator(IActivateItems activator)
         {
-            if (RepositoryLocator != null)
-                new ServiceLocatorPropagatorToChildControls(this).PropagateRecursively(new[] { this }, VisualStudioDesignMode);
-        }
-
-        protected override void OnLoad(EventArgs e)
-        {
-            if (VisualStudioDesignMode)
-                return;
-
-            new ServiceLocatorPropagatorToChildControls(this).PropagateRecursively(new[] { this }, VisualStudioDesignMode);
-
-            base.OnLoad(e);
-            if(RepositoryLocator == null)
-                throw new NullReferenceException("Repository Locator not set!");
-        }
-        
-        public bool VisualStudioDesignMode { get; private set; }
-        public void SetVisualStudioDesignMode(bool visualStudioDesignMode)
-        {
-            VisualStudioDesignMode = visualStudioDesignMode;
+            Activator = activator;
         }
         
         private void RDMPForm_KeyDown(object sender, KeyEventArgs e)
@@ -88,7 +70,16 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                     saveable.GetObjectSaverButton().Save();
             }
         }
-    }
 
-    
+        /// <summary>
+        /// Returns this since RDMPForm is a Form and therefore a top level control
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="found">pass null when calling this</param>
+        /// <returns></returns>
+        public IRDMPControl GetTopmostRDMPUserControl()
+        {
+            return this;
+        }
+    }
 }

@@ -31,7 +31,7 @@ namespace ANOStore.ANOEngineering
     /// </summary>
     public class ForwardEngineerANOCatalogueEngine
     {
-        private readonly ICatalogueRepository _catalogueRepository;
+        private readonly CatalogueRepository _catalogueRepository;
         private readonly ForwardEngineerANOCataloguePlanManager _planManager;
         public Catalogue NewCatalogue { get; private set; }
         public LoadMetadata LoadMetadata { get; private set; }
@@ -42,11 +42,14 @@ namespace ANOStore.ANOEngineering
 
         private ShareManager _shareManager;
 
+        private ColumnInfo[] _allColumnsInfos;
+
         public ForwardEngineerANOCatalogueEngine(IRDMPPlatformRepositoryServiceLocator repositoryLocator,ForwardEngineerANOCataloguePlanManager planManager)
         {
-            _catalogueRepository = repositoryLocator.CatalogueRepository;
+            _catalogueRepository = (CatalogueRepository) repositoryLocator.CatalogueRepository;
             _shareManager = new ShareManager(repositoryLocator);
             _planManager = planManager;
+            _allColumnsInfos = _catalogueRepository.GetAllObjects<ColumnInfo>();
         }
         
         public void Execute()
@@ -54,6 +57,8 @@ namespace ANOStore.ANOEngineering
 
             if(_planManager.TargetDatabase == null)
                 throw new Exception("PlanManager has no TargetDatabase set");
+
+            var memoryRepo = new MemoryCatalogueRepository();
 
             using (_catalogueRepository.BeginNewTransactedConnection())
             {
@@ -84,7 +89,7 @@ namespace ANOStore.ANOEngineering
                             if (columnPlan.Plan != Plan.Drop)
                             {
                                 //add the column verbatim to the query builder because we know we have to read it from source
-                                querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(columnInfo));
+                                querybuilderForMigratingTable.AddColumn(new ColumnInfoToIColumn(memoryRepo,columnInfo));
 
                                 string colName = columnInfo.GetRuntimeName();
                                 
@@ -148,9 +153,9 @@ namespace ANOStore.ANOEngineering
                             newTableInfo.SaveToDatabase();
                         }
                     }
-                    
-                    NewCatalogue = _catalogueRepository.CloneObjectInTable(_planManager.Catalogue);
-                    NewCatalogue.Name = "ANO" + NewCatalogue.Name;
+
+                    NewCatalogue = _planManager.Catalogue.ShallowClone();
+                    NewCatalogue.Name = "ANO" + _planManager.Catalogue.Name;
                     NewCatalogue.Folder = new CatalogueFolder(NewCatalogue, "\\anonymous" + NewCatalogue.Folder.Path);
                     NewCatalogue.SaveToDatabase();
 
@@ -173,11 +178,8 @@ namespace ANOStore.ANOEngineering
                         
                         ColumnInfo newColumnInfo = GetNewColumnInfoForOld(oldColumnInfo);
 
-                        var newCatalogueItem = _catalogueRepository.CloneObjectInTable(oldCatalogueItem);
+                        var newCatalogueItem = oldCatalogueItem.ShallowClone(NewCatalogue);
                         
-                        //wire it to the new Catalogue
-                        newCatalogueItem.Catalogue_ID = NewCatalogue.ID;
-
                         //and rewire it's ColumnInfo to the cloned child one
                         newCatalogueItem.ColumnInfo_ID = newColumnInfo.ID;
 
@@ -239,7 +241,7 @@ namespace ANOStore.ANOEngineering
                         }
                     }
 
-                    var existingJoinInfos = _catalogueRepository.JoinInfoFinder.GetAllJoinInfos();
+                    var existingJoinInfos = _catalogueRepository.GetAllObjects<JoinInfo>();
                     var existingLookups = _catalogueRepository.GetAllObjects<Lookup>();
                     var existingLookupComposites = _catalogueRepository.GetAllObjects<LookupCompositeJoinInfo>();
 
@@ -250,8 +252,8 @@ namespace ANOStore.ANOEngineering
                         var newPk = GetNewColumnInfoForOld(joinInfo.PrimaryKey);
 
                         //already exists
-                        if(!existingJoinInfos.Any(ej=>ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
-                            _catalogueRepository.JoinInfoFinder.AddJoinInfo(newFk,newPk,joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
+                        if (!existingJoinInfos.Any(ej => ej.ForeignKey_ID == newFk.ID && ej.PrimaryKey_ID == newPk.ID))
+                            new JoinInfo(_catalogueRepository, newFk, newPk, joinInfo.ExtractionJoinType,joinInfo.Collation); //create it
                     }
 
                     //migrate Lookups
@@ -295,11 +297,11 @@ namespace ANOStore.ANOEngineering
 
                         //date column based migration only works for single TableInfo migrations (see Plan Manager checks)
                         var qb = SelectSQLForMigrations.Single(kvp=>!kvp.Key.IsLookupTable()).Value;
-                        qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(null,
+                        qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepo,null,
                             new[]
                             {
-                                new SpontaneouslyInventedFilter(null,_planManager.DateColumn + " >= @startDate","After batch start date","",null),
-                                new SpontaneouslyInventedFilter(null,_planManager.DateColumn + " <= @endDate","Before batch end date","",null),
+                                new SpontaneouslyInventedFilter(memoryRepo,null,_planManager.DateColumn + " >= @startDate","After batch start date","",null),
+                                new SpontaneouslyInventedFilter(memoryRepo,null,_planManager.DateColumn + " <= @endDate","Before batch end date","",null),
                             }
                             ,FilterContainerOperation.AND);
                     }
@@ -355,8 +357,7 @@ namespace ANOStore.ANOEngineering
 
             return toReturn;
         }
-
-
+        
         /// <summary>
         /// Here we are migrating a Catalogue but some of the TableInfos have already been migrated e.g. lookup tables as part of migrating another Catalogue.  We are
         /// now trying to find one of those 'not migrated' ColumnInfos by name without knowing whether the user has since deleted the reference or worse introduced 
@@ -374,8 +375,8 @@ namespace ANOStore.ANOEngineering
                 null,
                 col.TableInfo.GetRuntimeName(),
                 expectedName);
-            
-            var columns = GetColumnInfosWithNameExactly(expectedNewName);
+
+            var columns = _allColumnsInfos.Where(c=>c.Name.Equals(expectedNewName,StringComparison.CurrentCultureIgnoreCase)).ToArray();
 
             bool failedANOToo = false;
 
@@ -423,23 +424,6 @@ namespace ANOStore.ANOEngineering
 
             //record in memory dictionary
             _parenthoodDictionary.Add(parent,child);
-        }
-
-
-        /// <summary>
-        /// Returns all ColumnInfos which have names exactly matching name, this must be a fully qualified string e.g. [MyDatabase]..[MyTable].[MyColumn].  You can use
-        /// IQuerySyntaxHelper.EnsureFullyQualified to get this.  Return is an array because you can have an identical table/database structure on two different servers
-        /// in each case the ColumnInfo will have the same fully qualified name (or you could have duplicate references to the same ColumnInfo/TableInfo for some reason)
-        /// </summary>
-        /// <param name="name"></param>
-        /// <returns></returns>
-        private ColumnInfo[] GetColumnInfosWithNameExactly(string name)
-        {
-            return _catalogueRepository.SelectAllWhere<ColumnInfo>("SELECT * FROM ColumnInfo WHERE LOWER(Name) = LOWER(@name)", "ID",
-                new Dictionary<string, object>
-                {
-                    {"name", name}
-                }).ToArray();
         }
     }
 }

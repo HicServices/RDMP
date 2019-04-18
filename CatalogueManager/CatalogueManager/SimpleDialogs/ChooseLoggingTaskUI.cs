@@ -5,17 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 
@@ -50,16 +48,13 @@ namespace CatalogueManager.SimpleDialogs
 
         private void RefreshUIFromDatabase()
         {
-            if(RepositoryLocator == null || _catalogue == null)
+            if( _catalogue == null)
                 return;
 
-            var servers = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s => string.Equals(expectedDatabaseTypeString, s.CreatedByAssembly)).ToArray();
+            var servers = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s => string.Equals(expectedDatabaseTypeString, s.CreatedByAssembly)).ToArray();
 
             ddLoggingServer.Items.Clear();
             ddLoggingServer.Items.AddRange(servers);
-
-            ddTestLoggingServer.Items.Clear();
-            ddTestLoggingServer.Items.AddRange(servers);
 
             ExternalDatabaseServer liveserver = null;
 
@@ -72,19 +67,6 @@ namespace CatalogueManager.SimpleDialogs
                     throw new Exception("Catalogue '" + _catalogue + "' lists it's Live Logging Server as '" + _catalogue.LiveLoggingServer + "' did not appear in combo box, possibly it is not marked as a '" + expectedDatabaseTypeString + "' server? Try editting it in Locations=>Manage External Servers");
 
                 ddLoggingServer.SelectedItem = liveserver;
-            }
-            
-            if (_catalogue.TestLoggingServer_ID != null)
-            {
-                var testLogging = ddTestLoggingServer.Items.Cast<ExternalDatabaseServer>()
-                    .SingleOrDefault(i => i.ID == (int)_catalogue.TestLoggingServer_ID);
-                
-                if(testLogging == null)
-                    throw new Exception("Catalogue '" + _catalogue + "' lists it's Test Logging Server as '" + _catalogue.TestLoggingServer + "' did not appear in combo box, possibly it is not marked as a  '" + expectedDatabaseTypeString + "' server? Try editting it in Locations=>Manage External Servers");
-
-                ddTestLoggingServer.SelectedItem = testLogging;
-
-                
             }
             
             try
@@ -120,10 +102,9 @@ namespace CatalogueManager.SimpleDialogs
 
         protected override void OnLoad(EventArgs e)
         {
-            
             base.OnLoad(e);
 
-            if(RepositoryLocator == null)
+            if(Activator == null)
                 return;
             
             RefreshUIFromDatabase();
@@ -182,19 +163,6 @@ namespace CatalogueManager.SimpleDialogs
             RefreshTasks();
         }
 
-        private void ddTestLoggingServer_SelectedIndexChanged(object sender, EventArgs e)
-        {
-            if (ddTestLoggingServer.SelectedItem == null)
-            {
-                _catalogue.TestLoggingServer_ID = null;
-                _catalogue.SaveToDatabase();
-                return;
-            }
-
-            _catalogue.TestLoggingServer_ID = ((ExternalDatabaseServer)ddTestLoggingServer.SelectedItem).ID;
-            _catalogue.SaveToDatabase();
-        }
-
         private void cbxDataLoadTasks_TextChanged(object sender, EventArgs e)
         {
             if (_catalogue == null)
@@ -208,7 +176,6 @@ namespace CatalogueManager.SimpleDialogs
         {
             try
             {
-                var testServer =  ddTestLoggingServer.SelectedItem as ExternalDatabaseServer;
                 var liveServer =  ddLoggingServer.SelectedItem as ExternalDatabaseServer;
 
                 string target = "";
@@ -217,13 +184,7 @@ namespace CatalogueManager.SimpleDialogs
 
                 if (liveServer != null)
                     target = liveServer.Server + "." + liveServer.Database;
-
-                if (liveServer != null && testServer != null)
-                    target += " and ";
-
-                if(testServer != null)
-                    target += testServer.Server + "." + testServer.Database;
-
+                
                 if (string.IsNullOrEmpty(target))
                 {
 
@@ -245,11 +206,7 @@ namespace CatalogueManager.SimpleDialogs
                             .CreateNewLoggingTaskIfNotExists(toCreate);
                         
                     }
-
-                    if(testServer!= null)
-                        new LogManager(testServer)
-                            .CreateNewLoggingTaskIfNotExists(toCreate);
-
+                    
                     MessageBox.Show("Done");
 
                     RefreshTasks();
@@ -307,7 +264,7 @@ namespace CatalogueManager.SimpleDialogs
 
         private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)
         {
-            CreatePlatformDatabase.CreateNewExternalServer(RepositoryLocator.CatalogueRepository,ServerDefaults.PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository,PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
             RefreshUIFromDatabase();
         }
 
@@ -315,9 +272,6 @@ namespace CatalogueManager.SimpleDialogs
         {
             if (sender == btnClearLive)
                 ddLoggingServer.SelectedItem = null;
-
-            if (sender == btnClearTest)
-                ddTestLoggingServer.SelectedItem = null;
         }
     }
 }

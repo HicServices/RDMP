@@ -35,7 +35,7 @@ namespace DataExportLibrary.Tests.CustomData
 
             try
             {
-                _request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
+                _request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(CustomExtractableDataSet));
                 ExtractionPipelineUseCase useCase;
                 IExecuteDatasetExtractionDestination results;
                 Execute(out useCase, out results);
@@ -76,16 +76,16 @@ namespace DataExportLibrary.Tests.CustomData
             var asExtractable = new ExtractableColumn(DataExportRepository, _extractableDataSet, _configuration, extraColumn, 10,extraColumn.SelectSQL);
 
             //get rid of any lingering joins
-            foreach (JoinInfo j in CatalogueRepository.JoinInfoFinder.GetAllJoinInfos())
+            foreach (JoinInfo j in CatalogueRepository.GetAllObjects<JoinInfo>())
                 j.DeleteInDatabase();
 
             //add the ability to join the two tables in the query
             var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
             var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(idCol, otherIdCol,ExtractionJoinType.Left,null);
+            new JoinInfo(CatalogueRepository,idCol, otherIdCol,ExtractionJoinType.Left,null);
 
             //generate a new request (this will include the newly created column)
-            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
+            _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
 
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
             tbl.Truncate();
@@ -148,18 +148,18 @@ namespace DataExportLibrary.Tests.CustomData
             rootContainer.AddChild(filter);
 
             //get rid of any lingering joins
-            foreach (JoinInfo j in CatalogueRepository.JoinInfoFinder.GetAllJoinInfos())
+            foreach (JoinInfo j in CatalogueRepository.GetAllObjects<JoinInfo>())
                 j.DeleteInDatabase();
 
             //add the ability to join the two tables in the query
             var idCol = _extractableDataSet.Catalogue.GetAllExtractionInformation(ExtractionCategory.Core).Single(c => c.IsExtractionIdentifier).ColumnInfo;
             var otherIdCol = CustomCatalogue.GetAllExtractionInformation(ExtractionCategory.ProjectSpecific).Single(e => e.GetRuntimeName().Equals("PrivateID")).ColumnInfo;
-            CatalogueRepository.JoinInfoFinder.AddJoinInfo(idCol, otherIdCol, ExtractionJoinType.Left, null);
+            new JoinInfo(CatalogueRepository,idCol, otherIdCol, ExtractionJoinType.Left, null);
 
             new SelectedDataSetsForcedJoin(DataExportRepository, _selectedDataSet, CustomTableInfo);
 
             //generate a new request (this will include the newly created column)
-            _request = new ExtractDatasetCommand(RepositoryLocator, _configuration, new ExtractableDatasetBundle(_extractableDataSet));
+            _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
             
             var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
             tbl.Truncate();

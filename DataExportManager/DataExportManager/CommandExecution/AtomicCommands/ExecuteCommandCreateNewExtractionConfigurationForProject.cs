@@ -29,7 +29,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return "Starts a new extraction for the project containing one or more datasets linked against a given cohort";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractionConfiguration, OverlayKind.Add);
         }

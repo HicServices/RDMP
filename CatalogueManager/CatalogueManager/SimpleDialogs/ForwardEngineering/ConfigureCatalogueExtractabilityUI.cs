@@ -37,7 +37,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     /// these up to a Catalogue or delete them if you decied you want to make the dataset extractable later on. </para>
     /// 
     /// <para>Alternatively you can create a new Catalogue, this will result in a Catalogue (dataset) of the same name as the table and a CatalogueItem being created for each ColumnInfo imported.
-    /// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand later on (in CatalogueItemTab).  It is likely that
+    /// If you choose to you can make these CatalogueItems extractable by creating ExtractionInformation too or you may choose to do this by hand later on (in CatalogueItemUI).  It is likely that
     /// you don't want to release every column in the dataset to researchers so make sure to review the extractability of the columns created. </para>
     /// 
     /// <para>You can choose a single extractable column to be the Patient Identifier (e.g. CHI / NHS number etc). This column must be the same (logically/datatype) across all your datasets i.e. 
@@ -51,8 +51,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
     {
         private object[] _extractionCategories;
         
-        private IActivateItems _activator;
-
         private string NotExtractable = "Not Extractable";
         private Catalogue _catalogue;
         private TableInfo _tableInfo;
@@ -70,17 +68,16 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         public TableInfo TableInfoCreated{get { return _tableInfo; }}
 
         private BinderWithErrorProviderFactory _binder;
-
-        RDMPUserControlPanel rdmpUserControlPanel = new RDMPUserControlPanel();
+        
         ObjectSaverButton objectSaverButton1 = new ObjectSaverButton();
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny):this()
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, TableInfo tableInfo,string initialDescription, Project projectSpecificIfAny):this(activator)
         {
             _tableInfo = tableInfo;
             Initialize(activator, initialDescription, projectSpecificIfAny);
         }
 
-        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny):this()
+        public ConfigureCatalogueExtractabilityUI(IActivateItems activator, ITableInfoImporter importer, string initialDescription, Project projectSpecificIfAny):this(activator)
         {
             ColumnInfo[] cols;
             importer.DoImport(out _tableInfo, out cols);
@@ -88,28 +85,15 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             Initialize(activator,initialDescription,projectSpecificIfAny);
         }
 
-        private ConfigureCatalogueExtractabilityUI()
+        private ConfigureCatalogueExtractabilityUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
-
-            //take panel1 out of us
-            this.Controls.Remove(panel1);
-
-            //and add it to the rdmp user control
-            rdmpUserControlPanel.Panel.Controls.Add(panel1);
-
-            //then put the user control in us
-            this.Controls.Add(rdmpUserControlPanel);
-            rdmpUserControlPanel.Dock = DockStyle.Fill;
-            panel1.Dock = DockStyle.Fill;
         }
 
         private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
         {
-            RepositoryLocator = activator.RepositoryLocator;
+            CommonFunctionality.SetItemActivator(activator);
 
-            _activator = activator;
-            
             var cols = _tableInfo.ColumnInfos;
             
             var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
@@ -157,7 +141,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             olvColumnInfoName.ImageGetter = ImageGetter;
             olvColumnExtractability.RebuildColumns();
             
-            if (_activator.RepositoryLocator.DataExportRepository == null)
+            if (Activator.RepositoryLocator.DataExportRepository == null)
                 gbProjectSpecific.Enabled = false;
             else
             {
@@ -168,10 +152,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             ddIsExtractionIdentifier.Items.Add("<<None>>");
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
 
-            rdmpUserControlPanel.SetItemActivator(_activator);
-            rdmpUserControlPanel.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
-            
-            objectSaverButton1.SetupFor(rdmpUserControlPanel,_catalogue,_activator.RefreshBus);
+            CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
         }
 
 
@@ -191,7 +172,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
         {
             var n = (Node) rowObject;
 
-            return _activator.CoreIconProvider.GetImage((object) n.ExtractionInformation ?? n.ColumnInfo);
+            return Activator.CoreIconProvider.GetImage((object) n.ExtractionInformation ?? n.ColumnInfo);
         }
 
         private object IsExtractionIdentifier_AspectGetter(object rowObject)
@@ -336,12 +317,12 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void FinaliseExtractability()
         {
-            var eds = new ExtractableDataSet(_activator.RepositoryLocator.DataExportRepository, _catalogue);
+            var eds = new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
 
             IAtomicCommandWithTarget cmd;
             if(_projectSpecific != null)
             {
-                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(_projectSpecific).SetTarget(_catalogue);
+                cmd = new ExecuteCommandMakeCatalogueProjectSpecific(Activator).SetTarget(_projectSpecific).SetTarget(_catalogue);
             
                 if (!cmd.IsImpossible)
                     cmd.Execute();
@@ -361,7 +342,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             }
             
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.CoreChildProvider.AllCatalogues, false, false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.CoreChildProvider.AllCatalogues, false, false);
                 if (dialog.ShowDialog() == DialogResult.OK)
 
                     if (MessageBox.Show("This will add " + eis.Length + " new columns to " + dialog.Selected + ". Are you sure this is what you want?","Add to existing", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -382,7 +363,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             _catalogue.DeleteInDatabase();
             _catalogue = null;
 
-            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(addToInstead));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(addToInstead));
 
             Close();
         }
@@ -394,7 +375,6 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
         private void btnOk_Click(object sender, EventArgs e)
         {
-
             var eis = GetExtractionInformations();
 
             if (!eis.Any())
@@ -413,6 +393,10 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
 
             _choicesFinalised = true;
             DialogResult = DialogResult.OK;
+            
+            if (CatalogueCreatedIfAny != null)
+                objectSaverButton1.CheckForUnsavedChangesAnOfferToSave();
+
             Close();
         }
 
@@ -435,7 +419,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
                     _catalogue.DeleteInDatabase();
                     _catalogue = null;
 
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
+                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
                 }
                 else
                     e.Cancel = true;
@@ -443,13 +427,13 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             else
             {
                 if(CatalogueCreatedIfAny != null)
-                    _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(CatalogueCreatedIfAny));
+                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(CatalogueCreatedIfAny));
             }
         }
 
         private void ConfigureCatalogueExtractabilityUI_Load(object sender, EventArgs e)
         {
-            _workflow = new HelpWorkflow(this, new Guid("74e6943e-1ed8-4c43-89c2-96158c1360fa"), new TutorialTracker(_activator));
+            _workflow = new HelpWorkflow(this, new Guid("74e6943e-1ed8-4c43-89c2-96158c1360fa"), new TutorialTracker(Activator));
             var stage1 = new HelpStage(olvColumnExtractability, "This is a collection of all the column definitions imported, change the Extractable status of one of the columns to make it extractable", () => GetExtractionInformations().Any());
             var stage2 = new HelpStage(ddIsExtractionIdentifier, "One of your columns should contain a patient identifier, select it here", () => GetExtractionInformations().Any(ei=>ei.IsExtractionIdentifier));
             var stage3 = new HelpStage(pChangeAll, "Change this dropdown to change all at once", () =>  _ddChangeAllChanged);
@@ -507,7 +491,7 @@ namespace CatalogueManager.SimpleDialogs.ForwardEngineering
             else
             {
 
-                var all = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+                var all = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
                 var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(all, false, false);
 
                 if (dialog.ShowDialog() == DialogResult.OK)

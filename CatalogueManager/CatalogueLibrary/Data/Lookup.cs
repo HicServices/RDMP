@@ -32,7 +32,7 @@ namespace CatalogueLibrary.Data
     /// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and 
     /// prescriberHealthboard).</para>
     /// </summary>
-    public class Lookup : VersionedDatabaseEntity, IJoin, IHasDependencies, ICheckable
+    public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     {
         //cached answers
         private ColumnInfo _description;
@@ -283,7 +283,7 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public IEnumerable<ISupplementalJoin> GetSupplementalJoins()
         {
-            return Repository.GetAllObjects<LookupCompositeJoinInfo>("WHERE OriginalLookup_ID=" + ID);
+            return Repository.GetAllObjectsWhere<LookupCompositeJoinInfo>("OriginalLookup_ID" , ID);
         }
         /// <inheritdoc/>
         public ExtractionJoinType GetInvertedJoinType()

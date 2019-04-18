@@ -15,13 +15,13 @@ namespace CatalogueLibrary.Data
     /// </summary>
     public class DataAccessCredentialsFactory
     {
-        private readonly CatalogueRepository _cataRepository;
+        private readonly ICatalogueRepository _cataRepository;
 
         /// <summary>
         /// Creates a new <see cref="DataAccessCredentialsFactory"/> for creating <see cref="DataAccessCredentials"/> which will be stored in the database provided (<paramref name="cataRepository"/>)
         /// </summary>
         /// <param name="cataRepository"></param>
-        public DataAccessCredentialsFactory(CatalogueRepository cataRepository)
+        public DataAccessCredentialsFactory(ICatalogueRepository cataRepository)
         {
             _cataRepository = cataRepository;
         }
@@ -36,7 +36,7 @@ namespace CatalogueLibrary.Data
         /// <param name="usageContext"></param>
         public DataAccessCredentials Create(TableInfo tableInfoCreated, string username, string password, DataAccessContext usageContext)
         {
-            DataAccessCredentials credentialsToAssociate = _cataRepository.TableInfoToCredentialsLinker.GetCredentialByUsernameAndPasswordIfExists(username, password);
+            DataAccessCredentials credentialsToAssociate = _cataRepository.TableInfoCredentialsManager.GetCredentialByUsernameAndPasswordIfExists(username, password);
 
             if (credentialsToAssociate == null)
             {
@@ -47,7 +47,7 @@ namespace CatalogueLibrary.Data
                 credentialsToAssociate.SaveToDatabase();
             }
 
-            _cataRepository.TableInfoToCredentialsLinker.CreateLinkBetween(credentialsToAssociate, tableInfoCreated,usageContext);
+            _cataRepository.TableInfoCredentialsManager.CreateLinkBetween(credentialsToAssociate, tableInfoCreated,usageContext);
 
             return credentialsToAssociate;
         }

@@ -4,7 +4,7 @@
     <Position X="10.253" Y="4.806" Height="0.386" Width="14.686" />
   </Comment>
   <Comment CommentText="Example instances of Controls which have more than 1 object required to function or where the object(s) are of dynamic Types that do not share a useful common interface ">
-    <Position X="11.211" Y="9.786" Height="0.75" Width="4.283" />
+    <Position X="10.805" Y="11.338" Height="0.74" Width="4.283" />
   </Comment>
   <Comment CommentText="Implementation / Control Layer">
     <Position X="10.285" Y="7.42" Height="0.386" Width="14.614" />
@@ -25,7 +25,7 @@
     <Position X="17.09" Y="9.82" Height="0.319" Width="5.725" />
   </Comment>
   <Comment CommentText="Main Application Window.  Also responsible for Persist/Load of states">
-    <Position X="0.579" Y="10.663" Height="0.463" Width="2.622" />
+    <Position X="0.558" Y="11.25" Height="0.463" Width="2.622" />
   </Comment>
   <Comment CommentText="Persistence Handling">
     <Position X="3.577" Y="6.949" Height="0.343" Width="6.432" />
@@ -59,7 +59,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ActivateItems" Collapsed="true">
     <Position X="5.25" Y="2.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAACgAAAECghDAAAAAoCAgYQQggwNhFFAAQMFAAQA=</HashCode>
+      <HashCode>AAQAACAAAAECghDQBAAAoCAgIQQggwNhFFQAQEFAAQA=</HashCode>
       <FileName>WindowManagement\ActivateItems.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -75,7 +75,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence.PersistableObjectCollectionDockContent" Collapsed="true">
     <Position X="11.75" Y="3.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAgCAQAAAAAAAAAABAAACAAAAAAEAIAAAAAAABAA=</HashCode>
+      <HashCode>AAAAAgCAQAAAQAAAAAABAAACAAAAAAEAIAAAAAAABAA=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\Persistence\PersistableObjectCollectionDockContent.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -99,13 +99,8 @@
     <Position X="20" Y="9" Width="2.75" />
     <TypeIdentifier />
   </Class>
-  <Class Name="CohortManager.SubComponents.Graphs.CohortSummaryAggregateGraph" Collapsed="true">
-    <Position X="13.25" Y="9" Width="3" />
-    <TypeIdentifier />
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="CatalogueManager.DataViewing.ViewSQLAndResultsWithDataGridUI" Collapsed="true">
-    <Position X="10.25" Y="9" Width="2.75" />
+  <Class Name="CatalogueManager.DataViewing.ViewSQLAndResultsWithDataGridUI">
+    <Position X="10.75" Y="9" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
@@ -132,7 +127,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAABATCACAAAAACAAABCAQAIAgEAAAAQAAAAAQA=</HashCode>
+      <HashCode>AAEgAAABATGACAAAAACAAABCAQAIAgEAAAAQAAAAAQA=</HashCode>
       <FileName>RDMPMainForm.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -166,7 +161,6 @@
   <Class Name="DataExportManager.Collections.DataExportCollectionUI" Collapsed="true">
     <Position X="26.25" Y="9" Width="2" />
     <TypeIdentifier />
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.NavigationTrack" Collapsed="true">
     <Position X="5.25" Y="1.5" Width="1.5" />

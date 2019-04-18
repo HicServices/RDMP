@@ -23,7 +23,7 @@ namespace ReusableUIComponents.Performance.PerformanceStackPath
     /// </summary>
     public partial class PerformanceStackPathViewerUI : UserControl
     {
-        DependencyGraph g; 
+        DependencyGraphUI g; 
         StackFrame origin;
 
         public PerformanceStackPathViewerUI(ComprehensiveQueryPerformanceCounter performanceCounter, int worstOffenderCount, bool collapseToMethod)
@@ -77,7 +77,7 @@ namespace ReusableUIComponents.Performance.PerformanceStackPath
                 }
             }
 
-            g = new DependencyGraph(new []{typeof(StackFrame)}, new StackFrameVisualiser(worstOffenderCount));
+            g = new DependencyGraphUI(new []{typeof(StackFrame)}, new StackFrameVisualiser(worstOffenderCount));
             g.Dock = DockStyle.Fill;
 
             Controls.Add(g);

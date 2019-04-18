@@ -77,7 +77,7 @@ namespace CatalogueLibraryTests.Integration.DataAccess
 
                 //now fetch them out of database lots of times
                 for (int i = 0; i < 100; i++)
-                    CatalogueRepository.GetAllCatalogues(true);
+                    CatalogueRepository.GetAllObjects<Catalogue>();
 
                 if (useTransactions)
                     CatalogueRepository.EndTransactedConnection(false);
@@ -100,17 +100,19 @@ namespace CatalogueLibraryTests.Integration.DataAccess
         [TestCase(false)]
         public void SimpleCaseSingleThreaded(bool useTransaction)
         {
+            
+
             using (
                 var con = useTransaction
-                    ? RepositoryLocator.CatalogueRepository.BeginNewTransactedConnection()
-                    : RepositoryLocator.CatalogueRepository.GetConnection())
+                    ? CatalogueRepository.BeginNewTransactedConnection()
+                    : CatalogueRepository.GetConnection())
             {
 
                 Assert.AreEqual(ConnectionState.Open, con.Connection.State);
                 Thread.Sleep(1000);
 
                 if (useTransaction)
-                    RepositoryLocator.CatalogueRepository.EndTransactedConnection(false);
+                    CatalogueRepository.EndTransactedConnection(false);
                 else
                     con.Connection.Close();
 

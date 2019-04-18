@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
@@ -168,10 +169,6 @@ namespace CatalogueLibrary.Data.Cohort
         
 
         #endregion
-
-        [NoMappingToDatabase]
-        CatalogueRepository CatalogueRepository { get { return (CatalogueRepository) Repository; } }
-
         
 
         /// <summary>
@@ -182,9 +179,12 @@ namespace CatalogueLibrary.Data.Cohort
         /// <param name="name"></param>
         public CohortIdentificationConfiguration(ICatalogueRepository repository, string name)
         {
+            var queryCache = repository.GetServerDefaults().GetDefaultFor(PermissableDefaults.CohortIdentificationQueryCachingServer_ID);
+
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
-                {"Name", name}
+                {"Name", name},
+                {"QueryCachingServer_ID",queryCache == null ? (object) DBNull.Value:queryCache.ID}
             });
         }
 
@@ -257,7 +257,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <inheritdoc/>
         public ISqlParameter[] GetAllParameters()
         {
-            return ((CatalogueRepository)Repository).GetAllParametersForParentTable(this).ToArray();
+            return CatalogueRepository.GetAllParametersForParentTable(this).ToArray();
         }
 
 
@@ -323,6 +323,7 @@ namespace CatalogueLibrary.Data.Cohort
         /// <returns></returns>
         public CohortIdentificationConfiguration CreateClone(ICheckNotifier notifier)
         {
+            //todo this would be nice if it was ICatalogueRepository but transaction is super SQLy
             var cataRepo = ((CatalogueRepository) Repository);
             //start a new super transaction
             using (cataRepo.BeginNewTransactedConnection())
@@ -416,14 +417,14 @@ namespace CatalogueLibrary.Data.Cohort
 
         private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)
         {
-            var cataRepo = (CatalogueRepository)Repository;
+            var cataRepo = CatalogueRepository;
 
             //two cases here either the import has a custom freaky CHI column (dimension) or it doesn't reference CHI at all if it is freaky we want to preserve it's freakyness
             ExtractionInformation underlyingExtractionInformation;
             IColumn extractionIdentifier = GetExtractionIdentifierFrom(toClone, out underlyingExtractionInformation, resolveMultipleExtractionIdentifiers);
             
             //clone will not have axis or pivot or dimensions other than extraction identifier
-            var newConfiguration = cataRepo.CloneObjectInTable(toClone);
+            var newConfiguration = toClone.ShallowClone();
 
             //make it's name follow the naming convention e.g. cic_105_LINK103_MyAggregate 
             EnsureNamingConvention(newConfiguration);
@@ -444,8 +445,8 @@ namespace CatalogueLibrary.Data.Cohort
 
 
             //now clone it's AggregateForcedJoins
-            foreach (var t in cataRepo.AggregateForcedJoiner.GetAllForcedJoinsFor(toClone))
-                cataRepo.AggregateForcedJoiner.CreateLinkBetween(newConfiguration, t);
+            foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(toClone))
+                cataRepo.AggregateForcedJoinManager.CreateLinkBetween(newConfiguration, t);
 
 
             //now give it 1 dimension which is the only IsExtractionIdentifier column 

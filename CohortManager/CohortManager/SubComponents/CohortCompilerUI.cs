@@ -42,7 +42,7 @@ namespace CohortManager.SubComponents
     /// sized pieces (Sets).</para>
     /// 
     /// <para>Start by identifying the first dataset you will need to interrogate (e.g. if they want to know about diabetic medications drag in 'Prescribing').  Next double click the set
-    /// and configure appropriate filters (See AggregateEditor) do not change the Dimension (this should already be the patient identifier).  Finally once you have configured
+    /// and configure appropriate filters (See AggregateEditorUI) do not change the Dimension (this should already be the patient identifier).  Finally once you have configured
     /// the correct filters you should rename your set (AggregateConfiguration) to have a name that reflects the filters (e.g. 'People who have been prescribed a diabetic medication).</para>
     /// 
     /// <para>Next identify the next dataset you need to interrogate (e.g. if they want to exclude patients who have a 'Biochemistry' test result of 'CREATANINE' > 100)  create this set as 
@@ -285,24 +285,16 @@ namespace CohortManager.SubComponents
 
         #endregion
 
-        private bool _haveSubscribed = false;
         private CohortCompilerRunner _runner;
-
-
+        
         public override void SetDatabaseObject(IActivateItems activator, CohortIdentificationConfiguration databaseObject)
         {
             _cic = databaseObject;
-
+            
             base.SetDatabaseObject(activator, databaseObject);
 
-            if (!_haveSubscribed)
-            {
-                activator.RefreshBus.Subscribe(this);
-                _haveSubscribed = true;
-            }
-
             foreach (var c in _timeoutControls.GetControls())
-                Add(c);
+                CommonFunctionality.Add(c);
 
             _queryCachingServer = _cic.QueryCachingServer;
             Compiler.CohortIdentificationConfiguration = _cic;
@@ -312,7 +304,7 @@ namespace CohortManager.SubComponents
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
         {
-            var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
+            var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(e.Object);
 
             //if publish event was for a child of the cic (_cic is in the objects descendancy i.e. it sits below our cic)
             if (descendancy != null && descendancy.Parents.Contains(_cic))

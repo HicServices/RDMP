@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using DataExportLibrary.Interfaces.Pipeline;
+using CatalogueLibrary.CohortCreation;
 
 namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
 {

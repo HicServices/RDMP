@@ -56,6 +56,6 @@ namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
         #endregion
 
         private System.Windows.Forms.ImageList imageList1;
-        private ConfigureAndExecutePipeline configureAndExecutePipeline1;
+        private ConfigureAndExecutePipelineUI configureAndExecutePipeline1;
     }
 }

@@ -222,20 +222,20 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
@@ -304,11 +304,11 @@
     <Compile Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.Designer.cs">
       <DependentUpon>Screen2.cs</DependentUpon>
     </Compile>
-    <Compile Include="CohortUI\ExtractableCohortCollection.cs">
+    <Compile Include="CohortUI\ExtractableCohortCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CohortUI\ExtractableCohortCollection.Designer.cs">
-      <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>
+    <Compile Include="CohortUI\ExtractableCohortCollectionUI.Designer.cs">
+      <DependentUpon>ExtractableCohortCollectionUI.cs</DependentUpon>
     </Compile>
     <Compile Include="CohortUI\ImportCustomData\CohortCreationRequestUI.cs">
       <SubType>Form</SubType>
@@ -377,6 +377,7 @@
     <Compile Include="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
     <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCloneExtractionConfiguration.cs" />
+    <Compile Include="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportAlreadyExistingCohort.cs" />
     <Compile Include="Menus\ExtractableDatasetMenu.cs" />
     <Compile Include="Menus\ExtractableDataSetPackageMenu.cs" />
     <Compile Include="Menus\ExtractionConfigurationMenu.cs" />
@@ -402,12 +403,6 @@
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
     </Compile>
     <Compile Include="ProjectUI\Datasets\Node\AvailableForceJoinNode.cs" />
-    <Compile Include="ProjectUI\DataUsers\DataUserManagement.cs">
-      <SubType>Form</SubType>
-    </Compile>
-    <Compile Include="ProjectUI\DataUsers\DataUserManagement.Designer.cs">
-      <DependentUpon>DataUserManagement.cs</DependentUpon>
-    </Compile>
     <Compile Include="ProjectUI\ExecuteExtractionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -444,23 +439,23 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureDisclaimer.cs">
+    <Compile Include="SimpleDialogs\ConfigureDisclaimerUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureDisclaimer.Designer.cs">
-      <DependentUpon>ConfigureDisclaimer.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\ConfigureDisclaimerUI.Designer.cs">
+      <DependentUpon>ConfigureDisclaimerUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithm.cs">
+    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithmUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithm.Designer.cs">
-      <DependentUpon>ConfigureHashingAlgorithm.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\ConfigureHashingAlgorithmUI.Designer.cs">
+      <DependentUpon>ConfigureHashingAlgorithmUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SelectWhichCohortToImport.cs">
+    <Compile Include="SimpleDialogs\SelectWhichCohortToImportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\SelectWhichCohortToImport.Designer.cs">
-      <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
+    <Compile Include="SimpleDialogs\SelectWhichCohortToImportUI.Designer.cs">
+      <DependentUpon>SelectWhichCohortToImportUI.cs</DependentUpon>
     </Compile>
     <Compile Include="Wizard\CreateNewDataExtractionProjectUI.cs">
       <SubType>Form</SubType>
@@ -481,8 +476,8 @@
     <EmbeddedResource Include="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">
       <DependentUpon>Screen2.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CohortUI\ExtractableCohortCollection.resx">
-      <DependentUpon>ExtractableCohortCollection.cs</DependentUpon>
+    <EmbeddedResource Include="CohortUI\ExtractableCohortCollectionUI.resx">
+      <DependentUpon>ExtractableCohortCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CohortUI\ImportCustomData\CohortCreationRequestUI.resx">
       <DependentUpon>CohortCreationRequestUI.cs</DependentUpon>
@@ -506,10 +501,6 @@
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\Datasets\ConfigureDatasetUI.resx">
       <DependentUpon>ConfigureDatasetUI.cs</DependentUpon>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
-    <EmbeddedResource Include="ProjectUI\DataUsers\DataUserManagement.resx">
-      <DependentUpon>DataUserManagement.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Include="ProjectUI\ExecuteExtractionUI.resx">
@@ -537,14 +528,14 @@
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SimpleDialogs\ConfigureDisclaimer.resx">
-      <DependentUpon>ConfigureDisclaimer.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\ConfigureDisclaimerUI.resx">
+      <DependentUpon>ConfigureDisclaimerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ConfigureHashingAlgorithm.resx">
-      <DependentUpon>ConfigureHashingAlgorithm.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\ConfigureHashingAlgorithmUI.resx">
+      <DependentUpon>ConfigureHashingAlgorithmUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\SelectWhichCohortToImport.resx">
-      <DependentUpon>SelectWhichCohortToImport.cs</DependentUpon>
+    <EmbeddedResource Include="SimpleDialogs\SelectWhichCohortToImportUI.resx">
+      <DependentUpon>SelectWhichCohortToImportUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Wizard\CreateNewDataExtractionProjectUI.resx">
       <DependentUpon>CreateNewDataExtractionProjectUI.cs</DependentUpon>
@@ -633,10 +624,6 @@
     <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
       <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
       <Name>RDMPAutomationService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>

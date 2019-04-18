@@ -6,17 +6,10 @@
 
 using System;
 using System.Linq;
-using System.Security;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -39,9 +32,8 @@ namespace DataExportManager.Menus
 
         private void AddExtractableDatasetToPackage(object sender, EventArgs e)
         {
-            var contents = _childProvider.PackageContents;
-            var notInPackage = _childProvider.ExtractableDataSets.Except(contents.GetAllDataSets(_package,_childProvider.ExtractableDataSets));
-
+            var packageManager = _activator.RepositoryLocator.DataExportRepository.PackageManager;
+            var notInPackage = _childProvider.ExtractableDataSets.Except(packageManager.GetAllDataSets(_package, _childProvider.ExtractableDataSets));
 
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(notInPackage, false, false);
             dialog.AllowMultiSelect = true;
@@ -49,7 +41,7 @@ namespace DataExportManager.Menus
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 foreach (ExtractableDataSet ds in dialog.MultiSelected.Cast<ExtractableDataSet>())
-                    contents.AddDataSetToPackage(_package, ds);
+                    packageManager.AddDataSetToPackage(_package, ds);
 
                 //package contents changed
                 if(dialog.MultiSelected.Any())

@@ -14,7 +14,6 @@ using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableLibraryCode.Checks;
@@ -168,7 +167,7 @@ namespace DataExportLibrary.DataRelease.Potential
             var salt = new HICProjectSalt(project);
 
             //create a request for an empty bundle - only the dataset
-            var request = new ExtractDatasetCommand(_repositoryLocator, Configuration, cohort, new ExtractableDatasetBundle(DataSet), _columnsToExtract, salt, null);
+            var request = new ExtractDatasetCommand( Configuration, cohort, new ExtractableDatasetBundle(DataSet), _columnsToExtract, salt, null);
             
             request.GenerateQueryBuilder();
 

@@ -76,15 +76,15 @@ namespace DataExportManager.CohortUI.CohortSourceManagement
             }
 
             serverDatabaseTableSelector1.SetExplicitDatabase(_externalCohortTable.Server, _externalCohortTable.Database, _externalCohortTable.Username, password);
-            
-            AddHelp(tbTableName, "IExternalCohortTable.TableName");
-            AddHelp(tbPrivateIdentifierField, "IExternalCohortTable.PrivateIdentifierField");
-            AddHelp(tbReleaseIdentifierField, "IExternalCohortTable.ReleaseIdentifierField");
-            AddHelp(tbDefinitionTableForeignKeyField, "IExternalCohortTable.DefinitionTableForeignKeyField");
-            
-            AddHelp(tbDefinitionTableName, "IExternalCohortTable.DefinitionTableName");
 
-            AddChecks(_externalCohortTable);
+            CommonFunctionality.AddHelp(tbTableName, "IExternalCohortTable.TableName");
+            CommonFunctionality.AddHelp(tbPrivateIdentifierField, "IExternalCohortTable.PrivateIdentifierField");
+            CommonFunctionality.AddHelp(tbReleaseIdentifierField, "IExternalCohortTable.ReleaseIdentifierField");
+            CommonFunctionality.AddHelp(tbDefinitionTableForeignKeyField, "IExternalCohortTable.DefinitionTableForeignKeyField");
+
+            CommonFunctionality.AddHelp(tbDefinitionTableName, "IExternalCohortTable.DefinitionTableName");
+
+            CommonFunctionality.AddChecks(_externalCohortTable);
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ExternalCohortTable databaseObject)

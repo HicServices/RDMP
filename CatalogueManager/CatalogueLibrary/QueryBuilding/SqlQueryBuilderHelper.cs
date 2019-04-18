@@ -10,6 +10,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
@@ -81,10 +82,10 @@ namespace CatalogueLibrary.QueryBuilding
             if (!qb.TablesUsedInQuery.Any())
                 throw new QueryBuildingException("Query has no TableInfos! Make sure your query has at least one column with an underlying ColumnInfo / TableInfo set - possibly you have deleted the TableInfo? this would result in orphan CatalogueItem");
 
-            CatalogueRepository cataRepository;
+            ICatalogueRepository cataRepository;
             try
             {
-                cataRepository = (CatalogueRepository)qb.TablesUsedInQuery.Select(t => t.Repository).Distinct().Single();
+                cataRepository = (ICatalogueRepository)qb.TablesUsedInQuery.Select(t => t.Repository).Distinct().Single();
             }
             catch (Exception e)
             {
@@ -97,7 +98,7 @@ namespace CatalogueLibrary.QueryBuilding
                     if (table1.ID != table2.ID) //each table must join with a single other table
                     {
                         //figure out which of the users columns is from table 1 to join using
-                        JoinInfo[] availableJoins = cataRepository.JoinInfoFinder.GetAllJoinInfosBetweenColumnInfoSets(
+                        JoinInfo[] availableJoins = cataRepository.JoinManager.GetAllJoinInfosBetweenColumnInfoSets(
                             table1.ColumnInfos.ToArray(),
                             table2.ColumnInfos.ToArray());
 
@@ -272,8 +273,7 @@ namespace CatalogueLibrary.QueryBuilding
             //there must be at least one TableInfo here to do this... but we are going to look up all available JoinInfos from these tables to identify opportunistic joins
             foreach(var table in toReturn.ToArray())
             {
-                var cataRepo = ((CatalogueRepository) table.Repository);
-                var available = cataRepo.JoinInfoFinder.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
+                var available = table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
                 
                 foreach (JoinInfo newAvailableJoin in available)
                 {

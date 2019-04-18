@@ -8,10 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text;
-using System.Threading.Tasks;
-using System.Web.ModelBinding;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
@@ -23,12 +20,12 @@ namespace CatalogueLibrary.Reports
     /// <summary>
     /// Calculates the size of all the databases on an server, the rowcounts of all talbes as well as summarising key value pair descriptors of the server (version etc).
     /// </summary>
-    public class DatabaseSizeReport : RequiresMicrosoftOffice, ICheckable
+    public class DatabaseSizeReport : DocXHelper, ICheckable
     {
         private readonly TableInfo[] _tableInfos;
-        private CatalogueRepository _repository;
+        private ICatalogueRepository _repository;
 
-        public DatabaseSizeReport(TableInfo[] tableInfos, CatalogueRepository repository)
+        public DatabaseSizeReport(TableInfo[] tableInfos, ICatalogueRepository repository)
         {
             _tableInfos = tableInfos;
             _repository = repository;
@@ -55,7 +52,7 @@ namespace CatalogueLibrary.Reports
                 if(toAddTo != null)
                     toAddTo.AddTableInfo(t); //add it as another table we know about in that database
                 else
-                    servers[key].Add(new DatabaseSizeFacts(_repository,t));//it is novel so add it as a new database we know only that table t is in
+                    servers[key].Add(new DatabaseSizeFacts(t));//it is novel so add it as a new database we know only that table t is in
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Identified dependencies of " + t, CheckResult.Success));
             }
@@ -150,7 +147,7 @@ namespace CatalogueLibrary.Reports
             public string DatabaseName { get; set; }
             public Dictionary<TableInfo,Catalogue[]> Tables { get; private set; }
 
-            public DatabaseSizeFacts(CatalogueRepository repository,TableInfo t)
+            public DatabaseSizeFacts(TableInfo t)
             {
                 DatabaseName = t.GetDatabaseRuntimeName();
                 Tables = new Dictionary<TableInfo, Catalogue[]>();

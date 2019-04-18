@@ -42,6 +42,8 @@ namespace ReusableUIComponents.Dialogs
         public static CommentStore CommentStore;
         #endregion
         
+        Regex className = new Regex(@"^\w+$");
+
         public WideMessageBox(WideMessageBoxArgs args)
         {
             InitializeComponent();
@@ -65,7 +67,9 @@ namespace ReusableUIComponents.Dialogs
                 this.WindowState = FormWindowState.Maximized;
 
             richTextBox1.LinkClicked += richTextBox1_LinkClicked;
+            btnViewSourceCode.Click += (s, e) => new ViewSourceCodeDialog((string)btnViewSourceCode.Tag).Show();
         }
+
 
         private void Setup(WideMessageBoxArgs args)
         {
@@ -109,6 +113,22 @@ namespace ReusableUIComponents.Dialogs
             SetMessage(message, args.KeywordNotToAdd);
 
             ApplyTheme(args.Theme);
+            
+            if (args.Theme == WideMessageBoxTheme.Help)
+                SetViewSourceCodeButton(args.Title);
+        }
+
+        private void SetViewSourceCodeButton(string title)
+        {
+            //if it's a class name we are showing
+            if (className.IsMatch(title) &&
+                ViewSourceCodeDialog.SourceCodeIsAvailableFor(title + ".cs"))
+            {
+                btnViewSourceCode.Enabled = true;
+                btnViewSourceCode.Tag = title + ".cs";
+            }
+            else
+                btnViewSourceCode.Enabled = false;
         }
 
         public static void Show(string mainMessage, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)

@@ -50,7 +50,7 @@ namespace DataLoadEngine.Factories
                 if (!task.ProcessTaskType.Equals(ProcessTaskType.DataProvider))
                     continue;
 
-                var type = ((CatalogueRepository)task.Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(task.Path);
+                var type = task.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(task.Path);
 
                 if (typeof(ICachedDataProvider).IsAssignableFrom(type))
                     compatibleProviders.Add(task);

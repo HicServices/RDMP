@@ -5,21 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.Reports;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DashboardTabs
@@ -28,9 +21,8 @@ namespace CatalogueManager.DashboardTabs
     /// TECHNICAL: wrapper class for a hosted IDashboardableControl.  Is responsible for rendering the close box and the border of the control.
     /// </summary>
     [TechnicalUI]
-    public partial class DashboardableControlHostPanel : UserControl
+    public partial class DashboardableControlHostPanel : RDMPUserControl
     {
-        private readonly IActivateItems _activator;
         private readonly DashboardControl _databaseRecord;
         private bool _editMode;
         public IDashboardableControl HostedControl { get; private set; }
@@ -39,8 +31,8 @@ namespace CatalogueManager.DashboardTabs
 
         public DashboardableControlHostPanel(IActivateItems activator, DashboardControl databaseRecord, IDashboardableControl hostedControl)
         {
-            
-            _activator = activator;
+            SetItemActivator(activator);
+
             _databaseRecord = databaseRecord;
             HostedControl = hostedControl;
             InitializeComponent();
@@ -108,8 +100,8 @@ namespace CatalogueManager.DashboardTabs
             if(_editMode)
             {
                 var layout = _databaseRecord.ParentLayout;
-                _activator.DeleteWithConfirmation(this, _databaseRecord);
-                _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(layout));
+                Activator.DeleteWithConfirmation(this, _databaseRecord);
+                Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(layout));
             }
         }
     }

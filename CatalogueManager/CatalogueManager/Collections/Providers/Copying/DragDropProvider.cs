@@ -16,7 +16,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.PerformanceImprovement;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Copying;
 using ReusableLibraryCode.CommandExecution;

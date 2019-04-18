@@ -12,7 +12,6 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.ChecksUI;
 
 namespace CatalogueManager.Menus
 {
@@ -32,8 +31,6 @@ namespace CatalogueManager.Menus
             //only allow them to execute graph if it is normal aggregate graph
             if (!aggregate.IsCohortIdentificationAggregate)
                 Add(new ExecuteCommandExecuteAggregateGraph(_activator, aggregate));
-
-            Items.Add("View Checks", CatalogueIcons.Warning, (s, e) => new PopupChecksUI("Checking " + aggregate, false).Check(aggregate));
 
             var addFilterContainer = new ToolStripMenuItem("Add Filter Container", GetImage(RDMPConcept.FilterContainer, OverlayKind.Add), (s, e) => AddFilterContainer());
 

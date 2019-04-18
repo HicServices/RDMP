@@ -389,7 +389,8 @@ namespace CatalogueLibrary.Repositories
                     {
                         if(asm.FullName.Contains("nunit.engine"))
                             continue;
-
+                        if (asm.FullName.Contains("NPOI"))
+                            continue;
                         try
                         {
                             foreach (Type type in asm.GetTypes())

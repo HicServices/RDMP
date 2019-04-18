@@ -50,24 +50,7 @@ namespace DataExportLibrary.Tests.Cohort
             Assert.AreEqual("ReleaseID", _extractableCohort.GetReleaseIdentifier(true));
             
         }
-
-        [Test]
-        public void CohortConfigurationChecker_AllFine()
-        {
-            RecordAllFailures failureRecorder = new RecordAllFailures();
-
-            //run checker
-            CohortConfigurationChecker checker = new CohortConfigurationChecker((DataExportRepository)DataExportRepository);
-            checker.Check(failureRecorder);
-
-            if (failureRecorder.FailureMessages.Any())
-                Console.WriteLine(failureRecorder.FailureMessages.Aggregate("",(s,n)=>s+n));
-
-            //make sure it didnt find any errors
-            Assert.IsTrue(!failureRecorder.FailureMessages.Any());
-
-        }
-
+        
         [Test]
         public void TestSelf_RecordAllFailures()
         {

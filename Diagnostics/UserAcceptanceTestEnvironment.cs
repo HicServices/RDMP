@@ -13,6 +13,7 @@ using System.Linq;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
@@ -167,8 +168,8 @@ namespace Diagnostics
             {
                 var builder = ((SqlConnectionStringBuilder)_discoveredServerToCreateRawDataOn.Builder);
 
-                var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
-                if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer) == null)
+                var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+                if (defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer) == null)
                 {
                     var create = notifier.OnCheckPerformed(new CheckEventArgs("There is no currently configured RAW server",
                         CheckResult.Warning, null,
@@ -182,7 +183,7 @@ namespace Diagnostics
                         raw.Password = builder.Password;
                         raw.SaveToDatabase();
 
-                        defaults.SetDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer, raw);
+                        defaults.SetDefault(PermissableDefaults.RAWDataLoadServer, raw);
                         
                         _serversCreated.Add(raw);
                     }
@@ -380,7 +381,7 @@ namespace Diagnostics
             if (anoIdentifierTable.Equals("ANOCHI"))
                 throw new Exception("Oops dont nuke this table name");
 
-            ANOTable toCleanup = repository.GetAllObjects<ANOTable>("WHERE TableName = '" + anoIdentifierTable+"'").SingleOrDefault();
+            ANOTable toCleanup = repository.GetAllObjectsWhere<ANOTable>("TableName", anoIdentifierTable).SingleOrDefault();
             
             if(toCleanup != null)
             {
@@ -450,6 +451,8 @@ namespace Diagnostics
             }
             
             _anoServer = SetupExternalServer(ANOIdentifiers,notifier);
+            _anoServer.CreatedByAssembly = "ANOStore.Database";
+            _anoServer.SaveToDatabase();
             _identifierDumpServer = SetupExternalServer(IdentifierDump, notifier);
             
             return true;
@@ -476,19 +479,15 @@ namespace Diagnostics
 
             //user does not want to recreate it but it has the correct name so we have to use it as the correct logging server
             DemographyCatalogue.LiveLoggingServer_ID = _loggingServer.ID;
-            DemographyCatalogue.TestLoggingServer_ID = _loggingServer.ID;//just use the same logging server for live and tests
             DemographyCatalogue.LoggingDataTask = _loggingTask;
             DemographyCatalogue.SaveToDatabase();
             
             
             //if there are not currently any default logging servers, set them to the one we just created.
-            ServerDefaults defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+            IServerDefaults defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
-            if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID) == null)
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID,_loggingServer);
-
-            if (defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.TestLoggingServer_ID) == null)
-                defaults.SetDefault(ServerDefaults.PermissableDefaults.TestLoggingServer_ID, _loggingServer);
+            if (defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) == null)
+                defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID,_loggingServer);
 
             return true;
 
@@ -552,11 +551,10 @@ namespace Diagnostics
                         }
                     }
 
-                    var cataloguesUsingServer = repository.GetAllCatalogues(true)
+                    var cataloguesUsingServer = repository.GetAllObjects<Catalogue>()
                         .Where(
                             c =>
-                                c.LiveLoggingServer_ID == externalDatabaseServer.ID ||
-                                c.TestLoggingServer_ID == externalDatabaseServer.ID).ToArray();
+                                c.LiveLoggingServer_ID == externalDatabaseServer.ID).ToArray();
 
                     foreach (Catalogue user in cataloguesUsingServer)
                     {
@@ -565,7 +563,6 @@ namespace Diagnostics
                         {
 
                             user.LiveLoggingServer_ID = null;
-                            user.TestLoggingServer_ID = null;
                             user.SaveToDatabase();
                         }
                         else
@@ -1001,7 +998,7 @@ namespace Diagnostics
             var repository = RepositoryLocator.CatalogueRepository;
             try
             {
-                DemographyCatalogue = repository.GetAllCatalogues().SingleOrDefault(cata => cata.Name.Equals(CatalogueName));
+                DemographyCatalogue = repository.GetAllObjects<Catalogue>().SingleOrDefault(cata => cata.Name.Equals(CatalogueName));
                 
                 if (DemographyCatalogue != null)
                 {
@@ -1155,8 +1152,7 @@ namespace Diagnostics
             {
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Exception occurred during import of the test table '" + TestTableName +
-                    "' into Data Catalogue (ConnectionString=" + repository.ConnectionString +
-                    ")", CheckResult.Fail, e));
+                    "' into Data Catalogue", CheckResult.Fail, e));
                 return false;
             }
         }
@@ -1253,12 +1249,12 @@ namespace Diagnostics
                 credentials.DeleteInDatabase();
             
             //check RAW server
-            var defaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
-            var rawServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.RAWDataLoadServer);
+            var defaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
+            var rawServer = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);
 
             //did we create it?
             if (rawServer != null && _serversCreated.Contains(rawServer))//yes
-                defaults.ClearDefault(ServerDefaults.PermissableDefaults.RAWDataLoadServer);//so clear the default we created
+                defaults.ClearDefault(PermissableDefaults.RAWDataLoadServer);//so clear the default we created
 
             //any servers we created need to be deleted
             foreach (var server in _serversCreated)

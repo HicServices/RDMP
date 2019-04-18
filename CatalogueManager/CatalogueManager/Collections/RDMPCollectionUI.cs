@@ -4,16 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.SimpleDialogs.Reports;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
@@ -27,20 +19,18 @@ namespace CatalogueManager.Collections
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<RDMPCollectionUI, UserControl>))]
     public abstract class RDMPCollectionUI : RDMPCollectionUI_Design,IConsultableBeforeClosing
     {
-        public RDMPCollectionCommonFunctionality CommonFunctionality { get; private set; }
+        public RDMPCollectionCommonFunctionality CommonTreeFunctionality { get; private set; }
         
         protected RDMPCollectionUI()
         {
-            CommonFunctionality = new RDMPCollectionCommonFunctionality();
+            CommonTreeFunctionality = new RDMPCollectionCommonFunctionality();
         }
 
 
         public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
-            CommonFunctionality.TearDown();
+            CommonTreeFunctionality.TearDown();
         }
-
-        public abstract void SetItemActivator(IActivateItems activator);
 
     }
 

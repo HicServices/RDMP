@@ -13,19 +13,19 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.ExtractionTime.Commands;
+using CatalogueLibrary.ExtractionTime.UserPicks;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
-using DataExportLibrary.Interfaces.ExtractionTime.UserPicks;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using MapsDirectlyToDatabaseTable;
+using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
@@ -94,15 +94,15 @@ namespace DataExportManager.ProjectUI
             Categories.Add(Bundles, new List<object>());
             
             var factory = new ExtractCommandCollectionFactory();
-            var collection = factory.Create(RepositoryLocator, configuration);
+            var collection = factory.Create(Activator.RepositoryLocator, configuration);
 
             //find all the things that are available for extraction
             
             //add globals to the globals category
-            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
+            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingDocument>().Where(d => d.IsGlobal && d.Extractable));
 
             //add global SQLs to globals category
-            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
+            Categories[ExtractionDirectory.GLOBALS_DATA_NAME].AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<SupportingSQLTable>().Where(s => s.IsGlobal && s.Extractable));
 
             //add the bundle
             Categories[Bundles].AddRange(collection.Datasets);
@@ -223,7 +223,7 @@ namespace DataExportManager.ProjectUI
             if (doc != null)
                 try
                 {
-                    Process.Start(doc.URL.ToString());
+                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(doc.GetFileName());
                 }
                 catch (Exception ex)
                 {
@@ -239,7 +239,7 @@ namespace DataExportManager.ProjectUI
                         throw new NotSupportedException("There is no known server for SupportingSql " + sql);
 
                     var server = sql.ExternalDatabaseServer;
-                    DataTableViewer dtv = new DataTableViewer(server, sql.SQL, sql.Name);
+                    DataTableViewerUI dtv = new DataTableViewerUI(server, sql.SQL, sql.Name);
                     dtv.Show();
                 }
                 catch (Exception ex)

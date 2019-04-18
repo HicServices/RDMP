@@ -32,11 +32,11 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var importTable = new ImportSQLTable(Activator,_allowImportAsCatalogue);
+            var importTable = new ImportSQLTableUI(Activator,_allowImportAsCatalogue);
             importTable.ShowDialog();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.TableInfo, OverlayKind.Import);
         }

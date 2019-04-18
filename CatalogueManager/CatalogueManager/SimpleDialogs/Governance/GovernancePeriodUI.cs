@@ -34,7 +34,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
     /// <para>If you are doing yearly approvals you can import the dataset list from the last year as the basis of governanced datasets.</para>
     /// 
     /// <para>If a GovernancePeriod expires all datasets (Catalogues) in the period will be assumed to have expired governance and will appear in the Dashboard as expired unless there is a new
-    /// GovernancePeriod that is active (See GovernanceSummary).</para>
+    /// GovernancePeriod that is active.</para>
     /// </summary>
     public partial class GovernancePeriodUI : GovernancePeriodUI_Design,ISaveableUI
     {
@@ -45,7 +45,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             InitializeComponent();
             AssociatedCollection = RDMPCollection.Catalogue;
 
-            olvName.ImageGetter = s => _activator.CoreIconProvider.GetImage(s);
+            olvName.ImageGetter = s => Activator.CoreIconProvider.GetImage(s);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, GovernancePeriod databaseObject)
@@ -74,10 +74,10 @@ namespace CatalogueManager.SimpleDialogs.Governance
             //add related catalogues
             olvCatalogues.AddObjects(_governancePeriod.GovernedCatalogues.ToArray());
 
-            AddHelp(olvCatalogues,"GovernancePeriod.GovernedCatalogues");
+            CommonFunctionality.AddHelp(olvCatalogues, "GovernancePeriod.GovernedCatalogues");
 
-            AddChecks(_governancePeriod);
-            StartChecking();
+            CommonFunctionality.AddChecks(_governancePeriod);
+            CommonFunctionality.StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, GovernancePeriod databaseObject)
@@ -88,6 +88,13 @@ namespace CatalogueManager.SimpleDialogs.Governance
             Bind(tbName, "Text", "Name", g => g.Name);
             Bind(tbDescription, "Text", "Description", g => g.Description);
         }
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            ticketingControl1.SetItemActivator(activator);
+        }
+
 
         private void rbNeverExpires_CheckedChanged(object sender, EventArgs e)
         {
@@ -116,7 +123,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         private void btnAddCatalogue_Click(object sender, EventArgs e)
         {
             var alreadyMappedCatalogues = olvCatalogues.Objects.Cast<Catalogue>();
-            var allCatalogues = RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
+            var allCatalogues = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>();
 
             var availableToSelect =
                 allCatalogues.Where(c => !alreadyMappedCatalogues.Contains(c)).ToArray();
@@ -141,7 +148,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             
         }
 
-        private void AddCatalogue(Catalogue c)
+        private void AddCatalogue(ICatalogue c)
         {
             _governancePeriod.CreateGovernanceRelationshipTo(c);
             olvCatalogues.AddObject(c);
@@ -166,7 +173,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         
         private void btnImportCatalogues_Click(object sender, EventArgs e)
         {
-            GovernancePeriod[] toImportFrom = RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
+            GovernancePeriod[] toImportFrom = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<GovernancePeriod>()
                 .Where(gov => gov.ID != _governancePeriod.ID)
                 .ToArray();
 
@@ -180,7 +187,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                Catalogue[] toAdd = ((GovernancePeriod) dialog.Selected).GovernedCatalogues.ToArray();
+                ICatalogue[] toAdd = ((GovernancePeriod) dialog.Selected).GovernedCatalogues.ToArray();
 
                 //do not add any we already have
                 toAdd = toAdd.Except(olvCatalogues.Objects.Cast<Catalogue>()).ToArray();
@@ -208,7 +215,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
         {
             var cata = olvCatalogues.SelectedObject as Catalogue;
             if(cata != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(cata));
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(cata));
         }
 
     }

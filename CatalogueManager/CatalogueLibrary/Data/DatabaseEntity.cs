@@ -9,13 +9,11 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Diagnostics.Contracts;
-using System.Linq;
 using System.Runtime.CompilerServices;
-using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Newtonsoft.Json;
 using ReusableLibraryCode.Annotations;
 
 namespace CatalogueLibrary.Data
@@ -36,13 +34,30 @@ namespace CatalogueLibrary.Data
         /// <inheritdoc/>
         public int ID { get; set; }
 
-        protected bool MaxLengthSet = false;
         private bool _readonly;
 
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public IRepository Repository { get; set; }
+        
+        /// <summary>
+        /// Returns <see cref="Repository"/> as <see cref="ICatalogueRepository"/> or null if the object does not exist in a catalogue repository.
+        /// </summary>
+        [NoMappingToDatabase]
+        public ICatalogueRepository CatalogueRepository
+        {
+            get { return Repository as ICatalogueRepository; }
+        }
 
+        
+        /// <summary>
+        /// Returns <see cref="Repository"/> as <see cref="IDataExportRepository"/> or null if the object does not exist in a data export repository.
+        /// </summary>
+        [NoMappingToDatabase]
+        public IDataExportRepository DataExportRepository
+        {
+            get { return Repository as IDataExportRepository; }
+        }
         /// <summary>
         /// Constructs a new instance.  You should only use this when your object does not yet exist in the database
         /// and you are trying to create it into the db
@@ -65,11 +80,6 @@ namespace CatalogueLibrary.Data
 
             ID = int.Parse(r["ID"].ToString()); // gets around decimals and other random crud number field types that sql returns
 
-            if (!MaxLengthSet)
-            {
-                Repository.FigureOutMaxLengths(this);
-                MaxLengthSet = true;
-            }
         }
 
         private bool HasColumn(IDataRecord reader, string columnName)
@@ -188,10 +198,10 @@ namespace CatalogueLibrary.Data
         /// </summary>
         /// <param name="propertyName"></param>
         [NotifyPropertyChangedInvocator]
-        protected virtual void OnPropertyChanged([CallerMemberName] string propertyName = null)
+        protected virtual void OnPropertyChanged(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
         {
             PropertyChangedEventHandler handler = PropertyChanged;
-            if (handler != null) handler(this, new PropertyChangedEventArgs(propertyName));
+            if (handler != null) handler(this, new PropertyChangedExtendedEventArgs(propertyName,oldValue,newValue));
         }
 
         /// <summary>
@@ -214,8 +224,10 @@ namespace CatalogueLibrary.Data
             if (_readonly)
                 throw new Exception("An attempt was made to modify Property '" + propertyName + "' of Database Object of Type '" + GetType().Name + "' while it was in read only mode.  Object was called '" + this + "'");
 
+            var old = field;
+
             field = value;
-            OnPropertyChanged(propertyName);
+            OnPropertyChanged(old, value, propertyName);
             return true;
         }
 
@@ -223,6 +235,37 @@ namespace CatalogueLibrary.Data
         public void SetReadOnly()
         {
             _readonly = true;
+        }
+
+        /// <summary>
+        /// Copies all properties not marked with [NoMappingToDatabase] or [Relationship] from the this object to the <paramref name="to"/> object. 
+        /// Also skips 'Name' and 'ID'
+        /// </summary>
+        /// <param name="to"></param>
+        protected void CopyShallowValuesTo(DatabaseEntity to,bool copyName = false,bool save = true)
+        {
+            if (GetType() != to.GetType())
+                throw new NotSupportedException(string.Format("Object to must be the same Type as us, we were '{0}' and it was '{1}'",GetType().Name,to.GetType().Name) );
+
+            var noMappingFinder = new AttributePropertyFinder<NoMappingToDatabase>(to);
+            var relationsFinder = new AttributePropertyFinder<RelationshipAttribute>(to);
+            
+            foreach (var p in GetType().GetProperties())
+            {
+                if (p.Name.Equals("ID"))
+                    continue;
+
+                if (p.Name.Equals("Name") && !copyName)
+                    continue;
+
+                if(noMappingFinder.GetAttribute(p) != null || relationsFinder.GetAttribute(p) != null)
+                    continue;
+
+                p.SetValue(to, p.GetValue(this));
+            }
+
+            if(save)
+                to.SaveToDatabase();
         }
     }
 }

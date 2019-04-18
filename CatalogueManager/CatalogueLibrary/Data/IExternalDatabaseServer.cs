@@ -6,6 +6,7 @@
 
 using System;
 using System.Reflection;
+using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
@@ -25,6 +26,12 @@ namespace CatalogueLibrary.Data
         /// <returns></returns>
         bool WasCreatedByDatabaseAssembly(Assembly databaseAssembly);
 
+        /// <summary>
+        /// Determines whether the given database server was created by the specified .Database assembly e.g. (DataQualityEngine.Database.dll).  If it is then the 
+        /// schema will match, database objects will be retrievable through the host assembly (e.g. DataQualityEngine.dll) etc.
+        /// </summary>
+        /// <returns></returns>
+        bool WasCreatedByDatabaseAssembly(Tier2DatabaseType type);
 
         /// <summary>
         /// Provides a live object for interacting directly with the server referenced by this <see cref="IExternalDatabaseServer"/>.  This will wokr

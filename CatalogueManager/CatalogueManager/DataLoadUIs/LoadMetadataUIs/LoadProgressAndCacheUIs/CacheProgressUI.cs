@@ -58,15 +58,15 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
         {
             base.SetDatabaseObject(activator, databaseObject);
 
-            AddHelp(tbCacheProgress, "ICacheProgress.CacheFillProgress");
-            AddHelp(ddCacheLagDurationType,"ICacheProgress.CacheLagPeriod");
-            AddHelp(ddCacheLagDelayDurationType,"ICacheProgress.CacheLagPeriodLoadDelay");
-            AddHelp(tbChunkPeriod, "ICacheProgress.ChunkPeriod");
-            AddHelp(pPipeline,"ICacheProgress.Pipeline_ID");
+            CommonFunctionality.AddHelp(tbCacheProgress, "ICacheProgress.CacheFillProgress");
+            CommonFunctionality.AddHelp(ddCacheLagDurationType, "ICacheProgress.CacheLagPeriod");
+            CommonFunctionality.AddHelp(ddCacheLagDelayDurationType, "ICacheProgress.CacheLagPeriodLoadDelay");
+            CommonFunctionality.AddHelp(tbChunkPeriod, "ICacheProgress.ChunkPeriod");
+            CommonFunctionality.AddHelp(pPipeline, "ICacheProgress.Pipeline_ID");
 
             _cacheProgress = databaseObject;
-            
-            AddToMenu(new ExecuteCommandExecuteCacheProgress(activator,databaseObject),"Go To Execute");
+
+            CommonFunctionality.AddToMenu(new ExecuteCommandExecuteCacheProgress(activator, databaseObject), "Go To Execute");
 
             ragSmiley1.Reset();
 
@@ -119,7 +119,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
                 var user = new PipelineUser(_cacheProgress);
                 var useCase = CachingPipelineUseCase.DesignTime();
 
-                var selectionFactory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, user, useCase);
+                var selectionFactory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, user, useCase);
                 _pipelineSelectionUI = (Control)selectionFactory.Create("Cache Pipeline",DockStyle.Fill,pPipeline);
             }
         }

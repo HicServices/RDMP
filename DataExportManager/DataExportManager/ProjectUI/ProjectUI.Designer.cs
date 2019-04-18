@@ -42,11 +42,10 @@ namespace DataExportManager.ProjectUI
             this.btnShowExtractionDirectory = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.tbProjectNumber = new System.Windows.Forms.TextBox();
-            this.btnConfigureDataUsers = new System.Windows.Forms.Button();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.extractableCohortCollection1 = new DataExportManager.CohortUI.ExtractableCohortCollection();
-            this.tcMasterTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControl();
+            this.extractableCohortCollection1 = new DataExportManager.CohortUI.ExtractableCohortCollectionUI();
+            this.tcMasterTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
@@ -148,16 +147,6 @@ namespace DataExportManager.ProjectUI
             this.tbProjectNumber.TabIndex = 5;
             this.tbProjectNumber.TextChanged += new System.EventHandler(this.tbProjectNumber_TextChanged);
             // 
-            // btnConfigureDataUsers
-            // 
-            this.btnConfigureDataUsers.Location = new System.Drawing.Point(523, 85);
-            this.btnConfigureDataUsers.Name = "btnConfigureDataUsers";
-            this.btnConfigureDataUsers.Size = new System.Drawing.Size(75, 45);
-            this.btnConfigureDataUsers.TabIndex = 7;
-            this.btnConfigureDataUsers.Text = "Configure Data Users";
-            this.btnConfigureDataUsers.UseVisualStyleBackColor = true;
-            this.btnConfigureDataUsers.Click += new System.EventHandler(this.btnConfigureDataUsers_Click);
-            // 
             // splitContainer1
             // 
             this.splitContainer1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -234,7 +223,6 @@ namespace DataExportManager.ProjectUI
             this.panel1.Controls.Add(this.tbName);
             this.panel1.Controls.Add(this.tcMasterTicket);
             this.panel1.Controls.Add(this.tbID);
-            this.panel1.Controls.Add(this.btnConfigureDataUsers);
             this.panel1.Controls.Add(this.tbExtractionDirectory);
             this.panel1.Controls.Add(this.tbProjectNumber);
             this.panel1.Controls.Add(this.label4);
@@ -277,9 +265,8 @@ namespace DataExportManager.ProjectUI
         private System.Windows.Forms.Button btnShowExtractionDirectory;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.TextBox tbProjectNumber;
-        private System.Windows.Forms.Button btnConfigureDataUsers;
-        private TicketingControl tcMasterTicket;
-        private CohortUI.ExtractableCohortCollection extractableCohortCollection1;
+        private TicketingControlUI tcMasterTicket;
+        private CohortUI.ExtractableCohortCollectionUI extractableCohortCollection1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Button btnBrowse;
         private Panel panel1;

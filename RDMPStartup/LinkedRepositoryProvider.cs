@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports.Exceptions;
 using CatalogueLibrary.Repositories;
@@ -26,11 +25,8 @@ namespace RDMPStartup
     /// 
     /// <para>See also UserSettingsRepositoryFinder</para>
     /// </summary>
-    public class LinkedRepositoryProvider : IRDMPPlatformRepositoryServiceLocator
+    public class LinkedRepositoryProvider : RepositoryProvider
     {
-        public CatalogueRepository CatalogueRepository { get; private set; }
-        public IDataExportRepository DataExportRepository { get; private set; }
-
         private List<IPluginRepositoryFinder> _pluginRepositoryFinders = null;
 
         public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString)
@@ -41,16 +37,12 @@ namespace RDMPStartup
                     ? null
                     : new CatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
             }
-            catch (SourceCodeNotFoundException)
+            catch (SourceCodeNotFoundException ex)
             {
-                throw;
+
+                throw new Exception("There was a problem with the Catalogue connection string", ex);
             }
-            catch (Exception)
-            {
-                CatalogueRepository = null;
-                throw;
-            }
-            
+
             try
             {
                 DataExportRepository =  string.IsNullOrWhiteSpace(dataExportConnectionString) ? null : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString), CatalogueRepository);
@@ -65,35 +57,10 @@ namespace RDMPStartup
                 ConfigureObscureDependencies();
         }
 
-        public LinkedRepositoryProvider(string catalogueConnectionString, string dataExportConnectionString, out Exception catalogueException, out Exception dataExportException)
-        {
-            catalogueException = null;
-            dataExportException = null;
-
-            try
-            {
-                CatalogueRepository = string.IsNullOrWhiteSpace(catalogueConnectionString) ? null : new CatalogueRepository(new SqlConnectionStringBuilder(catalogueConnectionString));
-            }
-            catch (Exception e)
-            {
-                catalogueException = e;
-                CatalogueRepository = null;
-            }
-
-            try
-            {
-                DataExportRepository = string.IsNullOrWhiteSpace(dataExportConnectionString) ? null : new DataExportRepository(new SqlConnectionStringBuilder(dataExportConnectionString), CatalogueRepository);
-            }
-            catch (Exception e)
-            {
-                dataExportException = e;
-                DataExportRepository = null;
-            }
-
-            if (CatalogueRepository != null)
-                ConfigureObscureDependencies();
-        }
-
+        /// <summary>
+        /// Call once if the <see cref="CatalogueRepository"/> and <see cref="DataExportRepository"/> are new (not existing already).  This will populate the
+        /// <see cref="TableRepository.ObscureDependencyFinder"/> with appropriate cross database runtime constraints.
+        /// </summary>
         private void ConfigureObscureDependencies()
         {
             //get the catalogues obscure dependency finder
@@ -103,103 +70,47 @@ namespace RDMPStartup
             finder.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(this);
             finder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(this);
 
-            if(DataExportRepository == null)
+            if (DataExportRepository == null)
                 return;
 
-            if ( DataExportRepository.ObscureDependencyFinder == null)
+            if (DataExportRepository.ObscureDependencyFinder == null)
                 DataExportRepository.ObscureDependencyFinder = new ObjectSharingObscureDependencyFinder(this);
             else
-                if(!(DataExportRepository.ObscureDependencyFinder is ObjectSharingObscureDependencyFinder))
+                if (!(DataExportRepository.ObscureDependencyFinder is ObjectSharingObscureDependencyFinder))
                     throw new Exception("Expected DataExportRepository.ObscureDependencyFinder to be an ObjectSharingObscureDependencyFinder");
         }
 
-        
-
-        public IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName, int objectId)
+        protected override IRepository GetRepository(string s)
         {
-            IRepository repository = GetRepository(repositoryTypeName);
-            Type objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
-            
-            if (!repository.StillExists(objectType, objectId))
-                return null;
-
-            return repository.GetObjectByID(objectType, objectId);
-        }
-
-        public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
-        {
-            IRepository repository = GetRepository(repositoryTypeName);
-            Type objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
-
-            return repository.StillExists(objectType, objectID);
-        }
-
-        private IRepository GetRepository(string s)
-        {
-            var repoType = GetTypeByName(s, typeof(IRepository));
-
-            if (repoType == typeof(CatalogueRepository))
-                return CatalogueRepository;
-
-            if (repoType == typeof(DataExportRepository))
-                return DataExportRepository;
-
             LoadPluginRepositoryFindersIfNotLoaded();
 
             foreach (IPluginRepositoryFinder repoFinder in _pluginRepositoryFinders)
             {
                 if (repoFinder.GetRepositoryType().FullName.Equals(s))
                 {
-                    var toReturn =  repoFinder.GetRepositoryIfAny();
-                    if(toReturn == null)
+                    var toReturn = repoFinder.GetRepositoryIfAny();
+                    if (toReturn == null)
                         throw new NotSupportedException("IPluginRepositoryFinder '" + repoFinder + "' said that it was the correct repository finder for repository of type '" + s + "' but it was unable to find an existing repository instance (GetRepositoryIfAny returned null)");
 
                     return toReturn;
                 }
             }
 
-            throw new NotSupportedException("Did not know what instance of IRepository to use for IRepository Type '" + repoType + "' , expected it to either be CatalogueRepository or DataExportRepository");
+            
+            return base.GetRepository(s);
         }
 
-        private void LoadPluginRepositoryFindersIfNotLoaded()
+        protected virtual void LoadPluginRepositoryFindersIfNotLoaded()
         {
-            if(_pluginRepositoryFinders !=null)
+            if (_pluginRepositoryFinders != null)
                 return;
-            
+
             _pluginRepositoryFinders = new List<IPluginRepositoryFinder>();
             var constructor = new ObjectConstructor();
 
             //it's a plugin?
             foreach (Type type in CatalogueRepository.MEF.GetTypes<IPluginRepositoryFinder>())
-                _pluginRepositoryFinders.Add((IPluginRepositoryFinder) constructor.Construct(type, this));
-        }
-        
-        Dictionary<string, Type> _cachedTypesByNameDictionary = new Dictionary<string, Type>();
-
-        object oLockDictionary = new object();
-        private Type GetTypeByName(string s, Type expectedBaseClassType)
-        {
-            Type toReturn;
-            lock (oLockDictionary)
-            {
-                if (_cachedTypesByNameDictionary.ContainsKey(s))
-                    return _cachedTypesByNameDictionary[s];
-
-                toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s, expectedBaseClassType);
-
-                if (toReturn == null)
-                    throw new TypeLoadException("Could not find Type called '" + s + "'");
-
-                if (expectedBaseClassType != null)
-                    if (!expectedBaseClassType.IsAssignableFrom(toReturn))
-                        throw new TypeLoadException("Found Type '" + s +
-                                                    "' which we managed to find but it did not match an expected base Type (" +
-                                                    expectedBaseClassType + ")");
-
-                //cache known type to not hammer reflection all the time!
-                _cachedTypesByNameDictionary.Add(s, toReturn);
-            }
-            return toReturn;
+                _pluginRepositoryFinders.Add((IPluginRepositoryFinder)constructor.Construct(type, this));
         }
     }
 }

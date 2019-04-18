@@ -20,7 +20,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Plugin,OverlayKind.Edit);
         }
@@ -34,8 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var f = new PluginManagementForm(Activator);
-            f.RepositoryLocator = Activator.RepositoryLocator;
+            var f = new PluginManagementFormUI(Activator);
             f.Show();
         }
     }

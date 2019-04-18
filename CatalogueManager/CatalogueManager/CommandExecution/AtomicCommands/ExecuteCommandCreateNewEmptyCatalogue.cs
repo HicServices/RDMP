@@ -32,7 +32,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return @"Create a new dataset not yet linked to any underlying database columns\tables";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Problem);
         }

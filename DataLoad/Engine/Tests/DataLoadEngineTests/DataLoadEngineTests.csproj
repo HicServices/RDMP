@@ -224,21 +224,20 @@
       <HintPath>..\..\..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi">
-      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Google.Protobuf">
@@ -319,6 +318,13 @@
     <Compile Include="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
     <Compile Include="Integration\PrematureLoadEnderTests.cs" />
     <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestAgent.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestAgentEquipment.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent_AgentLinkTable.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestInformant.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestReport.cs" />
+    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\RelationalBulkTestData.cs" />
     <Compile Include="Integration\RemoteDatabaseAttacherTests.cs" />
     <Compile Include="Integration\RuntimeTaskFactoryTests.cs" />
     <Compile Include="Integration\SafePrimaryKeyCollisionResolverMutilationTests.cs" />
@@ -395,6 +401,7 @@
     </None>
     <EmbeddedResource Include="Unit\TestFile\Book1.xlsx" />
     <EmbeddedResource Include="Unit\TestFile\FreakyBook1.xlsx" />
+    <EmbeddedResource Include="Unit\TestFile\OddFormats.xls" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj">

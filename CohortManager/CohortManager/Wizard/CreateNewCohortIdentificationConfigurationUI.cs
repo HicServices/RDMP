@@ -17,6 +17,7 @@ using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 
 namespace CohortManager.Wizard
 {
@@ -28,22 +29,20 @@ namespace CohortManager.Wizard
     /// Configuration created (See CohortCompilerUI).  There you can test/refine your configuration as well as add more datasets and deeper nesting of set operations as required.</para>
     /// 
     /// </summary>
-    public partial class CreateNewCohortIdentificationConfigurationUI : Form
+    public partial class CreateNewCohortIdentificationConfigurationUI : RDMPForm
     {
-        private readonly IActivateItems _activator;
         public CohortIdentificationConfiguration CohortIdentificationCriteriaCreatedIfAny { get;private set; }
 
-        public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator)
+        public CreateNewCohortIdentificationConfigurationUI(IActivateItems activator):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
 
             pbBigImageTopLeft.Image = CatalogueIcons.BigCohort;
 
-            inclusionCriteria1.SetupFor(_activator);
+            inclusionCriteria1.SetupFor(Activator);
 
-            setOperationInclude.SetupFor(_activator, true);
-            setOperationExclude.SetupFor(_activator,false);
+            setOperationInclude.SetupFor(Activator, true);
+            setOperationExclude.SetupFor(Activator, false);
         }
 
 
@@ -75,7 +74,7 @@ namespace CohortManager.Wizard
 
             if(((CheckBox)sender).Checked)
             {
-                target.SetupFor(_activator);
+                target.SetupFor(Activator);
                 target.Enabled = true;
             }
             else
@@ -100,7 +99,7 @@ namespace CohortManager.Wizard
             if(MessageBox.Show("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm",MessageBoxButtons.YesNo) != DialogResult.Yes)
                 return;
 
-            var cic = new CohortIdentificationConfiguration(_activator.RepositoryLocator.CatalogueRepository, tbName.Text);
+            var cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueRepository, tbName.Text);
             
             cic.CreateRootContainerIfNotExists();
             var root = cic.RootCohortAggregateContainer;
@@ -127,7 +126,7 @@ namespace CohortManager.Wizard
                     exclusionCriteria2.CreateCohortSet(cic, excludeContainer, 2);
             }
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(cic));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(cic));
 
             CohortIdentificationCriteriaCreatedIfAny = cic;
             DialogResult = DialogResult.OK;

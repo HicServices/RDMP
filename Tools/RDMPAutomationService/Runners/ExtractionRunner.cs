@@ -13,6 +13,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
+using CatalogueLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Checks;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.Data.DataTables;
@@ -21,8 +22,6 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.Listeners;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using HIC.Logging;
 using HIC.Logging.Listeners;
 using RDMPAutomationService.Options;
@@ -134,13 +133,13 @@ namespace RDMPAutomationService.Runners
                 return new ICheckable[0];
             }
 
-            checkables.Add(new ProjectChecker(RepositoryLocator, _configuration.Project)
+            checkables.Add(new ProjectChecker(_configuration.Project)
             {
                 CheckDatasets = false,
                 CheckConfigurations = false
             });
 
-            checkables.Add(new ExtractionConfigurationChecker(RepositoryLocator, _configuration)
+            checkables.Add(new ExtractionConfigurationChecker( _configuration)
             {
                 CheckDatasets = false,
                 CheckGlobals = false
@@ -155,7 +154,7 @@ namespace RDMPAutomationService.Runners
                     checkables.Add(new GlobalExtractionChecker(_configuration, globalsCommand, _pipeline));
 
                 if (datasetCommand != null)
-                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets, RepositoryLocator, false, _pipeline));
+                    checkables.Add(new SelectedDataSetsChecker(datasetCommand.SelectedDataSets,  false, _pipeline));
             }
             
             return checkables.ToArray();
@@ -251,7 +250,7 @@ namespace RDMPAutomationService.Runners
 
         private bool HasConfigurationPreviouslyBeenReleased()
         {
-            var previouslyReleasedStuff = _configuration.ReleaseLogEntries;
+            var previouslyReleasedStuff = _configuration.ReleaseLog;
 
             if (previouslyReleasedStuff.Any())
                 return true;

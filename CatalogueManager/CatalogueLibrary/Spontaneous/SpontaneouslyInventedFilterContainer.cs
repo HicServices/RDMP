@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Spontaneous
 {
@@ -29,73 +31,32 @@ namespace CatalogueLibrary.Spontaneous
     /// 
     /// <para>See also SpontaneouslyInventedFilter</para>
     /// </summary>
-    public class SpontaneouslyInventedFilterContainer:SpontaneousObject,IContainer
+    public class SpontaneouslyInventedFilterContainer : ConcreteContainer, IContainer
     {
-        List<IContainer> _subContainers = new List<IContainer>();
-        List<IFilter> _filters = new List<IFilter>();
-
-        public SpontaneouslyInventedFilterContainer(IContainer[] subContainersIfAny, IFilter[] filtersIfAny, FilterContainerOperation operation)
+        public SpontaneouslyInventedFilterContainer(MemoryCatalogueRepository repo, IContainer[] subContainersIfAny, IFilter[] filtersIfAny, FilterContainerOperation operation):base(repo)
         {
+            repo.InsertAndHydrate(this,new Dictionary<string, object>());
+
             if (subContainersIfAny != null)
-                _subContainers.AddRange(subContainersIfAny);
+                foreach (IContainer container in subContainersIfAny)
+                    AddChild(container);
+
 
             if (filtersIfAny != null)
-                _filters.AddRange(filtersIfAny);
+                foreach (IFilter filter in filtersIfAny)
+                    if(filter is SpontaneouslyInventedFilter)
+                        AddChild(filter);
+                    else
+                        AddChild(new SpontaneouslyInventedFilter(repo,this,filter.WhereSQL,filter.Name,filter.Description,filter.GetAllParameters())); 
 
             Operation = operation;
         }
 
-        /// <inheritdoc/>
-        public FilterContainerOperation Operation { get; set; }
 
-        public IContainer GetParentContainerIfAny()
+        public override Catalogue GetCatalogueIfAny()
         {
             return null;
         }
 
-        public IContainer[] GetSubContainers()
-        {
-            return _subContainers.ToArray();
-        }
-
-        public IFilter[] GetFilters()
-        {
-            return _filters.ToArray();
-        }
-
-        public void AddChild(IContainer child)
-        {
-            _subContainers.Add(child);
-        }
-
-        public void AddChild(IFilter filter)
-        {
-            _filters.Add(filter);
-        }
-
-        public void MakeIntoAnOrphan()
-        {
-            throw new NotSupportedException();
-        }
-
-        public IContainer GetRootContainerOrSelf()
-        {
-            return new ContainerHelper().GetRootContainerOrSelf(this);
-        }
-
-        public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllFiltersIncludingInSubContainersRecursively(this);
-        }
-
-        public Catalogue GetCatalogueIfAny()
-        {
-            return null;
-        }
-
-        public List<IContainer> GetAllSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllSubContainersRecursively(this);
-        }
     }
 }

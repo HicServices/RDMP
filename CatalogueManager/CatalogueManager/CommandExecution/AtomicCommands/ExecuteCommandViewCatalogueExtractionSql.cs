@@ -35,7 +35,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "View the query that would be executed during extraction of the dataset with the current extractable columns/transforms";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL);
         }
@@ -53,7 +53,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            Activator.Activate<ViewExtractionSql, Catalogue>(_catalogue);
+            Activator.Activate<ViewExtractionSqlUI, Catalogue>(_catalogue);
         }
     }
 }

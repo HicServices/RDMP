@@ -31,7 +31,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         public SqlConnectionStringBuilder UnitTestLoggingConnectionString { get; set; }
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
         public DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn { get; set; }
-        public CatalogueRepository CatalogueRepository { get; set; }
+        public ICatalogueRepository CatalogueRepository { get; set; }
 
         public DLEEndToEndTestSetup(DiscoveredServer serverICanCreateRandomDatabasesAndTablesOn, SqlConnectionStringBuilder unitTestLoggingConnectionString, IRDMPPlatformRepositoryServiceLocator repositoryLocator, DiscoveredServer discoveredServerICanCreateRandomDatabasesAndTablesOn)
         {
@@ -49,7 +49,7 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
 
         public void SetUp(int timeoutInMilliseconds,out LoadMetadata lmd)
         {
-            var rootFolder = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
+            var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
             _testFolder = rootFolder.CreateSubdirectory("TestTheTestDatasetSetup");
             var datasetFolder = _testFolder.CreateSubdirectory("TestDataset");
             

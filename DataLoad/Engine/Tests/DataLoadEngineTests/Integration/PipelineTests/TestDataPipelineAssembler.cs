@@ -32,7 +32,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
             Pipeline.SaveToDatabase();
 
             var args = Source.CreateArgumentsForClassIfNotExists<TestDataInventor>();
-            args[0].SetValue(TestContext.CurrentContext.WorkDirectory);
+            args[0].SetValue(TestContext.CurrentContext.TestDirectory);
             args[0].SaveToDatabase();
         }
 

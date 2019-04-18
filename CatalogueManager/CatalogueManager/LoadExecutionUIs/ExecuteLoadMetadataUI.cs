@@ -69,10 +69,10 @@ namespace CatalogueManager.LoadExecutionUIs
 
             SetLoadProgressGroupBoxState();
 
-            Add(new ExecuteCommandViewLoadDiagram(activator,_loadMetadata));
+            CommonFunctionality.Add(new ExecuteCommandViewLoadDiagram(activator, _loadMetadata));
 
-            AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator,_loadMetadata));
-            AddToMenu(miDebugOptions);
+            CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
+            CommonFunctionality.AddToMenu(miDebugOptions);
 
             AddPluginCommands();
         }
@@ -143,7 +143,7 @@ namespace CatalogueManager.LoadExecutionUIs
             if (scheduleItem.Key == 0)
                 return null;
 
-            return RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
+            return Activator.RepositoryLocator.CatalogueRepository.GetObjectByID<LoadProgress>(scheduleItem.Key);
         }
 
         

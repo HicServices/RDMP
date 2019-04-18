@@ -59,9 +59,15 @@ namespace CatalogueManager.SimpleDialogs
             ticketingControl1.TicketText = _supportingDocument.Ticket;
             tbUrl.Text = _supportingDocument.URL != null ? _supportingDocument.URL.AbsoluteUri : "";
 
-            AddHelp(cbExtractable, "SupportingDocument.Extractable");
-            AddHelp(cbIsGlobal, "SupportingSqlTable.IsGlobal");
+            CommonFunctionality.AddHelp(cbExtractable, "SupportingDocument.Extractable");
+            CommonFunctionality.AddHelp(cbIsGlobal, "SupportingSqlTable.IsGlobal");
 
+        }
+
+        public override void SetItemActivator(IActivateItems activator)
+        {
+            base.SetItemActivator(activator);
+            ticketingControl1.SetItemActivator(activator);
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, SupportingDocument databaseObject)
@@ -85,8 +91,7 @@ namespace CatalogueManager.SimpleDialogs
             if (_supportingDocument != null)
                 try
                 {
-                    var f = new FileInfo(_supportingDocument.URL.AbsolutePath);
-                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(f);
+                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(_supportingDocument.GetFileName());
                 }
                 catch (Exception ex)
                 {
@@ -106,13 +111,6 @@ namespace CatalogueManager.SimpleDialogs
                     tb.ForeColor = Color.Black;
 
                     PropertyInfo target = toSetOn.GetType().GetProperty(propertyToSet);
-                    FieldInfo targetMaxLength = toSetOn.GetType().GetField(propertyToSet + "_MaxLength");
-
-                    if (target == null || targetMaxLength == null)
-                        throw new Exception("Could not find property " + propertyToSet + " or it did not have a specified _MaxLength");
-
-                    if (tb.TextLength > (int)targetMaxLength.GetValue(toSetOn))
-                        throw new UriFormatException("Uri is too long to fit in database");
 
                     target.SetValue(toSetOn, new Uri(tb.Text), null);
                     tb.ForeColor = Color.Black;

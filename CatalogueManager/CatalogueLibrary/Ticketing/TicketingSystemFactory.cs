@@ -18,9 +18,9 @@ namespace CatalogueLibrary.Ticketing
     /// </summary>
     public class TicketingSystemFactory
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
-        public TicketingSystemFactory(CatalogueRepository repository)
+        public TicketingSystemFactory(ICatalogueRepository repository)
         {
             _repository = repository;
         }

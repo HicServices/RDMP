@@ -15,10 +15,9 @@ using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-
+using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Checks;
 using IFilter = CatalogueLibrary.Data.IFilter;
 
@@ -54,6 +53,7 @@ namespace DataExportLibrary.Data.DataTables
         }
         
         /// <inheritdoc/>
+        [Relationship(typeof(FilterContainer), RelationshipType.SharedObject)]
         public override int? FilterContainer_ID
         {
             get { return _filterContainerID; }
@@ -72,9 +72,7 @@ namespace DataExportLibrary.Data.DataTables
             get
             {
                 return
-                Repository.GetAllObjects<DeployedExtractionFilterParameter>(
-                    "WHERE ExtractionFilter_ID=" + ID)
-                    .ToArray();
+                Repository.GetAllObjectsWhere<DeployedExtractionFilterParameter>("ExtractionFilter_ID" , ID).ToArray();
             }
         }
 
@@ -117,11 +115,6 @@ namespace DataExportLibrary.Data.DataTables
             return ExtractionFilterParameters.Cast<ISqlParameter>().ToArray();
 
         }
-
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
 
         /// <summary>
         /// Creates a new empty WHERE filter in the given <paramref name="container"/> that will be used when 
@@ -199,6 +192,13 @@ namespace DataExportLibrary.Data.DataTables
             
             var container = Repository.GetObjectByID<FilterContainer>(FilterContainer_ID.Value);
             return container.GetSelectedDataSetsRecursively();
+        }
+
+        public DeployedExtractionFilter ShallowClone(FilterContainer into)
+        {
+            var clone = new DeployedExtractionFilter(DataExportRepository, Name, into);
+            CopyShallowValuesTo(clone);
+            return clone;
         }
     }
 }

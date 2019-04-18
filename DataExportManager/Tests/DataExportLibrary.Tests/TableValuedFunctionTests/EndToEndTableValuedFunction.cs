@@ -141,7 +141,7 @@ namespace DataExportLibrary.Tests.TableValuedFunctionTests
             
             _project = new Project(DataExportRepository, "TvfProject");
             _project.ProjectNumber = 12;
-            _project.ExtractionDirectory = TestContext.CurrentContext.WorkDirectory;
+            _project.ExtractionDirectory = TestContext.CurrentContext.TestDirectory;
             _project.SaveToDatabase();
 
             var destination = new PipelineComponent(CatalogueRepository, _pipe, typeof(BasicCohortDestination), 1, "Destination");
@@ -428,7 +428,7 @@ end
             globalP.Value = "1";
             globalP.SaveToDatabase();
             
-            var extractionCommand = new ExtractDatasetCommand(RepositoryLocator,config, new ExtractableDatasetBundle(tvfExtractable));
+            var extractionCommand = new ExtractDatasetCommand(config, new ExtractableDatasetBundle(tvfExtractable));
 
             var source = new ExecuteDatasetExtractionSource();
 

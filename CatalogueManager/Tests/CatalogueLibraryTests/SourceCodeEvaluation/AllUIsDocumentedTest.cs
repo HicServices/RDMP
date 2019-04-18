@@ -11,7 +11,6 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Reports;
 using CatalogueLibrary.Repositories;
-using CatalogueManager.SimpleDialogs.Reports;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
 using NUnit.Framework;
@@ -29,11 +28,8 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
         [Test]
         public void AllUIControlsDocumented()
         {
-            CatalogueRepository.SuppressHelpLoading = false;
-            CatalogueRepository.LoadHelp(TestContext.CurrentContext.WorkDirectory);
-            CatalogueRepository.SuppressHelpLoading = true;
-
-
+            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
+            
             List<string> undocumented = new List<string>();
 
             Console.WriteLine("////////////////////Documentation of UI Controls////////////////");
@@ -42,13 +38,20 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
             Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
             Assembly.Load(typeof(ActivateItems).Assembly.FullName);
 
-            DocumentationReportFormsAndControlsUI controlsFinding = new DocumentationReportFormsAndControlsUI(null);
-            controlsFinding.RepositoryLocator = RepositoryLocator;
-            var types = controlsFinding.GetAllFormsAndControlTypes();
+            List<Exception> ex;
+            var types = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)
+                .Where(
+                t =>
+                    (typeof(Form).IsAssignableFrom(t) || typeof(UserControl).IsAssignableFrom(t))
+                    &&
+                    !t.FullName.StartsWith("Microsoft")
+                    &&
+                    !t.FullName.StartsWith("System")
+                    ).ToArray();
+
 
             DocumentationReportFormsAndControls controlsDescriptions = new DocumentationReportFormsAndControls(CatalogueRepository.CommentStore,types.ToArray());
             controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier());
-
             
             foreach (var key in controlsDescriptions.Summaries.Keys.OrderBy(t=>t.ToString()))
             {

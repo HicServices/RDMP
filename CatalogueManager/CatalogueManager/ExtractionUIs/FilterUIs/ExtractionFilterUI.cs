@@ -24,6 +24,7 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using CatalogueManager.Copying;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
@@ -89,7 +90,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             var factory = new FilterUIOptionsFactory();
             var options = factory.Create(_extractionFilter);
             
-            var autoCompleteFactory = new AutoCompleteProviderFactory(_activator);
+            var autoCompleteFactory = new AutoCompleteProviderFactory(Activator);
             _autoCompleteProvider = autoCompleteFactory.Create(_extractionFilter.GetQuerySyntaxHelper());
             
             foreach (var t in options.GetTableInfos())
@@ -187,26 +188,36 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             Catalogue = databaseObject.GetCatalogue();
             _extractionFilter = databaseObject;
 
-            var factory = new ParameterCollectionUIOptionsFactory();
-            var options = factory.Create(databaseObject);
+            ParameterCollectionUIOptionsFactory factory = null;
+            ParameterCollectionUIOptions options = null;
+            try
+            {
+                factory = new ParameterCollectionUIOptionsFactory();
+                options = factory.Create(databaseObject);
+            }
+            catch (Exception e)
+            {
+                Activator.KillForm(ParentForm,e);
+                return;
+            }
 
             //collapse panel 1 unless there are parameters
             splitContainer1.Panel1Collapsed = !options.ParameterManager.ParametersFoundSoFarInQueryGeneration.Values.Any(v => v.Any());
 
             parameterCollectionUI1.SetUp(options);
-            
-            AddToMenu(new ExecuteCommandViewFilterMatchData(_activator, databaseObject, ViewType.TOP_100));
-            AddToMenu(new ExecuteCommandViewFilterMatchData(_activator,databaseObject,ViewType.Aggregate));
-            AddToMenu(new ExecuteCommandViewFilterMatchGraph(_activator, databaseObject));
-            AddToMenu(new ExecuteCommandBrowseLookup(_activator, databaseObject));
-            AddToMenu(new ExecuteCommandPublishFilter(_activator,databaseObject,databaseObject.GetCatalogue()));
+
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.Aggregate));
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchGraph(Activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandBrowseLookup(Activator, databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandPublishFilter(Activator, databaseObject, databaseObject.GetCatalogue()));
 
             FigureOutGlobalsAndAutoComplete();
             
             QueryEditor.Text = _extractionFilter.WhereSQL;
 
-            AddChecks(databaseObject);
-            StartChecking();
+            CommonFunctionality.AddChecks(databaseObject);
+            CommonFunctionality.StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ConcreteFilter databaseObject)

@@ -34,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Clipboard.SetText(_tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false,false,false));
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.SQL);
         }

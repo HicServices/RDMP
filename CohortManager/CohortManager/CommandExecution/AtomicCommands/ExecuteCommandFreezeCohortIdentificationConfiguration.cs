@@ -42,7 +42,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
             Publish(_cic);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.FrozenCohortIdentificationConfiguration;
         }

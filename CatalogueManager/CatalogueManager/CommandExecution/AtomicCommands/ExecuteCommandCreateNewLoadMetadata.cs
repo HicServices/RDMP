@@ -49,9 +49,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                         return; //user cancelled
             
                 //create the load
-                var cataRepository = (CatalogueRepository)_catalogue.Repository;
-
-                var lmd = new LoadMetadata(cataRepository, "Loading " + _catalogue.Name);
+                var lmd = new LoadMetadata(_catalogue.CatalogueRepository, "Loading " + _catalogue.Name);
 
                 lmd.EnsureLoggingWorksFor(_catalogue);
 
@@ -75,7 +73,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Create New Data Load Configuration...";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.LoadMetadata, OverlayKind.Add);
         }

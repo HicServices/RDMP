@@ -11,7 +11,6 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.DataRelease.Audit;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
@@ -20,7 +19,7 @@ using ReusableLibraryCode;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class CumulativeExtractionResults : VersionedDatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>
+    public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>
     {
         #region Database Properties
         private int _extractionConfiguration_ID;
@@ -186,7 +185,7 @@ namespace DataExportLibrary.Data.DataTables
         }
 
         /// <inheritdoc/>
-        public IReleaseLogEntry GetReleaseLogEntryIfAny()
+        public IReleaseLog GetReleaseLogEntryIfAny()
         {
             var repo = (DataExportRepository)Repository;
             using (var con = repo.GetConnection())
@@ -199,7 +198,7 @@ namespace DataExportLibrary.Data.DataTables
 
                 var r = cmdselect.ExecuteReader();
                 if (r.Read())
-                    return new ReleaseLogEntry(Repository, r);
+                    return new ReleaseLog(Repository, r);
 
                 return null;
             }

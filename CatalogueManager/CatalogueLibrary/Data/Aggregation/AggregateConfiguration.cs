@@ -40,7 +40,11 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, IInjectKnown<JoinableCohortAggregateConfiguration>,IDisableable,IKnowWhatIAm
+    public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, 
+        IInjectKnown<JoinableCohortAggregateConfiguration>,
+        IInjectKnown<AggregateDimension[]>,
+        IInjectKnown<Catalogue>,
+        IDisableable,IKnowWhatIAm
     {
         #region Database Properties
         private string _countSQL;
@@ -189,7 +193,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public Catalogue Catalogue
         {
-            get { return Repository.GetObjectByID<Catalogue>(Catalogue_ID); }
+            get { return _knownCatalogue.Value; }
         }
 
         /// <inheritdoc cref="RootFilterContainer_ID"/>
@@ -217,7 +221,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public IEnumerable<AnyTableSqlParameter> Parameters
         {
-            get { return ((CatalogueRepository) Repository).GetAllParametersForParentTable(this); }
+            get { return CatalogueRepository.GetAllParametersForParentTable(this); }
         }
 
         /// <inheritdoc cref="Parameters"/>
@@ -234,7 +238,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public TableInfo[] ForcedJoins
         {
-            get { return ((CatalogueRepository) Repository).AggregateForcedJoiner.GetAllForcedJoinsFor(this); }
+            get { return CatalogueRepository.AggregateForcedJoinManager.GetAllForcedJoinsFor(this); }
         }
 
         /// <summary>
@@ -263,7 +267,7 @@ namespace CatalogueLibrary.Data.Aggregation
         [NoMappingToDatabase]
         public AggregateDimension[] AggregateDimensions
         {
-            get { return Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray(); }
+            get { return _knownAggregateDimensions.Value; }
         }
 
 
@@ -321,7 +325,7 @@ namespace CatalogueLibrary.Data.Aggregation
 
             set
             {
-                CohortAggregateContainer.SetOrderIfExistsFor(this, value);
+                CatalogueRepository.CohortContainerManager.SetOrder(this,value);
                 _orderWithinKnownContainer = value;
             }
         }
@@ -345,12 +349,16 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="name"></param>
         public AggregateConfiguration(ICatalogueRepository repository, ICatalogue catalogue, string name)
         {
+            //default values
+            CountSQL = "count(*)";
+            dtCreated = DateTime.Now;
+
             repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name},
                 {"Catalogue_ID", catalogue.ID}
             });
-
+            
             ClearAllInjections();
         }
         
@@ -391,11 +399,12 @@ namespace CatalogueLibrary.Data.Aggregation
         /// </summary>
         public void ReFetchOrder()
         {
-            _orderWithinKnownContainer = ((CatalogueRepository) Repository).GetOrderIfExistsFor(this);
+            _orderWithinKnownContainer = CatalogueRepository.CohortContainerManager.GetOrderIfExistsFor(this);
         }
 
         private Lazy<JoinableCohortAggregateConfiguration> _knownJoinableCohortAggregateConfiguration;
-
+        private Lazy<AggregateDimension[]> _knownAggregateDimensions;
+        private Lazy<Catalogue> _knownCatalogue;
 
         /// <summary>
         /// All AggregateConfigurations have the potential a'Joinable Patient Index Table' (see AggregateConfiguration class documentation).  This method injects
@@ -411,6 +420,18 @@ namespace CatalogueLibrary.Data.Aggregation
         public void ClearAllInjections()
         {
             _knownJoinableCohortAggregateConfiguration = new Lazy<JoinableCohortAggregateConfiguration>(()=>Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfiguration>(this).SingleOrDefault());
+            _knownAggregateDimensions = new Lazy<AggregateDimension[]>(()=>Repository.GetAllObjectsWithParent<AggregateDimension>(this).ToArray()); 
+            _knownCatalogue = new Lazy<Catalogue>(()=>Repository.GetObjectByID<Catalogue>(Catalogue_ID));
+        }
+
+        public void InjectKnown(AggregateDimension[] instance)
+        {
+            _knownAggregateDimensions = new Lazy<AggregateDimension[]>(() => instance);
+        }
+
+        public void InjectKnown(Catalogue instance)
+        {
+            _knownCatalogue = new Lazy<Catalogue>(() => instance);
         }
 
         /// <summary>
@@ -441,10 +462,10 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="basedOnColumn"></param>
         public AggregateDimension AddDimension(ExtractionInformation basedOnColumn)
         {
+            ClearAllInjections();
             return new AggregateDimension((ICatalogueRepository) basedOnColumn.Repository, basedOnColumn, this);
         }
-
-
+        
         /// <summary>
         /// Sets up a new <see cref="AggregateBuilder"/> with all the columns (See <see cref="AggregateDimensions"/>), WHERE logic (See <see cref="RootFilterContainer"/>, Pivot
         /// etc.
@@ -540,6 +561,13 @@ namespace CatalogueLibrary.Data.Aggregation
             if(IsCohortIdentificationAggregate)
                 return;
 
+            //if it's a normal aggregate then don't let the user have more than 2 columns
+            if (AggregateDimensions.Length > 2)
+                throw new QueryBuildingException("Too many columns, You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
+
+            if(AggregateDimensions.Length == 2 && !PivotOnDimensionID.HasValue)
+                throw new QueryBuildingException("In order to have 2 columns, one must be selected as a pivot");
+
             try
             {
                 var qb = GetQueryBuilder();
@@ -557,6 +585,8 @@ namespace CatalogueLibrary.Data.Aggregation
         private int? _rootFilterContainerID;
         
         private bool orderFetchAttempted;
+        
+
 
         /// <summary>
         /// If the AggregateConfiguration is set up as a cohort identification set in a <see cref="CohortIdentificationConfiguration"/> then this method will return the set container
@@ -565,14 +595,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public CohortAggregateContainer GetCohortAggregateContainerIfAny()
         {
-            return
-                Repository.SelectAllWhere<CohortAggregateContainer>(
-                    "SELECT CohortAggregateContainer_ID FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
-                    "CohortAggregateContainer_ID",
-                    new Dictionary<string, object>
-                    {
-                        {"AggregateConfiguration_ID", ID}
-                    }).SingleOrDefault();
+            return CatalogueRepository.CohortContainerManager.GetParent(this);
         }
 
         /// <summary>
@@ -617,11 +640,9 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public AggregateConfiguration CreateClone()
         {
-            var cataRepo = (CatalogueRepository) Repository;
-            var clone = Repository.CloneObjectInTable(this);
-
-            clone.Name = Name + "(Clone)";
-
+            var cataRepo = CatalogueRepository;
+            var clone = ShallowClone();
+            
             if(clone.PivotOnDimensionID != null)
                 throw new NotImplementedException("Cannot clone due to PIVOT");
 
@@ -638,8 +659,8 @@ namespace CatalogueLibrary.Data.Aggregation
             }
 
             //now clone it's AggregateForcedJoins
-            foreach (var t in cataRepo.AggregateForcedJoiner.GetAllForcedJoinsFor(this))
-                cataRepo.AggregateForcedJoiner.CreateLinkBetween(clone, t);
+            foreach (var t in cataRepo.AggregateForcedJoinManager.GetAllForcedJoinsFor(this))
+                cataRepo.AggregateForcedJoinManager.CreateLinkBetween(clone, t);
             
             if (RootFilterContainer_ID != null)
             {
@@ -735,6 +756,13 @@ namespace CatalogueLibrary.Data.Aggregation
             return
                 @"This is an AggregateConfiguration running as an 'Aggregate Graph'.  It's role is to produce summary information about a dataset designed to be displayed in a graph e.g. number of records each year by healthboard";
 
+        }
+
+        public AggregateConfiguration ShallowClone()
+        {
+            var clone = new AggregateConfiguration(CatalogueRepository, Catalogue, Name);
+            CopyShallowValuesTo(clone);
+            return clone;
         }
     }
 }

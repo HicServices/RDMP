@@ -51,7 +51,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activate(doc);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.GovernanceDocument, OverlayKind.Add);
         }

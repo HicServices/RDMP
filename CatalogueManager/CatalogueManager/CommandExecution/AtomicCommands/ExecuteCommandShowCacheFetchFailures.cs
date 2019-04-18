@@ -5,27 +5,28 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
 using CatalogueLibrary.Data.Cache;
 using CatalogueManager.ItemActivation;
-using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAtomicCommand
     {
         private CacheProgress _cacheProgress;
+        private ICacheFetchFailure[] _failures;
 
         public ExecuteCommandShowCacheFetchFailures(IActivateItems activator, CacheProgress cacheProgress):base(activator)
         {
             _cacheProgress = cacheProgress;
 
-            if(_cacheProgress.CacheFetchFailures.All(f => f.ResolvedOn != null))
+            _failures = _cacheProgress.CacheFetchFailures.Where(f => f.ResolvedOn == null).ToArray();
+
+            if(!_failures.Any())
                 SetImpossible("There are no unresolved CacheFetchFailures");
         }
 
@@ -34,23 +35,22 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
 
             // for now just show a modal dialog with a data grid view of all the failure rows
-            var dt = new DataTable("CacheFetchFailure");
+            
+            DataTable dt = new DataTable();
+            dt.Columns.Add("FetchRequestStart");
+            dt.Columns.Add("FetchRequestEnd");
+            dt.Columns.Add("ExceptionText");
+            dt.Columns.Add("LastAttempt");
+            dt.Columns.Add("ResolvedOn");
 
-            using (var con = Activator.RepositoryLocator.CatalogueRepository.GetConnection())
-            {
-                var cmd = (SqlCommand)DatabaseCommandHelper.GetCommand("SELECT * FROM CacheFetchFailure WHERE CacheProgress_ID=@CacheProgressID AND ResolvedOn IS NULL", con.Connection);
-                cmd.Parameters.AddWithValue("@CacheProgressID", _cacheProgress.ID);
-                var reader = cmd.ExecuteReader();
-                dt.Load(reader);
-            }
+            foreach (ICacheFetchFailure f in _failures)
+                dt.Rows.Add(f.FetchRequestStart, f.FetchRequestEnd, f.ExceptionText, f.LastAttempt, f.ResolvedOn);
 
-            var dgv = new DataGridView { DataSource = dt, Dock = DockStyle.Fill };
-            var form = new Form { Text = "Cache Fetch Failures for " + _cacheProgress.LoadProgress.Name };
-            form.Controls.Add(dgv);
-            form.Show();
+            DataTableViewerUI ui = new DataTableViewerUI(dt,"Cache Failures");
+            Activator.ShowWindow(ui, true);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(_cacheProgress);
         }

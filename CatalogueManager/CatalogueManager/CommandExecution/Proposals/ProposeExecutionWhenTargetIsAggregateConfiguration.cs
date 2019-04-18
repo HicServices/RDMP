@@ -11,6 +11,7 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs.Advanced;
+using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
@@ -31,7 +32,7 @@ namespace CatalogueManager.CommandExecution.Proposals
 
         public override void Activate(AggregateConfiguration target)
         {
-            ItemActivator.Activate<AggregateEditor, AggregateConfiguration>(target);
+            ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
         }
 
         public override ICommandExecution ProposeExecution(ICommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)

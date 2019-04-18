@@ -23,7 +23,6 @@ using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using FAnsi.Connections;
 using HIC.Logging;
 using ReusableLibraryCode;
@@ -39,7 +38,6 @@ namespace DataExportLibrary.Checks
     /// </summary>
     public class SelectedDataSetsChecker : ICheckable
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly bool _checkGlobals;
         private readonly IPipeline _alsoCheckPipeline;
 
@@ -52,12 +50,10 @@ namespace DataExportLibrary.Checks
         /// prepares to check the dataset as it is selected in an <see cref="ExtractionConfiguration"/>.  Optionally checks an extraction <see cref="Pipeline"/> and globals
         /// </summary>
         /// <param name="selectedDataSet"></param>
-        /// <param name="repositoryLocator"></param>
         /// <param name="checkGlobals"></param>
         /// <param name="alsoCheckPipeline"></param>
-        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, IRDMPPlatformRepositoryServiceLocator repositoryLocator, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
+        public SelectedDataSetsChecker(ISelectedDataSets selectedDataSet, bool checkGlobals = false, IPipeline alsoCheckPipeline = null)
         {
-            _repositoryLocator = repositoryLocator;
             _checkGlobals = checkGlobals;
             _alsoCheckPipeline = alsoCheckPipeline;
             SelectedDataSet = selectedDataSet;
@@ -89,7 +85,7 @@ namespace DataExportLibrary.Checks
                 return;
             }
 
-            var request = new ExtractDatasetCommand(_repositoryLocator, config, cohort, new ExtractableDatasetBundle(ds),
+            var request = new ExtractDatasetCommand( config, cohort, new ExtractableDatasetBundle(ds),
                 selectedcols, new HICProjectSalt(project), new ExtractionDirectory(project.ExtractionDirectory, config)) { TopX = 1 };
 
             try
@@ -134,19 +130,15 @@ namespace DataExportLibrary.Checks
                 //Try to fetch TOP 1 data
                 try
                 {
-                    using (var con = server.GetConnection())
+                    using (var con = server.BeginNewTransactedConnection())
                     {
-                        con.Open();
-                        var transaction = con.BeginTransaction();
                         //incase user somehow manages to write a filter/transform that nukes data or something
-
-                        var managedTransaction = new ManagedTransaction(con, transaction);
 
                         DbCommand cmd;
 
                         try
                         {
-                            cmd = server.GetCommand(request.QueryBuilder.SQL, con, managedTransaction);
+                            cmd = server.GetCommand(request.QueryBuilder.SQL, con);
                             cmd.CommandTimeout = timeout;
                             notifier.OnCheckPerformed(
                                 new CheckEventArgs(
@@ -180,6 +172,8 @@ namespace DataExportLibrary.Checks
                             else
                                 notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
                         }
+
+                        con.ManagedTransaction.AbandonAndCloseConnection();
                     }
                 }
                 catch (Exception e)
@@ -188,7 +182,7 @@ namespace DataExportLibrary.Checks
                 }
             }
 
-            var cata = _repositoryLocator.CatalogueRepository.GetObjectByID<Catalogue>((int)ds.Catalogue_ID);
+            var cata = ds.Catalogue;
             var fetchOptions = _checkGlobals ? FetchOptions.ExtractableGlobalsAndLocals : FetchOptions.ExtractableLocals;
 
             foreach (var supportingDocument in cata.GetAllSupportingDocuments(fetchOptions))

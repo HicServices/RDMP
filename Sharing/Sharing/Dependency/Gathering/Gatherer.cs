@@ -39,6 +39,8 @@ namespace Sharing.Dependency.Gathering
             _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
             _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
 
+            _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
+
             _functions.Add(typeof(ExtractionFilter), o => GatherDependencies((IFilter)o));
             _functions.Add(typeof(DeployedExtractionFilter), o => GatherDependencies((IFilter)o));
             _functions.Add(typeof(AggregateFilter), o => GatherDependencies((IFilter)o));
@@ -46,8 +48,8 @@ namespace Sharing.Dependency.Gathering
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInAllDatabases()
         {
-            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetEverySingleObjectInEntireDatabase();
-            var allDataExportObjects = ((DataExportRepository)_repositoryLocator.DataExportRepository).GetEverySingleObjectInEntireDatabase();
+            var allCatalogueObjects = _repositoryLocator.CatalogueRepository.GetAllObjectsInDatabase();
+            var allDataExportObjects = _repositoryLocator.DataExportRepository.GetAllObjectsInDatabase();
             return allCatalogueObjects.Union(allDataExportObjects).ToArray();
         }
 
@@ -84,6 +86,32 @@ namespace Sharing.Dependency.Gathering
             
             return root;
         }
+
+        public GatheredObject GatherDependencies(LoadMetadata loadMetadata)
+        {
+            //Share the LoadMetadata
+            var root = new GatheredObject(loadMetadata);
+
+            //and the catalogues behind the load
+            foreach (var cata in loadMetadata.GetAllCatalogues()) 
+                root.Children.Add(GatherDependencies(cata));
+
+            //and the load operations
+            foreach (IProcessTask processTask in loadMetadata.ProcessTasks)
+            {
+                var gpt = new GatheredObject(processTask);
+                root.Children.Add(gpt);
+
+                foreach (IArgument a in processTask.GetAllArguments())
+                {
+                    var ga = new GatheredObject(a);
+                    gpt.Children.Add(ga);
+                }
+            }
+
+            return root;
+        }
+
         public GatheredObject GatherDependencies(Catalogue catalogue)
         {
             var root = new GatheredObject(catalogue);

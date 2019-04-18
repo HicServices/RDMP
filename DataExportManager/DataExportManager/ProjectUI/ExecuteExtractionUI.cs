@@ -20,7 +20,6 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.Data.LinkCreators;
 using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -69,6 +68,9 @@ namespace DataExportManager.ProjectUI
         
         private ToolStripControlHost _pipelinePanel;
 
+        private ToolStripLabel lblMaxConcurrent = new ToolStripLabel("Concurrent:");
+        private ToolStripTextBox tbMaxConcurrent = new ToolStripTextBox(){Text="3"};
+
         public ExecuteExtractionUI()
         {
             InitializeComponent();
@@ -106,7 +108,7 @@ namespace DataExportManager.ProjectUI
 
         private HelpWorkflow BuildHelpFlow()
         {
-            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(_activator), new NullHelpWorkflowProgressProvider());
+            var helpWorkflow = new HelpWorkflow(this, new ExecuteCommandExecuteExtractionConfiguration(Activator), new NullHelpWorkflowProgressProvider());
 
             //////Normal work flow
             var root = new HelpStage(tlvDatasets, "Choose the datasets and Globals you want to extract here.\r\n" +
@@ -166,7 +168,7 @@ namespace DataExportManager.ProjectUI
         private object State_ImageGetter(object rowObject)
         {
             var state = GetState(rowObject);
-            return state == null ? null : _activator.CoreIconProvider.GetImage(state);
+            return state == null ? null : Activator.CoreIconProvider.GetImage(state);
         }
 
         private object GetState(object rowObject)
@@ -206,10 +208,15 @@ namespace DataExportManager.ProjectUI
         
         private RDMPCommandLineOptions CommandGetter(CommandLineActivity activityRequested)
         {
+            int max;
+
+            //if user has defined an alternative maximum concurrent number of executing extraction threads
+            max = int.TryParse(tbMaxConcurrent.Text, out max) ? max : 3;
+
             return new ExtractionOptions() { 
                 Command = activityRequested,
                 ExtractGlobals = tlvDatasets.IsChecked(_globalsFolder),
-                MaxConcurrentExtractions = 3,
+                MaxConcurrentExtractions = max,
                 ExtractionConfiguration = _extractionConfiguration.ID,
                 Pipeline = _pipelineSelectionUI1.Pipeline == null? 0 : _pipelineSelectionUI1.Pipeline.ID,
                 Datasets = _datasets.All(tlvDatasets.IsChecked) ? new int[0] : _datasets.Where(tlvDatasets.IsChecked).Select(sds => sds.ExtractableDataSet.ID).ToArray()
@@ -271,7 +278,7 @@ namespace DataExportManager.ProjectUI
             {
                 //create a new selection UI (pick an extraction pipeliene UI)
                 var useCase = ExtractionPipelineUseCase.DesignTime();
-                var factory = new PipelineSelectionUIFactory(_activator.RepositoryLocator.CatalogueRepository, null, useCase);
+                var factory = new PipelineSelectionUIFactory(Activator.RepositoryLocator.CatalogueRepository, null, useCase);
 
                 _pipelineSelectionUI1 = factory.Create("Extraction Pipeline", DockStyle.Fill);
                 _pipelineSelectionUI1.CollapseToSingleLineMode();
@@ -287,11 +294,16 @@ namespace DataExportManager.ProjectUI
                 helpIcon1.SetHelpText("Extraction", "It is a wise idea to click here if you don't know what this screen can do for you...", BuildHelpFlow());
             }
 
-            Add(new ToolStripLabel("Extraction Pipeline:"));
-            Add(_pipelinePanel);
+            CommonFunctionality.Add(new ToolStripLabel("Extraction Pipeline:"));
+            CommonFunctionality.Add(_pipelinePanel);
+            CommonFunctionality.AddHelpStringToToolStrip("Extraction Pipeline","The sequence of components that will be executed in order to enable the datasets to be extracted. This will start with a source component that performs the linkage against the cohort followed by subsequent components (if any) and then a destination component that writes the final records (e.g. to database / csv file etc).");
 
-            AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
-            
+            CommonFunctionality.AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
+
+            CommonFunctionality.Add(lblMaxConcurrent);
+            CommonFunctionality.Add(tbMaxConcurrent);
+            CommonFunctionality.AddHelpStringToToolStrip("Concurrent", "The maximum number of datasets to extract at once.  Once this number is reached the remainder will be queued and only started when one of the other extracting datasets completes.");
+
             checkAndExecuteUI1.SetItemActivator(activator);
 
             tlvDatasets.ExpandAll();

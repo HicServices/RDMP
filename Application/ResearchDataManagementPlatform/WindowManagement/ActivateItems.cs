@@ -14,6 +14,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -31,6 +32,7 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManager.CommandExecution.AtomicCommands;
 using CohortManager.SubComponents;
@@ -73,7 +75,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
         public ITheme Theme { get; private set; }
-        public ServerDefaults ServerDefaults { get; private set; }
+        public IServerDefaults ServerDefaults { get; private set; }
         public RefreshBus RefreshBus { get; private set; }
         public FavouritesProvider FavouritesProvider { get; private set; }
 
@@ -101,7 +103,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
             RepositoryLocator = repositoryLocator;
 
-            ServerDefaults = new ServerDefaults(RepositoryLocator.CatalogueRepository);
+            ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
@@ -151,8 +153,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private void UpdateChildProviders()
         {
-            CatalogueChildProvider.UseCaching = UserSettings.UseCaching;
-
             //prefer a linked repository with both
             if(RepositoryLocator.DataExportRepository != null)
                 try
@@ -172,6 +172,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
 
             CoreChildProvider.GetPluginChildren();
+            RefreshBus.ChildProvider = CoreChildProvider;
         }
 
         public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control,DatabaseEntity objectOfTypeT)
@@ -196,6 +197,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if(singleControlForm is Form && asDocument)
                 throw new Exception("Control '" + singleControlForm + "' is a Form and asDocument was passed as true.  When asDocument is true you must be a Control not a Form e.g. inherit from RDMPUserControl instead of RDMPForm");
+
+            var c = singleControlForm as RDMPUserControl;
+            
+            if(c != null)
+                c.SetItemActivator(this);
 
             var content = WindowFactory.Create(this,singleControlForm,name , null);
             
@@ -295,7 +301,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null)
         {
-            var t = Activate<LookupConfiguration, Catalogue>(catalogue);
+            var t = Activate<LookupConfigurationUI, Catalogue>(catalogue);
             
             if(optionalLookupTableInfo != null)
                 t.SetLookupTableInfo(optionalLookupTableInfo);
@@ -317,7 +323,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return;
             }
 
-            Activate<FilterGraph>(collection);
+            Activate<FilterGraphUI>(collection);
         }
 
         public void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic)
@@ -332,7 +338,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
         {
-            return Activate<LoadDiagram, LoadMetadata>(loadMetadata);
+            return Activate<LoadDiagramUI, LoadMetadata>(loadMetadata);
         }
 
 
@@ -386,6 +392,23 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public string GetDocumentation(Type type)
         {
             return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
+        }
+
+        public string CurrentDirectory { get { return Environment.CurrentDirectory; }}
+        public DialogResult ShowDialog(Form form)
+        {
+            return form.ShowDialog();
+        }
+
+        public void KillForm(Form f, Exception reason)
+        {
+            f.Close();
+            ExceptionViewer.Show("Window Closed",reason);
+        }
+
+        public void OnRuleRegistered(IBinderRule rule)
+        {
+            //no special action required
         }
 
         ///<inheritdoc/>

@@ -87,7 +87,11 @@ namespace CatalogueManager.Collections
             var o = tlvTableInfos.SelectedObject;
             
             if (o is DecryptionPrivateKeyNode)
-                _activator.ShowWindow(new PasswordEncryptionKeyLocationUI(), true);
+            {
+                var c = new PasswordEncryptionKeyLocationUI();
+                c.SetItemActivator(_activator);
+                _activator.ShowWindow(c, true);
+            }
         }
         
         public void SelectTableInfo(TableInfo toSelect)
@@ -108,7 +112,7 @@ namespace CatalogueManager.Collections
         public override void SetItemActivator(IActivateItems activator)
         {
             _activator = activator;
-            CommonFunctionality.SetUp(
+            CommonTreeFunctionality.SetUp(
                 RDMPCollection.Tables, 
                 tlvTableInfos,
                 activator,
@@ -116,7 +120,7 @@ namespace CatalogueManager.Collections
                 olvColumn1
                 );
 
-            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a, false),
                 new ExecuteCommandBulkImportTableInfos(a)

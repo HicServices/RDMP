@@ -9,6 +9,9 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -53,7 +56,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <para>A LoadMetadata also allows you to override various settings such as forcing a specific alternate server to load - for when you want to overule
     /// the location that TableInfo thinks data is on e.g. into a test environment mirror of live.</para>
     /// </summary>
-    public class LoadMetadata : VersionedDatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
+    public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
     {
 
         #region Database Properties
@@ -63,7 +66,7 @@ namespace CatalogueLibrary.Data.DataLoad
         private string _description;
         private CacheArchiveType _cacheArchiveType;
         private int? _overrideRawServerID;
-
+        
         /// <inheritdoc/>
         [AdjustableLocation]
         public string LocationOfFlatFiles
@@ -122,9 +125,6 @@ namespace CatalogueLibrary.Data.DataLoad
         #endregion
 
         
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int LocationOfFlatFiles_MaxLength = -1;
-
         #region Relationships
 
         /// <inheritdoc/>
@@ -180,7 +180,12 @@ namespace CatalogueLibrary.Data.DataLoad
             CacheArchiveType = (CacheArchiveType)r["CacheArchiveType"];
             OverrideRAWServer_ID = ObjectToNullableInt(r["OverrideRAWServer_ID"]);
         }
-        
+
+        internal LoadMetadata(ShareManager shareManager,ShareDefinition shareDefinition):base()
+        {
+            shareManager.UpsertAndHydrate(this,shareDefinition);
+        }
+
         /// <inheritdoc/>
         public override void DeleteInDatabase()
         {
@@ -272,28 +277,6 @@ namespace CatalogueLibrary.Data.DataLoad
             return toReturn;
         }
         
-        /// <summary>
-        /// Do not use, just assume true
-        /// </summary>
-        /// <returns></returns>
-        [Obsolete("Test logging databases are a bad idea on a live Catalogue repository")]
-        public bool AreLiveAndTestLoggingDifferent()
-        {
-            Catalogue[] catalogues = GetAllCatalogues().Cast<Catalogue>().ToArray();
-
-            if (catalogues.Length == 0)
-                return true;
-
-            int? liveID = catalogues.Select(c => c.LiveLoggingServer_ID).Distinct().Single();
-            int? testID = catalogues.Select(c => c.TestLoggingServer_ID).Distinct().Single();
-
-            //theres a live configured but no test so we should just use the live one
-            if (liveID != null && testID == null)
-                return false;
-            
-            return liveID != testID ;
-        }
-
         /// <inheritdoc/>
         public DiscoveredServer GetDistinctLiveDatabaseServer()
         {
@@ -344,7 +327,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
             if (catalogue.LiveLoggingServer_ID == null)
             {
-                loggingServer = new ServerDefaults((CatalogueRepository) Repository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = CatalogueRepository.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
 
                 if (loggingServer != null)
                     catalogue.LiveLoggingServer_ID = loggingServer.ID;

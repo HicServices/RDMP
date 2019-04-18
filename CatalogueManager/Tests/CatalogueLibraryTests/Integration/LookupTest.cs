@@ -11,6 +11,7 @@ using CatalogueLibrary.CommandExecution;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
@@ -51,9 +52,12 @@ namespace CatalogueLibraryTests.Integration
             }
         }
 
-        [Test]
-        public void CreateLookup_linkWithOtherTable()
+        [TestCase(true)]
+        [TestCase(false)]
+        public void CreateLookup_linkWithOtherTable(bool memoryRepo)
         {
+            var repo = memoryRepo? (ICatalogueRepository)new MemoryCatalogueRepository():CatalogueRepository;
+
             TableInfo parent = null;
             TableInfo parent2 = null;
 
@@ -63,13 +67,13 @@ namespace CatalogueLibraryTests.Integration
 
             try
             {
-                parent = new TableInfo(CatalogueRepository, "unit_test_CreateLookup");
-                parent2 = new TableInfo(CatalogueRepository, "unit_test_CreateLookupOther");
-                child = new ColumnInfo(CatalogueRepository, "unit_test_CreateLookup", "int", parent); //lookup desc
-                child2 = new ColumnInfo(CatalogueRepository, "unit_test_CreateLookup", "int", parent2); //fk in data table
-                child3 = new ColumnInfo(CatalogueRepository, "unit_test_CreateLookup", "int", parent); //pk in lookup
+                parent = new TableInfo(repo, "unit_test_CreateLookup");
+                parent2 = new TableInfo(repo, "unit_test_CreateLookupOther");
+                child = new ColumnInfo(repo, "unit_test_CreateLookup", "int", parent); //lookup desc
+                child2 = new ColumnInfo(repo, "unit_test_CreateLookup", "int", parent2); //fk in data table
+                child3 = new ColumnInfo(repo, "unit_test_CreateLookup", "int", parent); //pk in lookup
 
-                new Lookup(CatalogueRepository, child, child2, child3, ExtractionJoinType.Left, null);
+                new Lookup(repo, child, child2, child3, ExtractionJoinType.Left, null);
 
                 Assert.AreEqual(child.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).Length, 1);
                 Assert.AreEqual(child2.GetAllLookupForColumnInfoWhereItIsA(LookupType.Description).Length, 0);

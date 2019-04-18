@@ -34,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Regular Expressions are patterns that match a given text input.  StandardRegex allow a central declaration of a given pattern rather than copying and pasting it everywhere";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.StandardRegex, OverlayKind.Add);
         }

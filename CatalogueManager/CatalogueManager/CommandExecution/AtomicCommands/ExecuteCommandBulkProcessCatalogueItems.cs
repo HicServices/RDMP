@@ -23,14 +23,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             _catalogue = catalogue;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Edit);
         }
 
         public override void Execute()
         {
-            Activator.Activate<BulkProcessCatalogueItems, Catalogue>(_catalogue);
+            Activator.Activate<BulkProcessCatalogueItemsUI, Catalogue>(_catalogue);
         }
     }
 }

@@ -31,8 +31,6 @@ namespace CohortManager.Collections
     public partial class CohortIdentificationCollectionUI : RDMPCollectionUI, ILifetimeSubscriber
     {
         //for expand all/ collapse all
-        private IActivateItems _activator;
-        
         public CohortIdentificationCollectionUI()
         {
             InitializeComponent();
@@ -40,36 +38,36 @@ namespace CohortManager.Collections
 
         public override void SetItemActivator(IActivateItems activator)
         {
-            _activator = activator;
-            
+            base.SetItemActivator(activator);
+
             //important to register the setup before the lifetime subscription so it gets priority on events
-            CommonFunctionality.SetUp(
+            CommonTreeFunctionality.SetUp(
                 RDMPCollection.Cohort, 
                 tlvCohortIdentificationConfigurations,
-                _activator,
+                Activator,
                 olvName,//column with the icon
                 olvName//column that can be renamed
                 
                 );
-            CommonFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
+            CommonTreeFunctionality.AxeChildren = new Type[]{typeof (CohortIdentificationConfiguration)};
             
             var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
 
             if (dataExportChildProvider == null)
             {
-                CommonFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
-                tlvCohortIdentificationConfigurations.AddObjects(_activator.CoreChildProvider.AllCohortIdentificationConfigurations);
+                CommonTreeFunctionality.MaintainRootObjects = new Type[] { typeof(CohortIdentificationConfiguration) };
+                tlvCohortIdentificationConfigurations.AddObjects(Activator.CoreChildProvider.AllCohortIdentificationConfigurations);
             }
             else
             {
-                CommonFunctionality.MaintainRootObjects = new Type[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
+                CommonTreeFunctionality.MaintainRootObjects = new Type[] { typeof(AllProjectCohortIdentificationConfigurationsNode), typeof(AllFreeCohortIdentificationConfigurationsNode) };
                 tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllProjectCohortIdentificationConfigurationsNode);
                 tlvCohortIdentificationConfigurations.AddObject(dataExportChildProvider.AllFreeCohortIdentificationConfigurationsNode);
             }
 
-            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]{new ExecuteCommandCreateNewCohortIdentificationConfiguration(a)};
 
-            _activator.RefreshBus.EstablishLifetimeSubscription(this);
+            Activator.RefreshBus.EstablishLifetimeSubscription(this);
             
             
         }

@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Nodes;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using FAnsi.Discovery;
+using ReusableLibraryCode;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramServerNode:TableInfoServerNode
+    public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm
     {
         private readonly LoadBubble _bubble;
         private readonly DiscoveredDatabase _database;
@@ -118,6 +118,22 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 return hashCode;
             }
         }
+
+        public string WhatIsThis()
+        {
+            switch (_bubble)
+            {
+                case LoadBubble.Raw:
+                    return "Depicts what server will be used for the RAW database and the tables/columns that are anticipated/found in that server currently";
+                case LoadBubble.Staging:
+                    return "Depicts what server will be used for the STAGING database and the tables/columns that are anticipated/found in that server currently";
+                case LoadBubble.Live:
+                    return "Depicts the current live server that the load will target (based on which Catalogues are associated with the load)";
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         #endregion
     }
 }

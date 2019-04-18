@@ -15,6 +15,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Nodes;
 using CatalogueLibrary.Nodes.PipelineNodes;
 using CatalogueLibrary.Nodes.SharingNodes;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Providers
@@ -32,9 +33,12 @@ namespace CatalogueLibrary.Providers
         TableInfoServerNode[] AllServers { get; }
         TableInfo[] AllTableInfos { get;}
         CohortIdentificationConfiguration[] AllCohortIdentificationConfigurations { get; }
-        
+        CohortAggregateContainer[] AllCohortAggregateContainers { get; set; }
+        JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
+        JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
+
         Catalogue[] AllCatalogues { get; }
-        Dictionary<int, Catalogue> AllCatalogueDictionary { get; }
+        Dictionary<int, Catalogue> AllCataloguesDictionary { get; }
 
         ExternalDatabaseServer[] AllExternalServers { get; }
 
@@ -62,14 +66,15 @@ namespace CatalogueLibrary.Providers
         AllConnectionStringKeywordsNode AllConnectionStringKeywordsNode { get; set; }
         AllStandardRegexesNode AllStandardRegexesNode { get;}
         AllPipelinesNode AllPipelinesNode { get; }
-
-        CatalogueItemIssue[] AllCatalogueItemIssues { get; }
-
+        
         AllGovernanceNode AllGovernanceNode { get; }
         GovernancePeriod[] AllGovernancePeriods { get; }
         GovernanceDocument[] AllGovernanceDocuments { get;}
 
-        /// <inheritdoc cref="GovernancePeriod.GetAllGovernedCataloguesForAllGovernancePeriods"/>
+        Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; }
+        AggregateFilter[] AllAggregateFilters { get; }
+
+        /// <inheritdoc cref="IGovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods"/>
         Dictionary<int, HashSet<int>> GovernanceCoverage { get;}
 
         JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; }
@@ -82,5 +87,7 @@ namespace CatalogueLibrary.Providers
         /// <param name="o"></param>
         /// <returns></returns>
         IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
+
+        DatabaseEntity GetLatestCopyOf(DatabaseEntity e);
     }
 }

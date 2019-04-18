@@ -37,26 +37,10 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
-    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
+    public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
     {
         #region Database Properties
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Statistical_cons_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Research_relevance_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Description_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Topic_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Agg_method_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Limitations_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Comments_MaxLength = -1;
-
+        
         private string _Name;
         private string _Statistical_cons;
         private string _Research_relevance;
@@ -223,16 +207,6 @@ namespace CatalogueLibrary.Data
             }
         }
         
-        /// <summary>
-        /// Gets all issues documented against the this column
-        /// </summary>
-        [NoMappingToDatabase]
-        public IEnumerable<CatalogueItemIssue> CatalogueItemIssues
-        {
-            get { return Repository.GetAllObjectsWithParent<CatalogueItemIssue>(this); }
-        }
-
-
         internal bool IsColumnInfoCached()
         {
             return _knownColumnInfo.IsValueCreated;
@@ -297,7 +271,7 @@ namespace CatalogueLibrary.Data
 
         internal CatalogueItem(ShareManager shareManager, ShareDefinition shareDefinition)
         {
-            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+            shareManager.UpsertAndHydrate(this,shareDefinition);
         }
 
         /// <inheritdoc/>
@@ -464,5 +438,11 @@ namespace CatalogueLibrary.Data
             InjectKnown(columnInfo);
         }
 
+        public CatalogueItem ShallowClone(Catalogue into)
+        {
+            var clone = new CatalogueItem(CatalogueRepository, into, Name);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
     }
 }

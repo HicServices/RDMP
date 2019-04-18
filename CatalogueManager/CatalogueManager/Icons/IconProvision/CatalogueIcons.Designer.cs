@@ -463,6 +463,16 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CatalogueLookupsNode {
+            get {
+                object obj = ResourceManager.GetObject("CatalogueLookupsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Clipboard {
             get {
                 object obj = ResourceManager.GetObject("Clipboard", resourceCulture);
@@ -596,6 +606,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap Database {
             get {
                 object obj = ResourceManager.GetObject("Database", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap DatabaseRefresh {
+            get {
+                object obj = ResourceManager.GetObject("DatabaseRefresh", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1083,16 +1103,6 @@ namespace CatalogueManager.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap LoadDirectoryNode {
-            get {
-                object obj = ResourceManager.GetObject("LoadDirectoryNode", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-        
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap ImportFile {
             get {
                 object obj = ResourceManager.GetObject("ImportFile", resourceCulture);
@@ -1166,6 +1176,16 @@ namespace CatalogueManager.Icons.IconProvision {
         public static System.Drawing.Bitmap LoadBubbleMounting {
             get {
                 object obj = ResourceManager.GetObject("LoadBubbleMounting", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap LoadDirectoryNode {
+            get {
+                object obj = ResourceManager.GetObject("LoadDirectoryNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

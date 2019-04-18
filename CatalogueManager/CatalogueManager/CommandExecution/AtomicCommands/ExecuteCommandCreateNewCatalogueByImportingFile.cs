@@ -74,7 +74,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             dialog.ShowDialog();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Add);
         }

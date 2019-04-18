@@ -7,23 +7,19 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Injection;
 
 namespace DataExportLibrary.Data
 {
-
-    /// <summary>
-    /// Records the fact that a given Cohort Identification Configuration (query that identifies a cohort) is associated with a given Project.  You can have multiple
-    /// associated configurations in a given project (e.g. cases, controls, time based etc).  You can also associate the same configuration with multiple Projects if
-    /// you need to.
-    /// </summary>
-    public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IMasqueradeAs,IDeletableWithCustomMessage
+    /// <inheritdoc/>
+    public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IProjectCohortIdentificationConfigurationAssociation,IInjectKnown<CohortIdentificationConfiguration>
     {
         #region Database Properties
 
@@ -31,9 +27,7 @@ namespace DataExportLibrary.Data
         private int _cohortIdentificationConfiguration_ID;
         #endregion
 
-        /// <summary>
-        /// The <see cref="IProject"/> to which the <see cref="CohortIdentificationConfiguration_ID"/> is associated with.
-        /// </summary>
+        /// <inheritdoc/>
         public int Project_ID
         {
             get { return _project_ID; }
@@ -55,11 +49,18 @@ namespace DataExportLibrary.Data
 
         /// <inheritdoc cref="Project_ID"/>
         [NoMappingToDatabase]
-        public Project Project { get { return Repository.GetObjectByID<Project>(Project_ID); } }
+        public IProject Project { get { return Repository.GetObjectByID<Project>(Project_ID); } }
+
+        private Lazy<CohortIdentificationConfiguration> _knownCic;
 
         /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
         [NoMappingToDatabase]
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration { get { return ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<CohortIdentificationConfiguration>(CohortIdentificationConfiguration_ID); } }
+        public CohortIdentificationConfiguration CohortIdentificationConfiguration {
+            get
+            {
+                //handles the object having been deleted and somehow that deletion is missed
+                return _knownCic.Value;
+            } }
 
         #endregion
 
@@ -80,23 +81,45 @@ namespace DataExportLibrary.Data
 
             if (ID == 0 || Repository != repository)
                 throw new ArgumentException("Repository failed to properly hydrate this class");
+
+            ClearAllInjections();
         }
         internal ProjectCohortIdentificationConfigurationAssociation(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
             Project_ID = Convert.ToInt32(r["Project_ID"]);
             CohortIdentificationConfiguration_ID = Convert.ToInt32(r["CohortIdentificationConfiguration_ID"]);
+
+            ClearAllInjections();
         }
 
-        private CohortIdentificationConfiguration _cachedCic = null;
-        
+
+        public void InjectKnown(CohortIdentificationConfiguration instance)
+        {
+            _knownCic = new Lazy<CohortIdentificationConfiguration>(() => instance);
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownCic = new Lazy<CohortIdentificationConfiguration>(FetchCohortIdentificationConfiguration); 
+        }
+
+        private CohortIdentificationConfiguration FetchCohortIdentificationConfiguration()
+        {
+            return
+                DataExportRepository.CatalogueRepository.GetAllObjectsWhere<CohortIdentificationConfiguration>("ID",
+                    CohortIdentificationConfiguration_ID).SingleOrDefault();
+        }
+
+
         /// <summary>
         /// Returns the associated <see cref="CohortIdentificationConfiguration_ID"/> Name
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
-            return GetCohortIdentificationConfigurationCached().Name;
+            var assoc = CohortIdentificationConfiguration;
+            return assoc == null ? "Orphan Association" :assoc.Name;
         }
 
         /// <inheritdoc/>
@@ -111,27 +134,7 @@ namespace DataExportLibrary.Data
         /// <returns></returns>
         public object MasqueradingAs()
         {
-            return GetCohortIdentificationConfigurationCached();
-        }
-
-        /// <inheritdoc cref="CohortIdentificationConfiguration_ID"/>
-        public CohortIdentificationConfiguration GetCohortIdentificationConfigurationCached()
-        {
-            //if we never knew it or it changed
-            if (_cachedCic == null || _cachedCic.ID != CohortIdentificationConfiguration_ID)
-                _cachedCic = CohortIdentificationConfiguration;//fetch it
-            
-            return _cachedCic;
-        }
-
-        /// <summary>
-        /// Informs the class of the known value of <see cref="CohortIdentificationConfiguration_ID"/> (so that it doesn't have
-        /// to be fetched by database queries later on).
-        /// </summary>
-        /// <param name="cic"></param>
-        public void InjectKnownCohortIdentificationConfiguration(CohortIdentificationConfiguration cic)
-        {
-            _cachedCic = cic;
+            return CohortIdentificationConfiguration;
         }
     }
 }

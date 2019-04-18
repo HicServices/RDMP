@@ -236,7 +236,7 @@
             this.Controls.Add(this.lblInclusionCriteria);
             this.Controls.Add(this.label2);
             this.Name = "CreateNewCohortIdentificationConfigurationUI";
-            this.Text = "CohortCreationWizard";
+            this.Text = "Cohort Store Wizard";
             ((System.ComponentModel.ISupportInitialize)(this.pbBigImageTopLeft)).EndInit();
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();

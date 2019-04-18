@@ -20,7 +20,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddNewCatalogueItem : BasicUICommandExecution,IAtomicCommand
     {
-        private IActivateItems _activator;
         private Catalogue _catalogue;
         private ColumnInfo[] _columnInfos;
         private HashSet<int> _existingColumnInfos;
@@ -32,7 +31,6 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandAddNewCatalogueItem(IActivateItems activator, Catalogue catalogue,params ColumnInfo[] columnInfos) : base(activator)
         {
-            _activator = activator;
             _catalogue = catalogue;
 
             _existingColumnInfos = new HashSet<int>(_catalogue.CatalogueItems.Select(ci=>ci.ColumnInfo_ID).Where(col=>col.HasValue).Select(v=>v.Value).Distinct().ToArray());
@@ -61,10 +59,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 ColumnInfo columnInfo;
                 string text;
 
-                if(SelectOne(_activator.CoreChildProvider.AllColumnInfos,out columnInfo))
+                if(SelectOne(Activator.CoreChildProvider.AllColumnInfos,out columnInfo))
                     if(TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo.GetRuntimeName(),out text))
                     {
-                        var ci = new CatalogueItem(_activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
+                        var ci = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
                         ci.Name = text;
                         ci.SetColumnInfo(columnInfo);
                         ci.SaveToDatabase();
@@ -79,8 +77,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 {
                     if(AlreadyInCatalogue(columnInfo))
                         continue;
-                    
-                    var ci = new CatalogueItem(_activator.RepositoryLocator.CatalogueRepository, _catalogue, columnInfo.Name);
+
+                    var ci = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository, _catalogue, columnInfo.Name);
                     ci.SetColumnInfo(columnInfo);
                     ci.SaveToDatabase();
                 }
@@ -94,7 +92,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return _existingColumnInfos.Contains(candidate.ID);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.CatalogueItem, OverlayKind.Add);
         }

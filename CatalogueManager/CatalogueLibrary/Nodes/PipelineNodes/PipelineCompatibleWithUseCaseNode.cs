@@ -25,10 +25,11 @@ namespace CatalogueLibrary.Nodes.PipelineNodes
         public PipelineUseCase UseCase { get; set; }
         private Type _useCaseType;
 
-        public PipelineCompatibleWithUseCaseNode(Pipeline pipeline, PipelineUseCase useCase)
+        public PipelineCompatibleWithUseCaseNode(MemoryRepository repo, Pipeline pipeline, PipelineUseCase useCase):base(null)
         {
             Pipeline = pipeline;
             UseCase = useCase;
+            Repository = repo;
             _useCaseType = UseCase.GetType();
         }
 

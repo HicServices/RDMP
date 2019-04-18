@@ -14,7 +14,6 @@ using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Xceed.Words.NET;
@@ -33,34 +32,25 @@ namespace CatalogueLibrary.Reports
     /// of extractable columns as well as an Appendix of Lookups.  In addition any IsExtractable AggregateConfiguration graphs will be run and screen captured and added to 
     /// the report (including heatmap if a dynamic pivot is included in the graph).
     /// </summary>
-    public class MetadataReport:RequiresMicrosoftOffice
+    public class MetadataReport:DocXHelper
     {
-        public IDetermineDatasetTimespan TimespanCalculator { get; set; }
-        private readonly CatalogueRepository _repository;
-        private readonly int _timeout;
-        private readonly bool _includeRowCounts;
-        private readonly bool _includeDistinctRowCounts;
-        private readonly bool _skipImages;
-        private readonly Catalogue[] _catalogues;
-
+        private readonly ICatalogueRepository _repository;
+        private readonly MetadataReportArgs _args;
+        
         HashSet<TableInfo> LookupsEncounteredToAppearInAppendix = new HashSet<TableInfo>();
 
         public float PageWidthInPixels { get; private set; }
-        public int MaxLookupRows { get; set; }
         
         public event RequestCatalogueImagesHandler RequestCatalogueImages;
         
         private const int TextFontSize = 7;
+
         
-        public MetadataReport(CatalogueRepository repository,IEnumerable<Catalogue> catalogues, int timeout, bool includeRowCounts, bool includeDistinctRowCounts, bool skipImages,IDetermineDatasetTimespan timespanCalculator)
+
+        public MetadataReport(ICatalogueRepository repository,MetadataReportArgs args)
         {
-            TimespanCalculator = timespanCalculator;
             _repository = repository;
-            _timeout = timeout;
-            _includeRowCounts = includeRowCounts;
-            _includeDistinctRowCounts = includeDistinctRowCounts;
-            _skipImages = skipImages;
-            _catalogues = catalogues.ToArray();
+            _args = args;
         }
 
         Thread thread;
@@ -77,15 +67,8 @@ namespace CatalogueLibrary.Reports
             try
             {
 
-                int version = OfficeVersionFinder.GetMajorVersion(OfficeVersionFinder.OfficeComponent.Word);
-
-                if (version == 0)
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Microsoft Word not found, is it installed?"));
-                else
-                    listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Found Microsoft Word " + version + " installed"));
-
                 //if theres only one catalogue call it 'prescribing.docx' etc
-                string filename = _catalogues.Length == 1 ? _catalogues[0].Name : "MetadataReport";
+                string filename = _args.Catalogues.Length == 1 ? _args.Catalogues[0].Name : "MetadataReport";
 
                 var f = GetUniqueFilenameInWorkArea(filename);
 
@@ -120,9 +103,9 @@ namespace CatalogueLibrary.Reports
                         int completed = 0;
 
 
-                        foreach (Catalogue c in _catalogues)
+                        foreach (Catalogue c in _args.Catalogues)
                         {
-                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _catalogues.Length), sw.Elapsed));
+                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed++, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
 
                             int recordCount = -1;
                             int distinctRecordCount = -1;
@@ -131,7 +114,7 @@ namespace CatalogueLibrary.Reports
                             bool gotRecordCount = false;
                             try
                             {
-                                if (_includeRowCounts)
+                                if (_args.IncludeRowCounts)
                                 {
                                     GetRecordCount(c, out recordCount, out distinctRecordCount, out identifierName);
                                     gotRecordCount = true;
@@ -144,9 +127,9 @@ namespace CatalogueLibrary.Reports
 
                             InsertHeader(document,c.Name);
 
-                            if (TimespanCalculator != null)
+                            if (_args.TimespanCalculator != null)
                             {
-                                string timespan = TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true);
+                                string timespan = _args.TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true);
                                 if (!string.IsNullOrWhiteSpace(timespan))
                                     InsertParagraph(document,timespan, TextFontSize);
                             }
@@ -158,8 +141,8 @@ namespace CatalogueLibrary.Reports
                                 InsertHeader(document,"Record Count", 3);
                                 CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
                             }
-                            
-                            if (!_skipImages)
+
+                            if (!_args.SkipImages)
                             {
                                 BitmapWithDescription[] onRequestCatalogueImages = RequestCatalogueImages(c);
 
@@ -175,10 +158,10 @@ namespace CatalogueLibrary.Reports
                             CreateDescriptionsTable(document,c);
 
                             //if this is not the last Catalogue create a new page
-                            if (completed != _catalogues.Length)
+                            if (completed != _args.Catalogues.Length)
                                 document.InsertSectionPageBreak();
 
-                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _catalogues.Length), sw.Elapsed));
+                            listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
                         }
 
                         if (LookupsEncounteredToAppearInAppendix.Any())
@@ -233,7 +216,7 @@ namespace CatalogueLibrary.Reports
                 //write name of lookup
                 InsertHeader(document,lookupTable.Name);
 
-                var table = InsertTable(document,Math.Min(dt.Rows.Count + 1, MaxLookupRows + 2), dt.Columns.Count);
+                var table = InsertTable(document,Math.Min(dt.Rows.Count + 1, _args.MaxLookupRows + 2), dt.Columns.Count);
 
                 int tableLine = 0;
 
@@ -244,7 +227,7 @@ namespace CatalogueLibrary.Reports
                 //move to next line
                 tableLine++;
 
-                int maxLineCountDowner = MaxLookupRows+1;//1 for the headers and 1 for the ... row
+                int maxLineCountDowner = _args.MaxLookupRows + 1;//1 for the headers and 1 for the ... row
                 
                 //see if it has any lookups
                 foreach (DataRow row in dt.Rows)
@@ -303,16 +286,17 @@ namespace CatalogueLibrary.Reports
 
         private void CreateDescriptionsTable(DocX document, Catalogue c)
         {
-            var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).ToList();
-            extractionInformations.Sort();
+            var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(Include).ToList();
+            extractionInformations.Sort(IsExtractionIdentifiersFirstOrder);
 
-            var table = InsertTable(document,extractionInformations.Count + 1, 3);
+            var table = InsertTable(document,extractionInformations.Count + 1, 4);
             
             int tableLine = 0;
 
             SetTableCell(table, tableLine, 0, "Column", TextFontSize);
             SetTableCell(table, tableLine, 1, "Datatype", TextFontSize);
             SetTableCell(table, tableLine, 2, "Description", TextFontSize);
+            SetTableCell(table, tableLine, 3, "Category", TextFontSize);
 
             tableLine++;
 
@@ -322,7 +306,6 @@ namespace CatalogueLibrary.Reports
                 SetTableCell(table,tableLine, 0, information.GetRuntimeName(),TextFontSize);
                 SetTableCell(table,tableLine, 1, information.ColumnInfo.Data_type,TextFontSize);
                 string description = information.CatalogueItem.Description;
-
                 
                 //a field should only ever be a foreign key to one Lookup table
                 var lookups = information.ColumnInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
@@ -341,7 +324,8 @@ namespace CatalogueLibrary.Reports
 
                 }
 
-                SetTableCell(table,tableLine, 2,description, TextFontSize);
+                SetTableCell(table, tableLine, 2, description, TextFontSize);
+                SetTableCell(table, tableLine, 3, information.ExtractionCategory.ToString(), TextFontSize);
 
                 tableLine++;
             }
@@ -349,16 +333,48 @@ namespace CatalogueLibrary.Reports
             table.AutoFit = AutoFit.Contents;
         }
 
+        private int IsExtractionIdentifiersFirstOrder(ExtractionInformation x, ExtractionInformation y)
+        {
+            if (x.IsExtractionIdentifier && !y.IsExtractionIdentifier)
+                return -1;
+
+            if (y.IsExtractionIdentifier && y.IsExtractionIdentifier)
+                return 1;
+
+            return x.Order - y.Order;
+        }
+
+        private bool Include(ExtractionInformation arg)
+        {
+            switch (arg.ExtractionCategory)
+            {
+                case ExtractionCategory.Core:
+                    return true;
+                case ExtractionCategory.Supplemental:
+                    return true;
+                case ExtractionCategory.SpecialApprovalRequired:
+                    return true;
+                case ExtractionCategory.Internal:
+                    return _args.IncludeInternalItems;
+                case ExtractionCategory.Deprecated:
+                    return _args.IncludeDeprecatedItems;
+                case ExtractionCategory.ProjectSpecific:
+                    return true;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+        }
+
         private void CreateCountTable(DocX document, int recordCount, int distinctCount, string identifierName)
         {
-            var table = InsertTable(document,2, identifierName != null && _includeDistinctRowCounts ? 2 : 1);
+            var table = InsertTable(document,2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
             
             int tableLine = 0;
 
             SetTableCell(table,tableLine, 0, "Records",TextFontSize);
 
             //only add column values if there is an IsExtractionIdentifier returned 
-            if (identifierName != null && _includeDistinctRowCounts)
+            if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
                 SetTableCell(table,tableLine, 1, "Distinct " + identifierName,TextFontSize);
             
             tableLine++;
@@ -367,7 +383,7 @@ namespace CatalogueLibrary.Reports
             SetTableCell(table,tableLine, 0,recordCount.ToString("N0"),TextFontSize);
 
             //only add column values if there is an IsExtractionIdentifier returned 
-            if (identifierName != null &&  _includeDistinctRowCounts)
+            if (identifierName != null && _args.IncludeDistinctIdentifierCounts)
                 SetTableCell(table, tableLine, 1, distinctCount.ToString("N0"), TextFontSize);
         }
 
@@ -418,7 +434,7 @@ namespace CatalogueLibrary.Reports
                 sql += "count(*) as recordCount";
 
                 //if it has extraction information and we want a distinct count
-                if (hasExtractionIdentifier && _includeDistinctRowCounts)
+                if (hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts)
                     sql += ",\r\ncount(distinct " + bestExtractionInformation[0].SelectSQL + ") as recordCountDistinct" + Environment.NewLine;
             
                 sql += " from " + Environment.NewLine;
@@ -427,13 +443,13 @@ namespace CatalogueLibrary.Reports
                 identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
             
                 DbCommand cmd = server.GetCommand(sql,con);
-                cmd.CommandTimeout = _timeout;
+                cmd.CommandTimeout = _args.Timeout;
 
                 DbDataReader r = cmd.ExecuteReader();
                 r.Read();
 
                 count = Convert.ToInt32(r["recordCount"]);
-                distinct = hasExtractionIdentifier && _includeDistinctRowCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
+                distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
 
                 con.Close();
             }

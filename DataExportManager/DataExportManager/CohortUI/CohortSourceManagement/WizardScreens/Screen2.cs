@@ -35,7 +35,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
     /// <para>After you have chosen the correct private identifier you should choose a strategy for allocating release identifiers.  Because each agency handles governance and identifier assignment
     /// differently you can select 'Allow Null Release Identifiers' and provide allocate them yourself manually (e.g. through a stored proceedure).</para>
     /// </summary>
-    public partial class Screen2 : RDMPUserControl
+    partial class Screen2 : RDMPUserControl
     {
         public Screen2()
         {
@@ -49,7 +49,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
             base.OnLoad(e);
 
             serverDatabaseTableSelector1.HideTableComponents();
-            Wizard = new CreateNewCohortDatabaseWizard(null,RepositoryLocator.CatalogueRepository,RepositoryLocator.DataExportRepository,false);
+            Wizard = new CreateNewCohortDatabaseWizard(null, Activator.RepositoryLocator.CatalogueRepository, Activator.RepositoryLocator.DataExportRepository, false);
         }
 
         public CreateNewCohortDatabaseWizard Wizard { get; private set; }
@@ -80,7 +80,7 @@ namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
                 return;
             }
 
-            Wizard = new CreateNewCohortDatabaseWizard(db, RepositoryLocator.CatalogueRepository, RepositoryLocator.DataExportRepository,cbAllowNullReleaseIdentifiers.Checked);
+            Wizard = new CreateNewCohortDatabaseWizard(db, Activator.RepositoryLocator.CatalogueRepository, Activator.RepositoryLocator.DataExportRepository, cbAllowNullReleaseIdentifiers.Checked);
 
             var popup = new PopupChecksUI("Creating Cohort Table", false);
             ExternalCohortTableCreatedIfAny = Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);

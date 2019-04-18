@@ -5,24 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Globalization;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using CatalogueLibrary.Data;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Dashboard.CatalogueSummary.DataQualityReporting.SubComponents;
 using DataQualityEngine.Data;
-using HIC.Common.Validation.Constraints;
 using ReusableUIComponents;
-using Cursor = System.Windows.Forms.Cursor;
 
 namespace Dashboard.CatalogueSummary.DataQualityReporting
 {

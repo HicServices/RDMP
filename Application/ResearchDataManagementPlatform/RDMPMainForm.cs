@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
@@ -38,6 +39,7 @@ namespace ResearchDataManagementPlatform
     {
         private readonly PersistenceDecisionFactory _persistenceFactory = new PersistenceDecisionFactory();
         private ITheme _theme;
+        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
 
         public RDMPMainForm()
         {
@@ -51,7 +53,7 @@ namespace ResearchDataManagementPlatform
                 if (!string.IsNullOrWhiteSpace(t))
                 {
                     var type = Type.GetType(t);
-                    _theme = type == null ? new MyVS2015BlueTheme() : (ITheme) Activator.CreateInstance(type);
+                    _theme = type == null ? new MyVS2015BlueTheme() : (ITheme) System.Activator.CreateInstance(type);
                 }
                 else
                     _theme = new MyVS2015BlueTheme();
@@ -80,13 +82,14 @@ namespace ResearchDataManagementPlatform
         readonly RefreshBus _refreshBus = new RefreshBus();
         private FileInfo _persistenceFile;
         private ICheckNotifier _globalErrorCheckNotifier;
-        
+
+        public void SetRepositoryLocator(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        {
+            RepositoryLocator = repositoryLocator;
+        }
 
         private void RDMPMainForm_Load(object sender, EventArgs e)
         {
-            if (RepositoryLocator == null)
-                return;
-
             var exceptionCounter = new ExceptionCounterUI();
             _globalErrorCheckNotifier = exceptionCounter;
             _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
@@ -125,6 +128,11 @@ namespace ResearchDataManagementPlatform
                     _globalErrorCheckNotifier.OnCheckPerformed(
                         new CheckEventArgs("Could not load window persistence due to error in persistence file",
                             CheckResult.Fail, ex));
+
+                    //delete the persistence file and try again
+                    MessageBox.Show("Persistence file corrupt, application will restart without persistence");
+                    _persistenceFile.Delete();
+                    Application.Restart();
                 }
             }
          
@@ -249,11 +257,6 @@ namespace ResearchDataManagementPlatform
             }
 
             return null;
-        }
-
-        private void RDMPMainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            SqlDependencyTableMonitor.Stop();
         }
     }
 }

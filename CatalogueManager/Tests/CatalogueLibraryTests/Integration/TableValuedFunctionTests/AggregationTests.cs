@@ -5,13 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using NUnit.Framework;
 using Tests.Common;
 
@@ -19,17 +16,19 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
 {
     public class AggregationTests :DatabaseTests
     {
-        TestableTableValuedFunction _function = new TestableTableValuedFunction();
+        private TestableTableValuedFunction _function;
 
-        [SetUp]
-        public void CreateTestData()
+        private void CreateFunction(ICatalogueRepository repo)
         {
-            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, CatalogueRepository);
+            _function = new TestableTableValuedFunction();
+            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, repo);
         }
-        
+
         [Test]
         public void GenerateAggregateManuallyTest()
         {
+            CreateFunction(CatalogueRepository);
+
             //do a count * on the query builder
             AggregateBuilder queryBuilder = new AggregateBuilder("", "count(*)", null,new[] { _function.TableInfoCreated });
 
@@ -44,17 +43,21 @@ namespace CatalogueLibraryTests.Integration.TableValuedFunctionTests
             Console.WriteLine(queryBuilder.SQL);
         }
         
-        [Test]
-        public void GenerateAggregateViaAggregateConfigurationTest()
+        [TestCase(false)]
+        [TestCase(true)]
+        public void GenerateAggregateViaAggregateConfigurationTest(bool memoryRepo)
         {
-            var agg = new AggregateConfiguration(CatalogueRepository, _function.Cata, "MyExcitingAggregate");
+            ICatalogueRepository repo = memoryRepo ? (ICatalogueRepository) new MemoryCatalogueRepository() : CatalogueRepository;
+            CreateFunction(repo);
+
+            var agg = new AggregateConfiguration(repo, _function.Cata, "MyExcitingAggregate");
             
             try
             {
                 agg.HavingSQL = "count(*)>1";
                 agg.SaveToDatabase();
 
-                var aggregateForcedJoin = new AggregateForcedJoin(CatalogueRepository);
+                var aggregateForcedJoin = repo.AggregateForcedJoinManager;
                 aggregateForcedJoin.CreateLinkBetween(agg, _function.TableInfoCreated);
 
                 AggregateBuilder queryBuilder = agg.GetQueryBuilder();
@@ -84,6 +87,8 @@ count(*)>1", queryBuilder.SQL);
         [Test]
         public void GenerateAggregateUsingOverridenParametersTest()
         {
+            CreateFunction(CatalogueRepository);
+
             var agg = new AggregateConfiguration(CatalogueRepository, _function.Cata, "MyExcitingAggregate");
 
             try

@@ -12,8 +12,7 @@ using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data;
-using DataExportLibrary.Interfaces.Data.DataTables;
+
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
@@ -21,13 +20,12 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
-using DataTable = System.Data.DataTable;
 
 namespace DataExportLibrary.Data.DataTables
 {
 
     /// <inheritdoc/>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>,  ICustomSearchString
+    public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>,  ICustomSearchString
     {
         /// <summary>
         /// Logging entry in the RDMP central relational log under which to record all activities that relate to creating cohorts
@@ -116,9 +114,6 @@ namespace DataExportLibrary.Data.DataTables
                 }
             }
         }
-
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int OverrideReleaseIdentifierSQL_MaxLength = -1;
 
         private Dictionary<string, string> _releaseToPrivateKeyDictionary;
         
@@ -593,7 +588,7 @@ namespace DataExportLibrary.Data.DataTables
         /// <inheritdoc/>
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
-            return Repository.GetAllObjects<ExtractionConfiguration>("WHERE Cohort_ID = " + ID);
+            return Repository.GetAllObjectsWhere<ExtractionConfiguration>("Cohort_ID " , ID);
         }
     }
 }

@@ -29,6 +29,7 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandAddNewCatalogueItem(_activator, catalogue), Keys.None, addItem);
             Items.Add(addItem);
 
+            Add(new ExecuteCommandGenerateMetadataReport(_activator, catalogue));
 
             var extractability = new ToolStripMenuItem("Extractability");
             Add(new ExecuteCommandChangeExtractability(_activator, catalogue),Keys.None,extractability);

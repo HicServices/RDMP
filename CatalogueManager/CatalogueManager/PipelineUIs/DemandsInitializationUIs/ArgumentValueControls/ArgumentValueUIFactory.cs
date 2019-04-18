@@ -78,7 +78,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
                             new ArgumentValueComboBoxUI(
                                 Enum.GetValues(argumentType).Cast<object>().ToArray());
                     }
-                    else if (typeof (CatalogueRepository).IsAssignableFrom(argumentType))
+                    else if (typeof (ICatalogueRepository).IsAssignableFrom(argumentType))
                     {
                         toReturn = new ArgumentValueLabelUI("<this value cannot be set manually>");
                     }
@@ -145,7 +145,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         }
 
 
-        private object[] GetAdvertisedColumnInfos(CatalogueRepository repository,IArgumentHost parent, bool relatedOnlyToLoadMetadata)
+        private object[] GetAdvertisedColumnInfos(ICatalogueRepository repository,IArgumentHost parent, bool relatedOnlyToLoadMetadata)
         {
             return relatedOnlyToLoadMetadata
                 ? GetAllColumnInfosAssociatedWithLoadMetadata(repository, parent).ToArray()
@@ -171,6 +171,17 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
 
             throw new NotSupportedException("Cannot populate LoadProgress selection list because type " + parent.GetType().Name + " does not support the " + typeof(ILoadProgressHost).Name + " interface");
 
+        }
+
+        /// <summary>
+        /// Returns true if the <see cref="IArgumentValueUI"/> for the given <paramref name="argsType"/> supports being
+        /// sent illegal string values (e.g. "fish" for typeof(int)).
+        /// </summary>
+        /// <param name="argsType"></param>
+        /// <returns></returns>
+        public bool CanHandleInvalidStringData(Type argsType)
+        {
+            return argsType.IsValueType && !typeof(bool).IsAssignableFrom(argsType)&& !typeof(Enum).IsAssignableFrom(argsType);
         }
     }
 }

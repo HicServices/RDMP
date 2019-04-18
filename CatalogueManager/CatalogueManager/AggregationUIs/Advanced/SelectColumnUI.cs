@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -21,7 +22,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
@@ -46,12 +47,18 @@ namespace CatalogueManager.AggregationUIs.Advanced
     {
         private IAggregateBuilderOptions _options;
         private AggregateConfiguration _aggregate;
-        private IActivateItems _activator;
-
+        
         private List<IColumn> _availableColumns;
         private List<IColumn> _includedColumns;
 
+        internal IReadOnlyCollection<IColumn> AvailableColumns { get { return new ReadOnlyCollection<IColumn>(_availableColumns);} }
+        internal IReadOnlyCollection<IColumn> IncludedColumns { get { return new ReadOnlyCollection<IColumn>(_includedColumns); } }
+
         public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
+
+        private Bitmap _add;
+        private Bitmap _delete;
+        private CountColumnRequirement _countColumnRequirement;
 
         public SelectColumnUI()
         {
@@ -107,14 +114,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     if (importableColumn != null)
                     {
 
-                        //if it's a normal aggregate then don't let the user have more than 2 columns
-                        if (!_aggregate.IsCohortIdentificationAggregate && _includedColumns.OfType<AggregateDimension>().Count() >= 2)
-                        {
-                            WideMessageBox.Show("Too many columns","You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
-                            return;
-                        }
-
-                        var dimension = new AggregateDimension(RepositoryLocator.CatalogueRepository, importableColumn, _aggregate);
+                        var dimension = new AggregateDimension(Activator.RepositoryLocator.CatalogueRepository, importableColumn, _aggregate);
 
                         _availableColumns.Remove(importableColumn);
                         _includedColumns.Add(dimension);
@@ -148,7 +148,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                         olvSelectColumns.AddObject(countColumn);
                         olvSelectColumns.EnsureModelVisible(countColumn);
 
-                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+                        Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                     }
 
 
@@ -191,8 +191,13 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private object ImageGetter(object rowObject)
         {
+            
             if (_availableColumns.Contains(rowObject))
                 return _add;
+
+            //if we are getting an icon for the count(*) column and it cannot be removed then don't show the icon for removal
+            if (_countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn)
+                return null;
 
             return _delete;
         }
@@ -246,7 +251,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
                     var querySyntaxSource = col as IHasQuerySyntaxHelper ?? _aggregate;
 
-                    var autoComplete = new AutoCompleteProviderFactory(_activator).Create(querySyntaxSource.GetQuerySyntaxHelper());
+                    var autoComplete = new AutoCompleteProviderFactory(Activator).Create(querySyntaxSource.GetQuerySyntaxHelper());
                     autoComplete.Add(col);
                     autoComplete.Add(_aggregate);
 
@@ -283,7 +288,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
                     olvSelectColumns.EnsureModelVisible(countCol);
                 }
                 
-                _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
+                Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_aggregate));
                 return;
             }
 
@@ -291,18 +296,16 @@ namespace CatalogueManager.AggregationUIs.Advanced
             if (saveable != null)
                 saveable.SaveToDatabase();
 
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
+            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
         }
 
-
-        private Bitmap _add;
-        private Bitmap _delete;
 
         public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
         {
             //record new states so we don't accidentally erase names of stuff
-            _activator = activator;
+            SetItemActivator(activator);
             _options = options;
+            _countColumnRequirement = _options.GetCountColumnRequirement(aggregate);
             _aggregate = aggregate;
             
             _availableColumns.Clear();

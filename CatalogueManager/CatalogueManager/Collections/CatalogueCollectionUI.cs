@@ -94,7 +94,7 @@ namespace CatalogueManager.Collections
             //if there are new catalogues we don't already have in our tree
             if (_allCatalogues != null)
             {
-                var newCatalogues = CommonFunctionality.CoreChildProvider.AllCatalogues.Except(_allCatalogues);
+                var newCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues.Except(_allCatalogues);
                 if (newCatalogues.Any())
                 {
                     oRefreshFrom = CatalogueFolder.Root;//refresh from the root instead
@@ -102,7 +102,7 @@ namespace CatalogueManager.Collections
                 }
             }
 
-            _allCatalogues = CommonFunctionality.CoreChildProvider.AllCatalogues;
+            _allCatalogues = CommonTreeFunctionality.CoreChildProvider.AllCatalogues;
             
             if(isFirstTime || Equals(oRefreshFrom, CatalogueFolder.Root))
             {
@@ -161,7 +161,7 @@ namespace CatalogueManager.Collections
             _activator.Emphasise += _activator_Emphasise;
 
             //important to register the setup before the lifetime subscription so it gets priority on events
-            CommonFunctionality.SetUp(
+            CommonTreeFunctionality.SetUp(
                 RDMPCollection.Catalogue,
                 tlvCatalogues,
                 _activator,
@@ -170,13 +170,13 @@ namespace CatalogueManager.Collections
                 olvColumn1 //also the renameable column
                 );
 
-            CommonFunctionality.MaintainRootObjects = new[]
+            CommonTreeFunctionality.MaintainRootObjects = new[]
             {
                 typeof (AllGovernanceNode)
             };
 
             //Things that are always visible regardless
-            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewCatalogueByImportingFile(a),
                 new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a),
@@ -246,7 +246,7 @@ namespace CatalogueManager.Collections
             if( o is CatalogueItem || o is AggregateConfiguration ||
             o is ColumnInfo || o is TableInfo || o is ExtractionFilter || o is ExtractionFilterParameter ||
             o is ExtractionFilterParameterSet || o is ExtractionInformation ||
-            o is AggregateFilterContainer || o is AggregateFilter || o is AggregateFilterParameter|| o is CatalogueItemIssue)
+            o is AggregateFilterContainer || o is AggregateFilter || o is AggregateFilterParameter)
             {
                 //then refresh us
                 RefreshUIFromDatabase(o);

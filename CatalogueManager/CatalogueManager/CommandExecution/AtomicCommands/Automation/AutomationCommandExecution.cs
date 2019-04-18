@@ -7,6 +7,7 @@
 using System;
 using CatalogueManager.ItemActivation;
 using CommandLine;
+using MapsDirectlyToDatabaseTable;
 using RDMPAutomationService.Options.Abstracts;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
@@ -15,10 +16,20 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
     {
         protected readonly Func<RDMPCommandLineOptions> CommandGetter;
         public const string AutomationServiceExecutable = "RDMPAutomationService.exe";
+        
+        private TableRepository _cataTableRepo;
+        private TableRepository _dataExportTableRepo;
+
 
         protected AutomationCommandExecution(IActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator)
         {
             CommandGetter = commandGetter;
+
+            _cataTableRepo =  Activator.RepositoryLocator.CatalogueRepository as TableRepository;
+            _dataExportTableRepo = Activator.RepositoryLocator.DataExportRepository as TableRepository;
+
+            if(_cataTableRepo == null || _dataExportTableRepo == null)
+                SetImpossible("Current repositories are not TableRepository");
         }
 
         protected string GetCommandText()
@@ -37,10 +48,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
                 return;
 
             if (string.IsNullOrWhiteSpace(options.CatalogueConnectionString))
-                options.CatalogueConnectionString = Activator.RepositoryLocator.CatalogueRepository.ConnectionStringBuilder.ConnectionString;
+                options.CatalogueConnectionString = _cataTableRepo.ConnectionStringBuilder.ConnectionString;
 
             if (string.IsNullOrWhiteSpace(options.DataExportConnectionString))
-                options.DataExportConnectionString = Activator.RepositoryLocator.DataExportRepository.ConnectionStringBuilder.ConnectionString;
+                options.DataExportConnectionString = _dataExportTableRepo.ConnectionStringBuilder.ConnectionString;
         }
     }
 }

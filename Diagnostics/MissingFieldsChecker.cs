@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
+using CatalogueLibrary.Spontaneous;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Repositories;
 using FAnsi.Discovery;
@@ -24,7 +25,7 @@ namespace Diagnostics
     public class MissingFieldsChecker : ICheckable
     {
         private readonly CatalogueRepository _catalogueRepository;
-        private readonly IDataExportRepository _dataExportRepository;
+        private readonly DataExportRepository _dataExportRepository;
         private readonly string _assemblyName;
         private readonly SqlConnectionStringBuilder _connectionStringBuilder;
         private readonly Type[] _typesToCheck;
@@ -36,7 +37,7 @@ namespace Diagnostics
             DataExportManager
         }
 
-        public MissingFieldsChecker(ThingToCheck toCheck, CatalogueRepository catalogueRepository, IDataExportRepository dataExportRepository)
+        public MissingFieldsChecker(ThingToCheck toCheck, CatalogueRepository catalogueRepository, DataExportRepository dataExportRepository)
         {
             _catalogueRepository = catalogueRepository;
             _dataExportRepository = dataExportRepository;
@@ -84,6 +85,9 @@ namespace Diagnostics
                 return;
 
             if (type.IsAbstract)
+                return;
+
+            if (typeof(SpontaneousObject).IsAssignableFrom(type))
                 return;
 
             if(type.Name.StartsWith("Spontaneous"))

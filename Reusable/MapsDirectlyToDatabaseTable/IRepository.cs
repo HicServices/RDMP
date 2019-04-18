@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq.Expressions;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -46,20 +47,31 @@ namespace MapsDirectlyToDatabaseTable
         /// Gets all objects of the given Type from the database, optionally fetches only those that match SQL WHERE statement
         /// </summary>
         /// <typeparam name="T"></typeparam>
-        /// <param name="whereText">Optional Boolean SQL logic that limits the objects returned e.g. "Catalogue_ID=7" (do not include the word WHERE)</param>
         /// <returns></returns>
-        T[] GetAllObjects<T>(string whereText = null) where T : IMapsDirectlyToDatabaseTable;
+        T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable;
 
-        IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
 
         /// <summary>
-        /// Each database Property 'PropertyX' can have an accompanying static int variable called 'PropertyX_MaxLength'.  Calling <see cref="IRepository.FigureOutMaxLengths"/> 
-        /// method will examine the database table behind the class and calculate the maximum lengths supported by the schema of each 'Property' and set the associated 
-        /// 'Property_MaxLength'
+        /// Gets all objects of the given Type from the database where the given property of the object is <paramref name="value1"/>
         /// </summary>
-        /// <param name="oTableWrapperObject"></param>
-        void FigureOutMaxLengths(IMapsDirectlyToDatabaseTable oTableWrapperObject);
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T[] GetAllObjectsWhere<T>(string property, object value1) where T : IMapsDirectlyToDatabaseTable;
 
+        /// <summary>
+        /// Gets all objects of the given Type from the database where the given properties match the provided values with the given operand
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        T[] GetAllObjectsWhere<T>(string property1, object value1, ExpressionType operand, string property2,object value2) where T : IMapsDirectlyToDatabaseTable;
+
+        /// <summary>
+        /// Gets all objects of type <paramref name="t"/>
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type t);
+        
         /// <summary>
         /// Returns child objects of type T which belong to parent.  If the repository does not think the parent type and T types are 
         /// related you should throw an Exception
@@ -124,37 +136,7 @@ namespace MapsDirectlyToDatabaseTable
 
         Version GetVersion();
 
-        /// <summary>
-        /// Run select query (SQL) and return objects fetched by ID, IDs can be found in the query result set in column columnWithObjectID 
-        /// IMPORTANT: if columnWithObjectID you should use typeof(T).Name + "_ID";
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="selectQuery"></param>
-        /// <param name="columnWithObjectID"></param>
-        /// <param name="parameters"></param>
-        /// <param name="dbNullSubstition"></param>
-        /// <returns></returns>
-        IEnumerable<T> SelectAllWhere<T>(string selectQuery, string columnWithObjectID=null, Dictionary<string, object> parameters = null, T dbNullSubstition = default(T)) where T : IMapsDirectlyToDatabaseTable;
-        IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID=null) where T : IMapsDirectlyToDatabaseTable;
-
-        int InsertAndReturnID<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable;
-        int Insert<T>(Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable;
-        int Insert(string sql, Dictionary<string, object> parameters);
-
-        int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows=true);
-        int Update(string updateQuery, Dictionary<string, object> parameters);
-
-        /// <summary>
-        /// Creates a new copy of the <paramref name="oToClone"/> object in the database that is identical except for having a new <see cref="IMapsDirectlyToDatabaseTable.ID"/>.
-        /// This will not work if there are database constraints that would get in the way e.g. if there is an unique constraint on Name (for example). 
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="oToClone">The database object to clone</param>
-        /// <returns>The new copy fetched out of the database</returns>
-        T CloneObjectInTable<T>(T oToClone) where T:IMapsDirectlyToDatabaseTable;
-
-
-        bool StillExists<T>(int allegedParent) where T : IMapsDirectlyToDatabaseTable;
+        bool StillExists<T>(int id) where T : IMapsDirectlyToDatabaseTable;
         bool StillExists(IMapsDirectlyToDatabaseTable o);
 
         /// <summary>
@@ -172,7 +154,22 @@ namespace MapsDirectlyToDatabaseTable
 
         void SaveSpecificPropertyOnlyToDatabase(IMapsDirectlyToDatabaseTable entity, string propertyName,object propertyValue);
 
+        /// <summary>
+        /// Returns all objects held in the repository.  This method is likely to be slow for large databases
+        /// </summary>
+        /// <returns></returns>
+        IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase();
 
-        
+        /// <summary>
+        /// Returns true if the object can be stored in the repository
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        bool SupportsObjectType(Type type);
+
+        /// <summary>
+        /// Throw an Exception if the repository persists to a location that is currently innaccessible (e.g. a database)
+        /// </summary>
+        void TestConnection();
     }
 }

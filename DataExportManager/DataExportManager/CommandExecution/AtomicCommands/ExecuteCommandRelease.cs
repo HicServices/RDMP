@@ -13,7 +13,6 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.DataRelease;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -35,7 +34,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             return "Gather all the extracted files into one releasable package and freeze the extraction configuration";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Release);
         }

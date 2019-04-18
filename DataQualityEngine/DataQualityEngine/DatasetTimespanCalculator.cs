@@ -34,7 +34,7 @@ namespace DataQualityEngine
 
             try
             {
-                var repo = new DQERepository((CatalogueRepository) catalogue.Repository);
+                var repo = new DQERepository(catalogue.CatalogueRepository);
 
                 Evaluation mostRecentEvaluation = repo.GetMostRecentEvaluationFor(catalogue);
 

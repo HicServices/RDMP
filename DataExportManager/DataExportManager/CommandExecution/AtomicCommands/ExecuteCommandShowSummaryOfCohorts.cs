@@ -58,8 +58,8 @@ namespace DataExportManager.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            var extractableCohortCollection = new ExtractableCohortCollection();
-            extractableCohortCollection.RepositoryLocator = Activator.RepositoryLocator;
+            var extractableCohortCollection = new ExtractableCohortCollectionUI();
+            extractableCohortCollection.SetItemActivator(Activator);
             Activator.ShowWindow(extractableCohortCollection, true);
 
             if (_onlyCohorts != null)
@@ -68,7 +68,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
                 extractableCohortCollection.SetupForAllCohorts(Activator);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AllCohortsNode);
         }

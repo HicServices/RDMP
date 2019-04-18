@@ -6,8 +6,8 @@
 
 using System;
 using System.Linq;
+using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
@@ -37,7 +37,7 @@ namespace CatalogueManager.Copying.Commands
                 return;
             }
 
-            CompatibleProjects = extractableCohort.Repository.GetAllObjects<Project>("WHERE ProjectNumber = " + ExternalProjectNumber);
+            CompatibleProjects = extractableCohort.Repository.GetAllObjectsWhere<Project>("ProjectNumber" , ExternalProjectNumber);
             CompatibleExtractionConfigurations = CompatibleProjects.SelectMany(p => p.ExtractionConfigurations).ToArray();
         }
         

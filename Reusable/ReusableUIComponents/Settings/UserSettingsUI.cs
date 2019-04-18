@@ -26,7 +26,6 @@ namespace ReusableUIComponents.Settings
             cbShowHomeOnStartup.Checked = UserSettings.ShowHomeOnStartup;
             cbEmphasiseOnTabChanged.Checked = UserSettings.EmphasiseOnTabChanged;
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
-            cbUseCaching.Checked = UserSettings.UseCaching;
             cbFindShouldPin.Checked = UserSettings.FindShouldPin;
             cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
 
@@ -60,10 +59,7 @@ namespace ReusableUIComponents.Settings
 
             if(cb == cbConfirmExit)
                 UserSettings.ConfirmApplicationExiting = cb.Checked;
-
-            if (cb == cbUseCaching)
-                UserSettings.UseCaching = cb.Checked;
-
+            
             if (cb == cbThemeMenus)
                 UserSettings.ApplyThemeToMenus = cb.Checked;
 

@@ -44,7 +44,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if (_catalogue == null)
             {
                 Catalogue cata;
-                if(!SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllCatalogues(), out cata))
+                if(!SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out cata))
                     return;
                 
                 _catalogue = new CatalogueCommand(cata);
@@ -56,7 +56,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             joinableCommandExecution.Execute();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
         }

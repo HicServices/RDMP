@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.Repositories
@@ -13,9 +14,25 @@ namespace CatalogueLibrary.Repositories
     /// <summary>
     /// See DataExportRepository
     /// </summary>
-    public interface IDataExportRepository : ITableRepository
+    public interface IDataExportRepository : IRepository
     {
-        CatalogueRepository CatalogueRepository { get; }
+        ICatalogueRepository CatalogueRepository { get; }
         CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c);
+
+        ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers();
+
+        /// <summary>
+        /// Manager for AND/OR WHERE containers and filters
+        /// </summary>
+        IFilterManager FilterManager { get; }
+
+        IExtractableDataSetPackageManager PackageManager { get; set; }
+
+        /// <summary>
+        /// Handles forbidding deleting stuff / cascading deletes into other objects
+        /// </summary>
+        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
+        
+        IDataExportPropertyManager DataExportPropertyManager { get; }
     }
 }

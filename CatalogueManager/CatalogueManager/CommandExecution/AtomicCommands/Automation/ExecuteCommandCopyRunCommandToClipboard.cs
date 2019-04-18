@@ -28,7 +28,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
             return "Generates the execute command line invocation (including arguments) and copies it to the Clipboard";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Clipboard);
         }

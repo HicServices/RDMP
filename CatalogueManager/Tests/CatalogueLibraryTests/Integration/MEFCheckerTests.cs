@@ -58,20 +58,20 @@ namespace CatalogueLibraryTests.Integration
         [Test]
         public void FileDuplication()
         {
-            var badDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Bad"));
+            var badDir = new DirectoryInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bad"));
 
             if(badDir.Exists)
                 badDir.Delete(true);
             
             badDir.Create();
 
-            var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"LoadModules.Generic.dll"));
+            var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"LoadModules.Generic.dll"));
 
             File.Copy(dllToCopy.FullName, Path.Combine(badDir.FullName,"LoadModules.Generic.dll"));
 
             var tomem = new ToMemoryCheckNotifier();
 
-            new SafeDirectoryCatalog(tomem, TestContext.CurrentContext.WorkDirectory);
+            new SafeDirectoryCatalog(tomem, TestContext.CurrentContext.TestDirectory);
             var warnings  = tomem.Messages.Where(m => m.Result == CheckResult.Warning).ToArray();
 
             Assert.GreaterOrEqual(warnings.Count(m => m.Message.StartsWith("Found 2 copies of")), 1);

@@ -45,7 +45,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
     /// </summary>
     public partial class PluginProcessTaskUI : PluginProcessTaskUI_Design, ISaveableUI
     {
-        private ArgumentCollection _argumentCollection;
+        private ArgumentCollectionUI _argumentCollection;
         private Type _underlyingType;
         private ProcessTask _processTask;
         private RAGSmileyToolStrip _ragSmiley;
@@ -60,40 +60,49 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
         {
-            base.SetDatabaseObject(activator, databaseObject);
             _processTask = databaseObject;
+            base.SetDatabaseObject(activator, databaseObject);
 
             if(_argumentCollection == null)
             {
-                var repo = (CatalogueRepository) databaseObject.Repository;
+                var repo = databaseObject.CatalogueRepository;
 
-                _argumentCollection = new ArgumentCollection();
-                try
-                {
-                    _underlyingType = repo.MEF.GetTypeByNameFromAnyLoadedAssembly(databaseObject.GetClassNameWhoArgumentsAreFor());
+                _argumentCollection = new ArgumentCollectionUI();
+                
+                var className = databaseObject.GetClassNameWhoArgumentsAreFor();
 
-                    if(_underlyingType == null)
-                        throw new Exception("Could not find Type '" + databaseObject.GetClassNameWhoArgumentsAreFor() +"' for ProcessTask '" + _processTask.Name + "'");
-                }
-                catch (Exception e)
+                if(string.IsNullOrWhiteSpace(className))
                 {
-                    ExceptionViewer.Show(e);
+                    activator.KillForm(ParentForm,new Exception("No class has been specified on ProcessTask '" + databaseObject +"'"));
                     return;
                 }
 
-                _argumentCollection.Setup(databaseObject, _underlyingType,_activator.RepositoryLocator.CatalogueRepository);
+                try
+                {
+                    _underlyingType = repo.MEF.GetTypeByNameFromAnyLoadedAssembly(className);
+
+                    if(_underlyingType == null)
+                        activator.KillForm(ParentForm,new Exception("Could not find Type '" +className +"' for ProcessTask '" + databaseObject + "'"));
+                }
+                catch (Exception e)
+                {
+                    activator.KillForm(ParentForm,new Exception("MEF crashed while trying to look up Type '" +className +"' for ProcessTask '" + databaseObject + "'",e));
+                    return;
+                }
+
+                _argumentCollection.Setup(databaseObject, _underlyingType,Activator.RepositoryLocator.CatalogueRepository);
 
                 _argumentCollection.Dock = DockStyle.Fill;
                 pArguments.Controls.Add(_argumentCollection);
             }
 
-            Add(_ragSmiley);
+            CommonFunctionality.Add(_ragSmiley);
 
             CheckComponent();
             
-            loadStageIconUI1.Setup(_activator.CoreIconProvider,_processTask.LoadStage);
+            loadStageIconUI1.Setup(Activator.CoreIconProvider,_processTask.LoadStage);
 
-            Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
+            CommonFunctionality.Add(new ToolStripButton("Check", FamFamFamIcons.arrow_refresh, (s, e) => CheckComponent()));
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ProcessTask databaseObject)
@@ -108,7 +117,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
         {
             try
             {
-                var factory = new RuntimeTaskFactory(_activator.RepositoryLocator.CatalogueRepository);
+                var factory = new RuntimeTaskFactory(Activator.RepositoryLocator.CatalogueRepository);
 
                 var lmd = _processTask.LoadMetadata;
                 var argsDictionary = new LoadArgsDictionary(lmd, new HICDatabaseConfiguration(lmd).DeployInfo);

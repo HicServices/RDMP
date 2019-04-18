@@ -14,6 +14,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataHelper;
+using CatalogueLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
@@ -23,7 +24,6 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using HIC.Logging;
@@ -66,7 +66,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             _configuration.SaveToDatabase();
 
 
-            _request = new ExtractDatasetCommand(RepositoryLocator,_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
+            _request = new ExtractDatasetCommand(_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
                 _extractableColumns, new HICProjectSalt(_project),
                 new ExtractionDirectory(@"C:\temp\", _configuration));
         }

@@ -35,10 +35,5 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
             Publish(_pipeline);
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

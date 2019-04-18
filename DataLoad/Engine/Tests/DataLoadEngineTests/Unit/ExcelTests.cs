@@ -29,29 +29,26 @@ namespace DataLoadEngineTests.Unit
     {
         public const string TestFile = "Book1.xlsx";
         public const string FreakyTestFile = "FreakyBook1.xlsx";
+        public const string OddFormatsFile = "OddFormats.xls";
 
-        private bool officeInstalled = false;
         private Dictionary<string, FileInfo> _fileLocations = new Dictionary<string, FileInfo>();
         public static FileInfo TestFileInfo;
         public static FileInfo FreakyTestFileInfo;
+        public static FileInfo OddFormatsFileInfo;
 
         [OneTimeSetUp]
         public void SprayToDisk()
         {
-            
-            officeInstalled = OfficeVersionFinder.GetVersion(OfficeVersionFinder.OfficeComponent.Excel) != null;
+            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.TestDirectory));
+            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.TestDirectory));
 
-            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.WorkDirectory));
-            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.WorkDirectory));
+            _fileLocations.Add(OddFormatsFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + OddFormatsFile, OddFormatsFile, TestContext.CurrentContext.TestDirectory));
         }
 
 
         [Test]
         public void TestFilesExists()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             Assert.IsTrue(_fileLocations[TestFile].Exists);
             Assert.IsTrue(_fileLocations[FreakyTestFile].Exists);
         }
@@ -71,9 +68,6 @@ namespace DataLoadEngineTests.Unit
         [TestCase(FreakyTestFile)]
         public void NormalBook_FirstRowCorrect(string versionOfTestFile)
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), new ThrowImmediatelyDataLoadEventListener());
@@ -99,9 +93,6 @@ namespace DataLoadEngineTests.Unit
         [TestCase(FreakyTestFile)]
         public void NormalBook_FirstRowCorrect_AddFilenameColumnNamed(string versionOfTestFile)
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
             source.AddFilenameColumnNamed = "Path";
 
@@ -137,9 +128,6 @@ namespace DataLoadEngineTests.Unit
             01/01/2002 11:30	0.22	0.1
             01/01/2003 01:30	0.10	0.51
             */
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var listener = new ToMemoryDataLoadEventListener(true);
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
@@ -147,33 +135,66 @@ namespace DataLoadEngineTests.Unit
             source.PreInitialize(new FlatFileToLoad(_fileLocations[versionOfTestFile]), listener);
             DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
 
-            Assert.AreEqual("01/01/2001 00:00:00", dt.Rows[0][3]);
+            Assert.AreEqual(5,dt.Rows.Count);
+
+            Assert.AreEqual("2001-01-01", dt.Rows[0][3]);
             Assert.AreEqual("0.1", dt.Rows[0][4]);
             Assert.AreEqual("10:30:00", dt.Rows[0][5]);
 
-            Assert.AreEqual("01/01/2001 10:30:00", dt.Rows[1][3]);
+            Assert.AreEqual("2001-01-01 10:30:00", dt.Rows[1][3]);
             Assert.AreEqual("0.51", dt.Rows[1][4]);
             Assert.AreEqual("11:30:00", dt.Rows[1][5]);
 
-            Assert.AreEqual("01/01/2002 11:30:00", dt.Rows[2][3]);
-            Assert.AreEqual("0.223", dt.Rows[2][4]);
+            Assert.AreEqual("2002-01-01 11:30:00", dt.Rows[2][3]);
+            Assert.AreEqual("0.22", dt.Rows[2][4]);
             Assert.AreEqual("0.1", dt.Rows[2][5]);
 
-            Assert.AreEqual("01/01/2003 01:30:00", dt.Rows[3][3]);
-            Assert.AreEqual("0.1", dt.Rows[3][4]);
+            Assert.AreEqual("2003-01-01 01:30:00", dt.Rows[3][3]);
+            Assert.AreEqual("0.10", dt.Rows[3][4]);
             Assert.AreEqual("0.51", dt.Rows[3][5]);
 
-            Assert.AreEqual("18/09/2015 00:00:00", dt.Rows[4][3]);
-            Assert.AreEqual("15:09", dt.Rows[4][4]);
+            Assert.AreEqual("2015-09-18", dt.Rows[4][3]);
+            Assert.AreEqual("15:09:00", dt.Rows[4][4]);
             Assert.AreEqual("00:03:56", dt.Rows[4][5]);
         }
 
         [Test]
+        public void TestOddFormats()
+        {
+            var listener = new ToMemoryDataLoadEventListener(true);
+
+            ExcelDataFlowSource source = new ExcelDataFlowSource();
+            source.WorkSheetName = "MySheet";
+
+            source.PreInitialize(new FlatFileToLoad(_fileLocations[OddFormatsFile]), listener);
+            DataTable dt = source.GetChunk(listener, new GracefulCancellationToken());
+
+            Assert.AreEqual(2,dt.Rows.Count);
+            Assert.AreEqual(5, dt.Columns.Count);
+            
+            Assert.AreEqual("Name", dt.Columns[0].ColumnName);
+            Assert.AreEqual("Category", dt.Columns[1].ColumnName);
+            Assert.AreEqual("Age", dt.Columns[2].ColumnName);
+            Assert.AreEqual("Wage", dt.Columns[3].ColumnName);
+            Assert.AreEqual("Invisibre", dt.Columns[4].ColumnName); //this column is hidden in the spreadsheet but we still load it
+
+            Assert.AreEqual("Frank", dt.Rows[0][0]);
+            Assert.AreEqual("Upper, Left", dt.Rows[0][1]);
+            Assert.AreEqual("30", dt.Rows[0][2]);
+            Assert.AreEqual("£11.00", dt.Rows[0][3]);
+            Assert.AreEqual("0.1", dt.Rows[0][4]);
+
+            Assert.AreEqual("Castello", dt.Rows[1][0]);
+            Assert.AreEqual("Lower, Back", dt.Rows[1][1]);
+            Assert.AreEqual("31", dt.Rows[1][2]);
+            Assert.AreEqual("50.00%", dt.Rows[1][3]);
+            Assert.AreEqual("0.2", dt.Rows[1][4]);
+        }
+
+
+        [Test]
         public void NormalBook_NoEmptyRowsRead()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             var listener = new ToMemoryDataLoadEventListener(true);
@@ -187,9 +208,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void FreakyTestFile_WarningsCorrect()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var messages = new ToMemoryDataLoadEventListener(true);
 
             ExcelDataFlowSource source = new ExcelDataFlowSource();
@@ -201,22 +219,15 @@ namespace DataLoadEngineTests.Unit
 
             Console.Write(messages.ToString());
 
-
-            Assert.IsTrue(args.Any(a => a.Message.Contains("Column 1 did not have a header and so was not loaded") && a.ProgressEventType == ProgressEventType.Warning));
-            Assert.IsTrue(args.Any(a => a.Message.Contains("Column 8 did not have a header and so was not loaded") && a.ProgressEventType == ProgressEventType.Warning));
-
             Assert.IsTrue(args.Any(a => a.Message.Contains("Discarded the following data (that was found in unamed columns):RowCount:5") && a.ProgressEventType == ProgressEventType.Warning));
         }
 
         [Test]
         public void BlankFirstLineFile()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@".\Resources\BlankLineBook.xlsx"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@".\Resources\BlankLineBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -235,13 +246,10 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void BlankWorkbook()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"Resources\BlankBook.xlsx"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"Resources\BlankBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -254,9 +262,6 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void Checks_ValidFileExtension_Pass()
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             ExcelDataFlowSource source = new ExcelDataFlowSource();
             source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
             source.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
@@ -270,39 +275,10 @@ namespace DataLoadEngineTests.Unit
             Assert.AreEqual("File extension bob.csv has an invalid extension:.csv (this class only accepts:.xlsx,.xls)",ex.Message);
         }
 
-        [Test]
-        public void Checks_ExcelInstalled()
-        {
-            ExcelDataFlowSource source = new ExcelDataFlowSource();
-            source.PreInitialize(new FlatFileToLoad(new FileInfo("bob.xlsx")),new ThrowImmediatelyDataLoadEventListener() );
-            try
-            {
-                //check it
-                source.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
-                
-                //checking did not throw fail so it must be the case that office is installed
-                Assert.IsTrue(officeInstalled);
-            }
-            catch (Exception e)//it threw on checking
-            {
-                if (!officeInstalled)
-                    Assert.IsTrue(
-                        e.Message.Contains("Microsoft Office was not detected on the PC")
-                        ||
-                        e.Message.Contains("Could not find installed Microsoft Excel application")
-                        ,"Expected the error message to be about office not being installed");
-                else
-                    throw;
-            }
-        }
-
         [TestCase(true)]
         [TestCase(false)]
         public void TestToCSVConverter(bool prefixWithWorkbookName)
         {
-            if (!officeInstalled)
-                Assert.Inconclusive();
-
             var loc = _fileLocations[TestFile];
 
             ExcelToCSVFilesConverter converter = new ExcelToCSVFilesConverter();
@@ -325,12 +301,11 @@ namespace DataLoadEngineTests.Unit
 
             Assert.AreEqual(
             @"Participant,Score,IsEvil,DateField,DoubleField,MixedField
-Bob,3,yes,1/1/2001,0.1,10:30:00
-Frank,1.1,no,1/1/2001 10:30,0.51,11:30:00
-Hank,2.1,no,1/1/2002 11:30,0.22,0.1
-Shanker,2,yes,1/1/2003 1:30,0.10,0.51
-,,,,,
-Bobboy,2,maybe,9/18/2015,15:09,00:03:56", contents.Trim(new[] { ',', '\r', '\n', ' ', '\t' }));
+Bob,3,yes,2001-01-01,0.1,10:30:00
+Frank,1.1,no,2001-01-01 10:30:00,0.51,11:30:00
+Hank,2.1,no,2002-01-01 11:30:00,0.22,0.1
+Shanker,2,yes,2003-01-01 01:30:00,0.10,0.51
+Bobboy,2,maybe,2015-09-18,15:09:00,00:03:56", contents.Trim(new[] { ',', '\r', '\n', ' ', '\t' }));
 
             file.Delete();
 

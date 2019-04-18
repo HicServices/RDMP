@@ -25,7 +25,7 @@ namespace CatalogueManager.AutoComplete
 {
     public class AutoCompleteProvider
     {
-        private IActivateItems _activator;
+        private readonly IActivateItems _activator;
         private AutocompleteMenu _autocomplete = new AutocompleteMenu();
 
         List<AutocompleteItem> items = new List<AutocompleteItem>();
@@ -182,10 +182,10 @@ namespace CatalogueManager.AutoComplete
         
         public void Add(ITableInfo tableInfo, LoadStage loadStage)
         {
-            //we already have it
-            if(items.Any(i=>i.Tag.Equals(tableInfo)))
+            //we already have it or it is not setup properly
+            if(items.Any(i=>i.Tag.Equals(tableInfo))||string.IsNullOrWhiteSpace(tableInfo.Database) || string.IsNullOrWhiteSpace(tableInfo.Server))
                 return;
-
+            
             var runtimeName = tableInfo.GetRuntimeName(loadStage);
             var dbName = tableInfo.GetDatabaseRuntimeName(loadStage);
 

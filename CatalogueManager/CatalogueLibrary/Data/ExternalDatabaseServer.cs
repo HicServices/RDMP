@@ -17,6 +17,7 @@ using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
@@ -39,7 +40,7 @@ namespace CatalogueLibrary.Data
     /// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
     /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
     /// </summary>
-    public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
+    public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
     {
         #region Database Properties
 
@@ -88,8 +89,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Server, value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Server;
                 _selfCertifyingDataAccessPoint.Server = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old,value);
             }
         }
 
@@ -102,8 +104,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Database,value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Database;
                 _selfCertifyingDataAccessPoint.Database = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -116,8 +119,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Username, value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Username;
                 _selfCertifyingDataAccessPoint.Username = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -130,8 +134,9 @@ namespace CatalogueLibrary.Data
                 if (Equals(_selfCertifyingDataAccessPoint.Password, value))
                     return;
 
+                var old = _selfCertifyingDataAccessPoint.Password;
                 _selfCertifyingDataAccessPoint.Password = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
@@ -143,25 +148,16 @@ namespace CatalogueLibrary.Data
             {
                 if (Equals(_selfCertifyingDataAccessPoint.DatabaseType, value))
                     return;
-
+                
+                var old = _selfCertifyingDataAccessPoint.DatabaseType;
                 _selfCertifyingDataAccessPoint.DatabaseType = value;
-                OnPropertyChanged();
+                OnPropertyChanged(old, value);
             }
         }
 
         #endregion
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Server_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Database_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Username_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Password_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-
+        
         /// <summary>
         /// Creates a new persistent server reference in RDMP platform database that allows it to connect to a (usually database) server.
         /// 
@@ -183,7 +179,7 @@ namespace CatalogueLibrary.Data
                 parameters.Add("CreatedByAssembly", databaseAssemblyIfCreatedByOne.GetName().Name);
 
             Repository = repository;
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository) repository,DatabaseType.MicrosoftSQLServer);
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository,DatabaseType.MicrosoftSQLServer);
             repository.InsertAndHydrate(this, parameters);
         }
 
@@ -191,9 +187,9 @@ namespace CatalogueLibrary.Data
         {
             var repo = shareManager.RepositoryLocator.CatalogueRepository;
             Repository = repo;
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)Repository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
 
-            repo.UpsertAndHydrate(this,shareManager, shareDefinition);
+            shareManager.UpsertAndHydrate(this, shareDefinition);
         }
 
         internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
@@ -204,7 +200,7 @@ namespace CatalogueLibrary.Data
 
             var databaseType = (DatabaseType) Enum.Parse(typeof (DatabaseType), r["DatabaseType"].ToString());
 
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)repository, databaseType)
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, databaseType)
             {
                 Database = r["Database"] as string,
                 Password = r["Password"] as string,
@@ -235,7 +231,12 @@ namespace CatalogueLibrary.Data
             catch (Exception exception)
             {
                 notifier.OnCheckPerformed(new CheckEventArgs("Failed to connect to server", CheckResult.Fail, exception));
+                return;
             }
+
+            //if it's a logging server run logging checks
+            if (WasCreatedByDatabaseAssembly(typeof(HIC.Logging.Database.Class1).Assembly))
+                new LoggingDatabaseChecker(this).Check(notifier);
         }
 
         /// <inheritdoc/>
@@ -280,6 +281,25 @@ namespace CatalogueLibrary.Data
                 return false;
 
             return databaseAssembly.GetName().Name == CreatedByAssembly;
+        }
+
+        public bool WasCreatedByDatabaseAssembly(Tier2DatabaseType type)
+        {
+            switch (type)
+            {
+                case Tier2DatabaseType.Logging:
+                    return CreatedByAssembly == "HIC.Logging.Database";
+                case Tier2DatabaseType.DataQuality:
+                    return CreatedByAssembly == "DataQualityEngine.Database";
+                case Tier2DatabaseType.QueryCaching:
+                    return CreatedByAssembly == "QueryCaching.Database";
+                case Tier2DatabaseType.ANOStore:
+                    return CreatedByAssembly == "ANOStore.Database";
+                case Tier2DatabaseType.IdentifierDump:
+                    return CreatedByAssembly == "IdentifierDump.Database";
+                default:
+                    throw new ArgumentOutOfRangeException("type");
+            }
         }
 
         /// <inheritdoc/>

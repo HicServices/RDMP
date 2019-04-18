@@ -5,33 +5,25 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.CohortCreation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.CohortCreationPipeline.Sources;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.Interfaces.Pipeline;
 using DataExportLibrary.Repositories;
 using DataExportManager.CohortUI.CohortSourceManagement;
 using DataExportManager.CommandExecution.AtomicCommands;
-using LoadModules.Generic.Attachers;
 using LoadModules.Generic.DataFlowSources;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.SingleControlForms;
@@ -44,9 +36,8 @@ namespace DataExportManager.Wizard
     /// if you want to do a project refresh or adjust a cohort etc (In such a case you should use CohortIdentificationCollectionUI to add a new ExtractionConfiguration/Cohort to your existing
     /// Project).
     /// </summary>
-    public partial class CreateNewDataExtractionProjectUI : Form
+    public partial class CreateNewDataExtractionProjectUI : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private Project[] _existingProjects;
         private int _projectNumber;
         private FileInfo _cohortFile;
@@ -56,14 +47,10 @@ namespace DataExportManager.Wizard
 
         public ExtractionConfiguration ExtractionConfigurationCreatedIfAny { get; private set; }
         
-        public CreateNewDataExtractionProjectUI(IActivateItems activator)
+        public CreateNewDataExtractionProjectUI(IActivateItems activator):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
             
-            if(activator == null || activator.RepositoryLocator == null)
-                return;
-
             _existingProjects = activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
             var highestNumber = _existingProjects.Max(p => p.ProjectNumber);
 
@@ -86,7 +73,7 @@ namespace DataExportManager.Wizard
 
         private void IdentifyCompatibleCohortSources()
         {
-            var sources = _activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
+            var sources = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExternalCohortTable>();
 
             ddCohortSources.Items.AddRange(sources);
 
@@ -102,7 +89,7 @@ namespace DataExportManager.Wizard
 
         private void IdentifyCompatiblePipelines()
         {
-            var p = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
+            var p = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Pipeline>();
             
             foreach (Pipeline pipeline in p)
             {
@@ -275,7 +262,7 @@ namespace DataExportManager.Wizard
 
                 //create the project
                 if (_project == null)
-                    _project = new Project(_activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
+                    _project = new Project(Activator.RepositoryLocator.DataExportRepository, tbProjectName.Text);
 
                 _project.ProjectNumber = int.Parse(tbProjectNumber.Text);
                 _project.ExtractionDirectory = tbExtractionDirectory.Text;
@@ -287,7 +274,7 @@ namespace DataExportManager.Wizard
 
                 if (_configuration == null)
                 {
-                    _configuration = new ExtractionConfiguration(_activator.RepositoryLocator.DataExportRepository,
+                    _configuration = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository,
                         _project);
                     _configuration.Name = "Cases";
                     _configuration.SaveToDatabase();
@@ -305,7 +292,7 @@ namespace DataExportManager.Wizard
 
                     //execute the cohort creation bit
                     var cohortRequest = new CohortCreationRequest(_project, cohortDefinition,
-                        (DataExportRepository) _activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
+                        (DataExportRepository) Activator.RepositoryLocator.DataExportRepository, tbCohortName.Text);
 
                     ComboBox dd;
                     if (_cohortFile != null)
@@ -323,7 +310,7 @@ namespace DataExportManager.Wizard
 
 
                         //since we are about to execute a cic and store the results we should associate it with the Project (if successful)
-                        cmdAssociateCicWithProject = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(
+                        cmdAssociateCicWithProject = new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(Activator).SetTarget(
                             _project).SetTarget(cohortRequest.CohortIdentificationConfiguration);
                     }
 
@@ -408,7 +395,7 @@ namespace DataExportManager.Wizard
         private void btnCreateNewCohortSource_Click(object sender, EventArgs e)
         {
             var wizard = new CreateNewCohortDatabaseWizardUI();
-            wizard.RepositoryLocator = _activator.RepositoryLocator;
+            wizard.SetItemActivator(Activator);
             SingleControlForm.ShowDialog(wizard);
             IdentifyCompatibleCohortSources();
 

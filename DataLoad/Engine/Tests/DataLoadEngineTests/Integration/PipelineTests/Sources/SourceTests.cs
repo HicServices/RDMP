@@ -23,6 +23,8 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
 {
     public class SourceTests:DatabaseTests
     {
+        private ICatalogueRepository mockRepo = new MemoryCatalogueRepository();
+
         [Test]
         public void RetrieveChunks()
         {
@@ -50,7 +52,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
         {
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.FixedDestination | PipelineUsage.LoadsSingleTableInfo);
-            var ti = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "Foo");
+            var ti = new TableInfo(mockRepo, "Foo");
             var component = new TestObjectNoRequirements();
             Assert.DoesNotThrow(() => context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti));
         }
@@ -62,8 +64,8 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var context = contextFactory.Create(PipelineUsage.FixedDestination | PipelineUsage.LoadsSingleTableInfo);
 
             var component = new TestObject_RequiresTableInfo();
-            var ti = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "Foo");
-            var ci = new ColumnInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "ColumnInfo", "Type", ti);
+            var ti = new TableInfo(mockRepo, "Foo");
+            var ci = new ColumnInfo(mockRepo, "ColumnInfo", "Type", ti);
             ci.Name = "ColumnInfo"; // because we passed a stubbed repository, the name won't be set
 
             var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ci));
@@ -77,7 +79,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var context = contextFactory.Create(PipelineUsage.None);
 
             var component = new TestObject_RequiresTableInfo();
-            var ti = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "Foo");
+            var ti = new TableInfo(new MemoryCatalogueRepository(), "Foo");
             var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, ti));
             StringAssert.Contains("Type TableInfo is not an allowable PreInitialize parameters type under the current DataFlowPipelineContext (check which flags you passed to the DataFlowPipelineContextFactory and the interfaces IPipelineRequirement<> that your components implement) ",ex.Message);
         }
@@ -91,7 +93,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             //component is both IPipelineRequirement<TableInfo> AND IPipelineRequirement<LoadModuleAssembly> but only TableInfo is passed in params
             var component = new TestObject_RequiresTableInfoAndFreakyObject();
 
-            var testTableInfo = new TableInfo(MockRepository.GenerateStub<ICatalogueRepository>(), "");
+            var testTableInfo = new TableInfo(mockRepo, "");
             testTableInfo.Name = "Test Table Info";
 
             var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, testTableInfo));

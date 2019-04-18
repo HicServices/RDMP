@@ -101,7 +101,7 @@
             this.Controls.Add(this.btnYes);
             this.Controls.Add(this.splitContainer1);
             this.Name = "SQLBeforeAndAfterViewer";
-            this.Text = "SQLBeforeAndAfterViewer";
+            this.Text = "SQL Before And After";
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).EndInit();
             this.splitContainer1.ResumeLayout(false);
             this.ResumeLayout(false);

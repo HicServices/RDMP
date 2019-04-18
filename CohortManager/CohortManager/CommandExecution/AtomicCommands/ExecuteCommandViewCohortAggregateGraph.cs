@@ -36,7 +36,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
             return _collection.Graph.Name;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph);
         }
@@ -45,7 +45,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<CohortSummaryAggregateGraph>(_collection);
+            Activator.Activate<CohortSummaryAggregateGraphUI>(_collection);
         }
     }
 }

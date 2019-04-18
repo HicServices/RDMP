@@ -11,6 +11,8 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Exceptions;
 using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -22,6 +24,8 @@ using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
+using CatalogueManager.Rules;
+using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
@@ -42,7 +46,7 @@ namespace CatalogueManager.ItemActivation
     {
         ITheme Theme { get; }
 
-        ServerDefaults ServerDefaults { get; }
+        IServerDefaults ServerDefaults { get; }
 
         /// <summary>
         /// Component for publishing the fact that an object has recently been put out of date by you.
@@ -69,7 +73,6 @@ namespace CatalogueManager.ItemActivation
         /// Component for closing and opening multiple windows at once for optimal user experience for achieving a given task (e.g. running a data load)
         /// </summary>
         IArrangeWindows WindowArranger { get;}
-
 
         Form ShowWindow(Control singleControlForm, bool asDocument = false);
 
@@ -160,5 +163,26 @@ namespace CatalogueManager.ItemActivation
         /// <param name="type"></param>
         /// <returns></returns>
         string GetDocumentation(Type type);
+
+        /// <summary>
+        /// Returns the current directory (e.g. <see cref="Environment.CurrentDirectory"/>).
+        /// </summary>
+        string CurrentDirectory { get; }
+
+        DialogResult ShowDialog(Form form);
+        
+        /// <summary>
+        /// Closes the Form <paramref name="f"/> and reports the <paramref name="reason"/> to the user
+        /// in a highly visible way
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="reason"></param>
+        void KillForm(Form f, Exception reason);
+
+        /// <summary>
+        /// Called when an ErrorProvider validation rule is registered
+        /// </summary>
+        /// <param name="rule"></param>
+        void OnRuleRegistered(IBinderRule rule);
     }
 }

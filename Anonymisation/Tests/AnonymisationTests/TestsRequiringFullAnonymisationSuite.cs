@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using DataLoadEngine.DatabaseManagement.Operations;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
@@ -42,7 +43,7 @@ namespace AnonymisationTests
             IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName);
             IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
 
-            new ServerDefaults(CatalogueRepository).SetDefault(ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
+            CatalogueRepository.GetServerDefaults().SetDefault(PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);
 
         }
 

@@ -79,20 +79,20 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi, Version=0.9.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
@@ -137,11 +137,11 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs">
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
-    <Compile Include="CatalogueSummary\CatalogueSummaryScreen.cs">
+    <Compile Include="CatalogueSummary\CatalogueDQEResultsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\CatalogueSummaryScreen.Designer.cs">
-      <DependentUpon>CatalogueSummaryScreen.cs</DependentUpon>
+    <Compile Include="CatalogueSummary\CatalogueDQEResultsUI.Designer.cs">
+      <DependentUpon>CatalogueDQEResultsUI.cs</DependentUpon>
     </Compile>
     <Compile Include="CatalogueSummary\DataQualityReporting\ColumnStatesChart.cs">
       <SubType>UserControl</SubType>
@@ -232,12 +232,6 @@
     <Compile Include="PieCharts\GoodBadCataloguePieChart.Designer.cs">
       <DependentUpon>GoodBadCataloguePieChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="Overview\GovernanceSummary.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Include="Overview\GovernanceSummary.Designer.cs">
-      <DependentUpon>GovernanceSummary.cs</DependentUpon>
-    </Compile>
     <Compile Include="Raceway\DatasetRacewayObjectCollection.cs" />
     <Compile Include="Raceway\RacewayRenderAreaUI.cs">
       <SubType>UserControl</SubType>
@@ -245,8 +239,8 @@
     <Compile Include="Raceway\RacewayRenderAreaUI.Designer.cs">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="CatalogueSummary\CatalogueSummaryScreen.resx">
-      <DependentUpon>CatalogueSummaryScreen.cs</DependentUpon>
+    <EmbeddedResource Include="CatalogueSummary\CatalogueDQEResultsUI.resx">
+      <DependentUpon>CatalogueDQEResultsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\ColumnStatesChart.resx">
       <DependentUpon>ColumnStatesChart.cs</DependentUpon>
@@ -297,9 +291,6 @@
     <EmbeddedResource Include="PieCharts\GoodBadCataloguePieChart.resx">
       <DependentUpon>GoodBadCataloguePieChart.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Overview\GovernanceSummary.resx">
-      <DependentUpon>GovernanceSummary.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Include="Raceway\RacewayRenderAreaUI.resx">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -325,10 +316,6 @@
     <ProjectReference Include="..\..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj">
       <Project>{fdf08240-2afc-48a4-8f48-37cc7ea3000b}</Project>
       <Name>CatalogueManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146b6739-8541-42d3-a390-4917e6f3bcc2}</Project>

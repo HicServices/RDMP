@@ -12,6 +12,7 @@ using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.QueryBuilding.Parameters;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
+using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueLibrary.QueryBuilding
 {
@@ -295,10 +296,15 @@ namespace CatalogueLibrary.QueryBuilding
             TableInfo primary;
             TablesUsedInQuery = SqlQueryBuilderHelper.GetTablesUsedInQuery(this, out primary, _forceJoinsToTheseTables);
 
+            var tables = _forceJoinsToTheseTables != null
+                ? TablesUsedInQuery.Union(_forceJoinsToTheseTables).ToList()
+                : TablesUsedInQuery;
+
+            if (!tables.Any())
+                throw new QueryBuildingException("No tables could be identified for the query.  Try adding a column or a force join");
+
             //get the database language syntax based on the tables used in the query 
-            _syntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(
-                _forceJoinsToTheseTables != null ?
-                TablesUsedInQuery.Union(_forceJoinsToTheseTables).ToList() : TablesUsedInQuery);
+            _syntaxHelper = SqlQueryBuilderHelper.GetSyntaxHelper(tables);
 
 
             //tell the count column what language it is

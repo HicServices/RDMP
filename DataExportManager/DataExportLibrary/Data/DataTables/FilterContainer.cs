@@ -4,16 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
 using CatalogueLibrary.Data;
 using System.Data.Common;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using MapsDirectlyToDatabaseTable;
 
 
 namespace DataExportLibrary.Data.DataTables
@@ -23,167 +19,43 @@ namespace DataExportLibrary.Data.DataTables
     /// case each DeployedExtractionFilter must be in either an AND or an OR container.  These FilterContainers ensure that each subcontainer / filter beyond the first is seperated by
     /// the appropriate operator (AND or OR) and brackets/tab indents where appropriate.
     /// </summary>
-    public class FilterContainer : DatabaseEntity, IContainer
+    public class FilterContainer : ConcreteContainer, IContainer
     {
-        #region Database Properties
-        private FilterContainerOperation _operation;
-
-        /// <inheritdoc/>
-        public FilterContainerOperation Operation
-        {
-            get { return _operation; }
-            set { SetField(ref _operation, value); }
-        }
-
-        #endregion
-
         /// <summary>
         /// Creates a new instance with the given <paramref name="operation"/>
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="operation"></param>
-        public FilterContainer(IDataExportRepository repository, FilterContainerOperation operation = FilterContainerOperation.AND)
+        public FilterContainer(IDataExportRepository repository, FilterContainerOperation operation = FilterContainerOperation.AND):base(repository.FilterManager)
         {
             Repository = repository;
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
-                {"Operation", operation}
+                {"Operation", operation.ToString()}
             });
         }
 
-        internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository, r)
+        internal FilterContainer(IDataExportRepository repository, DbDataReader r) : base(repository.FilterManager,repository, r)
         {
-            FilterContainerOperation op;
-
-            if (FilterContainerOperation.TryParse(r["Operation"].ToString(), out op))
-                Operation = op;
         }
 
         /// <inheritdoc/>
-        public IContainer GetParentContainerIfAny()
-        {
-            return  Repository.SelectAll<FilterContainer>(
-                "SELECT FilterContainer_ParentID FROM FilterContainerSubcontainers WHERE FilterContainerChildID=" + ID,
-                "FilterContainer_ParentID").SingleOrDefault();
-        }
-        /// <inheritdoc/>
-        public IContainer[] GetSubContainers()
-        {
-            var subcontainers = Repository.SelectAll<FilterContainer>(
-                "SELECT FilterContainerChildID FROM FilterContainerSubcontainers WHERE FilterContainer_ParentID=" + ID,
-                "FilterContainerChildID");
-
-            return subcontainers.Cast<IContainer>().ToArray();
-        }
-
-        /// <inheritdoc/>
-        public IFilter[] GetFilters()
-        {
-            var filters = Repository.GetAllObjects<DeployedExtractionFilter>("WHERE FilterContainer_ID=" + ID);
-            return filters.Cast<IFilter>().ToArray();
-        }
-        
-        /// <inheritdoc/>
-        public void AddChild(IContainer child)
-        {
-            if (!(child is FilterContainer))
-                throw new NotSupportedException();
-
-            Repository.Insert("INSERT INTO FilterContainerSubcontainers(FilterContainer_ParentID,FilterContainerChildID) VALUES (@FilterContainer_ParentID, @FilterContainerChildID)", new Dictionary<string, object>
-            {
-                {"FilterContainer_ParentID", ID},
-                {"FilterContainerChildID", child.ID}
-            });
-        }
-        /// <inheritdoc/>
-        public void AddChild(IFilter filter)
-        {
-            if (filter.FilterContainer_ID.HasValue)
-                if (filter.FilterContainer_ID == ID)
-                    return; //It's already a child of us
-                else
-                    throw new NotSupportedException("Filter " + filter + " is already a child of nother container (ID=" + filter.FilterContainer_ID + ")");
-
-            filter.FilterContainer_ID = ID;
-            filter.SaveToDatabase();
-        }
-        /// <inheritdoc/>
-        public void MakeIntoAnOrphan()
-        {
-            Repository.Delete("DELETE FROM FilterContainerSubcontainers where FilterContainerChildID = @FilterContainerChildID", new Dictionary<string, object>
-            {
-                {"FilterContainerChildID", ID}
-            });
-        }
-        /// <inheritdoc/>
-        public IContainer GetRootContainerOrSelf()
-        {
-            return new ContainerHelper().GetRootContainerOrSelf(this);
-        }
-        /// <inheritdoc/>
-        public List<IFilter> GetAllFiltersIncludingInSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllFiltersIncludingInSubContainersRecursively(this);
-        }
-        /// <inheritdoc/>
-        public Catalogue GetCatalogueIfAny()
+        public override Catalogue GetCatalogueIfAny()
         {
             var sel = GetSelectedDataSetIfAny();
-            return  sel != null?(Catalogue)sel.ExtractableDataSet.Catalogue:null;
+            return sel != null ? (Catalogue)sel.ExtractableDataSet.Catalogue : null;
         }
-        /// <inheritdoc/>
-        public List<IContainer> GetAllSubContainersRecursively()
-        {
-            return new ContainerHelper().GetAllSubContainersRecursively(this);
-        }
+        
         /// <summary>
-        /// Returns the <see cref="Operation"/> "AND" or "OR"
+        /// Returns the <see cref="ConcreteContainer.Operation"/> "AND" or "OR"
         /// </summary>
         /// <returns></returns>
         public override string ToString()
         {
             return Operation.ToString();
         }
-
-        /// <summary>
-        /// Returns the root filter container (if any) for the given <paramref name="dataSet"/> as it is extracted in the <paramref name="configuration"/>
-        /// </summary>
-        /// <param name="configuration"></param>
-        /// <param name="dataSet"></param>
-        /// <returns></returns>
-        public FilterContainer GetFilterContainerFor(IExtractionConfiguration configuration, IExtractableDataSet dataSet)
-        {
-            var objects = Repository.SelectAllWhere<FilterContainer>(
-                "SELECT RootFilterContainer_ID FROM SelectedDataSets WHERE ExtractionConfiguration_ID=@ExtractionConfiguration_ID AND ExtractableDataSet_ID=@ExtractableDataSet_ID",
-                "RootFilterContainer_ID",
-                new Dictionary<string, object>
-                {
-                    {"ExtractionConfiguration_ID", configuration.ID},
-                    {"ExtractableDataSet_ID", dataSet.ID}
-                }).ToList();
-
-            return objects.Any() ? objects.Single() : null;
-        }
         
-        /// <inheritdoc/>
-        public override void DeleteInDatabase()
-        {
-            var children = GetAllFiltersIncludingInSubContainersRecursively();
-
-            //if deleting first set delete any relationships where this is a child
-            Repository.Delete("DELETE FROM FilterContainerSubcontainers WHERE FilterContainerChildID=" + ID,null,false);
-            
-            //then delete any children it has itself
-            foreach (FilterContainer subContainer in this.GetSubContainers())
-                subContainer.DeleteInDatabase();
-
-            //clean up the orphans that will be created by killing ourselves
-            foreach (var filter in children.Where(c => c.Exists()))
-                filter.DeleteInDatabase();
-
-            // then delete the actual component
-            base.DeleteInDatabase();
-        }
+        
         
         /// <summary>
         /// Creates a deep copy of the current container, all filters and subcontainers (recursively).  These objects will all have new IDs and be new objects
@@ -193,21 +65,17 @@ namespace DataExportLibrary.Data.DataTables
         public FilterContainer DeepCloneEntireTreeRecursivelyIncludingFilters()
         {
             //clone ourselves
-            var clonedFilterContainer = Repository.CloneObjectInTable(this);
+            var clonedFilterContainer = this.ShallowClone();
             
             //clone our filters
             foreach (var deployedExtractionFilter in GetFilters())
             {
                 //clone it
-                var cloneFilter = Repository.CloneObjectInTable((DeployedExtractionFilter) deployedExtractionFilter);
+                var cloneFilter = ((DeployedExtractionFilter) deployedExtractionFilter).ShallowClone(clonedFilterContainer);
 
                 //clone parameters
                 foreach (DeployedExtractionFilterParameter parameter in deployedExtractionFilter.GetAllParameters())
-                {
-                    var clonefilterParameter = Repository.CloneObjectInTable(parameter);
-                    clonefilterParameter.ExtractionFilter_ID = cloneFilter.ID;
-                    clonefilterParameter.SaveToDatabase();
-                }
+                    parameter.ShallowClone(cloneFilter);
 
                 //change the clone to belonging to the cloned container (instead of this - the original container)
                 cloneFilter.FilterContainer_ID = clonedFilterContainer.ID;
@@ -228,6 +96,13 @@ namespace DataExportLibrary.Data.DataTables
             return clonedFilterContainer;
         }
 
+        private FilterContainer ShallowClone()
+        {
+            var clone = new FilterContainer(DataExportRepository, Operation);
+            CopyShallowValuesTo(clone);
+            return clone;
+        }
+
         /// <summary>
         /// If this container is a top level root container (as opposed to a subcontainer) this will return which <see cref="SelectedDataSets"/> (which dataset in which configuration)
         /// in which it applies.
@@ -240,7 +115,7 @@ namespace DataExportLibrary.Data.DataTables
             if (root == null)
                 return null;
 
-            return Repository.GetAllObjects<SelectedDataSets>("WHERE RootFilterContainer_ID=" + root.ID).SingleOrDefault();
+            return Repository.GetAllObjectsWhere<SelectedDataSets>("RootFilterContainer_ID", root.ID).SingleOrDefault();
         }
 
 

@@ -11,10 +11,8 @@ using System.Text;
 using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 
 namespace DataExportLibrary.ExtractionTime.Commands
 { 
@@ -53,7 +51,7 @@ namespace DataExportLibrary.ExtractionTime.Commands
                 sqls.Where(sql => sql.IsGlobal == false).ToArray(),//all non global extractable sql (SupportingSQL)
                 lookupsFound.ToArray());//all lookups associated with the Catalogue (the one behind the ExtractableDataset)
 
-            return new ExtractDatasetCommand(repositoryLocator,configuration, bundle);
+            return new ExtractDatasetCommand(configuration, bundle);
         }
 
         public ExtractDatasetCommand Create(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSets)

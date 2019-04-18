@@ -83,7 +83,7 @@ namespace DataExportLibrary.CohortCreationPipeline.UseCases
             GenerateContext();
         }
 
-        public static PipelineUseCase DesignTime(CatalogueRepository catalogueRepository)
+        public static PipelineUseCase DesignTime(ICatalogueRepository catalogueRepository)
         {
             return new CreateTableFromAggregateUseCase();
         }

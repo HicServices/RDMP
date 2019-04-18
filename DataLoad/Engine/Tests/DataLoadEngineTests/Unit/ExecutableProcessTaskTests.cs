@@ -9,6 +9,7 @@ using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Spontaneous;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rhino.Mocks;
 
@@ -22,7 +23,7 @@ namespace DataLoadEngineTests.Unit
             const string db = "my-db";
 
             var customArgs = new List<SpontaneouslyInventedArgument>();
-            customArgs.Add(new SpontaneouslyInventedArgument("DatabaseName", db));
+            customArgs.Add(new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db));
 
             var processTask = MockRepository.GenerateStub<IProcessTask>();
             var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));

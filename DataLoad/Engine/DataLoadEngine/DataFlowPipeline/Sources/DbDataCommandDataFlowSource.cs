@@ -14,10 +14,8 @@ using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataFlowPipeline.Sources
 {
-    /// <summary>
-    /// Reads records in Batches (of size BatchSize) from the remote database (DbConnectionStringBuilder builder) by executing the specified _sql.
-    /// </summary>
-    public class DbDataCommandDataFlowSource : IDataFlowSource<DataTable>
+    /// <inheritdoc/>
+    public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource
     {
         private readonly string _sql;
         private DbDataReader _reader;
@@ -71,15 +69,10 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
             {
                 DataTable chunk = GetChunkSchema(_reader);
                 
-                
                 while (_reader.Read())
                 {
-                    object[] values = new object[_numberOfColumns];
-
-                    _reader.GetValues(values);
-                    chunk.LoadDataRow(values, LoadOption.Upsert);
+                    AddRowToDataTable(chunk, _reader);
                     readThisBatch ++;
-                    TotalRowsRead++;
 
                     //we reached batch limit
                     if (readThisBatch == BatchSize)
@@ -111,6 +104,22 @@ namespace DataLoadEngine.DataFlowPipeline.Sources
                 job.OnProgress(this, new ProgressEventArgs(_taskBeingPerformed, new ProgressMeasurement(TotalRowsRead, ProgressType.Records), timer.Elapsed));
 
             }
+        }
+
+        private DataRow AddRowToDataTable(DataTable chunk, DbDataReader reader)
+        {
+            object[] values = new object[_numberOfColumns];
+
+            reader.GetValues(values);
+            TotalRowsRead++;
+            return chunk.LoadDataRow(values, LoadOption.Upsert);
+        }
+
+        /// <inheritdoc/>
+        public DataRow ReadOneRow()
+        {
+            //return null if there are no more records to read
+            return _reader.Read() ? AddRowToDataTable(GetChunkSchema(_reader), _reader) : null;
         }
 
         private DataTable GetChunkSchema(DbDataReader reader)

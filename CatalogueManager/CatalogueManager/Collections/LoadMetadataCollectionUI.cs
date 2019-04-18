@@ -70,14 +70,14 @@ namespace CatalogueManager.Collections
             _activator = activator;
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
             
-            CommonFunctionality.SetUp(
+            CommonTreeFunctionality.SetUp(
                 RDMPCollection.DataLoad,
                 tlvLoadMetadata,
                 activator,
                 olvName,
                 olvName);
 
-            CommonFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
+            CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=>new IAtomicCommand[] {new ExecuteCommandCreateNewLoadMetadata(a)};
             
             tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllPermissionWindowsNode);
             tlvLoadMetadata.AddObject(_activator.CoreChildProvider.AllLoadMetadatasNode);

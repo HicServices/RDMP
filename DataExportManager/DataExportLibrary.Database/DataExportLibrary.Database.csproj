@@ -150,6 +150,7 @@
     <EmbeddedResource Include="db\up\018_ObjectReferenceSupportDataExport.sql" />
     <EmbeddedResource Include="db\up\019_FAnsiSupport.sql" />
     <EmbeddedResource Include="db\up\019_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="db\up\020_AddReleaseLogIDColumn.sql" />
     <Content Include="deployment\_BuildInfo.xml" />
   </ItemGroup>
   <ItemGroup>

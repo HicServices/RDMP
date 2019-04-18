@@ -19,12 +19,10 @@ namespace MapsDirectlyToDatabaseTable
     /// </summary>
     public interface ITableRepository : IRepository
     {
-        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
+        
         string ConnectionString { get; }
         DbConnectionStringBuilder ConnectionStringBuilder { get; }
         DiscoveredServer DiscoveredServer { get; }
-        void PopulateUpdateCommandValuesWithCurrentState(DbCommand cmd, IMapsDirectlyToDatabaseTable oTableWrapperObject);
-        Dictionary<string, int> GetObjectCountByVersion(Type type);
 
         IManagedConnection GetConnection();
         IManagedConnection BeginNewTransactedConnection();
@@ -32,9 +30,12 @@ namespace MapsDirectlyToDatabaseTable
         void ClearUpdateCommandCache();
         int? ObjectToNullableInt(object o);
         DateTime? ObjectToNullableDateTime(object o);
-        void TestConnection();
-        bool SupportsObjectType(Type type);
+        
+        IEnumerable<T> SelectAll<T>(string selectQuery, string columnWithObjectID = null) where T : IMapsDirectlyToDatabaseTable;
 
+        int Insert(string sql, Dictionary<string, object> parameters);
+        int Delete(string deleteQuery, Dictionary<string, object> parameters = null, bool throwOnZeroAffectedRows = true);
+        int Update(string updateQuery, Dictionary<string, object> parameters);
     }
 
 }

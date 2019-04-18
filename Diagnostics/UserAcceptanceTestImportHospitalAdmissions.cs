@@ -216,7 +216,6 @@ namespace Diagnostics
             {
                 Description = TestHospitalAdmissions.DatasetDescription,
                 LiveLoggingServer_ID = _demographyCatalogue.LiveLoggingServer_ID,
-                TestLoggingServer_ID = _demographyCatalogue.TestLoggingServer_ID,
                 LoggingDataTask = _demographyCatalogue.LoggingDataTask
             };
 
@@ -305,7 +304,7 @@ namespace Diagnostics
 
 
             //cleanup old Catalogues
-            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllCatalogues(true).Where(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)))
+            foreach (Catalogue c in RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name.Equals(TestHospitalAdmissions.HospitalAdmissionsTableName)))
                 c.DeleteInDatabase();
 
 

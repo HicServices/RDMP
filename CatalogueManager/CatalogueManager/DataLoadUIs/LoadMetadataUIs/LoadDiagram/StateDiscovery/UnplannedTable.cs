@@ -5,9 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using ReusableLibraryCode;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
 {
+    /// <summary>
+    /// Depicts a table which was found in the loading tables of a DLE load.  These tables are unexpected (i.e. not created by RDMP).  They may be
+    /// temporary tables created as part of load scripts or they may reflect other ongoing/crashed loads (if in STAGING).
+    /// </summary>
     public class UnplannedTable:IHasLoadDiagramState
     {
         public DiscoveredTable Table { get; private set; }
@@ -24,5 +29,6 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscover
         {
             return Table.GetRuntimeName();
         }
+
     }
 }

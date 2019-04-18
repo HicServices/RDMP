@@ -37,7 +37,7 @@ namespace DataLoadEngine.Checks.Checkers
         {
             _loadMetadata = loadMetadata;
             _databaseConfiguration = overrideDatabaseConfiguration ?? new HICDatabaseConfiguration(loadMetadata);
-            _cataloguesToLoad = loadMetadata.GetAllCatalogues().ToList();
+            _cataloguesToLoad = _loadMetadata.GetAllCatalogues().ToList();
         }
 
         private void PreExecutionStagingDatabaseCheck(bool skipLookups)

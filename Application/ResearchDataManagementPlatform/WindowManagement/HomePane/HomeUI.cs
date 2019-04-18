@@ -13,7 +13,9 @@ using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManager.CommandExecution.AtomicCommands;
 using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
@@ -28,15 +30,15 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
     /// 
     /// <para>You can access the HomeUI at any time by clicking the home icon in the top left of the RDMP tool bar.</para>
     /// </summary>
-    public partial class HomeUI : UserControl,ILifetimeSubscriber
+    public partial class HomeUI : RDMPUserControl,ILifetimeSubscriber
     {
-        private readonly WindowManager _windowManager;
+        private readonly IActivateItems _activator;
         private readonly AtomicCommandUIFactory _uiFactory;
 
-        public HomeUI(WindowManager windowManager)
+        public HomeUI(IActivateItems activator)
         {
-            this._windowManager = windowManager;
-            _uiFactory = new AtomicCommandUIFactory(windowManager.ActivateItems);
+            _activator = activator;
+            _uiFactory = new AtomicCommandUIFactory(activator);
             InitializeComponent();
         }
 
@@ -48,79 +50,77 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpDataLoad.Controls.Clear();
             tlpAdvanced.Controls.Clear();
 
-            var activator = _windowManager.ActivateItems;
-            
             /////////////////////////////////////Data Management/////////////////////////////////
             //AddLabel("New Catalogue", tlpDataManagement);
-            
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(activator){OverrideCommandName = "New Catalogue From File"},tlpDataManagement);
 
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(activator, true) { OverrideCommandName = "New Catalogue From Existing Database Table" }, tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { OverrideCommandName = "New Catalogue From File" }, tlpDataManagement);
 
-            AddCommand(new ExecuteCommandEditExistingCatalogue(activator),
-                activator.CoreChildProvider.AllCatalogues,
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true) { OverrideCommandName = "New Catalogue From Existing Database Table" }, tlpDataManagement);
+
+            AddCommand(new ExecuteCommandEditExistingCatalogue(_activator),
+                _activator.CoreChildProvider.AllCatalogues,
                 cata => cata.Name,
                 tlpDataManagement);
 
             AddCommand(
-                new ExecuteCommandRunDQEOnCatalogue(activator),
-                activator.CoreChildProvider.AllCatalogues, cata => cata.Name,
+                new ExecuteCommandRunDQEOnCatalogue(_activator),
+                _activator.CoreChildProvider.AllCatalogues, cata => cata.Name,
                 tlpDataManagement);
 
             /////////////////////////////////////Cohort Creation/////////////////////////////////
 
-            AddCommand(new ExecuteCommandCreateNewCohortFromFile(activator),tlpCohortCreation);
+            AddCommand(new ExecuteCommandCreateNewCohortFromFile(_activator),tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(activator)
+            AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Create New Cohort Identification Query"
             },tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(activator)
+            AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Create New Cohort From Cohort Identification Query"
             },
-                    activator.CoreChildProvider.AllCohortIdentificationConfigurations,
+                    _activator.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
 
-            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(activator)
+            AddCommand(new ExecuteCommandEditExistingCohortIdentificationConfiguration(_activator)
             {
                 OverrideCommandName = "Edit Cohort Identification Query"
             },
-                    activator.CoreChildProvider.AllCohortIdentificationConfigurations,
+                    _activator.CoreChildProvider.AllCohortIdentificationConfigurations,
                     cic => cic.Name,
                     tlpCohortCreation);
 
 
-            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(activator)
+            AddCommand(new ExecuteCommandCreateNewCohortFromCatalogue(_activator)
             {
                 OverrideCommandName = "Create New Cohort From Dataset"
             },
-                activator.CoreChildProvider.AllCatalogues,
+                _activator.CoreChildProvider.AllCatalogues,
                 c=>c.Name,
 tlpCohortCreation);
             
             /////////////////////////////////////Data Export/////////////////////////////////
             
-            var dataExportChildProvider = activator.CoreChildProvider as DataExportChildProvider;
+            var dataExportChildProvider = _activator.CoreChildProvider as DataExportChildProvider;
             if (dataExportChildProvider != null)
             {
-                AddCommand(new ExecuteCommandCreateNewDataExtractionProject(activator), tlpDataExport);
-                AddCommand(new ExecuteCommandEditDataExtractionProject(activator),
+                AddCommand(new ExecuteCommandCreateNewDataExtractionProject(_activator), tlpDataExport);
+                AddCommand(new ExecuteCommandEditDataExtractionProject(_activator),
                         dataExportChildProvider.Projects,
                         cic => cic.Name,
                         tlpDataExport);
 
-                AddCommand(new ExecuteCommandMakeCatalogueProjectSpecific(activator),
+                AddCommand(new ExecuteCommandMakeCatalogueProjectSpecific(_activator),
                     dataExportChildProvider.AllCatalogues.Where(c=>!c.IsProjectSpecific(null)).ToArray(),
                     c=>c.Name,tlpDataExport );
             }
 
             //////////////////////////////////Data Loading////////////////////////////////////
-            AddCommand(new ExecuteCommandCreateNewLoadMetadata(activator),tlpDataLoad);
-            AddCommand(new ExecuteCommandExecuteLoadMetadata(activator), 
-                activator.CoreChildProvider.AllLoadMetadatas,
+            AddCommand(new ExecuteCommandCreateNewLoadMetadata(_activator),tlpDataLoad);
+            AddCommand(new ExecuteCommandExecuteLoadMetadata(_activator), 
+                _activator.CoreChildProvider.AllLoadMetadatas,
                 lmd=>lmd.Name,
                 tlpDataLoad);
             
@@ -131,7 +131,7 @@ tlpCohortCreation);
 
 
             //////////////////////////////////Advanced////////////////////////////////////
-            AddCommand(new ExecuteCommandManagePlugins(activator),tlpAdvanced);
+            AddCommand(new ExecuteCommandManagePlugins(_activator),tlpAdvanced);
         }
 
         private void AddLabel(string text,TableLayoutPanel tableLayoutPanel)
@@ -198,12 +198,9 @@ tlpCohortCreation);
         {
             base.OnLoad(e);
 
-            if (_windowManager == null)
-                return;
-
             BuildCommandLists();
 
-            _windowManager.ActivateItems.RefreshBus.EstablishLifetimeSubscription(this);
+            _activator.RefreshBus.EstablishLifetimeSubscription(this);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)

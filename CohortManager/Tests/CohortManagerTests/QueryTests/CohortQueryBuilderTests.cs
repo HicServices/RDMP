@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
+using CatalogueLibrary.Repositories;
 using CohortManagerLibrary.QueryBuilding;
 using NUnit.Framework;
 using Tests.Common;
@@ -585,20 +586,31 @@ string.Format(
         }
 
         [Test]
-        [TestCase(true)]
-        [TestCase(false)]
-        public void TestGettingAggregateSQLFromEntirity_TwoFilterParametersPerDataset(bool valuesAreSame)
+        [TestCase(true,true)]
+        [TestCase(true, false)]
+        [TestCase(false,true)]
+        [TestCase(false, false)]
+        public void TestGettingAggregateSQLFromEntirity_TwoFilterParametersPerDataset(bool valuesAreSame,bool memoryRepository)
         {
+            var repo = memoryRepository ? (ICatalogueRepository)new MemoryCatalogueRepository() : CatalogueRepository;
+
+            //create all the setup again but in the memory repository
+            if (memoryRepository)
+            {
+                Cleanup();
+                SetupTestData(repo);
+            }
+
             CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
 
             //setup a filter (all filters must be in a container so the container is a default AND container)
-            var AND1 = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
-            var filter1_1 = new AggregateFilter(CatalogueRepository,"filter1_1",AND1);
-            var filter1_2 = new AggregateFilter(CatalogueRepository,"filter1_2",AND1);
+            var AND1 = new AggregateFilterContainer(repo,FilterContainerOperation.AND);
+            var filter1_1 = new AggregateFilter(repo,"filter1_1",AND1);
+            var filter1_2 = new AggregateFilter(repo,"filter1_2",AND1);
 
-             var AND2 = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
-            var filter2_1 = new AggregateFilter(CatalogueRepository,"filter2_1",AND2);
-            var filter2_2 = new AggregateFilter(CatalogueRepository,"filter2_2",AND2);
+             var AND2 = new AggregateFilterContainer(repo,FilterContainerOperation.AND);
+            var filter2_1 = new AggregateFilter(repo,"filter2_1",AND2);
+            var filter2_2 = new AggregateFilter(repo,"filter2_2",AND2);
              
             //Filters must belong to containers BEFORE parameter creation
             //Make aggregate1 use the filter set we just setup
@@ -619,7 +631,7 @@ string.Format(
                 filter.WhereSQL = "@bob = 'bob'";
                 filter.SaveToDatabase();     
                 //get it to create the parameters for us
-                new ParameterCreator(new AggregateFilterFactory(CatalogueRepository), null, null).CreateAll(filter, null);
+                new ParameterCreator(new AggregateFilterFactory(repo), null, null).CreateAll(filter, null);
                 
                 //get the parameter it just created, set it's value and save it
                 var param = (AggregateFilterParameter) filter.GetAllParameters().Single();

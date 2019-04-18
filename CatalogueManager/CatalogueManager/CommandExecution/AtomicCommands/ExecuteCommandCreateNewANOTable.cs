@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -22,7 +23,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public ExecuteCommandCreateNewANOTable(IActivateItems activator) : base(activator)
         {
-            _anoStoreServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.ANOStore);
+            _anoStoreServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
             if(_anoStoreServer == null)
                 SetImpossible("No default ANOStore has been set");
@@ -33,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Create a table for storing anonymous identifier mappings for a given type of code e.g. 'PatientId' / 'GP Codes' etc";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ANOTable, OverlayKind.Add);
         }

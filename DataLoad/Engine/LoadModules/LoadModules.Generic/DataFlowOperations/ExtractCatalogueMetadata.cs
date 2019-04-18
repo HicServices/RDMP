@@ -10,9 +10,10 @@ using System.IO;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
+using CatalogueLibrary.ExtractionTime.Commands;
+using CatalogueLibrary.Repositories;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Sharing.CommandExecution;
@@ -58,7 +59,7 @@ namespace LoadModules.Generic.DataFlowOperations
                 var outputFile = new FileInfo(Path.Combine(outputFolder.FullName, toProcess.TableName + ".sd"));
 
                 catalogue.Name = toProcess.TableName;
-                var cmd = new ExecuteCommandExportObjectsToFile(extractDatasetCommand.RepositoryLocator, catalogue, outputFile);
+                var cmd = new ExecuteCommandExportObjectsToFile(new RepositoryProvider(extractDatasetCommand.DataExportRepository), catalogue, outputFile);
                 cmd.Execute();
                 catalogue.RevertToDatabaseState();
 

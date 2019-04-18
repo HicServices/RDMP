@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Repositories;
 using HIC.Logging;
 using ReusableLibraryCode.Checks;
@@ -108,7 +109,7 @@ namespace DataLoadEngine.Checks.Checkers
 
         private void CreateNewLoggingTaskFor(ICheckNotifier notifier,ICatalogue[] catalogues, string proposedName)
         {
-            var catarepo = (CatalogueRepository) _loadMetadata.Repository;
+            var catarepo =  _loadMetadata.CatalogueRepository;
 
             var serverIds = catalogues.Select(c => c.LiveLoggingServer_ID).Where(i=>i.HasValue).Distinct().ToArray();
 
@@ -125,7 +126,7 @@ namespace DataLoadEngine.Checks.Checkers
             }
             else
             {
-                loggingServer = new ServerDefaults(catarepo).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+                loggingServer = catarepo.GetServerDefaults().GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
                 
                 if(loggingServer == null)
                     throw new Exception("There is no default logging server!");

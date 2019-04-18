@@ -8,7 +8,6 @@ using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
-using CatalogueManager.DataViewing.Collections;
 
 namespace CatalogueManager.Menus
 {
@@ -17,9 +16,12 @@ namespace CatalogueManager.Menus
     {
         public ColumnInfoMenu(RDMPContextMenuStripArgs args, ColumnInfo columnInfo) : base(args, columnInfo)
         {
-            Items.Add("View Extract", null, (s,e)=> _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo,ViewType.TOP_100)));
-            //create right click context menu
-            Items.Add("View Aggreggate", null, (s, e) => _activator.ViewDataSample(new ViewColumnInfoExtractUICollection(columnInfo, ViewType.Aggregate)));
+            var miViewData = new ToolStripMenuItem("View Data");
+            Items.Add(miViewData);
+
+            Add(new ExecuteCommandViewData(_activator, ViewType.TOP_100, columnInfo),Keys.None,miViewData);
+            Add(new ExecuteCommandViewData(_activator, ViewType.Aggregate, columnInfo), Keys.None, miViewData);
+            Add(new ExecuteCommandViewData(_activator, ViewType.Distribution, columnInfo), Keys.None, miViewData);
             
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null,columnInfo.TableInfo));
 

@@ -33,7 +33,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
         private object ImageGetter(object rowObject)
         {
-            return _activator.CoreIconProvider.GetImage(rowObject);
+            return Activator.CoreIconProvider.GetImage(rowObject);
         }
 
         public override void SetDatabaseObject(IActivateItems activator, Lookup databaseObject)
@@ -59,7 +59,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             olvCompositeJoins.ClearObjects();
             olvExtractionDescriptions.ClearObjects();
 
-            var eis = _activator.CoreChildProvider.AllExtractionInformations.Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
+            var eis = Activator.CoreChildProvider.AllExtractionInformations.Where(ei => ei.CatalogueItem.ColumnInfo_ID == _lookup.Description_ID).ToArray();
             olvExtractionDescriptions.AddObjects(eis);
 
             olvCompositeJoins.AddObjects(_lookup.GetSupplementalJoins().ToArray());
@@ -75,7 +75,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             var ei = olvExtractionDescriptions.SelectedObject as ExtractionInformation;
 
             if(ei != null)
-                _activator.RequestItemEmphasis(this,new EmphasiseRequest(ei));
+                Activator.RequestItemEmphasis(this,new EmphasiseRequest(ei));
 
         }
 
@@ -85,7 +85,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 
             if(d != null)
             {
-                _activator.DeleteWithConfirmation(this, d);
+                Activator.DeleteWithConfirmation(this, d);
                 UpdateTreeViews();
             }
         }

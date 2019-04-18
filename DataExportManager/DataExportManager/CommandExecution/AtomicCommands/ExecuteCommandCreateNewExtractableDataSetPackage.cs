@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
+using DataExportLibrary.Data.DataTables;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
@@ -42,7 +42,7 @@ namespace DataExportManager.CommandExecution.AtomicCommands
             }
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Add);
         }

@@ -5,17 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Security.Policy;
-using System.Text;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data;
 using FAnsi;
-using Fansi.Implementations.MicrosoftSQL;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using FAnsi.Implementations.MicrosoftSQL;
 
 namespace CatalogueLibrary.DataHelper
 {

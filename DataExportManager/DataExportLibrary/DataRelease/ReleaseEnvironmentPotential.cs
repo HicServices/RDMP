@@ -10,10 +10,6 @@ using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Ticketing;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease
@@ -24,7 +20,7 @@ namespace DataExportLibrary.DataRelease
     /// </summary>
     public class ReleaseEnvironmentPotential : ICheckable
     {
-        private readonly DataExportRepository _repository;
+        private readonly IDataExportRepository _repository;
         public IExtractionConfiguration Configuration { get; private set; }
         public IProject Project { get; private set; }
 
@@ -35,7 +31,7 @@ namespace DataExportLibrary.DataRelease
         
         public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
         {
-            _repository = (DataExportRepository) configuration.Repository;
+            _repository = configuration.DataExportRepository;
             Configuration = configuration;
             Project = configuration.Project;
         }
@@ -44,7 +40,7 @@ namespace DataExportLibrary.DataRelease
         {
             Assesment = TicketingReleaseabilityEvaluation.TicketingLibraryMissingOrNotConfiguredCorrectly;
 
-            var configuration = _repository.CatalogueRepository.GetAllObjects<TicketingSystemConfiguration>("WHERE IsActive = 1").SingleOrDefault();
+            var configuration = _repository.CatalogueRepository.GetAllObjectsWhere<TicketingSystemConfiguration>("IsActive",1).SingleOrDefault();
             if (configuration == null) return;
 
             TicketingSystemFactory factory = new TicketingSystemFactory(_repository.CatalogueRepository);

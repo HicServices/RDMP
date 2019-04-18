@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -38,7 +39,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
             return "View the results of all data quality engine runs that have ever been run on the dataset";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.DQE;
         }
@@ -60,7 +61,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
                 return this;
             }
 
-            var dqeServer = Activator.ServerDefaults.GetDefaultFor(ServerDefaults.PermissableDefaults.DQE);
+            var dqeServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.DQE);
 
             if (dqeServer == null)
             {
@@ -78,7 +79,7 @@ namespace Dashboard.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.Activate<CatalogueSummaryScreen, Catalogue>(_catalogue);
+            Activator.Activate<CatalogueDQEResultsUI, Catalogue>(_catalogue);
         }
 
         private bool ServerHasAtLeastOneEvaluation(Catalogue c)

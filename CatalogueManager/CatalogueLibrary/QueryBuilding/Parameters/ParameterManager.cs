@@ -5,14 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 
@@ -49,6 +44,11 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
         /// <para>Do not modify this yourself</para>
         /// </summary>
         public Dictionary<ParameterLevel,List<ISqlParameter>> ParametersFoundSoFarInQueryGeneration = new Dictionary<ParameterLevel, List<ISqlParameter>>();
+
+        /// <summary>
+        /// Repository for creating temporary aggregate parameters
+        /// </summary>
+        private readonly MemoryRepository _memoryRepository = new MemoryRepository();
 
         /// <summary>
         /// Creates a new <see cref="ParameterManager"/> with the specified global parameters
@@ -177,6 +177,7 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
             ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Clear();
             ParametersFoundSoFarInQueryGeneration[ParameterLevel.TableInfo].Clear();
             State = ParameterManagerLifecycleState.ParameterDiscovery;
+            _memoryRepository.Clear();
         }
 
         private void AddParameterToCollection(ParameterFoundAtLevel toAdd,List<ParameterFoundAtLevel> existingParameters)
@@ -318,7 +319,8 @@ namespace CatalogueLibrary.QueryBuilding.Parameters
 
                     //do the rename operation into a spontaneous object because modifying the ISqlParameter directly could corrupt it for other users (especially if SuperCaching is on! See RDMPDEV-668)
                     var spont = new SpontaneouslyInventedSqlParameter(
-                        parameterToImport.ParameterSQL.Replace(toImportParameterName,parameterToImport + "_" + newSuffix),
+                        _memoryRepository,
+                        parameterToImport.ParameterSQL.Replace(toImportParameterName, parameterToImport + "_" + newSuffix),
                         parameterToImport.Value,
                         parameterToImport.Comment,
                         parameterToImport.GetQuerySyntaxHelper()

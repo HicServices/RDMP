@@ -6,9 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Repositories;
@@ -27,7 +24,7 @@ namespace CatalogueLibrary.DataHelper
     /// </summary>
     public class TableValuedFunctionImporter : ITableInfoImporter
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         private readonly string _server;
         private readonly string _database;
         private readonly DataAccessContext _usageContext;
@@ -50,7 +47,7 @@ namespace CatalogueLibrary.DataHelper
         /// <param name="repository"></param>
         /// <param name="tableValuedFunction"></param>
         /// <param name="usageContext"></param>
-        public TableValuedFunctionImporter(CatalogueRepository repository, DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
+        public TableValuedFunctionImporter(ICatalogueRepository repository, DiscoveredTableValuedFunction tableValuedFunction, DataAccessContext usageContext = DataAccessContext.Any)
         {
             _repository = repository;
             _tableValuedFunction = tableValuedFunction;

@@ -6,10 +6,9 @@
 
 using System.Data.SqlClient;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportLibrary.Interfaces.ExtractionTime.Commands;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

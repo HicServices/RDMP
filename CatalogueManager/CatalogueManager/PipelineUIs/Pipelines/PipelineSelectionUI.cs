@@ -27,13 +27,15 @@ namespace CatalogueManager.PipelineUIs.Pipelines
     {
 
         private IPipelineUseCase _useCase;
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         
         private IPipeline _pipeline;
         public event Action PipelineDeleted = delegate { };
         
         public event EventHandler PipelineChanged;
         public event EventHandler OnBeforeLaunchEdit;
+
+        ToolTip tt = new ToolTip();
 
         public IPipeline Pipeline
         {
@@ -90,7 +92,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         }
         
         //IMPORTANT:Do not change this method signature, it is used in reflection (See ArgumentValuePipelineUI.cs for one)
-        public PipelineSelectionUI(IPipelineUseCase useCase, CatalogueRepository repository)
+        public PipelineSelectionUI(IPipelineUseCase useCase, ICatalogueRepository repository)
         {
             _useCase = useCase;
             _repository = repository;
@@ -100,6 +102,10 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 return;
 
             RefreshPipelineList();
+
+            tt.SetToolTip(cbOnlyShowCompatiblePipelines,"Untick to show all pipelines, even if they are not compatible with the current operation.");
+            tt.SetToolTip(btnClonePipeline,"Create a new copy of the selected pipeline");
+            tt.SetToolTip(btnEditPipeline, "Change which components are run in the Pipeline and with what settings");
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)

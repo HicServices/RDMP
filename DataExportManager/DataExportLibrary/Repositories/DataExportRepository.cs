@@ -11,11 +11,11 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
+using CatalogueLibrary.Repositories.Managers;
 using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables.DataSetPackages;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportLibrary.Data.DataTables;
+using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 
 namespace DataExportLibrary.Repositories
@@ -39,15 +39,26 @@ namespace DataExportLibrary.Repositories
         /// The paired Catalogue database which contains non extract metadata (i.e. datasets, aggregates, data loads etc).  Some objects in this database
         /// contain references to objects in the CatalogueRepository.
         /// </summary>
-        public CatalogueRepository CatalogueRepository { get; private set; }
+        public ICatalogueRepository CatalogueRepository { get; private set; }
 
-        public DataExportRepository(DbConnectionStringBuilder connectionString, CatalogueRepository catalogueRepository) : base(null, connectionString)
+        public IFilterManager FilterManager { get; private set; }
+
+        public IDataExportPropertyManager DataExportPropertyManager { get; private set; }
+
+        public IExtractableDataSetPackageManager PackageManager { get; set; }
+
+
+        public DataExportRepository(DbConnectionStringBuilder connectionString, ICatalogueRepository catalogueRepository) : base(null, connectionString)
         {
             CatalogueRepository = catalogueRepository;
+            
+            FilterManager = new DataExportFilterManager(this);
+
+            DataExportPropertyManager = new DataExportPropertyManager(false,this);
+            PackageManager = new ExtractableDataSetPackageManager(this);
 
             Constructors.Add(typeof(SupplementalExtractionResults),(rep,r)=>new SupplementalExtractionResults((IDataExportRepository)rep,r));
             Constructors.Add(typeof(CumulativeExtractionResults),(rep,r)=>new CumulativeExtractionResults((IDataExportRepository)rep,r));
-            Constructors.Add(typeof(DataUser),(rep,r)=>new DataUser((IDataExportRepository)rep,r));
             Constructors.Add(typeof(DeployedExtractionFilter),(rep,r)=>new DeployedExtractionFilter((IDataExportRepository)rep,r));
             Constructors.Add(typeof(DeployedExtractionFilterParameter),(rep,r)=>new DeployedExtractionFilterParameter((IDataExportRepository)rep,r));
             Constructors.Add(typeof(ExternalCohortTable),(rep,r)=>new ExternalCohortTable((IDataExportRepository)rep,r));
@@ -96,11 +107,10 @@ namespace DataExportLibrary.Repositories
 
             return eds.GetCatalogueExtractabilityStatus();
         }
-
-        public SelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
+        
+        public ISelectedDataSets[] GetSelectedDatasetsWithNoExtractionIdentifiers()
         {
             return SelectAll<SelectedDataSets>(@"
-
 SELECT ID  FROM SelectedDataSets sds
 where not exists (
 select 1 FROM ExtractableColumn ec where 

@@ -40,7 +40,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// off the ANOStore server (see DeleteANOTableInANOStore method which will let you do this for empty tables)</para>
     /// 
     /// </summary>
-    public class ANOTable : VersionedDatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
+    public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
     {
         /// <summary>
         /// Prefix to put on anonymous columns
@@ -98,7 +98,9 @@ namespace CatalogueLibrary.Data.DataLoad
         }
 
         /// <summary>
-        /// Once it is created you shouldn't be able to edit it's Suffix incase it is pushed and if it isn't pushed why didnt you just create it with the correct suffix in the first place?
+        /// The letter that appears on the end of all anonymous identifiers generated e.g. AAB11_GP would have the suffix "GP"
+        /// 
+        /// <para>Once you have started using the <see cref="ANOTable"/> to anonymise identifiers you should not change the Suffix</para>
         /// </summary>
         public string Suffix
         {
@@ -150,7 +152,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
         internal ANOTable(ShareManager shareManager, ShareDefinition shareDefinition)
         {
-            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+            shareManager.UpsertAndHydrate(this,shareDefinition);
         }
 
         /// <summary>
@@ -201,6 +203,7 @@ namespace CatalogueLibrary.Data.DataLoad
             
             if (NumberOfCharactersToUseInAnonymousRepresentation + NumberOfIntegersToUseInAnonymousRepresentation == 0)
                 notifier.OnCheckPerformed(new CheckEventArgs("Anonymous representations must have at least 1 integer or character", CheckResult.Fail));
+            
             try
             {
                 if (!IsTablePushed())
@@ -227,6 +230,9 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <returns></returns>
         public DiscoveredTable GetPushedTable()
         {
+            if (!Server.WasCreatedByDatabaseAssembly(Tier2DatabaseType.ANOStore))
+                throw new Exception(string.Format("ANOTable's Server '{0}' is not an ANOStore.  ANOTable was '{1}'",Server,this));
+
             var tables = DataAccessPortal.GetInstance()
                 .ExpectDatabase(Server, DataAccessContext.DataLoad)
                 .DiscoverTables(false);

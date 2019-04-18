@@ -33,7 +33,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Validation Rules...";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.DQE, OverlayKind.Edit);
         }
@@ -54,7 +54,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if(_catalogue == null)
                 return;
 
-            Activator.Activate<ValidationSetupForm, Catalogue>(_catalogue);
+            Activator.Activate<ValidationSetupUI, Catalogue>(_catalogue);
         }
     }
 }

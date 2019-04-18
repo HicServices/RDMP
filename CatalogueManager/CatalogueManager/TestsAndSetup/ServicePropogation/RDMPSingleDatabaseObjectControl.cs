@@ -7,12 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
@@ -20,7 +17,6 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace CatalogueManager.TestsAndSetup.ServicePropogation
@@ -36,7 +32,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
     public abstract class RDMPSingleDatabaseObjectControl<T> : RDMPUserControl, IRDMPSingleDatabaseObjectControl where T : DatabaseEntity
     {
         private Control _colorIndicator;
-        protected IActivateItems _activator;
 
         private BinderWithErrorProviderFactory _binder;
 
@@ -45,13 +40,18 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         public DatabaseEntity DatabaseObject { get; private set; }
         protected RDMPCollection AssociatedCollection = RDMPCollection.None;
 
+        protected RDMPSingleDatabaseObjectControl()
+        {
+            CommonFunctionality.ToolStripAddedToHost += CommonFunctionality_ToolStripAddedToHost;
+        }
+
         public virtual void SetDatabaseObject(IActivateItems activator, T databaseObject)
         {
-            _activator = activator;
-            _activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
+            SetItemActivator(activator);
+            Activator.RefreshBus.EstablishSelfDestructProtocol(this,activator,databaseObject);
             DatabaseObject = databaseObject;
 
-            ClearToolStrip();
+            CommonFunctionality.ClearToolStrip();
 
             if(_colorIndicator == null && AssociatedCollection != RDMPCollection.None)
             {
@@ -66,16 +66,19 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             }
 
             if (_binder == null)
-            {
                 _binder = new BinderWithErrorProviderFactory(activator);
-                SetBindings(_binder,databaseObject);
-            }
 
-            SetItemActivator(activator);
-
+            SetBindings(_binder, databaseObject);
+            
             if(this is ISaveableUI)
                 ObjectSaverButton1.SetupFor(this, databaseObject, activator.RefreshBus);
 
+        }
+
+        void CommonFunctionality_ToolStripAddedToHost(object sender, EventArgs e)
+        {
+            if (_colorIndicator != null)
+                _colorIndicator.SendToBack();
         }
 
         protected virtual void SetBindings(BinderWithErrorProviderFactory rules, T databaseObject)
@@ -162,15 +165,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             {
                 tb.ForeColor = Color.Red;
             }
-
-        }
-
-        protected override void InitializeToolStrip()
-        {
-            base.InitializeToolStrip();
-
-            if (_colorIndicator != null)
-                _colorIndicator.SendToBack();
         }
 
         public void SetDatabaseObject(IActivateItems activator, DatabaseEntity databaseObject)
@@ -196,22 +190,31 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
 
             return "Unamed Tab";
         }
-        
-        public void Publish(DatabaseEntity e)
-        {
-            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
-        }
-
-        public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
 
         /// <summary>
-        /// Adds the given <paramref name="cmd"/> to the menu bar at the top of the control
+        /// Triggers an application refresh because a change has been made to <paramref name="e"/>
         /// </summary>
-        /// <param name="cmd"></param>
-        protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage,OverlayKind overlayKind = OverlayKind.None)
+        public void Publish(DatabaseEntity e)
         {
-            Add(cmd,overrideCommandName,_activator.CoreIconProvider.GetImage(overrideImage,overlayKind));
+            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(e));
         }
+
+        /// <summary>
+        /// Triggers an application refresh because a change has been made to the forms main <see cref="DatabaseObject"/>
+        /// </summary>
+        public void Publish()
+        {
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(DatabaseObject));
+        }
+
+        /// <summary>
+        /// Triggers a refresh only of this form (calls <see cref="SetDatabaseObject(CatalogueManager.ItemActivation.IActivateItems,T)"/>)
+        /// </summary>
+        protected void PublishToSelfOnly()
+        {
+            SetDatabaseObject(Activator, DatabaseObject);
+        }
+        public virtual void ConsultAboutClosing(object sender, FormClosingEventArgs e) {}
 
 
         /// <summary>
@@ -221,7 +224,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         protected void AddPluginCommands()
         {
             foreach (IAtomicCommand cmd in GetPluginCommands())
-                Add(cmd);
+                CommonFunctionality.Add(cmd);
         }
         /// <summary>
         /// Adds the all <see cref="IAtomicCommand"/> specified by <see cref="IActivateItems.PluginUserInterfaces"/> for the current control.  Commands
@@ -230,12 +233,12 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         protected void AddPluginCommandsToMenu()
         {
             foreach (IAtomicCommand cmd in GetPluginCommands())
-                AddToMenu(cmd);
+                CommonFunctionality.AddToMenu(cmd);
         }
 
         protected IEnumerable<IAtomicCommand> GetPluginCommands()
         {
-            foreach (var p in _activator.PluginUserInterfaces)
+            foreach (var p in Activator.PluginUserInterfaces)
             {
                 var cmds = p.GetAdditionalCommandsForControl(this, DatabaseObject);
 

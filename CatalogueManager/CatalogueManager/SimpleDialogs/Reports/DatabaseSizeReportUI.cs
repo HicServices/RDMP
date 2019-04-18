@@ -5,16 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Reports;
+using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 
 namespace CatalogueManager.SimpleDialogs.Reports
@@ -25,14 +19,14 @@ namespace CatalogueManager.SimpleDialogs.Reports
     /// </summary>
     public partial class DatabaseSizeReportUI : RDMPForm
     {
-        public DatabaseSizeReportUI()
+        public DatabaseSizeReportUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
         }
 
         private void btnStart_Click(object sender, EventArgs e)
         {
-            var repo = RepositoryLocator.CatalogueRepository;
+            var repo = Activator.RepositoryLocator.CatalogueRepository;
 
             checksUI1.StartChecking(new DatabaseSizeReport(repo.GetAllObjects<TableInfo>().ToArray(),repo));
         }

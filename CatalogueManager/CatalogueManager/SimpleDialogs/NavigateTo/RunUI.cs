@@ -15,6 +15,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode.Checks;
@@ -27,14 +28,12 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
     /// <summary>
     /// Allows you to search through and run any command (<see cref="IAtomicCommand"/>) in RDMP and lets you pick which object(s) to apply it to.
     /// </summary>
-    public partial class RunUI : Form
+    public partial class RunUI : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private readonly Dictionary<string, Type> _commandsDictionary;
 
-        public RunUI(IActivateItems activator)
+        public RunUI(IActivateItems activator):base(activator)
         {
-            _activator = activator;
             InitializeComponent();
             List<Exception> ex;
 
@@ -184,16 +183,16 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private object GetValueForParameterOfType(ParameterInfo parameterInfo, Type paramType)
         {
             if (typeof(ICatalogueRepository).IsAssignableFrom(paramType))
-                return _activator.RepositoryLocator.CatalogueRepository;
+                return Activator.RepositoryLocator.CatalogueRepository;
 
             if (typeof(IDataExportRepository).IsAssignableFrom(paramType))
-                return _activator.RepositoryLocator.DataExportRepository;
+                return Activator.RepositoryLocator.DataExportRepository;
 
             if (typeof(IRDMPPlatformRepositoryServiceLocator).IsAssignableFrom(paramType))
-                return _activator.RepositoryLocator;
+                return Activator.RepositoryLocator;
 
             if (typeof(IActivateItems).IsAssignableFrom(paramType))
-                return _activator;
+                return Activator;
 
             if (typeof (DirectoryInfo).IsAssignableFrom(paramType))
             {
@@ -207,10 +206,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
             {
                 IMapsDirectlyToDatabaseTable[] availableObjects;
-                if (_activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(paramType))
-                    availableObjects = _activator.RepositoryLocator.CatalogueRepository.GetAllObjects(paramType).ToArray();
-                else if (_activator.RepositoryLocator.DataExportRepository.SupportsObjectType(paramType))
-                    availableObjects = _activator.RepositoryLocator.DataExportRepository.GetAllObjects(paramType).ToArray();
+                if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(paramType))
+                    availableObjects = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(paramType).ToArray();
+                else if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(paramType))
+                    availableObjects = Activator.RepositoryLocator.DataExportRepository.GetAllObjects(paramType).ToArray();
                 else
                     return null;
 
@@ -220,14 +219,14 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             if (typeof (IMightBeDeprecated).IsAssignableFrom(paramType))
                 return PickOne(parameterInfo,paramType,
-                        _activator.CoreChildProvider.GetAllSearchables()
+                        Activator.CoreChildProvider.GetAllSearchables()
                         .Keys.OfType<IMightBeDeprecated>()
                         .Cast<IMapsDirectlyToDatabaseTable>()
                         .ToArray());
 
             if (typeof(ICheckable).IsAssignableFrom(paramType))
             {
-                return PickOne(parameterInfo, paramType, _activator.CoreChildProvider.GetAllSearchables()
+                return PickOne(parameterInfo, paramType, Activator.CoreChildProvider.GetAllSearchables()
                     .Keys.OfType<ICheckable>()
                     .Cast<IMapsDirectlyToDatabaseTable>()
                     .Where(paramType.IsInstanceOfType)

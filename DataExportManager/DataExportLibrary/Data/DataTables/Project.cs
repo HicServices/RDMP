@@ -7,28 +7,27 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
+using DataExportLibrary.Checks;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
+using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Data.DataTables
 {
     /// <summary>
     /// All extractions through DataExportManager must be done through Projects.  A Project has a name, extraction directory and optionally Tickets (if you have a ticketing system 
-    /// configured) and DataUsers.  A Project should never be deleted even after all ExtractionConfigurations have been executed as it serves as an audit and a cloning point if you 
+    /// configured).  A Project should never be deleted even after all ExtractionConfigurations have been executed as it serves as an audit and a cloning point if you 
     /// ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).
     /// 
     /// <para>The ProjectNumber must match the project number of the cohorts in your cohort database.  Therefore it is not possible to share a single cohort between multiple Projects. </para>
     /// </summary>
-    public class Project : VersionedDatabaseEntity, IProject,INamed, ICustomSearchString
+    public class Project : DatabaseEntity, IProject, ICustomSearchString,ICheckable
     {
         #region Database Properties
         private string _name;
@@ -69,25 +68,8 @@ namespace DataExportLibrary.Data.DataTables
 
         #endregion
 
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int Name_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int MasterTicket_MaxLength = -1;
-        ///<inheritdoc cref="IRepository.FigureOutMaxLengths"/>
-        public static int ExtractionDirectory_MaxLength = -1;
-
         #region Relationships
-
-        /// <inheritdoc/>
-        [NoMappingToDatabase]
-        public IEnumerable<IDataUser> DataUsers
-        {
-            get
-            {
-                return Repository.SelectAll<DataUser>("SELECT * FROM Project_DataUser WHERE Project_ID=" + ID, "DataUser_ID");
-            }
-        }
-
+        
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public IExtractionConfiguration[] ExtractionConfigurations
@@ -99,14 +81,19 @@ namespace DataExportLibrary.Data.DataTables
                     .ToArray();
             }
         }
-        #endregion
+
 
         /// <inheritdoc/>
         [NoMappingToDatabase]
-        public IDataExportRepository DataExportRepository
+        public IProjectCohortIdentificationConfigurationAssociation[] ProjectCohortIdentificationConfigurationAssociations
         {
-            get { return (IDataExportRepository)Repository; }
+            get
+            {
+                return Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
+            }
         }
+        #endregion
+
 
         /// <summary>
         /// Defines a new extraction project this is stored in the Data Export database
@@ -164,6 +151,11 @@ namespace DataExportLibrary.Data.DataTables
             return Name;
         }
 
+        public void Check(ICheckNotifier notifier)
+        {
+            new ProjectChecker(this).Check(notifier);
+        }
+
         /// <summary>
         /// Returns <see cref="ProjectNumber"/> (if any), <see cref="Name"/> and <see cref="MasterTicket"/>
         /// </summary>
@@ -184,7 +176,7 @@ namespace DataExportLibrary.Data.DataTables
         public CohortIdentificationConfiguration[] GetAssociatedCohortIdentificationConfigurations()
         {
             var associations = Repository.GetAllObjectsWithParent<ProjectCohortIdentificationConfigurationAssociation>(this);
-            return associations.Select(a => a.CohortIdentificationConfiguration).ToArray();
+            return associations.Select(a => a.CohortIdentificationConfiguration).Where(c=>c != null).ToArray();
         }
 
         /// <summary>

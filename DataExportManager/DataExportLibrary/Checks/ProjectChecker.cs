@@ -7,8 +7,8 @@
 using System;
 using System.IO;
 using System.Linq;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.Checks
@@ -19,7 +19,6 @@ namespace DataExportLibrary.Checks
     /// </summary>
     public class ProjectChecker:ICheckable
     {
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private readonly IProject _project;
         IExtractionConfiguration[] _extractionConfigurations;
         private DirectoryInfo _projectDirectory;
@@ -37,11 +36,9 @@ namespace DataExportLibrary.Checks
         /// <summary>
         /// Sets up the class to check the state of the <paramref name="project"/>
         /// </summary>
-        /// <param name="repositoryLocator"></param>
         /// <param name="project"></param>
-        public ProjectChecker(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IProject project)
+        public ProjectChecker(IProject project)
         {
-            _repositoryLocator = repositoryLocator;
             _project = project;
             CheckDatasets = true;
             CheckConfigurations = true;
@@ -80,17 +77,30 @@ namespace DataExportLibrary.Checks
                 notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory ('" + _project.ExtractionDirectory +"') is not a valid directory name ", CheckResult.Fail, e));
                 return;
             }
-            
+
             //tell them whether it exists or not
             notifier.OnCheckPerformed(new CheckEventArgs("Project ExtractionDirectory ('" + _project.ExtractionDirectory+"') " + (_projectDirectory.Exists ? "Exists" : "Does Not Exist"), _projectDirectory.Exists?CheckResult.Success : CheckResult.Fail));
 
             if (CheckConfigurations)
                 foreach (IExtractionConfiguration extractionConfiguration in _extractionConfigurations)
                 {
-                    var extractionConfigurationChecker = new ExtractionConfigurationChecker(_repositoryLocator,extractionConfiguration) {CheckDatasets = CheckDatasets};
+                    var extractionConfigurationChecker = new ExtractionConfigurationChecker( extractionConfiguration) { CheckDatasets = CheckDatasets };
                     extractionConfigurationChecker.Check(notifier);
                 }
-            
+
+
+            foreach (var assoc in _project.ProjectCohortIdentificationConfigurationAssociations)
+            {
+                if (assoc.CohortIdentificationConfiguration == null)
+                    if (notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Project contains a reference to a CohortIdentificationConfiguration which does not exist anymore",
+                            CheckResult.Fail, null, "Delete orphan ProjectCohortIdentificationConfigurationAssociation?")))
+                    {
+                        assoc.DeleteInDatabase();
+                    }
+            }
+
             notifier.OnCheckPerformed(new CheckEventArgs("All Project Checks Finished (Not necessarily without errors)", CheckResult.Success));
         }
     }

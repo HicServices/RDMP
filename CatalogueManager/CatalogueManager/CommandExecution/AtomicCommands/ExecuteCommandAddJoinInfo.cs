@@ -34,7 +34,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             return "Tells RDMP that two TableInfos can be joined together (including the direction LEFT/RIGHT/INNER, collation etc)";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return Activator.CoreIconProvider.GetImage(RDMPConcept.JoinInfo, OverlayKind.Add);
         }
@@ -51,7 +51,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var jc = Activator.Activate<JoinConfiguration, TableInfo>(_tableInfo);
+            var jc = Activator.Activate<JoinConfigurationUI, TableInfo>(_tableInfo);
 
             if (_otherTableInfo != null)
                 jc.SetOtherTableInfo(_otherTableInfo);

@@ -13,6 +13,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataHelper;
@@ -85,7 +86,7 @@ namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
         public void Load(DatabaseType databaseType, TestCase testCase)
         {
             var defaults = new ServerDefaults(CatalogueRepository);
-            var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             
             var db = GetCleanedServer(databaseType);
@@ -269,7 +270,7 @@ MrMurder,2001-01-01,Yella");
         {
             //setup the data tables
             var defaults = new ServerDefaults(CatalogueRepository);
-            var logServer = defaults.GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
+            var logServer = defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
 
             var db = GetCleanedServer(databaseType);
@@ -447,7 +448,7 @@ MrMurder,2001-01-01,Yella");
 
         private LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
         {
-            var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "MyLoadDir", true);
+            var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
             lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
             lmd.SaveToDatabase();
 

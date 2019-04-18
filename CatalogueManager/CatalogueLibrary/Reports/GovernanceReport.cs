@@ -20,12 +20,12 @@ namespace CatalogueLibrary.Reports
     /// Processes all GovernancePeriod and Catalogues into a CSV report about which datasets are covered by which governance periods, which periods have expired (and there
     /// is no corresponding follow on GovernancePeriod) and which Catalogues are not covered by any governance.
     /// </summary>
-    public class GovernanceReport:RequiresMicrosoftOffice
+    public class GovernanceReport:DocXHelper
     {
         private readonly IDetermineDatasetTimespan _timespanCalculator;
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
         
-        public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,CatalogueRepository repository)
+        public GovernanceReport(IDetermineDatasetTimespan timespanCalculator,ICatalogueRepository repository)
         {
             _timespanCalculator = timespanCalculator;
             _repository = repository;
@@ -39,9 +39,9 @@ namespace CatalogueLibrary.Reports
             sb.AppendLine("Extractable Datasets");
             sb.AppendLine("Folder,Catalogue,Current Governance,Dataset Period,Description");
             
-            Dictionary<GovernancePeriod, Catalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
+            Dictionary<GovernancePeriod, ICatalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
             
-            foreach (Catalogue catalogue in _repository.GetAllCataloguesWithAtLeastOneExtractableItem())
+            foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>().Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null)))
             {
                 if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
                     continue;
@@ -108,12 +108,12 @@ namespace CatalogueLibrary.Reports
         /// </summary>
         /// <param name="govs"></param>
         /// <param name="expired"></param>
-        private void OutputGovernanceList(Dictionary<GovernancePeriod, Catalogue[]> govs, StringBuilder sb, bool expired)
+        private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, StringBuilder sb, bool expired)
         {
             //headers for this section
             sb.AppendLine("Governance Period Name,Catalogues,Approval Start,Approval End,Documents");
             
-            foreach (KeyValuePair<GovernancePeriod, Catalogue[]> kvp in govs)
+            foreach (KeyValuePair<GovernancePeriod, ICatalogue[]> kvp in govs)
             {
                 //if governance period does not have any Catalogues associated with it skip it
                 if (!kvp.Value.Any())

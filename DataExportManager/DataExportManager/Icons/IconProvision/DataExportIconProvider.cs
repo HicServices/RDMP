@@ -39,7 +39,13 @@ namespace DataExportManager.Icons.IconProvision
                 return base.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link);
             
             if (concept is ProjectCohortIdentificationConfigurationAssociation)
-                return GetImage(((ProjectCohortIdentificationConfigurationAssociation)concept).GetCohortIdentificationConfigurationCached(), OverlayKind.Link);
+            {
+                var cic = ((ProjectCohortIdentificationConfigurationAssociation) concept).CohortIdentificationConfiguration;
+                //return image based on cic (will include frozen graphic if frozen)
+                return cic != null ? GetImage(cic,OverlayKind.Link):
+                    //it's an orphan or user cannot fetch the cic for some reason
+                    GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+            }
 
             //fallback on parent implementation if none of the above unique snowflake cases are met
             return base.GetImage(concept, kind);

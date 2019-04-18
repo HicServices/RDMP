@@ -26,6 +26,7 @@ using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
+using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Theme;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Providers.Nodes;
@@ -34,7 +35,6 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents.ScintillaHelper;
-using ScintillaNET;
 using IContainer = CatalogueLibrary.Data.IContainer;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
@@ -42,15 +42,12 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
     /// <summary>
     /// Allows you to search all objects in your database and rapidly select 1 which will be shown via the Emphasis system.
     /// </summary>
-    public partial class NavigateToObjectUI : Form
+    public partial class NavigateToObjectUI : RDMPForm
     {
-        private readonly IActivateItems _activator;
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _searchables;
         private ICoreIconProvider _coreIconProvider;
         private FavouritesProvider _favouriteProvider;
-
-        private Scintilla _scintilla;
-
+        
         private const int MaxMatches = 30;
         private List<IMapsDirectlyToDatabaseTable> _matches;
         private object oMatches = new object();
@@ -73,7 +70,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private Task _lastFetchTask = null;
         private CancellationTokenSource _lastCancellationToken;
-        private AutoCompleteProvider _autoCompleteProvider;
         private Type[] _types;
         private HashSet<string> _typeNames;
 
@@ -143,11 +139,10 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             if(!TypesThatAreNotUsefulParents.Contains(t))
                 TypesThatAreNotUsefulParents.Add(t);
         }
-        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None)
+        public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None):base(activator)
         {
-            _activator = activator;
             _coreIconProvider = activator.CoreIconProvider;
-            _favouriteProvider = _activator.FavouritesProvider;
+            _favouriteProvider = Activator.FavouritesProvider;
             _magnifier = FamFamFamIcons.magnifier;
             InitializeComponent();
 
@@ -155,26 +150,15 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             activator.Theme.ApplyTo(toolStrip1);
 
-            _searchables = _activator.CoreChildProvider.GetAllSearchables();
+            _searchables = Activator.CoreChildProvider.GetAllSearchables();
             
             _usefulPropertyFinder = new AttributePropertyFinder<UsefulPropertyAttribute>(_searchables.Keys);
 
-            ScintillaTextEditorFactory factory = new ScintillaTextEditorFactory();
-            _scintilla = factory.Create();
-            panel1.Controls.Add(_scintilla);
+            textBox1.Focus();
+            textBox1.Text = initialSearchQuery;
             
-            _scintilla.Focus();
-            _scintilla.Text = initialSearchQuery;
-            
-            _scintilla.TextChanged += tbFind_TextChanged;
-            _scintilla.PreviewKeyDown += _scintilla_PreviewKeyDown;
-            _scintilla.KeyUp += _scintilla_KeyUp;
-
-            _scintilla.Margins[0].Width = 0;//dont show line number
-
-            _scintilla.ClearCmdKey(Keys.Enter);
-            _scintilla.ClearCmdKey(Keys.Up);
-            _scintilla.ClearCmdKey(Keys.Down);
+            textBox1.TextChanged += tbFind_TextChanged;
+            textBox1.KeyUp += _scintilla_KeyUp;
 
             FetchMatches(initialSearchQuery,CancellationToken.None);
             StartPosition = FormStartPosition.CenterScreen;
@@ -188,13 +172,11 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                 if (!_typeNames.Contains(t.Name))
                     _typeNames.Add(t.Name);
             }
-
-            _autoCompleteProvider = new AutoCompleteProvider(_activator);
-            foreach (Type t in _types)
-                _autoCompleteProvider.Add(t);
-
-            _autoCompleteProvider.RegisterForEvents(_scintilla);
-
+            
+            textBox1.AutoCompleteMode = AutoCompleteMode.Append;
+            textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
+            textBox1.AutoCompleteCustomSource.AddRange(_typeNames.ToArray());
+            
             Type[] startingFilters = null;
 
             if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
@@ -235,51 +217,8 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             tbFind_TextChanged(null, null);
         }
 
-
-        void _scintilla_PreviewKeyDown(object sender, PreviewKeyDownEventArgs e)
-        {
-            var autoCompleteShowing = _autoCompleteProvider.IsShowing();
-            
-            _skipEnter = e.KeyCode == Keys.Enter && autoCompleteShowing;
-            _skipEscape = e.KeyCode == Keys.Escape && autoCompleteShowing;
-        }
-        
-        void ApplySyntaxHighlighting()
-        {
-            if(_isClosed)
-                return;
-            
-            var startPos = 0;
-            var endPos = _scintilla.TextLength;
-
-            _scintilla.Styles[1].ForeColor = Color.Blue;
-
-            _scintilla.StartStyling(startPos);
-            var text = _scintilla.GetTextRange(startPos, endPos);
-
-            int charPos = 0;
-            foreach (string s in text.Split(' '))
-            {
-                if (_typeNames.Contains(s))
-                    _scintilla.SetStyling(s.Length, 1);
-                else
-                    _scintilla.SetStyling(s.Length, 0);
-
-                charPos += s.Length + 1; //for the space
-
-                //deal with no trailing whitespace
-                if(charPos + startPos <= endPos)
-                    _scintilla.SetStyling(1, 0); //for the space
-            }
-        }
-
         void _scintilla_KeyUp(object sender, KeyEventArgs e)
         {
-            if (_autoCompleteProvider.IsShowing())
-                return;
-
-            ApplySyntaxHighlighting();
-            
             if (e.KeyCode == Keys.Up)
             {
                 e.Handled = true;
@@ -332,7 +271,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         private void Emphasise(IMapsDirectlyToDatabaseTable o)
         {
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = UserSettings.FindShouldPin });
+            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1) { Pin = UserSettings.FindShouldPin });
         }
         
         protected override void OnMouseMove(MouseEventArgs e)
@@ -397,9 +336,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
         protected override void OnDeactivate(EventArgs e)
         {
-            if(_autoCompleteProvider.IsShowing())
-                return;
-
             this.Close();
         }
 
@@ -412,7 +348,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             _lastCancellationToken = new CancellationTokenSource();
 
-            var toFind = _scintilla.Text;
+            var toFind = textBox1.Text;
 
             _lastFetchTask = Task.Run(() => FetchMatches(toFind, _lastCancellationToken.Token))
                 .ContinueWith(
@@ -445,9 +381,11 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
 
-            //and the explicit types
-            foreach (var showOnlyType in showOnlyTypes)
-                text = text + " " + showOnlyType.Name;
+            //if user hasn't typed any explicit Type filters
+            if(string.IsNullOrWhiteSpace(text) || !_typeNames.Intersect(text.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
+                //add the buttons pressed
+                foreach (var showOnlyType in showOnlyTypes)
+                    text = text + " " + showOnlyType.Name;
 
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken);
 
@@ -474,11 +412,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
             
             float maxWidthUsedDuringRender = 0;
             int renderWidth = panel1.Right;
-
-            //the descendancy diagram
-            int diagramStartX = renderWidth + 10;
-            int diagramStartY = panel1.Bottom;
-            int diagramWidth = Right - diagramStartX;
             
             lock (oMatches)
             {
@@ -532,7 +465,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                     for (int i = 0; i < _matches.Count; i++)
                     {
                         //get first parent that isn't one of the explicitly useless parent types (I'd rather know the Catalogue of an AggregateGraph than to know it's an under an AggregatesGraphNode)                
-                        var descendancy = _activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
+                        var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
                 
                         object lastParent = null;
 
@@ -544,10 +477,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
                                 &&
                                 !(parent is IContainer)
                                 );
-
-                            //if it is the selected node draw the parents diagram too
-                            if (i == keyboardSelectedIndex)
-                                DrawDescendancyDiagram(e, _matches[i], descendancy, diagramStartX, diagramStartY,diagramWidth);
                         }
 
                         float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
@@ -607,56 +536,7 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
 
             return sb.ToString();
         }
-
-        private void DrawDescendancyDiagram(PaintEventArgs e, IMapsDirectlyToDatabaseTable match, DescendancyList descendancy, int diagramStartX, int diagramStartY, int diagramWidth)
-        {
-            
-
-            int diagramHeight = (int)(RowHeight * (descendancy.Parents.Length + 1));
-
-            //draw diagram of descendancy 
-            e.Graphics.FillRectangle(Brushes.White, diagramStartX, diagramStartY, diagramWidth, diagramHeight);
-
-            //draw the parents
-            for (int i = 0; i < descendancy.Parents.Length; i++)
-            {
-                var lineStartX = diagramStartX + (DiagramTabDistance*i);
-                var lineStartY = diagramStartY + (RowHeight*i);
-
-                var img = _activator.CoreIconProvider.GetImage(descendancy.Parents[i]);
-                e.Graphics.DrawImage(img, lineStartX, lineStartY);
-                e.Graphics.DrawString(descendancy.Parents[i].ToString(), Font, Brushes.Black, lineStartX + 21, lineStartY);
-
-                if (i > 0)
-                    DrawTreeNodeIsChildOfBlueLines(e, lineStartX, lineStartY);
-            }
-
-            //now draw the last object
-            var lastLineStartX = diagramStartX + (DiagramTabDistance * descendancy.Parents.Length);
-            var lastLineStartY = diagramStartY + (diagramHeight - RowHeight);
-            
-            var matchImg = _activator.CoreIconProvider.GetImage(match);
-            e.Graphics.DrawImage(matchImg, lastLineStartX, lastLineStartY);
-            e.Graphics.DrawString(match.ToString(), Font, Brushes.Black, lastLineStartX + 21, lastLineStartY);
-
-            _diagramBottom = diagramStartY + diagramHeight;
-
-            DrawTreeNodeIsChildOfBlueLines(e, lastLineStartX, lastLineStartY);
-
-        }
-
-        private static void DrawTreeNodeIsChildOfBlueLines(PaintEventArgs e, int lineStartX, float lineStartY)
-        {
-            //draw the |_ lines
-            var midPointX = lineStartX - (DiagramTabDistance/2);
-            var midPointY = lineStartY + (RowHeight/2);
-
-            //straight down
-            e.Graphics.DrawLine(Pens.Blue, midPointX, lineStartY, midPointX, midPointY);
-            //then across
-            e.Graphics.DrawLine(Pens.Blue, midPointX, midPointY, lineStartX - 1, midPointY);
-        }
-
+        
         private string ShrinkTextToFitWidth(string originalText, float horizontalSpaceAvailableToDrawTextInto, Graphics g)
         {
 
@@ -676,7 +556,6 @@ namespace CatalogueManager.SimpleDialogs.NavigateTo
         private void NavigateToObjectUI_FormClosed(object sender, FormClosedEventArgs e)
         {
             _isClosed = true;
-            _autoCompleteProvider.UnRegister();
         }
     }
 }

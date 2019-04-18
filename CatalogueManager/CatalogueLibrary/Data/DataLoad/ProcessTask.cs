@@ -12,6 +12,8 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.ImportExport;
+using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -31,7 +33,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
     /// to write plugin classes to easily handle freaky source file types or complex/bespoke data load requirements.</para>
     /// </summary>
-    public class ProcessTask : VersionedDatabaseEntity, IProcessTask, ITableInfoCollectionHost, IOrderable,INamed, ICheckable
+    public class ProcessTask : DatabaseEntity, IProcessTask, ITableInfoCollectionHost, IOrderable,INamed, ICheckable
     {
         #region Database Properties
 
@@ -47,6 +49,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <summary>
         /// The load the process task exists as part of
         /// </summary>
+        [Relationship(typeof(LoadMetadata),RelationshipType.SharedObject)]
         public int LoadMetadata_ID
         {
             get { return _loadMetadataID; }
@@ -177,6 +180,11 @@ namespace CatalogueLibrary.Data.DataLoad
 
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
+         
+        internal ProcessTask(ShareManager shareManager, ShareDefinition shareDefinition)
+        {
+            shareManager.UpsertAndHydrate(this,shareDefinition);
+        }
 
         /// <inheritdoc/>
         public override string ToString()
@@ -196,8 +204,6 @@ namespace CatalogueLibrary.Data.DataLoad
                     CheckFileExistenceAndUniqueness(notifier);
                     CheckForProblemsInSQLFile(notifier);
 
-                    break;
-                case ProcessTaskType.StoredProcedure:
                     break;
                 case ProcessTaskType.Attacher:
                     break;
@@ -325,15 +331,14 @@ namespace CatalogueLibrary.Data.DataLoad
                     ProcessTaskArgument[] toCloneArguments = ProcessTaskArguments.ToArray();
 
                     //create a new transaction for all the cloning - note that once all objects are cloned the transaction is committed then all the objects are adjusted outside the transaction
-                    ProcessTask clone = Repository.CloneObjectInTable(this);
+                    ProcessTask clone = new ProcessTask(CatalogueRepository,LoadMetadata,loadStage);
+                    CopyShallowValuesTo(clone);
 
                     //foreach of our child arguments
                     foreach (ProcessTaskArgument argument in toCloneArguments)
                     {
                         //clone it but rewire it to the proper ProcessTask parent (the clone)
-                        var arg = Repository.CloneObjectInTable(argument);
-                        arg.ProcessTask_ID = clone.ID;
-                        arg.SaveToDatabase();
+                        argument.ShallowClone(clone);
                     }
             
                     //the values passed into parameter
@@ -394,8 +399,6 @@ namespace CatalogueLibrary.Data.DataLoad
                 case ProcessTaskType.Executable:
                     return true;
                 case ProcessTaskType.SQLFile:
-                    return stage != LoadStage.GetFiles;
-                case ProcessTaskType.StoredProcedure:
                     return stage != LoadStage.GetFiles;
                 case ProcessTaskType.Attacher:
                     return stage == LoadStage.Mounting;

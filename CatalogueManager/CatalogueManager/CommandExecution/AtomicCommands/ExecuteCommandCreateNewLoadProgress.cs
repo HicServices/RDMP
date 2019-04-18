@@ -38,7 +38,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Emphasise(lp);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.LoadProgress, OverlayKind.Add);
         }

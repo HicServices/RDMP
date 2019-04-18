@@ -33,10 +33,10 @@ namespace CatalogueLibraryTests.ImportTests
         [Test]
         public void Catalogue_returns_latest_compatible_plugin()
         {
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Blah.zip"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Blah.zip"));
             File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
 
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             var tripart = new Version(version);
 
             Plugin p = new Plugin(CatalogueRepository, fi);
@@ -47,7 +47,7 @@ namespace CatalogueLibraryTests.ImportTests
             p2.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 5);
             p2.SaveToDatabase();
 
-            var plugins = CatalogueRepository.GetCompatiblePlugins();
+            var plugins = CatalogueRepository.PluginManager.GetCompatiblePlugins();
             Assert.That(plugins, Has.Length.EqualTo(1));
             Assert.That(plugins[0], Is.EqualTo(p2));
         }
@@ -56,10 +56,10 @@ namespace CatalogueLibraryTests.ImportTests
         public void TestPlugin_PdbNull_Sharing()
         {
             //Setup the load module we want to test (with plugin parent)
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Blah.zip"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.zip"));
             File.WriteAllBytes(fi.FullName,new byte[]{0x1,0x2});
 
-            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Blah.dll"));
+            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.dll"));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
 
             Plugin p = new Plugin(CatalogueRepository,fi);
@@ -112,13 +112,13 @@ namespace CatalogueLibraryTests.ImportTests
         public void TestPlugin_OrphanImport_Sharing()
         {
             //Setup the load module we want to test (with plugin parent)
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Blah2.zip"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah2.zip"));
             File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
 
-            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Blah2.dll"));
+            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah2.dll"));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
             
-            var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Blah3.dll"));
+            var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah3.dll"));
             File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
             Plugin p = new Plugin(CatalogueRepository, fi);

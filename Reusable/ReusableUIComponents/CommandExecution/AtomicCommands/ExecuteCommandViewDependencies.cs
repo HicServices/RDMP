@@ -48,7 +48,7 @@ namespace ReusableUIComponents.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            DependencyGraph g = new DependencyGraph(_allowFilterOnTypes, _visualiser.Value);
+            DependencyGraphUI g = new DependencyGraphUI(_allowFilterOnTypes, _visualiser.Value);
             if (_initialGraphTypes != null)
                 g.ShowTypeList(_initialGraphTypes);
             else
@@ -56,7 +56,7 @@ namespace ReusableUIComponents.CommandExecution.AtomicCommands
 
             g.Dock = DockStyle.Fill;
             Form f = new Form();
-            f.Text = "Object Visualisation Graph: " + _root;
+            f.Text = "Dependencies of " + _root;
             f.WindowState = FormWindowState.Maximized;
             f.Controls.Add(g);
             f.Show();

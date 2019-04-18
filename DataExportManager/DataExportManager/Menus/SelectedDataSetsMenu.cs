@@ -7,13 +7,13 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Interfaces.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;

@@ -7,16 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-
+using BrightIdeasSoftware;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -33,6 +29,7 @@ namespace ReusableUIComponents
 
         private static HashSet<FileInfo> SupplementalSourceZipFiles = new HashSet<FileInfo>();
         private static object oSupplementalSourceZipFilesLock = new object();
+        private const string MainSourceCodeRepo = "SourceCodeForSelfAwareness.zip";
 
         public static void AddSupplementalSourceZipFile(FileInfo f)
         {
@@ -60,10 +57,19 @@ namespace ReusableUIComponents
 
             panel1.Controls.Add(QueryEditor);
 
+            LoadSourceCode(toFind,lineNumber,highlightColor);
+
+            var worker = new BackgroundWorker();
+            worker.DoWork += WorkerOnDoWork;
+            worker.RunWorkerAsync();
+        }
+
+        private void LoadSourceCode(string toFind, int lineNumber, Color highlightColor)
+        {
             lock (oSupplementalSourceZipFilesLock)
             {
                 string readToEnd = GetSourceForFile(toFind);
-                
+
                 //entry was found
                 if (readToEnd != null)
                 {
@@ -78,10 +84,28 @@ namespace ReusableUIComponents
                 else
                     throw new FileNotFoundException("Could not find file called '" + toFind + "' in any of the zip archives");
             }
-       
-            Text = new FileInfo(filename).Name;
+
+            Text = toFind;
         }
 
+        private void WorkerOnDoWork(object sender, DoWorkEventArgs doWorkEventArgs)
+        {
+            HashSet<string> entries = new HashSet<string>();
+
+            var zipArchive = new FileInfo(MainSourceCodeRepo);
+            foreach (var zipFile in new[] { zipArchive }.Union(SupplementalSourceZipFiles))
+            {
+                //if the zip exists
+                if (zipFile.Exists)
+                    //read the entry (if it is there)
+                    using (var z = ZipFile.OpenRead(zipFile.FullName))
+                        foreach (var entry in z.Entries)
+                            entries.Add(entry.Name);
+            }
+
+
+            olvSourceFiles.AddObjects(entries.ToArray());
+        }
         public ViewSourceCodeDialog(string filename):this(filename,-1,Color.White)
         {
         }
@@ -90,7 +114,7 @@ namespace ReusableUIComponents
         {
             try
             {
-                var zipArchive = new FileInfo("SourceCodeForSelfAwareness.zip");
+                var zipArchive = new FileInfo(MainSourceCodeRepo);
 
                 //for each zip file (starting with the main archive)
                 foreach (var zipFile in new[] { zipArchive }.Union(SupplementalSourceZipFiles))
@@ -117,6 +141,17 @@ namespace ReusableUIComponents
             return null;
         }
 
+        public static bool SourceCodeIsAvailableFor(string s)
+        {
+            try
+            {
+                return GetSourceForFile(s) != null;
+            }
+            catch (Exception)
+            {
+                return false;
+            }
+        }
         private static string GetEntryFromZipFile(ZipArchive z,string toFind)
         {
             var entry = z.Entries.SingleOrDefault(e => e.Name == toFind);
@@ -126,5 +161,19 @@ namespace ReusableUIComponents
 
             return new StreamReader(entry.Open()).ReadToEnd();
         }
+
+        private void textBox1_TextChanged(object sender, EventArgs e)
+        {
+            olvSourceFiles.UseFiltering = true;
+            olvSourceFiles.ModelFilter = new TextMatchFilter(olvSourceFiles,textBox1.Text,StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        private void olvSourceFiles_ItemActivate(object sender, EventArgs e)
+        {
+            var str = olvSourceFiles.SelectedObject as string;
+            if (str != null)
+                LoadSourceCode(str, -1, Color.White);
+        }
+
     }
 }

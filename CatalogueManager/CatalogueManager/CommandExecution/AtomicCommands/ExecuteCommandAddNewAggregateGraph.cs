@@ -6,6 +6,7 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Icons.IconProvision;
@@ -17,13 +18,14 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandAddNewAggregateGraph : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly IActivateItems _activator;
         private readonly Catalogue _catalogue;
 
         public ExecuteCommandAddNewAggregateGraph(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
-            _activator = activator;
             _catalogue = catalogue;
+
+            if(_catalogue.GetAllExtractionInformation(ExtractionCategory.Any).All(ei=>ei.ColumnInfo == null))
+                SetImpossible("Catalogue has no extractable columns");
         }
 
         public override string GetCommandHelp()
@@ -35,12 +37,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var newAggregate = new AggregateConfiguration(_activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
+            var newAggregate = new AggregateConfiguration(Activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
             Publish(_catalogue);
             Activate(newAggregate);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.AggregateGraph, OverlayKind.Add);
         }

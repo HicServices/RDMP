@@ -12,7 +12,7 @@ using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.TestsAndSetup.ServicePropogation
 {
-    public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing
+    public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing,IRDMPControl
     {
         DatabaseEntity DatabaseObject { get; }
 

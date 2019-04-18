@@ -71,7 +71,7 @@ namespace CatalogueLibrary.Data
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
-                {"DatabaseType",databaseType},
+                {"DatabaseType",databaseType.ToString()},
                 {"Name",keyword},
                 {"Value",value},
             });

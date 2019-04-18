@@ -6,11 +6,15 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Referencing;
+using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Repositories.Managers;
 using CatalogueLibrary.Ticketing;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
@@ -21,27 +25,24 @@ namespace CatalogueLibrary.Repositories
     /// <summary>
     /// See CatalogueRepository
     /// </summary>
-    public interface ICatalogueRepository : ITableRepository
+    public interface ICatalogueRepository : IRepository
     {
         /// <summary>
         /// Allows creation/discover/deletion of <see cref="AggregateForcedJoin"/> objects
         /// </summary>
-        AggregateForcedJoin AggregateForcedJoiner { get; set; }
+        IAggregateForcedJoinManager AggregateForcedJoinManager { get;}
+
+        IGovernanceManager GovernanceManager { get; }
 
         /// <summary>
         /// Allows linking/unlinking <see cref="DataAccessCredentials"/> to <see cref="TableInfo"/>
         /// </summary>
-        TableInfoToCredentialsLinker TableInfoToCredentialsLinker { get; set; }
-
-        /// <summary>
-        /// Enables encryption/decryption of strings using a custom RSA key stored in a secure location on disk
-        /// </summary>
-        PasswordEncryptionKeyLocation PasswordEncryptionKeyLocation { get; set; }
+        ITableInfoCredentialsManager TableInfoCredentialsManager { get; }
         
         /// <summary>
         /// Allows creation/discover of <see cref="JoinInfo"/> objects which describe how to join two <see cref="TableInfo"/> together in SQL
         /// </summary>
-        JoinInfoFinder JoinInfoFinder { get; set; }
+        IJoinManager JoinManager { get;}
 
         /// <summary>
         /// Supports creation of objects using Reflection and discovery of Types based on Managed Extensibility Framework Export attributes.
@@ -51,33 +52,38 @@ namespace CatalogueLibrary.Repositories
         /// <summary>
         /// Stores class comments discovered at startup using NuDoq
         /// </summary>
-        CommentStore CommentStore { get; }
+        CommentStore CommentStore { get; set; }
 
         /// <summary>
-        /// If the configuration is part of any aggregate container anywhere this method will return the order within that container
+        /// Manages information about what set containers / subcontainers exist under a <see cref="CohortIdentificationConfiguration"/>
         /// </summary>
-        /// <param name="configuration"></param>
-        /// <returns></returns>
-        int? GetOrderIfExistsFor(AggregateConfiguration configuration);
+        ICohortContainerManager CohortContainerManager { get;}
+
+        /// <summary>
+        /// Handles encrypting/decrypting strings with private/public key encryption
+        /// </summary>
+        IEncryptionManager EncryptionManager { get; }
+
+        /// <summary>
+        /// Handles forbidding deleting stuff / cascading deletes into other objects
+        /// </summary>
+        IObscureDependencyFinder ObscureDependencyFinder { get; set; }
+
+        /// <summary>
+        /// Manager for AND/OR WHERE containers and filters
+        /// </summary>
+        IFilterManager FilterManager {get;}
+
+        /// <summary>
+        /// Manager for identifying current active <see cref="Plugin"/>s
+        /// </summary>
+        IPluginManager PluginManager { get; }
 
         /// <summary>
         /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
         /// </summary>
         /// <returns></returns>
         LogManager GetDefaultLogManager();
-
-        /// <summary>
-        /// Returns all <see cref="Catalogue"/> optionally filtered by <see cref="Catalogue.IsDeprecated"/>
-        /// </summary>
-        /// <param name="includeDeprecatedCatalogues"></param>
-        /// <returns></returns>
-        Catalogue[] GetAllCatalogues(bool includeDeprecatedCatalogues = false);
-        
-        /// <summary>
-        /// Returns all <see cref="Catalogue"/> which have at least one <see cref="CatalogueItem"/> with an <see cref="ExtractionInformation"/>
-        /// </summary>
-        /// <returns></returns>
-        Catalogue[] GetAllCataloguesWithAtLeastOneExtractableItem();
 
         /// <summary>
         /// Returns all sql parameters declared in the immediate scope of the <paramref name="parent"/> (does not include parameters that are declared at a lower scope).
@@ -96,17 +102,6 @@ namespace CatalogueLibrary.Repositories
         /// </summary>
         /// <returns></returns>
         TicketingSystemConfiguration GetTicketingSystem();
-
-        /// <summary>
-        /// This method is used to allow you to clone an IMapsDirectlyToDatabaseTable object into a DIFFERENT database.  You should use DbCommandBuilder
-        /// and "SELECT * FROM TableX" in order to get the Insert command and then pass in a corresponding wrapper object which must have properties
-        /// that exactly match the underlying table, these will be populated into insertCommand ready for you to use
-        /// </summary>
-        /// <param name="insertCommand"></param>
-        /// <param name="oTableWrapperObject"></param>
-        void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand, IMapsDirectlyToDatabaseTable oTableWrapperObject);
-
-        T CloneObjectInTable<T>(T oToClone, TableRepository destinationRepository) where T : IMapsDirectlyToDatabaseTable;
         
         T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null)
             where T : IMapsDirectlyToDatabaseTable;
@@ -115,5 +110,22 @@ namespace CatalogueLibrary.Repositories
 
         T[] GetReferencesTo<T>(IMapsDirectlyToDatabaseTable o) where T : ReferenceOtherObjectDatabaseEntity;
 
+        IServerDefaults GetServerDefaults();
+
+        /// <summary>
+        /// True if the <paramref name="tableInfo"/> has <see cref="Lookup"/> relationships declared which make it a linkable lookup table in queries.
+        /// </summary>
+        /// <returns></returns>
+        bool IsLookupTable(ITableInfo tableInfo);
+
+        /// <summary>
+        /// Returns all Catalogues which have any CatalogueItems which are associated with any of the ColumnInfos of this TableInfo.  If this is a lookup table then expect to get back 
+        /// a whole bunch of catalogues.
+        /// </summary>
+        /// <returns></returns>
+        Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
+
+        ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type);
+        
     }
 }

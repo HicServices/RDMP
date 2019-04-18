@@ -6,6 +6,7 @@
 
 using System.Windows.Forms;
 using CatalogueLibrary.CommandExecution.AtomicCommands;
+using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
@@ -53,8 +54,8 @@ namespace CohortManager.Menus
 
         public CohortIdentificationConfigurationMenu(RDMPContextMenuStripArgs args, ProjectCohortIdentificationConfigurationAssociation association) : this(args,association.CohortIdentificationConfiguration)
         {
-            _executeAndImportCommand.SetTarget(association.Project);
-            _executeCommandClone.SetTarget(association.Project);
+            _executeAndImportCommand.SetTarget((DatabaseEntity)association.Project);
+            _executeCommandClone.SetTarget((DatabaseEntity)association.Project);
         }
         
     }

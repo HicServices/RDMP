@@ -35,7 +35,7 @@ namespace CatalogueLibraryTests.ImportTests
         public void ImportACatalogue()
         {
             var c = new Catalogue(CatalogueRepository, "omg cata");
-            Assert.AreEqual(CatalogueRepository.GetAllCatalogues().Count(), 1);
+            Assert.AreEqual(CatalogueRepository.GetAllObjects<Catalogue>().Count(), 1);
 
             var shareManager = new ShareManager(RepositoryLocator);
 
@@ -44,7 +44,7 @@ namespace CatalogueLibraryTests.ImportTests
             Assert.AreEqual(c.Name, c2.Name);
             Assert.AreNotEqual(c.ID,c2.ID);
 
-            Assert.AreEqual(CatalogueRepository.GetAllCatalogues().Count(),2);
+            Assert.AreEqual(CatalogueRepository.GetAllObjects<Catalogue>().Count(),2);
 
         }
 

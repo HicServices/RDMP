@@ -4,22 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.FilterImporting;
 using CatalogueLibrary.FilterImporting.Construction;
 using DataExportLibrary.Tests.DataExtraction;
-using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using NUnit.Framework;
-using Rhino.Mocks.Constraints;
 using Tests.Common;
 
 
@@ -35,6 +28,8 @@ namespace DataExportLibrary.Tests.Cloning
         {
             if (introduceOrphanExtractionInformation)
                 IntroduceOrphan();
+
+            Assert.IsEmpty(_configuration.ReleaseLog);
 
             var filter = new ExtractionFilter(CatalogueRepository, "FilterByFish", _extractionInformations[0]);
             try
@@ -63,7 +58,7 @@ namespace DataExportLibrary.Tests.Cloning
                 param.Value = "'jormungander'";
                 param.SaveToDatabase();
 
-                ExtractDatasetCommand request = new ExtractDatasetCommand(RepositoryLocator,_configuration,new ExtractableDatasetBundle(_extractableDataSet));
+                ExtractDatasetCommand request = new ExtractDatasetCommand(_configuration,new ExtractableDatasetBundle(_extractableDataSet));
                 request.GenerateQueryBuilder();
                 Assert.AreEqual(
                     CollapseWhitespace(
@@ -100,7 +95,7 @@ AND
                 Assert.AreNotEqual(deepClone.ID,_configuration.ID);
                 try
                 {
-                    ExtractDatasetCommand request2 = new ExtractDatasetCommand(RepositoryLocator,deepClone, new ExtractableDatasetBundle(_extractableDataSet));
+                    ExtractDatasetCommand request2 = new ExtractDatasetCommand(deepClone, new ExtractableDatasetBundle(_extractableDataSet));
                     request2.GenerateQueryBuilder();
                 
                     Assert.AreEqual(request.QueryBuilder.SQL,request2.QueryBuilder.SQL);

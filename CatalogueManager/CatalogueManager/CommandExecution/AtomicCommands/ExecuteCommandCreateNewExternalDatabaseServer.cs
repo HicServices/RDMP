@@ -9,6 +9,7 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
@@ -23,7 +24,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
     public class ExecuteCommandCreateNewExternalDatabaseServer : BasicUICommandExecution,IAtomicCommand
     {
         private readonly Assembly _databaseAssembly;
-        private readonly ServerDefaults.PermissableDefaults _defaultToSet;
+        private readonly PermissableDefaults _defaultToSet;
         private ExternalDatabaseServerStateBasedIconProvider _databaseIconProvider;
         private IconOverlayProvider _overlayProvider;
 
@@ -31,12 +32,12 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
 
         [ImportingConstructor]
-        public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator) : this(activator,null,ServerDefaults.PermissableDefaults.None)
+        public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator) : this(activator,null,PermissableDefaults.None)
         {
             
         }
 
-        public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator, Assembly databaseAssembly, ServerDefaults.PermissableDefaults defaultToSet) : base(activator)
+        public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator, Assembly databaseAssembly, PermissableDefaults defaultToSet) : base(activator)
         {
             _databaseAssembly = databaseAssembly;
             _defaultToSet = defaultToSet;
@@ -53,7 +54,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            if(_defaultToSet != ServerDefaults.PermissableDefaults.None)
+            if(_defaultToSet != PermissableDefaults.None)
                 return string.Format("Create New {0} Server...", UsefulStuff.PascalCaseStringToHumanReadable(_defaultToSet.ToString().Replace("_ID", "").Replace("Live", "").Replace("ANO", "Anonymisation")));
 
             if (_databaseAssembly != null)
@@ -66,21 +67,19 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             switch (_defaultToSet)
             {
-                case ServerDefaults.PermissableDefaults.LiveLoggingServer_ID:
+                case PermissableDefaults.LiveLoggingServer_ID:
                     return "Creates a database for auditing all flows of data (data load, extraction etc) including tables for errors, progress tables/record count loaded etc";
-                case ServerDefaults.PermissableDefaults.TestLoggingServer_ID:
-                    return "Deprecated, do not create TestLoggingServers";
-                case ServerDefaults.PermissableDefaults.IdentifierDumpServer_ID:
+                case PermissableDefaults.IdentifierDumpServer_ID:
                     return "Creates a database for storing the values of intercepted columns that are discarded during data load because they contain identifiable data";
-                case ServerDefaults.PermissableDefaults.DQE:
+                case PermissableDefaults.DQE:
                     return "Creates a database for storing the results of data quality engine runs on your datasets over time.";
-                case ServerDefaults.PermissableDefaults.WebServiceQueryCachingServer_ID:
+                case PermissableDefaults.WebServiceQueryCachingServer_ID:
                     break;
-                case ServerDefaults.PermissableDefaults.RAWDataLoadServer:
+                case PermissableDefaults.RAWDataLoadServer:
                     return "Defines which database server should be used for the RAW data in the RAW=>STAGING=>LIVE model of the data load engine";
-                case ServerDefaults.PermissableDefaults.ANOStore:
+                case PermissableDefaults.ANOStore:
                     return "Creates a new anonymisation database which contains mappings of identifiable values to anonymous representations";
-                case ServerDefaults.PermissableDefaults.CohortIdentificationQueryCachingServer_ID:
+                case PermissableDefaults.CohortIdentificationQueryCachingServer_ID:
                     return "Creates a new Query Cache database which contains the indexed results of executed subqueries in a CohortIdentificationConfiguration";
             }
 
@@ -111,7 +110,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activate(ServerCreatedIfAny);
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             if(_databaseAssembly != null)
             {

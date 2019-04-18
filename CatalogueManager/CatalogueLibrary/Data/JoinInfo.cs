@@ -6,9 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
-using System.Diagnostics;
 using System.Linq;
 using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
@@ -72,50 +70,76 @@ namespace CatalogueLibrary.Data
     /// <para>'Combo Joins' (or ISupplementalJoin) are when you need to use multiple columns to do the join e.g. A Left Join B on A.x = B.x AND A.y = B.y.  You can define
     /// these by simply declaring additional JoinInfos for the other column pairings with the same ExtractionJoinType.</para>
     /// </summary>
-    public class JoinInfo : IDeleteable, IJoin,IHasDependencies
+    public class JoinInfo : DatabaseEntity, IJoin,IHasDependencies
     {
-        /// <summary>
-        /// The catalogue repository database in which the joins are stored
-        /// </summary>
-        public IRepository Repository { get; set; }
+
+        #region Database Properties
+
+        private int _foreignKeyID;
+        private int _primaryKeyID;
+        private string _collation;
+        private ExtractionJoinType _extractionJoinType;
 
         /// <inheritdoc cref="IJoin.ForeignKey"/>
-        public int ForeignKey_ID { get; private set; }
+        public int ForeignKey_ID
+        {
+            get { return _foreignKeyID; }
+            set {SetField(ref _foreignKeyID , value); }
+        }
 
         /// <inheritdoc cref="IJoin.PrimaryKey"/>
-        public int PrimaryKey_ID { get; private set; }
+        public int PrimaryKey_ID
+        {
+            get { return _primaryKeyID; }
+            set { SetField(ref _primaryKeyID , value); }
+        }
+
+        /// <inheritdoc/>
+        public string Collation
+        {
+            get { return _collation; }
+            set { SetField(ref _collation , value); }
+        }
+
+        /// <inheritdoc/>
+        public ExtractionJoinType ExtractionJoinType
+        {
+            get { return _extractionJoinType; }
+            set { SetField(ref _extractionJoinType , value); }
+        }
+
+        #endregion
 
         //cached answer
         private ColumnInfo _foreignKey;
         private ColumnInfo _primaryKey;
 
         
+        private List<JoinInfo> _queryTimeComboJoins = new List<JoinInfo>();
+
+        #region Relationships
         /// <inheritdoc/>
+        [NoMappingToDatabase]
         public ColumnInfo ForeignKey
         {
             get { return _foreignKey ?? (_foreignKey = Repository.GetObjectByID<ColumnInfo>(ForeignKey_ID)); }
         }
 
         /// <inheritdoc/>
+        [NoMappingToDatabase]
         public ColumnInfo PrimaryKey
         {
             get { return _primaryKey ?? (_primaryKey = Repository.GetObjectByID<ColumnInfo>(PrimaryKey_ID)); }
         }
-
-        /// <inheritdoc/>
-        public string Collation { get; set; }
-
-        /// <inheritdoc/>
-        public ExtractionJoinType ExtractionJoinType { get; set; }
+        #endregion
 
         /// <summary>
-        /// Constructor to be used to create already existing JoinInfos out of the database only.  If you want to create new JoinInfos use JoinInfoFinder in CatalogueRepository.
+        /// Constructor to be used to create already existing JoinInfos out of the database only.
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="r"></param>
-        public JoinInfo(IRepository repository,DbDataReader r)
+        internal JoinInfo(IRepository repository,DbDataReader r):base(repository,r)
         {
-            Repository = repository;
             ForeignKey_ID = Convert.ToInt32(r["ForeignKey_ID"]);
             PrimaryKey_ID = Convert.ToInt32(r["PrimaryKey_ID"]);
 
@@ -132,73 +156,30 @@ namespace CatalogueLibrary.Data
                 throw new Exception("Join key 1 and 2 are the same, lookup is broken");
         }
 
+
+        public JoinInfo(ICatalogueRepository repository, ColumnInfo foreignKey, ColumnInfo primaryKey, ExtractionJoinType type, string collation)
+        {
+            if (foreignKey.ID == primaryKey.ID)
+                throw new ArgumentException("Joink Key 1 and Join Key 2 cannot be the same");
+
+            if (foreignKey.TableInfo_ID == primaryKey.TableInfo_ID)
+                throw new ArgumentException("Joink Key 1 and Join Key 2 are from the same table, this is not cool");
+
+            repository.InsertAndHydrate(this,new Dictionary<string, object>()
+            {
+                {"ForeignKey_ID",foreignKey.ID},
+                {"PrimaryKey_ID",primaryKey.ID},
+                {"ExtractionJoinType",type.ToString()},
+                {"Collation",collation}
+            });
+
+        }
+        
         /// <inheritdoc/>
         public override string ToString()
         {
             return " " + ForeignKey.Name + " = " + PrimaryKey.Name;
         }
-
-        /// <inheritdoc/>
-        public override bool Equals(object obj)
-        {
-            if (ReferenceEquals(null, obj)) return false;
-            if (ReferenceEquals(this, obj)) return true;
-            if (obj.GetType() != this.GetType()) return false;
-            return Equals((JoinInfo)obj);
-        }
-
-        #region Database specific stuff for this table only
-        
-        /// <inheritdoc/>
-        public void DeleteInDatabase()
-        {
-            using(var con = ((CatalogueRepository)Repository).GetConnection())
-            {
-                //only add link if it doesn't already exist
-                DbCommand cmd =
-                     DatabaseCommandHelper.GetCommand(
-                        "DELETE FROM JoinInfo WHERE ForeignKey_ID=@ForeignKey_ID AND PrimaryKey_ID=@PrimaryKey_ID",
-                        con.Connection,con.Transaction);
-
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@ForeignKey_ID", cmd));
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@PrimaryKey_ID", cmd));
-
-                cmd.Parameters["@ForeignKey_ID"].Value = ForeignKey_ID;
-                cmd.Parameters["@PrimaryKey_ID"].Value = PrimaryKey_ID;
-
-                int affectedRows = cmd.ExecuteNonQuery();
-                if (affectedRows != 1)
-                    throw new Exception("DELETE statement " + cmd.CommandText + " did not result in 1 affected rows, it resulted in:" + affectedRows);
-            }
-        }
-        #endregion
-
-        #region Resharper generated code to test for equality based on Foreign, Primary and Extraction type
-        
-        /// <summary>
-        /// Returns true if the join described by <paramref name="other"/> is the same as this
-        /// </summary>
-        /// <param name="other"></param>
-        /// <returns></returns>
-        protected bool Equals(JoinInfo other)
-        {
-            return Equals(ForeignKey.ID, other.ForeignKey.ID) && Equals(PrimaryKey.ID, other.PrimaryKey.ID) && ExtractionJoinType == other.ExtractionJoinType;
-        }
-
-        /// <inheritdoc/>
-        public override int GetHashCode()
-        {
-            unchecked
-            {
-                int hashCode = (ForeignKey != null ? ForeignKey.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (PrimaryKey != null ? PrimaryKey.GetHashCode() : 0);
-                hashCode = (hashCode * 397) ^ (int)ExtractionJoinType;
-                return hashCode;
-            }
-        }
-        #endregion
-         
-        private List<JoinInfo> _queryTimeComboJoins = new List<JoinInfo>();
         
         /// <summary>
         /// Notifies the join that other columns also need to be joined at runtime (e.g. when you have 2+ column pairs all of

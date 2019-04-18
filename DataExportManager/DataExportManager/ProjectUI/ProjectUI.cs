@@ -7,38 +7,20 @@
 using System;
 using System.ComponentModel;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using CatalogueManager;
+using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.MainFormUITabs;
-using CatalogueManager.Refreshing;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.Revertable;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Interfaces.Data.DataTables;
-using DataExportManager.ProjectUI.DataUsers;
-using DataExportManager.ProjectUI.Graphs;
-using DataExportLibrary;
-using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.DataRelease;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Repositories;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.ProjectUI
 {
@@ -65,34 +47,12 @@ namespace DataExportManager.ProjectUI
     {
         private Project _project;
         
-        public Project Project
-        {
-            get { return _project; }
-            set
-            {
-                //now load the UI form 
-                _project = value;
-
-                dataGridView1.DataSource = value == null?null : LoadDatagridFor(value);
-                tcMasterTicket.TicketText = value == null ? "" : value.MasterTicket;
-                tbExtractionDirectory.Text = value == null ? "" : value.ExtractionDirectory;
-                tbProjectNumber.Text = value == null ? "" : ""+value.ProjectNumber;
-                
-                btnConfigureDataUsers.Enabled = value != null;
-                dataGridView1.Invalidate();
-
-                SetCohorts();
-
-
-            }
-        }
-
         private void SetCohorts()
         {
-            if(RepositoryLocator == null || _project == null || _project.ProjectNumber == null)
+            if(_project == null || _project.ProjectNumber == null)
                 return;
 
-            var cohorts = RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>()
+            var cohorts = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ExtractableCohort>()
                 .Where(c => c.GetExternalData().ExternalProjectNumber == _project.ProjectNumber).ToArray();
 
             extractableCohortCollection1.SetupFor(cohorts);
@@ -125,7 +85,7 @@ namespace DataExportManager.ProjectUI
 
         public void RefreshLists()
         {
-             dataGridView1.DataSource = LoadDatagridFor(Project);
+             dataGridView1.DataSource = LoadDatagridFor(_project);
         }
 
 
@@ -140,33 +100,24 @@ namespace DataExportManager.ProjectUI
         public override void SetDatabaseObject(IActivateItems activator, Project databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
-            Project = databaseObject;
+            //now load the UI form 
+            _project = databaseObject;
+
+            dataGridView1.DataSource = LoadDatagridFor(_project);
+            tcMasterTicket.TicketText = _project.MasterTicket;
+            tbExtractionDirectory.Text = _project.ExtractionDirectory;
+            tbProjectNumber.Text = _project.ProjectNumber.ToString();
+
+            dataGridView1.Invalidate();
+
+            SetCohorts();
         }
 
-        #region helper methods
-        private void SetStringProperty(Control controlContainingValue, string property, object toSetOn)
+        public override void SetItemActivator(IActivateItems activator)
         {
-            if (toSetOn != null)
-            {
-                PropertyInfo target = toSetOn.GetType().GetProperty(property);
-                FieldInfo targetMaxLength = toSetOn.GetType().GetField(property + "_MaxLength");
-
-
-                if (target == null || targetMaxLength == null)
-                    throw new Exception("Could not find property " + property + " or it did not have a specified _MaxLength");
-
-                if (controlContainingValue.Text.Length > (int)targetMaxLength.GetValue(toSetOn))
-                    controlContainingValue.ForeColor = Color.Red;
-                else
-                {
-                    target.SetValue(toSetOn, controlContainingValue.Text, null);
-                    controlContainingValue.ForeColor = Color.Black;
-                }
-            }
+            base.SetItemActivator(activator);
+            tcMasterTicket.SetItemActivator(activator);
         }
-        #endregion
-
-
 
         private DataTable LoadDatagridFor(Project value)
         {
@@ -246,12 +197,12 @@ namespace DataExportManager.ProjectUI
         
         void mi_SetDescription_Click(object sender, EventArgs e)
         {
-            ExtractionConfiguration toSetDescriptionOn = RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+            ExtractionConfiguration toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
             if (toSetDescriptionOn.IsReleased)
                 return;
 
-            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", ExtractionConfiguration.Description_MaxLength, toSetDescriptionOn.Description);
+            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Description", "Enter a Description for the Extraction:", 1000, toSetDescriptionOn.Description);
 
             dialog.ShowDialog(this);
 
@@ -265,13 +216,12 @@ namespace DataExportManager.ProjectUI
 
         void mi_ChooseFileSeparator_Click(object sender, EventArgs e)
         {
-            ExtractionConfiguration toSetDescriptionOn = RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+            ExtractionConfiguration toSetDescriptionOn = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
 
             if (toSetDescriptionOn.IsReleased)
                 return;
 
-            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator of up to " + ExtractionConfiguration.Separator_MaxLength + " characters long",
-                                                     ExtractionConfiguration.Separator_MaxLength,toSetDescriptionOn.Separator);
+            TypeTextOrCancelDialog dialog = new TypeTextOrCancelDialog("Separator", "Choose a character(s) separator",3,toSetDescriptionOn.Separator);
 
             dialog.ShowDialog(this);
 
@@ -301,7 +251,7 @@ namespace DataExportManager.ProjectUI
                    
                     _rightClickedRowExtractionConfigurationID = int.Parse(dataGridView1.Rows[e.RowIndex].Cells["ID"].Value.ToString());
 
-                    ExtractionConfiguration selectedExtractionConfiguration = RepositoryLocator.DataExportRepository.GetObjectByID <ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
+                    ExtractionConfiguration selectedExtractionConfiguration = Activator.RepositoryLocator.DataExportRepository.GetObjectByID<ExtractionConfiguration>(_rightClickedRowExtractionConfigurationID);
                     
                     menu.Items.Clear();
                     
@@ -344,7 +294,7 @@ namespace DataExportManager.ProjectUI
                     tbExtractionDirectory.ForeColor = Color.Red;
                 else
                 {
-                    Project.ExtractionDirectory = tbExtractionDirectory.Text;
+                    _project.ExtractionDirectory = tbExtractionDirectory.Text;
                     tbExtractionDirectory.ForeColor = Color.Black;
                 }
             }
@@ -380,43 +330,35 @@ namespace DataExportManager.ProjectUI
 
         private void tbProjectNumber_TextChanged(object sender, EventArgs e)
         {
-            if (Project != null)
+            
+            if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
             {
-                if (string.IsNullOrWhiteSpace(tbProjectNumber.Text))
-                {
-                    Project.ProjectNumber = null;
-                    return;
-                }
-
-                try
-                {
-                    Project.ProjectNumber = int.Parse(tbProjectNumber.Text);
-                    tbProjectNumber.ForeColor = Color.Black;
-                    Project.SaveToDatabase();
-                }
-                catch (Exception )
-                {
-                    tbProjectNumber.ForeColor = Color.Red;
-                }
+                _project.ProjectNumber = null;
+                return;
             }
+
+            try
+            {
+                _project.ProjectNumber = int.Parse(tbProjectNumber.Text);
+                tbProjectNumber.ForeColor = Color.Black;
+                _project.SaveToDatabase();
+            }
+            catch (Exception )
+            {
+                tbProjectNumber.ForeColor = Color.Red;
+            }
+            
         }
         void tcMasterTicket_TicketTextChanged(object sender, EventArgs e)
         {
-            Project.MasterTicket = tcMasterTicket.TicketText;
+            _project.MasterTicket = tcMasterTicket.TicketText;
         }
 
-
-        private void btnConfigureDataUsers_Click(object sender, EventArgs e)
-        {
-            DataUserManagement management = new DataUserManagement(Project);
-            management.ShowDialog(this);
-        }
-        
         public void SwitchToCutDownUIMode()
         {
             dataGridView1.Visible = false;
             lblExtractions.Visible = false;
-            this.Height = 140;
+            this.Height = 160;
         }
 
         private void btnBrowse_Click(object sender, EventArgs e)

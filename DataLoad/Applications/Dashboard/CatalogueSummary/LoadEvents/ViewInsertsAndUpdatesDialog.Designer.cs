@@ -220,7 +220,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.Controls.Add(this.tabControl1);
             this.Controls.Add(this.btnFetchData);
             this.Name = "ViewInsertsAndUpdatesDialog";
-            this.Text = "ViewInsertsDialog";
+            this.Text = "Inserts And Updates";
             this.tabControl1.ResumeLayout(false);
             this.tpCheck.ResumeLayout(false);
             this.tpViewInserts.ResumeLayout(false);

@@ -7,8 +7,10 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using Diagnostics;
+using Diagnostics.TestData.Exercises;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode;
@@ -54,6 +56,36 @@ namespace CatalogueLibraryTests.Integration
 
             //apply any suggested fixes
             return true;
+        }
+
+        [Test]
+        public void TestGaussian()
+        {
+            var t = new CarotidArteryScanReportExerciseTestData();
+            
+            double[] a = new double[10000];
+
+            a = a.Select(e => t.GetGaussian()).OrderBy(e => e).ToArray();
+
+            Console.WriteLine(string.Join(Environment.NewLine, a));
+
+            Assert.GreaterOrEqual(a.Min(),-1);
+            Assert.LessOrEqual(a.Max(), 1);
+        }
+        [Test]
+        public void TestGaussianRange()
+        {
+            var t = new CarotidArteryScanReportExerciseTestData();
+            
+            double[] a = new double[1000];
+
+            a = a.Select(e => t.GetGaussian(10,20)).OrderBy(e => e).ToArray();
+
+            Console.WriteLine(string.Join(Environment.NewLine, a));
+
+
+            Assert.GreaterOrEqual(a.Min(), 10);
+            Assert.LessOrEqual(a.Max(), 20);
         }
     }
 

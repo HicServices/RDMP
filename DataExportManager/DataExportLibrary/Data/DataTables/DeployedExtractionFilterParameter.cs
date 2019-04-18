@@ -23,7 +23,7 @@ namespace DataExportLibrary.Data.DataTables
     /// <summary>
     /// Stores parameter values for a DeployedExtractionFilter
     /// </summary>
-    public class DeployedExtractionFilterParameter: VersionedDatabaseEntity, ISqlParameter
+    public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     {
         #region Database Properties
         private int _extractionFilter_ID;
@@ -35,6 +35,7 @@ namespace DataExportLibrary.Data.DataTables
         /// The <see cref="ExtractionFilter"/> against which the parameter is declared.  The WHERE Sql of the filter should
         /// reference this parameter (e.g. "[mydb]..[mytbl].[hb_extract] = @healthboard").
         /// </summary>
+        [Relationship(typeof(DeployedExtractionFilter),RelationshipType.SharedObject)]
         public int ExtractionFilter_ID
         {
             get { return _extractionFilter_ID; }
@@ -131,6 +132,13 @@ namespace DataExportLibrary.Data.DataTables
         public IMapsDirectlyToDatabaseTable GetOwnerIfAny()
         {
             return Repository.GetObjectByID<DeployedExtractionFilter>(ExtractionFilter_ID);
+        }
+
+        public DeployedExtractionFilterParameter ShallowClone(DeployedExtractionFilter into)
+        {
+            var clone = new DeployedExtractionFilterParameter(DataExportRepository, ParameterSQL, into);
+            CopyShallowValuesTo(clone);
+            return clone;
         }
     }
 }

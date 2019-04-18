@@ -45,15 +45,12 @@ namespace CatalogueManager.MainFormUITabs
             tbValue.Text = _keyword.Value;
             tbID.Text = _keyword.ID.ToString();
 
-            pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
-            
-            tbCommandToDelete.Text = "DELETE FROM " + 
-                activator.RepositoryLocator.CatalogueRepository.DiscoveredServer.GetCurrentDatabase()
-                    .ExpectTable("ConnectionStringKeyword")
-                    .GetFullyQualifiedName();
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(_keyword.DatabaseType);
 
-            AddChecks(databaseObject);
-            StartChecking();
+            tbCommandToDelete.Text = "DELETE FROM ConnectionStringKeyword";
+
+            CommonFunctionality.AddChecks(databaseObject);
+            CommonFunctionality.StartChecking();
         }
 
         protected override void SetBindings(BinderWithErrorProviderFactory rules, ConnectionStringKeyword databaseObject)
@@ -72,7 +69,7 @@ namespace CatalogueManager.MainFormUITabs
                 return;
             
             var type = (DatabaseType)ddDatabaseType.SelectedValue;
-            pbDatabaseProvider.Image = _activator.CoreIconProvider.GetImage(type);
+            pbDatabaseProvider.Image = Activator.CoreIconProvider.GetImage(type);
         }
     }
 

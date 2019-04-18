@@ -37,7 +37,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
             return "Runs the activity in a seperate console process.";
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return CatalogueIcons.Exe;
         }

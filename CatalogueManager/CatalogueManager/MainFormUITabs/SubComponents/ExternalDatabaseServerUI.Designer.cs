@@ -323,7 +323,7 @@
         private System.Windows.Forms.Label lblUsernameError;
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox tbUsername;
+        internal System.Windows.Forms.TextBox tbUsername;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbDatabaseName;
         private System.Windows.Forms.Label label4;

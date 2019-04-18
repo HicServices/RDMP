@@ -40,8 +40,6 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
                     return _exe;
                 case ProcessTaskType.SQLFile:
                     return _sql;
-                case ProcessTaskType.StoredProcedure:
-                    return _sql;
                 case ProcessTaskType.Attacher:
                     return _plugin;
                 case ProcessTaskType.DataProvider:

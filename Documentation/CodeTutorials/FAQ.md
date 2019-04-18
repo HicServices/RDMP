@@ -15,6 +15,7 @@
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
    1. [How does RDMP deal with Csv/text files?](#csv)
+   1. [Can RDMP read Excel files?](#excel)
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
    1. [When loading data can I skip some columns?](#skipColumns)
    1. [Can I run SQL Scripts during a load?](#sqlScripts)
@@ -23,6 +24,8 @@
    1. [Can I share/export/import my dataset metadata?](#sharing)
    1. [Is there a Data Quality Engine?](#dqe)
 1. User Interface Programming
+   1. [How are user interfaces implemented in RDMP?](#uioverview)
+   1. [Whats with the _Design user interface classes?](#abstractDesignerPattern)
    1. [How do I stop some nodes being reordered in RDMPCollectionUIs?](#reorder)
    1. [How do I add new nodes to RDMPCollectionUIs?](#addNewNodes)
    1. [My metadata databases are being hammered by thousands of requests](#databaseDdos)
@@ -142,6 +145,10 @@ Yes, [determining database types from untyped data (e.g. CSV)](./DataTableUpload
 <a name="csv"></a>
 ### How does RDMP deal with Csv/text files?
 RDMP supports files delimited by any character (tab separated, pipe separated, comma separated etc).  Since [invalid formatting is a common problem with ETL of CSV files RDMP has several fault tolerance features](./CSVHandling.md).
+
+<a name="excel"></a>
+### Can RDMP read Excel files?]
+Yes, Support for Excel is described in the [Excel Handling page](./ExcelHandling.md)
 
 <a name="typetranslation"></a>
 ### How does RDMP handle / translate untyped, C# and Database Types?
@@ -321,6 +328,16 @@ An example .dita file is shown below:
 Yes.  You can read more about the DQE in the [technical implementation](./Validation.md) or (from a user perspective) in the [User Manual](../UserManual.docx).
 
 ## User Interface Programming
+
+<a name="uioverview"></a>
+### How are user interfaces implemented in RDMP?
+RDMP uses Windows Forms with the [Dock Panel Suite](https://github.com/dockpanelsuite/dockpanelsuite) framework for docking.  It uses [Scintilla.Net](https://github.com/jacobslusser/ScintillaNET) for text editors (e.g. viewing SQL) and [ObjectListView](http://objectlistview.sourceforge.net/cs/index.html) for the advanced navigation tree/list views.
+
+User interfaces in RDMP follow a standard testable design which is described in the [user interface overview](./UserInterfaceOverview.md).
+
+<a name="abstractDesignerPattern"></a>
+### Whats with the _Design user interface classes?
+Any user interface class which includes an abstract base class in it's hierarchy (e.g. `CatalogueUI`) has an accompanying class `CatalogueUI_Design`.  This class exists solely facilitate using the visual studio forms designer (which [doesn't support abstract base classes](https://stackoverflow.com/a/6817281/4824531)).  Even with this workaround visual studio will sometimes fail to show the designer for these controls, restarting visual studio usually solves this problem.
 
 <a name="reorder"></a>
 ### How do I stop some nodes being reordered in RDMPCollectionUIs?

@@ -20,9 +20,9 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
     /// </summary>
     public class RuntimeTaskFactory
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
-        public RuntimeTaskFactory(CatalogueRepository repository)
+        public RuntimeTaskFactory(ICatalogueRepository repository)
         {
             _repository = repository;
         }
@@ -39,8 +39,6 @@ namespace DataLoadEngine.LoadExecution.Components.Runtime
                     return new ExecutableRuntimeTask(task, args);
                 case ProcessTaskType.SQLFile:
                     return new ExecuteSqlFileRuntimeTask(task, args);
-                case ProcessTaskType.StoredProcedure:
-                    return new StoredProcedureRuntimeTask(task, args, _repository);
                 case ProcessTaskType.Attacher:
                     return new AttacherRuntimeTask(task, args, _repository.MEF);
                 case ProcessTaskType.DataProvider:

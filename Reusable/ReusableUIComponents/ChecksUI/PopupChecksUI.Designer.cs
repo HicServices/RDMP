@@ -46,7 +46,7 @@
             this.ClientSize = new System.Drawing.Size(624, 614);
             this.Controls.Add(this.checksUI1);
             this.Name = "PopupChecksUI";
-            this.Text = "PopupChecksUI";
+            this.Text = "Checks";
             this.ResumeLayout(false);
 
         }

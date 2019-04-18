@@ -385,7 +385,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.Controls.Add(this.tabControl1);
             this.KeyPreview = true;
             this.Name = "StartupUIMainForm";
-            this.Text = "StartupUI";
+            this.Text = "Startup";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartupUIMainForm_FormClosing);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.StartupUIMainForm_KeyUp);
             this.tabControl1.ResumeLayout(false);

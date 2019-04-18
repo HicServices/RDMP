@@ -44,7 +44,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
                 return;
             }
 
-            _candidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Distinct().ToArray();
+            _candidates = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Select(e => e.ColumnInfo).Where(c=>c != null).Distinct().ToArray();
 
             if (!_candidates.Any())
                 SetImpossible("No ColumnInfo is associated with filter '" + filter + "'");
@@ -76,7 +76,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             }
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.ColumnInfo, OverlayKind.Filter);
         }

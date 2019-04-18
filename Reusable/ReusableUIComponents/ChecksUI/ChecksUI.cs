@@ -121,8 +121,8 @@ namespace ReusableUIComponents.ChecksUI
                 }
                 catch (Exception e)
                 {
-                    
-                    OnCheckPerformed(new CheckEventArgs("Entire checking process crashed",CheckResult.Fail, e));
+
+                    listener.OnCheckPerformed(new CheckEventArgs("Entire checking process crashed", CheckResult.Fail, e));
                     CheckingInProgress = false;
 
                     if (AllChecksComplete != null)
@@ -213,7 +213,7 @@ namespace ReusableUIComponents.ChecksUI
                 if (args.Ex != null)
                     ExceptionViewer.Show(args.Message, args.Ex);
                 else
-                    WideMessageBox.Show(null,args.Message, args.StackTrace, false, null, WideMessageBox.GetTheme(args.Result));
+                    WideMessageBox.Show("Check Result",args.Message, args.StackTrace, false, null, WideMessageBox.GetTheme(args.Result));
         }
 
         public void TerminateWithExtremePrejudice()

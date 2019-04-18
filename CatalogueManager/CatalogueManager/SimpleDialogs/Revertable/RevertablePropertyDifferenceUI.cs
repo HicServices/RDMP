@@ -29,7 +29,7 @@ namespace CatalogueManager.SimpleDialogs.Revertable
     /// from the database version (for example because another user has modified the record in the database while we had an older copy of it). See OfferChanceToSaveDialog for full details
     /// 
     /// </summary>
-    public partial class RevertablePropertyDifferenceUI : RDMPUserControl,IKnowIfImHostedByVisualStudio
+    public partial class RevertablePropertyDifferenceUI : RDMPUserControl
     {
         private readonly RevertablePropertyDifference _difference;
         
@@ -37,8 +37,7 @@ namespace CatalogueManager.SimpleDialogs.Revertable
         {
             _difference = difference;
             InitializeComponent();
-
-
+            
             if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
             

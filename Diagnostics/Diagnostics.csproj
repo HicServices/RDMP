@@ -131,24 +131,28 @@
       <HintPath>..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi, Version=0.9.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle">
-      <HintPath>..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="MathNet.Numerics, Version=4.7.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\MathNet.Numerics.4.7.0\lib\net40\MathNet.Numerics.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
@@ -163,6 +167,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel" />
+    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
@@ -172,6 +177,8 @@
     <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
     <Reference Include="System.Management" />
+    <Reference Include="System.Numerics" />
+    <Reference Include="System.Runtime.Serialization" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Xml" />
   </ItemGroup>
@@ -180,22 +187,16 @@
       <Link>Properties\SharedAssemblyInfo.cs</Link>
     </Compile>
     <Compile Include="ANOConfigurationChecker.cs" />
-    <Compile Include="CohortConfigurationChecker.cs" />
     <Compile Include="TestData\BulkTestsData.cs" />
     <Compile Include="TestData\Exercises\BiochemistryExerciseTestData.cs" />
+    <Compile Include="TestData\Exercises\CarotidArteryScanReportExerciseTestData.cs" />
     <Compile Include="TestData\Exercises\DemographyExerciseTestData.cs" />
     <Compile Include="TestData\Exercises\ExerciseTestDataGenerator.cs" />
     <Compile Include="TestData\Exercises\IExerciseTestDataGenerator.cs" />
     <Compile Include="TestData\Exercises\IExerciseTestIdentifiers.cs" />
     <Compile Include="TestData\Exercises\PrescribingExerciseTestData.cs" />
     <Compile Include="TestData\Exercises\ExerciseTestIdentifiers.cs" />
-    <Compile Include="TestData\Relational\CIATestAgent.cs" />
-    <Compile Include="TestData\Relational\CIATestAgentEquipment.cs" />
-    <Compile Include="TestData\Relational\CIATestEvent.cs" />
-    <Compile Include="TestData\Relational\CIATestEvent_AgentLinkTable.cs" />
-    <Compile Include="TestData\Relational\CIATestInformant.cs" />
-    <Compile Include="TestData\Relational\CIATestReport.cs" />
-    <Compile Include="TestData\Relational\RelationalBulkTestData.cs" />
+    <Compile Include="TestData\TestAppointment.cs" />
     <Compile Include="TestData\TestBiochemistrySample.cs" />
     <Compile Include="TestData\Postcode.cs" />
     <Compile Include="TestData\TestAddress.cs" />
@@ -215,10 +216,6 @@
     <ProjectReference Include="..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
       <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
       <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76D185E2-2B48-45B6-A2A9-74FF71D46C15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
     </ProjectReference>
     <ProjectReference Include="..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
       <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>

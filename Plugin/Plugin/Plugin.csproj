@@ -102,10 +102,6 @@
       <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
       <Name>DataExportLibrary.Database</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Interfaces\DataExportLibrary.Interfaces.csproj">
-      <Project>{76d185e2-2b48-45b6-a2a9-74ff71d46c15}</Project>
-      <Name>DataExportLibrary.Interfaces</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
       <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
       <Name>LoadModules.Generic</Name>
