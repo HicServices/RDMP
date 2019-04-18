@@ -266,7 +266,7 @@
             this.Controls.Add(this.gbPickFile);
             this.Controls.Add(this.gbPickDatabase);
             this.Name = "CreateNewCatalogueByImportingFileUI";
-            this.Text = "CreateNewCatalogueByImportingFile";
+            this.Text = "Create Catalogue By Importing A File";
             this.gbPickFile.ResumeLayout(false);
             this.gbPickFile.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFile)).EndInit();

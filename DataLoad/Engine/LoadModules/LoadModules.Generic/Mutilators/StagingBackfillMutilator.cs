@@ -111,7 +111,7 @@ namespace LoadModules.Generic.Mutilators
         /// <param name="joinPathToTimeTable"></param>
         private void ProcessPredecessors(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
-            var repository = (CatalogueRepository) tiCurrent.Repository;
+            var repository = tiCurrent.Repository;
 
             // Find all parents of this table
             var allJoinInfos = repository.GetAllObjects<JoinInfo>();
@@ -147,7 +147,7 @@ namespace LoadModules.Generic.Mutilators
         /// <param name="joinPathToTimeTable"></param>
         private void ProcessOldUpdatesInTable(TableInfo tiCurrent, List<JoinInfo> joinPathToTimeTable)
         {
-            var repository = (CatalogueRepository)tiCurrent.Repository;
+            var repository = tiCurrent.Repository;
 
             // Process old updates in children first
             // Does toCurrent have any children?

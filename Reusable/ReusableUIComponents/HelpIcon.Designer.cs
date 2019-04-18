@@ -36,10 +36,13 @@
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("$this.BackgroundImage")));
+            this.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
+            this.DoubleBuffered = true;
+            this.MaximumSize = new System.Drawing.Size(19, 19);
+            this.MinimumSize = new System.Drawing.Size(19, 19);
             this.Name = "HelpIcon";
             this.Size = new System.Drawing.Size(19, 19);
             this.MouseClick += new System.Windows.Forms.MouseEventHandler(this.HelpIcon_MouseClick);
-            this.MouseHover += new System.EventHandler(this.HelpIcon_MouseHover);
             this.ResumeLayout(false);
 
         }

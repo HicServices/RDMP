@@ -32,7 +32,6 @@
             this.label1 = new System.Windows.Forms.Label();
             this.cbEmphasiseOnTabChanged = new System.Windows.Forms.CheckBox();
             this.cbConfirmExit = new System.Windows.Forms.CheckBox();
-            this.cbUseCaching = new System.Windows.Forms.CheckBox();
             this.label2 = new System.Windows.Forms.Label();
             this.cbThemeMenus = new System.Windows.Forms.CheckBox();
             this.ddTheme = new System.Windows.Forms.ComboBox();
@@ -83,17 +82,6 @@
             this.cbConfirmExit.Text = "Confirm Application Exit";
             this.cbConfirmExit.UseVisualStyleBackColor = true;
             this.cbConfirmExit.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
-            // 
-            // cbUseCaching
-            // 
-            this.cbUseCaching.AutoSize = true;
-            this.cbUseCaching.Location = new System.Drawing.Point(39, 141);
-            this.cbUseCaching.Name = "cbUseCaching";
-            this.cbUseCaching.Size = new System.Drawing.Size(87, 17);
-            this.cbUseCaching.TabIndex = 2;
-            this.cbUseCaching.Text = "Use Caching";
-            this.cbUseCaching.UseVisualStyleBackColor = true;
-            this.cbUseCaching.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
             // label2
             // 
@@ -176,14 +164,13 @@
             this.Controls.Add(this.cbThemeMenus);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
-            this.Controls.Add(this.cbUseCaching);
             this.Controls.Add(this.cbFindShouldPin);
             this.Controls.Add(this.cbConfirmExit);
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.cbShowHomeOnStartup);
             this.Name = "UserSettingsFileUI";
-            this.Text = "UserSettingsUI";
+            this.Text = "User Settings";
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -195,7 +182,6 @@
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.CheckBox cbEmphasiseOnTabChanged;
         private System.Windows.Forms.CheckBox cbConfirmExit;
-        private System.Windows.Forms.CheckBox cbUseCaching;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox cbThemeMenus;
         private System.Windows.Forms.ComboBox ddTheme;

@@ -108,10 +108,10 @@ namespace CatalogueLibraryTests.ImportTests
         [Test]
         public void GatherAndShare_Plugin_Test()
         {
-            var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Imaginary1.dll"));
+            var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1.dll"));
             File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
 
-            var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Imaginary1.dll"));
+            var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1.dll"));
             File.WriteAllBytes(f2.FullName, new byte[] { 0x3, 0x3 });
 
             var plugin = new Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));

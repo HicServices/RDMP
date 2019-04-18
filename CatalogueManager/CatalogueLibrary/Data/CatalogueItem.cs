@@ -37,7 +37,7 @@ namespace CatalogueLibrary.Data
     /// 
     /// <para>Both the above would extract from the same ColumnInfo DateOfBirth</para>
     /// </summary>
-    public class CatalogueItem : VersionedDatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
+    public class CatalogueItem : DatabaseEntity, IDeleteable, IComparable, IHasDependencies, IRevertable, INamed, IInjectKnown<ExtractionInformation>,IInjectKnown<ColumnInfo>, IInjectKnown<Catalogue>
     {
         #region Database Properties
         
@@ -271,7 +271,7 @@ namespace CatalogueLibrary.Data
 
         internal CatalogueItem(ShareManager shareManager, ShareDefinition shareDefinition)
         {
-            shareManager.RepositoryLocator.CatalogueRepository.UpsertAndHydrate(this,shareManager,shareDefinition);
+            shareManager.UpsertAndHydrate(this,shareDefinition);
         }
 
         /// <inheritdoc/>

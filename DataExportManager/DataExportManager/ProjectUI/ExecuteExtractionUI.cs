@@ -296,11 +296,13 @@ namespace DataExportManager.ProjectUI
 
             CommonFunctionality.Add(new ToolStripLabel("Extraction Pipeline:"));
             CommonFunctionality.Add(_pipelinePanel);
+            CommonFunctionality.AddHelpStringToToolStrip("Extraction Pipeline","The sequence of components that will be executed in order to enable the datasets to be extracted. This will start with a source component that performs the linkage against the cohort followed by subsequent components (if any) and then a destination component that writes the final records (e.g. to database / csv file etc).");
 
             CommonFunctionality.AddToMenu(new ExecuteCommandRelease(activator).SetTarget(_extractionConfiguration));
 
             CommonFunctionality.Add(lblMaxConcurrent);
             CommonFunctionality.Add(tbMaxConcurrent);
+            CommonFunctionality.AddHelpStringToToolStrip("Concurrent", "The maximum number of datasets to extract at once.  Once this number is reached the remainder will be queued and only started when one of the other extracting datasets completes.");
 
             checkAndExecuteUI1.SetItemActivator(activator);
 

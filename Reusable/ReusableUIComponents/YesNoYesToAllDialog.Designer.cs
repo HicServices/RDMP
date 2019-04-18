@@ -101,7 +101,7 @@
             this.Controls.Add(this.btnNo);
             this.Controls.Add(this.btnYes);
             this.Name = "YesNoYesToAllDialog";
-            this.Text = "YesNoYesToAllDialog";
+            this.Text = "Yes/No";
             this.ResumeLayout(false);
 
         }

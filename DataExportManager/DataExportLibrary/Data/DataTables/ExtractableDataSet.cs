@@ -17,7 +17,7 @@ using MapsDirectlyToDatabaseTable.Injection;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class ExtractableDataSet : VersionedDatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
+    public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
     {
         #region Database Properties
         private int _catalogue_ID;
@@ -77,7 +77,7 @@ namespace DataExportLibrary.Data.DataTables
         /// Defines that the given Catalogue is extractable to researchers as a data set, this is stored in the DataExport database
         /// </summary>
         /// <returns></returns>
-        public ExtractableDataSet(IDataExportRepository repository, Catalogue catalogue, int disableExtraction = 0)
+        public ExtractableDataSet(IDataExportRepository repository, Catalogue catalogue, bool disableExtraction =false)
         {
             Repository = repository;
             Repository.InsertAndHydrate(this, new Dictionary<string, object>

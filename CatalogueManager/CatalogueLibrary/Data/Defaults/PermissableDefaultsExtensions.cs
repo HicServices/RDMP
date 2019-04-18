@@ -22,8 +22,6 @@ namespace CatalogueLibrary.Data.Defaults
             {
                 case PermissableDefaults.LiveLoggingServer_ID:
                     return Tier2DatabaseType.Logging;
-                case PermissableDefaults.TestLoggingServer_ID:
-                    return Tier2DatabaseType.Logging;
                 case PermissableDefaults.IdentifierDumpServer_ID:
                     return Tier2DatabaseType.IdentifierDump;
                 case PermissableDefaults.DQE:

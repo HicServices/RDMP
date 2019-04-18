@@ -25,7 +25,7 @@ namespace LoadModules.Generic.Mutilators.Dilution
                 throw new ArgumentNullException("targetColumn");
 
             _targetColumn = targetColumn;
-            _mef = ((CatalogueRepository)_targetColumn.Repository).MEF;
+            _mef = ((ICatalogueRepository)_targetColumn.Repository).MEF;
         }
 
         public IDilutionOperation Create(Type operation)

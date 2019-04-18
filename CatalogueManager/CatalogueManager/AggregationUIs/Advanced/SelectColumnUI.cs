@@ -22,7 +22,7 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying;
@@ -55,6 +55,10 @@ namespace CatalogueManager.AggregationUIs.Advanced
         internal IReadOnlyCollection<IColumn> IncludedColumns { get { return new ReadOnlyCollection<IColumn>(_includedColumns); } }
 
         public QuerySyntaxHelper _querySyntaxHelper = new MicrosoftQuerySyntaxHelper();
+
+        private Bitmap _add;
+        private Bitmap _delete;
+        private CountColumnRequirement _countColumnRequirement;
 
         public SelectColumnUI()
         {
@@ -187,8 +191,13 @@ namespace CatalogueManager.AggregationUIs.Advanced
 
         private object ImageGetter(object rowObject)
         {
+            
             if (_availableColumns.Contains(rowObject))
                 return _add;
+
+            //if we are getting an icon for the count(*) column and it cannot be removed then don't show the icon for removal
+            if (_countColumnRequirement == CountColumnRequirement.MustHaveOne && rowObject is AggregateCountColumn)
+                return null;
 
             return _delete;
         }
@@ -291,14 +300,12 @@ namespace CatalogueManager.AggregationUIs.Advanced
         }
 
 
-        private Bitmap _add;
-        private Bitmap _delete;
-
         public void SetUp(IActivateItems activator, IAggregateBuilderOptions options, AggregateConfiguration aggregate)
         {
             //record new states so we don't accidentally erase names of stuff
             SetItemActivator(activator);
             _options = options;
+            _countColumnRequirement = _options.GetCountColumnRequirement(aggregate);
             _aggregate = aggregate;
             
             _availableColumns.Clear();

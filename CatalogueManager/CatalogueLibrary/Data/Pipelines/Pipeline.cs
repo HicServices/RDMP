@@ -18,7 +18,7 @@ using ReusableLibraryCode.Annotations;
 namespace CatalogueLibrary.Data.Pipelines
 {
     /// <inheritdoc cref="IPipeline"/>
-    public class Pipeline : VersionedDatabaseEntity, IPipeline,IHasDependencies
+    public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies
     {
         #region Database Properties
 

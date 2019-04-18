@@ -18,7 +18,7 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Copying;
 using FAnsi.Discovery.QuerySyntax;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;

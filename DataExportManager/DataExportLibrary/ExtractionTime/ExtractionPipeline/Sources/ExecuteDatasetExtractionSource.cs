@@ -17,10 +17,13 @@ using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.ExtractionTime.Commands;
+using CatalogueLibrary.QueryBuilding;
 using DataExportLibrary.Data.DataTables;
 using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.Repositories;
+using DataLoadEngine.DataFlowPipeline.Components;
 using DataLoadEngine.DataFlowPipeline.Sources;
+using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -64,6 +67,13 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         [DemandsInitialization("In seconds. Overrides the global timeout for SQL query execution. Use 0 for infinite timeout.", DefaultValue = 50000, Mandatory = true)]
         public int ExecutionTimeout { get; set; }
+
+        [DemandsInitialization(@"Determines how the system achieves DISTINCT on extraction.  These include:
+None - Do not DISTINCT the records, can result in duplication in your extract (not recommended)
+SqlDistinct - Adds the DISTINCT keyword to the SELECT sql sent to the server
+OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies the DISTINCT in memory as records are read from the server (this can help when extracting very large data sets where DISTINCT keyword blocks record streaming until all records are ready to go)"
+            ,DefaultValue = Sources.DistinctStrategy.SqlDistinct)]
+        public DistinctStrategy DistinctStrategy { get; set; }
         
         /// <summary>
         /// This is a dictionary containing all the CatalogueItems used in the query, the underlying datatype in the origin database and the
@@ -129,6 +139,8 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
         private bool firstGlobalChunk = true;
         private int _rowsRead;
 
+        private RowPeeker _peeker = new RowPeeker();
+
         public virtual DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             // we are in the Global Commands case, let's return an empty DataTable (not null) 
@@ -172,11 +184,28 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
                 _hostedSource.BatchSize = BatchSize;
             }
 
-            DataTable chunk=null;
+            DataTable chunk = null;
 
             try
             {
                 chunk = _hostedSource.GetChunk(listener, cancellationToken);
+
+                chunk = _peeker.AddPeekedRowsIfAny(chunk);
+                
+                //if we are trying to distinct the records in memory based on release id
+                if (DistinctStrategy == DistinctStrategy.OrderByAndDistinctInMemory)
+                {
+                    var releaseIdentifierColumn =  Request.ReleaseIdentifierSubstitutions.First().GetRuntimeName();
+
+                    if(chunk != null)
+                    {
+                        //last release id in the current chunk
+                        var lastReleaseId = chunk.Rows[chunk.Rows.Count-1][releaseIdentifierColumn];
+
+                        _peeker.AddWhile(_hostedSource,r=>Equals(r[releaseIdentifierColumn], lastReleaseId),chunk);
+                        chunk = MakeDistinct(chunk,listener,cancellationToken);
+                    }
+                }
             }
             catch (AggregateException a)
             {
@@ -278,7 +307,20 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
             return chunk;
         }
-        
+
+        /// <summary>
+        /// Makes the current batch ONLY distinct.  This only works if you have a bounded batch (see OrderByAndDistinctInMemory)
+        /// </summary>
+        /// <param name="chunk"></param>
+        /// <param name="listener"></param>
+        /// <param name="cancellationToken"></param>
+        /// <returns></returns>
+        private DataTable MakeDistinct(DataTable chunk, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+        {
+            var removeDuplicates = new RemoveDuplicates(){NoLogging=true};
+            return removeDuplicates.ProcessPipelineData(chunk, listener, cancellationToken);
+        }
+
         private void GenerateExtractionTransformObservations(DataTable chunk)
         {
             ExtractTimeTransformationsObserved = new Dictionary<ExtractableColumn, ExtractTimeTransformationObserved>();
@@ -313,6 +355,35 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
 
         private string GetCommandSQL(IDataLoadEventListener listener)
         {
+            //if the user wants some custom logic for removing identical duplicates
+            switch (DistinctStrategy)
+            {
+                //user doesn't care about identical duplicates
+                case DistinctStrategy.None:
+                    ((QueryBuilder)Request.QueryBuilder).SetLimitationSQL("");
+                    break;
+
+                //system default behaviour
+                case DistinctStrategy.SqlDistinct:
+                    break;
+
+                //user wants to run order by the release ID and resolve duplicates in batches as they are read
+                case DistinctStrategy.OrderByAndDistinctInMemory:
+                    
+                    //remove the DISTINCT keyword from the query
+                    ((QueryBuilder)Request.QueryBuilder).SetLimitationSQL("");
+
+                    //find the release identifier substitution (e.g. chi for PROCHI)
+                    var substitution =  Request.ReleaseIdentifierSubstitutions.First();
+
+                    //add a line at the end of the query to ORDER BY the ReleaseId column (e.g. PROCHI)
+                    Request.QueryBuilder.AddCustomLine("ORDER BY " + substitution.SelectSQL, QueryComponent.Postfix);
+
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
+
             string sql = Request.QueryBuilder.SQL;
 
             sql = HackExtractionSQL(sql,listener);

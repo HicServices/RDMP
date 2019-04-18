@@ -26,7 +26,7 @@ using ReusableLibraryCode.DataAccess;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class ExtractionConfiguration : VersionedDatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
+    public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
     {
         #region Database Properties
         private DateTime? _dtCreated;
@@ -448,9 +448,7 @@ namespace DataExportLibrary.Data.DataTables
 
                 var catalogue = repo.CatalogueRepository.GetObjectByID<Catalogue>((int)catalogueID);
 
-                int? loggingServer = testLoggingServer
-                    ? catalogue.TestLoggingServer_ID
-                    : catalogue.LiveLoggingServer_ID;
+                int? loggingServer = catalogue.LiveLoggingServer_ID;
 
                 if ( loggingServer == null)
                     throw new Exception("Catalogue " + catalogue.Name + " does not have a "+(testLoggingServer?"test":"")+" logging server configured");

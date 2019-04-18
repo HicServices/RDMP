@@ -26,7 +26,6 @@ namespace CatalogueLibrary.Data.Aggregation
         #region Database Properties
         
         private bool _isDisabled;
-        private string _softwareVersion;
         
 
         /// <inheritdoc/>
@@ -34,16 +33,6 @@ namespace CatalogueLibrary.Data.Aggregation
         {
             get { return _isDisabled; }
             set { SetField(ref _isDisabled, value); }
-        }
-
-        /// <summary>
-        /// The version of RDMP that was running when the object was created
-        /// </summary>
-        [DoNotExtractProperty]
-        public string SoftwareVersion
-        {
-            get { return _softwareVersion; }
-            set { SetField(ref  _softwareVersion, value); }
         }
 
         #endregion
@@ -55,13 +44,12 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <param name="operation"></param>
         public AggregateFilterContainer(ICatalogueRepository repository, FilterContainerOperation operation):base(repository.FilterManager)
         {
-            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation}});
+            repository.InsertAndHydrate(this,new Dictionary<string, object>(){{"Operation" ,operation.ToString()}});
         }
 
 
         internal AggregateFilterContainer(ICatalogueRepository repository, DbDataReader r): base(repository.FilterManager,repository, r)
         {
-            SoftwareVersion = r["SoftwareVersion"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
         }
 

@@ -25,7 +25,7 @@ namespace DataExportLibrary.Data.DataTables
 {
 
     /// <inheritdoc/>
-    public class ExtractableCohort : VersionedDatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>,  ICustomSearchString
+    public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>,  ICustomSearchString
     {
         /// <summary>
         /// Logging entry in the RDMP central relational log under which to record all activities that relate to creating cohorts

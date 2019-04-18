@@ -109,7 +109,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines
             this.Controls.Add(this.panel1);
             this.Name = "ConfigurePipelineUI";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "ConfigurePipelineUI";
+            this.Text = "Configure Pipeline";
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.ResumeLayout(false);

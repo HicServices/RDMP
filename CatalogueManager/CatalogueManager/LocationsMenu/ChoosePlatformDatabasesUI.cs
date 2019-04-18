@@ -41,12 +41,12 @@ namespace CatalogueManager.LocationsMenu
     /// </summary>
     public partial class ChoosePlatformDatabasesUI : Form
     {
-        private readonly UserSettingsRepositoryFinder _repositoryLocator;
+        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
         public ChoosePlatformDatabasesUI(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            _repositoryLocator = (UserSettingsRepositoryFinder)repositoryLocator;
-            
+            _repositoryLocator = repositoryLocator;
+
             InitializeComponent();
 
             new RecentHistoryOfControls(tbCatalogueConnectionString, new Guid("75e6b0a3-03f2-49fc-9446-ebc1dae9f123"));
@@ -58,27 +58,17 @@ namespace CatalogueManager.LocationsMenu
             var cataDb = _repositoryLocator.CatalogueRepository as TableRepository;
             var dataExportDb = _repositoryLocator.DataExportRepository as TableRepository;
 
-            //yes
-            if (cataDb != null)
-                tbCatalogueConnectionString.Text = cataDb.ConnectionString;
-            else
-            {
-                //no, disable connection strings, the repo must be on disk or in memory or something
-                tbCatalogueConnectionString.Enabled = false;
-                btnSaveAndClose.Enabled = false;
-            }
+            //only enable connection string setting if it is a user settings repo
+            tbDataExportManagerConnectionString.Enabled = 
+            tbCatalogueConnectionString.Enabled =
+            btnBrowseForCatalogue.Enabled =
+            btnBrowseForDataExport.Enabled =
+            btnSaveAndClose.Enabled =
+            _repositoryLocator is UserSettingsRepositoryFinder;
 
             //yes
-            if (dataExportDb != null)
-                tbDataExportManagerConnectionString.Text = dataExportDb.ConnectionString;
-            else
-            {
-                //no, disable connection strings, the repo must be on disk or in memory or something
-                tbDataExportManagerConnectionString.Enabled = false;
-                btnSaveAndClose.Enabled = false;
-            }
-
-            
+            tbCatalogueConnectionString.Text = cataDb == null ? null : cataDb.ConnectionString;
+            tbDataExportManagerConnectionString.Text = dataExportDb == null ? null : dataExportDb.ConnectionString;
         }
 
         private void SetState(State newState)
@@ -140,7 +130,8 @@ namespace CatalogueManager.LocationsMenu
                 // save all the settings
                 UserSettings.CatalogueConnectionString = tbCatalogueConnectionString.Text;
                 UserSettings.DataExportConnectionString = tbDataExportManagerConnectionString.Text;
-                _repositoryLocator.RefreshRepositoriesFromUserSettings();
+
+                ((UserSettingsRepositoryFinder)_repositoryLocator).RefreshRepositoriesFromUserSettings();
                 return true;
             }
             catch (Exception exception)

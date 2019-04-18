@@ -72,7 +72,7 @@ namespace CachingEngineTests.Unit
             var cacheProgress = new CacheProgress(null, (ILoadProgress) null);
             container.ComposeExportedValue(cacheProgress);
 
-            var directoryInfo = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);;
+            var directoryInfo = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
             container.ComposeExportedValue(directoryInfo);
 
             var component = container.GetExportedValue<FilesystemCacheDestination>();

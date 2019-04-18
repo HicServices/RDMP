@@ -34,7 +34,7 @@ namespace CatalogueLibrary.Data.DataLoad
     /// <para>This allows simple UI driven population and persistence of configuration settings for plugin and system core components as they are used in all pipeline and
     /// dle activities.  See ArgumentCollection for UI logic.</para>
     /// </summary>
-    public abstract class Argument : VersionedDatabaseEntity, IArgument
+    public abstract class Argument : DatabaseEntity, IArgument
     {
 
         /// <summary>
@@ -144,9 +144,9 @@ namespace CatalogueLibrary.Data.DataLoad
                 if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(value);
+                    return CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(value);
 
-            if (type.Equals(typeof(CatalogueRepository).ToString()))
+            if (type.Equals(typeof(CatalogueRepository).ToString()) || type.Equals(typeof(ICatalogueRepository).ToString()))
                 return Repository;
 
 
@@ -250,7 +250,7 @@ namespace CatalogueLibrary.Data.DataLoad
             }
 
             if (type.Equals(typeof(EncryptedString).ToString()))
-                return new EncryptedString((CatalogueRepository)Repository) { Value = value };
+                return new EncryptedString(CatalogueRepository) { Value = value };
 
             throw new NotSupportedException("Custom arguments cannot be of type " + type);
         }
@@ -267,7 +267,7 @@ namespace CatalogueLibrary.Data.DataLoad
 
                 try
                 {
-                    Type t = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(concreteType.FullName);
+                    Type t = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(concreteType.FullName);
 
                     ObjectConstructor constructor = new ObjectConstructor();
 
@@ -320,7 +320,7 @@ namespace CatalogueLibrary.Data.DataLoad
                 string elementTypeAsString = arrayMatch.Groups[1].Value;
 
                 //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-                var elementType = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(elementTypeAsString);
+                var elementType = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(elementTypeAsString);
 
                 if (elementType == null)
                     throw new Exception("Could not figure out what SystemType to use for elementType = '" + elementTypeAsString + "' of Type '" + type + "'");
@@ -338,7 +338,7 @@ namespace CatalogueLibrary.Data.DataLoad
             }
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-            var anyType = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type);
+            var anyType = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(type);
 
             if (anyType == null)
                 throw new Exception("Could not figure out what SystemType to use for Type = '" + type + "'");
@@ -360,7 +360,7 @@ namespace CatalogueLibrary.Data.DataLoad
             //if it is interface e.g. ITableInfo fetch instead the TableInfo object
             if (type.IsInterface && type.Name.StartsWith("I"))
             {
-                var candidate = ((CatalogueRepository)Repository).MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1)); // chop the 'I' off
+                var candidate = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1)); // chop the 'I' off
 
                 if (!candidate.IsAbstract)
                     return candidate;
@@ -404,7 +404,7 @@ namespace CatalogueLibrary.Data.DataLoad
             {
                 if (typeof(IEncryptedString).IsAssignableFrom(type))
                 {
-                    var encryptor = new EncryptedString((CatalogueRepository)Repository);
+                    var encryptor = new EncryptedString(CatalogueRepository);
                     encryptor.Value = o.ToString();
                     return encryptor.Value;
                 }

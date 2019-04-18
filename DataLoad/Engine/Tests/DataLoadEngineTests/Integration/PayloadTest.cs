@@ -37,7 +37,7 @@ namespace DataLoadEngineTests.Integration
             b.ImportAsCatalogue();
 
             var lmd = new LoadMetadata(CatalogueRepository, "Loading");
-            lmd.LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"delme", true).RootPath.FullName;
+            lmd.LocationOfFlatFiles = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme", true).RootPath.FullName;
             lmd.SaveToDatabase();
 
             CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestPayloadAttacher));

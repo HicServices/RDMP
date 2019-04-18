@@ -32,7 +32,7 @@ namespace CatalogueLibrary.Data
     /// have the same DrugCode meaning different things based on the prescribing board - you need to join on both drugName and 
     /// prescriberHealthboard).</para>
     /// </summary>
-    public class Lookup : VersionedDatabaseEntity, IJoin, IHasDependencies, ICheckable
+    public class Lookup : DatabaseEntity, IJoin, IHasDependencies, ICheckable
     {
         //cached answers
         private ColumnInfo _description;
@@ -165,7 +165,7 @@ namespace CatalogueLibrary.Data
                 {"Description_ID", description.ID},
                 {"ForeignKey_ID", foreignKey.ID},
                 {"PrimaryKey_ID", primaryKey.ID},
-                {"ExtractionJoinType", type},
+                {"ExtractionJoinType", type.ToString()},
                 {"Collation", string.IsNullOrWhiteSpace(collation) ? DBNull.Value : (object)collation}
             });
         }

@@ -76,7 +76,7 @@
             this.Controls.Add(this.comboBox1);
             this.Controls.Add(this.label1);
             this.Name = "RunUI";
-            this.Text = "RunUI";
+            this.Text = "Run";
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 
@@ -38,7 +39,10 @@ namespace MapsDirectlyToDatabaseTable
                     val = null;
 
                 var prop = toCreate.GetType().GetProperty(kvp.Key);
-                prop.SetValue(toCreate,val);
+
+                var strVal = kvp.Value as string;
+
+                SetValue(toCreate, prop, strVal, val);
             }
 
             toCreate.Repository = this;
@@ -46,6 +50,14 @@ namespace MapsDirectlyToDatabaseTable
             Objects.Add(toCreate);
 
             toCreate.PropertyChanged += toCreate_PropertyChanged;
+        }
+
+        protected virtual void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val) where T : IMapsDirectlyToDatabaseTable
+        {
+            if (prop.PropertyType.IsEnum && strVal != null)
+                prop.SetValue(toCreate, Enum.Parse(prop.PropertyType, strVal));
+            else
+                prop.SetValue(toCreate, val);
         }
 
         readonly Dictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>> _propertyChanges = new Dictionary<IMapsDirectlyToDatabaseTable, HashSet<PropertyChangedExtendedEventArgs>>();
@@ -256,10 +268,6 @@ namespace MapsDirectlyToDatabaseTable
             prop.SetValue(entity,propertyValue);
         }
 
-        public T[] GetAllObjectsCached<T>() where T : IMapsDirectlyToDatabaseTable
-        {
-            return GetAllObjects<T>();
-        }
 
         public IMapsDirectlyToDatabaseTable[] GetAllObjectsInDatabase()
         {

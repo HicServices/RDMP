@@ -102,10 +102,13 @@ namespace CatalogueLibrary.Repositories
             return null;
         }
 
-        public void PopulateInsertCommandValuesWithCurrentState(DbCommand insertCommand,
-            IMapsDirectlyToDatabaseTable oTableWrapperObject)
+
+        protected override void SetValue<T>(T toCreate, PropertyInfo prop, string strVal, object val)
         {
-            throw new NotImplementedException();
+            if(prop.PropertyType == typeof(CatalogueFolder) && val is string)
+                base.SetValue(toCreate,prop,strVal,new CatalogueFolder((Catalogue)(object)toCreate,strVal));
+            else
+                base.SetValue(toCreate,prop,strVal,val);
         }
 
         
@@ -173,16 +176,7 @@ namespace CatalogueLibrary.Repositories
         {
             _defaults[toChange] = externalDatabaseServer;
         }
-
-        public override void InsertAndHydrate<T>(T toCreate, Dictionary<string, object> constructorParameters)
-        {
-            base.InsertAndHydrate(toCreate, constructorParameters);
-
-            var v = toCreate as VersionedDatabaseEntity;
-            if(v != null)
-                v.SoftwareVersion = GetVersion().ToString();
-        }
-
+        
         public override void Clear()
         {
             base.Clear();

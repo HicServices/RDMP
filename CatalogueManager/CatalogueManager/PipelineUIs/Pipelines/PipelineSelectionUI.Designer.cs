@@ -48,7 +48,7 @@
             this.ddPipelines.FormattingEnabled = true;
             this.ddPipelines.Location = new System.Drawing.Point(14, 21);
             this.ddPipelines.Name = "ddPipelines";
-            this.ddPipelines.Size = new System.Drawing.Size(557, 21);
+            this.ddPipelines.Size = new System.Drawing.Size(551, 21);
             this.ddPipelines.Sorted = true;
             this.ddPipelines.TabIndex = 25;
             this.ddPipelines.SelectedIndexChanged += new System.EventHandler(this.ddPipelines_SelectedIndexChanged);
@@ -96,9 +96,9 @@
             // btnClonePipeline
             // 
             this.btnClonePipeline.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClonePipeline.Location = new System.Drawing.Point(577, 19);
+            this.btnClonePipeline.Location = new System.Drawing.Point(571, 19);
             this.btnClonePipeline.Name = "btnClonePipeline";
-            this.btnClonePipeline.Size = new System.Drawing.Size(42, 23);
+            this.btnClonePipeline.Size = new System.Drawing.Size(48, 23);
             this.btnClonePipeline.TabIndex = 31;
             this.btnClonePipeline.Text = "Clone";
             this.btnClonePipeline.UseVisualStyleBackColor = true;

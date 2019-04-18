@@ -183,7 +183,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
         public static Form ShowAsDialog(ParameterCollectionUIOptions options, bool modal = false)
         {
             Form f = new Form();
-            f.Text = "ParamaterCollectionUI For:" + options.Collector;
+            f.Text = "Parameters For:" + options.Collector;
             var ui = new ParameterCollectionUI();
             f.Width = ui.Width;
             f.Height = ui.Height;

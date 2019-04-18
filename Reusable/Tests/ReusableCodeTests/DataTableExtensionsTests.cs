@@ -16,7 +16,7 @@ namespace ReusableCodeTests
         [Test]
         public void TestEscaping_CommaInCell()
         {
-            var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "out.csv");
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "out.csv");
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Phrase");
@@ -38,7 +38,7 @@ namespace ReusableCodeTests
         [Test]
         public void TestEscaping_CommaAndQuotesInCell()
         {
-            var path = Path.Combine(TestContext.CurrentContext.WorkDirectory,"out.csv");
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory,"out.csv");
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Phrase");
@@ -60,7 +60,7 @@ namespace ReusableCodeTests
         [Test]
         public void TestEscaping_CommaAndQuotesInCell2()
         {
-            var path = Path.Combine(TestContext.CurrentContext.WorkDirectory, "out.csv");
+            var path = Path.Combine(TestContext.CurrentContext.TestDirectory, "out.csv");
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Phrase");

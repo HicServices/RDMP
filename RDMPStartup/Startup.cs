@@ -149,13 +149,13 @@ namespace RDMPStartup
                     DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,null,null,1, RDMPPlatformDatabaseStatus.Broken, RDMPPlatformType.DataExport,e));
                 }
 
-                FindTier3Databases((CatalogueRepository) RepositoryLocator.CatalogueRepository);
+                FindTier3Databases( RepositoryLocator.CatalogueRepository);
             }
 
             Validator.RefreshExtraTypes(mefCheckNotifier);
         }
 
-        private void FindTier3Databases(CatalogueRepository catalogueRepository)
+        private void FindTier3Databases(ICatalogueRepository catalogueRepository)
         {
             ObjectConstructor constructor = new ObjectConstructor();
 

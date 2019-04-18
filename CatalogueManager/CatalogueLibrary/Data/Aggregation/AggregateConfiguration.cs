@@ -40,7 +40,7 @@ namespace CatalogueLibrary.Data.Aggregation
     /// <para>If your Aggregate is part of cohort identification (Identifier List or Patient Index Table) then its name will start with cic_X_ where X is the ID of the cohort identification 
     /// configuration.  Depending on the user interface though this might not appear (See ToString implementation).</para>
     /// </summary>
-    public class AggregateConfiguration : VersionedDatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, 
+    public class AggregateConfiguration : DatabaseEntity, ICheckable, IOrderable, ICollectSqlParameters, INamed, IHasDependencies, IHasQuerySyntaxHelper, 
         IInjectKnown<JoinableCohortAggregateConfiguration>,
         IInjectKnown<AggregateDimension[]>,
         IInjectKnown<Catalogue>,
@@ -565,6 +565,9 @@ namespace CatalogueLibrary.Data.Aggregation
             if (AggregateDimensions.Length > 2)
                 throw new QueryBuildingException("Too many columns, You can only have a maximum of 2 columns in any graph (plus a count column).  These are: \r\n 1. The time axis (if any) \r\n 2. The pivot column (if any)");
 
+            if(AggregateDimensions.Length == 2 && !PivotOnDimensionID.HasValue)
+                throw new QueryBuildingException("In order to have 2 columns, one must be selected as a pivot");
+
             try
             {
                 var qb = GetQueryBuilder();
@@ -637,7 +640,7 @@ namespace CatalogueLibrary.Data.Aggregation
         /// <returns></returns>
         public AggregateConfiguration CreateClone()
         {
-            var cataRepo = (CatalogueRepository) Repository;
+            var cataRepo = CatalogueRepository;
             var clone = ShallowClone();
             
             if(clone.PivotOnDimensionID != null)

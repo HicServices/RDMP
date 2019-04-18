@@ -23,7 +23,7 @@ namespace DataLoadEngineTests.Integration
     {
         private FixedWidthFormatFile CreateFormatFile()
         {
-            FileInfo fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"FixedWidthFormat.csv"));
+            FileInfo fileInfo = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"FixedWidthFormat.csv"));
 
             File.WriteAllText(fileInfo.FullName, LoadDirectory.ExampleFixedWidthFormatFileContents);
             
@@ -95,7 +95,7 @@ namespace DataLoadEngineTests.Integration
         {
             FixedWidthFormatFile formatFile = CreateFormatFile();
 
-            string tempFileToCreate = Path.Combine(TestContext.CurrentContext.WorkDirectory,"unitTestFixedWidthFile.txt");
+            string tempFileToCreate = Path.Combine(TestContext.CurrentContext.TestDirectory,"unitTestFixedWidthFile.txt");
 
             StreamWriter streamWriter = File.CreateText(tempFileToCreate);
             try
@@ -143,14 +143,14 @@ namespace DataLoadEngineTests.Integration
             if (testCase == FixedWidthTestCase.MisnamedHeaders)
                 flatFileColumn = "chickenDippers";
 
-            FileInfo formatFile = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Format.csv"));
+            FileInfo formatFile = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Format.csv"));
 
             File.WriteAllText(formatFile.FullName, @"From,To,Field,Size,DateFormat
 1,5," + flatFileColumn + ",5");
 
 
             //Create the working directory that will be processed
-            var workingDir = new DirectoryInfo(TestContext.CurrentContext.WorkDirectory);
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var parentDir = workingDir.CreateSubdirectory("FixedWidthTests");
 
             DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("TestHeaderMatching"));

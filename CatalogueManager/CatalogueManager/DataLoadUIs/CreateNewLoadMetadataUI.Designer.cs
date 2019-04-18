@@ -86,7 +86,7 @@ namespace CatalogueManager.DataLoadUIs
             this.Controls.Add(this.label3);
             this.Controls.Add(this.chooseLoggingTaskUI1);
             this.Name = "CreateNewLoadMetadataUI";
-            this.Text = "SelectLoadMetadataOrCreateNewUI";
+            this.Text = "Create New Load";
             this.ResumeLayout(false);
             this.PerformLayout();
 

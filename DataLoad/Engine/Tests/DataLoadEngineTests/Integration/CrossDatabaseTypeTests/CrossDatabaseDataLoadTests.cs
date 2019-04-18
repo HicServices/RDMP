@@ -448,7 +448,7 @@ MrMurder,2001-01-01,Yella");
 
         private LoadDirectory SetupLoadDirectory(LoadMetadata lmd)
         {
-            var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory), "MyLoadDir", true);
+            var projectDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), "MyLoadDir", true);
             lmd.LocationOfFlatFiles = projectDirectory.RootPath.FullName;
             lmd.SaveToDatabase();
 

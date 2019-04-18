@@ -33,14 +33,12 @@ namespace CatalogueLibraryTests.Integration
             try
             {
                 Assert.AreEqual(pipeline.Name,"Bob");
-                Assert.AreEqual(CatalogueRepository.GetVersion().ToString(),pipeline.SoftwareVersion);
 
                 PipelineComponent pipelineComponent = new PipelineComponent(CatalogueRepository, pipeline, typeof (BasicAnonymisationEngine), 0);
                 
                 try
                 {
                     Assert.AreEqual(pipelineComponent.Class,typeof(BasicAnonymisationEngine).FullName);
-                    Assert.AreEqual(CatalogueRepository.GetVersion().ToString(), pipelineComponent.SoftwareVersion);
 
                     PipelineComponentArgument argument1 = (PipelineComponentArgument) pipelineComponent.CreateNewArgument();
                     PipelineComponentArgument argument2 = new PipelineComponentArgument(CatalogueRepository, pipelineComponent);

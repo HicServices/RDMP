@@ -479,7 +479,6 @@ namespace Diagnostics
 
             //user does not want to recreate it but it has the correct name so we have to use it as the correct logging server
             DemographyCatalogue.LiveLoggingServer_ID = _loggingServer.ID;
-            DemographyCatalogue.TestLoggingServer_ID = _loggingServer.ID;//just use the same logging server for live and tests
             DemographyCatalogue.LoggingDataTask = _loggingTask;
             DemographyCatalogue.SaveToDatabase();
             
@@ -489,9 +488,6 @@ namespace Diagnostics
 
             if (defaults.GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID) == null)
                 defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID,_loggingServer);
-
-            if (defaults.GetDefaultFor(PermissableDefaults.TestLoggingServer_ID) == null)
-                defaults.SetDefault(PermissableDefaults.TestLoggingServer_ID, _loggingServer);
 
             return true;
 
@@ -558,8 +554,7 @@ namespace Diagnostics
                     var cataloguesUsingServer = repository.GetAllObjects<Catalogue>()
                         .Where(
                             c =>
-                                c.LiveLoggingServer_ID == externalDatabaseServer.ID ||
-                                c.TestLoggingServer_ID == externalDatabaseServer.ID).ToArray();
+                                c.LiveLoggingServer_ID == externalDatabaseServer.ID).ToArray();
 
                     foreach (Catalogue user in cataloguesUsingServer)
                     {
@@ -568,7 +563,6 @@ namespace Diagnostics
                         {
 
                             user.LiveLoggingServer_ID = null;
-                            user.TestLoggingServer_ID = null;
                             user.SaveToDatabase();
                         }
                         else

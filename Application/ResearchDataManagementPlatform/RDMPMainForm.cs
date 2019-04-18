@@ -128,6 +128,11 @@ namespace ResearchDataManagementPlatform
                     _globalErrorCheckNotifier.OnCheckPerformed(
                         new CheckEventArgs("Could not load window persistence due to error in persistence file",
                             CheckResult.Fail, ex));
+
+                    //delete the persistence file and try again
+                    MessageBox.Show("Persistence file corrupt, application will restart without persistence");
+                    _persistenceFile.Delete();
+                    Application.Restart();
                 }
             }
          
@@ -252,11 +257,6 @@ namespace ResearchDataManagementPlatform
             }
 
             return null;
-        }
-
-        private void RDMPMainForm_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            SqlDependencyTableMonitor.Stop();
         }
     }
 }

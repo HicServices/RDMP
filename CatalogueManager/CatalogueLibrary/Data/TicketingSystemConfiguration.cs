@@ -111,7 +111,7 @@ namespace CatalogueLibrary.Data
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"Name", name != null ? (object) name : DBNull.Value},
-                {"IsActive", 1}
+                {"IsActive", true}
             });
         }
 

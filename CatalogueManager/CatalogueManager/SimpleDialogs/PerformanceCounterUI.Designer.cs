@@ -100,7 +100,7 @@
             this.Controls.Add(this.btnViewPerformanceResults);
             this.Controls.Add(this.btnToggleCommandAuditing);
             this.Name = "PerformanceCounterUI";
-            this.Text = "PerformanceCounterUI";
+            this.Text = "Performance";
             this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.CatalogueLibraryPerformanceCounterUI_FormClosing);
             this.ResumeLayout(false);

@@ -216,7 +216,6 @@ namespace Diagnostics
             {
                 Description = TestHospitalAdmissions.DatasetDescription,
                 LiveLoggingServer_ID = _demographyCatalogue.LiveLoggingServer_ID,
-                TestLoggingServer_ID = _demographyCatalogue.TestLoggingServer_ID,
                 LoggingDataTask = _demographyCatalogue.LoggingDataTask
             };
 

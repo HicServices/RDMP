@@ -125,10 +125,6 @@ namespace CatalogueLibrary.Repositories
         /// <returns></returns>
         Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
 
-        void UpsertAndHydrate<T>(T toCreate, ShareManager shareManager, ShareDefinition shareDefinition) where T : class, IMapsDirectlyToDatabaseTable;
-
-        void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject);
-
         ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type);
         
     }

@@ -32,7 +32,7 @@ namespace CatalogueLibraryTests
                 Subject = "Interesting, PayAttention, HighPriority, Omg"
             };
 
-            var f = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "dublinTest.xml"));
+            var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTest.xml"));
 
             using(var fw = f.OpenWrite())
                 def.WriteXml(fw);
@@ -124,7 +124,7 @@ namespace CatalogueLibraryTests
   </dc:format>
 </metadata>";
 
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "dublinTestReading.xml"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "dublinTestReading.xml"));
             File.WriteAllText(fi.FullName,xml);
 
             var doc = XDocument.Load(fi.FullName);

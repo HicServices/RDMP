@@ -23,7 +23,7 @@ namespace DataExportLibrary.Data.DataTables
     /// <summary>
     /// Stores parameter values for a DeployedExtractionFilter
     /// </summary>
-    public class DeployedExtractionFilterParameter: VersionedDatabaseEntity, ISqlParameter
+    public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     {
         #region Database Properties
         private int _extractionFilter_ID;

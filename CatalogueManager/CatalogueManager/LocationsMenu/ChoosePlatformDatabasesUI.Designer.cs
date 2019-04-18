@@ -413,7 +413,7 @@ namespace CatalogueManager.LocationsMenu
             this.Controls.Add(this.gbUseExisting);
             this.Controls.Add(this.pResults);
             this.Name = "ChoosePlatformDatabases";
-            this.Text = "Configure DataManagementPlatform Core Databases";
+            this.Text = "Platform Databases";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ChooseDatabase_KeyUp);
             this.gbUseExisting.ResumeLayout(false);
             this.gbUseExisting.PerformLayout();

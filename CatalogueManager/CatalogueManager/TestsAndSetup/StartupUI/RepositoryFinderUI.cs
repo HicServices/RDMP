@@ -54,7 +54,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             lblExport.Text = "Export:Broken";
 
 
-            lblCatalogue.Text = "Catalogue:" + Describe((CatalogueRepository) _finder.CatalogueRepository, lblCatalogue);
+            lblCatalogue.Text = "Catalogue:" + Describe((TableRepository)_finder.CatalogueRepository, lblCatalogue);
             lblCatalogue.ForeColor = Color.Black;
 
             lblExport.Text = "Export:" + Describe((DataExportRepository)_finder.DataExportRepository, lblExport);

@@ -273,7 +273,7 @@ namespace CatalogueManager.PluginManagement
             this.Controls.Add(this.lblProgressAnalysing);
             this.Controls.Add(this.pbAnalysing);
             this.Name = "PluginManagementForm";
-            this.Text = "PluginManagementForm";
+            this.Text = "Plugins";
             ((System.ComponentModel.ISupportInitialize)(this.olvPlugins)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.olvLegacyPlugins)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);

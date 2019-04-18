@@ -325,13 +325,14 @@ namespace CatalogueManager.AggregationUIs
         private void PopulateGraphResults(QueryTimeColumn countColumn, AggregateContinuousDateAxis axis)
         {
             bool haveSetSource = false;
+            if(chart1.Legends.Count == 0) 
+                chart1.Legends.Add(new Legend());
 
             //last column is always the X axis, then for each column before it add a series with Y values coming from that column
             for (int i = 0; i < _dt.Columns.Count - 1; i++)
             {
                 int index = i;
-
-
+                
                 if (!haveSetSource)
                 {
                     try
@@ -349,18 +350,7 @@ namespace CatalogueManager.AggregationUIs
                     chart1.DataSource = _dt;
                     haveSetSource = true;
                 }
-
-                if (countColumn != null)
-                    try
-                    {
-                        chart1.ChartAreas[0].AxisY.Title = countColumn.IColumn.GetRuntimeName();
-                    }
-                    catch (Exception)
-                    {
-                        chart1.ChartAreas[0].AxisY.Title = "Count";
-                        //sometimes you can't get a runtime name e.g. it is count(*) with no alias
-                    }
-
+                
                 chart1.ChartAreas[0].AxisX.IsMarginVisible = false;
                 chart1.ChartAreas[0].AxisY.IsMarginVisible = false;
 
@@ -476,7 +466,22 @@ namespace CatalogueManager.AggregationUIs
                     }
                 }
                 else
+                {
                     chart1.ChartAreas[0] = new ChartArea(); //reset it
+                    chart1.ChartAreas[0].AxisX.Title = _dt.Columns[0].ColumnName;
+                }
+                
+                //Set the Y axis title
+                if (countColumn != null)
+                    try
+                    {
+                        chart1.ChartAreas[0].AxisY.Title = countColumn.IColumn.GetRuntimeName();
+                    }
+                    catch (Exception)
+                    {
+                        chart1.ChartAreas[0].AxisY.Title = "Count";
+                        //sometimes you can't get a runtime name e.g. it is count(*) with no alias
+                    }
 
                 chart1.ChartAreas[0].AxisY.MinorGrid.Enabled = true;
                 chart1.ChartAreas[0].AxisY.MinorGrid.LineDashStyle = ChartDashStyle.Dot;
@@ -518,6 +523,10 @@ namespace CatalogueManager.AggregationUIs
                 //name series based on column 3 or the aggregate name
                 chart1.Series[index].Name = _dt.Columns[index + 1].ColumnName;
             }
+
+            //don't show legend if theres only the one series
+            if(chart1.Series.Count == 1)
+                chart1.Legends.Clear();
 
             lblLoadStage.Text = "Data Binding Chart (" + _dt.Columns.Count + " columns)";
             lblLoadStage.Refresh();

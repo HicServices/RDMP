@@ -106,7 +106,7 @@ namespace CatalogueLibrary.Data.Cohort
         {
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
-                {"Operation", operation},
+                {"Operation", operation.ToString()},
                 {"Order", 0},
                 {"Name", operation.ToString()}
             });

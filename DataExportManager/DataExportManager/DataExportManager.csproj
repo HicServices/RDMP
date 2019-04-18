@@ -222,20 +222,20 @@
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle">
-      <HintPath>..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">

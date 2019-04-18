@@ -84,7 +84,7 @@
             this.Controls.Add(this.textBox1);
             this.Name = "TypeTextOrCancelDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "TypeTextOrCancelDialog";
+            this.Text = "Input";
             this.ResumeLayout(false);
             this.PerformLayout();
 

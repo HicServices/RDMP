@@ -27,7 +27,7 @@ namespace CatalogueLibraryTests.Unit.ExerciseData
             ExerciseTestIdentifiers people = new ExerciseTestIdentifiers();
             people.GeneratePeople(100);
 
-            var f =new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"DeleteMeTestPeople.csv"));
+            var f =new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPeople.csv"));
             
             var messages = new ToMemoryDataLoadEventListener(true);
 

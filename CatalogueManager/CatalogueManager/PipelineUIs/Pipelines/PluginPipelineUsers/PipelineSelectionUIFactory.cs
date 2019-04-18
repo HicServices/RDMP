@@ -30,7 +30,7 @@ namespace CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers
             _useCase = useCase;
         }
 
-        public PipelineSelectionUIFactory(CatalogueRepository repository, RequiredPropertyInfo requirement, ArgumentValueUIArgs args, object demanderInstance)
+        public PipelineSelectionUIFactory(ICatalogueRepository repository, RequiredPropertyInfo requirement, ArgumentValueUIArgs args, object demanderInstance)
         {
             _repository = repository;
 

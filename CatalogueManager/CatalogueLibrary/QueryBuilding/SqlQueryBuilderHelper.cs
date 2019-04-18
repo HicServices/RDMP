@@ -273,8 +273,7 @@ namespace CatalogueLibrary.QueryBuilding
             //there must be at least one TableInfo here to do this... but we are going to look up all available JoinInfos from these tables to identify opportunistic joins
             foreach(var table in toReturn.ToArray())
             {
-                var cataRepo = ((CatalogueRepository) table.Repository);
-                var available = cataRepo.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
+                var available = table.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(table, JoinInfoType.AnyKey);
                 
                 foreach (JoinInfo newAvailableJoin in available)
                 {

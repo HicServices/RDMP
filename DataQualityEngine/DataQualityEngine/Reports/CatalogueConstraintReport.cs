@@ -41,6 +41,8 @@ namespace DataQualityEngine.Reports
         private Validator _validator;
         private bool _containsDataLoadID;
 
+        public static int MaximumPivotValues = 5000;
+
         private Dictionary<string,DQEStateOverDataLoadRunId> byPivotRowStatesOverDataLoadRunId = new Dictionary<string, DQEStateOverDataLoadRunId>();
         private Dictionary<string,PeriodicityCubesOverTime> byPivotCategoryCubesOverTime = new Dictionary<string, PeriodicityCubesOverTime>();
 
@@ -55,7 +57,7 @@ namespace DataQualityEngine.Reports
             
         }
 
-        private void SetupLogging(CatalogueRepository repository)
+        private void SetupLogging(ICatalogueRepository repository)
         {
             //if we have already setup logging successfully then don't worry about doing it again
             if (_loggingServer != null && _logManager != null && _loggingTask != null)
@@ -83,7 +85,7 @@ namespace DataQualityEngine.Reports
 
         public override void GenerateReport(Catalogue c, IDataLoadEventListener listener, CancellationToken cancellationToken)
         {
-            SetupLogging((CatalogueRepository) c.Repository);
+            SetupLogging(c.CatalogueRepository);
 
             var toDatabaseLogger = new ToLoggingDatabaseDataLoadEventListener(this, _logManager, _loggingTask, "DQE evaluation of " + c);
 
@@ -92,7 +94,7 @@ namespace DataQualityEngine.Reports
             try
             {
                 _catalogue = c;
-                var dqeRepository = new DQERepository((CatalogueRepository) c.Repository);
+                var dqeRepository = new DQERepository(c.CatalogueRepository);
 
                 byPivotCategoryCubesOverTime.Add("ALL", new PeriodicityCubesOverTime("ALL"));
                 byPivotRowStatesOverDataLoadRunId.Add("ALL", new DQEStateOverDataLoadRunId("ALL"));
@@ -165,10 +167,9 @@ namespace DataQualityEngine.Reports
                             if (!byPivotCategoryCubesOverTime.ContainsKey(pivotValue))
                             {
                                 //we will need to expand the dictionaries 
-                                if (byPivotCategoryCubesOverTime.Keys.Count > 30)
-                                    //IMPORTANT: this value of 30 is in the documentation, dont change it without also changing UserManual.docx
+                                if (byPivotCategoryCubesOverTime.Keys.Count > MaximumPivotValues)
                                     throw new OverflowException(
-                                        "Encountered more than 30 values for the pivot column " + _pivotCategory +
+                                        "Encountered more than "+MaximumPivotValues+" values for the pivot column " + _pivotCategory +
                                         " this will result in crazy space usage since it is a multiplicative scale of DQE tesseracts");
 
                                 //expand both the time periodicity and the state results
@@ -279,7 +280,7 @@ namespace DataQualityEngine.Reports
             }
             try
             {
-                var dqeRepository = new DQERepository((CatalogueRepository)_catalogue.Repository);
+                var dqeRepository = new DQERepository(_catalogue.CatalogueRepository);
                 notifier.OnCheckPerformed(new CheckEventArgs("Found DQE reporting server " + dqeRepository.DiscoveredServer.Name, CheckResult.Success));
             }
             catch (Exception e)
@@ -292,7 +293,7 @@ namespace DataQualityEngine.Reports
 
             try
             {
-                SetupLogging((CatalogueRepository)_catalogue.Repository);
+                SetupLogging(_catalogue.CatalogueRepository);
             }
             catch (Exception e)
             {

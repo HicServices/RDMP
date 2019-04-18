@@ -163,7 +163,7 @@ namespace MapsDirectlyToDatabaseTableUI
             this.Controls.Add(this.olvObjects);
             this.Name = "SelectIMapsDirectlyToDatabaseTableDialog";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "SelectIMapsDirectlyToTableDialog";
+            this.Text = "Select Object(s)";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.SelectIMapsDirectlyToDatabaseTableDialog_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.olvObjects)).EndInit();
             this.ResumeLayout(false);

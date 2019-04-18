@@ -17,6 +17,7 @@ using CatalogueLibrary.Providers;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.DataViewing.Collections;
 using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.Icons.IconProvision;
@@ -42,6 +43,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 {
     public class TestActivateItems:IActivateItems, ITheme
     {
+        private readonly UITests _uiTests;
         private static CommentStore _commentStore;
         private List<IProblemProvider> _problemProviders;
 
@@ -58,8 +60,9 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         /// </summary>
         public TestActivateItemsResults Results { get; private set; }
 
-        public TestActivateItems(MemoryDataExportRepository repo)
+        public TestActivateItems(UITests uiTests,MemoryDataExportRepository repo)
         {
+            _uiTests = uiTests;
             Results = new TestActivateItemsResults();
 
             RepositoryLocator = new RepositoryProvider(repo);
@@ -84,6 +87,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                 new DataExportProblemProvider()
             });
 
+            PluginUserInterfaces = new List<IPluginUserInterface>();
         }
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
@@ -100,7 +104,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
         public ICoreIconProvider CoreIconProvider { get; private set; }
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
         public ICommandFactory CommandFactory { get; private set; }
-        public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
+        public ICommandExecutionFactory CommandExecutionFactory { get; set; }
         public CommentStore CommentStore { get; private set; }
         public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
         {
@@ -109,7 +113,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
         public T Activate<T, T2>(T2 databaseObject) where T : RDMPSingleDatabaseObjectControl<T2>, new() where T2 : DatabaseEntity
         {
-            throw new NotImplementedException();
+            return _uiTests.AndLaunch<T>(databaseObject);
         }
 
         public T Activate<T>(IPersistableObjectCollection collection) where T : Control, IObjectCollectionControl, new()

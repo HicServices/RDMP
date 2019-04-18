@@ -109,7 +109,7 @@ namespace DataLoadEngine.Checks.Checkers
 
         private void CreateNewLoggingTaskFor(ICheckNotifier notifier,ICatalogue[] catalogues, string proposedName)
         {
-            var catarepo = (CatalogueRepository) _loadMetadata.Repository;
+            var catarepo =  _loadMetadata.CatalogueRepository;
 
             var serverIds = catalogues.Select(c => c.LiveLoggingServer_ID).Where(i=>i.HasValue).Distinct().ToArray();
 

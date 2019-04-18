@@ -57,7 +57,7 @@ namespace CatalogueLibrary.QueryBuilding.Options
                     //can only Top X if we have a pivot (top x applies to the selection of the pivot values) or if we have nothing (no axis / pivot).  This rules out axis only queries 
                     return aggregate.PivotOnDimensionID != null || aggregate.GetAxisIfAny() == null;
                 case AggregateEditorSection.PIVOT:
-                    return aggregate.GetAxisIfAny() != null;//can only pivot if there is an axis
+                    return aggregate.GetAxisIfAny() != null || aggregate.AggregateDimensions.Length==2;//can only pivot if there is an axis or exactly 2 dimensions (+ count)
                 case AggregateEditorSection.AXIS:
                     return true;
                 default:

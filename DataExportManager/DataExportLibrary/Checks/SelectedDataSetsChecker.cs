@@ -130,19 +130,15 @@ namespace DataExportLibrary.Checks
                 //Try to fetch TOP 1 data
                 try
                 {
-                    using (var con = server.GetConnection())
+                    using (var con = server.BeginNewTransactedConnection())
                     {
-                        con.Open();
-                        var transaction = con.BeginTransaction();
                         //incase user somehow manages to write a filter/transform that nukes data or something
-
-                        var managedTransaction = new ManagedTransaction(con, transaction);
 
                         DbCommand cmd;
 
                         try
                         {
-                            cmd = server.GetCommand(request.QueryBuilder.SQL, con, managedTransaction);
+                            cmd = server.GetCommand(request.QueryBuilder.SQL, con);
                             cmd.CommandTimeout = timeout;
                             notifier.OnCheckPerformed(
                                 new CheckEventArgs(
@@ -176,6 +172,8 @@ namespace DataExportLibrary.Checks
                             else
                                 notifier.OnCheckPerformed(new CheckEventArgs("Failed to execute the query (See below for query)", CheckResult.Fail, e));
                         }
+
+                        con.ManagedTransaction.AbandonAndCloseConnection();
                     }
                 }
                 catch (Exception e)

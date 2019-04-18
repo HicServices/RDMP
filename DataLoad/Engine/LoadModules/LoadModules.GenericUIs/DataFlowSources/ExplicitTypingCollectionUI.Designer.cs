@@ -91,7 +91,7 @@
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.tableLayoutPanel1);
             this.Name = "ExplicitTypingCollectionUI";
-            this.Text = "ExplicitTypingCollectionUI";
+            this.Text = "Explicit Types";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ExplicitTypingCollectionUI_FormClosing);
             this.ResumeLayout(false);
 

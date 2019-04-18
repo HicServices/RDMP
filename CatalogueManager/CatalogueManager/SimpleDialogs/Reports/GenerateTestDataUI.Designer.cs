@@ -213,7 +213,7 @@
             this.Controls.Add(this.pOutputDirectory);
             this.Controls.Add(this.panel1);
             this.Name = "GenerateTestDataUI";
-            this.Text = "GenerateTestDataUI";
+            this.Text = "Generate Test Data";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.UserExercisesUI_FormClosing);
             this.pOutputDirectory.ResumeLayout(false);
             this.pOutputDirectory.PerformLayout();

@@ -301,8 +301,8 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnGenerateReport);
             this.Controls.Add(this.label1);
-            this.Name = "ConfigureMetadataReport";
-            this.Text = "ConfigureMetadataReport";
+            this.Name = "MetadataReportUI";
+            this.Text = "Metadata Report";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfigureMetadataReport_FormClosing);
             this.groupBox1.ResumeLayout(false);
             this.groupBox1.PerformLayout();

@@ -22,6 +22,8 @@ namespace DataExportLibrary.Repositories.Managers.HighPerformance
     class DataExportFilterManagerFromChildProvider : DataExportFilterManager
     {
         readonly Dictionary<int, List<FilterContainer>> _subcontainers = new Dictionary<int, List<FilterContainer>>();
+        
+        private From1ToM<IContainer, IFilter> _containersToFilters;
 
         /// <summary>
         /// Fetches all containers and filters out of the <paramref name="repository"/> and sets the class up to provide
@@ -30,6 +32,8 @@ namespace DataExportLibrary.Repositories.Managers.HighPerformance
         /// <param name="repository"></param>
         public DataExportFilterManagerFromChildProvider(DataExportRepository repository, DataExportChildProvider childProvider): base(repository)
         {
+            _containersToFilters = new From1ToM<IContainer, IFilter>(f=>f.FilterContainer_ID.Value,childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue));
+
             var server = repository.DiscoveredServer;
             using (var con = repository.GetConnection())
             {
@@ -60,6 +64,9 @@ namespace DataExportLibrary.Repositories.Managers.HighPerformance
             return _subcontainers[parent.ID].ToArray();
         }
 
-
+        public override IFilter[] GetFilters(IContainer container)
+        {
+            return  _containersToFilters[container].ToArray();
+        }
     }
 }

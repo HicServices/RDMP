@@ -5,9 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
@@ -49,8 +52,6 @@ namespace CatalogueLibrary.Providers
     /// </summary>
     public class CatalogueChildProvider :ICoreChildProvider
     {
-        public static bool UseCaching { get; set; }
-
         //Load System
         public LoadMetadata[] AllLoadMetadatas { get; set; }
         public ProcessTask[] AllProcessTasks { get; set; }
@@ -66,7 +67,7 @@ namespace CatalogueLibrary.Providers
         public SupportingSQLTable[] AllSupportingSQL { get; set; }
 
         //tells you the imediate children of a given node.  Do not add to this directly instead add using AddToDictionaries unless you want the Key to be an 'on the sly' no known descendency child
-        private Dictionary<object, HashSet<object>> _childDictionary = new Dictionary<object, HashSet<object>>();
+        private ConcurrentDictionary<object, HashSet<object>> _childDictionary = new ConcurrentDictionary<object, HashSet<object>>();
         
         //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
@@ -74,6 +75,8 @@ namespace CatalogueLibrary.Providers
 
 
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
+        
+        private From1ToM<Catalogue,CatalogueItem> _catalogueToCatalogueItems;
         public Dictionary<int,CatalogueItem> AllCatalogueItemsDictionary { get; private set; }
 
         private readonly Dictionary<int,ColumnInfo> _allColumnInfos;
@@ -112,6 +115,7 @@ namespace CatalogueLibrary.Providers
         public DataAccessCredentials[] AllDataAccessCredentials { get; set; }
         public Dictionary<TableInfo, List<DataAccessCredentialUsageNode>> AllDataAccessCredentialUsages { get; set; }
 
+        private From1ToM<TableInfo, ColumnInfo> _tableInfosToColumnInfos;
         public ColumnInfo[] AllColumnInfos { get; private set; }
         public PreLoadDiscardedColumn[] AllPreLoadDiscardedColumns { get; private set; }
 
@@ -139,10 +143,10 @@ namespace CatalogueLibrary.Providers
         private readonly IFilterManager _aggregateFilterManager;
 
         //Filters for Aggregates (includes filter containers (AND/OR)
-        public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary;
+        public Dictionary<int, AggregateFilterContainer> AllAggregateContainersDictionary { get; private set; }
         public AggregateFilterContainer[] AllAggregateContainers { get { return AllAggregateContainersDictionary.Values.ToArray();}}
 
-        private AggregateFilter[] AllAggregateFilters;
+        public AggregateFilter[] AllAggregateFilters { get; private set; }
         private AggregateFilterParameter[] AllAggregateFilterParameters;
 
         //Catalogue master filters (does not include any support for filter containers (AND/OR)
@@ -158,7 +162,7 @@ namespace CatalogueLibrary.Providers
         public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
         public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
-        public Dictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
+        public ConcurrentDictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
         public readonly IChildProvider[] PluginChildProviders;
         private readonly ICatalogueRepository _catalogueRepository;
@@ -181,7 +185,7 @@ namespace CatalogueLibrary.Providers
             _errorsCheckNotifier = errorsCheckNotifier;
 
             // all the objects which are 
-            AllMasqueraders = new Dictionary<object, HashSet<IMasqueradeAs>>();
+            AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();
             
             PluginChildProviders = pluginChildProviders;
             
@@ -216,10 +220,13 @@ namespace CatalogueLibrary.Providers
             AllConnectionStringKeywords = GetAllObjects<ConnectionStringKeyword>(repository).ToArray();
             AddToDictionaries(new HashSet<object>(AllConnectionStringKeywords), new DescendancyList(AllConnectionStringKeywordsNode));
             
-            //which TableInfos use which Credentials under which DataAccessContexts
-            AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials, AllTableInfos);
+            Task.WaitAll(
+                //which TableInfos use which Credentials under which DataAccessContexts
+                Task.Factory.StartNew(() => { AllDataAccessCredentialUsages = repository.TableInfoCredentialsManager.GetAllCredentialUsagesBy(AllDataAccessCredentials,AllTableInfos);}),
+                Task.Factory.StartNew(() => { AllColumnInfos = GetAllObjects<ColumnInfo>(repository); })
+                );
             
-            AllColumnInfos = GetAllObjects<ColumnInfo>(repository);
+            _tableInfosToColumnInfos = new From1ToM<TableInfo, ColumnInfo>(c=>c.TableInfo_ID,AllColumnInfos);
             AllPreLoadDiscardedColumns = GetAllObjects<PreLoadDiscardedColumn>(repository);
 
             AllSupportingDocuments = GetAllObjects<SupportingDocument>(repository);
@@ -229,10 +236,11 @@ namespace CatalogueLibrary.Providers
             AllJoinableCohortAggregateConfigurationUse = GetAllObjects<JoinableCohortAggregateConfigurationUse>(repository);
 
             AllCatalogueItemsDictionary = GetAllObjects<CatalogueItem>(repository).ToDictionary(i => i.ID, o => o);
+            _catalogueToCatalogueItems = new From1ToM<Catalogue, CatalogueItem>(ci=>ci.Catalogue_ID,AllCatalogueItems);
             _allColumnInfos = AllColumnInfos.ToDictionary(i=>i.ID,o=>o);
             
             //Inject known ColumnInfos into CatalogueItems
-            foreach (CatalogueItem ci in AllCatalogueItems)
+            Parallel.ForEach(AllCatalogueItems, (ci) =>
             {
                 ColumnInfo col = null;
 
@@ -240,7 +248,7 @@ namespace CatalogueLibrary.Providers
                     col = _allColumnInfos[ci.ColumnInfo_ID.Value];
 
                 ci.InjectKnown(col);
-            }
+            });
 
             AllExtractionInformationsDictionary = GetAllObjects<ExtractionInformation>(repository).ToDictionary(i => i.ID, o => o);
             _extractionInformationsByCatalogueItem = AllExtractionInformationsDictionary.Values.ToDictionary(k=>k.CatalogueItem_ID,v=>v);
@@ -327,8 +335,7 @@ namespace CatalogueLibrary.Providers
             BuildServerNodes();
 
             AddChildren(CatalogueFolder.Root,new DescendancyList(CatalogueFolder.Root));
-
-
+            
             AllLoadMetadatasNode = new AllLoadMetadatasNode();
             AddChildren(AllLoadMetadatasNode);
 
@@ -354,6 +361,29 @@ namespace CatalogueLibrary.Providers
             GovernanceCoverage = repository.GovernanceManager.GetAllGovernedCataloguesForAllGovernancePeriods();
 
             AddChildren(AllGovernanceNode);
+
+
+            var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
+
+            foreach (IMapsDirectlyToDatabaseTable o in _descendancyDictionary.Keys.OfType<IMapsDirectlyToDatabaseTable>())
+            {
+                if(!searchables.ContainsKey(o.ID))
+                    searchables.Add(o.ID,new HashSet<IMapsDirectlyToDatabaseTable>());
+
+                searchables[o.ID].Add(o);
+            }
+            
+            foreach (ObjectExport e in AllExports)
+            {
+                if(!searchables.ContainsKey(e.ReferencedObjectID))
+                    continue;
+                
+                var known = searchables[e.ReferencedObjectID].FirstOrDefault(s => e.ReferencedObjectType == s.GetType().FullName);
+
+                if(known != null)
+                    e.InjectKnown(known);
+            }
+            
         }
 
         
@@ -522,12 +552,14 @@ namespace CatalogueLibrary.Providers
                 AddToDictionaries(new HashSet<object>(tableInfos), new DescendancyList(AllServersNode, kvp.Key));
                 
                 //record the children of the table infos (mostly column infos)
-                foreach (var t in tableInfos)
-                    AddChildren(t, 
-                        
-                        //t descends from :
-                        //the all servers node=>the TableInfoServerNode => the t
-                        new DescendancyList(AllServersNode, kvp.Key, t));
+                var kvp1 = kvp;
+                Parallel.ForEach(tableInfos, (t) =>
+                {
+                    //t descends from :
+                    //the all servers node=>the TableInfoServerNode => the t
+                    AddChildren(t,new DescendancyList(AllServersNode, kvp1.Key, t));
+                });
+
             }
 
             //record the fact that all the servers are children of the all servers node
@@ -560,26 +592,24 @@ namespace CatalogueLibrary.Providers
 
         private void AddChildren(CatalogueFolder folder, DescendancyList descendancy)
         {
-            List<object> childObjects = new List<object>();
+            ConcurrentBag<object> childObjects = new ConcurrentBag<object>();
 
-            
-            //add subfolders
-            foreach (CatalogueFolder f in folder.GetImmediateSubFoldersUsing(AllCatalogues))
+            Parallel.ForEach(folder.GetImmediateSubFoldersUsing(AllCatalogues), (f) =>
             {
+                //add subfolders
                 childObjects.Add(f);
-                AddChildren(f,descendancy.Add(f));
-            }
-            
+                AddChildren(f, descendancy.Add(f));
+            });
+
             //add catalogues in folder
-            foreach (Catalogue c in AllCatalogues.Where(c => c.Folder.Equals(folder)))
+            Parallel.ForEach(AllCatalogues.Where(c => c.Folder.Equals(folder)), c => 
             {
                 AddChildren(c,descendancy.Add(c));
                 childObjects.Add(c);
-            }
-
+            });
+            
             //finalise
             AddToDictionaries(new HashSet<object>(childObjects),descendancy );
-            
         }
 
         #region Load Metadata
@@ -705,7 +735,30 @@ namespace CatalogueLibrary.Providers
             var catalogueAggregates = AllAggregateConfigurations.Where(a => a.Catalogue_ID == c.ID).ToArray();
             var cohortAggregates = catalogueAggregates.Where(a => a.IsCohortIdentificationAggregate).ToArray();
             var regularAggregates = catalogueAggregates.Except(cohortAggregates).ToArray();
+
+            //get all the CatalogueItems for this Catalogue
+            var cis = _catalogueToCatalogueItems[c].ToArray();
+
+            //tell the CatalogueItems that we are are their parent
+            foreach (CatalogueItem ci in cis)
+                ci.InjectKnown(c);
             
+            //add a new CatalogueItemNode (can be empty)
+            var catalogueItemsNode = new CatalogueItemsNode(c, cis);
+
+            //if there are at least 1 catalogue items inject them into Catalogue and add a recording that the CatalogueItemsNode has these children (otherwise node has no children)
+            if (cis.Any())
+            {
+                c.InjectKnown(cis);
+
+                var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
+                AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
+
+                foreach (CatalogueItem ci in cis)
+                    AddChildren(ci,ciNodeDescendancy.Add(ci));
+                
+            }
+
             //do we have any foreign key fields into this lookup table
             var lookups = AllLookups.Where(l => c.CatalogueItems.Any(ci => ci.ColumnInfo_ID == l.ForeignKey_ID)).ToArray();
             
@@ -762,30 +815,9 @@ namespace CatalogueLibrary.Providers
                     AddChildren(regularAggregate, nodeDescendancy.Add(regularAggregate));
             }
             
-            var cis = AllCatalogueItems
-                .Where(ci => ci.Catalogue_ID == c.ID)
-                .ToArray();
-
-            //tell the CatalogueItems that we are are their parent
-            foreach (CatalogueItem ci in cis)
-                ci.InjectKnown(c);
-
-            //add a new CatalogueItemNode (can be empty)
-            var catalogueItemsNode = new CatalogueItemsNode(c, cis);
             childObjects.Add(catalogueItemsNode);
 
-            //if there are at least 1 catalogue items inject them into Catalogue and add a recording that the CatalogueItemsNode has these children (otherwise node has no children)
-            if (cis.Any())
-            {
-                c.InjectKnown(cis);
-
-                var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
-                AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
-
-                foreach (CatalogueItem ci in cis)
-                    AddChildren(ci,ciNodeDescendancy.Add(ci));
-                
-            }
+            
             //finalise
             AddToDictionaries(new HashSet<object>(childObjects),descendancy);
         }
@@ -817,7 +849,7 @@ namespace CatalogueLibrary.Providers
             List<object> childrenObjects = new List<object>();
 
             var subcontainers = _aggregateFilterManager.GetSubContainers(container);
-            var filters = AllAggregateFilters.Where(f => f.FilterContainer_ID == container.ID).ToArray();
+            var filters = _aggregateFilterManager.GetFilters(container);
 
             foreach (AggregateFilterContainer subcontainer in subcontainers)
             {
@@ -1039,7 +1071,7 @@ namespace CatalogueLibrary.Providers
             }
 
             //next add the column infos
-            foreach (ColumnInfo c in AllColumnInfos.Where(ci => ci.TableInfo_ID == tableInfo.ID))
+            foreach (ColumnInfo c in _tableInfosToColumnInfos[tableInfo])
             {
                 children.Add(c);
                 c.InjectKnown(tableInfo);
@@ -1072,60 +1104,64 @@ namespace CatalogueLibrary.Providers
                 AddToDictionaries(children,descendancy);
         }
 
+        private object oAddToDictionariesLock = new object();
         protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
         {
             if(list.IsEmpty)
                 throw new ArgumentException("DescendancyList cannot be empty","list");
-            
+         
             //document that the last parent has these as children
             var parent = list.Last();
-
-            //we have already seen it before
-            if(_childDictionary.ContainsKey(parent))
+            lock (oAddToDictionariesLock)
             {
-                if (!_childDictionary[parent].SetEquals(children))
-                    throw new Exception("Ambiguous children collections for object '" + parent  +"'");
-            }
-            else
-                _childDictionary.Add(parent,children);
 
-            //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
-            foreach (object o in children)
-            {
-                //if there is a collision for the object then it means we already know of another way to get to it (that's a problem, there can be only one)
-                if(_descendancyDictionary.ContainsKey(o))
+                //we have already seen it before
+                if(_childDictionary.ContainsKey(parent))
                 {
+                    if (!_childDictionary[parent].SetEquals(children))
+                        throw new Exception("Ambiguous children collections for object '" + parent  +"'");
+                }
+                else
+                    _childDictionary.AddOrUpdate(parent,children,(o, set) => set);
 
-                    var collision =_descendancyDictionary[o];
-                    //the old way of getting to it was marked with BetterRouteExists so we can discard it
-                    if (collision.BetterRouteExists)
-                        _descendancyDictionary.Remove(o);
-                    //the new one is marked BetterRouteExists so just throw away the new one
-                    else if (list.BetterRouteExists)
-                        continue;
-                    //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
-                    else if (list.NewBestRoute && !collision.NewBestRoute)
-                        _descendancyDictionary.Remove(o);
-                    else
+                //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
+                foreach (object o in children)
+                {
+                    //if there is a collision for the object then it means we already know of another way to get to it (that's a problem, there can be only one)
+                    if(_descendancyDictionary.ContainsKey(o))
                     {
-                        //there was a horrible problem with 
-                        _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + collision,CheckResult.Fail));
-                        return;
-                    }
+
+                        var collision =_descendancyDictionary[o];
+                        //the old way of getting to it was marked with BetterRouteExists so we can discard it
+                        if (collision.BetterRouteExists)
+                            _descendancyDictionary.Remove(o);
+                        //the new one is marked BetterRouteExists so just throw away the new one
+                        else if (list.BetterRouteExists)
+                            continue;
+                        //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
+                        else if (list.NewBestRoute && !collision.NewBestRoute)
+                            _descendancyDictionary.Remove(o);
+                        else
+                        {
+                            //there was a horrible problem with 
+                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + collision,CheckResult.Fail));
+                            return;
+                        }
                     
+                    }
+
+                    _descendancyDictionary.Add(o, list);
                 }
 
-                _descendancyDictionary.Add(o, list);
-            }
+                foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
+                {
+                    var key = masquerader.MasqueradingAs();
 
-            foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
-            {
-                var key = masquerader.MasqueradingAs();
+                    if(!AllMasqueraders.ContainsKey(key))
+                        AllMasqueraders.AddOrUpdate(key,new HashSet<IMasqueradeAs>(),(o, set) => set);
 
-                if(!AllMasqueraders.ContainsKey(key))
-                    AllMasqueraders.Add(key,new HashSet<IMasqueradeAs>());
-
-                AllMasqueraders[key].Add(masquerader);
+                    AllMasqueraders[key].Add(masquerader);
+                }
             }
         }
 
@@ -1209,7 +1245,7 @@ namespace CatalogueLibrary.Providers
                             {
                                 //if the parent didn't have any children before
                                 if (!_childDictionary.ContainsKey(o))
-                                    _childDictionary.Add(o,new HashSet<object>());//it does now
+                                    _childDictionary.AddOrUpdate(o,new HashSet<object>(),(o1, set) => set);//it does now
 
 
                                 //add us to the parent objects child collection
@@ -1255,7 +1291,7 @@ namespace CatalogueLibrary.Providers
 
         protected T[] GetAllObjects<T>(IRepository repository) where T : IMapsDirectlyToDatabaseTable
         {
-            return UseCaching ? repository.GetAllObjectsCached<T>() : repository.GetAllObjects<T>();
+            return repository.GetAllObjects<T>();
         }
 
 
@@ -1266,4 +1302,31 @@ namespace CatalogueLibrary.Providers
         }
     }
 
+    internal class From1ToM<T, T1>:ConcurrentDictionary<int,ConcurrentBag<T1>> where T:IMapsDirectlyToDatabaseTable where T1:IMapsDirectlyToDatabaseTable
+    {
+        public From1ToM(Func<T1,int> idSelector, IEnumerable<T1> collection)
+        {
+            Parallel.ForEach(collection, (o) =>
+                {
+                    int id = idSelector(o);
+
+                    if (!Keys.Contains(id))
+                        AddOrUpdate(id, new ConcurrentBag<T1>(),(i, set) => set);
+
+                    this[id].Add(o);
+                }
+            );
+        }
+
+        public IEnumerable<T1> this[T parent]
+        {
+            get
+            {
+                if(this.ContainsKey(parent.ID))
+                    return this[parent.ID];
+
+                return Enumerable.Empty<T1>();
+            }
+        }
+    }
 }

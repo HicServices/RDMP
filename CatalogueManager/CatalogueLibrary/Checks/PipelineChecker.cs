@@ -33,7 +33,7 @@ namespace CatalogueLibrary.Checks
         /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
-            var mef = ((CatalogueRepository) _pipeline.Repository).MEF;
+            var mef = ((ICatalogueRepository)_pipeline.Repository).MEF;
             
             foreach (var component in _pipeline.PipelineComponents)
             {

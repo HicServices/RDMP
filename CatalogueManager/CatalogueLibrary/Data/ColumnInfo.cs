@@ -37,7 +37,7 @@ namespace CatalogueLibrary.Data
     /// for the RDMP so that it can rationalize and inform the system user of disapearing columns etc and let the user make decisions about how to resolve it 
     /// (which might be as simple as deleting the ColumnInfos although that will have knock on effects for extraction logic etc).</para>
     /// </summary>
-    public class ColumnInfo : VersionedDatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
+    public class ColumnInfo : DatabaseEntity, IComparable, IResolveDuplication, IHasDependencies, ICheckable, IHasQuerySyntaxHelper, IHasFullyQualifiedNameToo, ISupplementalColumnInformation, IInjectKnown<TableInfo>
     {
         
         #region Database Properties
@@ -283,15 +283,15 @@ namespace CatalogueLibrary.Data
         /// <param name="parent"></param>
         public ColumnInfo(ICatalogueRepository repository, string name, string type, TableInfo parent)
         {
+            //defaults
+            DuplicateRecordResolutionIsAscending = true;
+
             repository.InsertAndHydrate(this,new Dictionary<string, object>
             {
                 {"Name", name != null ? (object) name : DBNull.Value},
                 {"Data_type", type != null ? (object) type : DBNull.Value},
                 {"TableInfo_ID", parent.ID}
             });
-
-            //defaults
-            DuplicateRecordResolutionIsAscending = true;
 
             ClearAllInjections();
         }

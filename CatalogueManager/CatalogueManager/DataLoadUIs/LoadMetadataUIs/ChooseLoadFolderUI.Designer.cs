@@ -211,7 +211,7 @@
             this.Controls.Add(this.rbUseExisting);
             this.Controls.Add(this.rbCreateNew);
             this.Name = "ChooseLoadDirectoryUI";
-            this.Text = "ChooseLoadDirectoryUI";
+            this.Text = "Load Directory";
             this.ResumeLayout(false);
             this.PerformLayout();
 

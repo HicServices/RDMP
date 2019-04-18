@@ -18,7 +18,7 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueCon
         public object InitialValue { get; set; }
         public Type Type { get; set; }
         public RequiredPropertyInfo Required { get; set; }
-        public CatalogueRepository CatalogueRepository { get; set; }
+        public ICatalogueRepository CatalogueRepository { get; set; }
 
         /// <summary>
         /// Call this when the value populated in the user interface is changed

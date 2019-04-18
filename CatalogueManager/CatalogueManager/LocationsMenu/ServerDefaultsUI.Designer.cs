@@ -34,16 +34,12 @@
             this.label13 = new System.Windows.Forms.Label();
             this.ddDefaultANOStore = new System.Windows.Forms.ComboBox();
             this.btnCreateNewIdentifierDump = new System.Windows.Forms.Button();
-            this.btnCreateNewTestLoggingServer = new System.Windows.Forms.Button();
             this.btnCreateNewLoggingServer = new System.Windows.Forms.Button();
             this.btnClearIdentifierDump = new System.Windows.Forms.Button();
-            this.btnClearTestLoggingServer = new System.Windows.Forms.Button();
             this.btnClearLoggingServer = new System.Windows.Forms.Button();
             this.label12 = new System.Windows.Forms.Label();
-            this.label11 = new System.Windows.Forms.Label();
             this.label10 = new System.Windows.Forms.Label();
             this.ddDefaultIdentifierDump = new System.Windows.Forms.ComboBox();
-            this.ddDefaultTestLoggingServer = new System.Windows.Forms.ComboBox();
             this.ddDefaultLoggingServer = new System.Windows.Forms.ComboBox();
             this.groupBox4 = new System.Windows.Forms.GroupBox();
             this.btnCreateNewDQEServer = new System.Windows.Forms.Button();
@@ -76,20 +72,16 @@
             this.groupBox3.Controls.Add(this.label13);
             this.groupBox3.Controls.Add(this.ddDefaultANOStore);
             this.groupBox3.Controls.Add(this.btnCreateNewIdentifierDump);
-            this.groupBox3.Controls.Add(this.btnCreateNewTestLoggingServer);
             this.groupBox3.Controls.Add(this.btnCreateNewLoggingServer);
             this.groupBox3.Controls.Add(this.btnClearIdentifierDump);
-            this.groupBox3.Controls.Add(this.btnClearTestLoggingServer);
             this.groupBox3.Controls.Add(this.btnClearLoggingServer);
             this.groupBox3.Controls.Add(this.label12);
-            this.groupBox3.Controls.Add(this.label11);
             this.groupBox3.Controls.Add(this.label10);
             this.groupBox3.Controls.Add(this.ddDefaultIdentifierDump);
-            this.groupBox3.Controls.Add(this.ddDefaultTestLoggingServer);
             this.groupBox3.Controls.Add(this.ddDefaultLoggingServer);
             this.groupBox3.Location = new System.Drawing.Point(12, 12);
             this.groupBox3.Name = "groupBox3";
-            this.groupBox3.Size = new System.Drawing.Size(1124, 137);
+            this.groupBox3.Size = new System.Drawing.Size(1124, 106);
             this.groupBox3.TabIndex = 13;
             this.groupBox3.TabStop = false;
             this.groupBox3.Text = "Defaults:";
@@ -97,7 +89,7 @@
             // btnCreateNewANOStore
             // 
             this.btnCreateNewANOStore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateNewANOStore.Location = new System.Drawing.Point(1036, 102);
+            this.btnCreateNewANOStore.Location = new System.Drawing.Point(1036, 77);
             this.btnCreateNewANOStore.Name = "btnCreateNewANOStore";
             this.btnCreateNewANOStore.Size = new System.Drawing.Size(80, 23);
             this.btnCreateNewANOStore.TabIndex = 11;
@@ -108,7 +100,7 @@
             // btnClearANOStore
             // 
             this.btnClearANOStore.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearANOStore.Location = new System.Drawing.Point(969, 102);
+            this.btnClearANOStore.Location = new System.Drawing.Point(969, 77);
             this.btnClearANOStore.Name = "btnClearANOStore";
             this.btnClearANOStore.Size = new System.Drawing.Size(65, 23);
             this.btnClearANOStore.TabIndex = 10;
@@ -119,7 +111,7 @@
             // label13
             // 
             this.label13.AutoSize = true;
-            this.label13.Location = new System.Drawing.Point(7, 107);
+            this.label13.Location = new System.Drawing.Point(7, 82);
             this.label13.Name = "label13";
             this.label13.Size = new System.Drawing.Size(163, 13);
             this.label13.TabIndex = 9;
@@ -131,7 +123,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddDefaultANOStore.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddDefaultANOStore.FormattingEnabled = true;
-            this.ddDefaultANOStore.Location = new System.Drawing.Point(220, 104);
+            this.ddDefaultANOStore.Location = new System.Drawing.Point(220, 79);
             this.ddDefaultANOStore.Name = "ddDefaultANOStore";
             this.ddDefaultANOStore.Size = new System.Drawing.Size(743, 21);
             this.ddDefaultANOStore.TabIndex = 8;
@@ -140,24 +132,13 @@
             // btnCreateNewIdentifierDump
             // 
             this.btnCreateNewIdentifierDump.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateNewIdentifierDump.Location = new System.Drawing.Point(1036, 75);
+            this.btnCreateNewIdentifierDump.Location = new System.Drawing.Point(1036, 50);
             this.btnCreateNewIdentifierDump.Name = "btnCreateNewIdentifierDump";
             this.btnCreateNewIdentifierDump.Size = new System.Drawing.Size(80, 23);
             this.btnCreateNewIdentifierDump.TabIndex = 7;
             this.btnCreateNewIdentifierDump.Text = "Create New...";
             this.btnCreateNewIdentifierDump.UseVisualStyleBackColor = true;
             this.btnCreateNewIdentifierDump.Click += new System.EventHandler(this.btnCreateNewIdentifierDump_Click);
-            // 
-            // btnCreateNewTestLoggingServer
-            // 
-            this.btnCreateNewTestLoggingServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCreateNewTestLoggingServer.Location = new System.Drawing.Point(1036, 48);
-            this.btnCreateNewTestLoggingServer.Name = "btnCreateNewTestLoggingServer";
-            this.btnCreateNewTestLoggingServer.Size = new System.Drawing.Size(80, 23);
-            this.btnCreateNewTestLoggingServer.TabIndex = 7;
-            this.btnCreateNewTestLoggingServer.Text = "Create New...";
-            this.btnCreateNewTestLoggingServer.UseVisualStyleBackColor = true;
-            this.btnCreateNewTestLoggingServer.Click += new System.EventHandler(this.btnCreateNewTestLoggingServer_Click);
             // 
             // btnCreateNewLoggingServer
             // 
@@ -173,24 +154,13 @@
             // btnClearIdentifierDump
             // 
             this.btnClearIdentifierDump.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearIdentifierDump.Location = new System.Drawing.Point(969, 75);
+            this.btnClearIdentifierDump.Location = new System.Drawing.Point(969, 50);
             this.btnClearIdentifierDump.Name = "btnClearIdentifierDump";
             this.btnClearIdentifierDump.Size = new System.Drawing.Size(65, 23);
             this.btnClearIdentifierDump.TabIndex = 3;
             this.btnClearIdentifierDump.Text = "Clear";
             this.btnClearIdentifierDump.UseVisualStyleBackColor = true;
             this.btnClearIdentifierDump.Click += new System.EventHandler(this.btnClearServer_Click);
-            // 
-            // btnClearTestLoggingServer
-            // 
-            this.btnClearTestLoggingServer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnClearTestLoggingServer.Location = new System.Drawing.Point(969, 48);
-            this.btnClearTestLoggingServer.Name = "btnClearTestLoggingServer";
-            this.btnClearTestLoggingServer.Size = new System.Drawing.Size(65, 23);
-            this.btnClearTestLoggingServer.TabIndex = 3;
-            this.btnClearTestLoggingServer.Text = "Clear";
-            this.btnClearTestLoggingServer.UseVisualStyleBackColor = true;
-            this.btnClearTestLoggingServer.Click += new System.EventHandler(this.btnClearServer_Click);
             // 
             // btnClearLoggingServer
             // 
@@ -206,20 +176,11 @@
             // label12
             // 
             this.label12.AutoSize = true;
-            this.label12.Location = new System.Drawing.Point(7, 80);
+            this.label12.Location = new System.Drawing.Point(7, 55);
             this.label12.Name = "label12";
             this.label12.Size = new System.Drawing.Size(181, 13);
             this.label12.TabIndex = 2;
             this.label12.Text = "Identifier Dump (For new TableInfos):";
-            // 
-            // label11
-            // 
-            this.label11.AutoSize = true;
-            this.label11.Location = new System.Drawing.Point(7, 53);
-            this.label11.Name = "label11";
-            this.label11.Size = new System.Drawing.Size(209, 13);
-            this.label11.TabIndex = 2;
-            this.label11.Text = "Test Logging Server (For new Catalogues):";
             // 
             // label10
             // 
@@ -236,23 +197,11 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.ddDefaultIdentifierDump.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddDefaultIdentifierDump.FormattingEnabled = true;
-            this.ddDefaultIdentifierDump.Location = new System.Drawing.Point(220, 77);
+            this.ddDefaultIdentifierDump.Location = new System.Drawing.Point(220, 52);
             this.ddDefaultIdentifierDump.Name = "ddDefaultIdentifierDump";
             this.ddDefaultIdentifierDump.Size = new System.Drawing.Size(743, 21);
             this.ddDefaultIdentifierDump.TabIndex = 1;
             this.ddDefaultIdentifierDump.SelectedIndexChanged += new System.EventHandler(this.ddDefault_SelectedIndexChanged);
-            // 
-            // ddDefaultTestLoggingServer
-            // 
-            this.ddDefaultTestLoggingServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.ddDefaultTestLoggingServer.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
-            this.ddDefaultTestLoggingServer.FormattingEnabled = true;
-            this.ddDefaultTestLoggingServer.Location = new System.Drawing.Point(220, 50);
-            this.ddDefaultTestLoggingServer.Name = "ddDefaultTestLoggingServer";
-            this.ddDefaultTestLoggingServer.Size = new System.Drawing.Size(743, 21);
-            this.ddDefaultTestLoggingServer.TabIndex = 1;
-            this.ddDefaultTestLoggingServer.SelectedIndexChanged += new System.EventHandler(this.ddDefault_SelectedIndexChanged);
             // 
             // ddDefaultLoggingServer
             // 
@@ -273,7 +222,7 @@
             this.groupBox4.Controls.Add(this.btnCreateNewDQEServer);
             this.groupBox4.Controls.Add(this.btnClearDQEServer);
             this.groupBox4.Controls.Add(this.ddDQEServer);
-            this.groupBox4.Location = new System.Drawing.Point(12, 155);
+            this.groupBox4.Location = new System.Drawing.Point(12, 124);
             this.groupBox4.Name = "groupBox4";
             this.groupBox4.Size = new System.Drawing.Size(1126, 62);
             this.groupBox4.TabIndex = 14;
@@ -326,7 +275,7 @@
             this.groupBox5.Controls.Add(this.btnCreateNewWebServiceQueryCache);
             this.groupBox5.Controls.Add(this.btnClearWebServiceQueryCache);
             this.groupBox5.Controls.Add(this.ddWebServiceQueryCacheServer);
-            this.groupBox5.Location = new System.Drawing.Point(12, 223);
+            this.groupBox5.Location = new System.Drawing.Point(12, 192);
             this.groupBox5.Name = "groupBox5";
             this.groupBox5.Size = new System.Drawing.Size(1126, 99);
             this.groupBox5.TabIndex = 15;
@@ -425,7 +374,7 @@
             | System.Windows.Forms.AnchorStyles.Right)));
             this.groupBox6.Controls.Add(this.btnClearRAWServer);
             this.groupBox6.Controls.Add(this.ddOverrideRawServer);
-            this.groupBox6.Location = new System.Drawing.Point(12, 328);
+            this.groupBox6.Location = new System.Drawing.Point(12, 297);
             this.groupBox6.Name = "groupBox6";
             this.groupBox6.Size = new System.Drawing.Size(1126, 62);
             this.groupBox6.TabIndex = 16;
@@ -457,18 +406,18 @@
             this.ddOverrideRawServer.TabIndex = 4;
             this.ddOverrideRawServer.SelectedIndexChanged += new System.EventHandler(this.ddDefault_SelectedIndexChanged);
             // 
-            // ManageExternalServers
+            // ServerDefaultsUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.AutoScroll = true;
-            this.ClientSize = new System.Drawing.Size(1148, 404);
+            this.ClientSize = new System.Drawing.Size(1148, 366);
             this.Controls.Add(this.groupBox6);
             this.Controls.Add(this.groupBox5);
             this.Controls.Add(this.groupBox4);
             this.Controls.Add(this.groupBox3);
-            this.Name = "ManageExternalServers";
-            this.Text = "ManageExternalServers";
+            this.Name = "ServerDefaultsUI";
+            this.Text = "Server Defaults";
             this.groupBox3.ResumeLayout(false);
             this.groupBox3.PerformLayout();
             this.groupBox4.ResumeLayout(false);
@@ -483,14 +432,11 @@
 
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.Label label12;
-        private System.Windows.Forms.Label label11;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.ComboBox ddDefaultIdentifierDump;
-        private System.Windows.Forms.ComboBox ddDefaultTestLoggingServer;
         private System.Windows.Forms.ComboBox ddDefaultLoggingServer;
         private System.Windows.Forms.Button btnClearLoggingServer;
         private System.Windows.Forms.Button btnClearIdentifierDump;
-        private System.Windows.Forms.Button btnClearTestLoggingServer;
         private System.Windows.Forms.GroupBox groupBox4;
         private System.Windows.Forms.Button btnCreateNewDQEServer;
         private System.Windows.Forms.Button btnClearDQEServer;
@@ -500,7 +446,6 @@
         private System.Windows.Forms.Button btnClearWebServiceQueryCache;
         private System.Windows.Forms.ComboBox ddWebServiceQueryCacheServer;
         private System.Windows.Forms.Button btnCreateNewIdentifierDump;
-        private System.Windows.Forms.Button btnCreateNewTestLoggingServer;
         private System.Windows.Forms.Button btnCreateNewLoggingServer;
         private System.Windows.Forms.GroupBox groupBox6;
         private System.Windows.Forms.Button btnClearRAWServer;

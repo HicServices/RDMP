@@ -10,6 +10,7 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
 using RDMPStartup;
 using ReusableUIComponents.Dialogs;
+using ScintillaNET;
 
 
 namespace CatalogueManager.TestsAndSetup
@@ -31,6 +32,8 @@ namespace CatalogueManager.TestsAndSetup
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+            Scintilla.SetDestroyHandleBehavior(true);
 
             //tell me when you blow up somewhere in the windows API instead of somewhere sensible
             Application.ThreadException += (sender, args) => ExceptionViewer.Show(args.Exception,false);

@@ -14,7 +14,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using FAnsi.Implementation;
-using Fansi.Implementations.MicrosoftSQL;
+using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;

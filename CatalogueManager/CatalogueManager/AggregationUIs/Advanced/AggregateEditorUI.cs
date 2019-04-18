@@ -113,7 +113,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             var patientIndexTable = rowobject as JoinableCohortAggregateConfiguration;
             var patientIndexTableUse = rowobject as JoinableCohortAggregateConfigurationUse;
 
-            var joiner = ((CatalogueRepository)_aggregate.Repository).AggregateForcedJoinManager;
+            var joiner = _aggregate.CatalogueRepository.AggregateForcedJoinManager;
             
             //user is trying to use a joinable something
             if (newvalue == CheckState.Checked)
@@ -365,7 +365,14 @@ namespace CatalogueManager.AggregationUIs.Advanced
             {
                 _aggregate.PivotOnDimensionID = null;
                 ddPivotDimension.SelectedItem = null;
+
+                if(sender == btnClearPivotDimension)
+                {
+                    _aggregate.SaveToDatabase();
+                    Publish();
+                }
             }
+
         }
         #endregion
 
@@ -498,7 +505,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             //set enablednesss based on legality
             cbExtractable.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.Extractable, _aggregate);
             cbExtractable.Checked = _aggregate.IsExtractable;
-            gbPivot.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
+            ddPivotDimension.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.PIVOT, _aggregate);
             gbAxis.Enabled = _options.ShouldBeEnabled(AggregateEditorSection.AXIS, _aggregate);
 
             //add included/excluded dimensions

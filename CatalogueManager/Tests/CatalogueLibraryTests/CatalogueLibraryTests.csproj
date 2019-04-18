@@ -203,20 +203,20 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi, Version=0.9.0.5, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.dll</HintPath>
+    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
+    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
       <Private>True</Private>
     </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle">
-      <HintPath>..\..\..\packages\HIC.FansiSql.0.9.0.5\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
+    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
       <Private>True</Private>
     </Reference>
     <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
@@ -278,6 +278,7 @@
     <Compile Include="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
     <Compile Include="DublinCoreTests.cs" />
     <Compile Include="ImportTests\GatherAndShareTests.cs" />
+    <Compile Include="ImportTests\ShareLoadMetadataTests.cs" />
     <Compile Include="ImportTests\PluginClassTests.cs" />
     <Compile Include="ImportTests\TestImportingAnObject.cs" />
     <Compile Include="MemoryRepositoryTests\MemoryRepositoryTests.cs" />
@@ -349,6 +350,7 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>TestResources.resx</DependentUpon>
     </Compile>
+    <Compile Include="UnitTestsAllObjectsSupported.cs" />
     <Compile Include="Unit\CacheFetchRequestProviderTests.cs" />
     <Compile Include="Unit\CacheLagPeriodUnitTests.cs" />
     <Compile Include="Unit\CatalogueNamingTests.cs" />
@@ -380,6 +382,7 @@
     <Compile Include="Integration\TableInfoTests.cs" />
     <Compile Include="Unit\TestAcronymGeneration.cs" />
     <Compile Include="UserInterfaceTests\AggregateEditorUITests.cs" />
+    <Compile Include="UserInterfaceTests\ExecuteCommandActivateTests.cs" />
     <Compile Include="UserInterfaceTests\ANOTableUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueItemUITests.cs" />
     <Compile Include="UserInterfaceTests\CatalogueUITests.cs" />
@@ -387,6 +390,7 @@
     <Compile Include="UserInterfaceTests\ExternalDatabaseServerUITests.cs" />
     <Compile Include="UserInterfaceTests\ForwardEngineerANOCatalogueUITests.cs" />
     <Compile Include="UserInterfaceTests\LoadDiagramUITests.cs" />
+    <Compile Include="UserInterfaceTests\PluginProcessTaskUITests.cs" />
     <Compile Include="UserInterfaceTests\TestActivateItems.cs" />
     <Compile Include="UserInterfaceTests\UITests.cs" />
     <Compile Include="UserInterfaceTests\UITimeoutAttribute.cs" />

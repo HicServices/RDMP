@@ -39,10 +39,10 @@ namespace DataLoadEngineTests.Unit
         [OneTimeSetUp]
         public void SprayToDisk()
         {
-            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.WorkDirectory));
-            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.WorkDirectory));
+            _fileLocations.Add(TestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly,typeof(ExcelTests).Namespace + ".TestFile." + TestFile,TestFile,TestContext.CurrentContext.TestDirectory));
+            _fileLocations.Add(FreakyTestFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + FreakyTestFile, FreakyTestFile, TestContext.CurrentContext.TestDirectory));
 
-            _fileLocations.Add(OddFormatsFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + OddFormatsFile, OddFormatsFile, TestContext.CurrentContext.WorkDirectory));
+            _fileLocations.Add(OddFormatsFile, UsefulStuff.SprayFile(typeof(ExcelTests).Assembly, typeof(ExcelTests).Namespace + ".TestFile." + OddFormatsFile, OddFormatsFile, TestContext.CurrentContext.TestDirectory));
         }
 
 
@@ -227,7 +227,7 @@ namespace DataLoadEngineTests.Unit
         {
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@".\Resources\BlankLineBook.xlsx"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@".\Resources\BlankLineBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -249,7 +249,7 @@ namespace DataLoadEngineTests.Unit
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,@"Resources\BlankBook.xlsx"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"Resources\BlankBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());

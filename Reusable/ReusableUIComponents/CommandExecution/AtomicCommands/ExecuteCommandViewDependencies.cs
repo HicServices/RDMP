@@ -56,7 +56,7 @@ namespace ReusableUIComponents.CommandExecution.AtomicCommands
 
             g.Dock = DockStyle.Fill;
             Form f = new Form();
-            f.Text = "Object Visualisation Graph: " + _root;
+            f.Text = "Dependencies of " + _root;
             f.WindowState = FormWindowState.Maximized;
             f.Controls.Add(g);
             f.Show();

@@ -170,7 +170,7 @@
             this.Controls.Add(this.label1);
             this.Controls.Add(this.lbMissingReferences);
             this.Name = "ResolveMissingTargetPropertiesForm";
-            this.Text = "ResolveMissingTargetPropertiesForm";
+            this.Text = "Resolve Missing Columns";
             this.ResumeLayout(false);
             this.PerformLayout();
 

@@ -27,7 +27,7 @@ namespace CatalogueLibrary.Data
     /// <para>If the Global flag is set then the SQL will be run and the result provided to every researcher regardless of what datasets they have asked for in 
     /// an extraction, this is useful for large lookups like ICD / SNOMED CT which are likely to be used by many datasets. </para>
     /// </summary>
-    public class SupportingSQLTable : VersionedDatabaseEntity,INamed, ISupportingObject
+    public class SupportingSQLTable : DatabaseEntity,INamed, ISupportingObject
     {
         /// <summary>
         /// The subfolder of extractions in which to put <see cref="Extractable"/> <see cref="SupportingSQLTable"/> when doing project extractions

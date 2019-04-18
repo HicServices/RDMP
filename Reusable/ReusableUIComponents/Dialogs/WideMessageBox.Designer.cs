@@ -178,7 +178,7 @@
             this.KeyPreview = true;
             this.Name = "WideMessageBox";
             this.StartPosition = System.Windows.Forms.FormStartPosition.CenterScreen;
-            this.Text = "WideMessageBox";
+            this.Text = "Message";
             this.Load += new System.EventHandler(this.WideMessageBox_Load);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.WideMessageBox_KeyUp);
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).EndInit();

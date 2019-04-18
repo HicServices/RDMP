@@ -12,173 +12,64 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
+using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Repositories;
 using FAnsi.Implementation;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using Tests.Common;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
-    public class UITests
+    public class UITests : UnitTests
     {
-        protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
-        protected TestActivateItems ItemActivator;
+        private TestActivateItems _itemActivator;
 
-        protected MEF MEF;
+        protected TestActivateItems ItemActivator
+        {
+            get
+            {
+                if (_itemActivator == null)
+                {
+                    _itemActivator = new TestActivateItems(this,Repository);
+                    _itemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
+                    
+                    //if mef was loaded for this test then this is supported otherwise not
+                    if(MEF != null)
+                        _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
+                }
+
+                return _itemActivator;
+            }
+        }
+
+        
 
         private ToMemoryCheckNotifier _checkResults;
         private Control _userInterfaceLaunched;
-
-        /// <summary>
-        /// Call if your test needs to access classes via MEF.  Loads all dlls in the test directory.
-        /// 
-        /// <para>This must be called before you 'launch' your ui</para>
-        /// </summary>
-        protected void SetupMEF()
-        {
-            MEF = new MEF();
-            MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
-        }
         
-        /// <summary>
-        /// Creates a minimum viable object of Type T.  This includes the object and any dependencies e.g. a 
-        /// <see cref="ColumnInfo"/> cannot exist without a <see cref="TableInfo"/>.  
-        /// </summary>
-        /// <typeparam name="T">Type of object you want to create</typeparam>
-        /// <returns></returns>
-        /// <exception cref="NotSupportedException">If there is not yet an implementation for the given T.  Feel free to write one.</exception>
-        protected T WhenIHaveA<T>() where T:DatabaseEntity
-        {
-            T toReturn = null;
-
-            if (typeof (T) == typeof (Catalogue))
-                return (T)(object) Save(new Catalogue(Repository, "Mycata"));
-
-            if (typeof(T) == typeof(CatalogueItem))
-            {
-                var cata = new Catalogue(Repository, "Mycata");
-                return (T)(object)Save(new CatalogueItem(Repository, cata, "MyCataItem"));
-            }
-
-            if (typeof(T) == typeof(ExtractionInformation))
-            {
-                var col = WhenIHaveA<ColumnInfo>();
-
-                var cata = new Catalogue(Repository, "Mycata");
-                var ci = new CatalogueItem(Repository, cata, "MyCataItem");
-                var ei = new ExtractionInformation(Repository, ci, col, "MyCataItem");
-                return (T)(object)Save(ei);
-            }
-
-            if (typeof (T) == typeof (TableInfo))
-            {
-                var table = new TableInfo(Repository, "My_Table");
-                return  (T)(object)Save(table);
-            }
-
-            if (typeof (T) == typeof (ColumnInfo))
-            {
-                var ti = WhenIHaveA<TableInfo>();
-                var col = new ColumnInfo(Repository,"My_Col","varchar(10)",ti);
-                return (T)(object)Save(col);
-            }
-
-            if (typeof (T) == typeof (AggregateConfiguration))
-            {
-                ExtractionInformation dateEi;
-                ExtractionInformation otherEi;
-                return (T)(object)WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
-            }
-
-            if (typeof (T) == typeof (ExternalDatabaseServer))
-            {
-                return (T) (object) Save(new ExternalDatabaseServer(Repository,"My Server"));
-            }
-
-            if (typeof (T) == typeof (ANOTable))
-            {
-                ExternalDatabaseServer server;
-                return (T)WhenIHaveA<ANOTable>(out server);
-            }
-
-            if (typeof (T) == typeof (LoadMetadata))
-            {
-                //creates the table, column, catalogue, catalogue item and extraction information
-                var ei = WhenIHaveA<ExtractionInformation>();
-                var cata = ei.CatalogueItem.Catalogue;
-
-                var ti = ei.ColumnInfo.TableInfo;
-                ti.Server = "localhost";
-                ti.Database = "mydb";
-                ti.SaveToDatabase();
-
-                var lmd = new LoadMetadata(Repository, "MyLoad");
-                cata.LoadMetadata_ID = lmd.ID;
-                cata.SaveToDatabase();
-                return (T)(object)Save(lmd);
-            }
-
-
-            throw new NotSupportedException();
-        }
-
-        /// <inheritdoc cref="WhenIHaveA{T}()"/>
-        protected AggregateConfiguration WhenIHaveA<T>(out ExtractionInformation dateEi, out ExtractionInformation otherEi) where T : AggregateConfiguration
-        {
-            var ti = WhenIHaveA<TableInfo>();
-            var dateCol = new ColumnInfo(Repository, "MyDateCol", "datetime2", ti);
-            var otherCol = new ColumnInfo(Repository, "MyOtherCol", "varchar(10)", ti);
-
-            var cata = WhenIHaveA<Catalogue>();
-            var dateCi = new CatalogueItem(Repository, cata, dateCol.Name);
-            dateEi = new ExtractionInformation(Repository, dateCi, dateCol, dateCol.Name);
-            var otherCi = new CatalogueItem(Repository, cata, otherCol.Name);
-            otherEi = new ExtractionInformation(Repository, otherCi, otherCol, otherCol.Name);
-            return Save(new AggregateConfiguration(Repository, cata, "My graph"));
-        }
         
-        /// <inheritdoc cref="WhenIHaveA{T}()"/>
-        protected DatabaseEntity WhenIHaveA<T>(out ExternalDatabaseServer server) where T:ANOTable
-        {
-            server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(ANOStore.Database.Class1).Assembly);
-            var anoTable = new ANOTable(Repository, server, "ANOFish", "F");
-            return anoTable;
-        }
-
-        private T Save<T>(T s) where T:ISaveable
-        {
-            s.SaveToDatabase();
-            return s;
-        }
 
         /// <summary>
         /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
         /// visibly appear but will be mounted on a Form and generally should behave like live ones.
         /// 
-        /// <para>Test should only call this method once.</para>
+        /// <para>Method only tracks one set of results at once, so if you call this method more than once then expect old Errors to disapear.</para>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="o"></param>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
-        protected T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
+        public T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
-            if (_userInterfaceLaunched != null)
-                throw new NotSupportedException("AndLaunch called multiple times");
+            Console.WriteLine("Launched " + typeof(T).Name);
 
-            if (ItemActivator == null)
-            {
-                ItemActivator = new TestActivateItems(Repository);
-                ItemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
-            }
+            //clear the old results
+            ClearResults();
             
             Form f = new Form();
             T ui = new T();
@@ -195,23 +86,17 @@ namespace CatalogueLibraryTests.UserInterfaceTests
 
 
         /// <summary>
-        /// Loads FAnsi implementations for all supported DBMS platforms into memory
+        /// Clears the ItemActivator and ui fields
         /// </summary>
         [SetUp]
-        protected void LoadDatabaseImplementations()
+        protected void ClearResults()
         {
-            ImplementationManager.Load(
-                typeof(FAnsi.Implementations.MicrosoftSQL.MicrosoftSQLImplementation).Assembly,
-                typeof(FAnsi.Implementations.MySql.MySqlImplementation).Assembly,
-                typeof(FAnsi.Implementations.Oracle.OracleImplementation).Assembly);
-
-            if(ItemActivator != null)
-                ItemActivator.Results.Clear();
+            if(_itemActivator != null)
+                _itemActivator.Results.Clear();
 
             _checkResults = null;
             _userInterfaceLaunched = null;
         }
-
         /// <summary>
         /// Asserts that the given command is impossible for the <paramref name="expectedReason"/>
         /// </summary>
@@ -244,7 +129,14 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             var e = (BeforeCheckingEventArgs) eventArgs;
 
             _checkResults = new ToMemoryCheckNotifier();
-            e.Checkable.Check(_checkResults);
+            try
+            {
+                e.Checkable.Check(_checkResults);
+            }
+            catch (Exception ex)
+            {
+                _checkResults.OnCheckPerformed(new CheckEventArgs("Checks threw exception", CheckResult.Fail, ex));
+            }
             e.Cancel = true;
         }
 
@@ -302,7 +194,7 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             switch (expectedErrorLevel)
             {
                 case ExpectedErrorType.KilledForm:
-                    Assert.IsTrue(ItemActivator.Results.KilledForms.Values.Any(v=>v.Message.Contains(expectedContainsText)));
+                    Assert.IsTrue(ItemActivator.Results.KilledForms.Values.Any(v=>v.Message.Contains(expectedContainsText)),"Failed to find expected Exception, Exceptions were:\r\n" +string.Join(Environment.NewLine,ItemActivator.Results.KilledForms.Values.Select(v=>v.ToString())) );
                     break;
                 case ExpectedErrorType.Fatal:
                     Assert.IsTrue(ItemActivator.Results.FatalCalls.Any(c => c.Message.Contains(expectedContainsText)));
@@ -313,7 +205,10 @@ namespace CatalogueLibraryTests.UserInterfaceTests
                         throw new Exception("Could not check for Checks error because control did not register an ICheckable");
 
                     //there must have been something checked that failed with the provided message
-                    Assert.IsTrue(_checkResults.Messages.Any(m=>m.Message.Contains(expectedContainsText) && m.Result == CheckResult.Fail));
+                    Assert.IsTrue(_checkResults.Messages.Any(m=>
+                        m.Message.Contains(expectedContainsText) || 
+                        (m.Ex != null && m.Ex.Message.Contains(expectedContainsText))
+                        && m.Result == CheckResult.Fail));
 
                     break;
                 case ExpectedErrorType.ErrorProvider:

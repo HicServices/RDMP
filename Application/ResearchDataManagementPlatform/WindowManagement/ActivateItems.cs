@@ -153,8 +153,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         private void UpdateChildProviders()
         {
-            CatalogueChildProvider.UseCaching = UserSettings.UseCaching;
-
             //prefer a linked repository with both
             if(RepositoryLocator.DataExportRepository != null)
                 try

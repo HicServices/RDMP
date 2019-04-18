@@ -128,7 +128,7 @@
             this.Controls.Add(this.btnOk);
             this.Controls.Add(this.lblToImport);
             this.Name = "SelectWhichCohortToImport";
-            this.Text = "SelectWhichCohortToImport";
+            this.Text = "Import Existing Cohort";
             ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();

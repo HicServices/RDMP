@@ -113,12 +113,6 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("ShowNonExtractableCatalogues", value); }
         }
 
-        public static bool UseCaching
-        {
-            get { return AppSettings.GetValueOrDefault("UseCaching", false); }
-            set { AppSettings.AddOrUpdateValue("UseCaching", value); }
-        }
-
         public static bool ShowColumnProjectNumber
         {
             get { return AppSettings.GetValueOrDefault("ShowColumnProjectNumber", true); }

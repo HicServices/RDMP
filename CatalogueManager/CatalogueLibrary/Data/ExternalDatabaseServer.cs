@@ -40,7 +40,7 @@ namespace CatalogueLibrary.Data
     /// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
     /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
     /// </summary>
-    public class ExternalDatabaseServer : VersionedDatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
+    public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
     {
         #region Database Properties
 
@@ -187,9 +187,9 @@ namespace CatalogueLibrary.Data
         {
             var repo = shareManager.RepositoryLocator.CatalogueRepository;
             Repository = repo;
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)Repository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(CatalogueRepository, DatabaseType.MicrosoftSQLServer/*will get changed by UpsertAndHydrate*/); 
 
-            repo.UpsertAndHydrate(this,shareManager, shareDefinition);
+            shareManager.UpsertAndHydrate(this, shareDefinition);
         }
 
         internal ExternalDatabaseServer(ICatalogueRepository repository, DbDataReader r): base(repository, r)
@@ -200,7 +200,7 @@ namespace CatalogueLibrary.Data
 
             var databaseType = (DatabaseType) Enum.Parse(typeof (DatabaseType), r["DatabaseType"].ToString());
 
-            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint((CatalogueRepository)repository, databaseType)
+            _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository, databaseType)
             {
                 Database = r["Database"] as string,
                 Password = r["Password"] as string,

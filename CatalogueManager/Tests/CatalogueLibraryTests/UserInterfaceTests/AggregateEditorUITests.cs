@@ -9,16 +9,17 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.AggregationUIs.Advanced;
 using CatalogueManager.CommandExecution.AtomicCommands;
+using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {
     class AggregateEditorUITests:UITests
     {
-        [Test,UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_NormalState()
         {
-            var config = WhenIHaveA<AggregateConfiguration>();
+            var config = GetAggregateConfigurationWithNoDimensions();
             var ui = AndLaunch<AggregateEditorUI>(config);
 
             //The selected columns ui
@@ -60,16 +61,17 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             AssertNoErrors(ExpectedErrorType.Any);
         }
 
-        [Test, UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_AxisOnlyShowsDateDimensions()
         {
             ExtractionInformation dateEi;
             ExtractionInformation otherEi;
-            var config = WhenIHaveA<AggregateConfiguration>(out dateEi,out otherEi);
-
+            var config = GetAggregateConfigurationWithNoDimensions(out dateEi,out otherEi);
+            
             var dimDate = new AggregateDimension(Repository, dateEi, config);
             var dimOther = new AggregateDimension(Repository, otherEi, config);
-            
+            config.ClearAllInjections();
+
             var ui = AndLaunch<AggregateEditorUI>(config);
 
             //only date should be an option for axis dimension
@@ -80,16 +82,22 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             Assert.AreEqual(1, ui.ddPivotDimension.Items.Count);
             Assert.AreEqual(dimOther, ui.ddPivotDimension.Items[0]);
 
+            //it wants us to pick either a pivot or an axis
+            AssertErrorWasShown(ExpectedErrorType.FailedCheck,"In order to have 2 columns, one must be selected as a pivot");
+            config.PivotOnDimensionID = dimOther.ID;
+            config.SaveToDatabase();
+
+            Publish(config);
+
             AssertNoErrors(ExpectedErrorType.Any);
         }
 
-        [Test, UITimeout(5000)]
+        [Test, UITimeout(50000)]
         public void Test_AggregateEditorUI_NoExtractableColumns()
         {
             //Create a Catalogue with an AggregateConfiguration that doesn't have any extractable columns yet
             var cata = WhenIHaveA<Catalogue>();
-            var config = new AggregateConfiguration(Repository,cata,"my config");
-            config.SaveToDatabase();
+            var config = new AggregateConfiguration(Repository,cata,"My config");
 
             //these commands should be impossible
             var cmd = new ExecuteCommandAddNewAggregateGraph(ItemActivator, cata);
@@ -105,5 +113,28 @@ namespace CatalogueLibraryTests.UserInterfaceTests
             StringAssert.Contains("no extractable columns", killed.Value.Message);
         }
 
+        
+
+
+
+
+        private AggregateConfiguration GetAggregateConfigurationWithNoDimensions()
+        {
+            ExtractionInformation otherEi;
+            ExtractionInformation dateEi;
+            return GetAggregateConfigurationWithNoDimensions(out dateEi, out otherEi);
+        }
+
+        private AggregateConfiguration GetAggregateConfigurationWithNoDimensions(out ExtractionInformation dateEi, out ExtractionInformation otherEi)
+        {
+            var config = WhenIHaveA<AggregateConfiguration>(out dateEi, out otherEi);
+
+            //remove any existing dimensions
+            foreach (var d in config.AggregateDimensions)
+                d.DeleteInDatabase();
+
+            config.ClearAllInjections();
+            return config;
+        }
     }
 }

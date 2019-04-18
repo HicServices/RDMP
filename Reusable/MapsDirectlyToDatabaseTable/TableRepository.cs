@@ -265,16 +265,6 @@ namespace MapsDirectlyToDatabaseTable
             }
         }
 
-        readonly SqlDependencyTableMonitor _cacheMonitor = new SqlDependencyTableMonitor();
-
-        public T[] GetAllObjectsCached<T>() where T : IMapsDirectlyToDatabaseTable
-        {
-            if (_cacheMonitor.HasValidCache<T>())
-                return _cacheMonitor.GetCached<T>();
-            
-            return _cacheMonitor.RegisterTableMonitor(this, ConstructEntity<T>);
-        }
-
         public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
         {
             return GetAllObjects<T>(null);
@@ -731,7 +721,7 @@ namespace MapsDirectlyToDatabaseTable
             if (ongoingConnection != null && ongoingConnection.Connection.State == ConnectionState.Open)//as long as it hasn't timed out or been disposed etc
                     return ongoingConnection;
 
-            ongoingConnection = new ManagedConnection(DiscoveredServer, ongoingTransaction);
+            ongoingConnection = DiscoveredServer.GetManagedConnection(ongoingTransaction);
 
             //record as the active connection on this thread
             ongoingConnections[Thread.CurrentThread] = ongoingConnection;

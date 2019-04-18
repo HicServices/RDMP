@@ -39,14 +39,14 @@ namespace DataLoadEngineTests.Integration
 
             var tbl = db.CreateTable("Fish",dt);
             
-            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory,"Bob.sql"));
+            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Bob.sql"));
 
             File.WriteAllText(f.FullName,@"UPDATE Fish Set Lawl = 1");
 
             var pt = MockRepository.GenerateMock<IProcessTask>();
             pt.Stub(x => x.Path).Return(f.FullName);
 
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
@@ -77,14 +77,14 @@ namespace DataLoadEngineTests.Integration
             ColumnInfo[] cols;
             Import(tbl,out ti,out cols);
 
-            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Bob.sql"));
+            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
             
             File.WriteAllText(f.FullName, @"UPDATE {T:0} Set {C:0} = 1");
 
             var pt = MockRepository.GenerateMock<IProcessTask>();
             pt.Stub(x => x.Path).Return(f.FullName);
 
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
@@ -120,7 +120,7 @@ namespace DataLoadEngineTests.Integration
             ColumnInfo[] cols;
             Import(tbl, out ti, out cols);
             
-            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.WorkDirectory, "Bob.sql"));
+            FileInfo f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "Bob.sql"));
 
             File.WriteAllText(f.FullName, @"UPDATE {T:"+ti.ID+ "} Set {C:"+cols[0].ID+ "} = 1");
 
@@ -132,7 +132,7 @@ namespace DataLoadEngineTests.Integration
             var pt = MockRepository.GenerateMock<IProcessTask>();
             pt.Stub(x => x.Path).Return(f.FullName);
 
-            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.WorkDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 

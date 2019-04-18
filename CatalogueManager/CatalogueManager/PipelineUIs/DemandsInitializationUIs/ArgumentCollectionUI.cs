@@ -150,10 +150,28 @@ namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
 
             var args = new ArgumentValueUIArgs();
             args.Parent = parent;
-            args.InitialValue = argument.GetValueAsSystemType();
             args.Type = argument.GetSystemType();
+
+            try
+            {
+
+                args.InitialValue = argument.GetValueAsSystemType();
+            }
+            catch (Exception e)
+            {
+                
+                //add the text value value and report the error
+                if(_valueUisFactory.CanHandleInvalidStringData(args.Type))
+                    args.InitialValue = argument.Value;
+                else
+                    args.InitialValue = null;
+
+                ragSmiley.Fatal(e);
+            }
+
+            
             args.Required = required;
-            args.CatalogueRepository = (CatalogueRepository) argument.Repository;
+            args.CatalogueRepository = (ICatalogueRepository)argument.Repository;
             args.Setter = (v) =>
             {
                 ragSmiley.Reset();

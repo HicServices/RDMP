@@ -217,6 +217,17 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// </summary>
         private readonly HashSet<Control> _helpAdded = new HashSet<Control>();
 
+        /// <summary>
+        /// Adds a <see cref="HelpIcon"/> to the task bar at the top of the control
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="body"></param>
+        public void AddHelpStringToToolStrip(string title, string body)
+        {
+            var help = new HelpIcon();
+            help.SetHelpText(title, body);
+            Add(new ToolStripControlHost(help));
+        }
         
 
         /// <summary>
@@ -240,7 +251,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
             if (body == null)
                 return;
 
-            AddStringHelp(c,title,body,anchor);
+            AddHelpString(c, title, body, anchor);
         }
 
         /// <summary>
@@ -251,7 +262,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         /// <param name="body">The text you want displayed on hover (under the title)</param>
         /// <param name="anchor">Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
         ///  be chosen based on the control <paramref name="c"/></param>
-        public void AddStringHelp(Control c, string title, string body, AnchorStyles anchor = AnchorStyles.None)
+        public void AddHelpString(Control c, string title, string body, AnchorStyles anchor = AnchorStyles.None)
         {
             //don't add help to the control more than once
             if (_helpAdded.Contains(c))
@@ -275,8 +286,6 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
                 help.Anchor = anchor;
 
             c.Parent.Controls.Add(help);
-
-
         }
 
         public void ClearToolStrip()

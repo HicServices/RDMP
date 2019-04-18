@@ -127,21 +127,21 @@ namespace DataLoadEngine.LoadExecution.Components.Standard
         {
             try
             {
-                using (SqlConnection con = (SqlConnection) dbInfo.Server.GetConnection())
+                var cols = dbInfo.ExpectTable(sourceTableName).DiscoverColumns();
+
+                using (var con = dbInfo.Server.GetConnection())
                 {
                     con.Open();
-                    SqlCommand cmd = new SqlCommand(
+                    var cmd = dbInfo.Server.GetCommand(
 
                         //Magical code that nukes blank/null rows - where all rows are blank/null
-                        @"  ;with C(XmlCol) as
-(
-  select
-    (select T.*
-     for xml path('row'), type)
-  from " + sourceTableName + @" as T
-)
-delete from C
-where C.XmlCol.exist('row/*[. != """"]') = 0",con);
+                        string.Format(@"delete from {0} WHERE {1}",
+                            sourceTableName,
+                            string.Join(" AND ",
+                                cols.Select(c=> "(" + c + " IS NULL OR " + c + "=''" +")"))),con);
+
+
+                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "About to delete fully null records using SQL:" + cmd.CommandText));
 
                     cmd.CommandTimeout = 500000;
 

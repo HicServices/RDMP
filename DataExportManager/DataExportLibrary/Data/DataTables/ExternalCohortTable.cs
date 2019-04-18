@@ -30,7 +30,7 @@ using ReusableLibraryCode.DataAccess;
 namespace DataExportLibrary.Data.DataTables
 {
     /// <inheritdoc/>
-    public class ExternalCohortTable : VersionedDatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
+    public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
     {
         #region Database Properties
         private string _name;
@@ -130,7 +130,7 @@ namespace DataExportLibrary.Data.DataTables
             Repository.InsertAndHydrate(this, new Dictionary<string, object>
             {
                 {"Name", name ?? "NewExternalSource" + Guid.NewGuid()},
-                {"DatabaseType",databaseType}
+                {"DatabaseType",databaseType.ToString()}
             });
         }
 
@@ -142,7 +142,6 @@ namespace DataExportLibrary.Data.DataTables
         internal ExternalCohortTable(IDataExportRepository repository, DbDataReader r)
             : base(repository, r)
         {
-            SoftwareVersion = r["SoftwareVersion"].ToString();
             Name = r["Name"] as string;
             var databaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
 

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Providers;
@@ -25,8 +26,12 @@ namespace CatalogueLibrary.Repositories.Managers.HighPerformance
         /// </summary>
         readonly Dictionary<int, List<AggregateFilterContainer>> _subcontainers = new Dictionary<int, List<AggregateFilterContainer>>();
 
+        private From1ToM<IContainer, IFilter> _containersToFilters;
+
         public FilterManagerFromChildProvider(CatalogueRepository repository,ICoreChildProvider childProvider):base(repository)
         {
+            _containersToFilters = new From1ToM<IContainer, IFilter>(f=>f.FilterContainer_ID.Value,childProvider.AllAggregateFilters.Where(f=>f.FilterContainer_ID.HasValue));
+
             var server = repository.DiscoveredServer;
             using (var con = repository.GetConnection())
             {
@@ -40,7 +45,7 @@ namespace CatalogueLibrary.Repositories.Managers.HighPerformance
                     if(!_subcontainers.ContainsKey(parentId))
                         _subcontainers.Add(parentId,new List<AggregateFilterContainer>());
 
-                    _subcontainers[parentId].Add(childProvider.AllAggregateContainers[subcontainerId]);
+                    _subcontainers[parentId].Add(childProvider.AllAggregateContainersDictionary[subcontainerId]);
                 }
                 r.Close();
             }
@@ -52,6 +57,11 @@ namespace CatalogueLibrary.Repositories.Managers.HighPerformance
                 return new AggregateFilterContainer[0];
 
             return _subcontainers[container.ID].ToArray();
+        }
+
+        public override IFilter[] GetFilters(IContainer container)
+        {
+            return _containersToFilters[container].ToArray();
         }
     }
 }

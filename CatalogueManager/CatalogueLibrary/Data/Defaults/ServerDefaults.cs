@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 
@@ -30,7 +31,6 @@ namespace CatalogueLibrary.Data.Defaults
         {
             _repository = repository;
             StringExpansionDictionary.Add(PermissableDefaults.LiveLoggingServer_ID, "Catalogue.LiveLoggingServer_ID");
-            StringExpansionDictionary.Add(PermissableDefaults.TestLoggingServer_ID, "Catalogue.TestLoggingServer_ID");
             StringExpansionDictionary.Add(PermissableDefaults.IdentifierDumpServer_ID, "TableInfo.IdentifierDumpServer_ID");
             StringExpansionDictionary.Add(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, "CIC.QueryCachingServer_ID");
             StringExpansionDictionary.Add(PermissableDefaults.ANOStore, "ANOTable.Server_ID");
@@ -52,7 +52,12 @@ namespace CatalogueLibrary.Data.Defaults
 
             using (var con = _repository.GetConnection())
             {
-                var cmd = DatabaseCommandHelper.GetCommand("SELECT dbo.GetDefaultExternalServerIDFor('" + StringExpansionDictionary[field] + "')", con.Connection,con.Transaction);
+                var cmd = DatabaseCommandHelper.GetCommand("SELECT ExternalDatabaseServer_ID FROM ServerDefaults WHERE DefaultType = @type", con.Connection, con.Transaction);
+                var p = cmd.CreateParameter();
+                p.ParameterName = "@type";
+                p.Value = StringExpansionDictionary[field];
+                cmd.Parameters.Add(p);
+
                 var executeScalar = cmd.ExecuteScalar();
 
                 if (executeScalar == DBNull.Value)

@@ -10,9 +10,6 @@ using System.Threading;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Ticketing;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 
 namespace DataExportLibrary.DataRelease
@@ -23,7 +20,7 @@ namespace DataExportLibrary.DataRelease
     /// </summary>
     public class ReleaseEnvironmentPotential : ICheckable
     {
-        private readonly DataExportRepository _repository;
+        private readonly IDataExportRepository _repository;
         public IExtractionConfiguration Configuration { get; private set; }
         public IProject Project { get; private set; }
 
@@ -34,7 +31,7 @@ namespace DataExportLibrary.DataRelease
         
         public ReleaseEnvironmentPotential(IExtractionConfiguration configuration)
         {
-            _repository = (DataExportRepository) configuration.Repository;
+            _repository = configuration.DataExportRepository;
             Configuration = configuration;
             Project = configuration.Project;
         }

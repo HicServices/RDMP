@@ -27,7 +27,7 @@ namespace DataExportLibrary.Data.DataTables
     /// 
     /// <para>It also means you have a single point you can change the parameter if you need to adjust it later on.</para>
     /// </summary>
-    public class GlobalExtractionFilterParameter : VersionedDatabaseEntity, ISqlParameter, IInjectKnown<IQuerySyntaxHelper>
+    public class GlobalExtractionFilterParameter : DatabaseEntity, ISqlParameter, IInjectKnown<IQuerySyntaxHelper>
     {
         /// <inheritdoc/>
         [NoMappingToDatabase]

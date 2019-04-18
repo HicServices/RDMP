@@ -35,6 +35,8 @@ namespace CatalogueManager.PipelineUIs.Pipelines
         public event EventHandler PipelineChanged;
         public event EventHandler OnBeforeLaunchEdit;
 
+        ToolTip tt = new ToolTip();
+
         public IPipeline Pipeline
         {
             get { return _pipeline; }
@@ -100,6 +102,10 @@ namespace CatalogueManager.PipelineUIs.Pipelines
                 return;
 
             RefreshPipelineList();
+
+            tt.SetToolTip(cbOnlyShowCompatiblePipelines,"Untick to show all pipelines, even if they are not compatible with the current operation.");
+            tt.SetToolTip(btnClonePipeline,"Create a new copy of the selected pipeline");
+            tt.SetToolTip(btnEditPipeline, "Change which components are run in the Pipeline and with what settings");
         }
 
         private void groupBox1_Enter(object sender, EventArgs e)

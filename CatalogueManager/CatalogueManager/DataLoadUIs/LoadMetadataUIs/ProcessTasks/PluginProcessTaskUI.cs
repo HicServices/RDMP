@@ -60,24 +60,33 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
         public override void SetDatabaseObject(IActivateItems activator, ProcessTask databaseObject)
         {
-            base.SetDatabaseObject(activator, databaseObject);
             _processTask = databaseObject;
+            base.SetDatabaseObject(activator, databaseObject);
 
             if(_argumentCollection == null)
             {
-                var repo = (CatalogueRepository) databaseObject.Repository;
+                var repo = databaseObject.CatalogueRepository;
 
                 _argumentCollection = new ArgumentCollectionUI();
+                
+                var className = databaseObject.GetClassNameWhoArgumentsAreFor();
+
+                if(string.IsNullOrWhiteSpace(className))
+                {
+                    activator.KillForm(ParentForm,new Exception("No class has been specified on ProcessTask '" + databaseObject +"'"));
+                    return;
+                }
+
                 try
                 {
-                    _underlyingType = repo.MEF.GetTypeByNameFromAnyLoadedAssembly(databaseObject.GetClassNameWhoArgumentsAreFor());
+                    _underlyingType = repo.MEF.GetTypeByNameFromAnyLoadedAssembly(className);
 
                     if(_underlyingType == null)
-                        throw new Exception("Could not find Type '" + databaseObject.GetClassNameWhoArgumentsAreFor() +"' for ProcessTask '" + _processTask.Name + "'");
+                        activator.KillForm(ParentForm,new Exception("Could not find Type '" +className +"' for ProcessTask '" + databaseObject + "'"));
                 }
                 catch (Exception e)
                 {
-                    ExceptionViewer.Show(e);
+                    activator.KillForm(ParentForm,new Exception("MEF crashed while trying to look up Type '" +className +"' for ProcessTask '" + databaseObject + "'",e));
                     return;
                 }
 
