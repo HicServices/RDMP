@@ -19,10 +19,14 @@ namespace ReusableLibraryCode.Settings
 
         public RDMPApplicationSettings()
         {
-            if (System.AppDomain.CurrentDomain.ActivationContext != null)
-                this.store  = IsolatedStorageFile.GetUserStoreForApplication();
-            else
-                this.store = IsolatedStorageFile.GetUserStoreForAssembly();
+            try
+            {
+                store = IsolatedStorageFile.GetUserStoreForApplication();
+            }
+            catch (Exception)
+            {
+                store = IsolatedStorageFile.GetUserStoreForAssembly();
+            }
         }
 
         /// <summary>

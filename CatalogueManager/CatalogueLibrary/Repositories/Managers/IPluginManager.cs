@@ -14,6 +14,6 @@ namespace CatalogueLibrary.Repositories.Managers
     /// </summary>
     public interface IPluginManager
     {
-        Plugin[] GetCompatiblePlugins();
+        Data.Plugin[] GetCompatiblePlugins();
     }
 }

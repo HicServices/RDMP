@@ -1,388 +1,200 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>LoadModules.Generic</RootNamespace>
-    <AssemblyName>LoadModules.Generic</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net452</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\SMI\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsLibPaths />
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsBaseLineFile />
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsSQLServerOption />
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
+    <PostBuildEvent />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Test\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent />
+  </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ExcelNumberFormat, Version=1.0.3.0, Culture=neutral, PublicKeyToken=23c6f5d73be07eca, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\ExcelNumberFormat.1.0.3\lib\net20\ExcelNumberFormat.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ICSharpCode.SharpZipLib, Version=1.0.0.999, Culture=neutral, PublicKeyToken=1b03e6acf1164f73, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\SharpZipLib.1.0.0\lib\net45\ICSharpCode.SharpZipLib.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI.OOXML, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.OOXML.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI.OpenXml4Net, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXml4Net.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="NPOI.OpenXmlFormats, Version=2.4.1.0, Culture=neutral, PublicKeyToken=0df73ec7942b34e1, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NPOI.2.4.1\lib\net45\NPOI.OpenXmlFormats.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Renci.SshNet">
-      <HintPath>..\..\..\..\packages\SSH.NET.2013.4.7\lib\net40\Renci.SshNet.dll</HintPath>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
-    <Reference Include="System.ComponentModel.Composition" />
+    <PackageReference Include="System.ComponentModel" Version="4.*" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
+    <PackageReference Include="System.IO.Compression" Version="4.*" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.Management" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="7.1.1" />
+    <PackageReference Include="ExcelNumberFormat" Version="1.0.3" />
+    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
+    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1000" />
+    <PackageReference Include="MySql.Data" Version="8.0.14" />
+    <PackageReference Include="NPOI" Version="2.4.1" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
+    <PackageReference Include="SharpZipLib" Version="1.0.0" />
+    <PackageReference Include="SSH.NET" Version="2013.4.7" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Attachers\AnySeparatorFileAttacher.cs" />
-    <Compile Include="Attachers\DelimitedFlatFileAttacher.cs" />
-    <Compile Include="Attachers\ExcelAttacher.cs" />
-    <Compile Include="Attachers\KVPAttacherPipelineUseCase.cs" />
-    <Compile Include="Attachers\RemoteDatabaseAttacher.cs" />
-    <Compile Include="DataFlowDestinations\DoNothingCacheDestination.cs" />
-    <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasException.cs" />
-    <Compile Include="DataFlowOperations\Aliases\AliasHandler.cs" />
-    <Compile Include="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
-    <Compile Include="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
-    <Compile Include="DataFlowOperations\ExtractCatalogueMetadata.cs" />
-    <Compile Include="DataFlowOperations\ReleaseMetadata.cs" />
-    <Compile Include="DataFlowOperations\RowDeleter.cs" />
-    <Compile Include="DataFlowOperations\Swapping\ColumnSwapper.cs" />
-    <Compile Include="DataFlowOperations\TableVersionNamer.cs" />
-    <Compile Include="DataFlowSources\DoNothingCacheSource.cs" />
-    <Compile Include="DataFlowSources\SubComponents\FlatFileColumnCollection.cs" />
-    <Compile Include="DataFlowSources\SubComponents\FlatFileEventHandlers.cs" />
-    <Compile Include="DataFlowSources\SubComponents\FlatFileLine.cs" />
-    <Compile Include="DataFlowSources\SubComponents\FlatFileToDataTablePusher.cs" />
-    <Compile Include="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
-    <Compile Include="DataProvider\ImportFilesDataProvider.cs" />
-    <Compile Include="DataProvider\ShareDefinitionImporter.cs" />
-    <Compile Include="LoadProgressUpdating\DataLoadProgressUpdateInfo.cs" />
-    <Compile Include="Exceptions\FlatFileLoadException.cs" />
-    <Compile Include="Exceptions\MultipleMatchingFilesException.cs" />
-    <Compile Include="Attachers\FixedWidthAttacher.cs" />
-    <Compile Include="Attachers\FixedWidthColumn.cs" />
-    <Compile Include="Attachers\FixedWidthFormatFile.cs" />
-    <Compile Include="Attachers\FlatFileAttacher.cs" />
-    <Compile Include="Attachers\KVPAttacher.cs" />
-    <Compile Include="Attachers\MDFAttacher.cs" />
-    <Compile Include="Attachers\MdfAttachStrategy.cs" />
-    <Compile Include="Attachers\MdfFileAttachLocations.cs" />
-    <Compile Include="Attachers\RemoteTableAttacher.cs" />
-    <Compile Include="DataFlowOperations\ColumnBlacklister.cs" />
-    <Compile Include="DataFlowOperations\ColumnRenamer.cs" />
-    <Compile Include="DataFlowOperations\Transposer.cs" />
-    <Compile Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cs" />
-    <Compile Include="DataFlowSources\ExcelDataFlowSource.cs" />
-    <Compile Include="DataFlowSources\ExplicitTypingCollection.cs" />
-    <Compile Include="DataProvider\DoNothingDataProvider.cs" />
-    <Compile Include="DataProvider\WebServiceConfiguration.cs" />
-    <Compile Include="LoadProgressUpdating\DataLoadProgressUpdateStrategy.cs" />
-    <Compile Include="LoadProgressUpdating\UpdateProgressToResultOfDelegate.cs" />
-    <Compile Include="LoadProgressUpdating\UpdateProgressToSpecificValueIfLoadsuccessful.cs" />
-    <Compile Include="Mutilators\BackupDatabaseMutilation.cs" />
-    <Compile Include="Mutilators\Coalescer.cs" />
-    <Compile Include="Mutilators\Distincter.cs" />
-    <Compile Include="Mutilators\MatchingTablesMutilator.cs" />
-    <Compile Include="Mutilators\PrematureLoadEndCondition.cs" />
-    <Compile Include="Mutilators\Dilution\Dilution.cs" />
-    <Compile Include="Mutilators\Dilution\DilutionOperationFactory.cs" />
-    <Compile Include="Mutilators\Dilution\Exceptions\DilutionColumnNotSetException.cs" />
-    <Compile Include="Mutilators\Dilution\Operations\CrushToBitFlag.cs" />
-    <Compile Include="Mutilators\Dilution\Operations\DilutionOperation.cs" />
-    <Compile Include="Mutilators\Dilution\Operations\ExcludeRight3OfUKPostcodes.cs" />
-    <Compile Include="Mutilators\Dilution\Operations\IPluginDilutionOperation.cs" />
-    <Compile Include="Mutilators\Dilution\Operations\RoundDateToMiddleOfQuarter.cs" />
-    <Compile Include="Mutilators\PrematureLoadEnder.cs" />
-    <Compile Include="Mutilators\PrimaryKeyCollisionResolverMutilation.cs" />
-    <Compile Include="Mutilators\QueryBuilders\BackfillSqlHelper.cs" />
-    <Compile Include="Mutilators\SafePrimaryKeyCollisionResolverMutilation.cs" />
-    <Compile Include="Mutilators\StagingBackfillMutilator.cs" />
-    <Compile Include="Mutilators\TableVarcharMaxer.cs" />
-    <Compile Include="ScheduleStrategy.cs" />
-    <Compile Include="Web\WebFileDownloader.cs" />
-    <Compile Include="NativeFileIO.cs" />
-    <Compile Include="FileOperations\FileUnzipper.cs" />
-    <Compile Include="FTP\FTPDownloader.cs" />
-    <Compile Include="FTP\SFTPDownloader.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="..\..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj">
-      <Project>{63E1D23E-F82C-4325-B0F7-9638C3753A46}</Project>
-      <Name>ANOStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj">
-      <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
-      <Name>CachingEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
-      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
-      <Name>DataExportLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7f56d629-dc24-43a5-a338-073687433e55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5ad03b2f-232a-4e0b-86ff-dc7f49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Sharing\Sharing\Sharing.csproj">
-      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
-      <Name>Sharing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj">
-      <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
-      <Name>DataLoadEngine</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
+    <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
+    <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
+    <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
+    <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
+    <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
+    <ProjectReference Include="..\..\..\..\Sharing\Sharing\Sharing.csproj" />
+    <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\App.config">
-      <Link>App.config</Link>
-    </None>
     <None Include="Attachers\GenericAttachers.cd" />
     <None Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cd" />
-    <None Include="packages.config" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <Compile Remove="NativeFileIO.cs" />
+    <Compile Remove="ScheduleStrategy.cs" />
+    <Compile Remove="Attachers\AnySeparatorFileAttacher.cs" />
+    <Compile Remove="Attachers\DelimitedFlatFileAttacher.cs" />
+    <Compile Remove="Attachers\ExcelAttacher.cs" />
+    <Compile Remove="Attachers\FixedWidthAttacher.cs" />
+    <Compile Remove="Attachers\FixedWidthColumn.cs" />
+    <Compile Remove="Attachers\FixedWidthFormatFile.cs" />
+    <Compile Remove="Attachers\FlatFileAttacher.cs" />
+    <Compile Remove="Attachers\KVPAttacher.cs" />
+    <Compile Remove="Attachers\KVPAttacherPipelineUseCase.cs" />
+    <Compile Remove="Attachers\MDFAttacher.cs" />
+    <Compile Remove="Attachers\MdfAttachStrategy.cs" />
+    <Compile Remove="Attachers\MdfFileAttachLocations.cs" />
+    <Compile Remove="Attachers\RemoteDatabaseAttacher.cs" />
+    <Compile Remove="Attachers\RemoteTableAttacher.cs" />
+    <Compile Remove="DataFlowDestinations\DoNothingCacheDestination.cs" />
+    <Compile Remove="DataFlowOperations\ColumnBlacklister.cs" />
+    <Compile Remove="DataFlowOperations\ColumnRenamer.cs" />
+    <Compile Remove="DataFlowOperations\ExtractCatalogueMetadata.cs" />
+    <Compile Remove="DataFlowOperations\ReleaseMetadata.cs" />
+    <Compile Remove="DataFlowOperations\RowDeleter.cs" />
+    <Compile Remove="DataFlowOperations\TableVersionNamer.cs" />
+    <Compile Remove="DataFlowOperations\Transposer.cs" />
+    <Compile Remove="DataFlowSources\DelimitedFlatFileDataFlowSource.cs" />
+    <Compile Remove="DataFlowSources\DoNothingCacheSource.cs" />
+    <Compile Remove="DataFlowSources\ExcelDataFlowSource.cs" />
+    <Compile Remove="DataFlowSources\ExplicitTypingCollection.cs" />
+    <Compile Remove="DataProvider\DoNothingDataProvider.cs" />
+    <Compile Remove="DataProvider\ImportFilesDataProvider.cs" />
+    <Compile Remove="DataProvider\ShareDefinitionImporter.cs" />
+    <Compile Remove="DataProvider\WebServiceConfiguration.cs" />
+    <Compile Remove="Exceptions\FlatFileLoadException.cs" />
+    <Compile Remove="Exceptions\MultipleMatchingFilesException.cs" />
+    <Compile Remove="FileOperations\FileUnzipper.cs" />
+    <Compile Remove="FTP\FTPDownloader.cs" />
+    <Compile Remove="FTP\SFTPDownloader.cs" />
+    <Compile Remove="LoadProgressUpdating\DataLoadProgressUpdateInfo.cs" />
+    <Compile Remove="LoadProgressUpdating\DataLoadProgressUpdateStrategy.cs" />
+    <Compile Remove="LoadProgressUpdating\UpdateProgressToResultOfDelegate.cs" />
+    <Compile Remove="LoadProgressUpdating\UpdateProgressToSpecificValueIfLoadsuccessful.cs" />
+    <Compile Remove="Mutilators\BackupDatabaseMutilation.cs" />
+    <Compile Remove="Mutilators\Coalescer.cs" />
+    <Compile Remove="Mutilators\Distincter.cs" />
+    <Compile Remove="Mutilators\MatchingTablesMutilator.cs" />
+    <Compile Remove="Mutilators\PrematureLoadEndCondition.cs" />
+    <Compile Remove="Mutilators\PrematureLoadEnder.cs" />
+    <Compile Remove="Mutilators\PrimaryKeyCollisionResolverMutilation.cs" />
+    <Compile Remove="Mutilators\SafePrimaryKeyCollisionResolverMutilation.cs" />
+    <Compile Remove="Mutilators\StagingBackfillMutilator.cs" />
+    <Compile Remove="Mutilators\TableVarcharMaxer.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Web\WebFileDownloader.cs" />
+    <Compile Remove="DataFlowOperations\Aliases\AliasHandler.cs" />
+    <Compile Remove="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
+    <Compile Remove="DataFlowOperations\Swapping\ColumnSwapper.cs" />
+    <Compile Remove="DataFlowSources\SubComponents\FlatFileColumnCollection.cs" />
+    <Compile Remove="DataFlowSources\SubComponents\FlatFileEventHandlers.cs" />
+    <Compile Remove="DataFlowSources\SubComponents\FlatFileLine.cs" />
+    <Compile Remove="DataFlowSources\SubComponents\FlatFileToDataTablePusher.cs" />
+    <Compile Remove="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
+    <Compile Remove="Mutilators\Dilution\Dilution.cs" />
+    <Compile Remove="Mutilators\Dilution\DilutionOperationFactory.cs" />
+    <Compile Remove="Mutilators\QueryBuilders\BackfillSqlHelper.cs" />
+    <Compile Remove="DataFlowOperations\Aliases\Exceptions\AliasException.cs" />
+    <Compile Remove="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
+    <Compile Remove="Mutilators\Dilution\Exceptions\DilutionColumnNotSetException.cs" />
+    <Compile Remove="Mutilators\Dilution\Operations\CrushToBitFlag.cs" />
+    <Compile Remove="Mutilators\Dilution\Operations\DilutionOperation.cs" />
+    <Compile Remove="Mutilators\Dilution\Operations\ExcludeRight3OfUKPostcodes.cs" />
+    <Compile Remove="Mutilators\Dilution\Operations\IPluginDilutionOperation.cs" />
+    <Compile Remove="Mutilators\Dilution\Operations\RoundDateToMiddleOfQuarter.cs" />
+  </ItemGroup>
 </Project>

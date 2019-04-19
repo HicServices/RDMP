@@ -1,17 +1,6 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{66DCB9F0-41A3-4B14-ACC8-2036383A79C2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Dashboard</RootNamespace>
-    <AssemblyName>Dashboard</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net452</TargetFramework>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <PublishUrl>C:\Development\Deployments\RDMP\Dashboard\</PublishUrl>
     <Install>true</Install>
@@ -30,35 +19,13 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>F048E664FB6FC6DA51ABB0FAB72EA28DFCAA0309</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile />
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -73,586 +40,217 @@
     <ManifestTimestampUrl>http://timestamp.verisign.com/scripts/timstamp.dll</ManifestTimestampUrl>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
-    <Reference Include="System.ComponentModel.Composition" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.ComponentModel" Version="4.*" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
+    <PackageReference Include="System.Management" Version="4.*" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
+    <PackageReference Include="jacobslusser.ScintillaNET" Version="3.6.3" />
+    <PackageReference Include="MySql.Data" Version="8.0.14" />
+    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="CatalogueSummary\CatalogueDQEResultsUI.cs">
+    <Compile Include="..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Update="CatalogueSummary\CatalogueDQEResultsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\CatalogueDQEResultsUI.Designer.cs">
+    <Compile Update="CatalogueSummary\CatalogueDQEResultsUI.Designer.cs">
       <DependentUpon>CatalogueDQEResultsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\ColumnStatesChart.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\ColumnStatesChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\ColumnStatesChart.Designer.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\ColumnStatesChart.Designer.cs">
       <DependentUpon>ColumnStatesChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\DQEGraphAnnotationUI.cs" />
-    <Compile Include="CatalogueSummary\DataQualityReporting\IDataQualityReportingChart.cs" />
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceBar.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceBar.Designer.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceBar.Designer.cs">
       <DependentUpon>ConsequenceBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceKey.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceKey.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceKey.Designer.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceKey.Designer.cs">
       <DependentUpon>ConsequenceKey.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\DQEPivotCategorySelector.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\DQEPivotCategorySelector.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\DQEPivotCategorySelector.Designer.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\DQEPivotCategorySelector.Designer.cs">
       <DependentUpon>DQEPivotCategorySelector.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\EvaluationTrackBar.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\EvaluationTrackBar.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\SubComponents\EvaluationTrackBar.Designer.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\SubComponents\EvaluationTrackBar.Designer.cs">
       <DependentUpon>EvaluationTrackBar.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\TimePeriodicityChart.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\TimePeriodicityChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\DataQualityReporting\TimePeriodicityChart.Designer.cs">
+    <Compile Update="CatalogueSummary\DataQualityReporting\TimePeriodicityChart.Designer.cs">
       <DependentUpon>TimePeriodicityChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\DiffDataTables.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\DiffDataTables.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\DiffDataTables.Designer.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\DiffDataTables.Designer.cs">
       <DependentUpon>DiffDataTables.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\LoadEventsTreeView.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\LoadEventsTreeView.Designer.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.Designer.cs">
       <DependentUpon>LoadEventsTreeView.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\ResolveFatalErrors.Designer.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.Designer.cs">
       <DependentUpon>ResolveFatalErrors.cs</DependentUpon>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.Designer.cs">
+    <Compile Update="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.Designer.cs">
       <DependentUpon>ViewInsertsAndUpdatesDialog.cs</DependentUpon>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
-    <Compile Include="DQEPluginUserInterface.cs" />
-    <Compile Include="Menus\MenuItems\DQEMenuItem.cs" />
-    <Compile Include="Overview\DataLoadsGraph.cs">
+    <Compile Update="Overview\DataLoadsGraph.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Overview\DataLoadsGraph.Designer.cs">
+    <Compile Update="Overview\DataLoadsGraph.Designer.cs">
       <DependentUpon>DataLoadsGraph.cs</DependentUpon>
     </Compile>
-    <Compile Include="Overview\DataLoadsGraphObjectCollection.cs" />
-    <Compile Include="Overview\DataLoadsGraphResult.cs" />
-    <Compile Include="Overview\DataLoadsGraphResultStatus.cs" />
-    <Compile Include="PieCharts\GoodBadCataloguePieChartObjectCollection.cs" />
-    <Compile Include="Raceway\DatasetRaceway.cs">
+    <Compile Update="Raceway\DatasetRaceway.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Raceway\DatasetRaceway.Designer.cs">
+    <Compile Update="Raceway\DatasetRaceway.Designer.cs">
       <DependentUpon>DatasetRaceway.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="PieCharts\GoodBadCataloguePieChart.cs">
+    <Compile Update="PieCharts\GoodBadCataloguePieChart.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PieCharts\GoodBadCataloguePieChart.Designer.cs">
+    <Compile Update="PieCharts\GoodBadCataloguePieChart.Designer.cs">
       <DependentUpon>GoodBadCataloguePieChart.cs</DependentUpon>
     </Compile>
-    <Compile Include="Raceway\DatasetRacewayObjectCollection.cs" />
-    <Compile Include="Raceway\RacewayRenderAreaUI.cs">
+    <Compile Update="Raceway\RacewayRenderAreaUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Raceway\RacewayRenderAreaUI.Designer.cs">
+    <Compile Update="Raceway\RacewayRenderAreaUI.Designer.cs">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </Compile>
-    <EmbeddedResource Include="CatalogueSummary\CatalogueDQEResultsUI.resx">
+    <EmbeddedResource Update="CatalogueSummary\CatalogueDQEResultsUI.resx">
       <DependentUpon>CatalogueDQEResultsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\ColumnStatesChart.resx">
+    <EmbeddedResource Update="CatalogueSummary\DataQualityReporting\ColumnStatesChart.resx">
       <DependentUpon>ColumnStatesChart.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceBar.resx">
+    <EmbeddedResource Update="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceBar.resx">
       <DependentUpon>ConsequenceBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceKey.resx">
+    <EmbeddedResource Update="CatalogueSummary\DataQualityReporting\SubComponents\ConsequenceKey.resx">
       <DependentUpon>ConsequenceKey.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\SubComponents\DQEPivotCategorySelector.resx">
+    <EmbeddedResource Update="CatalogueSummary\DataQualityReporting\SubComponents\DQEPivotCategorySelector.resx">
       <DependentUpon>DQEPivotCategorySelector.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\SubComponents\EvaluationTrackBar.resx">
+    <EmbeddedResource Update="CatalogueSummary\DataQualityReporting\SubComponents\EvaluationTrackBar.resx">
       <DependentUpon>EvaluationTrackBar.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\DataQualityReporting\TimePeriodicityChart.resx">
+    <EmbeddedResource Update="CatalogueSummary\DataQualityReporting\TimePeriodicityChart.resx">
       <DependentUpon>TimePeriodicityChart.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\LoadEvents\DiffDataTables.resx">
+    <EmbeddedResource Update="CatalogueSummary\LoadEvents\DiffDataTables.resx">
       <DependentUpon>DiffDataTables.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\LoadEvents\LoadEventsTreeView.resx">
+    <EmbeddedResource Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.resx">
       <DependentUpon>LoadEventsTreeView.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\LoadEvents\ResolveFatalErrors.resx">
+    <EmbeddedResource Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.resx">
       <DependentUpon>ResolveFatalErrors.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.resx">
+    <EmbeddedResource Update="CatalogueSummary\LoadEvents\ViewInsertsAndUpdatesDialog.resx">
       <DependentUpon>ViewInsertsAndUpdatesDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Overview\DataLoadsGraph.resx">
+    <EmbeddedResource Update="Overview\DataLoadsGraph.resx">
       <DependentUpon>DataLoadsGraph.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Raceway\DatasetRaceway.resx">
+    <EmbeddedResource Update="Raceway\DatasetRaceway.resx">
       <DependentUpon>DatasetRaceway.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="PieCharts\GoodBadCataloguePieChart.resx">
+    <EmbeddedResource Update="PieCharts\GoodBadCataloguePieChart.resx">
       <DependentUpon>GoodBadCataloguePieChart.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Raceway\RacewayRenderAreaUI.resx">
+    <EmbeddedResource Update="Raceway\RacewayRenderAreaUI.resx">
       <DependentUpon>RacewayRenderAreaUI.cs</DependentUpon>
     </EmbeddedResource>
-    <None Include="..\..\..\App.config">
-      <Link>App.config</Link>
-    </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <Compile Include="Properties\Settings.Designer.cs">
+    <Compile Update="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Settings.settings</DependentUpon>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8e14721e-2e82-4ec5-87f0-0b32f54911b5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj">
-      <Project>{fdf08240-2afc-48a4-8f48-37cc7ea3000b}</Project>
-      <Name>CatalogueManager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
-      <Project>{146b6739-8541-42d3-a390-4917e6f3bcc2}</Project>
-      <Name>DataExportLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
-      <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
-      <Name>DataQualityEngine.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
-      <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
-      <Name>DataQualityEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj">
-      <Project>{94797307-05F3-4E72-B60B-DCB51B41CF9C}</Project>
-      <Name>MapsDirectlyToDatabaseTableUI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7f56d629-dc24-43a5-a338-073687433e55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
-      <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
-      <Name>ReusableUIComponents</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
-      <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
-      <Name>HIC.Common.Validation</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
+    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj" />
+    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
+    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
+    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
+    <ProjectReference Include="..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
+    <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj" />
+    <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
+    <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
+    <ProjectReference Include="..\..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
+    <ProjectReference Include="..\..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Dashboard.ico" />
   </ItemGroup>
   <ItemGroup>
-    <PublishFile Include="ANOStore.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="CatalogueLibrary.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="CatalogueLibrary.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="CatalogueManager.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Dashboard.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataExportManager2.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataExportManager2.Interfaces.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataExportManager2Library.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataLoadEngine.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataQualityEngine.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataQualityEngine.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Diagnostics.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="HIC.Common.Validation.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="HIC.Logging.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="HIC.Logging.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="IdentifierDump.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="LoadModules.Generic.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="MapsDirectlyToDatabaseTable.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="MapsDirectlyToDatabaseTableUI.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Microsoft.VisualBasic.PowerPacks.Vs">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-    <PublishFile Include="QueryCaching.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="QueryCaching.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="RDMPObjectVisualisation.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="RDMPStartup.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="ReusableLibraryCode.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="ReusableUIComponents.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Ticketing.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
+    <Compile Remove="DQEPluginUserInterface.cs" />
+    <Compile Remove="Overview\DataLoadsGraphObjectCollection.cs" />
+    <Compile Remove="Overview\DataLoadsGraphResult.cs" />
+    <Compile Remove="Overview\DataLoadsGraphResultStatus.cs" />
+    <Compile Remove="PieCharts\GoodBadCataloguePieChartObjectCollection.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Raceway\DatasetRacewayObjectCollection.cs" />
+    <Compile Remove="CatalogueSummary\DataQualityReporting\DQEGraphAnnotationUI.cs" />
+    <Compile Remove="CatalogueSummary\DataQualityReporting\IDataQualityReportingChart.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
+    <Compile Remove="Menus\MenuItems\DQEMenuItem.cs" />
   </ItemGroup>
-  <ItemGroup />
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

@@ -1,286 +1,126 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A870596C-7245-48F5-B588-AFE41D09B4D2}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>RDMPStartup</RootNamespace>
-    <AssemblyName>RDMPStartup</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net452</TargetFramework>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
+    <CodeContractsExtraRewriteOptions />
+    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
+    <CodeContractsInferRequires>True</CodeContractsInferRequires>
+    <CodeContractsLibPaths />
+    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
+    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
+    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
+    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
+    <CodeContractsExtraAnalysisOptions />
+    <CodeContractsCustomRewriterAssembly />
+    <CodeContractsCustomRewriterClass />
+    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
+    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
+    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
+    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
+    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
+    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
+    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
+    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
+    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
+    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
+    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
+    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
+    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
+    <CodeContractsBaseLineFile />
+    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
+    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
+    <CodeContractsSQLServerOption />
+    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
+    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
+    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
+    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
+    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
+    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
+    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
+    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
+    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
+    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
+    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
+    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
-    <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
-    <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
-    <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
-    <CodeContractsRuntimeSkipQuantifiers>False</CodeContractsRuntimeSkipQuantifiers>
-    <CodeContractsRunCodeAnalysis>False</CodeContractsRunCodeAnalysis>
-    <CodeContractsNonNullObligations>True</CodeContractsNonNullObligations>
-    <CodeContractsBoundsObligations>True</CodeContractsBoundsObligations>
-    <CodeContractsArithmeticObligations>True</CodeContractsArithmeticObligations>
-    <CodeContractsEnumObligations>True</CodeContractsEnumObligations>
-    <CodeContractsRedundantAssumptions>True</CodeContractsRedundantAssumptions>
-    <CodeContractsAssertsToContractsCheckBox>True</CodeContractsAssertsToContractsCheckBox>
-    <CodeContractsRedundantTests>True</CodeContractsRedundantTests>
-    <CodeContractsMissingPublicRequiresAsWarnings>True</CodeContractsMissingPublicRequiresAsWarnings>
-    <CodeContractsMissingPublicEnsuresAsWarnings>False</CodeContractsMissingPublicEnsuresAsWarnings>
-    <CodeContractsInferRequires>True</CodeContractsInferRequires>
-    <CodeContractsInferEnsures>False</CodeContractsInferEnsures>
-    <CodeContractsInferEnsuresAutoProperties>True</CodeContractsInferEnsuresAutoProperties>
-    <CodeContractsInferObjectInvariants>False</CodeContractsInferObjectInvariants>
-    <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
-    <CodeContractsSuggestAssumptionsForCallees>False</CodeContractsSuggestAssumptionsForCallees>
-    <CodeContractsSuggestRequires>False</CodeContractsSuggestRequires>
-    <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
-    <CodeContractsSuggestObjectInvariants>False</CodeContractsSuggestObjectInvariants>
-    <CodeContractsSuggestReadonly>True</CodeContractsSuggestReadonly>
-    <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
-    <CodeContractsShowSquigglies>True</CodeContractsShowSquigglies>
-    <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <CodeContractsEmitXMLDocs>False</CodeContractsEmitXMLDocs>
-    <CodeContractsCustomRewriterAssembly />
-    <CodeContractsCustomRewriterClass />
-    <CodeContractsLibPaths />
-    <CodeContractsExtraRewriteOptions />
-    <CodeContractsExtraAnalysisOptions />
-    <CodeContractsSQLServerOption />
-    <CodeContractsBaseLineFile />
-    <CodeContractsCacheAnalysisResults>True</CodeContractsCacheAnalysisResults>
-    <CodeContractsSkipAnalysisIfCannotConnectToCache>False</CodeContractsSkipAnalysisIfCannotConnectToCache>
-    <CodeContractsFailBuildOnWarnings>False</CodeContractsFailBuildOnWarnings>
-    <CodeContractsBeingOptimisticOnExternal>True</CodeContractsBeingOptimisticOnExternal>
-    <CodeContractsRuntimeCheckingLevel>Full</CodeContractsRuntimeCheckingLevel>
     <CodeContractsReferenceAssembly>Build</CodeContractsReferenceAssembly>
-    <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Mono.Reflection, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756, processorArchitecture=MSIL">
-      <HintPath>..\packages\Mono.Reflection.1.1.0.0\lib\Mono.Reflection.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
-    <Reference Include="System.ComponentModel.Composition" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.ComponentModel" Version="4.*" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
+    <PackageReference Include="System.Management" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
+    <PackageReference Include="Mono.Reflection" Version="1.1.0.0" />
+    <PackageReference Include="MySql.Data" Version="8.0.14" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Events\StartupDelegates.cs" />
-    <Compile Include="Events\MEFFileDownloadEventStatus.cs" />
-    <Compile Include="Events\MEFFileDownloadProgressEventArgs.cs" />
-    <Compile Include="Events\PlatformDatabaseFoundEventArgs.cs" />
-    <Compile Include="Events\PluginPatcherFoundEventArgs.cs" />
-    <Compile Include="Events\PluginPatcherStatus.cs" />
-    <Compile Include="Events\RDMPPlatformDatabaseStatus.cs" />
-    <Compile Include="IPluginRepositoryFinder.cs" />
-    <Compile Include="LinkedRepositoryProvider.cs" />
-    <Compile Include="PluginManagement\PluginAnalyser.cs" />
-    <Compile Include="PluginManagement\PluginAnalyserProgressEventArgs.cs" />
-    <Compile Include="PluginManagement\PluginAnalyserProgressEventHandler.cs" />
-    <Compile Include="PluginManagement\PluginAnalyserReport.cs" />
-    <Compile Include="PluginManagement\PluginAssemblyStatus.cs" />
-    <Compile Include="PluginManagement\PluginDependency.cs" />
-    <Compile Include="PluginManagement\PluginPart.cs" />
-    <Compile Include="PluginManagement\PluginProcessor.cs" />
-    <Compile Include="PluginRepository.cs" />
-    <Compile Include="PluginRepositoryFinder.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="UserSettingsRepositoryFinder.cs" />
-    <Compile Include="Startup.cs" />
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj">
-      <Project>{9de66727-51cf-44f8-adf3-00ddb262dc1c}</Project>
-      <Name>ANOStore.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Anonymisation\ANOStore\ANOStore.csproj">
-      <Project>{63e1d23e-f82c-4325-b0f7-9638c3753a46}</Project>
-      <Name>ANOStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Anonymisation\IdentifierDump.Database\IdentifierDump.Database.csproj">
-      <Project>{93be8c03-da4a-4299-8add-7d6893df4860}</Project>
-      <Name>IdentifierDump.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Anonymisation\IdentifierDump\IdentifierDump.csproj">
-      <Project>{01028615-752e-470a-90a7-d809af2ee09f}</Project>
-      <Name>IdentifierDump</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CatalogueManager\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
-      <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
-      <Name>CatalogueLibrary.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
-      <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
-      <Name>DataExportLibrary.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
-      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
-      <Name>DataExportLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
-      <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
-      <Name>DataQualityEngine.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
-      <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
-      <Name>DataQualityEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
-      <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>
-      <Name>HIC.Logging.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj">
-      <Project>{3fd82ca1-5f5a-4142-957a-13b29d729ec8}</Project>
-      <Name>QueryCaching.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\QueryCaching\QueryCaching\QueryCaching.csproj">
-      <Project>{e128bb1b-d14a-4972-8b97-bffa6d8e2ae7}</Project>
-      <Name>QueryCaching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Sharing\Sharing\Sharing.csproj">
-      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
-      <Name>Sharing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
-      <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
-      <Name>HIC.Common.Validation</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj" />
+    <ProjectReference Include="..\Anonymisation\ANOStore\ANOStore.csproj" />
+    <ProjectReference Include="..\Anonymisation\IdentifierDump.Database\IdentifierDump.Database.csproj" />
+    <ProjectReference Include="..\Anonymisation\IdentifierDump\IdentifierDump.csproj" />
+    <ProjectReference Include="..\CatalogueManager\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj" />
+    <ProjectReference Include="..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj" />
+    <ProjectReference Include="..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
+    <ProjectReference Include="..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
+    <ProjectReference Include="..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
+    <ProjectReference Include="..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj" />
+    <ProjectReference Include="..\Logging\HIC.Logging\HIC.Logging.csproj" />
+    <ProjectReference Include="..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj" />
+    <ProjectReference Include="..\QueryCaching\QueryCaching\QueryCaching.csproj" />
+    <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
+    <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
+    <ProjectReference Include="..\Sharing\Sharing\Sharing.csproj" />
+    <ProjectReference Include="..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\App.config">
-      <Link>App.config</Link>
-    </None>
-    <None Include="packages.config" />
     <None Include="Repositories.cd" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <Compile Remove="IPluginRepositoryFinder.cs" />
+    <Compile Remove="LinkedRepositoryProvider.cs" />
+    <Compile Remove="PluginRepository.cs" />
+    <Compile Remove="PluginRepositoryFinder.cs" />
+    <Compile Remove="Startup.cs" />
+    <Compile Remove="UserSettingsRepositoryFinder.cs" />
+    <Compile Remove="Events\MEFFileDownloadEventStatus.cs" />
+    <Compile Remove="Events\MEFFileDownloadProgressEventArgs.cs" />
+    <Compile Remove="Events\PlatformDatabaseFoundEventArgs.cs" />
+    <Compile Remove="Events\PluginPatcherFoundEventArgs.cs" />
+    <Compile Remove="Events\PluginPatcherStatus.cs" />
+    <Compile Remove="Events\RDMPPlatformDatabaseStatus.cs" />
+    <Compile Remove="Events\StartupDelegates.cs" />
+    <Compile Remove="PluginManagement\PluginAnalyser.cs" />
+    <Compile Remove="PluginManagement\PluginAnalyserProgressEventArgs.cs" />
+    <Compile Remove="PluginManagement\PluginAnalyserProgressEventHandler.cs" />
+    <Compile Remove="PluginManagement\PluginAnalyserReport.cs" />
+    <Compile Remove="PluginManagement\PluginAssemblyStatus.cs" />
+    <Compile Remove="PluginManagement\PluginDependency.cs" />
+    <Compile Remove="PluginManagement\PluginPart.cs" />
+    <Compile Remove="PluginManagement\PluginProcessor.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+  </ItemGroup>
 </Project>

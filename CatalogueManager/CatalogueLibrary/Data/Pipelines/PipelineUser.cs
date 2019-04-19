@@ -6,7 +6,6 @@
 
 using System;
 using System.Reflection;
-using System.Web.Security.AntiXss;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Repositories;
 

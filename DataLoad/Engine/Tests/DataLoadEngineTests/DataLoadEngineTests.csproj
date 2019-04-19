@@ -1,20 +1,7 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="..\..\..\..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\..\..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" />
-  <Import Project="..\..\..\..\packages\NUnit.3.11.0\build\NUnit.props" Condition="Exists('..\..\..\..\packages\NUnit.3.11.0\build\NUnit.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{066C4228-210D-4F22-A7FD-CA6304D5FFB5}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>DataLoadEngineTests</RootNamespace>
-    <AssemblyName>DataLoadEngineTests</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net452</TargetFramework>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -31,21 +18,10 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\</SolutionDir>
-    <RestorePackages>true</RestorePackages>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
-    <NuGetPackageImportStamp>ccef2e8b</NuGetPackageImportStamp>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -91,13 +67,6 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
     <CodeContractsRuntimeCallSiteRequires>False</CodeContractsRuntimeCallSiteRequires>
@@ -142,30 +111,16 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Test\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -212,170 +167,49 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Test\</OutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
+  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Protobuf">
-      <HintPath>..\..\..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="nunit.framework, Version=3.11.0.0, Culture=neutral, PublicKeyToken=2638cd05610744eb, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\NUnit.3.11.0\lib\net45\nunit.framework.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Rhino.Mocks, Version=3.6.0.0, Culture=neutral, PublicKeyToken=0b3305902db7183f, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\packages\RhinoMocks.3.6.1\lib\net\Rhino.Mocks.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.ComponentModel" Version="4.*" />
+    <PackageReference Include="System.IO.Compression" Version="4.*" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
+    <PackageReference Include="System.Management" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="7.1.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
+    <PackageReference Include="MySql.Data" Version="8.0.14" />
+    <PackageReference Include="NUnit" Version="3.11.0" />
+    <PackageReference Include="NUnit3TestAdapter" Version="3.10.0" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
+    <PackageReference Include="RhinoMocks" Version="3.6.1" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.IO.Compression.FileSystem" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\..\..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Integration\BackfillSqlHelperTests.cs" />
-    <Compile Include="Integration\CachedFileRetrieverTests.cs" />
-    <Compile Include="Integration\Cache\TestDataInventor.cs" />
-    <Compile Include="Integration\Cache\TestDataWriterChunk.cs" />
-    <Compile Include="Integration\CheckingTests\ProcessTaskCheckingTests.cs" />
-    <Compile Include="Integration\CoalescerTests.cs" />
-    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
-    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommandTest.cs" />
-    <Compile Include="Integration\CrossDatabaseTypeTests\CrossDatabaseInsertTests.cs" />
-    <Compile Include="Integration\CrossDatabaseTypeTests\HowDoWeAchieveMd5Test.cs" />
-    <Compile Include="Integration\DatabaseClonerTests.cs" />
-    <Compile Include="Integration\DataLoadProgressUpdateInfoTests.cs" />
-    <Compile Include="Integration\DataTableUploadDestinationTests.cs" />
-    <Compile Include="Integration\DilutionTests\DilutionCheckTests.cs" />
-    <Compile Include="Integration\DilutionTests\DilutionOperationTests.cs" />
-    <Compile Include="Integration\DilutionTests\DilutionOperationFactoryTests.cs" />
-    <Compile Include="Integration\DistincterTests.cs" />
-    <Compile Include="Integration\ExecutableProcessTaskTests.cs" />
-    <Compile Include="Integration\ExecuteSqlFileRuntimeTaskTests.cs" />
-    <Compile Include="Integration\HICPipelineTests.cs" />
-    <Compile Include="Integration\ImportFilesDataProviderTests.cs" />
-    <Compile Include="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
-    <Compile Include="Integration\KVPAttacherTest.cs" />
-    <Compile Include="Integration\PayloadTest.cs" />
-    <Compile Include="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
-    <Compile Include="Integration\PipelineTests\Components\ColumnSwapperTests.cs" />
-    <Compile Include="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
-    <Compile Include="Integration\PipelineTests\Components\TransposerTests.cs" />
-    <Compile Include="Integration\PipelineTests\PipelineArgumentTests.cs" />
-    <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTestsBase.cs" />
-    <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTests_AutomaticallyResolved.cs" />
-    <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTests_ResolvedAccordingToStrategy.cs" />
-    <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTests_Unresolveable.cs" />
-    <Compile Include="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
-    <Compile Include="Integration\PrematureLoadEnderTests.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestAgent.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestAgentEquipment.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent_AgentLinkTable.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestInformant.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\CIATestReport.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\TestData\RelationalBulkTestData.cs" />
-    <Compile Include="Integration\RemoteDatabaseAttacherTests.cs" />
-    <Compile Include="Integration\RuntimeTaskFactoryTests.cs" />
-    <Compile Include="Integration\SafePrimaryKeyCollisionResolverMutilationTests.cs" />
-    <Compile Include="Integration\SingleJobPipelineTests.cs" />
-    <Compile Include="Integration\BackfillTests.cs" />
-    <Compile Include="Integration\PipelineTests\ArchiveFilesTests.cs" />
-    <Compile Include="Integration\PipelineTests\ComponentCompatibilityTests.cs" />
-    <Compile Include="Integration\PipelineTests\PipelineReadPerformanceTest.cs" />
-    <Compile Include="Integration\PipelineTests\Sources\DelimitedFileSourceTests.cs" />
-    <Compile Include="Integration\RelationalBulkTestDataTests\RelationalBulkTestDataSetup.cs" />
-    <Compile Include="Integration\SetupDatasetTest.cs" />
-    <Compile Include="Integration\TableInfoJoiningQueryBuilderTests.cs" />
-    <Compile Include="Integration\TableVarcharMaxerTests.cs" />
-    <Compile Include="Integration\TestDataWriter.cs" />
-    <Compile Include="Integration\ToMemoryDataLoadJob.cs" />
-    <Compile Include="Integration\WebFileDownloaderTests.cs" />
-    <Compile Include="Integration\WebServiceConfigurationTests.cs" />
-    <Compile Include="Integration\DatabaseOperationTests.cs" />
-    <Compile Include="Integration\ExcelConversionTest.cs" />
-    <Compile Include="Integration\FixedWidthTests.cs" />
-    <Compile Include="Unit\DataFlowComponentTests.cs" />
-    <Compile Include="Unit\ExcelTests.cs" />
-    <Compile Include="Unit\IAttacherCompositionTests.cs" />
-    <Compile Include="Unit\JobDateGenerationStrategyFactoryTestsUnit.cs" />
-    <Compile Include="Unit\JobDateGenerationStrategyTests.cs" />
-    <Compile Include="Integration\MigrationStrategyTests.cs" />
-    <Compile Include="Unit\CommandLineHelperTests.cs" />
-    <Compile Include="Integration\HousekeepingTests.cs" />
-    <Compile Include="Unit\ExecutableProcessTaskTests.cs" />
-    <Compile Include="Integration\FlatFileAttacherTests.cs" />
-    <Compile Include="Unit\MDFAttacherTests.cs" />
-    <Compile Include="Integration\PipelineTests\Sources\SourceTests.cs" />
-    <Compile Include="Integration\PrimaryKeyCollisionResolverTests.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Properties\Settings.Designer.cs">
+    <Compile Include="..\..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Update="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Include="Resources\Resource1.Designer.cs">
+    <Compile Update="Resources\Resource1.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resource1.resx</DependentUpon>
     </Compile>
-    <Compile Include="Unit\SchedulingTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\..\..\App.config">
-      <Link>App.config</Link>
-    </None>
-    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
@@ -404,75 +238,19 @@
     <EmbeddedResource Include="Unit\TestFile\OddFormats.xls" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj">
-      <Project>{63e1d23e-f82c-4325-b0f7-9638c3753a46}</Project>
-      <Name>ANOStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj">
-      <Project>{2CDD82D5-3E34-46C5-9679-ADEAB49B170C}</Project>
-      <Name>AnonymisationTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj">
-      <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
-      <Name>CachingEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\CatalogueManager\Tests\CatalogueLibraryTests\CatalogueLibraryTests.csproj">
-      <Project>{E733ACCF-3610-4F90-A240-8B9A757270C4}</Project>
-      <Name>CatalogueLibraryTests</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Diagnostics\Diagnostics.csproj">
-      <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
-      <Name>Diagnostics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{EC22CB10-78FC-4150-83EB-05861C5EEB94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Tests.Common\Tests.Common.csproj">
-      <Project>{ca13a431-7fb6-4bce-8521-42d130934311}</Project>
-      <Name>Tests.Common</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
-      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
-      <Name>RDMPAutomationService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj">
-      <Project>{A3279A4D-10C4-4FE2-808B-3252BCC25275}</Project>
-      <Name>DataLoadEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
-      <Project>{E0CAE42D-E92E-4425-A1A2-FC8A172C47EB}</Project>
-      <Name>LoadModules.Generic</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
+    <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
+    <ProjectReference Include="..\..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj" />
+    <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
+    <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\..\..\..\CatalogueManager\Tests\CatalogueLibraryTests\CatalogueLibraryTests.csproj" />
+    <ProjectReference Include="..\..\..\..\Diagnostics\Diagnostics.csproj" />
+    <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
+    <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
+    <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
+    <ProjectReference Include="..\..\..\..\Tests.Common\Tests.Common.csproj" />
+    <ProjectReference Include="..\..\..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj" />
+    <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj" />
+    <ProjectReference Include="..\..\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Resources\ExpectedData.sql" />
@@ -488,7 +266,7 @@
     <None Include="Resources\XmlTestForExcel.xml" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Resources\Resource1.resx">
+    <EmbeddedResource Update="Resources\Resource1.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
@@ -497,20 +275,84 @@
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
-  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
-    <PropertyGroup>
-      <ErrorText>This project references NuGet package(s) that are missing on this computer. Enable NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
-    </PropertyGroup>
-    <Error Condition="!Exists('..\..\..\..\packages\NUnit.3.11.0\build\NUnit.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\NUnit.3.11.0\build\NUnit.props'))" />
-    <Error Condition="!Exists('..\..\..\..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" Text="$([System.String]::Format('$(ErrorText)', '..\..\..\..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props'))" />
-  </Target>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <Compile Remove="Integration\BackfillSqlHelperTests.cs" />
+    <Compile Remove="Integration\BackfillTests.cs" />
+    <Compile Remove="Integration\CachedFileRetrieverTests.cs" />
+    <Compile Remove="Integration\CoalescerTests.cs" />
+    <Compile Remove="Integration\DatabaseClonerTests.cs" />
+    <Compile Remove="Integration\DatabaseOperationTests.cs" />
+    <Compile Remove="Integration\DataLoadProgressUpdateInfoTests.cs" />
+    <Compile Remove="Integration\DataTableUploadDestinationTests.cs" />
+    <Compile Remove="Integration\DistincterTests.cs" />
+    <Compile Remove="Integration\ExcelConversionTest.cs" />
+    <Compile Remove="Integration\ExecutableProcessTaskTests.cs" />
+    <Compile Remove="Integration\ExecuteSqlFileRuntimeTaskTests.cs" />
+    <Compile Remove="Integration\FixedWidthTests.cs" />
+    <Compile Remove="Integration\FlatFileAttacherTests.cs" />
+    <Compile Remove="Integration\HICPipelineTests.cs" />
+    <Compile Remove="Integration\HousekeepingTests.cs" />
+    <Compile Remove="Integration\ImportFilesDataProviderTests.cs" />
+    <Compile Remove="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
+    <Compile Remove="Integration\KVPAttacherTest.cs" />
+    <Compile Remove="Integration\MigrationStrategyTests.cs" />
+    <Compile Remove="Integration\PayloadTest.cs" />
+    <Compile Remove="Integration\PrematureLoadEnderTests.cs" />
+    <Compile Remove="Integration\PrimaryKeyCollisionResolverTests.cs" />
+    <Compile Remove="Integration\RemoteDatabaseAttacherTests.cs" />
+    <Compile Remove="Integration\RuntimeTaskFactoryTests.cs" />
+    <Compile Remove="Integration\SafePrimaryKeyCollisionResolverMutilationTests.cs" />
+    <Compile Remove="Integration\SetupDatasetTest.cs" />
+    <Compile Remove="Integration\SingleJobPipelineTests.cs" />
+    <Compile Remove="Integration\TableInfoJoiningQueryBuilderTests.cs" />
+    <Compile Remove="Integration\TableVarcharMaxerTests.cs" />
+    <Compile Remove="Integration\TestDataWriter.cs" />
+    <Compile Remove="Integration\ToMemoryDataLoadJob.cs" />
+    <Compile Remove="Integration\WebFileDownloaderTests.cs" />
+    <Compile Remove="Integration\WebServiceConfigurationTests.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Unit\CommandLineHelperTests.cs" />
+    <Compile Remove="Unit\DataFlowComponentTests.cs" />
+    <Compile Remove="Unit\ExcelTests.cs" />
+    <Compile Remove="Unit\ExecutableProcessTaskTests.cs" />
+    <Compile Remove="Unit\IAttacherCompositionTests.cs" />
+    <Compile Remove="Unit\JobDateGenerationStrategyFactoryTestsUnit.cs" />
+    <Compile Remove="Unit\JobDateGenerationStrategyTests.cs" />
+    <Compile Remove="Unit\MDFAttacherTests.cs" />
+    <Compile Remove="Unit\SchedulingTests.cs" />
+    <Compile Remove="Integration\Cache\TestDataInventor.cs" />
+    <Compile Remove="Integration\Cache\TestDataWriterChunk.cs" />
+    <Compile Remove="Integration\CheckingTests\ProcessTaskCheckingTests.cs" />
+    <Compile Remove="Integration\CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
+    <Compile Remove="Integration\CrossDatabaseTypeTests\CrossDatabaseInsertTests.cs" />
+    <Compile Remove="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommandTest.cs" />
+    <Compile Remove="Integration\CrossDatabaseTypeTests\HowDoWeAchieveMd5Test.cs" />
+    <Compile Remove="Integration\DilutionTests\DilutionCheckTests.cs" />
+    <Compile Remove="Integration\DilutionTests\DilutionOperationFactoryTests.cs" />
+    <Compile Remove="Integration\DilutionTests\DilutionOperationTests.cs" />
+    <Compile Remove="Integration\PipelineTests\ArchiveFilesTests.cs" />
+    <Compile Remove="Integration\PipelineTests\ComponentCompatibilityTests.cs" />
+    <Compile Remove="Integration\PipelineTests\PipelineArgumentTests.cs" />
+    <Compile Remove="Integration\PipelineTests\PipelineReadPerformanceTest.cs" />
+    <Compile Remove="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\RelationalBulkTestDataSetup.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
+    <Compile Remove="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
+    <Compile Remove="Integration\PipelineTests\Components\ColumnSwapperTests.cs" />
+    <Compile Remove="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
+    <Compile Remove="Integration\PipelineTests\Components\TransposerTests.cs" />
+    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests.cs" />
+    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTestsBase.cs" />
+    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests_AutomaticallyResolved.cs" />
+    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests_ResolvedAccordingToStrategy.cs" />
+    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests_Unresolveable.cs" />
+    <Compile Remove="Integration\PipelineTests\Sources\SourceTests.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestAgent.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestAgentEquipment.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent_AgentLinkTable.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestInformant.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestReport.cs" />
+    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\RelationalBulkTestData.cs" />
+  </ItemGroup>
 </Project>

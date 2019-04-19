@@ -5,16 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
-using Xceed.Words.NET;
 
 namespace CatalogueLibrary.Triggers.Implementations
 {

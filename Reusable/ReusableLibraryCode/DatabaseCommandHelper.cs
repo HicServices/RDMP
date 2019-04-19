@@ -15,11 +15,10 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
-using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
-using MySql.Data.MySqlClient;
 using Oracle.ManagedDataAccess.Client;
+using MySql.Data.MySqlClient;
 using ReusableLibraryCode.Performance;
 
 namespace ReusableLibraryCode

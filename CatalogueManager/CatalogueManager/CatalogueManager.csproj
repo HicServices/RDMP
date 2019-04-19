@@ -1,19 +1,8 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{FDF08240-2AFC-48A4-8F48-37CC7EA3000B}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>CatalogueManager</RootNamespace>
-    <AssemblyName>CatalogueManager</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <TargetFrameworkProfile>
-    </TargetFrameworkProfile>
-    <FileAlignment>512</FileAlignment>
+    <TargetFramework>net452</TargetFramework>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <PublishUrl>C:\Development\Deployments\RDMP\CatalogueManager\</PublishUrl>
@@ -36,36 +25,46 @@
     <UseApplicationTrust>false</UseApplicationTrust>
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
-    <NuGetPackageImportStamp>65891bf7</NuGetPackageImportStamp>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
+    <PostBuildEvent />
+    <PreBuildEvent />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
-    <PlatformTarget>x86</PlatformTarget>
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestCertificateThumbprint>F048E664FB6FC6DA51ABB0FAB72EA28DFCAA0309</ManifestCertificateThumbprint>
   </PropertyGroup>
   <PropertyGroup>
-    <ManifestKeyFile>
-    </ManifestKeyFile>
+    <ManifestKeyFile />
   </PropertyGroup>
   <PropertyGroup>
     <GenerateManifests>true</GenerateManifests>
@@ -73,30 +72,17 @@
   <PropertyGroup>
     <SignManifests>true</SignManifests>
   </PropertyGroup>
-  <PropertyGroup />
   <PropertyGroup>
     <ApplicationIcon>laser.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <TargetZone>LocalIntranet</TargetZone>
   </PropertyGroup>
-  <PropertyGroup />
-  <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup />
   <PropertyGroup>
     <ApplicationManifest>Properties\app.manifest</ApplicationManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
     <WarningLevel>3</WarningLevel>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
@@ -144,14 +130,7 @@
     <NoWarn>1573,1584</NoWarn>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|AnyCPU'">
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -197,51 +176,33 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x86'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x86\Test\</OutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Test\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <WarningLevel>3</WarningLevel>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Test\</OutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
-    <Prefer32Bit>false</Prefer32Bit>
   </PropertyGroup>
   <PropertyGroup>
     <ManifestTimestampUrl>http://timestamp.verisign.com/scripts/timstamp.dll</ManifestTimestampUrl>
@@ -249,1181 +210,798 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
+  <PropertyGroup>
+    <PostBuildEvent />
+  </PropertyGroup>
+  <PropertyGroup>
+    <PreBuildEvent />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="AutocompleteMenu-ScintillaNET, Version=1.3.4.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\AutoCompleteMenu-ScintillaNET.1.6.1\lib\net40\AutocompleteMenu-ScintillaNET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CommandLine, Version=2.3.0.0, Culture=neutral, PublicKeyToken=de6f01bd326f8c32, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CommandLineParser.2.3.0\lib\net45\CommandLine.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="CsvHelper, Version=7.0.0.0, Culture=neutral, PublicKeyToken=8c4959082be5c823, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\CsvHelper.7.1.1\lib\net45\CsvHelper.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="ObjectListView, Version=2.9.1.1072, Culture=neutral, PublicKeyToken=b1c5bf581481bcd4, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\ObjectListView.Official.2.9.1\lib\net20\ObjectListView.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.ComponentModel" Version="4.*" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
+    <PackageReference Include="System.IO.Compression" Version="4.*" />
+    <PackageReference Include="System.Management" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
+    <PackageReference Include="CommandLineParser" Version="2.3.0" />
+    <PackageReference Include="CsvHelper" Version="7.1.1" />
+    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
+    <PackageReference Include="jacobslusser.ScintillaNET" Version="3.6.3" />
+    <PackageReference Include="MySql.Data" Version="8.0.14" />
+    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
+    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="PresentationCore" />
-    <Reference Include="ScintillaNET, Version=3.6.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\jacobslusser.ScintillaNET.3.6.3\lib\net40\ScintillaNET.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
-    <Reference Include="System.ComponentModel.Composition" />
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.IO.Compression" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Xml" />
-    <Reference Include="System.Xml.Linq" />
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="AggregationUIs\Advanced\AggregateEditorUI.cs">
+    <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <Compile Update="AggregationUIs\Advanced\AggregateEditorUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\AggregateEditorUI.Designer.cs">
+    <Compile Update="AggregationUIs\Advanced\AggregateEditorUI.Designer.cs">
       <DependentUpon>AggregateEditorUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\SelectColumnUI.cs">
+    <Compile Update="AggregationUIs\Advanced\SelectColumnUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\SelectColumnUI.Designer.cs">
+    <Compile Update="AggregationUIs\Advanced\SelectColumnUI.Designer.cs">
       <DependentUpon>SelectColumnUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\AggregateTopXUI.cs">
+    <Compile Update="AggregationUIs\Advanced\AggregateTopXUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AggregationUIs\Advanced\AggregateTopXUI.Designer.cs">
+    <Compile Update="AggregationUIs\Advanced\AggregateTopXUI.Designer.cs">
       <DependentUpon>AggregateTopXUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="AggregationUIs\AggregateContinuousDateAxisUI.cs">
+    <Compile Update="AggregationUIs\AggregateContinuousDateAxisUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AggregationUIs\AggregateContinuousDateAxisUI.Designer.cs">
+    <Compile Update="AggregationUIs\AggregateContinuousDateAxisUI.Designer.cs">
       <DependentUpon>AggregateContinuousDateAxisUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="AggregationUIs\AggregateGraphUI.cs">
+    <Compile Update="AggregationUIs\AggregateGraphUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="AggregationUIs\AggregateGraphUI.Designer.cs">
+    <Compile Update="AggregationUIs\AggregateGraphUI.Designer.cs">
       <DependentUpon>AggregateGraphUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ANOEngineeringUIs\ANOTableUI.cs">
+    <Compile Update="ANOEngineeringUIs\ANOTableUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ANOEngineeringUIs\ANOTableUI.Designer.cs">
+    <Compile Update="ANOEngineeringUIs\ANOTableUI.Designer.cs">
       <DependentUpon>ANOTableUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.cs">
+    <Compile Update="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.Designer.cs">
+    <Compile Update="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.Designer.cs">
       <DependentUpon>ForwardEngineerANOCatalogueUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="AutoCompleteTextbox.cs">
+    <Compile Update="AutoCompleteTextbox.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="AutoComplete\AutoCompleteProvider.cs" />
-    <Compile Include="AutoComplete\AutoCompleteProviderFactory.cs" />
-    <Compile Include="Collections\CollectionPinFilterUI.cs">
+    <Compile Update="Collections\CollectionPinFilterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Collections\CollectionPinFilterUI.Designer.cs">
+    <Compile Update="Collections\CollectionPinFilterUI.Designer.cs">
       <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\FavouritesCollectionUI.cs">
+    <Compile Update="Collections\FavouritesCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Collections\FavouritesCollectionUI.Designer.cs">
+    <Compile Update="Collections\FavouritesCollectionUI.Designer.cs">
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\OrderableComparer.cs" />
-    <Compile Include="Collections\Providers\CheckColumnProvider.cs" />
-    <Compile Include="Collections\Providers\Copying\CopyPasteProvider.cs" />
-    <Compile Include="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
-    <Compile Include="Collections\Providers\IDColumnProvider.cs" />
-    <Compile Include="Collections\RDMPCollection.cs" />
-    <Compile Include="Collections\RDMPCollectionCommonFunctionalitySettings.cs" />
-    <Compile Include="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Automation\AutomationCommandExecution.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Automation\ExecuteCommandCopyRunCommandToClipboard.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddJoinInfo.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewGovernanceDocument.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewLookupTableRelationship.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAnonymiseColumnInfo.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBrowseLookup.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkImportTableInfos.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandBulkProcessCatalogueItems.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCheck.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandClonePipeline.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueFromTableInfo.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilter.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilterFromCatalogue.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewGovernancePeriod.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDeprecate.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditCacheProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateMetadataReport.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueProjectSpecific.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakeProjectSpecificCatalogueNormalAgain.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandOverrideRawServer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderColumns.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowCacheFetchFailures.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowXmlDoc.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchGraph.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoadDiagram.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSample.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewSqlParameters.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportInDublinCoreFormat.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportObjectsToFileUI.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportDublinCoreFormat.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportFilterDescriptionsFromShare.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShare.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShareDefinitionList.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemsNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentialUsageNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLookup.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsWindowLayout.cs" />
-    <Compile Include="Copying\Commands\AggregateConfigurationCommand.cs" />
-    <Compile Include="Copying\Commands\CacheProgressCommand.cs" />
-    <Compile Include="Copying\Commands\CatalogueCommand.cs" />
-    <Compile Include="Copying\Commands\CohortAggregateContainerCommand.cs" />
-    <Compile Include="Copying\Commands\CohortCommandHelper.cs" />
-    <Compile Include="Copying\Commands\CohortIdentificationConfigurationCommand.cs" />
-    <Compile Include="Copying\Commands\ColumnCommand.cs" />
-    <Compile Include="Copying\Commands\ColumnInfoCommand.cs" />
-    <Compile Include="Copying\Commands\ContainerCommand.cs" />
-    <Compile Include="Copying\Commands\DataAccessCredentialsCommand.cs" />
-    <Compile Include="Copying\Commands\ExtractableCohortCommand.cs" />
-    <Compile Include="Copying\Commands\ExtractableDataSetCommand.cs" />
-    <Compile Include="Copying\Commands\FileCollectionCommand.cs" />
-    <Compile Include="Copying\Commands\FilterCommand.cs" />
-    <Compile Include="Copying\Commands\ManyCataloguesCommand.cs" />
-    <Compile Include="Copying\Commands\PipelineCommand.cs" />
-    <Compile Include="Copying\Commands\ProcessTaskCommand.cs" />
-    <Compile Include="Copying\Commands\SqlTextOnlyCommand.cs" />
-    <Compile Include="Copying\Commands\TableInfoCommand.cs" />
-    <Compile Include="Copying\RDMPCommandFactory.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPublishFilter.cs" />
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.Designer.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.Designer.cs">
       <DependentUpon>LookupBrowserUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupUI.Designer.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.Designer.cs">
       <DependentUpon>LookupUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractableCohortStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentials.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalDatabaseServer.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadProgress.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindow.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPreLoadDiscardedColumn.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionFilterParameterSet.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingDocument.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingSQLTable.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsTableInfo.cs" />
-    <Compile Include="Icons\IconProvision\CatalogueIcons.Designer.cs">
+    <Compile Update="Icons\IconProvision\CatalogueIcons.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>CatalogueIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConfigureDefaultServers.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExportLoggedDataToCsv.cs" />
-    <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.cs">
+    <Compile Update="MainFormUITabs\ConnectionStringKeywordUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\ConnectionStringKeywordUI.Designer.cs">
+    <Compile Update="MainFormUITabs\ConnectionStringKeywordUI.Designer.cs">
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
-    <Compile Include="Menus\AllGovernanceNodeMenu.cs" />
-    <Compile Include="Menus\AllServersNodeMenu.cs" />
-    <Compile Include="Menus\AllStandardRegexesNodeMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
-    <Compile Include="Menus\CatalogueFolderMenu.cs" />
-    <Compile Include="Menus\ContainerMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandEditLoadMetadataDescription.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDisableOrEnable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandViewData.cs" />
-    <Compile Include="Menus\ExternalDatabaseServerMenu.cs" />
-    <Compile Include="Menus\FilterContainerMenu.cs" />
-    <Compile Include="Menus\GovernancePeriodMenu.cs" />
-    <Compile Include="Menus\LookupMenu.cs" />
-    <Compile Include="Menus\MenuItems\AtomicCommandToolStripItem.cs">
+    <Compile Update="Menus\MenuItems\AtomicCommandToolStripItem.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Include="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
-    <Compile Include="Menus\ProcessTaskMenu.cs" />
-    <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
+    <Compile Update="PipelineUIs\DataObjects\DataFlowComponentVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.Designer.cs">
+    <Compile Update="PipelineUIs\DataObjects\DataFlowComponentVisualisation.Designer.cs">
       <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.cs">
+    <Compile Update="PipelineUIs\DataObjects\PipelineComponentVisualisation.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.Designer.cs">
       <DependentUpon>ArgumentCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.Designer.cs">
       <DependentUpon>ArgumentValueDictionaryUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.Designer.cs">
       <DependentUpon>ArgumentValueArrayUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.Designer.cs">
       <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.Designer.cs">
       <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.Designer.cs">
       <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.Designer.cs">
       <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.Designer.cs">
       <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.Designer.cs">
       <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.Designer.cs">
+    <Compile Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.Designer.cs">
       <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIArgs.cs" />
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
-    <Compile Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
-    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.cs">
+    <Compile Update="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.Designer.cs">
+    <Compile Update="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.Designer.cs">
       <DependentUpon>ConfigureAndExecutePipelineUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\ConfigurePipelineUI.cs">
+    <Compile Update="PipelineUIs\Pipelines\ConfigurePipelineUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\ConfigurePipelineUI.Designer.cs">
+    <Compile Update="PipelineUIs\Pipelines\ConfigurePipelineUI.Designer.cs">
       <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\IPipelineSelectionUI.cs" />
-    <Compile Include="PipelineUIs\Pipelines\Models\AdvertisedPipelineComponentTypeUnderContext.cs" />
-    <Compile Include="PipelineUIs\Pipelines\Models\DividerLineControl.cs">
+    <Compile Update="PipelineUIs\Pipelines\Models\DividerLineControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\Models\DividerLineControl.Designer.cs">
+    <Compile Update="PipelineUIs\Pipelines\Models\DividerLineControl.Designer.cs">
       <DependentUpon>DividerLineControl.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineDiagramUI.cs">
+    <Compile Update="PipelineUIs\Pipelines\PipelineDiagramUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineDiagramUI.Designer.cs">
+    <Compile Update="PipelineUIs\Pipelines\PipelineDiagramUI.Designer.cs">
       <DependentUpon>PipelineDiagramUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
+    <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineSelectionUI.Designer.cs">
+    <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.Designer.cs">
       <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineWorkAreaUI.cs">
+    <Compile Update="PipelineUIs\Pipelines\PipelineWorkAreaUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PipelineWorkAreaUI.Designer.cs">
+    <Compile Update="PipelineUIs\Pipelines\PipelineWorkAreaUI.Designer.cs">
       <DependentUpon>PipelineWorkAreaUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
-    <Compile Include="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
-    <Compile Include="Rules\BinderRule.cs" />
-    <Compile Include="Rules\IBinderRule.cs" />
-    <Compile Include="Rules\NotNullRule.cs" />
-    <Compile Include="Rules\UniqueRule.cs" />
-    <Compile Include="SimpleControls\CheckAndExecuteUI.cs">
+    <Compile Update="SimpleControls\CheckAndExecuteUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleControls\CheckAndExecuteUI.Designer.cs">
+    <Compile Update="SimpleControls\CheckAndExecuteUI.Designer.cs">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleControls\CommandGetterHandler.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\Automation\ExecuteCommandRunDetached.cs" />
-    <Compile Include="FindAndReplace\FindAndReplaceNode.cs" />
-    <Compile Include="FindAndReplace\FindAndReplaceUI.cs">
+    <Compile Update="FindAndReplace\FindAndReplaceUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="FindAndReplace\FindAndReplaceUI.Designer.cs">
+    <Compile Update="FindAndReplace\FindAndReplaceUI.Designer.cs">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Menus\AllLoadMetadatasNodeMenu.cs" />
-    <Compile Include="Menus\AllObjectImportsNodeMenu.cs" />
-    <Compile Include="Menus\AllPermissionWindowsNodeMenu.cs" />
-    <Compile Include="Menus\AllANOTablesNodeMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetDataAccessContextForCredentials.cs" />
-    <Compile Include="Menus\HICProjectDirectoryNodeMenu.cs" />
-    <Compile Include="Collections\Providers\FavouriteColumnProvider.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCacheProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewProcessTask.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAssociateCatalogueWithLoadMetadata.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChoosePlatformDatabase.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingExistingDataTable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandDelete.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
+    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.Designer.cs">
+    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.Designer.cs">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.cs">
+    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
+    <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.Designer.cs">
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandUIFactory.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditDataExtractionProject.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandExecuteLoadMetadata.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
-    <Compile Include="CommandExecution\CachedDropTarget.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandChangeLoadStage.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderProcessTask.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAggregateConfiguration.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogue.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortAggregateContainer.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConcreteFilter.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsFilterContainer.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadMetadata.cs" />
-    <Compile Include="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadStageNode.cs" />
-    <Compile Include="CommandExecution\Proposals\RDMPCommandExecutionProposal.cs" />
-    <Compile Include="DashboardTabs\Construction\DashboardControlFactory.cs" />
-    <Compile Include="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />
-    <Compile Include="DashboardTabs\Construction\IDashboardableControl.cs" />
-    <Compile Include="DashboardTabs\Construction\INotifyMeOfEditState.cs" />
-    <Compile Include="DashboardTabs\DashboardableControlHostPanel.cs">
+    <Compile Update="DashboardTabs\DashboardableControlHostPanel.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DashboardTabs\DashboardableControlHostPanel.Designer.cs">
+    <Compile Update="DashboardTabs\DashboardableControlHostPanel.Designer.cs">
       <DependentUpon>DashboardableControlHostPanel.cs</DependentUpon>
     </Compile>
-    <Compile Include="DashboardTabs\DashboardEditModeFunctionality.cs" />
-    <Compile Include="DashboardTabs\DashboardLayoutUI.cs">
+    <Compile Update="DashboardTabs\DashboardLayoutUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DashboardTabs\DashboardLayoutUI.Designer.cs">
+    <Compile Update="DashboardTabs\DashboardLayoutUI.Designer.cs">
       <DependentUpon>DashboardLayoutUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.Designer.cs">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadExecutionUIs\ExecuteCacheProgressUI.cs">
+    <Compile Update="LoadExecutionUIs\ExecuteCacheProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LoadExecutionUIs\ExecuteCacheProgressUI.Designer.cs">
+    <Compile Update="LoadExecutionUIs\ExecuteCacheProgressUI.Designer.cs">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LoadExecutionUIs\ExecuteLoadMetadataUI.cs">
+    <Compile Update="LoadExecutionUIs\ExecuteLoadMetadataUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LoadExecutionUIs\ExecuteLoadMetadataUI.Designer.cs">
+    <Compile Update="LoadExecutionUIs\ExecuteLoadMetadataUI.Designer.cs">
       <DependentUpon>ExecuteLoadMetadataUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataViewing\Collections\Arbitrary\ArbitraryTableExtractionUICollection.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramColumnNode.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\IHasLoadDiagramState.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadDiagramState.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramTableNode.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\UnplannedTable.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadStageIconUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadStageIconUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadStageIconUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadStageIconUI.Designer.cs">
       <DependentUpon>LoadStageIconUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\ExeProcessTaskUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\ExeProcessTaskUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\ExeProcessTaskUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\ExeProcessTaskUI.Designer.cs">
       <DependentUpon>ExeProcessTaskUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\PluginProcessTaskUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\PluginProcessTaskUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\PluginProcessTaskUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\PluginProcessTaskUI.Designer.cs">
       <DependentUpon>PluginProcessTaskUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.Designer.cs">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataQualityUIs\DQEExecutionControlUI.cs">
+    <Compile Update="DataQualityUIs\DQEExecutionControlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataQualityUIs\DQEExecutionControlUI.Designer.cs">
+    <Compile Update="DataQualityUIs\DQEExecutionControlUI.Designer.cs">
       <DependentUpon>DQEExecutionControlUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataViewing\Collections\ViewAggregateExtractUICollection.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\FilterGraphUI.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\FilterGraphUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\FilterGraphUI.Designer.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\FilterGraphUI.Designer.cs">
       <DependentUpon>FilterGraphUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\FilterGraphObjectCollection.cs" />
-    <Compile Include="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.Designer.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.Designer.cs">
       <DependentUpon>JoinConfigurationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.Designer.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.Designer.cs">
       <DependentUpon>KeyDropLocationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataViewing\Collections\IViewSQLAndResultsCollection.cs" />
-    <Compile Include="DataViewing\Collections\ViewColumnInfoExtractUICollection.cs" />
-    <Compile Include="Icons\IconOverlays\CachedOverlayResult.cs" />
-    <Compile Include="Icons\IconOverlays\IconOverlayProvider.cs" />
-    <Compile Include="Icons\IconOverlays\Overlays.Designer.cs">
+    <Compile Update="Icons\IconOverlays\Overlays.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Overlays.resx</DependentUpon>
     </Compile>
-    <Compile Include="Icons\IconProvision\EnumImageCollection.cs" />
-    <Compile Include="Icons\IconProvision\Exceptions\IconProvisionException.cs" />
-    <Compile Include="Icons\IconProvision\ICoreIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\AggregateConfigurationStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CatalogueItemStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CatalogueStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CheckResultStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CohortAggregateContainerStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\CohortIdentificationConfigurationStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ColumnInfoStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExternalDatabaseServerStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ExtractionInformationStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\FamFamFamIcons.Designer.cs">
+    <Compile Update="Icons\IconProvision\FamFamFamIcons.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>FamFamFamIcons.resx</DependentUpon>
     </Compile>
-    <Compile Include="Collections\RDMPCollectionCommonFunctionality.cs" />
-    <Compile Include="Collections\RDMPCollectionUI.cs">
+    <Compile Update="Collections\RDMPCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationSetContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddCohortToExtractionConfiguration.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandAddDatasetsToConfiguration.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveAggregateIntoContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveCohortAggregateContainerIntoSubContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveContainerIntoContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandMoveFilterIntoContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandPutCatalogueIntoCatalogueFolder.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderAggregate.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandReOrderAggregateContainer.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandUseCredentialsToAccessTableInfoData.cs" />
-    <Compile Include="CommandExecution\RDMPCommandExecutionFactory.cs" />
-    <Compile Include="CredentialsUIs\DataAccessCredentialsUI.cs">
+    <Compile Update="CredentialsUIs\DataAccessCredentialsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="CredentialsUIs\DataAccessCredentialsUI.Designer.cs">
+    <Compile Update="CredentialsUIs\DataAccessCredentialsUI.Designer.cs">
       <DependentUpon>DataAccessCredentialsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
+    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.Designer.cs">
+    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.Designer.cs">
       <DependentUpon>ColumnInfoToANOTableConverterUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\ANOTableManagement\PatternPredictor.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressAnnotation.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.Designer.cs">
       <DependentUpon>LoadProgressDiagramUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.Designer.cs">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.Designer.cs">
       <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.Designer.cs">
       <DependentUpon>LoadDiagramUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramDatabaseNode.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramServerNode.cs" />
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.Designer.cs">
       <DependentUpon>LoadProgressUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\PreLoadDiscardedColumnUI.cs">
+    <Compile Update="DataLoadUIs\ANOUIs\PreLoadDiscarding\PreLoadDiscardedColumnUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\PreLoadDiscardedColumnUI.Designer.cs">
+    <Compile Update="DataLoadUIs\ANOUIs\PreLoadDiscarding\PreLoadDiscardedColumnUI.Designer.cs">
       <DependentUpon>PreLoadDiscardedColumnUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.Designer.cs">
       <DependentUpon>LoadMetadataUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.Designer.cs">
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.Designer.cs">
       <DependentUpon>PermissionWindowUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataLoadUIs\CreateNewLoadMetadataUI.cs">
+    <Compile Update="DataLoadUIs\CreateNewLoadMetadataUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="DataLoadUIs\CreateNewLoadMetadataUI.Designer.cs">
+    <Compile Update="DataLoadUIs\CreateNewLoadMetadataUI.Designer.cs">
       <DependentUpon>CreateNewLoadMetadataUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.Designer.cs">
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.Designer.cs">
       <DependentUpon>LookupConfigurationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\ReOrderCatalogueItemsUI.cs">
+    <Compile Update="ExtractionUIs\ReOrderCatalogueItemsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\ReOrderCatalogueItemsUI.Designer.cs">
+    <Compile Update="ExtractionUIs\ReOrderCatalogueItemsUI.Designer.cs">
       <DependentUpon>ReOrderCatalogueItemsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\ExtractionInformationUI.cs">
+    <Compile Update="ExtractionUIs\ExtractionInformationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\ExtractionInformationUI.Designer.cs">
+    <Compile Update="ExtractionUIs\ExtractionInformationUI.Designer.cs">
       <DependentUpon>ExtractionInformationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ExtractionFilterUI.Designer.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.Designer.cs">
       <DependentUpon>ExtractionFilterUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\FilterImportWizard.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\Options\AggregateFilterUIOptions.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\Options\DeployedExtractionFilterUIOptions.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\Options\ExtractionFilterUIOptions.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\Options\FilterUIOptions.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\Options\FilterUIOptionsFactory.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\Options\IParameterRefactorer.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\Options\ParameterCollectionUIOptionsFactory.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\Options\ParameterRefactorer.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterCollectionUI.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ParameterUIs\ParameterCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterCollectionUI.Designer.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ParameterUIs\ParameterCollectionUI.Designer.cs">
       <DependentUpon>ParameterCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\Options\ParameterCollectionUIOptions.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.Designer.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.Designer.cs">
       <DependentUpon>ParameterEditorScintillaControlUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaSection.cs" />
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.Designer.cs">
+    <Compile Update="ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.Designer.cs">
       <DependentUpon>ExtractionFilterParameterSetUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\Providers\FavouritesProvider.cs" />
-    <Compile Include="DataViewing\Collections\ViewTableInfoExtractUICollection.cs" />
-    <Compile Include="DataViewing\ViewType.cs" />
-    <Compile Include="HelpTextConstants.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\IObjectStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\RDMPConcept.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\LoadStageNodeStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\ProcessTaskStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\SupportingObjectStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\TableInfoStateBasedIconProvider.cs" />
-    <Compile Include="Icons\IconProvision\StateBasedIconProviders\TableInfoServerNodeStateBasedIconProvider.cs" />
-    <Compile Include="ItemActivation\Arranging\IArrangeWindows.cs" />
-    <Compile Include="ItemActivation\Emphasis\EmphasiseEventArgs.cs" />
-    <Compile Include="ItemActivation\Emphasis\EmphasiseItemHandler.cs" />
-    <Compile Include="ItemActivation\Emphasis\EmphasiseRequest.cs" />
-    <Compile Include="ItemActivation\IActivateItems.cs" />
-    <Compile Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.cs">
+    <Compile Update="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.Designer.cs">
+    <Compile Update="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.Designer.cs">
       <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Menus\AggregateFilterContainerMenu.cs" />
-    <Compile Include="Menus\AggregatesNodeMenu.cs" />
-    <Compile Include="Menus\AllExternalServersNodeMenu.cs" />
-    <Compile Include="Menus\CacheProgressMenu.cs" />
-    <Compile Include="Menus\CatalogueItemsNodeMenu.cs" />
-    <Compile Include="Menus\AllDataAccessCredentialsNodeMenu.cs" />
-    <Compile Include="Menus\DataAccessCredentialUsageNodeMenu.cs" />
-    <Compile Include="Menus\DocumentationNodeMenu.cs" />
-    <Compile Include="Menus\FilterMenu.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandCollapseChildNodes.cs" />
-    <Compile Include="CommandExecution\AtomicCommands\ExecuteCommandExpandAllNodes.cs" />
-    <Compile Include="Menus\ParametersNodeMenu.cs" />
-    <Compile Include="Menus\ExtractionInformationMenu.cs" />
-    <Compile Include="Menus\LoadMetadataScheduleNodeMenu.cs" />
-    <Compile Include="Menus\LoadProgressMenu.cs" />
-    <Compile Include="Menus\LoadStageNodeMenu.cs" />
-    <Compile Include="Menus\MenuItems\AtomicCommandMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
-    <Compile Include="Menus\MenuItems\SetDumpServerMenuItem.cs" />
-    <Compile Include="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
-    <Compile Include="Menus\AllRDMPRemotesNodeMenu.cs" />
-    <Compile Include="Menus\RDMPContextMenuStripArgs.cs" />
-    <Compile Include="PluginChildProvision\IPluginUserInterface.cs" />
-    <Compile Include="PluginChildProvision\PluginChildProvider.cs" />
-    <Compile Include="PluginManagement\CodeGeneration\CodeGenerationException.cs" />
-    <Compile Include="PluginManagement\CodeGeneration\MapsDirectlyToDatabaseTableClassCodeGenerator.cs" />
-    <Compile Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.cs">
+    <Compile Update="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.Designer.cs">
+    <Compile Update="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.Designer.cs">
       <DependentUpon>GenerateClassCodeFromTableUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Refreshing\SelfDestructProtocol.cs" />
-    <Compile Include="Refreshing\SubscriptionException.cs" />
-    <Compile Include="Refreshing\ILifetimeSubscriber.cs" />
-    <Compile Include="Refreshing\IRefreshBusSubscriber.cs" />
-    <Compile Include="Refreshing\RefreshBus.cs" />
-    <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.cs">
+    <Compile Update="LocationsMenu\PasswordEncryptionKeyLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\PasswordEncryptionKeyLocationUI.Designer.cs">
+    <Compile Update="LocationsMenu\PasswordEncryptionKeyLocationUI.Designer.cs">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingDataSourcesTabUI.cs">
+    <Compile Update="LogViewer\Tabs\LoggingDataSourcesTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingFatalErrorsTabUI.cs">
+    <Compile Update="LogViewer\Tabs\LoggingFatalErrorsTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingProgressMessagesTabUI.cs">
+    <Compile Update="LogViewer\Tabs\LoggingProgressMessagesTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingRunsTabUI.cs">
+    <Compile Update="LogViewer\Tabs\LoggingRunsTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingTabUI.cs">
+    <Compile Update="LogViewer\Tabs\LoggingTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingTasksTabUI.cs">
+    <Compile Update="LogViewer\Tabs\LoggingTasksTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LogViewer\Tabs\LoggingTableLoadsTabUI.cs">
+    <Compile Update="LogViewer\Tabs\LoggingTableLoadsTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueUI.cs">
+    <Compile Update="MainFormUITabs\CatalogueUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueUI.Designer.cs">
+    <Compile Update="MainFormUITabs\CatalogueUI.Designer.cs">
       <DependentUpon>CatalogueUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\CatalogueCollectionUI.cs">
+    <Compile Update="Collections\CatalogueCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Collections\CatalogueCollectionUI.Designer.cs">
+    <Compile Update="Collections\CatalogueCollectionUI.Designer.cs">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\LoadMetadataCollectionUI.cs">
+    <Compile Update="Collections\LoadMetadataCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Collections\LoadMetadataCollectionUI.Designer.cs">
+    <Compile Update="Collections\LoadMetadataCollectionUI.Designer.cs">
       <DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\Providers\Copying\DragDropProvider.cs" />
-    <Compile Include="Collections\Providers\Filtering\CatalogueCollectionFilter.cs" />
-    <Compile Include="Icons\IconProvision\CatalogueIconProvider.cs" />
-    <Compile Include="Collections\Providers\RenameProvider.cs" />
-    <Compile Include="Menus\AggregateConfigurationMenu.cs" />
-    <Compile Include="Menus\CatalogueItemMenu.cs" />
-    <Compile Include="Menus\ColumnInfoMenu.cs" />
-    <Compile Include="Menus\LoadMetadataMenu.cs" />
-    <Compile Include="Menus\RDMPContextMenuStrip.cs" />
-    <Compile Include="Menus\CatalogueMenu.cs" />
-    <Compile Include="Menus\TableInfoMenu.cs" />
-    <Compile Include="ObjectVisualisation\CatalogueObjectVisualisation.cs" />
-    <Compile Include="PluginManagement\PluginDependencyVisualisationUI.cs">
+    <Compile Update="PluginManagement\PluginDependencyVisualisationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="PluginManagement\PluginDependencyVisualisationUI.Designer.cs">
+    <Compile Update="PluginManagement\PluginDependencyVisualisationUI.Designer.cs">
       <DependentUpon>PluginDependencyVisualisationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="PluginManagement\PluginManagementFormUI.cs">
+    <Compile Update="PluginManagement\PluginManagementFormUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="PluginManagement\PluginManagementFormUI.Designer.cs">
+    <Compile Update="PluginManagement\PluginManagementFormUI.Designer.cs">
       <DependentUpon>PluginManagementFormUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainFormUITabs\SubComponents\ImportSQLTableUI.cs">
+    <Compile Update="MainFormUITabs\SubComponents\ImportSQLTableUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\SubComponents\ImportSQLTableUI.Designer.cs">
+    <Compile Update="MainFormUITabs\SubComponents\ImportSQLTableUI.Designer.cs">
       <DependentUpon>ImportSQLTableUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Collections\TableInfoCollectionUI.cs">
+    <Compile Update="Collections\TableInfoCollectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Collections\TableInfoCollectionUI.Designer.cs">
+    <Compile Update="Collections\TableInfoCollectionUI.Designer.cs">
       <DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainFormUITabs\SubComponents\TableInfoUI.cs">
+    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\SubComponents\TableInfoUI.Designer.cs">
+    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.Designer.cs">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Refreshing\RefreshObjectEventArgs.cs" />
-    <Compile Include="Refreshing\RefreshObjectEventHandler.cs" />
-    <Compile Include="SimpleControls\ExecutionEventArgs.cs" />
-    <Compile Include="SimpleControls\ISaveableUI.cs" />
-    <Compile Include="SimpleControls\ObjectSaverButton.cs" />
-    <Compile Include="SimpleDialogs\BulkProcessCatalogueItemsUI.cs">
+    <Compile Update="SimpleDialogs\BulkProcessCatalogueItemsUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\BulkProcessCatalogueItemsUI.Designer.cs">
+    <Compile Update="SimpleDialogs\BulkProcessCatalogueItemsUI.Designer.cs">
       <DependentUpon>BulkProcessCatalogueItemsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
+    <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.Designer.cs">
+    <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.Designer.cs">
       <DependentUpon>ConfigureCatalogueExtractabilityUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Rules\BinderWithErrorProviderFactory.cs" />
-    <Compile Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.cs">
+    <Compile Update="SimpleDialogs\NavigateTo\NavigateToObjectUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.Designer.cs">
+    <Compile Update="SimpleDialogs\NavigateTo\NavigateToObjectUI.Designer.cs">
       <DependentUpon>NavigateToObjectUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\NavigateTo\RunUI.cs">
+    <Compile Update="SimpleDialogs\NavigateTo\RunUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\NavigateTo\RunUI.Designer.cs">
+    <Compile Update="SimpleDialogs\NavigateTo\RunUI.Designer.cs">
       <DependentUpon>RunUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\PerformanceCounterUI.cs">
+    <Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\PerformanceCounterUI.Designer.cs">
+    <Compile Update="SimpleDialogs\PerformanceCounterUI.Designer.cs">
       <DependentUpon>PerformanceCounterUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationsMenu\ChoosePlatformDatabasesUI.cs">
+    <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\ChoosePlatformDatabasesUI.Designer.cs">
+    <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.Designer.cs">
       <DependentUpon>ChoosePlatformDatabasesUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Governance\GovernanceDocumentUI.cs">
+    <Compile Update="SimpleDialogs\Governance\GovernanceDocumentUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Governance\GovernanceDocumentUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Governance\GovernanceDocumentUI.Designer.cs">
       <DependentUpon>GovernanceDocumentUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Governance\GovernancePeriodUI.cs">
+    <Compile Update="SimpleDialogs\Governance\GovernancePeriodUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Governance\GovernancePeriodUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Governance\GovernancePeriodUI.Designer.cs">
       <DependentUpon>GovernancePeriodUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.cs">
+    <Compile Update="SimpleDialogs\Remoting\RemoteRDMPUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Remoting\RemoteRDMPUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Remoting\RemoteRDMPUI.Designer.cs">
       <DependentUpon>RemoteRDMPUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.cs">
+    <Compile Update="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.Designer.cs">
       <DependentUpon>DocumentationReportFormsAndControlsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\DatabaseSizeReportUI.cs">
+    <Compile Update="SimpleDialogs\Reports\DatabaseSizeReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\DatabaseSizeReportUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Reports\DatabaseSizeReportUI.Designer.cs">
       <DependentUpon>DatabaseSizeReportUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.cs">
+    <Compile Update="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.Designer.cs">
       <DependentUpon>OfferChanceToSaveDialogUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\WordAccessRightsByUserUI.cs">
+    <Compile Update="SimpleDialogs\Reports\WordAccessRightsByUserUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\WordAccessRightsByUserUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Reports\WordAccessRightsByUserUI.Designer.cs">
       <DependentUpon>WordAccessRightsByUserUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\MetadataReportUI.cs">
+    <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\MetadataReportUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Reports\MetadataReportUI.Designer.cs">
       <DependentUpon>MetadataReportUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.cs">
+    <Compile Update="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.Designer.cs">
+    <Compile Update="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.Designer.cs">
       <DependentUpon>ConfigurePrimaryKeyCollisionResolverUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.cs">
+    <Compile Update="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.Designer.cs">
       <DependentUpon>ExerciseTestDataGeneratorUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\GenerateTestDataUI.cs">
+    <Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Reports\GenerateTestDataUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.Designer.cs">
       <DependentUpon>GenerateTestDataUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.cs">
+    <Compile Update="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.Designer.cs">
+    <Compile Update="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.Designer.cs">
       <DependentUpon>RevertablePropertyDifferenceUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.cs">
+    <Compile Update="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.Designer.cs">
+    <Compile Update="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.Designer.cs">
       <DependentUpon>CreateNewCatalogueByImportingFileUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.cs">
+    <Compile Update="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.Designer.cs">
+    <Compile Update="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.Designer.cs">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueItemUI.cs">
+    <Compile Update="MainFormUITabs\CatalogueItemUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\CatalogueItemUI.Designer.cs">
+    <Compile Update="MainFormUITabs\CatalogueItemUI.Designer.cs">
       <DependentUpon>CatalogueItemUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="MainFormUITabs\DitaExtractorUI.cs">
+    <Compile Update="MainFormUITabs\DitaExtractorUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="MainFormUITabs\DitaExtractorUI.Designer.cs">
+    <Compile Update="MainFormUITabs\DitaExtractorUI.Designer.cs">
       <DependentUpon>DitaExtractorUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="SimpleDialogs\ChooseLoggingTaskUI.cs">
+    <Compile Update="SimpleDialogs\ChooseLoggingTaskUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ChooseLoggingTaskUI.Designer.cs">
+    <Compile Update="SimpleDialogs\ChooseLoggingTaskUI.Designer.cs">
       <DependentUpon>ChooseLoggingTaskUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationsMenu\ServerDefaultsUI.cs">
+    <Compile Update="LocationsMenu\ServerDefaultsUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\ServerDefaultsUI.Designer.cs">
+    <Compile Update="LocationsMenu\ServerDefaultsUI.Designer.cs">
       <DependentUpon>ServerDefaultsUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.cs">
+    <Compile Update="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.Designer.cs">
+    <Compile Update="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.Designer.cs">
       <DependentUpon>PropagateCatalogueItemChangesToSimilarNamedUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\ShowSQLUI.cs">
+    <Compile Update="SimpleDialogs\ShowSQLUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\ShowSQLUI.Designer.cs">
+    <Compile Update="SimpleDialogs\ShowSQLUI.Designer.cs">
       <DependentUpon>ShowSQLUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SupportingSQLTableUI.cs">
+    <Compile Update="SimpleDialogs\SupportingSQLTableUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\SupportingSQLTableUI.Designer.cs">
+    <Compile Update="SimpleDialogs\SupportingSQLTableUI.Designer.cs">
       <DependentUpon>SupportingSQLTableUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="SimpleDialogs\SupportingDocumentUI.cs">
+    <Compile Update="SimpleDialogs\SupportingDocumentUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="SimpleDialogs\SupportingDocumentUI.Designer.cs">
+    <Compile Update="SimpleDialogs\SupportingDocumentUI.Designer.cs">
       <DependentUpon>SupportingDocumentUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="DataViewing\ViewSQLAndResultsWithDataGridUI.cs">
+    <Compile Update="DataViewing\ViewSQLAndResultsWithDataGridUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="DataViewing\ViewSQLAndResultsWithDataGridUI.Designer.cs">
+    <Compile Update="DataViewing\ViewSQLAndResultsWithDataGridUI.Designer.cs">
       <DependentUpon>ViewSQLAndResultsWithDataGridUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="ExtractionUIs\ViewExtractionSqlUI.cs">
+    <Compile Update="ExtractionUIs\ViewExtractionSqlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="ExtractionUIs\ViewExtractionSqlUI.Designer.cs">
+    <Compile Update="ExtractionUIs\ViewExtractionSqlUI.Designer.cs">
       <DependentUpon>ViewExtractionSqlUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationsMenu\Ticketing\TicketingControlUI.cs">
+    <Compile Update="LocationsMenu\Ticketing\TicketingControlUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\Ticketing\TicketingControlUI.Designer.cs">
+    <Compile Update="LocationsMenu\Ticketing\TicketingControlUI.Designer.cs">
       <DependentUpon>TicketingControlUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.cs">
+    <Compile Update="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.Designer.cs">
+    <Compile Update="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.Designer.cs">
       <DependentUpon>TicketingSystemConfigurationUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\ServicePropogation\BeforeCheckingEventArgs.cs" />
-    <Compile Include="TestsAndSetup\ServicePropogation\INamedTab.cs" />
-    <Compile Include="TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs" />
-    <Compile Include="TestsAndSetup\ServicePropogation\IRDMPControl.cs" />
-    <Compile Include="TestsAndSetup\ServicePropogation\IRDMPSingleDatabaseObjectControl.cs" />
-    <Compile Include="TestsAndSetup\RDMPBootStrapper.cs" />
-    <Compile Include="TestsAndSetup\ServicePropogation\RDMPControlCommonFunctionality.cs" />
-    <Compile Include="TestsAndSetup\ServicePropogation\RDMPForm.cs">
+    <Compile Update="TestsAndSetup\ServicePropogation\RDMPForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs">
+    <Compile Update="TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\ServicePropogation\RDMPUserControl.cs">
+    <Compile Update="TestsAndSetup\ServicePropogation\RDMPUserControl.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\ManagedDatabaseUI.cs">
+    <Compile Update="TestsAndSetup\StartupUI\ManagedDatabaseUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\ManagedDatabaseUI.Designer.cs">
+    <Compile Update="TestsAndSetup\StartupUI\ManagedDatabaseUI.Designer.cs">
       <DependentUpon>ManagedDatabaseUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\PluginPatcherUI.cs">
+    <Compile Update="TestsAndSetup\StartupUI\PluginPatcherUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\PluginPatcherUI.Designer.cs">
+    <Compile Update="TestsAndSetup\StartupUI\PluginPatcherUI.Designer.cs">
       <DependentUpon>PluginPatcherUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\RepositoryFinderUI.cs">
+    <Compile Update="TestsAndSetup\StartupUI\RepositoryFinderUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\RepositoryFinderUI.Designer.cs">
+    <Compile Update="TestsAndSetup\StartupUI\RepositoryFinderUI.Designer.cs">
       <DependentUpon>RepositoryFinderUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\StartupUIMainForm.cs">
+    <Compile Update="TestsAndSetup\StartupUI\StartupUIMainForm.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\StartupUIMainForm.Designer.cs">
+    <Compile Update="TestsAndSetup\StartupUI\StartupUIMainForm.Designer.cs">
       <DependentUpon>StartupUIMainForm.cs</DependentUpon>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\MEFStartupUI.cs">
+    <Compile Update="TestsAndSetup\StartupUI\MEFStartupUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="TestsAndSetup\StartupUI\MEFStartupUI.Designer.cs">
+    <Compile Update="TestsAndSetup\StartupUI\MEFStartupUI.Designer.cs">
       <DependentUpon>MEFStartupUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Theme\BackColorProvider.cs" />
-    <Compile Include="Tutorials\Tutorial.cs" />
-    <Compile Include="Tutorials\TutorialTracker.cs" />
-    <Compile Include="Validation\StandardRegexUI.cs">
+    <Compile Update="Validation\StandardRegexUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Validation\StandardRegexUI.Designer.cs">
+    <Compile Update="Validation\StandardRegexUI.Designer.cs">
       <DependentUpon>StandardRegexUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Validation\ResolveMissingTargetPropertiesUI.cs">
+    <Compile Update="Validation\ResolveMissingTargetPropertiesUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Validation\ResolveMissingTargetPropertiesUI.Designer.cs">
+    <Compile Update="Validation\ResolveMissingTargetPropertiesUI.Designer.cs">
       <DependentUpon>ResolveMissingTargetPropertiesUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Validation\SecondaryConstraintUI.cs">
+    <Compile Update="Validation\SecondaryConstraintUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Validation\SecondaryConstraintUI.Designer.cs">
+    <Compile Update="Validation\SecondaryConstraintUI.Designer.cs">
       <DependentUpon>SecondaryConstraintUI.cs</DependentUpon>
     </Compile>
-    <Compile Include="Validation\ValidationSetupUI.cs">
+    <Compile Update="Validation\ValidationSetupUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Include="Validation\ValidationSetupUI.Designer.cs">
+    <Compile Update="Validation\ValidationSetupUI.Designer.cs">
       <DependentUpon>ValidationSetupUI.cs</DependentUpon>
     </Compile>
-    <None Include="..\..\App.config">
-      <Link>App.config</Link>
-    </None>
     <None Include="ExtractionUIs\FilterUIs\ParameterUIs\Parameters.cd" />
     <None Include="LogViewer\LoggingUI.cd" />
     <None Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueUIs.cd" />
@@ -1712,518 +1290,430 @@
     <None Include="Icons\Menu.png" />
     <Content Include="TestsAndSetup\StartupUI\CSharp.png" />
     <Content Include="TestsAndSetup\StartupUI\Database.png" />
-    <EmbeddedResource Include="AggregationUIs\Advanced\SelectColumnUI.resx">
+    <EmbeddedResource Update="AggregationUIs\Advanced\SelectColumnUI.resx">
       <DependentUpon>SelectColumnUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\Advanced\AggregateTopXUI.resx">
+    <EmbeddedResource Update="AggregationUIs\Advanced\AggregateTopXUI.resx">
       <DependentUpon>AggregateTopXUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\AggregateContinuousDateAxisUI.resx">
+    <EmbeddedResource Update="AggregationUIs\AggregateContinuousDateAxisUI.resx">
       <DependentUpon>AggregateContinuousDateAxisUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\Advanced\AggregateEditorUI.resx">
+    <EmbeddedResource Update="AggregationUIs\Advanced\AggregateEditorUI.resx">
       <DependentUpon>AggregateEditorUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="AggregationUIs\AggregateGraphUI.resx">
+    <EmbeddedResource Update="AggregationUIs\AggregateGraphUI.resx">
       <DependentUpon>AggregateGraphUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="ANOEngineeringUIs\ANOTableUI.resx">
+    <EmbeddedResource Update="ANOEngineeringUIs\ANOTableUI.resx">
       <DependentUpon>ANOTableUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.resx">
+    <EmbeddedResource Update="ANOEngineeringUIs\ForwardEngineerANOCatalogueUI.resx">
       <DependentUpon>ForwardEngineerANOCatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Collections\CollectionPinFilterUI.resx">
+    <EmbeddedResource Update="Collections\CollectionPinFilterUI.resx">
       <DependentUpon>CollectionPinFilterUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Collections\FavouritesCollectionUI.resx">
+    <EmbeddedResource Update="Collections\FavouritesCollectionUI.resx">
       <DependentUpon>FavouritesCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.resx">
+    <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.resx">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.resx">
+    <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.resx">
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashboardTabs\DashboardableControlHostPanel.resx">
+    <EmbeddedResource Update="DashboardTabs\DashboardableControlHostPanel.resx">
       <DependentUpon>DashboardableControlHostPanel.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DashboardTabs\DashboardLayoutUI.resx">
+    <EmbeddedResource Update="DashboardTabs\DashboardLayoutUI.resx">
       <DependentUpon>DashboardLayoutUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadStateUI.resx">
       <DependentUpon>LoadStateUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadStageIconUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadStageIconUI.resx">
       <DependentUpon>LoadStageIconUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\ExeProcessTaskUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\ExeProcessTaskUI.resx">
       <DependentUpon>ExeProcessTaskUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\PluginProcessTaskUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\PluginProcessTaskUI.resx">
       <DependentUpon>PluginProcessTaskUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\ProcessTasks\SqlProcessTaskUI.resx">
       <DependentUpon>SqlProcessTaskUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.resx">
       <DependentUpon>LookupBrowserUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\JoinsAndLookups\LookupUI.resx">
       <DependentUpon>LookupUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\ConnectionStringKeywordUI.resx">
+    <EmbeddedResource Update="MainFormUITabs\ConnectionStringKeywordUI.resx">
       <DependentUpon>ConnectionStringKeywordUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DataObjects\DataFlowComponentVisualisation.resx">
+    <EmbeddedResource Update="PipelineUIs\DataObjects\DataFlowComponentVisualisation.resx">
       <DependentUpon>DataFlowComponentVisualisation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DataObjects\PipelineComponentVisualisation.resx">
+    <EmbeddedResource Update="PipelineUIs\DataObjects\PipelineComponentVisualisation.resx">
       <DependentUpon>PipelineComponentVisualisation.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
       <DependentUpon>ArgumentCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueDictionaryUI.resx">
       <DependentUpon>ArgumentValueDictionaryUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueArrayUI.resx">
       <DependentUpon>ArgumentValueArrayUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueBoolUI.resx">
       <DependentUpon>ArgumentValueBoolUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueComboBoxUI.resx">
       <DependentUpon>ArgumentValueComboBoxUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueCustomUIDrivenClassUI.resx">
       <DependentUpon>ArgumentValueCustomUIDrivenClassUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueLabelUI.resx">
       <DependentUpon>ArgumentValueLabelUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValuePipelineUI.resx">
       <DependentUpon>ArgumentValuePipelineUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueSqlUI.resx">
       <DependentUpon>ArgumentValueSqlUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.resx">
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueTextUI.resx">
       <DependentUpon>ArgumentValueTextUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.resx">
+    <EmbeddedResource Update="PipelineUIs\Pipelines\ConfigureAndExecutePipelineUI.resx">
       <DependentUpon>ConfigureAndExecutePipelineUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\ConfigurePipelineUI.resx">
+    <EmbeddedResource Update="PipelineUIs\Pipelines\ConfigurePipelineUI.resx">
       <DependentUpon>ConfigurePipelineUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\Models\DividerLineControl.resx">
+    <EmbeddedResource Update="PipelineUIs\Pipelines\Models\DividerLineControl.resx">
       <DependentUpon>DividerLineControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineDiagramUI.resx">
+    <EmbeddedResource Update="PipelineUIs\Pipelines\PipelineDiagramUI.resx">
       <DependentUpon>PipelineDiagramUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineSelectionUI.resx">
+    <EmbeddedResource Update="PipelineUIs\Pipelines\PipelineSelectionUI.resx">
       <DependentUpon>PipelineSelectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PipelineUIs\Pipelines\PipelineWorkAreaUI.resx">
+    <EmbeddedResource Update="PipelineUIs\Pipelines\PipelineWorkAreaUI.resx">
       <DependentUpon>PipelineWorkAreaUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleControls\CheckAndExecuteUI.resx">
+    <EmbeddedResource Update="SimpleControls\CheckAndExecuteUI.resx">
       <DependentUpon>CheckAndExecuteUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="FindAndReplace\FindAndReplaceUI.resx">
+    <EmbeddedResource Update="FindAndReplace\FindAndReplaceUI.resx">
       <DependentUpon>FindAndReplaceUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
+    <EmbeddedResource Update="LoadExecutionUIs\ExecuteCacheProgressUI.resx">
       <DependentUpon>ExecuteCacheProgressUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="LoadExecutionUIs\ExecuteLoadMetadataUI.resx">
+    <EmbeddedResource Update="LoadExecutionUIs\ExecuteLoadMetadataUI.resx">
       <DependentUpon>ExecuteLoadMetadataUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataQualityUIs\DQEExecutionControlUI.resx">
+    <EmbeddedResource Update="DataQualityUIs\DQEExecutionControlUI.resx">
       <DependentUpon>DQEExecutionControlUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.resx">
       <DependentUpon>JoinConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.resx">
       <DependentUpon>KeyDropLocationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Icons\IconProvision\FamFamFamIcons.resx">
+    <EmbeddedResource Update="Icons\IconProvision\FamFamFamIcons.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>FamFamFamIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="Icons\IconOverlays\Overlays.resx">
+    <EmbeddedResource Update="Icons\IconOverlays\Overlays.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>Overlays.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="CredentialsUIs\DataAccessCredentialsUI.resx">
+    <EmbeddedResource Update="CredentialsUIs\DataAccessCredentialsUI.resx">
       <DependentUpon>DataAccessCredentialsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.resx">
       <DependentUpon>ColumnInfoToANOTableConverterUI.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressDiagramUI.resx">
       <DependentUpon>LoadProgressDiagramUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\CacheProgressUI.resx">
       <DependentUpon>CacheProgressUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.resx">
       <DependentUpon>ChooseLoadFolderUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramUI.resx">
       <DependentUpon>LoadDiagramUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.resx">
       <DependentUpon>LoadMetadataUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\LoadProgressUI.resx">
       <DependentUpon>LoadProgressUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\ANOUIs\PreLoadDiscarding\PreLoadDiscardedColumnUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\ANOUIs\PreLoadDiscarding\PreLoadDiscardedColumnUI.resx">
       <DependentUpon>PreLoadDiscardedColumnUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\PermissionWindowUI.resx">
       <DependentUpon>PermissionWindowUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataLoadUIs\CreateNewLoadMetadataUI.resx">
+    <EmbeddedResource Update="DataLoadUIs\CreateNewLoadMetadataUI.resx">
       <DependentUpon>CreateNewLoadMetadataUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.resx">
       <DependentUpon>LookupConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\ReOrderCatalogueItemsUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\ReOrderCatalogueItemsUI.resx">
       <DependentUpon>ReOrderCatalogueItemsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\ExtractionInformationUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\ExtractionInformationUI.resx">
       <DependentUpon>ExtractionInformationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\FilterUIs\ExtractionFilterUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.resx">
       <DependentUpon>ExtractionFilterUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.resx">
       <DependentUpon>ExtractionFilterParameterSetUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterCollectionUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\FilterUIs\ParameterUIs\ParameterCollectionUI.resx">
       <DependentUpon>ParameterCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaControlUI.resx">
       <DependentUpon>ParameterEditorScintillaControlUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
+    <EmbeddedResource Update="LocationsMenu\PasswordEncryptionKeyLocationUI.resx">
       <DependentUpon>PasswordEncryptionKeyLocationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LogViewer\Tabs\LoggingTabUI.resx">
+    <EmbeddedResource Update="LogViewer\Tabs\LoggingTabUI.resx">
       <DependentUpon>LoggingTabUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\CatalogueUI.resx">
+    <EmbeddedResource Update="MainFormUITabs\CatalogueUI.resx">
       <DependentUpon>CatalogueUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Collections\CatalogueCollectionUI.resx">
+    <EmbeddedResource Update="Collections\CatalogueCollectionUI.resx">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Collections\LoadMetadataCollectionUI.resx">
+    <EmbeddedResource Update="Collections\LoadMetadataCollectionUI.resx">
       <DependentUpon>LoadMetadataCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Icons\IconProvision\CatalogueIcons.resx">
+    <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
       <Generator>PublicResXFileCodeGenerator</Generator>
       <SubType>Designer</SubType>
       <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.resx">
+    <EmbeddedResource Update="MainFormUITabs\SubComponents\ExternalDatabaseServerUI.resx">
       <DependentUpon>ExternalDatabaseServerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.resx">
+    <EmbeddedResource Update="PluginManagement\CodeGeneration\GenerateClassCodeFromTableUI.resx">
       <DependentUpon>GenerateClassCodeFromTableUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginManagement\PluginDependencyVisualisationUI.resx">
+    <EmbeddedResource Update="PluginManagement\PluginDependencyVisualisationUI.resx">
       <DependentUpon>PluginDependencyVisualisationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="PluginManagement\PluginManagementFormUI.resx">
+    <EmbeddedResource Update="PluginManagement\PluginManagementFormUI.resx">
       <DependentUpon>PluginManagementFormUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\SubComponents\ImportSQLTableUI.resx">
+    <EmbeddedResource Update="MainFormUITabs\SubComponents\ImportSQLTableUI.resx">
       <DependentUpon>ImportSQLTableUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Collections\TableInfoCollectionUI.resx">
+    <EmbeddedResource Update="Collections\TableInfoCollectionUI.resx">
       <DependentUpon>TableInfoCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\SubComponents\TableInfoUI.resx">
+    <EmbeddedResource Update="MainFormUITabs\SubComponents\TableInfoUI.resx">
       <DependentUpon>TableInfoUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\BulkProcessCatalogueItemsUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\BulkProcessCatalogueItemsUI.resx">
       <DependentUpon>BulkProcessCatalogueItemsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.resx">
       <DependentUpon>ConfigureCatalogueExtractabilityUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\NavigateTo\NavigateToObjectUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\NavigateTo\NavigateToObjectUI.resx">
       <DependentUpon>NavigateToObjectUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\NavigateTo\RunUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\NavigateTo\RunUI.resx">
       <DependentUpon>RunUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\PerformanceCounterUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\PerformanceCounterUI.resx">
       <DependentUpon>PerformanceCounterUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\ChoosePlatformDatabasesUI.resx">
+    <EmbeddedResource Update="LocationsMenu\ChoosePlatformDatabasesUI.resx">
       <DependentUpon>ChoosePlatformDatabasesUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Governance\GovernanceDocumentUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Governance\GovernanceDocumentUI.resx">
       <DependentUpon>GovernanceDocumentUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Governance\GovernancePeriodUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Governance\GovernancePeriodUI.resx">
       <DependentUpon>GovernancePeriodUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Remoting\RemoteRDMPUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Remoting\RemoteRDMPUI.resx">
       <DependentUpon>RemoteRDMPUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.resx">
       <DependentUpon>DocumentationReportFormsAndControlsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\DatabaseSizeReportUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Reports\DatabaseSizeReportUI.resx">
       <DependentUpon>DatabaseSizeReportUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Revertable\OfferChanceToSaveDialogUI.resx">
       <DependentUpon>OfferChanceToSaveDialogUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\WordAccessRightsByUserUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Reports\WordAccessRightsByUserUI.resx">
       <DependentUpon>WordAccessRightsByUserUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\MetadataReportUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Reports\MetadataReportUI.resx">
       <DependentUpon>MetadataReportUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\ConfigurePrimaryKeyCollisionResolverUI.resx">
       <DependentUpon>ConfigurePrimaryKeyCollisionResolverUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Reports\ExerciseTestDataGeneratorUI.resx">
       <DependentUpon>ExerciseTestDataGeneratorUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Reports\GenerateTestDataUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Reports\GenerateTestDataUI.resx">
       <DependentUpon>GenerateTestDataUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\Revertable\RevertablePropertyDifferenceUI.resx">
       <DependentUpon>RevertablePropertyDifferenceUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI.resx">
       <DependentUpon>CreateNewCatalogueByImportingFileUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.resx">
+    <EmbeddedResource Update="SimpleDialogs\SimpleFileImporting\CreateNewCatalogueByImportingFileUI_Advanced.resx">
       <DependentUpon>CreateNewCatalogueByImportingFileUI_Advanced.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\CatalogueItemUI.resx">
+    <EmbeddedResource Update="MainFormUITabs\CatalogueItemUI.resx">
       <DependentUpon>CatalogueItemUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="MainFormUITabs\DitaExtractorUI.resx">
+    <EmbeddedResource Update="MainFormUITabs\DitaExtractorUI.resx">
       <DependentUpon>DitaExtractorUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Properties\Resources.resx">
+    <EmbeddedResource Update="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <Compile Include="Properties\Resources.Designer.cs">
+    <Compile Update="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DependentUpon>Resources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
     </Compile>
-    <EmbeddedResource Include="SimpleDialogs\ChooseLoggingTaskUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\ChooseLoggingTaskUI.resx">
       <DependentUpon>ChooseLoggingTaskUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\ServerDefaultsUI.resx">
+    <EmbeddedResource Update="LocationsMenu\ServerDefaultsUI.resx">
       <DependentUpon>ServerDefaultsUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\PropagateCatalogueItemChangesToSimilarNamedUI.resx">
       <DependentUpon>PropagateCatalogueItemChangesToSimilarNamedUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\ShowSQLUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\ShowSQLUI.resx">
       <DependentUpon>ShowSQLUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\SupportingSQLTableUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\SupportingSQLTableUI.resx">
       <DependentUpon>SupportingSQLTableUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="SimpleDialogs\SupportingDocumentUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\SupportingDocumentUI.resx">
       <DependentUpon>SupportingDocumentUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="DataViewing\ViewSQLAndResultsWithDataGridUI.resx">
+    <EmbeddedResource Update="DataViewing\ViewSQLAndResultsWithDataGridUI.resx">
       <DependentUpon>ViewSQLAndResultsWithDataGridUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="ExtractionUIs\ViewExtractionSqlUI.resx">
+    <EmbeddedResource Update="ExtractionUIs\ViewExtractionSqlUI.resx">
       <DependentUpon>ViewExtractionSqlUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\Ticketing\TicketingControlUI.resx">
+    <EmbeddedResource Update="LocationsMenu\Ticketing\TicketingControlUI.resx">
       <DependentUpon>TicketingControlUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.resx">
+    <EmbeddedResource Update="LocationsMenu\Ticketing\TicketingSystemConfigurationUI.resx">
       <DependentUpon>TicketingSystemConfigurationUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPForm.resx">
+    <EmbeddedResource Update="TestsAndSetup\ServicePropogation\RDMPForm.resx">
       <DependentUpon>RDMPForm.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\ServicePropogation\RDMPUserControl.resx">
+    <EmbeddedResource Update="TestsAndSetup\ServicePropogation\RDMPUserControl.resx">
       <DependentUpon>RDMPUserControl.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\StartupUI\ManagedDatabaseUI.resx">
+    <EmbeddedResource Update="TestsAndSetup\StartupUI\ManagedDatabaseUI.resx">
       <DependentUpon>ManagedDatabaseUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\StartupUI\PluginPatcherUI.resx">
+    <EmbeddedResource Update="TestsAndSetup\StartupUI\PluginPatcherUI.resx">
       <DependentUpon>PluginPatcherUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\StartupUI\RepositoryFinderUI.resx">
+    <EmbeddedResource Update="TestsAndSetup\StartupUI\RepositoryFinderUI.resx">
       <DependentUpon>RepositoryFinderUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\StartupUI\StartupUIMainForm.resx">
+    <EmbeddedResource Update="TestsAndSetup\StartupUI\StartupUIMainForm.resx">
       <DependentUpon>StartupUIMainForm.cs</DependentUpon>
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Include="TestsAndSetup\StartupUI\MEFStartupUI.resx">
+    <EmbeddedResource Update="TestsAndSetup\StartupUI\MEFStartupUI.resx">
       <DependentUpon>MEFStartupUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="..\..\Documentation\UserManual.docx">
       <Link>UserManual.docx</Link>
     </EmbeddedResource>
-    <EmbeddedResource Include="Validation\StandardRegexUI.resx">
+    <EmbeddedResource Update="Validation\StandardRegexUI.resx">
       <DependentUpon>StandardRegexUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Validation\ResolveMissingTargetPropertiesUI.resx">
+    <EmbeddedResource Update="Validation\ResolveMissingTargetPropertiesUI.resx">
       <DependentUpon>ResolveMissingTargetPropertiesUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Validation\SecondaryConstraintUI.resx">
+    <EmbeddedResource Update="Validation\SecondaryConstraintUI.resx">
       <DependentUpon>SecondaryConstraintUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Validation\ValidationSetupUI.resx">
+    <EmbeddedResource Update="Validation\ValidationSetupUI.resx">
       <DependentUpon>ValidationSetupUI.cs</DependentUpon>
     </EmbeddedResource>
     <None Include="CatalogueManager_TemporaryKey.pfx" />
-    <None Include="packages.config" />
     <None Include="Properties\app.manifest" />
     <None Include="verisign_key.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj">
-      <Project>{9de66727-51cf-44f8-adf3-00ddb262dc1c}</Project>
-      <Name>ANOStore.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Anonymisation\ANOStore\ANOStore.csproj">
-      <Project>{63e1d23e-f82c-4325-b0f7-9638c3753a46}</Project>
-      <Name>ANOStore</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Anonymisation\IdentifierDump.Database\IdentifierDump.Database.csproj">
-      <Project>{93be8c03-da4a-4299-8add-7d6893df4860}</Project>
-      <Name>IdentifierDump.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj">
-      <Project>{652AB569-E61F-4503-B925-BBC32D5F8F52}</Project>
-      <Name>CachingEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj">
-      <Project>{AA8B053B-3CF6-42EF-B5E6-2F9EE97F822F}</Project>
-      <Name>CohortManagerLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj">
-      <Project>{52953926-d147-4278-8564-b49182718b13}</Project>
-      <Name>DataExportLibrary.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
-      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
-      <Name>DataExportLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj">
-      <Project>{a3279a4d-10c4-4fe2-808b-3252bcc25275}</Project>
-      <Name>DataLoadEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj">
-      <Project>{73c80d09-4568-472f-9ab2-3540d09c8643}</Project>
-      <Name>LoadModules.GenericUIs</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj">
-      <Project>{e0cae42d-e92e-4425-a1a2-fc8a172c47eb}</Project>
-      <Name>LoadModules.Generic</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj">
-      <Project>{5b2277de-7d2b-48a4-ae01-86beab5c6005}</Project>
-      <Name>DataQualityEngine.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj">
-      <Project>{141D0499-2B1F-4997-8BF3-19C895484093}</Project>
-      <Name>DataQualityEngine</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj">
-      <Project>{8937888F-BDAC-4B51-A87F-3A83C38447D3}</Project>
-      <Name>Diagnostics</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj">
-      <Project>{cbc7aed9-b870-452f-8e78-f9694128ba01}</Project>
-      <Name>HIC.Logging.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj">
-      <Project>{ec22cb10-78fc-4150-83eb-05861c5eeb94}</Project>
-      <Name>HIC.Logging</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj">
-      <Project>{3fd82ca1-5f5a-4142-957a-13b29d729ec8}</Project>
-      <Name>QueryCaching.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj">
-      <Project>{E128BB1B-D14A-4972-8B97-BFFA6D8E2AE7}</Project>
-      <Name>QueryCaching</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj">
-      <Project>{A870596C-7245-48F5-B588-AFE41D09B4D2}</Project>
-      <Name>RDMPStartup</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj">
-      <Project>{94797307-05f3-4e72-b60b-dcb51b41cf9c}</Project>
-      <Name>MapsDirectlyToDatabaseTableUI</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj">
-      <Project>{b3351d78-abb9-4fed-88bf-c688d5f267b6}</Project>
-      <Name>ReusableUIComponents</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj">
-      <Project>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</Project>
-      <Name>Sharing</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj">
-      <Project>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</Project>
-      <Name>DatabaseCreation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj">
-      <Project>{27BDABCE-8FEF-48D9-BAD6-8E280B13ADF5}</Project>
-      <Name>PluginPackager</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj">
-      <Project>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</Project>
-      <Name>RDMPAutomationService</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
-      <Project>{79730F00-359A-496D-84C5-8CF9C62A51EA}</Project>
-      <Name>HIC.Common.Validation</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj">
-      <Project>{6fa17ad8-35b3-480b-808e-f8c46d79fa20}</Project>
-      <Name>CatalogueLibrary.Database</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj" />
+    <ProjectReference Include="..\..\Anonymisation\ANOStore\ANOStore.csproj" />
+    <ProjectReference Include="..\..\Anonymisation\IdentifierDump.Database\IdentifierDump.Database.csproj" />
+    <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj" />
+    <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj" />
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj" />
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
+    <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj" />
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj" />
+    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
+    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
+    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
+    <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj" />
+    <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj" />
+    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
+    <ProjectReference Include="..\..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj" />
+    <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj" />
+    <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj" />
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj" />
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
+    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
+    <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj" />
+    <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj" />
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj" />
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj" />
+    <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
+    <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj" />
+    <ProjectReference Include="..\CatalogueLibrary\CatalogueLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="laser.ico" />
@@ -2238,340 +1728,349 @@
     <None Include="Resources\tableinfo_icon.png" />
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.0">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4 %28x86 and x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
-      <Visible>False</Visible>
-      <ProductName>Windows Installer 3.1</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
+    <Compile Remove="HelpTextConstants.cs" />
+    <Compile Remove="AutoComplete\AutoCompleteProvider.cs" />
+    <Compile Remove="AutoComplete\AutoCompleteProviderFactory.cs" />
+    <Compile Remove="Collections\OrderableComparer.cs" />
+    <Compile Remove="Collections\RDMPCollection.cs" />
+    <Compile Remove="Collections\RDMPCollectionCommonFunctionality.cs" />
+    <Compile Remove="Collections\RDMPCollectionCommonFunctionalitySettings.cs" />
+    <Compile Remove="Collections\RDMPCollectionCommonFunctionalityTreeHijacker.cs" />
+    <Compile Remove="CommandExecution\CachedDropTarget.cs" />
+    <Compile Remove="CommandExecution\RDMPCommandExecutionFactory.cs" />
+    <Compile Remove="Copying\RDMPCommandFactory.cs" />
+    <Compile Remove="DashboardTabs\DashboardEditModeFunctionality.cs" />
+    <Compile Remove="DataViewing\ViewType.cs" />
+    <Compile Remove="FindAndReplace\FindAndReplaceNode.cs" />
+    <Compile Remove="ItemActivation\IActivateItems.cs" />
+    <Compile Remove="Menus\AggregateConfigurationMenu.cs" />
+    <Compile Remove="Menus\AggregateFilterContainerMenu.cs" />
+    <Compile Remove="Menus\AggregatesNodeMenu.cs" />
+    <Compile Remove="Menus\AllANOTablesNodeMenu.cs" />
+    <Compile Remove="Menus\AllConnectionStringKeywordsNodeMenu.cs" />
+    <Compile Remove="Menus\AllDataAccessCredentialsNodeMenu.cs" />
+    <Compile Remove="Menus\AllExternalServersNodeMenu.cs" />
+    <Compile Remove="Menus\AllGovernanceNodeMenu.cs" />
+    <Compile Remove="Menus\AllLoadMetadatasNodeMenu.cs" />
+    <Compile Remove="Menus\AllObjectImportsNodeMenu.cs" />
+    <Compile Remove="Menus\AllPermissionWindowsNodeMenu.cs" />
+    <Compile Remove="Menus\AllRDMPRemotesNodeMenu.cs" />
+    <Compile Remove="Menus\AllServersNodeMenu.cs" />
+    <Compile Remove="Menus\AllStandardRegexesNodeMenu.cs" />
+    <Compile Remove="Menus\CacheProgressMenu.cs" />
+    <Compile Remove="Menus\CatalogueFolderMenu.cs" />
+    <Compile Remove="Menus\CatalogueItemMenu.cs" />
+    <Compile Remove="Menus\CatalogueItemsNodeMenu.cs" />
+    <Compile Remove="Menus\CatalogueMenu.cs" />
+    <Compile Remove="Menus\ColumnInfoMenu.cs" />
+    <Compile Remove="Menus\ContainerMenu.cs" />
+    <Compile Remove="Menus\DataAccessCredentialUsageNodeMenu.cs" />
+    <Compile Remove="Menus\DocumentationNodeMenu.cs" />
+    <Compile Remove="Menus\ExternalDatabaseServerMenu.cs" />
+    <Compile Remove="Menus\ExtractionInformationMenu.cs" />
+    <Compile Remove="Menus\FilterContainerMenu.cs" />
+    <Compile Remove="Menus\FilterMenu.cs" />
+    <Compile Remove="Menus\GovernancePeriodMenu.cs" />
+    <Compile Remove="Menus\HICProjectDirectoryNodeMenu.cs" />
+    <Compile Remove="Menus\LoadMetadataMenu.cs" />
+    <Compile Remove="Menus\LoadMetadataScheduleNodeMenu.cs" />
+    <Compile Remove="Menus\LoadProgressMenu.cs" />
+    <Compile Remove="Menus\LoadStageNodeMenu.cs" />
+    <Compile Remove="Menus\LookupMenu.cs" />
+    <Compile Remove="Menus\ParametersNodeMenu.cs" />
+    <Compile Remove="Menus\PipelineCompatibleWithUseCaseNodeMenu.cs" />
+    <Compile Remove="Menus\PreLoadDiscardedColumnsNodeMenu.cs" />
+    <Compile Remove="Menus\ProcessTaskMenu.cs" />
+    <Compile Remove="Menus\RDMPContextMenuStrip.cs" />
+    <Compile Remove="Menus\RDMPContextMenuStripArgs.cs" />
+    <Compile Remove="Menus\TableInfoMenu.cs" />
+    <Compile Remove="ObjectVisualisation\CatalogueObjectVisualisation.cs" />
+    <Compile Remove="PluginChildProvision\IPluginUserInterface.cs" />
+    <Compile Remove="PluginChildProvision\PluginChildProvider.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="Refreshing\ILifetimeSubscriber.cs" />
+    <Compile Remove="Refreshing\IRefreshBusSubscriber.cs" />
+    <Compile Remove="Refreshing\RefreshBus.cs" />
+    <Compile Remove="Refreshing\RefreshObjectEventArgs.cs" />
+    <Compile Remove="Refreshing\RefreshObjectEventHandler.cs" />
+    <Compile Remove="Refreshing\SelfDestructProtocol.cs" />
+    <Compile Remove="Refreshing\SubscriptionException.cs" />
+    <Compile Remove="Rules\BinderRule.cs" />
+    <Compile Remove="Rules\BinderWithErrorProviderFactory.cs" />
+    <Compile Remove="Rules\IBinderRule.cs" />
+    <Compile Remove="Rules\NotNullRule.cs" />
+    <Compile Remove="Rules\UniqueRule.cs" />
+    <Compile Remove="SimpleControls\CommandGetterHandler.cs" />
+    <Compile Remove="SimpleControls\ExecutionEventArgs.cs" />
+    <Compile Remove="SimpleControls\ISaveableUI.cs" />
+    <Compile Remove="SimpleControls\ObjectSaverButton.cs" />
+    <Compile Remove="TestsAndSetup\RDMPBootStrapper.cs" />
+    <Compile Remove="Theme\BackColorProvider.cs" />
+    <Compile Remove="Tutorials\Tutorial.cs" />
+    <Compile Remove="Tutorials\TutorialTracker.cs" />
+    <Compile Remove="Collections\Providers\CheckColumnProvider.cs" />
+    <Compile Remove="Collections\Providers\FavouriteColumnProvider.cs" />
+    <Compile Remove="Collections\Providers\FavouritesProvider.cs" />
+    <Compile Remove="Collections\Providers\IDColumnProvider.cs" />
+    <Compile Remove="Collections\Providers\RenameProvider.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\BasicUICommandExecution.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandActivate.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddCatalogueToCohortIdentificationSetContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddCohortToExtractionConfiguration.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddDatasetsToConfiguration.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddJoinInfo.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddNewAggregateGraph.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddNewCatalogueItem.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddNewGovernanceDocument.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddNewLookupTableRelationship.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingDocument.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAddNewSupportingSqlTable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAnonymiseColumnInfo.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAssociateCatalogueWithLoadMetadata.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandBrowseLookup.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandBulkImportTableInfos.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandBulkProcessCatalogueItems.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandChangeExtractability.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandChangeLoadStage.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCheck.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandChooseHICProjectDirectory.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandChoosePlatformDatabase.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandClonePipeline.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCollapseChildNodes.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandConfigureCatalogueValidationRules.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandConfigureDefaultServers.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandConvertAggregateConfigurationToPatientIndexTable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateANOVersion.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewANOTable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCacheProgress.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingExistingDataTable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueByImportingFile.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCatalogueFromTableInfo.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewConnectionStringKeyword.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewEmptyCatalogue.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExternalDatabaseServer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilter.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewFilterFromCatalogue.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewGovernancePeriod.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadMetadata.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewLoadProgress.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPermissionWindow.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPipeline.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewPreLoadDiscardedColumn.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewProcessTask.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewRemoteRDMP.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewStandardRegex.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandDelete.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandDeprecate.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandDisableOrEnable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandEditCacheProgress.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandEditLoadMetadataDescription.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandEditPipelineWithUseCase.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandExecuteAggregateGraph.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandExecuteCacheProgress.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandExpandAllNodes.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandExportLoggedDataToCsv.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandFindUsages.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandGenerateMetadataReport.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandGenerateTestData.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandImportCatalogueItemDescription.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandImportNewCopyOfFilterIntoContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandLinkCatalogueItemToColumnInfo.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueItemExtractable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMakeCatalogueProjectSpecific.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMakeProjectSpecificCatalogueNormalAgain.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandManagePlugins.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMoveAggregateIntoContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMoveCohortAggregateContainerIntoSubContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMoveContainerIntoContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandMoveFilterIntoContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandOpenInExplorer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandOverrideRawServer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandPin.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandPublishFilter.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandPutCatalogueIntoCatalogueFolder.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandRefreshObject.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandRename.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandReOrderAggregate.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandReOrderAggregateContainer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandReOrderColumns.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandReOrderProcessTask.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandRunDQEOnCatalogue.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandScriptTable.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandSetDataAccessContextForCredentials.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandSetPermissionWindow.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandShow.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandShowCacheFetchFailures.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandShowKeywordHelp.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandShowRelatedObject.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandShowXmlDoc.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandUnpin.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandUseCredentialsToAccessTableInfoData.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewCatalogueExtractionSql.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewData.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchData.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewFilterMatchGraph.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewLoadDiagram.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewLoggedData.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewSample.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewSqlParameters.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAggregateConfiguration.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsAllCataloguesUsedByLoadMetadataNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsANOTable.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCacheProgress.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogue.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItem.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCatalogueItemsNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortAggregateContainer.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConcreteFilter.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsConnectionStringKeyword.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDashboardLayout.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentials.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsDataAccessCredentialUsageNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalDatabaseServer.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionFilterParameterSet.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionInformation.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsFilterContainer.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernanceDocument.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsGovernancePeriod.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsIDirectoryInfoNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadMetadata.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadProgress.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLoadStageNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsLookup.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsParametersNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindow.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPermissionWindowUsedByCacheProgressNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPipelineCompatibleWithUseCaseNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsPreLoadDiscardedColumn.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProcessTask.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsRemoteRDMP.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardPipelineUseCaseNode.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsStandardRegex.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingDocument.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSupportingSQLTable.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsTableInfo.cs" />
+    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsWindowLayout.cs" />
+    <Compile Remove="CommandExecution\Proposals\RDMPCommandExecutionProposal.cs" />
+    <Compile Remove="Copying\Commands\AggregateConfigurationCommand.cs" />
+    <Compile Remove="Copying\Commands\CacheProgressCommand.cs" />
+    <Compile Remove="Copying\Commands\CatalogueCommand.cs" />
+    <Compile Remove="Copying\Commands\CohortAggregateContainerCommand.cs" />
+    <Compile Remove="Copying\Commands\CohortCommandHelper.cs" />
+    <Compile Remove="Copying\Commands\CohortIdentificationConfigurationCommand.cs" />
+    <Compile Remove="Copying\Commands\ColumnCommand.cs" />
+    <Compile Remove="Copying\Commands\ColumnInfoCommand.cs" />
+    <Compile Remove="Copying\Commands\ContainerCommand.cs" />
+    <Compile Remove="Copying\Commands\DataAccessCredentialsCommand.cs" />
+    <Compile Remove="Copying\Commands\ExtractableCohortCommand.cs" />
+    <Compile Remove="Copying\Commands\ExtractableDataSetCommand.cs" />
+    <Compile Remove="Copying\Commands\FileCollectionCommand.cs" />
+    <Compile Remove="Copying\Commands\FilterCommand.cs" />
+    <Compile Remove="Copying\Commands\ManyCataloguesCommand.cs" />
+    <Compile Remove="Copying\Commands\PipelineCommand.cs" />
+    <Compile Remove="Copying\Commands\ProcessTaskCommand.cs" />
+    <Compile Remove="Copying\Commands\SqlTextOnlyCommand.cs" />
+    <Compile Remove="Copying\Commands\TableInfoCommand.cs" />
+    <Compile Remove="DashboardTabs\Construction\DashboardControlFactory.cs" />
+    <Compile Remove="DashboardTabs\Construction\IDashboardableControl.cs" />
+    <Compile Remove="DashboardTabs\Construction\INotifyMeOfEditState.cs" />
+    <Compile Remove="DataViewing\Collections\IViewSQLAndResultsCollection.cs" />
+    <Compile Remove="DataViewing\Collections\ViewAggregateExtractUICollection.cs" />
+    <Compile Remove="DataViewing\Collections\ViewColumnInfoExtractUICollection.cs" />
+    <Compile Remove="DataViewing\Collections\ViewTableInfoExtractUICollection.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\FilterGraphObjectCollection.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\FilterImportWizard.cs" />
+    <Compile Remove="Icons\IconOverlays\CachedOverlayResult.cs" />
+    <Compile Remove="Icons\IconOverlays\IconOverlayProvider.cs" />
+    <Compile Remove="Icons\IconProvision\CatalogueIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\EnumImageCollection.cs" />
+    <Compile Remove="Icons\IconProvision\ICoreIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\RDMPConcept.cs" />
+    <Compile Remove="ItemActivation\Arranging\IArrangeWindows.cs" />
+    <Compile Remove="ItemActivation\Emphasis\EmphasiseEventArgs.cs" />
+    <Compile Remove="ItemActivation\Emphasis\EmphasiseItemHandler.cs" />
+    <Compile Remove="ItemActivation\Emphasis\EmphasiseRequest.cs" />
+    <Compile Remove="Menus\MenuItems\AtomicCommandMenuItem.cs" />
+    <Compile Remove="Menus\MenuItems\PluginUserInterfaceCrashedMenuItem.cs" />
+    <Compile Remove="Menus\MenuItems\RDMPToolStripMenuItem.cs" />
+    <Compile Remove="Menus\MenuItems\SetDumpServerMenuItem.cs" />
+    <Compile Remove="PipelineUIs\Pipelines\IPipelineSelectionUI.cs" />
+    <Compile Remove="PluginManagement\CodeGeneration\CodeGenerationException.cs" />
+    <Compile Remove="PluginManagement\CodeGeneration\MapsDirectlyToDatabaseTableClassCodeGenerator.cs" />
+    <Compile Remove="TestsAndSetup\ServicePropogation\BeforeCheckingEventArgs.cs" />
+    <Compile Remove="TestsAndSetup\ServicePropogation\INamedTab.cs" />
+    <Compile Remove="TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs" />
+    <Compile Remove="TestsAndSetup\ServicePropogation\IRDMPControl.cs" />
+    <Compile Remove="TestsAndSetup\ServicePropogation\IRDMPSingleDatabaseObjectControl.cs" />
+    <Compile Remove="TestsAndSetup\ServicePropogation\RDMPControlCommonFunctionality.cs" />
+    <Compile Remove="Collections\Providers\Copying\CopyPasteProvider.cs" />
+    <Compile Remove="Collections\Providers\Copying\DragDropProvider.cs" />
+    <Compile Remove="Collections\Providers\Filtering\CatalogueCollectionFilter.cs" />
+    <Compile Remove="Collections\Providers\Filtering\SearchablesMatchScorer.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Automation\AutomationCommandExecution.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Automation\ExecuteCommandCopyRunCommandToClipboard.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Automation\ExecuteCommandRunDetached.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportInDublinCoreFormat.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Sharing\ExecuteCommandExportObjectsToFileUI.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportCatalogueDescriptionsFromShare.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportDublinCoreFormat.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportFilterDescriptionsFromShare.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShare.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\Sharing\ExecuteCommandImportShareDefinitionList.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\UIFactory\AtomicCommandUIFactory.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditDataExtractionProject.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCatalogue.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandEditExistingCohortIdentificationConfiguration.cs" />
+    <Compile Remove="CommandExecution\AtomicCommands\WindowArranging\ExecuteCommandExecuteLoadMetadata.cs" />
+    <Compile Remove="DashboardTabs\Construction\Exceptions\DashboardControlHydrationException.cs" />
+    <Compile Remove="DataLoadUIs\ANOUIs\ANOTableManagement\PatternPredictor.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramColumnNode.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramDatabaseNode.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramServerNode.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadDiagram\LoadDiagramTableNode.cs" />
+    <Compile Remove="DataViewing\Collections\Arbitrary\ArbitraryTableExtractionUICollection.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\Options\AggregateFilterUIOptions.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\Options\DeployedExtractionFilterUIOptions.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\Options\ExtractionFilterUIOptions.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\Options\FilterUIOptions.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\Options\FilterUIOptionsFactory.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\ParameterUIs\ParameterEditorScintillaSection.cs" />
+    <Compile Remove="Icons\IconProvision\Exceptions\IconProvisionException.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\AggregateConfigurationStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\CatalogueItemStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\CatalogueStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\CheckResultStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\CohortAggregateContainerStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\CohortIdentificationConfigurationStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ColumnInfoStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ExternalDatabaseServerStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ExtractableCohortStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ExtractCommandStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ExtractionInformationStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\IObjectStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\LoadStageNodeStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ProcessTaskStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ReleaseabilityStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\SupportingObjectStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\TableInfoServerNodeStateBasedIconProvider.cs" />
+    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\TableInfoStateBasedIconProvider.cs" />
+    <Compile Remove="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIArgs.cs" />
+    <Compile Remove="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs" />
+    <Compile Remove="PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\IArgumentValueUI.cs" />
+    <Compile Remove="PipelineUIs\Pipelines\Models\AdvertisedPipelineComponentTypeUnderContext.cs" />
+    <Compile Remove="PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs" />
+    <Compile Remove="PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\IHasLoadDiagramState.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\LoadDiagramState.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadDiagram\StateDiscovery\UnplannedTable.cs" />
+    <Compile Remove="DataLoadUIs\LoadMetadataUIs\LoadProgressAndCacheUIs\Diagrams\LoadProgressAnnotation.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\ParameterUIs\Options\IParameterRefactorer.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\ParameterUIs\Options\ParameterCollectionUIOptions.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\ParameterUIs\Options\ParameterCollectionUIOptionsFactory.cs" />
+    <Compile Remove="ExtractionUIs\FilterUIs\ParameterUIs\Options\ParameterRefactorer.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <PublishFile Include="ANOStore.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="ANOStore.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="CatalogueLibrary.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="CatalogueLibrary.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="CatalogueManager.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataExportManager2.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataExportManager2.Interfaces.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataExportManager2Library.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataLoadEngine.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataQualityEngine.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="DataQualityEngine.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Diagnostics.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="HIC.Common.Validation.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="HIC.Logging.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="HIC.Logging.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="IdentifierDump.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="IdentifierDump.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="LoadModules.Generic.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="LoadModules.GenericUIs.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="MapsDirectlyToDatabaseTable.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="MapsDirectlyToDatabaseTableUI.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Microsoft.VisualBasic.PowerPacks.Vs">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>Assembly</FileType>
-    </PublishFile>
-    <PublishFile Include="QueryCaching.Database.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="QueryCaching.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="RDMPObjectVisualisation.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="RDMPStartup.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="ReusableLibraryCode.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="ReusableUIComponents.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-    <PublishFile Include="Ticketing.pdb">
-      <Visible>False</Visible>
-      <Group>
-      </Group>
-      <TargetPath>
-      </TargetPath>
-      <PublishState>Include</PublishState>
-      <IncludeHash>True</IncludeHash>
-      <FileType>File</FileType>
-    </PublishFile>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Service References\Icons\IconProvision\StateBasedIconProviders\" />
-    <Folder Include="SimpleDialogs\LaunchAnyDialog\" />
-  </ItemGroup>
-  <ItemGroup>
-    <WCFMetadata Include="Service References\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
-  </PropertyGroup>
-  <PropertyGroup>
-    <PreBuildEvent>
-    </PreBuildEvent>
-  </PropertyGroup>
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

@@ -1,31 +1,11 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{79730F00-359A-496D-84C5-8CF9C62A51EA}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>HIC.Common.Validation</RootNamespace>
-    <AssemblyName>HIC.Common.Validation</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
+    <TargetFramework>net452</TargetFramework>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
-    <DocumentationFile>bin\$(Configuration)\$(AssemblyName).xml</DocumentationFile>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <Prefer32Bit>false</Prefer32Bit>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -71,13 +51,6 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <Prefer32Bit>false</Prefer32Bit>
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsRuntimeOnlyPublicSurface>False</CodeContractsRuntimeOnlyPublicSurface>
     <CodeContractsRuntimeThrowOnFailure>True</CodeContractsRuntimeThrowOnFailure>
@@ -123,161 +96,94 @@
     <CodeContractsAnalysisWarningLevel>0</CodeContractsAnalysisWarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>false</SignAssembly>
-  </PropertyGroup>
-  <PropertyGroup>
-    <AssemblyOriginatorKeyFile>
-    </AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile />
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
-    <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
-    <OutputPath>bin\x64\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <Optimize>true</Optimize>
-    <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\Test\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>AnyCPU</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|x64'">
     <DebugSymbols>true</DebugSymbols>
-    <OutputPath>bin\x64\Test\</OutputPath>
+    <OutputPath>bin\$(Platform)\$(Configuration)\</OutputPath>
     <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <DebugType>full</DebugType>
-    <PlatformTarget>x64</PlatformTarget>
-    <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
-    <Reference Include="System.ComponentModel.Composition" />
+    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
+    <PackageReference Include="System.ComponentModel" Version="4.*" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
+    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
+    <PackageReference Include="System.Management" Version="4.*" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
+    <PackageReference Include="MySql.Data" Version="8.0.14" />
+    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
+  </ItemGroup>
+  <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
     <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data.DataSetExtensions" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
     <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Management" />
     <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SharedAssemblyInfo.cs">
-      <Link>Properties\SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="Constraints\IConstraint.cs" />
-    <Compile Include="Constraints\Primary\Alpha.cs" />
-    <Compile Include="Constraints\Primary\AlphaNumeric.cs" />
-    <Compile Include="Constraints\Primary\Date.cs" />
-    <Compile Include="Constraints\Primary\PluginPrimaryConstraint.cs" />
-    <Compile Include="Constraints\Primary\PrimaryConstraint.cs" />
-    <Compile Include="Constraints\Secondary\PluginSecondaryConstraint.cs" />
-    <Compile Include="Constraints\Secondary\Predictor\PluginPredictionRule.cs" />
-    <Compile Include="Constraints\Secondary\Predictor\ValuePredictsOtherValueNullness.cs" />
-    <Compile Include="Constraints\Secondary\ReferentialIntegrityConstraint.cs" />
-    <Compile Include="Constraints\Secondary\SecondaryConstraint.cs" />
-    <Compile Include="Constraints\Secondary\StandardRegexConstraint.cs" />
-    <Compile Include="Constraints\Secondary\Bound.cs" />
-    <Compile Include="Constraints\Secondary\BoundDate.cs" />
-    <Compile Include="Constraints\Secondary\Predictor\ChiSexPredictor.cs" />
-    <Compile Include="Constraints\Secondary\Predictor\PredictionRule.cs" />
-    <Compile Include="Constraints\Secondary\Predictor\Prediction.cs" />
-    <Compile Include="Dependency\Exceptions\ValidationXmlDependencyException.cs" />
-    <Compile Include="Dependency\Suspect.cs" />
-    <Compile Include="Dependency\ValidationXMLObscureDependencyFinder.cs" />
-    <Compile Include="ItemValidator.cs" />
-    <Compile Include="Constraints\Consequence.cs" />
-    <Compile Include="Constraints\Primary\IPrimaryConstraint.cs" />
-    <Compile Include="Constraints\Secondary\RegularExpression.cs" />
-    <Compile Include="UIAttributes\Attributes.cs" />
-    <Compile Include="ValidationFailure.cs" />
-    <Compile Include="Constraints\Secondary\BoundDouble.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Constraints\Primary\Chi.cs" />
-    <Compile Include="Constraints\Secondary\NotNull.cs" />
-    <Compile Include="Constraints\Secondary\ISecondaryConstraint.cs" />
-    <Compile Include="Validator.cs" />
-    <Compile Include="VerboseValidationResults.cs" />
+    <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\App.config">
-      <Link>App.config</Link>
-    </None>
     <None Include="ClassDiagram1.cd" />
-    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="readme.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <Compile Remove="ItemValidator.cs" />
+    <Compile Remove="ValidationFailure.cs" />
+    <Compile Remove="Validator.cs" />
+    <Compile Remove="VerboseValidationResults.cs" />
+    <Compile Remove="Constraints\Consequence.cs" />
+    <Compile Remove="Constraints\IConstraint.cs" />
+    <Compile Remove="Dependency\Suspect.cs" />
+    <Compile Remove="Dependency\ValidationXMLObscureDependencyFinder.cs" />
+    <Compile Remove="Properties\AssemblyInfo.cs" />
+    <Compile Remove="UIAttributes\Attributes.cs" />
+    <Compile Remove="Constraints\Primary\Alpha.cs" />
+    <Compile Remove="Constraints\Primary\AlphaNumeric.cs" />
+    <Compile Remove="Constraints\Primary\Chi.cs" />
+    <Compile Remove="Constraints\Primary\Date.cs" />
+    <Compile Remove="Constraints\Primary\IPrimaryConstraint.cs" />
+    <Compile Remove="Constraints\Primary\PluginPrimaryConstraint.cs" />
+    <Compile Remove="Constraints\Primary\PrimaryConstraint.cs" />
+    <Compile Remove="Constraints\Secondary\Bound.cs" />
+    <Compile Remove="Constraints\Secondary\BoundDate.cs" />
+    <Compile Remove="Constraints\Secondary\BoundDouble.cs" />
+    <Compile Remove="Constraints\Secondary\ISecondaryConstraint.cs" />
+    <Compile Remove="Constraints\Secondary\NotNull.cs" />
+    <Compile Remove="Constraints\Secondary\PluginSecondaryConstraint.cs" />
+    <Compile Remove="Constraints\Secondary\ReferentialIntegrityConstraint.cs" />
+    <Compile Remove="Constraints\Secondary\RegularExpression.cs" />
+    <Compile Remove="Constraints\Secondary\SecondaryConstraint.cs" />
+    <Compile Remove="Constraints\Secondary\StandardRegexConstraint.cs" />
+    <Compile Remove="Dependency\Exceptions\ValidationXmlDependencyException.cs" />
+    <Compile Remove="Constraints\Secondary\Predictor\ChiSexPredictor.cs" />
+    <Compile Remove="Constraints\Secondary\Predictor\PluginPredictionRule.cs" />
+    <Compile Remove="Constraints\Secondary\Predictor\Prediction.cs" />
+    <Compile Remove="Constraints\Secondary\Predictor\PredictionRule.cs" />
+    <Compile Remove="Constraints\Secondary\Predictor\ValuePredictsOtherValueNullness.cs" />
+  </ItemGroup>
 </Project>

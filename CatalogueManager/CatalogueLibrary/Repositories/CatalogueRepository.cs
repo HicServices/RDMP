@@ -112,7 +112,7 @@ namespace CatalogueLibrary.Repositories
             Constructors.Add(typeof(GovernancePeriod),(rep,r)=>new GovernancePeriod((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(StandardRegex),(rep,r)=>new StandardRegex((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(AnyTableSqlParameter),(rep,r)=>new AnyTableSqlParameter((ICatalogueRepository)rep, r));
-            Constructors.Add(typeof(Plugin),(rep,r)=>new Plugin((ICatalogueRepository)rep, r));
+            Constructors.Add(typeof(Data.Plugin),(rep,r)=>new Data.Plugin((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(ANOTable),(rep,r)=>new ANOTable((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(AggregateConfiguration),(rep,r)=>new AggregateConfiguration((ICatalogueRepository)rep, r));
             Constructors.Add(typeof(AggregateContinuousDateAxis),(rep,r)=>new AggregateContinuousDateAxis((ICatalogueRepository)rep, r));

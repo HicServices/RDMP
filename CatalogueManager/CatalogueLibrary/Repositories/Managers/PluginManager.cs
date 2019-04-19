@@ -8,7 +8,6 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
 using ReusableLibraryCode.Extensions;
 
 namespace CatalogueLibrary.Repositories.Managers
@@ -23,7 +22,7 @@ namespace CatalogueLibrary.Repositories.Managers
             _repository = repository;
         }
 
-        public Plugin[] GetCompatiblePlugins()
+        public Data.Plugin[] GetCompatiblePlugins()
         {
             var location = Assembly.GetExecutingAssembly().Location;
             if(location == null)
@@ -32,7 +31,7 @@ namespace CatalogueLibrary.Repositories.Managers
             var fileVersion = FileVersionInfo.GetVersionInfo(location).FileVersion;
             var version = new Version(fileVersion);
 
-            var plugins = _repository.GetAllObjects<Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(version, 3));
+            var plugins = _repository.GetAllObjects<Data.Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(version, 3));
             var uniquePlugins = plugins.GroupBy(p => new { name = p.Name, ver = new Version(p.PluginVersion.Major, p.PluginVersion.Minor, p.PluginVersion.Build) })
                 .ToDictionary(g => g.Key, p => p.OrderByDescending(pv => pv.PluginVersion).First());
             return uniquePlugins.Values.ToArray();
