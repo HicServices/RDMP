@@ -16,7 +16,6 @@ using CachingEngine.PipelineExecution.Destinations;
 using CachingEngine.Requests;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
-using ICSharpCode.SharpZipLib.Tar;
 using ReusableLibraryCode.Progress;
 
 namespace CachingEngine.Layouts
@@ -201,17 +200,6 @@ namespace CachingEngine.Layouts
                             zipArchive.CreateEntryFromFile(dataFile.FullName, dataFile.Name, CompressionLevel.Optimal);
                         }
                         
-                    }
-                }
-            else
-                using (var tarArchive = TarArchive.CreateOutputTarArchive(new FileStream(archiveFilepath.FullName, FileMode.CreateNew)))
-                {
-                    // RootPath is case-sensitive *and* requires forward slashes!
-                    tarArchive.RootPath = archiveDirectory.Replace(@"\", @"/");
-                    foreach (var item in files)
-                    {
-                        var entry = TarEntry.CreateEntryFromFile(item.FullName);
-                        tarArchive.WriteEntry(entry, true);
                     }
                 }
         }

@@ -38,12 +38,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <summary>
         /// Cached files are contained in a zip file
         /// </summary>
-        Zip = 1,
-
-        /// <summary>
-        /// Cached files are contained in a tar file
-        /// </summary>
-        Tar = 2
+        Zip = 1
     }
 
 
