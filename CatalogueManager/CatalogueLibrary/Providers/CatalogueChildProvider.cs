@@ -1302,7 +1302,7 @@ namespace CatalogueLibrary.Providers
         }
     }
 
-    internal class From1ToM<T, T1>:ConcurrentDictionary<int,ConcurrentBag<T1>> where T:IMapsDirectlyToDatabaseTable where T1:IMapsDirectlyToDatabaseTable
+    public class From1ToM<T, T1>:ConcurrentDictionary<int,ConcurrentBag<T1>> where T:IMapsDirectlyToDatabaseTable where T1:IMapsDirectlyToDatabaseTable
     {
         public From1ToM(Func<T1,int> idSelector, IEnumerable<T1> collection)
         {

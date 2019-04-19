@@ -32,7 +32,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
 
     public enum ExecuteExtractionToFlatFileType
     {
-        Access,
         CSV
     }
 
@@ -251,10 +250,6 @@ namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
             
             switch (FlatFileType)
             {
-                case ExecuteExtractionToFlatFileType.Access:
-                    OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".accdb");
-                      _output = new MicrosoftAccessDatabaseFormat(OutputFile);
-                    break;
                 case ExecuteExtractionToFlatFileType.CSV:
                     OutputFile = Path.Combine(DirectoryPopulated.FullName, GetFilename() + ".csv");
                     if (request.Configuration != null)

@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using ICSharpCode.SharpZipLib.Tar;
 using ReusableLibraryCode.Progress;
 
 namespace DataLoadEngine.DataProvider.FromCache
@@ -60,19 +59,6 @@ namespace DataLoadEngine.DataProvider.FromCache
             var archive = new ZipArchive(new FileStream(job.Value.FullName, FileMode.Open));
             archive.ExtractToDirectory(destinationDirectory.FullName);
             archive.Dispose();
-        }
-    }
-
-    internal class TarExtractor : ArchiveExtractor
-    {
-        public TarExtractor() : base(".tar")
-        {
-        }
-
-        protected override void DoExtraction(KeyValuePair<DateTime, FileInfo> job, DirectoryInfo destinationDirectory, IDataLoadEventListener dataLoadJob)
-        {
-            using (var archive = TarArchive.CreateInputTarArchive(new FileStream(job.Value.FullName, FileMode.Open)))
-                archive.ExtractContents(destinationDirectory.FullName);
         }
     }
 }

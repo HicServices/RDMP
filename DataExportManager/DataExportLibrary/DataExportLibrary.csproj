@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\SMI\</SolutionDir>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -117,31 +117,6 @@
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.ComponentModel" Version="4.*" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
-    <PackageReference Include="System.IO.Compression" Version="4.*" />
-    <PackageReference Include="System.Management" Version="4.*" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="7.1.1" />
-    <PackageReference Include="DocX" Version="1.1.0" />
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
-    <PackageReference Include="MySql.Data" Version="8.0.14" />
-    <PackageReference Include="Newtonsoft.Json" Version="11.0.2" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xaml" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -164,127 +139,6 @@
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="BetweenCatalogueAndDataExportObscureDependencyFinder.cs" />
-    <Compile Remove="Checks\ExtractionConfigurationChecker.cs" />
-    <Compile Remove="Checks\GlobalExtractionChecker.cs" />
-    <Compile Remove="Checks\GlobalsReleaseChecker.cs" />
-    <Compile Remove="Checks\ProjectChecker.cs" />
-    <Compile Remove="Checks\SelectedDataSetsChecker.cs" />
-    <Compile Remove="Checks\SupportingSQLTableChecker.cs" />
-    <Compile Remove="CohortCreationPipeline\CohortCreationRequest.cs" />
-    <Compile Remove="CohortCreationPipeline\CohortRefreshEngine.cs" />
-    <Compile Remove="CohortDatabaseWizard\CreateNewCohortDatabaseWizard.cs" />
-    <Compile Remove="CohortDatabaseWizard\PrivateIdentifierPrototype.cs" />
-    <Compile Remove="CohortDescribing\CohortDescriptionDataTableAsyncFetch.cs" />
-    <Compile Remove="CohortDescribing\CohortDescriptionFactory.cs" />
-    <Compile Remove="CohortDescribing\ExtractableCohortDescription.cs" />
-    <Compile Remove="Data\ExternalCohortDefinitionData.cs" />
-    <Compile Remove="Data\HICProjectSalt.cs" />
-    <Compile Remove="Data\ProjectCohortIdentificationConfigurationAssociation.cs" />
-    <Compile Remove="DataRelease\ReleaseEngine.cs" />
-    <Compile Remove="DataRelease\ReleaseEngineSettings.cs" />
-    <Compile Remove="DataRelease\ReleaseEnvironmentPotential.cs" />
-    <Compile Remove="DataRelease\ReleaseFolderSettings.cs" />
-    <Compile Remove="ExtractionTime\ExtractionDirectory.cs" />
-    <Compile Remove="ExtractionTime\ExtractionQueryBuilder.cs" />
-    <Compile Remove="ExtractionTime\ExtractionTimeTimeCoverageAggregator.cs" />
-    <Compile Remove="ExtractionTime\ExtractionTimeTimeCoverageAggregatorBucket.cs" />
-    <Compile Remove="ExtractionTime\ExtractionTimeValidator.cs" />
-    <Compile Remove="ExtractionTime\ExtractTableVerbatim.cs" />
-    <Compile Remove="ExtractionTime\ExtractTimeTransformationObserved.cs" />
-    <Compile Remove="ExtractionTime\ReleaseIdentifierSubstitution.cs" />
-    <Compile Remove="ExtractionTime\WordDataReleaseFileGenerator.cs" />
-    <Compile Remove="ExtractionTime\WordDataWriter.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Providers\DataExportChildProvider.cs" />
-    <Compile Remove="Providers\DataExportProblemProvider.cs" />
-    <Compile Remove="Repositories\DataExportRepository.cs" />
-    <Compile Remove="Repositories\MemoryDataExportRepository.cs" />
-    <Compile Remove="CohortCreationPipeline\Destinations\BasicCohortDestination.cs" />
-    <Compile Remove="CohortCreationPipeline\Sources\AggregateConfigurationTableSource.cs" />
-    <Compile Remove="CohortCreationPipeline\Sources\CohortIdentificationConfigurationSource.cs" />
-    <Compile Remove="CohortCreationPipeline\Sources\PatientIdentifierColumnSource.cs" />
-    <Compile Remove="CohortCreationPipeline\Sources\PatientIndexTableSource.cs" />
-    <Compile Remove="CohortCreationPipeline\UseCases\CreateTableFromAggregateUseCase.cs" />
-    <Compile Remove="Data\DataTables\CohortDefinition.cs" />
-    <Compile Remove="Data\DataTables\CumulativeExtractionResults.cs" />
-    <Compile Remove="Data\DataTables\DeployedExtractionFilter.cs" />
-    <Compile Remove="Data\DataTables\DeployedExtractionFilterFactory.cs" />
-    <Compile Remove="Data\DataTables\DeployedExtractionFilterParameter.cs" />
-    <Compile Remove="Data\DataTables\ExternalCohortTable.cs" />
-    <Compile Remove="Data\DataTables\ExtractableCohort.cs" />
-    <Compile Remove="Data\DataTables\ExtractableColumn.cs" />
-    <Compile Remove="Data\DataTables\ExtractableDataSet.cs" />
-    <Compile Remove="Data\DataTables\ExtractableDataSetPackage.cs" />
-    <Compile Remove="Data\DataTables\ExtractionConfiguration.cs" />
-    <Compile Remove="Data\DataTables\FilterContainer.cs" />
-    <Compile Remove="Data\DataTables\GlobalExtractionFilterParameter.cs" />
-    <Compile Remove="Data\DataTables\Project.cs" />
-    <Compile Remove="Data\DataTables\SelectedDataSetsForcedJoin.cs" />
-    <Compile Remove="Data\DataTables\SupplementalExtractionResults.cs" />
-    <Compile Remove="Data\LinkCreators\SelectedDataSets.cs" />
-    <Compile Remove="DataRelease\Audit\ReleaseLog.cs" />
-    <Compile Remove="DataRelease\Exceptions\ProjectNumberException.cs" />
-    <Compile Remove="DataRelease\Potential\FlatFileGlobalsReleasePotential.cs" />
-    <Compile Remove="DataRelease\Potential\FlatFileReleasePotential.cs" />
-    <Compile Remove="DataRelease\Potential\GlobalReleasePotential.cs" />
-    <Compile Remove="DataRelease\Potential\MsSqlExtractionReleasePotential.cs" />
-    <Compile Remove="DataRelease\Potential\MsSqlGlobalsReleasePotential.cs" />
-    <Compile Remove="DataRelease\Potential\NoGlobalReleasePotential.cs" />
-    <Compile Remove="DataRelease\Potential\NoReleasePotential.cs" />
-    <Compile Remove="DataRelease\Potential\Releaseability.cs" />
-    <Compile Remove="DataRelease\Potential\ReleasePotential.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\BasicDataReleaseDestination.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\FixedReleaseSource.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\FlatFileReleaseSource.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\MsSqlReleaseSource.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\NullReleaseSource.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\ReleaseAudit.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\ReleaseData.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\ReleaseFolderProvider.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\ReleaseState.cs" />
-    <Compile Remove="DataRelease\ReleasePipeline\ReleaseUseCase.cs" />
-    <Compile Remove="ExtractionTime\Commands\ExtractCommand.cs" />
-    <Compile Remove="ExtractionTime\Commands\ExtractCommandCollection.cs" />
-    <Compile Remove="ExtractionTime\Commands\ExtractCommandCollectionFactory.cs" />
-    <Compile Remove="ExtractionTime\Commands\ExtractDatasetCommand.cs" />
-    <Compile Remove="ExtractionTime\Commands\ExtractGlobalsCommand.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\ExtractionPipelineUseCase.cs" />
-    <Compile Remove="ExtractionTime\FileOutputFormats\CSVOutputFormat.cs" />
-    <Compile Remove="ExtractionTime\FileOutputFormats\FileOutputFormat.cs" />
-    <Compile Remove="ExtractionTime\FileOutputFormats\IFileOutputFormat.cs" />
-    <Compile Remove="ExtractionTime\FileOutputFormats\MicrosoftAccessDatabaseFormat.cs" />
-    <Compile Remove="ExtractionTime\Listeners\ElevateStateListener.cs" />
-    <Compile Remove="ExtractionTime\UserPicks\Bundle.cs" />
-    <Compile Remove="ExtractionTime\UserPicks\BundledLookupTable.cs" />
-    <Compile Remove="ExtractionTime\UserPicks\ExtractableDatasetBundle.cs" />
-    <Compile Remove="ExtractionTime\UserPicks\GlobalsBundle.cs" />
-    <Compile Remove="Providers\Nodes\AllCohortsNode.cs" />
-    <Compile Remove="Providers\Nodes\ExtractionConfigurationsNode.cs" />
-    <Compile Remove="Providers\Nodes\ExtractionDirectoryNode.cs" />
-    <Compile Remove="Providers\Nodes\FrozenExtractionConfigurationsNode.cs" />
-    <Compile Remove="Providers\Nodes\LinkedCohortNode.cs" />
-    <Compile Remove="Providers\Nodes\PackageContentNode.cs" />
-    <Compile Remove="Providers\Nodes\ProjectCataloguesNode.cs" />
-    <Compile Remove="Repositories\Managers\DataExportFilterManager.cs" />
-    <Compile Remove="Repositories\Managers\DataExportPropertyManager.cs" />
-    <Compile Remove="Repositories\Managers\ExtractableDataSetPackageManager.cs" />
-    <Compile Remove="CohortCreationPipeline\Destinations\IdentifierAllocation\GuidReleaseIdentifierAllocator.cs" />
-    <Compile Remove="CohortCreationPipeline\Destinations\IdentifierAllocation\IAllocateReleaseIdentifiers.cs" />
-    <Compile Remove="CohortCreationPipeline\Destinations\IdentifierAllocation\NullAllocateReleaseIdentifiers.cs" />
-    <Compile Remove="CohortCreationPipeline\Destinations\IdentifierAllocation\ProjectConsistentGuidReleaseIdentifierAllocator.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Destinations\ExecuteDatasetExtractionFlatFileDestination.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Destinations\IExecuteDatasetExtractionDestination.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Sources\DistinctStrategy.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Sources\ExecuteCrossServerDatasetExtractionSource.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Sources\ExecutePkSynthesizerDatasetExtractionSource.cs" />
-    <Compile Remove="ExtractionTime\ExtractionPipeline\Sources\RowPeeker.cs" />
-    <Compile Remove="Providers\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs" />
-    <Compile Remove="Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs" />
-    <Compile Remove="Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs" />
-    <Compile Remove="Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs" />
-    <Compile Remove="Repositories\Managers\HighPerformance\DataExportFilterManagerFromChildProvider.cs" />
   </ItemGroup>
 </Project>

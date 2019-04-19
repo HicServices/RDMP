@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -118,26 +118,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.ComponentModel" Version="4.*" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-    <PackageReference Include="System.Management" Version="4.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
-    <PackageReference Include="MySql.Data" Version="8.0.14" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Transactions" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -152,38 +132,6 @@
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="ItemValidator.cs" />
-    <Compile Remove="ValidationFailure.cs" />
-    <Compile Remove="Validator.cs" />
-    <Compile Remove="VerboseValidationResults.cs" />
-    <Compile Remove="Constraints\Consequence.cs" />
-    <Compile Remove="Constraints\IConstraint.cs" />
-    <Compile Remove="Dependency\Suspect.cs" />
-    <Compile Remove="Dependency\ValidationXMLObscureDependencyFinder.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="UIAttributes\Attributes.cs" />
-    <Compile Remove="Constraints\Primary\Alpha.cs" />
-    <Compile Remove="Constraints\Primary\AlphaNumeric.cs" />
-    <Compile Remove="Constraints\Primary\Chi.cs" />
-    <Compile Remove="Constraints\Primary\Date.cs" />
-    <Compile Remove="Constraints\Primary\IPrimaryConstraint.cs" />
-    <Compile Remove="Constraints\Primary\PluginPrimaryConstraint.cs" />
-    <Compile Remove="Constraints\Primary\PrimaryConstraint.cs" />
-    <Compile Remove="Constraints\Secondary\Bound.cs" />
-    <Compile Remove="Constraints\Secondary\BoundDate.cs" />
-    <Compile Remove="Constraints\Secondary\BoundDouble.cs" />
-    <Compile Remove="Constraints\Secondary\ISecondaryConstraint.cs" />
-    <Compile Remove="Constraints\Secondary\NotNull.cs" />
-    <Compile Remove="Constraints\Secondary\PluginSecondaryConstraint.cs" />
-    <Compile Remove="Constraints\Secondary\ReferentialIntegrityConstraint.cs" />
-    <Compile Remove="Constraints\Secondary\RegularExpression.cs" />
-    <Compile Remove="Constraints\Secondary\SecondaryConstraint.cs" />
-    <Compile Remove="Constraints\Secondary\StandardRegexConstraint.cs" />
-    <Compile Remove="Dependency\Exceptions\ValidationXmlDependencyException.cs" />
-    <Compile Remove="Constraints\Secondary\Predictor\ChiSexPredictor.cs" />
-    <Compile Remove="Constraints\Secondary\Predictor\PluginPredictionRule.cs" />
-    <Compile Remove="Constraints\Secondary\Predictor\Prediction.cs" />
-    <Compile Remove="Constraints\Secondary\Predictor\PredictionRule.cs" />
-    <Compile Remove="Constraints\Secondary\Predictor\ValuePredictsOtherValueNullness.cs" />
   </ItemGroup>
 </Project>

@@ -184,8 +184,6 @@ namespace DataLoadEngine.DataProvider.FromCache
                     throw new Exception("At this stage a cache archive type must be specified");
                 case CacheArchiveType.Zip:
                     return new ZipExtractor();
-                case CacheArchiveType.Tar:
-                    return new TarExtractor();
                 default:
                     throw new ArgumentOutOfRangeException("cacheArchiveType");
             }

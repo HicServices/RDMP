@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\</SolutionDir>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -161,28 +161,6 @@
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.ComponentModel" Version="4.*" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
-    <PackageReference Include="System.IO.Compression" Version="4.*" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-    <PackageReference Include="System.Management" Version="4.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
-    <PackageReference Include="MySql.Data" Version="8.0.14" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
-    <PackageReference Include="SharpZipLib" Version="0.86.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Transactions" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -202,118 +180,9 @@
     <None Include="Job\SchedulesAndJobCreation.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="IDisposeAfterDataLoad.cs" />
-    <Compile Remove="Attachers\Attacher.cs" />
-    <Compile Remove="Attachers\IAttacher.cs" />
-    <Compile Remove="Attachers\IPluginAttacher.cs" />
-    <Compile Remove="Checks\CheckEntireDataLoadProcess.cs" />
-    <Compile Remove="DatabaseManagement\DatabaseOperations.cs" />
-    <Compile Remove="DatabaseManagement\StandardDatabaseHelper.cs" />
-    <Compile Remove="DataProvider\IDataProvider.cs" />
-    <Compile Remove="DataProvider\IPluginDataProvider.cs" />
-    <Compile Remove="Factories\CacheLayoutFactory.cs" />
-    <Compile Remove="Job\DataLoadJob.cs" />
-    <Compile Remove="Job\IDataLoadJob.cs" />
-    <Compile Remove="Job\IJobFactory.cs" />
-    <Compile Remove="Job\JobFactory.cs" />
-    <Compile Remove="Job\ThrowImmediatelyDataLoadJob.cs" />
-    <Compile Remove="LoadExecution\HICDataLoadFactory.cs" />
-    <Compile Remove="LoadExecution\IDataLoadExecution.cs" />
-    <Compile Remove="LoadExecution\SingleJobExecution.cs" />
-    <Compile Remove="LoadProcess\DataLoadProcess.cs" />
-    <Compile Remove="LoadProcess\HICLoadConfigurationFlags.cs" />
-    <Compile Remove="LoadProcess\IDataLoadOperation.cs" />
-    <Compile Remove="LoadProcess\IDataLoadProcess.cs" />
-    <Compile Remove="Migration\BackfillMigrationFieldProcessor.cs" />
-    <Compile Remove="Migration\DatabaseMigrationStrategy.cs" />
-    <Compile Remove="Migration\IMigrationFieldProcessor.cs" />
-    <Compile Remove="Migration\MigrationColumnSet.cs" />
-    <Compile Remove="Migration\MigrationConfiguration.cs" />
-    <Compile Remove="Migration\MigrationHost.cs" />
-    <Compile Remove="Migration\StagingToLiveMigrationFieldProcessor.cs" />
-    <Compile Remove="Mutilators\IMutilateDataTables.cs" />
-    <Compile Remove="Mutilators\IPluginMutilateDataTables.cs" />
-    <Compile Remove="PipelineUseCases\UploadFileUseCase.cs" />
     <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Checks\Checkers\AnonymisationChecks.cs" />
-    <Compile Remove="Checks\Checkers\CatalogueLoadChecks.cs" />
-    <Compile Remove="Checks\Checkers\CommandLineParser.cs" />
-    <Compile Remove="Checks\Checkers\MetadataLoggingConfigurationChecks.cs" />
-    <Compile Remove="Checks\Checkers\PreExecutionChecker.cs" />
-    <Compile Remove="Checks\Checkers\ProcessTaskChecks.cs" />
-    <Compile Remove="DatabaseManagement\EntityNaming\HICDatabaseConfiguration.cs" />
-    <Compile Remove="DatabaseManagement\Operations\DatabaseCloner.cs" />
-    <Compile Remove="DatabaseManagement\Operations\TableInfoCloneOperation.cs" />
-    <Compile Remove="DataFlowPipeline\Components\CleanStrings.cs" />
-    <Compile Remove="DataFlowPipeline\Components\RemoveDuplicates.cs" />
-    <Compile Remove="DataFlowPipeline\Destinations\DataTableUploadDestination.cs" />
-    <Compile Remove="DataFlowPipeline\Destinations\SqlBulkInsertDestination.cs" />
-    <Compile Remove="DataFlowPipeline\Sources\DbDataCommandDataFlowSource.cs" />
-    <Compile Remove="DataFlowPipeline\Sources\IDbDataCommandDataFlowSource.cs" />
-    <Compile Remove="DataProvider\FromCache\ArchiveExtractor.cs" />
-    <Compile Remove="DataProvider\FromCache\BasicCacheDataProvider.cs" />
-    <Compile Remove="DataProvider\FromCache\CachedFileRetriever.cs" />
-    <Compile Remove="DataProvider\FromCache\DeleteCachedFilesOperation.cs" />
-    <Compile Remove="DataProvider\FromCache\ICachedDataProvider.cs" />
-    <Compile Remove="Job\Scheduling\DataLoadProgressUpdateException.cs" />
-    <Compile Remove="Job\Scheduling\IJobDateGenerationStrategy.cs" />
-    <Compile Remove="Job\Scheduling\IUpdateLoadProgress.cs" />
-    <Compile Remove="Job\Scheduling\JobDateGenerationStrategyFactory.cs" />
-    <Compile Remove="Job\Scheduling\MultipleScheduleJobFactory.cs" />
-    <Compile Remove="Job\Scheduling\ScheduledDataLoadJob.cs" />
-    <Compile Remove="Job\Scheduling\ScheduledJobFactory.cs" />
-    <Compile Remove="Job\Scheduling\SingleScheduleCacheDateTrackingStrategy.cs" />
-    <Compile Remove="Job\Scheduling\SingleScheduleConsecutiveDateStrategy.cs" />
-    <Compile Remove="Job\Scheduling\SingleScheduledJobFactory.cs" />
-    <Compile Remove="Job\Scheduling\UpdateProgressIfLoadsuccessful.cs" />
-    <Compile Remove="LoadExecution\Components\CompositeDataLoadComponent.cs" />
-    <Compile Remove="LoadExecution\Components\DataLoadComponent.cs" />
-    <Compile Remove="LoadExecution\Components\DeleteForLoadingFilesOperation.cs" />
-    <Compile Remove="LoadExecution\Components\IDataLoadComponent.cs" />
-    <Compile Remove="LoadExecution\Components\LoadFiles.cs" />
-    <Compile Remove="LoadExecution\Components\PopulateRAW.cs" />
-    <Compile Remove="LoadExecution\Components\RuntimeTaskPackager.cs" />
-    <Compile Remove="LoadExecution\Delegates\ExecutionStoppedHandler.cs" />
-    <Compile Remove="LoadExecution\Delegates\JobFinishedHandler.cs" />
-    <Compile Remove="LoadProcess\Scheduling\IterativeScheduledDataLoadProcess.cs" />
-    <Compile Remove="LoadProcess\Scheduling\ScheduledDataLoadProcess.cs" />
-    <Compile Remove="LoadProcess\Scheduling\SingleJobScheduledDataLoadProcess.cs" />
-    <Compile Remove="Migration\QueryBuilding\LiveMigrationQueryHelper.cs" />
-    <Compile Remove="Migration\QueryBuilding\MigrationColumnSetQueryHelper.cs" />
-    <Compile Remove="Migration\QueryBuilding\MigrationQueryHelper.cs" />
-    <Compile Remove="Migration\QueryBuilding\OverwriteMigrationStrategy.cs" />
-    <Compile Remove="Migration\QueryBuilding\ReverseMigrationQueryHelper.cs" />
-    <Compile Remove="DataFlowPipeline\Components\Anonymisation\ANOConfigurationException.cs" />
-    <Compile Remove="DataFlowPipeline\Components\Anonymisation\ANOTableInfoSynchronizer.cs" />
-    <Compile Remove="DataFlowPipeline\Components\Anonymisation\ANOTransformer.cs" />
-    <Compile Remove="DataFlowPipeline\Components\Anonymisation\BasicAnonymisationEngine.cs" />
-    <Compile Remove="DataFlowPipeline\Components\Anonymisation\ColumnInfoToANOTableConverter.cs" />
-    <Compile Remove="DataFlowPipeline\Components\Anonymisation\IdentifierDumper.cs" />
-    <Compile Remove="DataFlowPipeline\Components\Anonymisation\IdentifierDumperSynchronizer.cs" />
-    <Compile Remove="Job\Scheduling\Exceptions\CacheDataProviderFindingException.cs" />
-    <Compile Remove="Job\Scheduling\Exceptions\LoadOrCacheProgressUnclearException.cs" />
-    <Compile Remove="LoadExecution\Components\Arguments\CommandLineHelper.cs" />
-    <Compile Remove="LoadExecution\Components\Arguments\IStageArgs.cs" />
-    <Compile Remove="LoadExecution\Components\Arguments\LoadArgsDictionary.cs" />
-    <Compile Remove="LoadExecution\Components\Arguments\RuntimeArgumentCollection.cs" />
-    <Compile Remove="LoadExecution\Components\Arguments\StageArgs.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\AttacherRuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\DataProviderRuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\ExecutableRuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\ExecuteSqlFileRuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\ExecuteSqlFileRuntimeTaskException.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\IMEFRuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\IRuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\MandatoryPropertyChecker.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\MutilateDataTablesRuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\RuntimeTask.cs" />
-    <Compile Remove="LoadExecution\Components\Runtime\RuntimeTaskFactory.cs" />
-    <Compile Remove="LoadExecution\Components\Standard\ArchiveFiles.cs" />
-    <Compile Remove="LoadExecution\Components\Standard\MigrateRAWTableToStaging.cs" />
-    <Compile Remove="LoadExecution\Components\Standard\MigrateRAWToStaging.cs" />
-    <Compile Remove="LoadExecution\Components\Standard\MigrateStagingToLive.cs" />
-    <Compile Remove="LoadProcess\Scheduling\Strategy\AnyAvailableLoadProgressSelectionStrategy.cs" />
-    <Compile Remove="LoadProcess\Scheduling\Strategy\ILoadProgressSelectionStrategy.cs" />
-    <Compile Remove="LoadProcess\Scheduling\Strategy\SingleLoadProgressSelectionStrategy.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Checks\Notifiers\" />
   </ItemGroup>
 </Project>
