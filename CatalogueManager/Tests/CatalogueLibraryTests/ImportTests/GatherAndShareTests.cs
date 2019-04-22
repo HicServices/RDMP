@@ -114,7 +114,7 @@ namespace CatalogueLibraryTests.ImportTests
             var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1.dll"));
             File.WriteAllBytes(f2.FullName, new byte[] { 0x3, 0x3 });
 
-            var plugin = new Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
+            var plugin = new CatalogueLibrary.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
             var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
             var lma2 = new LoadModuleAssembly(CatalogueRepository, f2, plugin);
 

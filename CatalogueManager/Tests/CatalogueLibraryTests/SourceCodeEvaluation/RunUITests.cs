@@ -15,7 +15,6 @@ using CohortManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands;
 using NUnit.Framework;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
@@ -35,7 +34,6 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation
                 typeof(ExecuteCommandShowKeywordHelp),
                 typeof(ExecuteCommandCollapseChildNodes),
                 typeof(ExecuteCommandExpandAllNodes),
-                typeof(ExecuteCommandViewDependencies),
                 typeof(ExecuteCommandViewCohortAggregateGraph),
                 typeof(ExecuteCommandExecuteExtractionAggregateGraph),
                 

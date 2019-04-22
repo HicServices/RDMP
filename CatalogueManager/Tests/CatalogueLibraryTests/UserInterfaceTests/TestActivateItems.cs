@@ -36,7 +36,6 @@ using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dependencies.Models;
 using ReusableUIComponents.Theme;
 
 namespace CatalogueLibraryTests.UserInterfaceTests

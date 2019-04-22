@@ -21,7 +21,6 @@ using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 using NUnit.Framework;
-using Mono.Reflection;
 using ReusableLibraryCode;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
@@ -168,7 +167,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                     if(!setMethod.IsAbstract)
                     {
-                        var instructions = setMethod.GetInstructions();
+                        /*var instructions = setMethod.GetInstructions();
 
                         bool foundINotify = false;
                     
@@ -184,7 +183,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                         if(!foundINotify)
                             _fails.Add("FAIL:Set Method for property " + p.Name + " on Type " + type.Name + " does not include an Instruction calling method 'SetField' or 'OnPropertyChanged'");
                         
-                        
+                        */
                     }
                 }
                 
@@ -230,7 +229,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
 
                 if (toStringMethod.DeclaringType == typeof (MarshalByRefObject))
                     continue;
-
+                /*
                 IList<Instruction> instructions = null;
                 try
                 {
@@ -268,7 +267,7 @@ namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation
                                 _fails.Add("FAIL: ToString method in Type " + t.FullName + " uses Relationship PropertyInfo " + prop.Name);
                             }
                         }
-                    }
+                    }*/
             }
         }
 

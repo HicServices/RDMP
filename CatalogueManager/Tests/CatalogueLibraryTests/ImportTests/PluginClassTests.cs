@@ -39,11 +39,11 @@ namespace CatalogueLibraryTests.ImportTests
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             var tripart = new Version(version);
 
-            Plugin p = new Plugin(CatalogueRepository, fi);
+            CatalogueLibrary.Data.Plugin p = new CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
             p.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 1);
             p.SaveToDatabase();
 
-            Plugin p2 = new Plugin(CatalogueRepository, fi);
+            CatalogueLibrary.Data.Plugin p2 = new CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
             p2.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 5);
             p2.SaveToDatabase();
 
@@ -62,7 +62,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.dll"));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
 
-            Plugin p = new Plugin(CatalogueRepository,fi);
+            CatalogueLibrary.Data.Plugin p = new CatalogueLibrary.Data.Plugin(CatalogueRepository,fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
             
             //Give it some pdb bytes
@@ -82,7 +82,7 @@ namespace CatalogueLibraryTests.ImportTests
             p.DeleteInDatabase();
 
             //import it again
-            p = new Plugin(sm, list[0]);
+            p = new CatalogueLibrary.Data.Plugin(sm, list[0]);
             lma = new LoadModuleAssembly(sm, list[1]);
             
             Assert.AreEqual(1,lma.Pdb.Length); //1 byte in pdb
@@ -101,7 +101,7 @@ namespace CatalogueLibraryTests.ImportTests
             //and delete pluing (CASCADE deletes lma too)
             p.DeleteInDatabase();
 
-            p = new Plugin(sm, list[0]);
+            p = new CatalogueLibrary.Data.Plugin(sm, list[0]);
             lma = new LoadModuleAssembly(sm, list[1]);
 
             Assert.IsNull(lma.Pdb);
@@ -121,7 +121,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah3.dll"));
             File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
-            Plugin p = new Plugin(CatalogueRepository, fi);
+            CatalogueLibrary.Data.Plugin p = new CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
             var lma2 = new LoadModuleAssembly(CatalogueRepository, fi3, p);
             
