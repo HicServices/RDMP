@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -234,114 +234,5 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="DublinCoreTests.cs" />
-    <Compile Remove="LazyTest.cs" />
-    <Compile Remove="UnitTestsAllObjectsSupported.cs" />
-    <Compile Remove="CrossPlatformParameterTests\BasicParameterUseTests.cs" />
-    <Compile Remove="ImportTests\GatherAndShareTests.cs" />
-    <Compile Remove="ImportTests\PluginClassTests.cs" />
-    <Compile Remove="ImportTests\ShareLoadMetadataTests.cs" />
-    <Compile Remove="ImportTests\TestImportingAnObject.cs" />
-    <Compile Remove="Integration\AllKeywordsDescribedTest.cs" />
-    <Compile Remove="Integration\AllObjectsHaveImages.cs" />
-    <Compile Remove="Integration\CatalogueCheckTests.cs" />
-    <Compile Remove="Integration\CatalogueItemTests.cs" />
-    <Compile Remove="Integration\CatalogueTests.cs" />
-    <Compile Remove="Integration\ColumnInfoTests.cs" />
-    <Compile Remove="Integration\ComprehensiveQueryPerformanceCounterTests.cs" />
-    <Compile Remove="Integration\CredentialsTests.cs" />
-    <Compile Remove="Integration\CrossDatabaseTriggerTests.cs" />
-    <Compile Remove="Integration\DiagnosticsTests.cs" />
-    <Compile Remove="Integration\DitaExtractorTests.cs" />
-    <Compile Remove="Integration\EncryptionTests.cs" />
-    <Compile Remove="Integration\ExtractionInformationTests.cs" />
-    <Compile Remove="Integration\ForwardEngineerANOCatalogueTests.cs" />
-    <Compile Remove="Integration\GetDatabaseDiagramBinaryTest.cs" />
-    <Compile Remove="Integration\GovernanceTests.cs" />
-    <Compile Remove="Integration\HangingConnectionTest.cs" />
-    <Compile Remove="Integration\LinkerTests.cs" />
-    <Compile Remove="Integration\LoadMetadataTests.cs" />
-    <Compile Remove="Integration\LoadProgressTest.cs" />
-    <Compile Remove="Integration\LookupTest.cs" />
-    <Compile Remove="Integration\MEFCheckerTests.cs" />
-    <Compile Remove="Integration\PasswordEncryptionKeyLocationTests.cs" />
-    <Compile Remove="Integration\PipelineTests.cs" />
-    <Compile Remove="Integration\ServerDefaultsTests.cs" />
-    <Compile Remove="Integration\SupportingDocumentTests.cs" />
-    <Compile Remove="Integration\TableInfoSynchronizerTests.cs" />
-    <Compile Remove="Integration\TableInfoTests.cs" />
-    <Compile Remove="Integration\TableNamingConventionTests.cs" />
-    <Compile Remove="Integration\TriggerTests.cs" />
-    <Compile Remove="Integration\VersioningTests.cs" />
-    <Compile Remove="JsonSerializationTests\JsonSerializationTests.cs" />
-    <Compile Remove="MemoryRepositoryTests\MemoryRepositoryTests.cs" />
-    <Compile Remove="MemoryRepositoryTests\MemoryRepositoryVsDatabaseRepository.cs" />
-    <Compile Remove="Mocks\RdmpMockFactory.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="RefactoringTests\SelectSQLRefactorerTests.cs" />
-    <Compile Remove="SourceCodeEvaluation\AllUIsDocumentedTest.cs" />
-    <Compile Remove="SourceCodeEvaluation\CsProjFileTidy.cs" />
-    <Compile Remove="SourceCodeEvaluation\DependenciesEvaluation.cs" />
-    <Compile Remove="SourceCodeEvaluation\EvaluateNamespacesAndSolutionFoldersTests.cs" />
-    <Compile Remove="SourceCodeEvaluation\InterfaceDeclarationsCorrect.cs" />
-    <Compile Remove="SourceCodeEvaluation\RunUITests.cs" />
-    <Compile Remove="SourceCodeEvaluation\SinglePropertyUISourceCodeEvaluator.cs" />
-    <Compile Remove="Unit\CacheFetchRequestProviderTests.cs" />
-    <Compile Remove="Unit\CacheLagPeriodUnitTests.cs" />
-    <Compile Remove="Unit\CatalogueNamingTests.cs" />
-    <Compile Remove="Unit\CommitAssemblyTest.cs" />
-    <Compile Remove="Unit\IColumnTests.cs" />
-    <Compile Remove="Unit\LoadModuleAssemblyTests.cs" />
-    <Compile Remove="Unit\ObjectConstructorTests.cs" />
-    <Compile Remove="Unit\ParameterManagerTests.cs" />
-    <Compile Remove="Unit\PermissionWindowTests.cs" />
-    <Compile Remove="Unit\PreInitializeTests.cs" />
-    <Compile Remove="Unit\SimpleColumnInfoTests.cs" />
-    <Compile Remove="Unit\SqlSyntaxHelperTests.cs" />
-    <Compile Remove="Unit\TestAcronymGeneration.cs" />
-    <Compile Remove="UserInterfaceTests\AggregateEditorUITests.cs" />
-    <Compile Remove="UserInterfaceTests\ANOTableUITests.cs" />
-    <Compile Remove="UserInterfaceTests\CatalogueItemUITests.cs" />
-    <Compile Remove="UserInterfaceTests\CatalogueUITests.cs" />
-    <Compile Remove="UserInterfaceTests\ChildProviderTests.cs" />
-    <Compile Remove="UserInterfaceTests\ExecuteCommandActivateTests.cs" />
-    <Compile Remove="UserInterfaceTests\ExternalDatabaseServerUITests.cs" />
-    <Compile Remove="UserInterfaceTests\ForwardEngineerANOCatalogueUITests.cs" />
-    <Compile Remove="UserInterfaceTests\LoadDiagramUITests.cs" />
-    <Compile Remove="UserInterfaceTests\PluginProcessTaskUITests.cs" />
-    <Compile Remove="UserInterfaceTests\TestActivateItems.cs" />
-    <Compile Remove="UserInterfaceTests\UITests.cs" />
-    <Compile Remove="UserInterfaceTests\UITimeoutAttribute.cs" />
-    <Compile Remove="Integration\ArgumentTests\ProcessTaskArgumentTests.cs" />
-    <Compile Remove="Integration\ArgumentTests\ProcessTaskTests.cs" />
-    <Compile Remove="Integration\ArgumentTests\TestArgumentedClass.cs" />
-    <Compile Remove="Integration\DataAccess\SuperMultiThreadedVolumeAccess.cs" />
-    <Compile Remove="Integration\DataAccess\TestDataAccess.cs" />
-    <Compile Remove="Integration\Dependencies\DependencyTests.cs" />
-    <Compile Remove="Integration\FilterImportingTests\FilterImporterTests.cs" />
-    <Compile Remove="Integration\FilterImportingTests\ParameterCreatorTests.cs" />
-    <Compile Remove="Integration\ObscureDependencyTests\BetweenCatalogueAndDataExportObscureDependencyFinderTests.cs" />
-    <Compile Remove="Integration\ObscureDependencyTests\ObjectSharingObscureDependencyFinderTests.cs" />
-    <Compile Remove="Integration\ObscureDependencyTests\ValidationXMLObscureDependencyFinderTests.cs" />
-    <Compile Remove="Integration\TableValuedFunctionTests\AggregationTests.cs" />
-    <Compile Remove="Integration\TableValuedFunctionTests\ImportAndTestTests.cs" />
-    <Compile Remove="Integration\Validation\ReferentialIntegrityConstraintTests.cs" />
-    <Compile Remove="Integration\Validation\StandardRegexTests.cs" />
-    <Compile Remove="SourceCodeEvaluation\ClassFileEvaluation\AllImportantClassesDocumented.cs" />
-    <Compile Remove="SourceCodeEvaluation\ClassFileEvaluation\DocumentationCrossExaminationTest.cs" />
-    <Compile Remove="SourceCodeEvaluation\ClassFileEvaluation\ExplicitDatabaseNameChecker.cs" />
-    <Compile Remove="SourceCodeEvaluation\ClassFileEvaluation\RDMPFormInitializationTests.cs" />
-    <Compile Remove="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousEmptyChecksMethodsOrNotICheckablePlugins.cs" />
-    <Compile Remove="SourceCodeEvaluation\ClassFileEvaluation\SuspiciousRelationshipPropertyUse.cs" />
-    <Compile Remove="SourceCodeEvaluation\ClassFileEvaluation\UserInterfaceStandardisationChecker.cs" />
-    <Compile Remove="Unit\ExerciseData\TestBiochemistryCreation.cs" />
-    <Compile Remove="Unit\ExerciseData\TestDemographyCreation.cs" />
-    <Compile Remove="Unit\ExerciseData\TestPrescribingCreation.cs" />
-    <Compile Remove="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateBuilderTestsBase.cs" />
-    <Compile Remove="Integration\QueryBuildingTests\AggregateBuilderTests\AggregateDataBasedTests.cs" />
-    <Compile Remove="Integration\QueryBuildingTests\AggregateBuilderTests\MicrosoftAggregateBuilderTests.cs" />
-    <Compile Remove="Integration\QueryBuildingTests\AggregateBuilderTests\MySqlAggregateBuilderTests.cs" />
-    <Compile Remove="Integration\QueryBuildingTests\QueryBuilderTests\MicrosoftQueryBuilderTests.cs" />
-    <Compile Remove="Integration\QueryBuildingTests\QueryBuilderTests\MySqlQueryBuilderTests.cs" />
-  </ItemGroup>
+                                                                                                                                                                                                                                                                                                                                                                                                                                                      </ItemGroup>
 </Project>

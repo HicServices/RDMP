@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -158,25 +158,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.ComponentModel" Version="4.*" />
-    <PackageReference Include="System.Management" Version="4.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
-    <PackageReference Include="MySql.Data" Version="8.0.14" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
-    <PackageReference Include="RhinoMocks" Version="3.6.1" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Transactions" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -189,22 +170,5 @@
     <ProjectReference Include="..\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Class1.cs" />
-    <Compile Remove="DatasetTimespanCalculator.cs" />
-    <Compile Remove="Data\ArchivalPeriodicityCount.cs" />
-    <Compile Remove="Data\ColumnState.cs" />
-    <Compile Remove="Data\DQEGraphAnnotation.cs" />
-    <Compile Remove="Data\DQERepository.cs" />
-    <Compile Remove="Data\Evaluation.cs" />
-    <Compile Remove="Data\PeriodicityState.cs" />
-    <Compile Remove="Data\RowState.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Reports\CatalogueConstraintReport.cs" />
-    <Compile Remove="Reports\DataQualityReport.cs" />
-    <Compile Remove="Reports\DQEStateOverDataLoadRunId.cs" />
-    <Compile Remove="Reports\IDataQualityReport.cs" />
-    <Compile Remove="Reports\LoadProgressSummaryReport.cs" />
-    <Compile Remove="Reports\PeriodicityHelpers\PeriodicityCube.cs" />
-    <Compile Remove="Reports\PeriodicityHelpers\PeriodicityCubesOverTime.cs" />
-  </ItemGroup>
+                                                                      </ItemGroup>
 </Project>

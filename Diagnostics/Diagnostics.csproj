@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -141,30 +141,5 @@
     <EmbeddedResource Include="TestData\PrescriptionCodes.csv" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="ANOConfigurationChecker.cs" />
-    <Compile Remove="MissingFieldsChecker.cs" />
-    <Compile Remove="UserAcceptanceTest.cs" />
-    <Compile Remove="UserAcceptanceTestDataExportFunctionality.cs" />
-    <Compile Remove="UserAcceptanceTestEnvironment.cs" />
-    <Compile Remove="UserAcceptanceTestImportHospitalAdmissions.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="TestData\BulkTestsData.cs" />
-    <Compile Remove="TestData\Postcode.cs" />
-    <Compile Remove="TestData\TestAddress.cs" />
-    <Compile Remove="TestData\TestAdmission.cs" />
-    <Compile Remove="TestData\TestAppointment.cs" />
-    <Compile Remove="TestData\TestBiochemistrySample.cs" />
-    <Compile Remove="TestData\TestDemography.cs" />
-    <Compile Remove="TestData\TestHospitalAdmissions.cs" />
-    <Compile Remove="TestData\TestPerson.cs" />
-    <Compile Remove="TestData\TestPrescription.cs" />
-    <Compile Remove="TestData\Exercises\BiochemistryExerciseTestData.cs" />
-    <Compile Remove="TestData\Exercises\CarotidArteryScanReportExerciseTestData.cs" />
-    <Compile Remove="TestData\Exercises\DemographyExerciseTestData.cs" />
-    <Compile Remove="TestData\Exercises\ExerciseTestDataGenerator.cs" />
-    <Compile Remove="TestData\Exercises\ExerciseTestIdentifiers.cs" />
-    <Compile Remove="TestData\Exercises\IExerciseTestDataGenerator.cs" />
-    <Compile Remove="TestData\Exercises\IExerciseTestIdentifiers.cs" />
-    <Compile Remove="TestData\Exercises\PrescribingExerciseTestData.cs" />
-  </ItemGroup>
+                                                                                                      </ItemGroup>
 </Project>

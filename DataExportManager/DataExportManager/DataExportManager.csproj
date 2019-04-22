@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <PublishUrl>C:\Development\Deployments\RDMP\DataExportManager2\</PublishUrl>
@@ -448,60 +448,5 @@
     <ProjectReference Include="..\DataExportLibrary\DataExportLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="ChangesSavedHandler.cs" />
-    <Compile Remove="CommandExecution\DataExportPluginUserInterface.cs" />
-    <Compile Remove="Menus\AllCataloguesUsedByLoadMetadataNodeMenu.cs" />
-    <Compile Remove="Menus\AllCohortsNodeMenu.cs" />
-    <Compile Remove="Menus\ExternalCohortTableMenu.cs" />
-    <Compile Remove="Menus\ExtractableCohortMenu.cs" />
-    <Compile Remove="Menus\ExtractableDatasetMenu.cs" />
-    <Compile Remove="Menus\ExtractableDataSetPackageMenu.cs" />
-    <Compile Remove="Menus\ExtractionConfigurationMenu.cs" />
-    <Compile Remove="Menus\ExtractionConfigurationsNodeMenu.cs" />
-    <Compile Remove="Menus\ExtractionDirectoryNodeMenu.cs" />
-    <Compile Remove="Menus\ProjectCohortIdentificationConfigurationAssociationsNodeMenu.cs" />
-    <Compile Remove="Menus\ProjectMenu.cs" />
-    <Compile Remove="Menus\ProjectSavedCohortsNodeMenu.cs" />
-    <Compile Remove="Menus\SelectedDataSetsMenu.cs" />
-    <Compile Remove="ProjectUI\ExtractCommandStateMonitor.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandAssociateCohortIdentificationConfigurationWithProject.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandChooseCohort.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCloneCohortIdentificationConfiguration.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCloneExtractionConfiguration.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortDatabaseUsingWizard.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewDataExtractionProject.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractableDataSetPackage.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewExtractionConfigurationForProject.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionAggregateGraph.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandExecuteExtractionConfiguration.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandGenerateReleaseDocument.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandRefreshExtractionConfigurationsCohort.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandRelease.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandSetProjectExtractionDirectory.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandShowSummaryOfCohorts.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandUnfreezeExtractionConfiguration.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewSelectedDatasetsExtractionSql.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewThenVsNowSql.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExternalCohortTable.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractableCohort.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsExtractionConfiguration.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProject.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCataloguesNode.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectCohortIdentificationConfigurationAssociationsNode.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsProjectSavedCohortsNode.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsSelectedDataSets.cs" />
-    <Compile Remove="DataViewing\Collections\ViewCohortExtractionUICollection.cs" />
-    <Compile Remove="Icons\IconProvision\DataExportIconProvider.cs" />
-    <Compile Remove="ProjectUI\Graphs\ExtractionAggregateGraphObjectCollection.cs" />
-    <Compile Remove="ProjectUI\Graphs\ProjectExtractionGraphsGenerator.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\CohortCreationCommands\CohortCreationCommandExecution.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromCatalogue.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandCreateNewCohortFromFile.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\CohortCreationCommands\ExecuteCommandImportAlreadyExistingCohort.cs" />
-    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ExtractableDataSetStateBasedIconProvider.cs" />
-    <Compile Remove="Icons\IconProvision\StateBasedIconProviders\ExtractionConfigurationStateBasedIconProvider.cs" />
-    <Compile Remove="ProjectUI\Datasets\Node\AvailableForceJoinNode.cs" />
-  </ItemGroup>
+                                                                                                                                                                                                                              </ItemGroup>
 </Project>

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Configuration;
 using System.IO;
 using CatalogueLibrary.DataFlowPipeline;
 using CommandLine;
@@ -24,10 +25,10 @@ namespace RDMPAutomationService
 {
     public class Program
     {
-        public static int Main(string[] args)
+        static int Main(string[] args)
         {
-            if (!File.Exists(AppDomain.CurrentDomain.GetData("APP_CONFIG_FILE").ToString()))
-                AppConfig.Change(Path.GetFullPath("ResearchDataManagementPlatform.exe.config"));
+            //if (!File.Exists(AppDomain.CurrentDomain.GetData("APP_CONFIG_FILE").ToString()))
+                //AppConfig.Change(Path.GetFullPath("ResearchDataManagementPlatform.exe.config"));
 
             try
             {

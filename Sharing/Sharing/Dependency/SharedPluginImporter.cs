@@ -25,9 +25,9 @@ namespace Sharing.Dependency
             _shareManager = new ShareManager(repositoryLocator);
         }
 
-        public Plugin Import(Stream stream)
+        public CatalogueLibrary.Data.Plugin Import(Stream stream)
         {
-            return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<Plugin>().Single();
+            return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<CatalogueLibrary.Data.Plugin>().Single();
         }
     }
 }

@@ -67,6 +67,5 @@
     <None Include="Execution\CohortCompiler.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
 </Project>

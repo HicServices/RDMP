@@ -61,6 +61,5 @@
     <None Include="deployment\LOCAL.DBDeployment.Restore.bat" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
 </Project>

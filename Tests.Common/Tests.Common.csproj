@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\SMI\</SolutionDir>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -107,15 +107,5 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="DatabaseTests.cs" />
-    <Compile Remove="SimpleExampleTests.cs" />
-    <Compile Remove="TestableTableValuedFunction.cs" />
-    <Compile Remove="TestCaseNotWrittenYetException.cs" />
-    <Compile Remove="TestDatabasesSettings.cs" />
-    <Compile Remove="TestDirectoryHelper.cs" />
-    <Compile Remove="TestLoadDirectory.cs" />
-    <Compile Remove="UnitTests.cs" />
-    <Compile Remove="UserAcceptanceTestEnvironmentHelper.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+                                          </ItemGroup>
 </Project>

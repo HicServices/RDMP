@@ -53,7 +53,7 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
             _listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "File " + _fileToLoad + " is empty"));
         }
         
-        public void ReadingExceptionOccurred(CsvHelperException obj)
+        public bool ReadingExceptionOccurred(CsvHelperException obj)
         {
             var line = new FlatFileLine(obj.ReadingContext);
 
@@ -78,6 +78,9 @@ namespace LoadModules.Generic.DataFlowSources.SubComponents
                 default:
                     throw new ArgumentOutOfRangeException();
             }
+
+            //todo should this return true or false? not clear, this was an API change in CSV.
+            return true;
         }
 
         public void BadDataFound(FlatFileLine line, bool isFromCsvHelper=false)

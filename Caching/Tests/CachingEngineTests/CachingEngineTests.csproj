@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
@@ -69,13 +69,5 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Integration\CachingHostTests.cs" />
-    <Compile Remove="Integration\CustomDateCachingTests.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Unit\IFileDataFlowSource.cs" />
-    <Compile Remove="Unit\PipelineExecutionTests.cs" />
-    <Compile Remove="Unit\TestIFileDataFlowComponents.cs" />
-    <Compile Remove="Unit\WebServiceConfigurationTest.cs" />
-    <Compile Remove="Unit\WebServiceDataFlowSource.cs" />
-  </ItemGroup>
+                                  </ItemGroup>
 </Project>

@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -276,83 +276,5 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Integration\BackfillSqlHelperTests.cs" />
-    <Compile Remove="Integration\BackfillTests.cs" />
-    <Compile Remove="Integration\CachedFileRetrieverTests.cs" />
-    <Compile Remove="Integration\CoalescerTests.cs" />
-    <Compile Remove="Integration\DatabaseClonerTests.cs" />
-    <Compile Remove="Integration\DatabaseOperationTests.cs" />
-    <Compile Remove="Integration\DataLoadProgressUpdateInfoTests.cs" />
-    <Compile Remove="Integration\DataTableUploadDestinationTests.cs" />
-    <Compile Remove="Integration\DistincterTests.cs" />
-    <Compile Remove="Integration\ExcelConversionTest.cs" />
-    <Compile Remove="Integration\ExecutableProcessTaskTests.cs" />
-    <Compile Remove="Integration\ExecuteSqlFileRuntimeTaskTests.cs" />
-    <Compile Remove="Integration\FixedWidthTests.cs" />
-    <Compile Remove="Integration\FlatFileAttacherTests.cs" />
-    <Compile Remove="Integration\HICPipelineTests.cs" />
-    <Compile Remove="Integration\HousekeepingTests.cs" />
-    <Compile Remove="Integration\ImportFilesDataProviderTests.cs" />
-    <Compile Remove="Integration\JobDateGenerationStrategyFactoryTestsIntegration.cs" />
-    <Compile Remove="Integration\KVPAttacherTest.cs" />
-    <Compile Remove="Integration\MigrationStrategyTests.cs" />
-    <Compile Remove="Integration\PayloadTest.cs" />
-    <Compile Remove="Integration\PrematureLoadEnderTests.cs" />
-    <Compile Remove="Integration\PrimaryKeyCollisionResolverTests.cs" />
-    <Compile Remove="Integration\RemoteDatabaseAttacherTests.cs" />
-    <Compile Remove="Integration\RuntimeTaskFactoryTests.cs" />
-    <Compile Remove="Integration\SafePrimaryKeyCollisionResolverMutilationTests.cs" />
-    <Compile Remove="Integration\SetupDatasetTest.cs" />
-    <Compile Remove="Integration\SingleJobPipelineTests.cs" />
-    <Compile Remove="Integration\TableInfoJoiningQueryBuilderTests.cs" />
-    <Compile Remove="Integration\TableVarcharMaxerTests.cs" />
-    <Compile Remove="Integration\TestDataWriter.cs" />
-    <Compile Remove="Integration\ToMemoryDataLoadJob.cs" />
-    <Compile Remove="Integration\WebFileDownloaderTests.cs" />
-    <Compile Remove="Integration\WebServiceConfigurationTests.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Unit\CommandLineHelperTests.cs" />
-    <Compile Remove="Unit\DataFlowComponentTests.cs" />
-    <Compile Remove="Unit\ExcelTests.cs" />
-    <Compile Remove="Unit\ExecutableProcessTaskTests.cs" />
-    <Compile Remove="Unit\IAttacherCompositionTests.cs" />
-    <Compile Remove="Unit\JobDateGenerationStrategyFactoryTestsUnit.cs" />
-    <Compile Remove="Unit\JobDateGenerationStrategyTests.cs" />
-    <Compile Remove="Unit\MDFAttacherTests.cs" />
-    <Compile Remove="Unit\SchedulingTests.cs" />
-    <Compile Remove="Integration\Cache\TestDataInventor.cs" />
-    <Compile Remove="Integration\Cache\TestDataWriterChunk.cs" />
-    <Compile Remove="Integration\CheckingTests\ProcessTaskCheckingTests.cs" />
-    <Compile Remove="Integration\CrossDatabaseTypeTests\CrossDatabaseDataLoadTests.cs" />
-    <Compile Remove="Integration\CrossDatabaseTypeTests\CrossDatabaseInsertTests.cs" />
-    <Compile Remove="Integration\CrossDatabaseTypeTests\CrossDatabaseMergeCommandTest.cs" />
-    <Compile Remove="Integration\CrossDatabaseTypeTests\HowDoWeAchieveMd5Test.cs" />
-    <Compile Remove="Integration\DilutionTests\DilutionCheckTests.cs" />
-    <Compile Remove="Integration\DilutionTests\DilutionOperationFactoryTests.cs" />
-    <Compile Remove="Integration\DilutionTests\DilutionOperationTests.cs" />
-    <Compile Remove="Integration\PipelineTests\ArchiveFilesTests.cs" />
-    <Compile Remove="Integration\PipelineTests\ComponentCompatibilityTests.cs" />
-    <Compile Remove="Integration\PipelineTests\PipelineArgumentTests.cs" />
-    <Compile Remove="Integration\PipelineTests\PipelineReadPerformanceTest.cs" />
-    <Compile Remove="Integration\PipelineTests\TestDataPipelineAssembler.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\RelationalBulkTestDataSetup.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\RelationalBulkTestQueryBuilding.cs" />
-    <Compile Remove="Integration\PipelineTests\Components\AliasHandlerTests.cs" />
-    <Compile Remove="Integration\PipelineTests\Components\ColumnSwapperTests.cs" />
-    <Compile Remove="Integration\PipelineTests\Components\RemoveDuplicatesTests.cs" />
-    <Compile Remove="Integration\PipelineTests\Components\TransposerTests.cs" />
-    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests.cs" />
-    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTestsBase.cs" />
-    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests_AutomaticallyResolved.cs" />
-    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests_ResolvedAccordingToStrategy.cs" />
-    <Compile Remove="Integration\PipelineTests\Sources\DelimitedFileSourceTests_Unresolveable.cs" />
-    <Compile Remove="Integration\PipelineTests\Sources\SourceTests.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestAgent.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestAgentEquipment.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestEvent_AgentLinkTable.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestInformant.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\CIATestReport.cs" />
-    <Compile Remove="Integration\RelationalBulkTestDataTests\TestData\RelationalBulkTestData.cs" />
-  </ItemGroup>
+                                                                                                                                                                                                                                                                                                                          </ItemGroup>
 </Project>

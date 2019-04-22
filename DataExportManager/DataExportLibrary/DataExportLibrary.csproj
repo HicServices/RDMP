@@ -139,6 +139,5 @@
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
 </Project>

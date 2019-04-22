@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -121,34 +121,5 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="ConfigurationPropertiesTests.cs" />
-    <Compile Remove="DataExportRepositoryTests.cs" />
-    <Compile Remove="ExtractionConfigurationTest.cs" />
-    <Compile Remove="ImportFileTests.cs" />
-    <Compile Remove="ProjectChecksTestsComplex.cs" />
-    <Compile Remove="ProjectChecksTestsSimple.cs" />
-    <Compile Remove="ProjectCohortIdentificationConfigurationAssociationTests.cs" />
-    <Compile Remove="TestExtractableTables.cs" />
-    <Compile Remove="TestsRequiringACohort.cs" />
-    <Compile Remove="Cloning\CloneExtractionConfigurationTests.cs" />
-    <Compile Remove="Cohort\CohortTests.cs" />
-    <Compile Remove="Cohort\CommittingNewCohortsTests.cs" />
-    <Compile Remove="Cohort\CreateNewCohortDatabaseWizardTests.cs" />
-    <Compile Remove="Cohort\ProjectConsistentGuidReleaseIdentifierAllocatorTests.cs" />
-    <Compile Remove="CustomData\CustomDataImportingTests.cs" />
-    <Compile Remove="DataAccess\PackageContentsTests.cs" />
-    <Compile Remove="DataAccess\SelectedColumnsTests.cs" />
-    <Compile Remove="DataExtraction\EmptyDataExtractionTests.cs" />
-    <Compile Remove="DataExtraction\ExecuteCrossServerDatasetExtractionSourceTest.cs" />
-    <Compile Remove="DataExtraction\ExecuteFullExtractionToDatabaseMSSqlChecksTests.cs" />
-    <Compile Remove="DataExtraction\ExecuteFullExtractionToDatabaseMSSqlDestinationTest.cs" />
-    <Compile Remove="DataExtraction\ExecutePkSynthesizerDatasetExtractionSourceTests.cs" />
-    <Compile Remove="DataExtraction\NormalDataExtractionTests.cs" />
-    <Compile Remove="DataExtraction\RowPeekerTests.cs" />
-    <Compile Remove="DataExtraction\SupplementalExtractionResultsTest.cs" />
-    <Compile Remove="DataExtraction\TestCohortRefreshing.cs" />
-    <Compile Remove="DataExtraction\TestsRequiringAnExtractionConfiguration.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="TableValuedFunctionTests\EndToEndTableValuedFunction.cs" />
-  </ItemGroup>
+                                                                                                                      </ItemGroup>
 </Project>

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
@@ -465,63 +465,5 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="AbstractControlDescriptionProvider.cs" />
-    <Compile Remove="BetterListBoxScrollArgs.cs" />
-    <Compile Remove="ChartLookAndFeelSetter.cs" />
-    <Compile Remove="ConnectionStringTextBox.cs" />
-    <Compile Remove="DoTransparencyProperly.cs" />
-    <Compile Remove="ExceptionCounterUI.cs" />
-    <Compile Remove="FormsHelper.cs" />
-    <Compile Remove="HelpSection.cs" />
-    <Compile Remove="IconFactory.cs" />
-    <Compile Remove="NativeMethods.cs" />
-    <Compile Remove="PreviewKey.cs" />
-    <Compile Remove="RecentHistoryOfControls.cs" />
-    <Compile Remove="SimpleCounterButton.cs" />
-    <Compile Remove="TechnicalUI.cs" />
-    <Compile Remove="ToolStripTimeout.cs" />
-    <Compile Remove="ViewSourceCodeToolTip.cs" />
-    <Compile Remove="WideMessageBoxTheme.cs" />
-    <Compile Remove="ChecksUI\AllChecksCompleteHandler.cs" />
-    <Compile Remove="ChecksUI\AllChecksCompleteHandlerArgs.cs" />
-    <Compile Remove="ChecksUI\IRAGSmiley.cs" />
-    <Compile Remove="ChecksUI\MakeChangePopup.cs" />
-    <Compile Remove="CommandExecution\ICommandExecutionFactory.cs" />
-    <Compile Remove="CommandExecution\ICommandFactory.cs" />
-    <Compile Remove="Dependencies\DependencyFinder.cs" />
-    <Compile Remove="Dialogs\WideMessageBoxArgs.cs" />
-    <Compile Remove="Heatmapping\RainbowColorPicker.cs" />
-    <Compile Remove="Progress\PopupErrorMessagesEventListener.cs" />
-    <Compile Remove="Progress\ProgressUIEntry.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="ScintillaHelper\CSharpLexer.cs" />
-    <Compile Remove="ScintillaHelper\ScintillaLineHighlightingHelper.cs" />
-    <Compile Remove="ScintillaHelper\ScintillaMenu.cs" />
-    <Compile Remove="ScintillaHelper\ScintillaTextEditorFactory.cs" />
-    <Compile Remove="SingleControlForms\IConsultableBeforeClosing.cs" />
-    <Compile Remove="SingleControlForms\SingleControlForm.cs" />
-    <Compile Remove="Theme\ITheme.cs" />
-    <Compile Remove="TransparentHelpSystem\HelpStage.cs" />
-    <Compile Remove="TransparentHelpSystem\HelpWorkflow.cs" />
-    <Compile Remove="TransparentHelpSystem\TransparentHelpForm.cs" />
-    <Compile Remove="TreeHelper\TreeNodeParentFinder.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewDependencies.cs" />
-    <Compile Remove="CommandExecution\Proposals\ICommandExecutionProposal.cs" />
-    <Compile Remove="Dependencies\Models\ByteComparer.cs" />
-    <Compile Remove="Dependencies\Models\ColorRequest.cs" />
-    <Compile Remove="Dependencies\Models\ColorResponse.cs" />
-    <Compile Remove="Dependencies\Models\DataEdge.cs" />
-    <Compile Remove="Dependencies\Models\DataVertex.cs" />
-    <Compile Remove="Dependencies\Models\GraphAreaExample.cs" />
-    <Compile Remove="Dependencies\Models\GraphExample.cs" />
-    <Compile Remove="Dependencies\Models\IObjectVisualisation.cs" />
-    <Compile Remove="Dependencies\Models\StringToVisibilityConverter.cs" />
-    <Compile Remove="Dependencies\Models\WPFBitmapConverter.cs" />
-    <Compile Remove="Performance\PerformanceStackPath\StackFrame.cs" />
-    <Compile Remove="Performance\PerformanceStackPath\StackFrameVisualiser.cs" />
-    <Compile Remove="Performance\StackTraceProcessing\StackFramesTree.cs" />
-    <Compile Remove="TransparentHelpSystem\ProgressTracking\IHelpWorkflowProgressProvider.cs" />
-    <Compile Remove="TransparentHelpSystem\ProgressTracking\IHelpWorkflowUser.cs" />
-    <Compile Remove="TransparentHelpSystem\ProgressTracking\NullHelpWorkflowProgressProvider.cs" />
-  </ItemGroup>
+                                                                                                                                                                                                                                          </ItemGroup>
 </Project>

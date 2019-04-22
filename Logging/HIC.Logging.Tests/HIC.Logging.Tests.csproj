@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <DebugSymbols>true</DebugSymbols>
@@ -52,9 +52,5 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Integration\DataLoadTaskHelper.cs" />
-    <Compile Remove="Integration\FatalErrorLoggingTest.cs" />
-    <Compile Remove="Integration\LogManagerTest.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+                  </ItemGroup>
 </Project>

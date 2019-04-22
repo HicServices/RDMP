@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
@@ -178,6 +178,5 @@
     <ProjectReference Include="..\LoadModules.Generic\LoadModules.Generic.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
 </Project>

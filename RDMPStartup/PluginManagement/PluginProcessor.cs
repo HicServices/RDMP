@@ -64,10 +64,10 @@ namespace RDMPStartup.PluginManagement
                 throw new NotSupportedException(String.Format("Plugin version {0} is incompatible with current running version of RDMP.", pluginVersion));
             
             // delete EXACT old versions of the Plugin
-            var oldVersion = _repository.GetAllObjects<Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
+            var oldVersion = _repository.GetAllObjects<CatalogueLibrary.Data.Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
 
             List<LoadModuleAssembly> legacyDlls = new List<LoadModuleAssembly>();
-            Plugin plugin = null;
+            CatalogueLibrary.Data.Plugin plugin = null;
 
             if (oldVersion != null)
             {
@@ -76,7 +76,7 @@ namespace RDMPStartup.PluginManagement
                 plugin = oldVersion;
             }
             else
-                plugin = new Plugin(_repository, toCommit, pluginVersion);
+                plugin = new CatalogueLibrary.Data.Plugin(_repository, toCommit, pluginVersion);
 
             try
             {
@@ -111,7 +111,7 @@ namespace RDMPStartup.PluginManagement
             return toReturn;
         }
 
-        private void ProcessFile(Plugin plugin, FileInfo toCommit, List<LoadModuleAssembly> legacyDlls)
+        private void ProcessFile(CatalogueLibrary.Data.Plugin plugin, FileInfo toCommit, List<LoadModuleAssembly> legacyDlls)
         {
             if (LoadModuleAssembly.IsDllProhibited(toCommit))
                 return;

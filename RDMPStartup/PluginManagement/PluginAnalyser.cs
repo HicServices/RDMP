@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
-using Mono.Reflection;
 
 namespace RDMPStartup.PluginManagement
 {
@@ -27,14 +26,14 @@ namespace RDMPStartup.PluginManagement
     /// </summary>
     public class PluginAnalyser
     {
-        public Plugin Plugin { get; set; }
+        public CatalogueLibrary.Data.Plugin Plugin { get; set; }
         public DirectoryInfo PluginDirectory { get; set; }
         public SafeDirectoryCatalog Catalog { get; set; }
 
         public Dictionary<LoadModuleAssembly,PluginAnalyserReport> Reports = new Dictionary<LoadModuleAssembly, PluginAnalyserReport>();
         public event PluginAnalyserProgressEventHandler ProgressMade = delegate { };
 
-        public PluginAnalyser(Plugin plugin,DirectoryInfo pluginDirectory,SafeDirectoryCatalog catalog)
+        public PluginAnalyser(CatalogueLibrary.Data.Plugin plugin,DirectoryInfo pluginDirectory,SafeDirectoryCatalog catalog)
         {
             Plugin = plugin;
             PluginDirectory = pluginDirectory;
@@ -124,26 +123,9 @@ namespace RDMPStartup.PluginManagement
                     pluginPart.Dependencies.Add(dependency);
                     try
                     {
-                        var instructions = method.GetInstructions();
-                        foreach (Instruction instruction in instructions)
-                        {
-                            MethodInfo methodInfo = instruction.Operand as MethodInfo;
+                        var instructions = method.GetMethodBody();
 
-                            if (methodInfo != null)
-                            {
-                                var t = methodInfo.DeclaringType;
-                                ParameterInfo[] parameters = methodInfo.GetParameters();
-
-
-                                dependency.Instructions.Add(
-                                    string.Format("{0}.{1}({2});",
-                                        t != null ? t.FullName : "Unknown",
-                                        methodInfo.Name,
-                                        String.Join(", ",
-                                            parameters.Select(p => p.ParameterType.FullName + " " + p.Name).ToArray())
-                                        ));
-                            }
-                        }
+                        instructions?.GetILAsByteArray();
 
                     }
                     catch (Exception e)

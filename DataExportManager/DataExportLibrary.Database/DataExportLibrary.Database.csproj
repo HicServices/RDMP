@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <CodeContractsRunInBackground>True</CodeContractsRunInBackground>
@@ -80,7 +80,5 @@
     <None Include="deployment\LOCAL.DBDeployment.Restore.bat" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Class1.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+          </ItemGroup>
 </Project>

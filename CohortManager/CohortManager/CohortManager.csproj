@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <PublishUrl>C:\Development\Deployments\RDMP\CohortManager\</PublishUrl>
@@ -93,31 +93,6 @@
   <PropertyGroup>
     <StartupObject />
   </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.ComponentModel" Version="4.*" />
-    <PackageReference Include="System.Management" Version="4.*" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
-    <PackageReference Include="jacobslusser.ScintillaNET" Version="3.6.3" />
-    <PackageReference Include="MySql.Data" Version="8.0.14" />
-    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="WindowsBase" />
-  </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Update="Collections\CohortIdentificationCollectionUI.cs">
@@ -263,20 +238,5 @@
     <Content Include="Icons\Warning.png" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="CohortManagerPluginUserInterface.cs" />
-    <Compile Remove="Menus\AllFreeCohortIdentificationConfigurationsNodeMenu.cs" />
-    <Compile Remove="Menus\AllProjectCohortIdentificationConfigurationsNodeMenu.cs" />
-    <Compile Remove="Menus\CohortAggregateContainerMenu.cs" />
-    <Compile Remove="Menus\CohortIdentificationConfigurationMenu.cs" />
-    <Compile Remove="Menus\JoinableCollectionNodeMenu.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewCohortIdentificationConfiguration.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandCreateNewQueryCacheDatabase.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandFreezeCohortIdentificationConfiguration.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandSetQueryCachingDatabase.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewCohortAggregateGraph.cs" />
-    <Compile Remove="CommandExecution\Proposals\ProposeExecutionWhenTargetIsCohortIdentificationConfiguration.cs" />
-    <Compile Remove="SubComponents\EmptyLineElements\CohortIdentificationHeader.cs" />
-    <Compile Remove="SubComponents\Graphs\CohortSummaryAggregateGraphObjectCollection.cs" />
-  </ItemGroup>
+                                                              </ItemGroup>
 </Project>

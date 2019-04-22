@@ -132,6 +132,5 @@
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
 </Project>

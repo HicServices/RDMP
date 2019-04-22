@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <PublishUrl>C:\Development\Deployments\RDMP\Dashboard\</PublishUrl>
     <Install>true</Install>
@@ -240,17 +240,5 @@
     <Content Include="Dashboard.ico" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="DQEPluginUserInterface.cs" />
-    <Compile Remove="Overview\DataLoadsGraphObjectCollection.cs" />
-    <Compile Remove="Overview\DataLoadsGraphResult.cs" />
-    <Compile Remove="Overview\DataLoadsGraphResultStatus.cs" />
-    <Compile Remove="PieCharts\GoodBadCataloguePieChartObjectCollection.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Raceway\DatasetRacewayObjectCollection.cs" />
-    <Compile Remove="CatalogueSummary\DataQualityReporting\DQEGraphAnnotationUI.cs" />
-    <Compile Remove="CatalogueSummary\DataQualityReporting\IDataQualityReportingChart.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewDQEResultsForCatalogue.cs" />
-    <Compile Remove="CommandExecution\AtomicCommands\ExecuteCommandViewLoadMetadataLogs.cs" />
-    <Compile Remove="Menus\MenuItems\DQEMenuItem.cs" />
-  </ItemGroup>
+                                                  </ItemGroup>
 </Project>

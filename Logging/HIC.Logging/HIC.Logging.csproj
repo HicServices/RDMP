@@ -115,8 +115,7 @@
     <ProjectReference Include="..\HIC.Logging.Database\HIC.Logging.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.6.2" />
   </ItemGroup>

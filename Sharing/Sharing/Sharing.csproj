@@ -1,131 +1,19 @@
-﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="12.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{5F04A8FF-F5CD-4276-8BF1-28A8F7C58F28}</ProjectGuid>
-    <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>Sharing</RootNamespace>
-    <AssemblyName>Sharing</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
-    <FileAlignment>512</FileAlignment>
-    <TargetFrameworkProfile />
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+    <TargetFramework>netstandard2.0</TargetFramework>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="FAnsi, Version=0.9.0.10, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MicrosoftSQL, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MicrosoftSQL.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.MySql, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.MySql.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="FAnsi.Implementations.Oracle, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\HIC.FAnsiSql.0.9.0.10\lib\net452\FAnsi.Implementations.Oracle.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Google.Protobuf, Version=3.5.1.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Google.Protobuf.3.5.1\lib\net45\Google.Protobuf.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="MySql.Data, Version=8.0.14.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\MySql.Data.8.0.14\lib\net452\MySql.Data.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Newtonsoft.Json, Version=11.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Newtonsoft.Json.11.0.2\lib\net45\Newtonsoft.Json.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="Oracle.ManagedDataAccess, Version=4.122.18.3, Culture=neutral, PublicKeyToken=89b483f429c47342, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\Oracle.ManagedDataAccess.18.3.0\lib\net40\Oracle.ManagedDataAccess.dll</HintPath>
-      <Private>True</Private>
-    </Reference>
-    <Reference Include="System" />
-    <Reference Include="System.ComponentModel" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Core" />
-    <Reference Include="System.Data" />
-    <Reference Include="System.Drawing" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Management" />
-    <Reference Include="System.Net.Http" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Xml" />
+    <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="..\..\SharedAssemblyInfo.cs">
-      <Link>SharedAssemblyInfo.cs</Link>
-    </Compile>
-    <Compile Include="CommandExecution\ExecuteCommandExportObjectsToFile.cs" />
-    <Compile Include="Dependency\ObjectSharingObscureDependencyFinder.cs" />
-    <Compile Include="Dependency\SharedPluginImporter.cs" />
-    <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Refactoring\Exceptions\RefactoringException.cs" />
-    <Compile Include="Dependency\Gathering\GatheredObject.cs" />
-    <Compile Include="Dependency\Gathering\Gatherer.cs" />
-    <Compile Include="Refactoring\SelectSQLRefactorer.cs" />
-    <Compile Include="Transmission\RemotePushingService.cs" />
+    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
+    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
+    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj">
-      <Project>{8E14721E-2E82-4EC5-87F0-0B32F54911B5}</Project>
-      <Name>CatalogueLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj">
-      <Project>{146B6739-8541-42D3-A390-4917E6F3BCC2}</Project>
-      <Name>DataExportLibrary</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj">
-      <Project>{7F56D629-DC24-43A5-A338-073687433E55}</Project>
-      <Name>MapsDirectlyToDatabaseTable</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj">
-      <Project>{5AD03B2F-232A-4E0B-86FF-DC7F49146962}</Project>
-      <Name>ReusableLibraryCode</Name>
-    </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="..\..\App.config">
-      <Link>App.config</Link>
-    </None>
-    <None Include="packages.config" />
     <None Include="Sharing.cd" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Exceptions\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>

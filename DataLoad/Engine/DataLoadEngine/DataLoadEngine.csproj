@@ -180,8 +180,7 @@
     <None Include="Job\SchedulesAndJobCreation.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
   <ItemGroup>
     <Folder Include="Checks\Notifiers\" />
   </ItemGroup>

@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\..\..\SMI\</SolutionDir>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
@@ -79,31 +79,9 @@
   </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
-    <PackageReference Include="System.ComponentModel" Version="4.*" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
-    <PackageReference Include="System.IO.Compression" Version="4.*" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.Management" Version="4.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="CsvHelper" Version="7.1.1" />
     <PackageReference Include="ExcelNumberFormat" Version="1.0.3" />
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
-    <PackageReference Include="Microsoft.Office.Interop.Excel" Version="15.0.4795.1000" />
-    <PackageReference Include="MySql.Data" Version="8.0.14" />
     <PackageReference Include="NPOI" Version="2.4.1" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
-    <PackageReference Include="SharpZipLib" Version="1.0.0" />
-    <PackageReference Include="SSH.NET" Version="2013.4.7" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Transactions" />
+    <PackageReference Include="SSH.NET" Version="2016.1.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
@@ -124,77 +102,5 @@
     <None Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cd" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="NativeFileIO.cs" />
-    <Compile Remove="ScheduleStrategy.cs" />
-    <Compile Remove="Attachers\AnySeparatorFileAttacher.cs" />
-    <Compile Remove="Attachers\DelimitedFlatFileAttacher.cs" />
-    <Compile Remove="Attachers\ExcelAttacher.cs" />
-    <Compile Remove="Attachers\FixedWidthAttacher.cs" />
-    <Compile Remove="Attachers\FixedWidthColumn.cs" />
-    <Compile Remove="Attachers\FixedWidthFormatFile.cs" />
-    <Compile Remove="Attachers\FlatFileAttacher.cs" />
-    <Compile Remove="Attachers\KVPAttacher.cs" />
-    <Compile Remove="Attachers\KVPAttacherPipelineUseCase.cs" />
-    <Compile Remove="Attachers\MDFAttacher.cs" />
-    <Compile Remove="Attachers\MdfAttachStrategy.cs" />
-    <Compile Remove="Attachers\MdfFileAttachLocations.cs" />
-    <Compile Remove="Attachers\RemoteDatabaseAttacher.cs" />
-    <Compile Remove="Attachers\RemoteTableAttacher.cs" />
-    <Compile Remove="DataFlowDestinations\DoNothingCacheDestination.cs" />
-    <Compile Remove="DataFlowOperations\ColumnBlacklister.cs" />
-    <Compile Remove="DataFlowOperations\ColumnRenamer.cs" />
-    <Compile Remove="DataFlowOperations\ExtractCatalogueMetadata.cs" />
-    <Compile Remove="DataFlowOperations\ReleaseMetadata.cs" />
-    <Compile Remove="DataFlowOperations\RowDeleter.cs" />
-    <Compile Remove="DataFlowOperations\TableVersionNamer.cs" />
-    <Compile Remove="DataFlowOperations\Transposer.cs" />
-    <Compile Remove="DataFlowSources\DelimitedFlatFileDataFlowSource.cs" />
-    <Compile Remove="DataFlowSources\DoNothingCacheSource.cs" />
-    <Compile Remove="DataFlowSources\ExcelDataFlowSource.cs" />
-    <Compile Remove="DataFlowSources\ExplicitTypingCollection.cs" />
-    <Compile Remove="DataProvider\DoNothingDataProvider.cs" />
-    <Compile Remove="DataProvider\ImportFilesDataProvider.cs" />
-    <Compile Remove="DataProvider\ShareDefinitionImporter.cs" />
-    <Compile Remove="DataProvider\WebServiceConfiguration.cs" />
-    <Compile Remove="Exceptions\FlatFileLoadException.cs" />
-    <Compile Remove="Exceptions\MultipleMatchingFilesException.cs" />
-    <Compile Remove="FileOperations\FileUnzipper.cs" />
-    <Compile Remove="FTP\FTPDownloader.cs" />
-    <Compile Remove="FTP\SFTPDownloader.cs" />
-    <Compile Remove="LoadProgressUpdating\DataLoadProgressUpdateInfo.cs" />
-    <Compile Remove="LoadProgressUpdating\DataLoadProgressUpdateStrategy.cs" />
-    <Compile Remove="LoadProgressUpdating\UpdateProgressToResultOfDelegate.cs" />
-    <Compile Remove="LoadProgressUpdating\UpdateProgressToSpecificValueIfLoadsuccessful.cs" />
-    <Compile Remove="Mutilators\BackupDatabaseMutilation.cs" />
-    <Compile Remove="Mutilators\Coalescer.cs" />
-    <Compile Remove="Mutilators\Distincter.cs" />
-    <Compile Remove="Mutilators\MatchingTablesMutilator.cs" />
-    <Compile Remove="Mutilators\PrematureLoadEndCondition.cs" />
-    <Compile Remove="Mutilators\PrematureLoadEnder.cs" />
-    <Compile Remove="Mutilators\PrimaryKeyCollisionResolverMutilation.cs" />
-    <Compile Remove="Mutilators\SafePrimaryKeyCollisionResolverMutilation.cs" />
-    <Compile Remove="Mutilators\StagingBackfillMutilator.cs" />
-    <Compile Remove="Mutilators\TableVarcharMaxer.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-    <Compile Remove="Web\WebFileDownloader.cs" />
-    <Compile Remove="DataFlowOperations\Aliases\AliasHandler.cs" />
-    <Compile Remove="DataFlowOperations\Aliases\AliasResolutionStrategy.cs" />
-    <Compile Remove="DataFlowOperations\Swapping\ColumnSwapper.cs" />
-    <Compile Remove="DataFlowSources\SubComponents\FlatFileColumnCollection.cs" />
-    <Compile Remove="DataFlowSources\SubComponents\FlatFileEventHandlers.cs" />
-    <Compile Remove="DataFlowSources\SubComponents\FlatFileLine.cs" />
-    <Compile Remove="DataFlowSources\SubComponents\FlatFileToDataTablePusher.cs" />
-    <Compile Remove="DataProvider\FlatFileManipulation\ExcelToCSVFilesConverter.cs" />
-    <Compile Remove="Mutilators\Dilution\Dilution.cs" />
-    <Compile Remove="Mutilators\Dilution\DilutionOperationFactory.cs" />
-    <Compile Remove="Mutilators\QueryBuilders\BackfillSqlHelper.cs" />
-    <Compile Remove="DataFlowOperations\Aliases\Exceptions\AliasException.cs" />
-    <Compile Remove="DataFlowOperations\Aliases\Exceptions\AliasTableFetchException.cs" />
-    <Compile Remove="Mutilators\Dilution\Exceptions\DilutionColumnNotSetException.cs" />
-    <Compile Remove="Mutilators\Dilution\Operations\CrushToBitFlag.cs" />
-    <Compile Remove="Mutilators\Dilution\Operations\DilutionOperation.cs" />
-    <Compile Remove="Mutilators\Dilution\Operations\ExcludeRight3OfUKPostcodes.cs" />
-    <Compile Remove="Mutilators\Dilution\Operations\IPluginDilutionOperation.cs" />
-    <Compile Remove="Mutilators\Dilution\Operations\RoundDateToMiddleOfQuarter.cs" />
-  </ItemGroup>
+                                                                                                                                                                                                                                                                                                  </ItemGroup>
 </Project>

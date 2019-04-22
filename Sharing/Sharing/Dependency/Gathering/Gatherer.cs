@@ -7,17 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using ReusableLibraryCode;
 
 namespace Sharing.Dependency.Gathering
 {
@@ -37,7 +33,7 @@ namespace Sharing.Dependency.Gathering
             _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
             _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
             _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
-            _functions.Add(typeof(Plugin), o => GatherDependencies((Plugin)o));
+            _functions.Add(typeof(CatalogueLibrary.Data.Plugin), o => GatherDependencies((CatalogueLibrary.Data.Plugin)o));
 
             _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
 
@@ -77,7 +73,7 @@ namespace Sharing.Dependency.Gathering
             return root;
         }
 
-        public GatheredObject GatherDependencies(Plugin plugin)
+        public GatheredObject GatherDependencies(CatalogueLibrary.Data.Plugin plugin)
         {
             var root = new GatheredObject(plugin);
 

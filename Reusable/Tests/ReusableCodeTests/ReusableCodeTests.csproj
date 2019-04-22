@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net452</TargetFramework>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <ItemGroup>
@@ -40,10 +40,5 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="DataTableExtensionsTests.cs" />
-    <Compile Remove="ExpectedIdenticalStringsExceptionTests.cs" />
-    <Compile Remove="RecentHistoryOfControlsTests.cs" />
-    <Compile Remove="UsefulStuffTests.cs" />
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+                      </ItemGroup>
 </Project>

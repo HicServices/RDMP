@@ -200,8 +200,7 @@
     <None Include="KeywordHelp.txt" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Remove="Properties\AssemblyInfo.cs" />
-  </ItemGroup>
+      </ItemGroup>
   <ItemGroup>
     <Folder Include="Data\DataLoad\Exceptions\" />
   </ItemGroup>
