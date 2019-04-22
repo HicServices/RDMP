@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <PublishUrl>C:\Development\Deployments\RDMP\DataExportManager2\</PublishUrl>
@@ -444,7 +444,6 @@
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
-    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj" />
     <ProjectReference Include="..\DataExportLibrary\DataExportLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>

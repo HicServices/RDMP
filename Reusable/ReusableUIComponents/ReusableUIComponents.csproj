@@ -1,8 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <CodeContractsAssemblyMode>0</CodeContractsAssemblyMode>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <UseWindowsForms>true</UseWindowsForms>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
@@ -103,42 +104,6 @@
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.ComponentModel" Version="4.*" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="4.*" />
-    <PackageReference Include="System.IO.Compression" Version="4.*" />
-    <PackageReference Include="System.Management" Version="4.*" />
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-    <PackageReference Include="System.Runtime" Version="4.*" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
-    <PackageReference Include="CsvHelper" Version="7.1.1" />
-    <PackageReference Include="Google.Protobuf" Version="3.5.1" />
-    <PackageReference Include="GraphX" Version="2.2.0.2" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.0.10" />
-    <PackageReference Include="jacobslusser.ScintillaNET" Version="3.6.3" />
-    <PackageReference Include="MySql.Data" Version="8.0.14" />
-    <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
-    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
-    <PackageReference Include="Oracle.ManagedDataAccess" Version="18.3.0" />
-    <PackageReference Include="QuickGraphPCL" Version="3.6.61114.2" />
-  </ItemGroup>
-  <ItemGroup>
-    <Reference Include="PresentationCore" />
-    <Reference Include="PresentationFramework" />
-    <Reference Include="System.ComponentModel.DataAnnotations" />
-    <Reference Include="System.Configuration" />
-    <Reference Include="System.Configuration.Install" />
-    <Reference Include="System.Drawing.Design" />
-    <Reference Include="System.Transactions" />
-    <Reference Include="System.Windows.Forms" />
-    <Reference Include="System.Windows.Forms.DataVisualization" />
-    <Reference Include="System.Xaml" />
-    <Reference Include="WindowsBase" />
-    <Reference Include="WindowsFormsIntegration" />
-  </ItemGroup>
-  <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Update="ChecksUI\ChecksUI.cs">
       <SubType>UserControl</SubType>
@@ -172,12 +137,6 @@
     </Compile>
     <Compile Update="DataTableViewerUI.Designer.cs">
       <DependentUpon>DataTableViewerUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Dependencies\DependencyGraphUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Dependencies\DependencyGraphUI.Designer.cs">
-      <DependentUpon>DependencyGraphUI.cs</DependentUpon>
     </Compile>
     <Compile Update="Dialogs\ExceptionViewer.cs">
       <SubType>Form</SubType>
@@ -242,12 +201,6 @@
     </Compile>
     <Compile Update="Performance\PerformanceCounterResultsUI.Designer.cs">
       <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
-    </Compile>
-    <Compile Update="Performance\PerformanceStackPath\PerformanceStackPathViewerUI.cs">
-      <SubType>UserControl</SubType>
-    </Compile>
-    <Compile Update="Performance\PerformanceStackPath\PerformanceStackPathViewerUI.Designer.cs">
-      <DependentUpon>PerformanceStackPathViewerUI.cs</DependentUpon>
     </Compile>
     <Compile Update="Progress\ProgressBarsUI.cs">
       <SubType>UserControl</SubType>
@@ -335,9 +288,6 @@
     <EmbeddedResource Update="DataTableViewerUI.resx">
       <DependentUpon>DataTableViewerUI.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Dependencies\DependencyGraphUI.resx">
-      <DependentUpon>DependencyGraphUI.cs</DependentUpon>
-    </EmbeddedResource>
     <EmbeddedResource Update="Dialogs\ExceptionViewer.resx">
       <DependentUpon>ExceptionViewer.cs</DependentUpon>
     </EmbeddedResource>
@@ -363,9 +313,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="Performance\PerformanceCounterResultsUI.resx">
       <DependentUpon>PerformanceCounterResultsUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Performance\PerformanceStackPath\PerformanceStackPathViewerUI.resx">
-      <DependentUpon>PerformanceStackPathViewerUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Progress\ProgressBarsUI.resx">
       <DependentUpon>ProgressBarsUI.cs</DependentUpon>
@@ -419,12 +366,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Page Include="Dependencies\Templates\template.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="Images\ViewDependencies.png" />
   </ItemGroup>
   <ItemGroup>
@@ -465,5 +406,16 @@
     </Content>
   </ItemGroup>
   <ItemGroup>
-                                                                                                                                                                                                                                          </ItemGroup>
+    <PackageReference Include="jacobslusser.ScintillaNET" Version="3.6.3" />
+    <PackageReference Include="NHunspell" Version="1.2.5554.16953" />
+    <PackageReference Include="ObjectListView.Official" Version="2.9.1" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.5.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Performance\StackTraceProcessing\" />
+  </ItemGroup>
 </Project>

@@ -17,7 +17,6 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using ReusableLibraryCode.Performance;
-using ReusableUIComponents.Performance.PerformanceStackPath;
 using ReusableUIComponents.Performance.StackTraceProcessing;
 
 namespace ReusableUIComponents.Performance
@@ -210,20 +209,5 @@ namespace ReusableUIComponents.Performance
             LoadState(_performanceCounter);
         }
 
-        private void btnShowNetwork_Click(object sender, EventArgs e)
-        {
-
-            Form f = new Form();
-            
-            var stackPathViewer = new PerformanceStackPathViewerUI(_performanceCounter, _worstOffenderCount, ignoreSystemCalls);
-            stackPathViewer.Dock = DockStyle.Fill;
-            f.Controls.Add(stackPathViewer);
-
-            f.Width = 500;
-            f.Height = 500;
-            f.Show();
-
-
-        }
     }
 }

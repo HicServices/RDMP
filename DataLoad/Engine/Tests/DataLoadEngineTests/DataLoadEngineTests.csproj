@@ -248,7 +248,6 @@
     <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\..\..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj" />
     <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj" />
     <ProjectReference Include="..\..\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
   </ItemGroup>

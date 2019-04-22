@@ -235,15 +235,15 @@ namespace Tests.Common
                 return (T)(object)joinable.AddUser(config);
             }
             
-            if (typeof (T) == typeof(Plugin))
-                return (T)(object)new Plugin(Repository,new FileInfo("bob.zip"));
+            if (typeof (T) == typeof(CatalogueLibrary.Data.Plugin))
+                return (T)(object)new CatalogueLibrary.Data.Plugin(Repository,new FileInfo("bob.zip"));
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
                 var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.dll");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
-                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Plugin>());
+                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<CatalogueLibrary.Data.Plugin>());
             }
             
             if (typeof (T) == typeof(AggregateContinuousDateAxis))

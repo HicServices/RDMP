@@ -12,7 +12,6 @@ using System.Threading;
 using System.Windows.Forms;
 using System.Windows.Markup;
 using BrightIdeasSoftware;
-using QuickGraph;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

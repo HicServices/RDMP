@@ -2,7 +2,7 @@
   <PropertyGroup>
     <Platform Condition=" '$(Platform)' == '' ">x86</Platform>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <IsWebBootstrapper>true</IsWebBootstrapper>
     <CodeContractsAssemblyMode>1</CodeContractsAssemblyMode>
     <PublishUrl>C:\Development\Deployments\RDMP\CatalogueManager\</PublishUrl>
@@ -1678,8 +1678,6 @@
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
     <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj" />
     <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj" />
-    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj" />
-    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj" />
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
     <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj" />
     <ProjectReference Include="..\CatalogueLibrary\CatalogueLibrary.csproj" />
@@ -1697,5 +1695,7 @@
     <None Include="Resources\tableinfo_icon.png" />
   </ItemGroup>
   <ItemGroup>
-                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                  </ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+    <Reference Include="System.Windows.Forms.DataVisualization" />
+  </ItemGroup>
 </Project>

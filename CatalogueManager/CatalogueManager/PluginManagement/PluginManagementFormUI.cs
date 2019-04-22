@@ -133,7 +133,7 @@ namespace CatalogueManager.PluginManagement
 
         private void TreeListViewOnFormatRow(object sender, FormatRowEventArgs formatRowEventArgs)
         {
-            var plugin = formatRowEventArgs.Model as Plugin;
+            var plugin = formatRowEventArgs.Model as CatalogueLibrary.Data.Plugin;
             var lma = formatRowEventArgs.Model as LoadModuleAssembly;
             var part = formatRowEventArgs.Model as PluginPart;
             var exception = formatRowEventArgs.Model as Exception;
@@ -261,8 +261,8 @@ namespace CatalogueManager.PluginManagement
 
         #endregion
 
-        private IList<Plugin> wrongPlugins;
-        private IList<Plugin> compatiblePlugins;
+        private IList<CatalogueLibrary.Data.Plugin> wrongPlugins;
+        private IList<CatalogueLibrary.Data.Plugin> compatiblePlugins;
         BackgroundWorker analyser;
 
         private void RefreshUIFromDatabase()
@@ -277,7 +277,7 @@ namespace CatalogueManager.PluginManagement
             olvLegacyPlugins.ClearObjects();
 
             compatiblePlugins = Activator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins().ToList();
-            wrongPlugins = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Except(compatiblePlugins).ToList();
+            wrongPlugins = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueLibrary.Data.Plugin>().Except(compatiblePlugins).ToList();
 
             olvPlugins.AddObjects(compatiblePlugins.SelectMany(p => p.LoadModuleAssemblies).ToArray());
             olvLegacyPlugins.AddObjects(wrongPlugins.SelectMany(p => p.LoadModuleAssemblies).ToArray());
@@ -327,7 +327,7 @@ namespace CatalogueManager.PluginManagement
 
         }
 
-        private Dictionary<Plugin, PluginAnalyser> analysers = new Dictionary<Plugin, PluginAnalyser>();
+        private Dictionary<CatalogueLibrary.Data.Plugin, PluginAnalyser> analysers = new Dictionary<CatalogueLibrary.Data.Plugin, PluginAnalyser>();
 
         protected override void OnLoad(EventArgs e)
         {
@@ -361,7 +361,7 @@ namespace CatalogueManager.PluginManagement
                     }
 
                     //delete any plugins for which there are no dlls left
-                    foreach (Plugin emptyPlugin in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Plugin>().Where(p => !p.LoadModuleAssemblies.Any()))
+                    foreach (CatalogueLibrary.Data.Plugin emptyPlugin in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueLibrary.Data.Plugin>().Where(p => !p.LoadModuleAssemblies.Any()))
                         emptyPlugin.DeleteInDatabase();
                 }
             }
