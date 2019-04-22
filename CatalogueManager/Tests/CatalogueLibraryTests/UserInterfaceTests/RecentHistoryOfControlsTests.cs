@@ -5,20 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Windows.Forms;
 using NUnit.Framework;
 using ReusableUIComponents;
 
-namespace ReusableCodeTests
+namespace CatalogueLibraryTests.UserInterfaceTests
 {
     public class RecentHistoryOfControlsTests
     {
         [Test]
         public void TestOverflowPrevention()
         {
-            var t = new TextBox();
+            var t = new System.Windows.Forms.TextBox();
 
             var c = new RecentHistoryOfControls(t,new Guid("b3ccaf14-702a-438a-8cf4-d550d6d7775d"));
 

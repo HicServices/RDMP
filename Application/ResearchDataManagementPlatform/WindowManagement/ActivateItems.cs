@@ -29,7 +29,6 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Arranging;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.PluginChildProvision;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Rules;
@@ -50,7 +49,6 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dependencies.Models;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
@@ -409,12 +407,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public void OnRuleRegistered(IBinderRule rule)
         {
             //no special action required
-        }
-
-        ///<inheritdoc/>
-        public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
-        {
-            return new Lazy<IObjectVisualisation>(() => new CatalogueObjectVisualisation(RepositoryLocator.CatalogueRepository.CommentStore,CoreIconProvider));
         }
 
         public T Activate<T, T2>(T2 databaseObject)

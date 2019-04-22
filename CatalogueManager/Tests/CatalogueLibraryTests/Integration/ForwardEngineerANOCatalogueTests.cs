@@ -20,6 +20,7 @@ using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.QueryBuilding;
+using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Triggers;
 using Diagnostics.TestData;
 using FAnsi.Discovery;

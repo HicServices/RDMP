@@ -222,11 +222,7 @@ namespace ReusableLibraryCode.Settings
 
         static ISettings CreateSettings()
         {
-#if NETSTANDARD1_0 || NETSTANDARD2_0
-            return null;
-#else
             return new RDMPApplicationSettings();
-#endif
         }
 
     }

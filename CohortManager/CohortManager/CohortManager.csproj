@@ -238,5 +238,9 @@
     <Content Include="Icons\Warning.png" />
   </ItemGroup>
   <ItemGroup>
-                                                              </ItemGroup>
+    <PackageReference Include="ObjectListView" Version="2.7.1.5" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System.Windows.Forms" />
+  </ItemGroup>
 </Project>
