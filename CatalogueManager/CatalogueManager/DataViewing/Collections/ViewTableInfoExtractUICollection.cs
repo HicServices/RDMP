@@ -13,7 +13,6 @@ using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Spontaneous;
 using CatalogueManager.AutoComplete;
-using CatalogueManager.ObjectVisualisation;
 using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.DataAccess;
 

@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
-using CatalogueManager.ObjectVisualisation;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;

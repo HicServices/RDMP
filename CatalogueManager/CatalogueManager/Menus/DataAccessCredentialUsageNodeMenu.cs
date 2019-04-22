@@ -12,14 +12,11 @@ using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
 using RDMPStartup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Dependencies;
 
 namespace CatalogueManager.Menus
 {
@@ -35,8 +32,6 @@ namespace CatalogueManager.Menus
                 Add(new ExecuteCommandSetDataAccessContextForCredentials(_activator, node, context, existingUsages), Keys.None, setUsage);
             
             Items.Add(setUsage);
-
-            Add(new ExecuteCommandViewDependencies(node.Credentials,_activator.GetLazyCatalogueObjectVisualisation()));
         }
     }
 }

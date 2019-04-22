@@ -30,8 +30,6 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
 
             Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
-            
-            Add(new ExecuteCommandFindUsages(_activator,columnInfo));
         }
     }
 }

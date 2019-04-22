@@ -31,7 +31,6 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dependencies.Models;
 using ReusableUIComponents.Theme;
 
 namespace CatalogueManager.ItemActivation
@@ -107,13 +106,7 @@ namespace CatalogueManager.ItemActivation
         /// Component for fetching xmldoc comments from the codebase 
         /// </summary>
         CommentStore CommentStore { get; }
-
-        /// <summary>
-        /// Creates a new late loading <see cref="IObjectVisualisation"/> for use with Dependency graph generation
-        /// </summary>
-        /// <returns></returns>
-        Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation();
-
+        
         /// <summary>
         /// Launches a new instance of the specified RDMPSingleDatabaseObjectControl Type with the supplied DatabaseEntity.  If you already have
         /// an ICommandExecutionProposal which facilitates Activation then you can instead use CommandExecutionFactory.Activate

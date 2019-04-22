@@ -15,11 +15,7 @@ using System.Windows.Input;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.DashboardTabs.Construction;
 using ReusableUIComponents;
-using Cursor = System.Windows.Forms.Cursor;
-using Cursors = System.Windows.Forms.Cursors;
-using MouseEventArgs = System.Windows.Forms.MouseEventArgs;
-using Point = System.Drawing.Point;
-using Size = System.Drawing.Size;
+using System.Drawing;
 
 namespace CatalogueManager.DashboardTabs
 {
@@ -88,18 +84,15 @@ namespace CatalogueManager.DashboardTabs
             //if we are changing a control currently
             if(_actionUnderwayOnControl != null)
             {
-                //if the user is not holding shift down, snap to grid
-                if (!(Keyboard.IsKeyDown(Key.LeftShift) || Keyboard.IsKeyDown(Key.RightShift)))
-                {
-                    _actionUnderwayOnControl.Location = new Point(
-                        (int)(Math.Round(_actionUnderwayOnControl.Location.X / 5.0) * 5),
-                        (int)(Math.Round(_actionUnderwayOnControl.Location.Y / 5.0) * 5));
-
-
-                    _actionUnderwayOnControl.Size = new Size(
-                        (int)(Math.Round(_actionUnderwayOnControl.Size.Width / 5.0) * 5),
-                        (int)(Math.Round(_actionUnderwayOnControl.Size.Height / 5.0) * 5));
-                }
+                
+                 _actionUnderwayOnControl.Location = new Point(
+                    (int)(Math.Round(_actionUnderwayOnControl.Location.X / 5.0) * 5),
+                    (int)(Math.Round(_actionUnderwayOnControl.Location.Y / 5.0) * 5));
+                
+                _actionUnderwayOnControl.Size = new Size(
+                    (int)(Math.Round(_actionUnderwayOnControl.Size.Width / 5.0) * 5),
+                    (int)(Math.Round(_actionUnderwayOnControl.Size.Height / 5.0) * 5));
+                
                 
                 //save changes
                 foreach (KeyValuePair<DashboardControl, DashboardableControlHostPanel> kvp in _layoutUI.ControlDictionary)
@@ -163,7 +156,7 @@ namespace CatalogueManager.DashboardTabs
 
             if (_actionUnderway != EditModeAction.None)
             {
-                var vector = new Vector(
+                var vector = new Point(
                         (currentScreenCoordinate.X - lastKnownScreenCoordinate.X ),
                         (currentScreenCoordinate.Y - lastKnownScreenCoordinate.Y));
 
@@ -172,8 +165,8 @@ namespace CatalogueManager.DashboardTabs
                 {
                     _actionUnderwayOnControl.Location
                         = new Point(
-                            Math.Max(0, Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Width, _actionUnderwayOnControl.Location.X + (int)vector.X)),
-                            Math.Max(0, Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Height, _actionUnderwayOnControl.Location.Y + (int)vector.Y))
+                            Math.Max(0, Math.Min(layoutUIVisibleArea.Width - _actionUnderwayOnControl.Width, _actionUnderwayOnControl.Location.X + vector.X)),
+                            Math.Max(0, Math.Min(layoutUIVisibleArea.Height - _actionUnderwayOnControl.Height, _actionUnderwayOnControl.Location.Y + vector.Y))
                         );
                     _actionUnderwayOnControl.Invalidate();
                 }

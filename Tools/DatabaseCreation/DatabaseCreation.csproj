@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{3ABB76CF-1BE8-4EEF-9A57-C925C3C98ABE}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup>

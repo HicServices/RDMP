@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{04AEBB47-FDD6-4BDF-8FEF-572B947AFEFF}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netcoreapp2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>

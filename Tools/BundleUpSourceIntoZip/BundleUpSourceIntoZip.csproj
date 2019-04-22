@@ -2,7 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{F00EF92F-A683-4D43-A2A1-C237C23ADE8D}</ProjectGuid>
     <OutputType>Exe</OutputType>
-    <TargetFramework>netstandard2.0</TargetFramework>
+    <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(ProjectDir)..\..\ $(ProjectDir)output\</PostBuildEvent>
     <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(ProjectDir)..\..\ $(ProjectDir)output\</PostBuildEvent>

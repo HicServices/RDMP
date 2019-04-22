@@ -1678,6 +1678,8 @@
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
     <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj" />
     <ProjectReference Include="..\..\Tools\DatabaseCreation\DatabaseCreation.csproj" />
+    <ProjectReference Include="..\..\Tools\PluginPackager\PluginPackager.csproj" />
+    <ProjectReference Include="..\..\Tools\RDMPAutomationService\RDMPAutomationService.csproj" />
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
     <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj" />
     <ProjectReference Include="..\CatalogueLibrary\CatalogueLibrary.csproj" />
@@ -1693,6 +1695,9 @@
     <None Include="Resources\loadmetadata_icon.png" />
     <None Include="Resources\lookup_icon.png" />
     <None Include="Resources\tableinfo_icon.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />

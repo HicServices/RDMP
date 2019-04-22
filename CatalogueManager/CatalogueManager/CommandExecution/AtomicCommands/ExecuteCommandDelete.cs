@@ -17,7 +17,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
+
 using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

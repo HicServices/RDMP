@@ -11,7 +11,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
-using CatalogueManager.ObjectVisualisation;
 using CohortManagerLibrary.QueryBuilding;
 using FAnsi.Discovery.QuerySyntax;
 using ReusableLibraryCode.DataAccess;

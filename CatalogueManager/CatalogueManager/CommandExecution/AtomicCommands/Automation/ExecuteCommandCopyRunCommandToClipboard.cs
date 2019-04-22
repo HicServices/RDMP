@@ -37,7 +37,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
         {
             base.Execute();
 
-            Clipboard.SetText(GetCommandText());
+            System.Windows.Forms.Clipboard.SetText(GetCommandText());
         }
     }
 }

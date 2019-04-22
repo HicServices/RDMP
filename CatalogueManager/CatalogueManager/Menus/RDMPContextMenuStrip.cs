@@ -19,14 +19,13 @@ using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.ObjectVisualisation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
+
 
 namespace CatalogueManager.Menus
 {
@@ -172,10 +171,7 @@ namespace CatalogueManager.Menus
                 checkAll.Enabled = commonFunctionality.CheckColumnProvider.GetCheckables().Any();
                 inspectionMenuItem.DropDownItems.Add(checkAll);
             }
-
-            if(databaseEntity != null)
-                Add(new ExecuteCommandViewDependencies(databaseEntity as IHasDependencies, _activator.GetLazyCatalogueObjectVisualisation()), Keys.None, inspectionMenuItem);
-
+            
             inspectionMenuItem.Enabled = inspectionMenuItem.HasDropDown;
         }
 

@@ -18,7 +18,7 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.CommandExecution.AtomicCommands;
+
 
 namespace CatalogueManager.Menus.MenuItems
 {

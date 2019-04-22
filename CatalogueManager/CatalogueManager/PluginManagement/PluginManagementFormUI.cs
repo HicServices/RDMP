@@ -299,7 +299,7 @@ namespace CatalogueManager.PluginManagement
 
             var mef = Activator.RepositoryLocator.CatalogueRepository.MEF;
 
-            foreach (Plugin plugin in compatiblePlugins)
+            foreach (CatalogueLibrary.Data.Plugin plugin in compatiblePlugins)
             {
                 var pluginDir = plugin.GetPluginDirectoryName(mef.DownloadDirectory);
                 var pa = new PluginAnalyser(plugin, new DirectoryInfo(pluginDir), mef.SafeDirectoryCatalog);
