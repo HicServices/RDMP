@@ -15,7 +15,7 @@ using CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 
-namespace PluginPackager
+namespace CatalogueLibrary
 {
     /// <summary>
     /// Creates a .zip file containing all binary files and (optionally) source code for an RDMP plugin.  The resulting zip file can be committed as a Plugin 

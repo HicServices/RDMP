@@ -7,6 +7,7 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
+using CatalogueLibrary;
 using CatalogueLibrary.Repositories;
 using CommandLine;
 using FAnsi.Implementation;
