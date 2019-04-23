@@ -21,8 +21,7 @@ using Newtonsoft.Json.Converters;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Serialization;
-using Rhino.Mocks;
-using Rhino.Mocks.Utilities;
+using Moq;
 using Sharing.Dependency;
 using Tests.Common;
 

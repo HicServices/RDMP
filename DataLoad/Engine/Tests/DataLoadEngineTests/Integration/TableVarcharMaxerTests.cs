@@ -17,8 +17,8 @@ using FAnsi.Discovery.TypeTranslation;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -50,10 +50,9 @@ namespace DataLoadEngineTests.Integration
             maxer.Initialize(db,LoadStage.AdjustRaw);
             maxer.Check(new ThrowImmediatelyCheckNotifier(){ThrowOnWarning = true});
 
-            var job = MockRepository.GenerateMock<IDataLoadJob>();
-
-            job.Stub(x => x.RegularTablesToLoad).Return(new List<ITableInfo>(){ti});
-            job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
+            var job = Mock.Of<IDataLoadJob>(x => 
+                x.RegularTablesToLoad==new List<ITableInfo>(){ti} &&
+                x.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
 
             maxer.Mutilate(job);
 

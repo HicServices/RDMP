@@ -14,8 +14,8 @@ using DataLoadEngine.Job.Scheduling;
 using HIC.Logging;
 using LoadModules.Generic.LoadProgressUpdating;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -26,16 +26,14 @@ namespace DataLoadEngineTests.Integration
         #region Setup Methods
         public DataLoadProgressUpdateInfoTests()
         {
-            ICatalogue cata = MockRepository.GenerateMock<ICatalogue>();
-            cata.Expect(p => p.LoggingDataTask).Return("NothingTask");
+            ICatalogue cata = Mock.Of<ICatalogue>(
+                c=> c.LoggingDataTask == "NothingTask" && 
+                c.GetTableInfoList(false) == new TableInfo[0] &&
+                c.GetLookupTableInfoList() == new TableInfo[0]);
+            
+            var lmd = Mock.Of<ILoadMetadata>(m => m.GetAllCatalogues() == new[] { cata });
 
-            cata.Expect(m => m.GetTableInfoList(false)).Return(new TableInfo[0]);
-            cata.Expect(m => m.GetLookupTableInfoList()).Return(new TableInfo[0]);
-
-            var lmd = MockRepository.GenerateMock<ILoadMetadata>();
-            lmd.Expect(m => m.GetAllCatalogues()).Return(new[] { cata });
-
-            _job = new ScheduledDataLoadJob(null,"fish", MockRepository.GenerateMock<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob(),null);
+            _job = new ScheduledDataLoadJob(null,"fish", Mock.Of<ILogManager>(), lmd, null, new ThrowImmediatelyDataLoadJob(),null);
         }
         #endregion
 

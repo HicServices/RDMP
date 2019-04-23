@@ -11,7 +11,7 @@ using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 
 namespace DataLoadEngineTests.Unit
 {
@@ -25,7 +25,7 @@ namespace DataLoadEngineTests.Unit
             var customArgs = new List<SpontaneouslyInventedArgument>();
             customArgs.Add(new SpontaneouslyInventedArgument(new MemoryRepository(), "DatabaseName", db));
 
-            var processTask = MockRepository.GenerateStub<IProcessTask>();
+            var processTask = Mock.Of<IProcessTask>();
             var task = new ExecutableRuntimeTask(processTask, new RuntimeArgumentCollection(customArgs.ToArray(), null));
             
             var argString = task.CreateArgString();
@@ -37,8 +37,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestConstructionFromProcessTask()
         {
-            var processTask = MockRepository.GenerateStub<IProcessTask>();
-            processTask.Stub(pt => pt.Path).Return("path");
+            var processTask = Mock.Of<IProcessTask>(pt => pt.Path=="path");
 
             var runtimeTask = new ExecutableRuntimeTask(processTask, null);
             Assert.AreEqual("path", runtimeTask.ExeFilepath);

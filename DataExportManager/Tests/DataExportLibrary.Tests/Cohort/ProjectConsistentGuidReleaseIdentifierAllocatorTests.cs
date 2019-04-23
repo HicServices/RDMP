@@ -18,7 +18,6 @@ using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests.Cohort

@@ -17,7 +17,6 @@ using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.JsonSerializationTests

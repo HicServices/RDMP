@@ -19,8 +19,8 @@ using FAnsi;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using Rhino.Mocks;
-using Tests.Common;
+using Tests.Common; 
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -42,8 +42,7 @@ namespace DataLoadEngineTests.Integration
 
             File.WriteAllText(f.FullName,@"UPDATE Fish Set Lawl = 1");
 
-            var pt = MockRepository.GenerateMock<IProcessTask>();
-            pt.Stub(x => x.Path).Return(f.FullName);
+            var pt = Mock.Of<IProcessTask>(x => x.Path==f.FullName);
 
             var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
@@ -51,7 +50,7 @@ namespace DataLoadEngineTests.Integration
 
             task.Check(new ThrowImmediatelyCheckNotifier());
 
-            IDataLoadJob job = MockRepository.GenerateMock<IDataLoadJob>();
+            IDataLoadJob job = Mock.Of<IDataLoadJob>();
 
             task.Run(job, new GracefulCancellationToken());
 
@@ -80,22 +79,20 @@ namespace DataLoadEngineTests.Integration
             
             File.WriteAllText(f.FullName, @"UPDATE {T:0} Set {C:0} = 1");
 
-            var pt = MockRepository.GenerateMock<IProcessTask>();
-            pt.Stub(x => x.Path).Return(f.FullName);
+            var pt = Mock.Of<IProcessTask>(x => x.Path==f.FullName);
 
             var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
             task.Check(new ThrowImmediatelyCheckNotifier());
-
-            IDataLoadJob job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Stub(x => x.RegularTablesToLoad).Return(new List<ITableInfo> {ti});
-            job.Stub(x => x.LookupTablesToLoad).Return(new List<ITableInfo>());
-
             HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
-            job.Stub(x => x.Configuration).Return(configuration);
-            
+
+            IDataLoadJob job = Mock.Of<IDataLoadJob>(x => 
+            x.RegularTablesToLoad == new List<ITableInfo> {ti} &&
+            x.LookupTablesToLoad == new List<ITableInfo>() &&
+            x.Configuration == configuration);
+                                  
             var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(()=>task.Run(job, new GracefulCancellationToken()));
             StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.Message);
             StringAssert.Contains("Bob.sql",ex.Message);
@@ -128,8 +125,7 @@ namespace DataLoadEngineTests.Integration
             //we renamed the table to simulate RAW, confirm TableInfo doesn't think it exists
             Assert.IsFalse(ti.Discover(DataAccessContext.InternalDataProcessing).Exists());
 
-            var pt = MockRepository.GenerateMock<IProcessTask>();
-            pt.Stub(x => x.Path).Return(f.FullName);
+            var pt = Mock.Of<IProcessTask>(x => x.Path==f.FullName);
 
             var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
@@ -137,15 +133,15 @@ namespace DataLoadEngineTests.Integration
 
             task.Check(new ThrowImmediatelyCheckNotifier());
 
-            IDataLoadJob job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Stub(x => x.RegularTablesToLoad).Return(new List<ITableInfo> { ti });
-            job.Stub(x => x.LookupTablesToLoad).Return(new List<ITableInfo>());
-
+            
             //create a namer that tells the user 
             var namer = RdmpMockFactory.Mock_INameDatabasesAndTablesDuringLoads(db, tableName);
-            
             HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server,namer);
-            job.Stub(x => x.Configuration).Return(configuration);
+
+            IDataLoadJob job = Mock.Of<IDataLoadJob>(x => 
+            x.RegularTablesToLoad == new List<ITableInfo> { ti }&&
+            x.LookupTablesToLoad == new List<ITableInfo>() &&
+            x.Configuration == configuration);
 
             task.Run(job, new GracefulCancellationToken());
 

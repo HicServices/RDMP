@@ -20,7 +20,7 @@ using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
+using Moq;
 
 namespace DataLoadEngineTests.Unit
 {
@@ -285,8 +285,7 @@ namespace DataLoadEngineTests.Unit
             converter.ExcelFilePattern = loc.Name;
             converter.PrefixWithWorkbookName = prefixWithWorkbookName;
             
-            var mockProjDir = MockRepository.GenerateMock<ILoadDirectory>();
-            mockProjDir.Expect(p => p.ForLoading).Return(loc.Directory);
+            var mockProjDir = Mock.Of<ILoadDirectory>(p => p.ForLoading==loc.Directory);
           
             var j= new ThrowImmediatelyDataLoadJob();
             j.LoadDirectory = mockProjDir;

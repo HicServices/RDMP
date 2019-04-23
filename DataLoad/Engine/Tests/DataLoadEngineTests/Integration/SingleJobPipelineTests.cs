@@ -11,8 +11,8 @@ using DataLoadEngine.Job;
 using DataLoadEngine.LoadExecution;
 using DataLoadEngine.LoadExecution.Components;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -24,7 +24,7 @@ namespace DataLoadEngineTests.Integration
 
             var pipeline = new SingleJobExecution(new List<IDataLoadComponent> {component});
 
-            var job = MockRepository.GenerateStub<IDataLoadJob>();
+            var job = Mock.Of<IDataLoadJob>();
             var jobTokenSource = new GracefulCancellationTokenSource();
             pipeline.Run(job, jobTokenSource.Token);
         }

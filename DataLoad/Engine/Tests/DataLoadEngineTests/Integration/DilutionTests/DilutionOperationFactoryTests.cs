@@ -11,8 +11,8 @@ using CatalogueLibrary.Data.DataLoad;
 using LoadModules.Generic.Mutilators.Dilution;
 using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration.DilutionTests
 {
@@ -27,8 +27,7 @@ namespace DataLoadEngineTests.Integration.DilutionTests
         [Test]
         public void NullOperation_Throws()
         {
-            var col = MockRepository.GenerateMock<IPreLoadDiscardedColumn>();
-            col.Stub(p => p.Repository).Return(CatalogueRepository);
+            var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.Repository==CatalogueRepository);
 
             var factory = new DilutionOperationFactory(col);
             Assert.Throws<ArgumentNullException>(()=>factory.Create(null));
@@ -37,8 +36,7 @@ namespace DataLoadEngineTests.Integration.DilutionTests
         [Test]
         public void UnexpectedType_Throws()
         {
-            var col = MockRepository.GenerateMock<IPreLoadDiscardedColumn>();
-            col.Stub(p => p.Repository).Return(CatalogueRepository);
+            var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.Repository==CatalogueRepository);
 
             var factory = new DilutionOperationFactory(col);
             Assert.Throws<ArgumentException>(()=>factory.Create(typeof(Catalogue)));
@@ -47,8 +45,7 @@ namespace DataLoadEngineTests.Integration.DilutionTests
         [Test]
         public void ExpectedType_Created()
         {
-            var col = MockRepository.GenerateMock<IPreLoadDiscardedColumn>();
-            col.Stub(p => p.Repository).Return(CatalogueRepository);
+            var col = Mock.Of<IPreLoadDiscardedColumn>(p => p.Repository==CatalogueRepository);
 
             var factory = new DilutionOperationFactory(col);
             var i = factory.Create(typeof(ExcludeRight3OfUKPostcodes));

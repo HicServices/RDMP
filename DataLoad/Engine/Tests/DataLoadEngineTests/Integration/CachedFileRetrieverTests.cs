@@ -19,9 +19,9 @@ using DataLoadEngine.Job;
 using DataLoadEngine.Job.Scheduling;
 using FAnsi.Discovery;
 using HIC.Logging;
+using Moq;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace DataLoadEngineTests.Integration
@@ -33,16 +33,10 @@ namespace DataLoadEngineTests.Integration
 
         public CachedFileRetrieverTests()
         {
-            _cpMock = MockRepository.GenerateMock<ICacheProgress>();
-
-            _lpMock = MockRepository.GenerateMock<ILoadProgress>();
-            _lpMock.Stub(cp => cp.CacheProgress).Return(_cpMock);
-
-            
+            _cpMock = Mock.Of<ICacheProgress>();
+            _lpMock = Mock.Of<ILoadProgress>(l=>l.CacheProgress == _cpMock);
         }
-
-
-
+               
         [Test(Description = "RDMPDEV-185: Tests the scenario where the files in ForLoading do not match the files that are expected given the job specification. In this case the load process should not continue, otherwise the wrong data will be loaded.")]
         public void AttemptToLoadDataWithFilesInForLoading_DisagreementBetweenCacheAndForLoading()
         {
@@ -175,14 +169,14 @@ namespace DataLoadEngineTests.Integration
 
         private ScheduledDataLoadJob CreateTestJob(ILoadDirectory directory)
         {
-            var catalogue = MockRepository.GenerateStub<ICatalogue>();
-            catalogue.Stub(c => c.GetTableInfoList(Arg<bool>.Is.Anything)).Return(new TableInfo[0]);
-            catalogue.Stub(c => c.GetLookupTableInfoList()).Return(new TableInfo[0]);
-            catalogue.LoggingDataTask = "TestLogging";
-
-            var logManager = MockRepository.GenerateStub<ILogManager>();
-            var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
-            loadMetadata.Stub(lm => lm.GetAllCatalogues()).Return(new[] { catalogue });
+            var catalogue = Mock.Of<ICatalogue>(c => 
+            c.GetTableInfoList(false) == new TableInfo[0] &&
+            c.GetLookupTableInfoList()==new TableInfo[0] &&
+            c.LoggingDataTask == "TestLogging"
+            );
+            
+            var logManager = Mock.Of<ILogManager>();
+            var loadMetadata = Mock.Of<ILoadMetadata>(lm => lm.GetAllCatalogues()==new[] { catalogue });
 
             var j = new ScheduledDataLoadJob(RepositoryLocator, "Test job", logManager, loadMetadata, directory, new ThrowImmediatelyDataLoadEventListener(), null);
             j.LoadProgress = _lpMock;

@@ -14,8 +14,8 @@ using DataLoadEngine.Job;
 using LoadModules.Generic.DataProvider;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -36,8 +36,7 @@ namespace DataLoadEngineTests.Integration
             File.WriteAllText(originpath,"fish");
 
             var job = new ThrowImmediatelyDataLoadJob();
-            var mockProjectDirectory = MockRepository.GenerateMock<ILoadDirectory>();
-            mockProjectDirectory.Expect(p => p.ForLoading).Return(targetDir);
+            var mockProjectDirectory = Mock.Of<ILoadDirectory>(p => p.ForLoading == targetDir);
             job.LoadDirectory = mockProjectDirectory;
 
 

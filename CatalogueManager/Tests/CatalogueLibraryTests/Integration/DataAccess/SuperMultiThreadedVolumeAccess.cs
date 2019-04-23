@@ -16,7 +16,6 @@ using FAnsi.Connections;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.DataAccess

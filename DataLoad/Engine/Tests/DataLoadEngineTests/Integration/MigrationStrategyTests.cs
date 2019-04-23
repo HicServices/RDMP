@@ -11,8 +11,8 @@ using DataLoadEngine.Migration.QueryBuilding;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -24,11 +24,11 @@ namespace DataLoadEngineTests.Integration
             var from = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("Bob",new[] {new DatabaseColumnRequest("Field", "int")});
             var to = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
 
-            var connection = MockRepository.GenerateStub<IManagedConnection>();
-            var job = MockRepository.GenerateStub<IDataLoadJob>();
+            var connection = Mock.Of<IManagedConnection>();
+            var job = Mock.Of<IDataLoadJob>();
             var strategy = new OverwriteMigrationStrategy(connection);
 
-            var migrationFieldProcessor = MockRepository.GenerateStub<IMigrationFieldProcessor>();
+            var migrationFieldProcessor = Mock.Of<IMigrationFieldProcessor>();
 
             var ex = Assert.Throws<Exception>(() => new MigrationColumnSet(from, to, migrationFieldProcessor));
             Assert.AreEqual("There are no primary keys declared in table Bob", ex.Message);

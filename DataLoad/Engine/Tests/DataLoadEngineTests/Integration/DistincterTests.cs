@@ -17,8 +17,8 @@ using DataLoadEngine.Job;
 using FAnsi;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -68,9 +68,7 @@ namespace DataLoadEngineTests.Integration
             distincter.TableRegexPattern = new Regex(".*");
             distincter.Initialize(db, LoadStage.AdjustRaw);
 
-            var job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Expect(p => p.RegularTablesToLoad).Return(new List<ITableInfo>(new[] { tableInfo }));
-            job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
+            var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo })&& p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
 
             distincter.Mutilate(job);
 
@@ -125,9 +123,7 @@ namespace DataLoadEngineTests.Integration
             distincter.TableRegexPattern = new Regex(".*");
             distincter.Initialize(db, LoadStage.AdjustRaw);
 
-            var job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Expect(p => p.RegularTablesToLoad).Return(new List<ITableInfo>(new[] { tableInfo }));
-            job.Expect(p => p.Configuration).Return(new HICDatabaseConfiguration(db.Server));
+            var job = Mock.Of<IDataLoadJob>(p => p.RegularTablesToLoad==new List<ITableInfo>(new[] { tableInfo }) && p.Configuration==new HICDatabaseConfiguration(db.Server,null,null,null));
 
             distincter.Mutilate(job);
 

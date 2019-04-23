@@ -16,8 +16,8 @@ using LoadModules.Generic.Mutilators.Dilution.Operations;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration.DilutionTests
 {
@@ -31,13 +31,12 @@ namespace DataLoadEngineTests.Integration.DilutionTests
         [TestCase(null, null)]
         public void TestRoundDateToMiddleOfQuarter(string input, string expectedDilute)
         {
-            var col = MockRepository.GenerateMock<IPreLoadDiscardedColumn>();
             
-            var tbl = MockRepository.GenerateStrictMock<ITableInfo>();
-            tbl.Expect(m => m.GetRuntimeName(LoadStage.AdjustStaging)).Return("DateRoundingTests").Repeat.Once();
             
-            col.Stub(p => p.TableInfo).Return(tbl);
-            col.Stub(m => m.GetRuntimeName()).Return("TestField");
+            var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DateRoundingTests");
+            var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
+                c.TableInfo == tbl &&
+                c.GetRuntimeName() == "TestField");
 
             var o = new RoundDateToMiddleOfQuarter();
             o.ColumnToDilute = col;
@@ -67,8 +66,6 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
                     con.ManagedTransaction.AbandonAndCloseConnection();
                 }
             }
-
-            tbl.VerifyAllExpectations();
         }
 
 
@@ -91,13 +88,8 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
         [TestCase(null,null)]
         public void TestExcludeRight3OfUKPostcodes(string input, string expectedDilute)
         {
-            var col = MockRepository.GenerateMock<IPreLoadDiscardedColumn>();
-
-            var tbl = MockRepository.GenerateStrictMock<ITableInfo>();
-            tbl.Expect(m => m.GetRuntimeName(LoadStage.AdjustStaging)).Return("ExcludeRight3OfPostcodes").Repeat.Once();
-
-            col.Stub(p => p.TableInfo).Return(tbl);
-            col.Stub(m => m.GetRuntimeName()).Return("TestField");
+            var tbl = Mock.Of<ITableInfo>(t=>t.GetRuntimeName(LoadStage.AdjustStaging,null) == "ExcludeRight3OfPostcodes");
+            var col = Mock.Of<IPreLoadDiscardedColumn>(c=>c.TableInfo == tbl && c.GetRuntimeName() == "TestField");
 
             var o = new ExcludeRight3OfUKPostcodes();
             o.ColumnToDilute = col;
@@ -128,8 +120,6 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
                 }
                 
             }
-
-            tbl.VerifyAllExpectations();
         }
 
         [TestCase("2001-01-03","datetime", true)]
@@ -141,13 +131,10 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
         [TestCase("","varchar(1)", true)]//This data exists regardless of if it is blank so it still gets the 1
         public void DiluteToBitFlag(string input,string inputDataType, bool expectedDilute)
         {
-            var col = MockRepository.GenerateMock<IPreLoadDiscardedColumn>();
-
-            var tbl = MockRepository.GenerateStrictMock<ITableInfo>();
-            tbl.Expect(m => m.GetRuntimeName(LoadStage.AdjustStaging)).Return("DiluteToBitFlagTests").Repeat.Once();
-
-            col.Stub(p => p.TableInfo).Return(tbl);
-            col.Stub(m => m.GetRuntimeName()).Return("TestField");
+            var tbl = Mock.Of<ITableInfo>(m => m.GetRuntimeName(LoadStage.AdjustStaging,null) == "DiluteToBitFlagTests");
+            var col = Mock.Of<IPreLoadDiscardedColumn>(c=>
+            c.TableInfo == tbl && 
+            c.GetRuntimeName() =="TestField");
 
             var o = new CrushToBitFlag();
             o.ColumnToDilute = col;
@@ -174,8 +161,6 @@ INSERT INTO DiluteToBitFlagTests VALUES (" + insert + ")", con).ExecuteNonQuery(
                     con.ManagedTransaction.AbandonAndCloseConnection();
                 }
             }
-
-            tbl.VerifyAllExpectations();
         }
         
         [Test]

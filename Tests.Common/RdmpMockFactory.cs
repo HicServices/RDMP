@@ -8,8 +8,9 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery;
+using Moq;
 using ReusableLibraryCode.DataAccess;
-using Rhino.Mocks;
+
 
 namespace Tests.Common
 {
@@ -17,11 +18,10 @@ namespace Tests.Common
     {
         public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(string databaseNameToReturn,string tableNameToReturn )
         {
-            var mock = MockRepository.GenerateMock<INameDatabasesAndTablesDuringLoads>();
+            return  Mock.Of<INameDatabasesAndTablesDuringLoads>(x=>
+                x.GetDatabaseName(It.IsAny<string>(), It.IsAny<LoadBubble>())==databaseNameToReturn &&
+                x.GetName(It.IsAny<string>(), It.IsAny<LoadBubble>())==tableNameToReturn);
 
-            mock.Stub(x => x.GetDatabaseName(null, LoadBubble.Live)).IgnoreArguments().Return(databaseNameToReturn);
-            mock.Stub(x => x.GetName(null, LoadBubble.Live)).IgnoreArguments().Return(tableNameToReturn);
-            return mock;
         }
 
         public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(DiscoveredDatabase databaseNameToReturn, string tableNameToReturn)
@@ -36,29 +36,25 @@ namespace Tests.Common
 
         public static ILoadMetadata Mock_LoadMetadataLoadingTable(ITableInfo tableInfo)
         {
-            var lmd = MockRepository.GenerateMock<ILoadMetadata>();
-            var cata = MockRepository.GenerateMock<ICatalogue>();
+            var lmd = new Mock<ILoadMetadata>();
+            var cata = new Mock<ICatalogue>();
 
-            lmd.Stub(m => m.GetDistinctLiveDatabaseServer()).Return(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
-            lmd.Stub(m => m.GetAllCatalogues()).Return(new[] { cata });
+            lmd.Setup(m => m.GetDistinctLiveDatabaseServer()).Returns(tableInfo.Discover(DataAccessContext.DataLoad).Database.Server);
+            lmd.Setup(m => m.GetAllCatalogues()).Returns(new[] { cata.Object });
 
-            cata.Stub(m => m.GetTableInfoList(true)).IgnoreArguments().Return(new[] { tableInfo });
+            cata.Setup(m => m.GetTableInfoList(It.IsAny<bool>())).Returns(new[] { tableInfo });
 
-            return lmd;
+            return lmd.Object;
         }
 
         public static ITableInfo Mock_TableInfo(DiscoveredTable table)
         {
-            var ti = MockRepository.GenerateMock<ITableInfo>();
-
-            ti.Stub(p => p.Name).Return(table.GetFullyQualifiedName());
-            ti.Stub(p => p.Database).Return(table.Database.GetRuntimeName());
-            ti.Stub(p => p.DatabaseType).Return(table.Database.Server.DatabaseType);
-            ti.Stub(p => p.IsTableValuedFunction).Return(table.TableType == TableType.TableValuedFunction);
-
-            ti.Stub(m => m.Discover(DataAccessContext.Any)).IgnoreArguments().Return(table);
-            
-            return ti;
+            return Mock.Of<ITableInfo>(p=>
+                p.Name == table.GetFullyQualifiedName() &&
+                p.Database==table.Database.GetRuntimeName() && 
+                p.DatabaseType==table.Database.Server.DatabaseType &&
+                p.IsTableValuedFunction == (table.TableType == TableType.TableValuedFunction) &&
+                p.Discover(It.IsAny<DataAccessContext>())==table);
         }
     }
 }

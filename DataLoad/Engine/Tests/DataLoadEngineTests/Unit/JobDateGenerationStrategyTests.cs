@@ -8,7 +8,7 @@ using System;
 using CatalogueLibrary.Data;
 using DataLoadEngine.Job.Scheduling;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 
 namespace DataLoadEngineTests.Unit
 {
@@ -17,8 +17,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestSingleScheduleConsecutiveDateStrategy()
         {
-            var schedule = MockRepository.GenerateMock<ILoadProgress>();
-            schedule.Stub(loadProgress => loadProgress.DataLoadProgress).Return(new DateTime(2015, 1, 1));
+            var schedule = Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == new DateTime(2015, 1, 1));
 
             var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
@@ -36,10 +35,9 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestSingleScheduleConsecutiveDateStrategy_FutureDates_AreForbidden()
         {
-            var schedule = MockRepository.GenerateMock<ILoadProgress>();
-            schedule.Stub(loadProgress => loadProgress.DataLoadProgress).Return(DateTime.Now.Date.AddDays(-2));//we have loaded up to day before yesterday
-
-            
+            //we have loaded up to day before yesterday
+            var schedule = Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == (DateTime.Now.Date.AddDays(-2)));
+                                    
             var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
 
             var dates = strategy.GetDates(100, false);
@@ -50,9 +48,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void TestSingleScheduleConsecutiveDateStrategy_FutureDates_AreAllowed()
         {
-            var schedule = MockRepository.GenerateMock<ILoadProgress>();
-            schedule.Stub(loadProgress => loadProgress.DataLoadProgress).Return(DateTime.Now.Date.AddDays(-2));//we have loaded up to day before yesterday
-
+            var schedule = Mock.Of<ILoadProgress>(loadProgress => loadProgress.DataLoadProgress == DateTime.Now.Date.AddDays(-2));//we have loaded up to day before yesterday
 
             var strategy = new SingleScheduleConsecutiveDateStrategy(schedule);
             

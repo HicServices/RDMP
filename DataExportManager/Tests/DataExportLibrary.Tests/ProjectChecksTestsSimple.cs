@@ -17,7 +17,7 @@ using DataExportLibrary.Checks;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
-using Rhino.Mocks.Constraints;
+using Moq;
 using Tests.Common;
 
 namespace DataExportLibrary.Tests

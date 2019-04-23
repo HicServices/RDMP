@@ -17,8 +17,8 @@ using DataLoadEngine.LoadExecution.Components.Standard;
 using DataLoadEngine.LoadProcess;
 using HIC.Logging;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration.PipelineTests
 {
@@ -42,15 +42,11 @@ namespace DataLoadEngineTests.Integration.PipelineTests
 
             var archiveComponent = new ArchiveFiles(new HICLoadConfigurationFlags());
             
-            var dataLoadInfo = MockRepository.GenerateStub<IDataLoadInfo>();
-            dataLoadInfo.Stub(info => info.ID).Return(1);
+            var dataLoadInfo = Mock.Of<IDataLoadInfo>(info => info.ID==1);
 
-            var LoadDirectory = MockRepository.GenerateStub<ILoadDirectory>();
-            LoadDirectory.Stub(d => d.ForArchiving).Return(forArchiving);
-            LoadDirectory.Stub(d => d.ForLoading).Return(forLoading);
+            var LoadDirectory = Mock.Of<ILoadDirectory>(d => d.ForArchiving==forArchiving && d.ForLoading==forLoading);
 
-            var job = MockRepository.GenerateStub<IDataLoadJob>();
-            job.Stub(j => j.DataLoadInfo).Return(dataLoadInfo);
+            var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo==dataLoadInfo);
             job.LoadDirectory = LoadDirectory;
 
             try
@@ -95,8 +91,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests
             var archiveFiles = new ArchiveFiles(new HICLoadConfigurationFlags());
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "dataset");
             
-            var job = MockRepository.GenerateStub<IDataLoadJob>();
-            job.Stub(j => j.DataLoadInfo).Return(MockRepository.GenerateStub<IDataLoadInfo>());
+            var job = Mock.Of<IDataLoadJob>(j => j.DataLoadInfo==Mock.Of<IDataLoadInfo>());
             job.LoadDirectory = loadDirectory;
 
             try

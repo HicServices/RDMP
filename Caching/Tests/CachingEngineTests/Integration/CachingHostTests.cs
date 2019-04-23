@@ -21,29 +21,14 @@ using CatalogueLibrary.DataFlowPipeline;
 using CatalogueLibrary.Repositories;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace CachingEngineTests.Integration
 {
-    [Category("Integration")]
-    public class CachingHostTests : DatabaseTests
+    public class CachingHostTests : UnitTests
     {
-
-        private ICacheProgress CreateCacheProgressStubWithUnlockedLoadProgress()
-        {
-            var cacheProgress = MockRepository.GenerateStub<ICacheProgress>();
-
-            var loadProgress = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress.IsDisabled = false;
-
-            cacheProgress.Stub(progress => progress.LoadProgress).Return(loadProgress);
-
-            return cacheProgress;
-        }
-
-
-        /// <summary>
+                /// <summary>
         /// Makes sure that a cache progress pipeline will not be run if we are outside the permission window
         /// </summary>
         [Test]
@@ -56,31 +41,39 @@ namespace CachingEngineTests.Integration
                 Directory.Delete(testDir.FullName, true);
 
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "Test");
-            var loadMetadata = MockRepository.GenerateStub<ILoadMetadata>();
+
+
+            var cp = WhenIHaveA<CacheProgress>();
+            var loadMetadata = cp.LoadProgress.LoadMetadata;
             loadMetadata.LocationOfFlatFiles = loadDirectory.RootPath.FullName;
 
             // This feels a bit nasty, but quick and much better than having the test wait for an arbitrary time period.
             var listener = new ExpectedNotificationListener("Download not permitted at this time, sleeping for 60 seconds");
+                        
+            cp.CacheFillProgress = DateTime.Now.AddDays(-1);
+            cp.PermissionWindow_ID = 1;
+                                  
 
-            var cacheProgress = CreateCacheProgressStubWithUnlockedLoadProgress();
-            cacheProgress.CacheFillProgress = DateTime.Now.AddDays(-1);
-            cacheProgress.PermissionWindow_ID = 1;
-            cacheProgress.LoadProgress.Stub(schedule => schedule.LoadMetadata).Return(loadMetadata);
-
-            var permissionWindow = MockRepository.GenerateStub<IPermissionWindow>();
+            var permissionWindow = new PermissionWindow(Repository);
             permissionWindow.RequiresSynchronousAccess = true;
             permissionWindow.ID = 1;
             permissionWindow.Name = "Test Permission Window";
-            permissionWindow.Stub(window => window.WithinPermissionWindow()).Return(false);
 
-            cacheProgress.Stub(progress => progress.PermissionWindow).Return(permissionWindow);
+            
+            TimeSpan yesterdayStart = DateTime.Now.Subtract(new DateTime(0,0,1,0,10,0));
+            TimeSpan yesterdayStop = DateTime.Now.Subtract(new DateTime(0,0,1,0,5,0));
+            permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new []{new PermissionWindowPeriod((int)new DateTime(yesterdayStart.Ticks).DayOfWeek,yesterdayStart,yesterdayStop)}));
+            permissionWindow.SaveToDatabase();
 
-            var dataFlowPipelineEngine = MockRepository.GenerateMock<IDataFlowPipelineEngine>();
+            cp.PermissionWindow_ID = permissionWindow.ID;
+            cp.SaveToDatabase();
+
+            var dataFlowPipelineEngine = Mock.Of<IDataFlowPipelineEngine>();
 
             // set up a factory stub to return our engine mock
-            var cacheHost = new CachingHost(CatalogueRepository)
+            var cacheHost = new CachingHost(Repository)
             {
-                CacheProgressList = new List<ICacheProgress> { cacheProgress }
+                CacheProgressList = new List<ICacheProgress> { cp }
             };
 
             var stopTokenSource = new CancellationTokenSource();
@@ -100,8 +93,6 @@ namespace CachingEngineTests.Integration
             {
                 Assert.AreEqual(1, e.InnerExceptions.Count);
                 Assert.IsInstanceOf(typeof (TaskCanceledException), e.InnerExceptions[0], e.InnerExceptions[0].Message);
-
-                dataFlowPipelineEngine.AssertWasCalled(engine => engine.ExecutePipeline(cancellationToken), options => options.Repeat.Times(0));
             }
             finally
             {

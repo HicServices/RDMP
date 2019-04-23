@@ -14,7 +14,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using NUnit.Framework;
 using ReusableLibraryCode;
-using Rhino.Mocks.Constraints;
+using Moq;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

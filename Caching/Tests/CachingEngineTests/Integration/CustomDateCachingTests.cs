@@ -27,8 +27,8 @@ using CatalogueLibrary.DataFlowPipeline.Requirements;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace CachingEngineTests.Integration
 {
@@ -44,39 +44,41 @@ namespace CachingEngineTests.Integration
             mef.AddTypeToCatalogForTesting(typeof(TestCacheDestination));
 
             // Create a pipeline that will record the cache chunks
-            var pipeline = MockRepository.GenerateStub<IPipeline>();
-            var sourceComponent = MockRepository.GenerateStub<IPipelineComponent>();
-            sourceComponent.Class = "CachingEngineTests.Integration.TestCacheSource";
-            sourceComponent.Stub(c => c.GetClassAsSystemType()).Return(typeof (TestCacheSource));
-            sourceComponent.Stub(c => c.GetAllArguments()).Return(new IArgument[0]);
+                        var sourceComponent = Mock.Of<IPipelineComponent>(x=>
+                x.Class == "CachingEngineTests.Integration.TestCacheSource" &&
+                x.GetClassAsSystemType()==typeof (TestCacheSource) &&
+                x.GetAllArguments()==new IArgument[0]);
 
-            var destinationComponent = MockRepository.GenerateStub<IPipelineComponent>();
-            destinationComponent.Class = "CachingEngineTests.Integration.TestCacheDestination";
-            destinationComponent.Stub(c => c.GetClassAsSystemType()).Return(typeof (TestCacheDestination));
-            destinationComponent.Stub(c => c.GetAllArguments()).Return(new IArgument[0]);
+            var destinationComponent = Mock.Of<IPipelineComponent>(x=>
+                x.Class == "CachingEngineTests.Integration.TestCacheDestination" &&
+                x.GetClassAsSystemType()==typeof (TestCacheDestination) &&
+                x.GetAllArguments()==new IArgument[0]);
 
-            pipeline.Repository = CatalogueRepository;
-            pipeline.Stub(p => p.Source).Return(sourceComponent);
-            pipeline.Stub(p => p.Destination).Return(destinationComponent);
-            pipeline.Stub(p => p.PipelineComponents).Return(Enumerable.Empty<IPipelineComponent>().OrderBy(p => p).ToList());
-
+            var pipeline = Mock.Of<IPipeline>(p=>
+                p.Repository == CatalogueRepository &&
+                p.Source==sourceComponent &&
+                p.Destination==destinationComponent &&
+                p.Repository == CatalogueRepository &&
+                p.PipelineComponents==Enumerable.Empty<IPipelineComponent>().OrderBy(o => o).ToList());
+            
             var projDir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"delme",true);
 
-            var lmd = MockRepository.GenerateStub<ILoadMetadata>();
+            var lmd = Mock.Of<ILoadMetadata>();
             lmd.LocationOfFlatFiles = projDir.RootPath.FullName;
 
-            var loadProgress = MockRepository.GenerateStub<ILoadProgress>();
-            loadProgress.OriginDate = new DateTime(2001,01,01);
-            loadProgress.Expect(m => m.LoadMetadata).Return(lmd);
+            var loadProgress = Mock.Of<ILoadProgress>(l=>
+            l.OriginDate == new DateTime(2001,01,01) &&
+            l.LoadMetadata==lmd);
 
-            var cacheProgress = MockRepository.GenerateStub<ICacheProgress>();
-            cacheProgress.Pipeline_ID = -123;
-            cacheProgress.Stub(c => c.Pipeline).Return(pipeline);
-            cacheProgress.ChunkPeriod = new TimeSpan(1, 0, 0, 0);
-            cacheProgress.LoadProgress_ID = -1;
-            cacheProgress.Repository = CatalogueRepository;
-            cacheProgress.Expect(m => m.LoadProgress).Return(loadProgress);
-            cacheProgress.CacheFillProgress = new DateTime(2020, 1, 1);
+            var cacheProgress = Mock.Of<ICacheProgress>(c=>
+
+            c.Pipeline_ID == -123 &&
+            c.Pipeline==pipeline &&
+            c.ChunkPeriod == new TimeSpan(1, 0, 0, 0) &&
+            c.LoadProgress_ID == -1 &&
+            c.Repository == CatalogueRepository &&
+            c.LoadProgress ==loadProgress &&
+            c.CacheFillProgress == new DateTime(2020, 1, 1));
 
             var caching = new CustomDateCaching(cacheProgress, RepositoryLocator.CatalogueRepository);
             var startDate = new DateTime(2016, 1, 1);

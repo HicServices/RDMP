@@ -12,7 +12,6 @@ using DataLoadEngine.DatabaseManagement.EntityNaming;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using Rhino.Mocks;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

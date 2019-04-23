@@ -13,7 +13,7 @@ using System.Threading.Tasks;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataLoadEngine.DataFlowPipeline.Sources;
 using NUnit.Framework;
-using Rhino.Mocks;
+using Moq;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
@@ -28,18 +28,19 @@ namespace DataExportLibrary.Tests.DataExtraction
             dt.Rows.Add("dish");
             dt.Rows.Add("splish");
 
-            var mock = MockRepository.GenerateMock<IDbDataCommandDataFlowSource>();
-            mock.Expect(m => m.ReadOneRow()).Return(dt.Rows[0]).Repeat.Once();
-            mock.Expect(m => m.ReadOneRow()).Return(dt.Rows[1]).Repeat.Once();
-            mock.Expect(m => m.ReadOneRow()).Return(dt.Rows[2]).Repeat.Once();
-            mock.Expect(m => m.ReadOneRow()).Return(null).Repeat.Once();
+            var mock = new Mock<IDbDataCommandDataFlowSource>();
+            mock.SetupSequence(m=>m.ReadOneRow())
+                .Returns(dt.Rows[0])
+                .Returns(dt.Rows[1])
+                .Returns(dt.Rows[2])
+                .Returns(()=>{return null;});
 
             RowPeeker p = new RowPeeker();
             var dt2 = new DataTable();
             dt2.Columns.Add("MyCol");
 
             //Reads fish and peeks dish
-            p.AddWhile(mock,r=>(string) r["MyCol"] == "fish",dt2);
+            p.AddWhile(mock.Object,r=>(string) r["MyCol"] == "fish",dt2);
 
             //read one row
             Assert.AreEqual(1,dt2.Rows.Count);
@@ -49,7 +50,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             dt3.Columns.Add("MyCol");
             
             //cannot add while there is a peek stored
-            Assert.Throws<Exception>(() => p.AddWhile(mock, r => (string) r["MyCol"] == "fish", dt2));
+            Assert.Throws<Exception>(() => p.AddWhile(mock.Object, r => (string) r["MyCol"] == "fish", dt2));
 
             //clear the peek
             //unpeeks dish
@@ -61,7 +62,7 @@ namespace DataExportLibrary.Tests.DataExtraction
             //Reads nothing but peeks splish
             DataTable dt4 = new DataTable();
             dt4.Columns.Add("MyCol");
-            p.AddWhile(mock, r => (string) r["MyCol"] == "fish", dt4);
+            p.AddWhile(mock.Object, r => (string) r["MyCol"] == "fish", dt4);
 
             Assert.AreEqual(0,dt4.Rows.Count);
 
@@ -73,11 +74,9 @@ namespace DataExportLibrary.Tests.DataExtraction
 
             DataTable dt6 = new DataTable();
             dt6.Columns.Add("MyCol");
-            p.AddWhile(mock, r => (string) r["MyCol"] == "fish", dt6);
+            p.AddWhile(mock.Object, r => (string) r["MyCol"] == "fish", dt6);
 
             Assert.AreEqual(0,dt6.Rows.Count);
-
-            mock.VerifyAllExpectations();
         }
 
         

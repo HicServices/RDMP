@@ -9,9 +9,9 @@ using CatalogueLibrary.Data;
 using DataLoadEngine.Job.Scheduling;
 using DataLoadEngine.Job.Scheduling.Exceptions;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
+using Moq;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 
 namespace DataLoadEngineTests.Unit
 {
@@ -20,7 +20,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void NoDates()
         {
-            var lp = MockRepository.GenerateMock<ILoadProgress>();
+            var lp = Mock.Of<ILoadProgress>();
             
             var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 
@@ -32,8 +32,7 @@ namespace DataLoadEngineTests.Unit
         [Test]
         public void DateKnown_NoCache_SuggestSingleScheduleConsecutiveDateStrategy()
         {
-            var lp = MockRepository.GenerateMock<ILoadProgress>();
-            lp.Expect(p => p.DataLoadProgress).Return(new DateTime(2001, 01, 01));
+            var lp = Mock.Of<ILoadProgress>(p => p.DataLoadProgress==new DateTime(2001, 01, 01));
             
             var factory = new JobDateGenerationStrategyFactory(new SingleLoadProgressSelectionStrategy(lp));
 

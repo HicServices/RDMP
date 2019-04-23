@@ -12,8 +12,8 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {
@@ -25,13 +25,12 @@ namespace DataExportLibrary.Tests.DataExtraction
         [SetUp]
         public void CleanupOnStart()
         {
-            _projectStub = MockRepository.GenerateStub<IProject>();
+            _projectStub = Mock.Of<IProject>();
             _projectStub.ProjectNumber = -123;
 
-            var cfg = MockRepository.GenerateStub<IExtractionConfiguration>();
+            var cfg = Mock.Of<IExtractionConfiguration>();
             
-            _commandStub = MockRepository.GenerateStub<IExtractCommand>();
-            _commandStub.Stub(cmd => cmd.Configuration).Return(cfg);
+            _commandStub = Mock.Of<IExtractCommand>(cmd => cmd.Configuration==cfg);
 
             var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
 

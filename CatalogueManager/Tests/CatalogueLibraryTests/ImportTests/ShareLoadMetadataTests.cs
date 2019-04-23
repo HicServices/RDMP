@@ -19,9 +19,9 @@ using FAnsi.Implementations.MicrosoftSQL;
 using LoadModules.Generic.Attachers;
 using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using Rhino.Mocks;
 using Sharing.Dependency.Gathering;
 using Tests.Common;
+using Moq;
 
 namespace CatalogueLibraryTests.ImportTests
 {
@@ -120,8 +120,7 @@ namespace CatalogueLibraryTests.ImportTests
 
             RuntimeTaskFactory f = new RuntimeTaskFactory(Repository);
 
-            var stg = MockRepository.GenerateMock<IStageArgs>();
-            stg.Stub(x => x.LoadStage).Return(LoadStage.Mounting);
+            var stg = Mock.Of<IStageArgs>(x => x.LoadStage==LoadStage.Mounting);
 
             f.Create(pt1, stg);
         }
@@ -140,11 +139,10 @@ namespace CatalogueLibraryTests.ImportTests
             //setup Reflection / MEF
             SetupMEF();
             RuntimeTaskFactory f = new RuntimeTaskFactory(Repository);
-            var stg = MockRepository.GenerateMock<IStageArgs>();
-            stg.Stub(x => x.LoadStage).Return(LoadStage.Mounting);
-            stg.Stub(x => x.DbInfo)
-                .Return(new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
-            
+            var stg = Mock.Of<IStageArgs>(x =>
+                x.LoadStage==LoadStage.Mounting &&
+                x.DbInfo == new DiscoveredServer(new SqlConnectionStringBuilder()).ExpectDatabase("d"));
+
             //create a single process task for the load
             var pt1 = new ProcessTask(Repository, lmd1, LoadStage.Mounting);
             pt1.ProcessTaskType = ProcessTaskType.MutilateDataTable;

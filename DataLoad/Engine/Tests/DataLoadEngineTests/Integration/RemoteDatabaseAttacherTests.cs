@@ -18,8 +18,8 @@ using HIC.Logging;
 using LoadModules.Generic.Attachers;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
-using Rhino.Mocks;
 using Tests.Common;
+using Moq;
 
 namespace DataLoadEngineTests.Integration
 {
@@ -61,18 +61,16 @@ namespace DataLoadEngineTests.Integration
 
             attacher.LoadRawColumnsOnly = scenario == Scenario.AllRawColumns || scenario == Scenario.MissingPreLoadDiscardedColumn;
             attacher.RemoteSource = externalServer;
-
-            var job = MockRepository.GenerateMock<IDataLoadJob>();
-            job.Stub(p => p.RegularTablesToLoad).Return(new List<ITableInfo> {ti});
-            job.Stub(p => p.LookupTablesToLoad).Return(new List<ITableInfo>());
             
             var lm = new LogManager(new ServerDefaults(CatalogueRepository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID));
             lm.CreateNewLoggingTaskIfNotExists("amagad");
             var dli = lm.CreateDataLoadInfo("amagad", "p", "a", "", true);
 
-            job.Stub(p => p.DataLoadInfo).Return(dli);
-
-            switch (scenario)
+            var job = Mock.Of<IDataLoadJob>(p => 
+            p.RegularTablesToLoad==new List<ITableInfo> {ti} && 
+            p.LookupTablesToLoad==new List<ITableInfo>() && p.DataLoadInfo==dli);
+            
+                        switch (scenario)
             {
                 case Scenario.AllRawColumns:
                     break;

@@ -15,7 +15,6 @@ using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using NUnit.Framework;
-using Rhino.Mocks;
 
 namespace CatalogueLibraryTests.Unit
 {
