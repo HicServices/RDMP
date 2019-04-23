@@ -4,17 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 
-namespace PluginPackager
+namespace RDMPStartup.Options
 {
     /// <summary>
     /// Command line arguments for PluginPackager.exe
     /// </summary>
-    public class PluginPackagerProgramOptions
+    [Verb("pack",HelpText = "Packs a given directory into a new RDMP plugin")]
+    public class PackOptions
     {
         [Value(0,Required =true,HelpText = "Path to the Visual Studio .sln file which contains your Plugin")]
         public string SolutionFile { get; set; }
@@ -41,12 +41,12 @@ namespace PluginPackager
             get
             {
                 yield return 
-                    new Example("Normal Scenario", new PluginPackagerProgramOptions { SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", ZipFileName = "CoolPlugin.zip" });
+                    new Example("Normal Scenario", new PackOptions { SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", ZipFileName = "CoolPlugin.zip" });
 
                 yield return
-                    new Example("No source code, Release mode", new PluginPackagerProgramOptions { SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", ZipFileName = "CoolPlugin.zip" , SkipSourceCodeCollection =  true});
+                    new Example("No source code, Release mode", new PackOptions { SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", ZipFileName = "CoolPlugin.zip" , SkipSourceCodeCollection =  true});
                 yield return
-                    new Example("Commit zip to RDMP database", new PluginPackagerProgramOptions
+                    new Example("Commit zip to RDMP database", new PackOptions
                     {
                         SolutionFile = @"c:\MyPlugins\MyPlugin\CoolPlugin.sln", 
                         ZipFileName = "CoolPlugin.zip", 

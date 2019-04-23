@@ -45,22 +45,7 @@
     <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
     <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
     <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-  </PropertyGroup>
+                                                              </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
   </PropertyGroup>
@@ -71,8 +56,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent />
-  </PropertyGroup>
+      </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />

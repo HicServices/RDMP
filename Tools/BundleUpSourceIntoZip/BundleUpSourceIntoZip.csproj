@@ -4,13 +4,8 @@
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp2.2</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(ProjectDir)..\..\ $(ProjectDir)output\</PostBuildEvent>
-    <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(ProjectDir)..\..\ $(ProjectDir)output\</PostBuildEvent>
-    <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(ProjectDir)..\..\ $(ProjectDir)output\</PostBuildEvent>
   </PropertyGroup>
-  <PropertyGroup>
-    <PostBuildEvent>$(TargetDir)BundleUpSourceIntoZip.exe $(ProjectDir)..\..\ $(ProjectDir)output\</PostBuildEvent>
-  </PropertyGroup>
+  <PropertyGroup />
   <ItemGroup>
     <PackageReference Include="System.IO.Compression" Version="4.*" />
   </ItemGroup>

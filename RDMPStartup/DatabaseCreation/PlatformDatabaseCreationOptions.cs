@@ -15,6 +15,7 @@ namespace RDMPStartup.DatabaseCreation
     /// <summary>
     /// Command line arguments for DatabaseCreation.exe
     /// </summary>
+    [Verb("install" , HelpText = "Creates RMDP platform databases in the target database server")]
     public class PlatformDatabaseCreationOptions
     {
         [Value(0, Required = true, HelpText = "The Microsoft SQL Server on which to create the platform databases (does not have to be the same as your data repository server)")]

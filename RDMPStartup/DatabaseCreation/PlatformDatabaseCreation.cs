@@ -3,7 +3,6 @@ using System.Data.SqlClient;
 using System.Reflection;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
-using HIC.Logging.Database;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.Checks;
 
@@ -18,7 +17,7 @@ namespace RDMPStartup.DatabaseCreation
 
         public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
         {
-            Create(DefaultCatalogueDatabaseName, typeof(Class1).Assembly, options);
+            Create(DefaultCatalogueDatabaseName, typeof(CatalogueLibrary.Database.Class1).Assembly, options);
             Create(DefaultDataExportDatabaseName, typeof(DataExportLibrary.Database.Class1).Assembly, options);
 
             var dqe = Create(DefaultDQEDatabaseName, typeof(DataQualityEngine.Database.Class1).Assembly, options);

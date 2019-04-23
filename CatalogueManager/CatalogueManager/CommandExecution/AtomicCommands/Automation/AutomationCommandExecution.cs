@@ -15,7 +15,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
     public abstract class AutomationCommandExecution : BasicUICommandExecution
     {
         protected readonly Func<RDMPCommandLineOptions> CommandGetter;
-        public const string AutomationServiceExecutable = "RDMPAutomationService.exe";
+        public const string AutomationServiceExecutable = "rdmp.exe";
         
         private TableRepository _cataTableRepo;
         private TableRepository _dataExportTableRepo;

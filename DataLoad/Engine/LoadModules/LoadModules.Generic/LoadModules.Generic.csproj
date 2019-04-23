@@ -45,22 +45,7 @@
     <CodeContractsSuggestAssumptions>False</CodeContractsSuggestAssumptions>
     <CodeContractsNecessaryEnsures>True</CodeContractsNecessaryEnsures>
     <CodeContractsUseBaseLine>False</CodeContractsUseBaseLine>
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-  </PropertyGroup>
+                                                              </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <CodeContractsEnableRuntimeChecking>False</CodeContractsEnableRuntimeChecking>
     <CodeContractsReferenceAssembly>DoNotBuild</CodeContractsReferenceAssembly>
@@ -75,8 +60,7 @@
     <CodeContractsEnableRuntimeChecking>True</CodeContractsEnableRuntimeChecking>
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent />
-  </PropertyGroup>
+      </PropertyGroup>
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.3" />

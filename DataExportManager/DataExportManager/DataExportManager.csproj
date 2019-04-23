@@ -23,22 +23,7 @@
     <PublishWizardCompleted>true</PublishWizardCompleted>
     <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-    <PostBuildEvent />
-  </PropertyGroup>
+                                                              </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
   </PropertyGroup>
@@ -181,8 +166,7 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-    <PostBuildEvent />
-  </PropertyGroup>
+      </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
     <Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
