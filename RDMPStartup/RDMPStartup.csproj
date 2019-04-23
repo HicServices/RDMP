@@ -65,6 +65,7 @@
     <ProjectReference Include="..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
     <ProjectReference Include="..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj" />
     <ProjectReference Include="..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
+    <ProjectReference Include="..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
     <ProjectReference Include="..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
     <ProjectReference Include="..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
     <ProjectReference Include="..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj" />

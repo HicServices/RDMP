@@ -17,7 +17,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
-using DatabaseCreation;
 using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
@@ -29,6 +28,7 @@ using MapsDirectlyToDatabaseTable;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
 using RDMPStartup;
+using RDMPStartup.DatabaseCreation;
 using RDMPStartup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -102,14 +102,14 @@ namespace Tests.Common
         public DatabaseTests()
         {
 
-            var opts = new DatabaseCreationProgramOptions()
+            var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
                 Prefix = TestDatabaseNames.Prefix
             };
 
             
-            RepositoryLocator = new DatabaseCreationRepositoryFinder(opts);
+            RepositoryLocator = new PlatformDatabaseCreationRepositoryFinder(opts);
 
             Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + CatalogueRepository.DiscoveredServer.Name + " Database=" + CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
             Assert.IsTrue(CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
@@ -125,8 +125,8 @@ namespace Tests.Common
 
             var defaults = CatalogueRepository.GetServerDefaults();
 
-            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultDQEDatabaseName, PermissableDefaults.DQE,typeof(DataQualityEngine.Database.Class1).Assembly);
-            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,typeof(DataQualityEngine.Database.Class1).Assembly);
+            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
             CreateScratchArea();
@@ -174,7 +174,7 @@ namespace Tests.Common
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,Assembly creator)
         {
-            var opts = new DatabaseCreationProgramOptions()
+            var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
                 Prefix = prefix

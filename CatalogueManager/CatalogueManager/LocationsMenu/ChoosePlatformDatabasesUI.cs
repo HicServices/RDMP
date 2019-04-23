@@ -10,12 +10,12 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using CatalogueLibrary.Repositories;
-using DatabaseCreation;
 using DataExportLibrary.Repositories;
 using Diagnostics;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using RDMPStartup;
+using RDMPStartup.DatabaseCreation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
@@ -227,7 +227,7 @@ namespace CatalogueManager.LocationsMenu
 
                 Console.SetOut(new StringWriter(sb));
 
-                var opts = new DatabaseCreationProgramOptions();
+                var opts = new PlatformDatabaseCreationOptions();
                 opts.ServerName = tbSuiteServer.Text;
                 opts.Prefix = tbDatabasePrefix.Text;
                 opts.Username = tbUsername.Text;
@@ -237,7 +237,8 @@ namespace CatalogueManager.LocationsMenu
                 {
                     try
                     {
-                        DatabaseCreationProgram.RunOptionsAndReturnExitCode(opts);
+                        var creator = new PlatformDatabaseCreation();
+                        creator.CreatePlatformDatabases(opts);
                     }
                     catch (Exception ex)
                     {
@@ -268,8 +269,8 @@ namespace CatalogueManager.LocationsMenu
 
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Finished Creating Platform Databases", CheckResult.Success));
 
-                var cata = opts.GetBuilder(DatabaseCreationProgram.DefaultCatalogueDatabaseName);
-                var export = opts.GetBuilder(DatabaseCreationProgram.DefaultDataExportDatabaseName);
+                var cata = opts.GetBuilder(PlatformDatabaseCreation.DefaultCatalogueDatabaseName);
+                var export = opts.GetBuilder(PlatformDatabaseCreation.DefaultDataExportDatabaseName);
                 
                 UserSettings.CatalogueConnectionString = cata.ConnectionString;
                 UserSettings.DataExportConnectionString = export.ConnectionString;

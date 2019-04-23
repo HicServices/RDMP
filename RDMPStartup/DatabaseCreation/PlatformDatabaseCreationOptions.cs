@@ -4,18 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
+using CatalogueLibrary.Repositories;
 using CommandLine;
 using CommandLine.Text;
 
-namespace DatabaseCreation
+namespace RDMPStartup.DatabaseCreation
 {
     /// <summary>
     /// Command line arguments for DatabaseCreation.exe
     /// </summary>
-    public class DatabaseCreationProgramOptions
+    public class PlatformDatabaseCreationOptions
     {
         [Value(0, Required = true, HelpText = "The Microsoft SQL Server on which to create the platform databases (does not have to be the same as your data repository server)")]
         public string ServerName { get; set; }
@@ -43,10 +43,10 @@ namespace DatabaseCreation
         {
             get
             {
-                yield return new Example("Normal Scenario", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_"});
-                yield return new Example("Drop existing", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
-                yield return new Example("Binary Collation", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress",Prefix =  "TEST_" , DropDatabases = true,BinaryCollation =true });
-                yield return new Example("Drop existing", new DatabaseCreationProgramOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", Username = "sa", Password = "lawl", DropDatabases = true });
+                yield return new Example("Normal Scenario", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_"});
+                yield return new Example("Drop existing", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
+                yield return new Example("Binary Collation", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress",Prefix =  "TEST_" , DropDatabases = true,BinaryCollation =true });
+                yield return new Example("Drop existing", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", Username = "sa", Password = "lawl", DropDatabases = true });
             }
         }
 

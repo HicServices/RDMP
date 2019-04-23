@@ -73,7 +73,6 @@
     <ProjectReference Include="..\RDMPStartup\RDMPStartup.csproj" />
     <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\Tools\DatabaseCreation\DatabaseCreation.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="TestDatabases.txt">

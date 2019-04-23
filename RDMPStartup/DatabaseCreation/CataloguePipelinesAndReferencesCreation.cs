@@ -5,15 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
 using DataExportLibrary.CohortCreationPipeline.Sources;
@@ -22,10 +18,9 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using DataLoadEngine.DataFlowPipeline.Destinations;
 using LoadModules.Generic.DataFlowSources;
-using RDMPStartup;
 using ReusableLibraryCode.Checks;
 
-namespace DatabaseCreation
+namespace RDMPStartup.DatabaseCreation
 {
     /// <summary>
     /// Creates default pipelines required for basic functionality in RDMP.  These are templates that work but can be expanded upon / modified by the user.  For
