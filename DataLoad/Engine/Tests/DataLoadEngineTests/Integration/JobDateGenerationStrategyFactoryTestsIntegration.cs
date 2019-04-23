@@ -15,12 +15,12 @@ using DataLoadEngine.DataProvider.FromCache;
 using DataLoadEngine.Job.Scheduling;
 using DataLoadEngine.Job.Scheduling.Exceptions;
 using DataLoadEngine.LoadProcess.Scheduling.Strategy;
-using DataLoadEngineTests.Integration.Cache;
 using DataLoadEngineTests.Integration.PipelineTests;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Helpers;
 
 namespace DataLoadEngineTests.Integration
 {

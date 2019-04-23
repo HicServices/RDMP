@@ -14,6 +14,7 @@ using DataExportLibrary.ExtractionTime.Commands;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using NUnit.Framework;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 
 namespace DataExportLibrary.Tests.Cloning

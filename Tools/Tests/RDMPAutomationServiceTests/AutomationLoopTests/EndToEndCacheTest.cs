@@ -7,21 +7,20 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using CachingEngine;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngineTests.Integration;
-using DataLoadEngineTests.Integration.Cache;
-using DataLoadEngineTests.Integration.PipelineTests;
 using NUnit.Framework;
-using RDMPAutomationService.Options;
-using RDMPAutomationService.Runners;
+using RDMPStartup.Options;
+using RDMPStartup.Runners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Helpers;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {
@@ -94,13 +93,17 @@ namespace RDMPAutomationServiceTests.AutomationLoopTests
         }
 
         [Test]
-        [Timeout(60000)]
         public void RunEndToEndCacheTest()
         {
-            Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Count());
+            var t = Task.Factory.StartNew(() =>
+            {
+                Assert.AreEqual(0, _LoadDirectory.Cache.GetFiles("*.csv").Count());
 
-            var auto = new CacheRunner(new CacheOptions(){  CacheProgress= _cp.ID, Command = CommandLineActivity.run });
-            auto.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+                var auto = new CacheRunner(new CacheOptions(){CacheProgress = _cp.ID, Command = CommandLineActivity.run});
+                auto.Run(RepositoryLocator, new ThrowImmediatelyDataLoadEventListener(),new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
+            });
+
+            Assert.True(t.Wait(60000));
         }
 
         [TearDown]

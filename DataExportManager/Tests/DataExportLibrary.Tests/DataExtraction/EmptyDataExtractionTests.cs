@@ -19,6 +19,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using HIC.Logging;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {

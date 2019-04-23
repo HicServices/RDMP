@@ -18,6 +18,7 @@ using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.Cohort
 {

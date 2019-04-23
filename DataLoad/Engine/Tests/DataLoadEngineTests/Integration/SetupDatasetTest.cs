@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using AnonymisationTests;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.DataFlowPipeline;
@@ -26,6 +25,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace DataLoadEngineTests.Integration
 {

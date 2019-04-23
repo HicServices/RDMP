@@ -22,6 +22,7 @@ using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {

@@ -13,6 +13,7 @@ using DataExportLibrary.ExtractionTime;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline;
 using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using NUnit.Framework;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {

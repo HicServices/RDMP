@@ -7,7 +7,6 @@
 using System;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.Checks.Checkers;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using NUnit.Framework;

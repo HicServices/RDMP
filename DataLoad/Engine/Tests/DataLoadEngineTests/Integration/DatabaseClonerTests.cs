@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using AnonymisationTests;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
@@ -16,6 +15,7 @@ using FAnsi.Discovery;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace DataLoadEngineTests.Integration
 {

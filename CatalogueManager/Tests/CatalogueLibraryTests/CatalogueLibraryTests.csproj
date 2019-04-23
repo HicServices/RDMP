@@ -173,7 +173,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj" />
     <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
-    <ProjectReference Include="..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj" />
     <ProjectReference Include="..\..\..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
     <ProjectReference Include="..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
     <ProjectReference Include="..\..\..\CohortManager\CohortManager\CohortManager.csproj" />

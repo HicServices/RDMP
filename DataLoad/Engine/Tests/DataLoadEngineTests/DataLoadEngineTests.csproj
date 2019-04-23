@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProductVersion>8.0.30703</ProductVersion>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <PublishUrl>publish\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -220,10 +220,8 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
-    <ProjectReference Include="..\..\..\..\Anonymisation\Tests\AnonymisationTests\AnonymisationTests.csproj" />
     <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
     <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
-    <ProjectReference Include="..\..\..\..\CatalogueManager\Tests\CatalogueLibraryTests\CatalogueLibraryTests.csproj" />
     <ProjectReference Include="..\..\..\..\Diagnostics\Diagnostics.csproj" />
     <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
@@ -256,5 +254,6 @@
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-                                                                                                                                                                                                                                                                                                                          </ItemGroup>
+    <Folder Include="Integration\Cache\" />
+  </ItemGroup>
 </Project>

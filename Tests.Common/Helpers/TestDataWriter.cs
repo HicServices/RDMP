@@ -1,0 +1,61 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System.IO;
+using CachingEngine.BasicCache;
+using CachingEngine.Layouts;
+using CachingEngine.PipelineExecution.Destinations;
+using CachingEngine.Requests;
+using CatalogueLibrary.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
+
+namespace Tests.Common.Helpers
+{
+    public class TestDataWriter : CacheFilesystemDestination
+    {
+        public TestDataWriterChunk ProcessPipelineData(TestDataWriterChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        {
+            var layout = CreateCacheLayout();
+
+            var toCreateFilesIn = layout.Resolver.GetLoadCacheDirectory(CacheDirectory);
+            
+            foreach (FileInfo file in toProcess.Files)
+            {
+                string destination = Path.Combine(toCreateFilesIn.FullName, file.Name);
+
+                if(File.Exists(destination))
+                    File.Delete(destination);
+
+                file.MoveTo(destination);
+            }
+
+            return null;
+        }
+
+        public override ICacheChunk ProcessPipelineData(ICacheChunk toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        {
+            return ProcessPipelineData((TestDataWriterChunk)toProcess, listener, cancellationToken);
+        }
+
+        public override ICacheLayout CreateCacheLayout()
+        {
+            return new BasicCacheLayout(CacheDirectory);
+        }
+
+        public override void Abort(IDataLoadEventListener listener)
+        {
+            
+        }
+
+        public override void Check(ICheckNotifier notifier)
+        {
+            if (CacheDirectory == null)
+                notifier.OnCheckPerformed(new CheckEventArgs("PreInitialize was not called? (CacheDirectory == null)", CheckResult.Fail));
+        }
+
+    }
+}

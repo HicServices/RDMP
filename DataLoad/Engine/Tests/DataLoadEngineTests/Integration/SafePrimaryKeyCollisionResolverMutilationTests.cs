@@ -9,7 +9,6 @@ using System.Data;
 using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using FAnsi;

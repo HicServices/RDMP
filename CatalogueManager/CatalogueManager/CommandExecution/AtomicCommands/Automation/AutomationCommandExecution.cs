@@ -8,7 +8,7 @@ using System;
 using CatalogueManager.ItemActivation;
 using CommandLine;
 using MapsDirectlyToDatabaseTable;
-using RDMPAutomationService.Options.Abstracts;
+using RDMPStartup.Options.Abstracts;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
 {

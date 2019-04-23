@@ -20,6 +20,7 @@ using DataExportLibrary.ExtractionTime.UserPicks;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {

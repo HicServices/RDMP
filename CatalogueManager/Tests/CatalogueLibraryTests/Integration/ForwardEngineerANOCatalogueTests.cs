@@ -11,7 +11,6 @@ using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
-using AnonymisationTests;
 using ANOStore.ANOEngineering;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
@@ -30,6 +29,7 @@ using Newtonsoft.Json;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace CatalogueLibraryTests.Integration
 {

@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Triggers;
-using DataExportLibrary.Tests.DataExtraction;
 using DataQualityEngine.Data;
 using DataQualityEngine.Reports;
 using Diagnostics.TestData;
@@ -22,6 +21,7 @@ using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace DataQualityEngine.Tests
 {

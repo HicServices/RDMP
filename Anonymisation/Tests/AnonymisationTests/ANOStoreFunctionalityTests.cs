@@ -11,6 +11,7 @@ using CatalogueLibrary.Data.DataLoad;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
+using Tests.Common.Scenarios;
 
 namespace AnonymisationTests
 {

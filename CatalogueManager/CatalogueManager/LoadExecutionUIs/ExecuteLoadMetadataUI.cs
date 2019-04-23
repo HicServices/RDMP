@@ -15,8 +15,8 @@ using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using RDMPAutomationService.Options;
-using RDMPAutomationService.Options.Abstracts;
+using RDMPStartup.Options;
+using RDMPStartup.Options.Abstracts;
 using ReusableUIComponents;
 
 namespace CatalogueManager.LoadExecutionUIs

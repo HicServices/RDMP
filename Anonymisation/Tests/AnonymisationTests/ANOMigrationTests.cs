@@ -19,6 +19,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace AnonymisationTests
 {

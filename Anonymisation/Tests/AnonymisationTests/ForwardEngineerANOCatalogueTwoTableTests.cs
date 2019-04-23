@@ -21,6 +21,7 @@ using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace AnonymisationTests
 {

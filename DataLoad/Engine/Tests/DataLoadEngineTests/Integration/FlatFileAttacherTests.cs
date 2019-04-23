@@ -12,7 +12,6 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.EntityNaming;
 using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibraryTests.Mocks;
 using DataLoadEngine.DatabaseManagement.EntityNaming;
 using DataLoadEngine.Job;
 using FAnsi;

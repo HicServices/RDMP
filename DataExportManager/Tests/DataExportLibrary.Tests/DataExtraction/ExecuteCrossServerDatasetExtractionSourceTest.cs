@@ -15,6 +15,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {

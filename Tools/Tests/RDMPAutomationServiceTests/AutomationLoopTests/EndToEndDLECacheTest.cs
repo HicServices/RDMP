@@ -12,11 +12,9 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cache;
 using CatalogueLibrary.Data.DataLoad;
 using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngineTests.Integration;
-using DataLoadEngineTests.Integration.Cache;
-using DataLoadEngineTests.Integration.PipelineTests;
 using NUnit.Framework;
 using Tests.Common;
+using Tests.Common.Helpers;
 
 namespace RDMPAutomationServiceTests.AutomationLoopTests
 {

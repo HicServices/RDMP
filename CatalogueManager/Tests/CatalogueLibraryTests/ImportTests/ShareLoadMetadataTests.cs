@@ -10,7 +10,6 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Repositories;
-using CatalogueLibraryTests.Mocks;
 using DataExportLibrary.Repositories;
 using DataLoadEngine.LoadExecution.Components.Arguments;
 using DataLoadEngine.LoadExecution.Components.Runtime;

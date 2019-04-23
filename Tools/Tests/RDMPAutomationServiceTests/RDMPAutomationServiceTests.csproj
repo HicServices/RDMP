@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <ProjectGuid>{33CDFC10-6E3A-44C1-B29C-CAF77D846421}</ProjectGuid>
-    <TargetFramework>net461</TargetFramework>
+    <TargetFramework>netcoreapp2.2</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <Import Project="..\..\..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props" Condition="Exists('..\..\..\packages\NUnit3TestAdapter.3.10.0\build\net35\NUnit3TestAdapter.props')" />
@@ -29,8 +29,6 @@
     <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj" />
     <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj" />
-    <ProjectReference Include="..\..\..\DataLoad\Engine\Tests\DataLoadEngineTests\DataLoadEngineTests.csproj" />
-    <ProjectReference Include="..\..\RDMPAutomationService\RDMPAutomationService.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

@@ -7,8 +7,8 @@
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.DataFlowPipeline;
 using NUnit.Framework;
-using RDMPAutomationService.Options;
-using RDMPAutomationService.Runners;
+using RDMPStartup.Options;
+using RDMPStartup.Runners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;

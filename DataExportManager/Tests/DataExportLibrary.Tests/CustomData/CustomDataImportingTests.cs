@@ -15,6 +15,7 @@ using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using DataExportLibrary.ExtractionTime.UserPicks;
 using DataExportLibrary.Tests.DataExtraction;
 using NUnit.Framework;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.CustomData
 {

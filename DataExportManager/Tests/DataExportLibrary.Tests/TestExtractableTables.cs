@@ -13,6 +13,7 @@ using CatalogueLibrary.Data;
 using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
 using ReusableLibraryCode;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests
 {

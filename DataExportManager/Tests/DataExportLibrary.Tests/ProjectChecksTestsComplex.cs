@@ -13,6 +13,7 @@ using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests
 {

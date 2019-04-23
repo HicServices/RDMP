@@ -22,6 +22,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.DataExtraction
 {

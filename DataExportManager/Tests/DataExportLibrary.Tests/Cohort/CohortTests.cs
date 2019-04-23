@@ -13,6 +13,7 @@ using Diagnostics;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using Tests.Common.Scenarios;
 
 namespace DataExportLibrary.Tests.Cohort
 {
