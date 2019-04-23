@@ -8,6 +8,7 @@ using System;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -40,7 +41,7 @@ namespace Dashboard.Menus.MenuItems
 
             if (_dqeServer == null)
             {
-                var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(DataQualityEngine.Database.Class1).Assembly, PermissableDefaults.DQE);
+                var cmdCreateDb = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new DataQualityEnginePatcher(), PermissableDefaults.DQE);
                 cmdCreateDb.Execute();
             }
             else

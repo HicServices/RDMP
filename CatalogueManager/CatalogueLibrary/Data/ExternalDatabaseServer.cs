@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Reflection;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
@@ -17,6 +18,7 @@ using FAnsi.Discovery.QuerySyntax;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -163,7 +165,7 @@ namespace CatalogueLibrary.Data
         /// <param name="repository"></param>
         /// <param name="name"></param>
         /// <param name="databaseAssemblyIfCreatedByOne"></param>
-        public ExternalDatabaseServer(ICatalogueRepository repository, string name, Assembly databaseAssemblyIfCreatedByOne = null)
+        public ExternalDatabaseServer(ICatalogueRepository repository, string name, IPatcher creatorIfAny)
         {
             var parameters = new Dictionary<string, object>
             {
@@ -171,13 +173,14 @@ namespace CatalogueLibrary.Data
                 {"DatabaseType",DatabaseType.MicrosoftSQLServer}
             };
             
-            if(databaseAssemblyIfCreatedByOne != null)
-                parameters.Add("CreatedByAssembly", databaseAssemblyIfCreatedByOne.GetName().Name);
-
+            if(creatorIfAny != null)
+                parameters.Add("CreatedByAssembly" , creatorIfAny.Name);
+            
             Repository = repository;
             _selfCertifyingDataAccessPoint = new SelfCertifyingDataAccessPoint(repository,DatabaseType.MicrosoftSQLServer);
             repository.InsertAndHydrate(this, parameters);
         }
+
 
         internal ExternalDatabaseServer(ShareManager shareManager, ShareDefinition shareDefinition)
         {
@@ -231,7 +234,7 @@ namespace CatalogueLibrary.Data
             }
 
             //if it's a logging server run logging checks
-            if (WasCreatedByDatabaseAssembly(typeof(HIC.Logging.Database.Class1).Assembly))
+            if (WasCreatedBy(new LoggingDatabasePatcher()))
                 new LoggingDatabaseChecker(this).Check(notifier);
         }
 
@@ -271,33 +274,14 @@ namespace CatalogueLibrary.Data
         }
 
         /// <inheritdoc/>
-        public bool WasCreatedByDatabaseAssembly(Assembly databaseAssembly)
+        public bool WasCreatedBy(IPatcher patcher)
         {
             if (string.IsNullOrWhiteSpace(CreatedByAssembly))
                 return false;
-
-            return databaseAssembly.GetName().Name == CreatedByAssembly;
+            
+            return patcher.Name == CreatedByAssembly || patcher.LegacyName == CreatedByAssembly;
         }
-
-        public bool WasCreatedByDatabaseAssembly(Tier2DatabaseType type)
-        {
-            switch (type)
-            {
-                case Tier2DatabaseType.Logging:
-                    return CreatedByAssembly == "HIC.Logging.Database";
-                case Tier2DatabaseType.DataQuality:
-                    return CreatedByAssembly == "DataQualityEngine.Database";
-                case Tier2DatabaseType.QueryCaching:
-                    return CreatedByAssembly == "QueryCaching.Database";
-                case Tier2DatabaseType.ANOStore:
-                    return CreatedByAssembly == "ANOStore.Database";
-                case Tier2DatabaseType.IdentifierDump:
-                    return CreatedByAssembly == "IdentifierDump.Database";
-                default:
-                    throw new ArgumentOutOfRangeException("type");
-            }
-        }
-
+        
         /// <inheritdoc/>
         public DiscoveredDatabase Discover(DataAccessContext context)
         {

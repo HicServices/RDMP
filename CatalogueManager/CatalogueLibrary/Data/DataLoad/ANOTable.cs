@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
@@ -230,7 +231,7 @@ namespace CatalogueLibrary.Data.DataLoad
         /// <returns></returns>
         public DiscoveredTable GetPushedTable()
         {
-            if (!Server.WasCreatedByDatabaseAssembly(Tier2DatabaseType.ANOStore))
+            if (!Server.WasCreatedBy(new ANOStorePatcher()))
                 throw new Exception(string.Format("ANOTable's Server '{0}' is not an ANOStore.  ANOTable was '{1}'",Server,this));
 
             var tables = DataAccessPortal.GetInstance()

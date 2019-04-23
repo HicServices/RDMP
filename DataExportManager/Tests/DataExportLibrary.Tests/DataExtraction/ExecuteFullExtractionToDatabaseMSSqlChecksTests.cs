@@ -62,7 +62,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void ServerMissingServerName()
         {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
+            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
             try
             {
                 var destination = new ExecuteFullExtractionToDatabaseMSSql();
@@ -84,7 +84,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [TestCase(true)]
         public void ServerDatabaseIsPresentAndCorrect(bool alreadyExists)
         {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
+            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
             //server.Database = "FictionalDatabase"; Ignored by the extractor!
 
@@ -121,7 +121,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         [Test]
         public void ServerDatabaseIsPresentAndCorrectButHasTablesInIt()
         {
-            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction");
+            var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
             //server.Database = "FictionalDatabase"; Ignored by the extractor!
 

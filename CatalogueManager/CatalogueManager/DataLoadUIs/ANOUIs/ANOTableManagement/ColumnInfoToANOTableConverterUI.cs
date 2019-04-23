@@ -17,6 +17,7 @@ using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.QueryBuilding;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
@@ -151,7 +152,7 @@ namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
             
             ddExternalDatabaseServer.Items.Clear();
             
-            ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.ANOStore));
+            ddExternalDatabaseServer.Items.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<ANOStorePatcher>());
 
             var defaultServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 

@@ -6,6 +6,7 @@
 
 using System;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
+using MapsDirectlyToDatabaseTable.Versioning;
 
 namespace RDMPStartup.Events
 {

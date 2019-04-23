@@ -23,6 +23,7 @@ using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
 using IContainer = CatalogueLibrary.Data.IContainer;
@@ -157,9 +158,10 @@ namespace CatalogueLibrary.Repositories
             prop.SetValue(onObject,value);
         }
 
-        public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
+        public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
         {
-            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedByDatabaseAssembly(type)).ToArray();
+            IPatcher p = new T();
+            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(p)).ToArray();
         }
 
         public IExternalDatabaseServer GetDefaultFor(PermissableDefaults field)

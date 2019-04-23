@@ -14,6 +14,7 @@ using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
+using MapsDirectlyToDatabaseTable.Versioning;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -23,10 +24,10 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewExternalDatabaseServer : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly Assembly _databaseAssembly;
         private readonly PermissableDefaults _defaultToSet;
         private ExternalDatabaseServerStateBasedIconProvider _databaseIconProvider;
         private IconOverlayProvider _overlayProvider;
+        private IPatcher _patcher;
 
         public ExternalDatabaseServer ServerCreatedIfAny { get; private set; }
 
@@ -37,9 +38,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             
         }
 
-        public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator, Assembly databaseAssembly, PermissableDefaults defaultToSet) : base(activator)
+        public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator, IPatcher patcher, PermissableDefaults defaultToSet) : base(activator)
         {
-            _databaseAssembly = databaseAssembly;
+            _patcher = patcher;
             _defaultToSet = defaultToSet;
             
             _overlayProvider = new IconOverlayProvider();
@@ -57,8 +58,8 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             if(_defaultToSet != PermissableDefaults.None)
                 return string.Format("Create New {0} Server...", UsefulStuff.PascalCaseStringToHumanReadable(_defaultToSet.ToString().Replace("_ID", "").Replace("Live", "").Replace("ANO", "Anonymisation")));
 
-            if (_databaseAssembly != null)
-                return string.Format("Create New {0} Server...", _databaseAssembly.GetName().Name);
+            if (_patcher != null)
+                return string.Format("Create New {0} Server...", _patcher.Name);
 
             return base.GetCommandName();
         }
@@ -91,15 +92,15 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             base.Execute();
             
             //user wants to create a new server e.g. a new Logging server
-            if (_databaseAssembly == null)
-                ServerCreatedIfAny = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository,"New ExternalDatabaseServer " + Guid.NewGuid());
+            if (_patcher == null)
+                ServerCreatedIfAny = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository,"New ExternalDatabaseServer " + Guid.NewGuid(),_patcher);
             else
             {
                 //create the new server
                 ServerCreatedIfAny = CreatePlatformDatabase.CreateNewExternalServer(
                     Activator.RepositoryLocator.CatalogueRepository,
                     _defaultToSet,
-                    _databaseAssembly);   
+                    _patcher);
             }
 
             //user cancelled creating a server
@@ -112,9 +113,9 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
-            if(_databaseAssembly != null)
+            if(_patcher != null)
             {
-                var basicIcon = _databaseIconProvider.GetIconForAssembly(_databaseAssembly);
+                var basicIcon = _databaseIconProvider.GetIconForAssembly(_patcher.GetDbAssembly());
                 return _overlayProvider.GetOverlay(basicIcon, OverlayKind.Add);
             }
 

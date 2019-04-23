@@ -240,7 +240,7 @@ namespace DataLoadEngineTests.Integration
                 
                 if (overrideRAW)
                 {
-                    external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server");
+                    external = new ExternalDatabaseServer(CatalogueRepository, "RAW Server",null);
                     external.SetProperties(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("master"));
 
                     if (sendDodgyCredentials)

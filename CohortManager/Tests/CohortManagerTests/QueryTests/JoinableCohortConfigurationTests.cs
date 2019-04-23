@@ -13,6 +13,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Cohort.Joinables;
+using CatalogueLibrary.Database;
 using CohortManagerLibrary.QueryBuilding;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
@@ -432,9 +433,9 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                 _queryCachingDatabase.Drop(); //make sure it doesn't exist
 
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
-            scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new AcceptAllCheckNotifier());
+            scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
 
-            var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName);
+            var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
             queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
             
             //make the builder use the query cache we just set up

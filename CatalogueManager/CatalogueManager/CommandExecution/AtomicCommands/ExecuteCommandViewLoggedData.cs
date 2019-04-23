@@ -8,6 +8,7 @@ using System;
 using System.Drawing;
 using System.Linq;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LogViewer;
@@ -29,7 +30,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
         {
             _target = target;
             _filter = filter ?? new LogViewerFilter();
-            _loggingServers = Activator.RepositoryLocator.CatalogueRepository.GetAllTier2Databases(Tier2DatabaseType.Logging);
+            _loggingServers = Activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
             if(!_loggingServers.Any())
                 SetImpossible("There are no logging servers");

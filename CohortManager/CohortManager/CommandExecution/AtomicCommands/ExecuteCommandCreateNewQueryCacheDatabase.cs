@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Database;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -32,15 +33,16 @@ namespace CohortManager.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dbAssembly = typeof(QueryCaching.Database.Class1).Assembly;
-            CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(dbAssembly);
+            var p = new QueryCachingPatcher();
+
+            CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(p);
             createPlatform.ShowDialog();
 
             if (!string.IsNullOrWhiteSpace(createPlatform.DatabaseConnectionString))
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(createPlatform.DatabaseConnectionString);
 
-                var newServer = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", dbAssembly);
+                var newServer = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
 
                 newServer.Server = builder.DataSource;
                 newServer.Database = builder.InitialCatalog;

@@ -6,6 +6,7 @@
 
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
@@ -19,7 +20,7 @@ namespace CatalogueManager.Menus
             Add(new ExecuteCommandCreateNewANOTable(_activator));
             
             Add(new ExecuteCommandCreateNewExternalDatabaseServer(_activator,
-                typeof(ANOStore.Database.Class1).Assembly, PermissableDefaults.ANOStore) 
+                new ANOStorePatcher(), PermissableDefaults.ANOStore) 
                 { OverrideCommandName = "Create ANOStore Database" });
 
             Add(new ExecuteCommandExportObjectsToFileUI(_activator,_activator.CoreChildProvider.AllANOTables));

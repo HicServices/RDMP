@@ -25,7 +25,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Components
         [SetUp]
         public void SetupServer()
         {
-            _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer");
+            _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer",null);
             _server.SetProperties(DiscoveredDatabaseICanCreateRandomTablesIn);
 
             var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;

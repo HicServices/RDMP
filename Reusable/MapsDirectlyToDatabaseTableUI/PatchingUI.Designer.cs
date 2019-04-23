@@ -29,7 +29,6 @@
         private void InitializeComponent()
         {
             this.label1 = new System.Windows.Forms.Label();
-            this.lblHostAssembly = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
             this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.btnAttemptPatching = new System.Windows.Forms.Button();
@@ -47,16 +46,6 @@
             this.label1.Size = new System.Drawing.Size(339, 13);
             this.label1.TabIndex = 0;
             this.label1.Text = "The following Patch related problems  were detected in your database:";
-            // 
-            // lblHostAssembly
-            // 
-            this.lblHostAssembly.AutoSize = true;
-            this.lblHostAssembly.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblHostAssembly.Location = new System.Drawing.Point(112, 50);
-            this.lblHostAssembly.Name = "lblHostAssembly";
-            this.lblHostAssembly.Size = new System.Drawing.Size(92, 15);
-            this.lblHostAssembly.TabIndex = 2;
-            this.lblHostAssembly.Text = "Hosting Assembly";
             // 
             // label4
             // 
@@ -135,7 +124,6 @@
             this.Controls.Add(this.label2);
             this.Controls.Add(this.lblDatabaseVersion);
             this.Controls.Add(this.lblPatchingAssembly);
-            this.Controls.Add(this.lblHostAssembly);
             this.Controls.Add(this.label1);
             this.Name = "PatchingUI";
             this.Text = "Patching";
@@ -147,7 +135,6 @@
         #endregion
 
         private System.Windows.Forms.Label label1;
-        private System.Windows.Forms.Label lblHostAssembly;
         private System.Windows.Forms.Label label4;
         private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnAttemptPatching;

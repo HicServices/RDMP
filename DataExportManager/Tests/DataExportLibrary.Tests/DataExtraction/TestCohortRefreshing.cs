@@ -10,6 +10,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using DataExportLibrary.CohortCreationPipeline;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
@@ -104,14 +105,14 @@ namespace DataExportLibrary.Tests.DataExtraction
             var oldcohort = _configuration.Cohort;
 
             //Create a query cache
-            var p = new QueryCachingDatabasePatcher();
-            ExternalDatabaseServer queryCacheServer = new ExternalDatabaseServer(CatalogueRepository, "TestCohortRefreshing_CacheTest", p.GetDbAssembly());
+            var p = new QueryCachingPatcher();
+            ExternalDatabaseServer queryCacheServer = new ExternalDatabaseServer(CatalogueRepository, "TestCohortRefreshing_CacheTest", p);
 
             DiscoveredDatabase cachedb = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("TestCohortRefreshing_CacheTest");
             if (cachedb.Exists())
                 cachedb.Drop();
 
-            new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p.GetHostAssembly(), new ThrowImmediatelyCheckNotifier());
+            new MasterDatabaseScriptExecutor(cachedb).CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
             queryCacheServer.SetProperties(cachedb);
             
             //Create a Cohort Identification configuration (query) that will identify the cohort

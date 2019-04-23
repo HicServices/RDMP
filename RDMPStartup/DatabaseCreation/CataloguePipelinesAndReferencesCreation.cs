@@ -10,6 +10,7 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
 using CatalogueLibrary.Data.Pipelines;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.CohortCreationPipeline.Destinations;
 using DataExportLibrary.CohortCreationPipeline.Sources;
@@ -50,7 +51,7 @@ namespace RDMPStartup.DatabaseCreation
         {
             var defaults = _repositoryLocator.CatalogueRepository.GetServerDefaults();
 
-            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging", typeof(HIC.Logging.Database.Class1).Assembly);
+            _edsLogging = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "Logging",new LoggingDatabasePatcher());
 
             _edsLogging.Server = _logging.DataSource;
             _edsLogging.Database = _logging.InitialCatalog;
@@ -65,7 +66,7 @@ namespace RDMPStartup.DatabaseCreation
             defaults.SetDefault(PermissableDefaults.LiveLoggingServer_ID, _edsLogging);
             Console.WriteLine("Successfully configured default logging server");
 
-            var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", typeof(DataQualityEngine.Database.Class1).Assembly);
+            var edsDQE = new ExternalDatabaseServer(_repositoryLocator.CatalogueRepository, "DQE", new DataQualityEnginePatcher());
             edsDQE.Server = _dqe.DataSource;
             edsDQE.Database = _dqe.InitialCatalog;
 

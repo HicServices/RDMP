@@ -7,6 +7,7 @@
 using System;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Database;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
@@ -25,7 +26,7 @@ namespace CatalogueManager.Menus
         public ExternalDatabaseServerMenu(RDMPContextMenuStripArgs args, ExternalDatabaseServer server) : base(args, server)
         {
             _server = server;
-            if (server.WasCreatedByDatabaseAssembly(typeof (HIC.Logging.Database.Class1).Assembly))
+            if (server.WasCreatedBy(new LoggingDatabasePatcher()))
             {
                 var viewLogs = new ToolStripMenuItem("View Logs",CatalogueIcons.Logging);
                 Add(new ExecuteCommandViewLoggedData(_activator, LoggingTables.DataLoadTask), Keys.None,viewLogs);

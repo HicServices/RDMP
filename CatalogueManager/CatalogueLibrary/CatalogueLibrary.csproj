@@ -183,10 +183,10 @@
     <None Include="Triggers\Triggers.cd" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj" />
     <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
+    <ProjectReference Include="..\CatalogueLibrary.Database\CatalogueLibrary.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="Properties\Resources.resx">

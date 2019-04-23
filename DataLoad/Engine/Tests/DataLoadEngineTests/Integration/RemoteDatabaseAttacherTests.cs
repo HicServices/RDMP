@@ -53,7 +53,7 @@ namespace DataLoadEngineTests.Integration
             if (scenario == Scenario.MissingPreLoadDiscardedColumn || scenario == Scenario.MissingPreLoadDiscardedColumnButSelectStar)
                 new PreLoadDiscardedColumn(CatalogueRepository, ti, "MyMissingCol");
 
-            var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote");
+            var externalServer = new ExternalDatabaseServer(CatalogueRepository, "MyFictionalRemote",null);
             externalServer.SetProperties(db);
             
             var attacher = new RemoteDatabaseAttacher();

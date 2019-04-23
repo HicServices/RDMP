@@ -1,6 +1,7 @@
 using System;
 using System.Data.SqlClient;
 using System.Reflection;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
@@ -17,11 +18,12 @@ namespace RDMPStartup.DatabaseCreation
 
         public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
         {
-            Create(DefaultCatalogueDatabaseName, typeof(CatalogueLibrary.Database.Class1).Assembly, options);
-            Create(DefaultDataExportDatabaseName, typeof(DataExportLibrary.Database.Class1).Assembly, options);
+            
+            Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
+            Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
 
-            var dqe = Create(DefaultDQEDatabaseName, typeof(DataQualityEngine.Database.Class1).Assembly, options);
-            var logging = Create(DefaultLoggingDatabaseName, typeof(HIC.Logging.Database.Class1).Assembly, options);
+            var dqe = Create(DefaultDQEDatabaseName, new DataQualityEnginePatcher(), options);
+            var logging = Create(DefaultLoggingDatabaseName, new LoggingDatabasePatcher(), options);
 
             CatalogueRepository.SuppressHelpLoading = true;
 
@@ -32,7 +34,7 @@ namespace RDMPStartup.DatabaseCreation
             }
         }
 
-        private SqlConnectionStringBuilder Create(string databaseName, Assembly dotDatabaseAssembly, PlatformDatabaseCreationOptions options)
+        private SqlConnectionStringBuilder Create(string databaseName, IPatcher patcher, PlatformDatabaseCreationOptions options)
         {
             SqlConnection.ClearAllPools();
 
@@ -48,7 +50,7 @@ namespace RDMPStartup.DatabaseCreation
             
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(builder.ConnectionString);
             executor.BinaryCollation = options.BinaryCollation;
-            executor.CreateAndPatchDatabaseWithDotDatabaseAssembly(dotDatabaseAssembly,new AcceptAllCheckNotifier());
+            executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
             Console.WriteLine("Created " + builder.InitialCatalog + " on server " + builder.DataSource);
             
             return builder;

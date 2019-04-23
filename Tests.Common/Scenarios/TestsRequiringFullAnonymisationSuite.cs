@@ -6,6 +6,7 @@
 
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
@@ -31,10 +32,11 @@ namespace Tests.Common.Scenarios
                 IdentifierDump_Database.Drop();
 
             var scriptCreate = new MasterDatabaseScriptExecutor(IdentifierDump_Database);
-            scriptCreate.CreateAndPatchDatabase(typeof(IdentifierDump.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
+            var p = new IdentifierDumpDatabasePatcher();
+            scriptCreate.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
 
             //now create a new reference!
-            IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName);
+            IdentifierDump_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,IdentifierDump_DatabaseName,p);
             IdentifierDump_ExternalDatabaseServer.SetProperties(IdentifierDump_Database);
 
             CatalogueRepository.GetServerDefaults().SetDefault(PermissableDefaults.IdentifierDumpServer_ID, IdentifierDump_ExternalDatabaseServer);

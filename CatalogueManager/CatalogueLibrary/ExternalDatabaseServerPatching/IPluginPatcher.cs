@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.ComponentModel.Composition;
+using MapsDirectlyToDatabaseTable.Versioning;
 
 namespace CatalogueLibrary.ExternalDatabaseServerPatching
 {
@@ -12,7 +13,16 @@ namespace CatalogueLibrary.ExternalDatabaseServerPatching
     /// MEF discoverable version of IPatcher
     /// </summary>
     [InheritedExport(typeof(IPatcher))]
-    public interface IPluginPatcher : IPatcher
+    public class PluginPatcher : Patcher
     {
+        public PluginPatcher():base(3,null)
+        {
+            
+        }
+
+        public PluginPatcher(string subdirectory):base(3,subdirectory)
+        {
+            
+        }
     }
 }

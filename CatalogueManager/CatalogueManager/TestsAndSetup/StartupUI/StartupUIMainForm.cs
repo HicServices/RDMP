@@ -11,6 +11,7 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons;
@@ -91,8 +92,8 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
 
             HandleDatabaseFoundOnSimpleUI(eventArgs);
 
-            //now we are on teh correct UI thread.
-            if (eventArgs.DatabaseType == RDMPPlatformType.Catalogue)
+            //now we are on the correct UI thread.
+            if (eventArgs.Patcher is CataloguePatcher)
             {
                 Catalogue.Visible = true;
                 Catalogue.HandleDatabaseFound(eventArgs);
@@ -110,13 +111,13 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                     pbWhereIsDatabase.Visible = false;
             }
             
-            if (eventArgs.DatabaseType == RDMPPlatformType.DataExport)
+            if (eventArgs.Patcher is DataExportPatcher)
             {
                 DataExport.Visible = true;
                 DataExport.HandleDatabaseFound(eventArgs);
             }
 
-            if (eventArgs.Tier == 2)
+            if (eventArgs.Patcher.Tier == 2)
             {
                 var ctrl = new ManagedDatabaseUI();
                 flpTier2Databases.Controls.Add(ctrl);
@@ -124,7 +125,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                 ctrl.RequestRestart += () => StartOrRestart(true);
             }
 
-            if (eventArgs.Tier == 3)
+            if (eventArgs.Patcher.Tier == 3)
             {
                 var ctrl = new ManagedDatabaseUI();
                 flpTier3Databases.Controls.Add(ctrl);
@@ -349,13 +350,13 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             else
                 return;//we are broken and found more broken stuff!
 
-            lblProgress.Text = eventArgs.DatabaseType + " database status was " + eventArgs.Status;
+            lblProgress.Text = eventArgs.Patcher.Name + " database status was " + eventArgs.Status;
 
             switch (eventArgs.Status)
             {
                 case RDMPPlatformDatabaseStatus.Unreachable:
 
-                    if (eventArgs.Tier == 1)
+                    if (eventArgs.Patcher.Tier == 1)
                         Angry();
                     else
                         Warning();
@@ -367,12 +368,12 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
                 case RDMPPlatformDatabaseStatus.RequiresPatching:
                     Warning();
 
-                    if (MessageBox.Show("Patching Required on database of type " + eventArgs.DatabaseType, "Patch",
+                    if (MessageBox.Show("Patching Required on database of type " + eventArgs.Patcher.Name, "Patch",
                             MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         PatchingUI.ShowIfRequired(
                             (SqlConnectionStringBuilder) eventArgs.Repository.ConnectionStringBuilder,
-                            eventArgs.Repository, eventArgs.DatabaseAssembly, eventArgs.HostAssembly);
+                            eventArgs.Repository, eventArgs.Patcher);
                         AppliedPatch = true;
                     }
                     else

@@ -5,7 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
+using MapsDirectlyToDatabaseTable.Versioning;
 
 namespace CatalogueLibrary.Data.Defaults
 {
@@ -16,24 +18,24 @@ namespace CatalogueLibrary.Data.Defaults
         /// </summary>
         /// <param name="permissableDefault"></param>
         /// <returns></returns>
-        public static Tier2DatabaseType? ToTier2DatabaseType(this PermissableDefaults permissableDefault)
+        public static IPatcher ToTier2DatabaseType(this PermissableDefaults permissableDefault)
         {
             switch (permissableDefault)
             {
                 case PermissableDefaults.LiveLoggingServer_ID:
-                    return Tier2DatabaseType.Logging;
+                    return new LoggingDatabasePatcher();
                 case PermissableDefaults.IdentifierDumpServer_ID:
-                    return Tier2DatabaseType.IdentifierDump;
+                    return new IdentifierDumpDatabasePatcher();
                 case PermissableDefaults.DQE:
-                    return Tier2DatabaseType.DataQuality;
+                    return new IdentifierDumpDatabasePatcher();
                 case PermissableDefaults.WebServiceQueryCachingServer_ID:
-                    return Tier2DatabaseType.QueryCaching;
+                    return new QueryCachingPatcher();
                 case PermissableDefaults.CohortIdentificationQueryCachingServer_ID:
-                    return Tier2DatabaseType.QueryCaching;
+                    return new QueryCachingPatcher();
                 case PermissableDefaults.RAWDataLoadServer:
                     return null;
                 case PermissableDefaults.ANOStore:
-                    return Tier2DatabaseType.ANOStore;
+                    return new ANOStorePatcher();
                 default:
                     throw new ArgumentOutOfRangeException("permissableDefault");
             }

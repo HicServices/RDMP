@@ -12,6 +12,7 @@ using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Serialization;
+using CatalogueLibrary.Database;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
@@ -27,7 +28,7 @@ namespace CatalogueLibraryTests.ImportTests
         [TestCase(false)]
         public void GatherAndShare_ANOTable_Test(bool goViaJson)
         {
-            var anoserver = new ExternalDatabaseServer(CatalogueRepository, "MyGatherAndShareTestANOServer", typeof (Class1).Assembly);
+            var anoserver = new ExternalDatabaseServer(CatalogueRepository, "MyGatherAndShareTestANOServer", new ANOStorePatcher());
             var anoTable = new ANOTable(CatalogueRepository, anoserver, "ANOMagad", "N");
 
             Assert.AreEqual(anoTable.Server_ID,anoserver.ID);

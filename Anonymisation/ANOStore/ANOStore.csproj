@@ -55,7 +55,6 @@
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\Sharing\Sharing\Sharing.csproj" />
-    <ProjectReference Include="..\ANOStore.Database\ANOStore.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
       </ItemGroup>

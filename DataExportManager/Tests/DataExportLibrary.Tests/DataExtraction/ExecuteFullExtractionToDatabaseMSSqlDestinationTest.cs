@@ -100,7 +100,7 @@ namespace DataExportLibrary.Tests.DataExtraction
         protected override Pipeline SetupPipeline()
         {
             //create a target server pointer
-            _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver");
+            _extractionServer = new ExternalDatabaseServer(CatalogueRepository, "myserver",null);
             _extractionServer.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
             _extractionServer.SaveToDatabase();
 

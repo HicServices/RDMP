@@ -10,9 +10,11 @@ using System.Reflection;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using MapsDirectlyToDatabaseTable.Versioning;
 using MapsDirectlyToDatabaseTableUI;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
@@ -85,13 +87,13 @@ namespace CatalogueManager.LocationsMenu
             comboBox.Items.Clear();
 
             var currentDefault = defaults.GetDefaultFor(permissableDefault);
-            Tier2DatabaseType? expectedTypeOfServer = permissableDefault.ToTier2DatabaseType();
+            var patcher = permissableDefault.ToTier2DatabaseType();
             
             var toAdd = allServers;
             
-            if(expectedTypeOfServer != null) //we expect an explicit type e.g. a HIC.Logging.Database 
+            if(patcher != null) //we expect an explicit type e.g. a HIC.Logging.Database 
             {
-                var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllTier2Databases(expectedTypeOfServer.Value);
+                var compatibles = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(patcher)).ToArray();
 
                 if (currentDefault == null || compatibles.Contains(currentDefault))//if there is not yet a default or the existing default is of the correct type
                     toAdd = compatibles;//then we can go ahead and use the restricted type
@@ -184,9 +186,9 @@ namespace CatalogueManager.LocationsMenu
             RefreshUIFromDatabase();
         }
         
-        private void CreateNewExternalServer(PermissableDefaults defaultToSet, Assembly databaseAssembly)
+        private void CreateNewExternalServer(PermissableDefaults defaultToSet, IPatcher patcher)
         {
-            if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository, defaultToSet, databaseAssembly) != null)
+            if (CreatePlatformDatabase.CreateNewExternalServer(Activator.RepositoryLocator.CatalogueRepository, defaultToSet, patcher) != null)
                 RefreshUIFromDatabase();
         }
 
@@ -199,31 +201,31 @@ namespace CatalogueManager.LocationsMenu
 
         private void btnCreateNewDQEServer_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(PermissableDefaults.DQE, typeof(DataQualityEngine.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.DQE, new DataQualityEnginePatcher());
         }
         private void btnCreateNewWebServiceQueryCache_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(PermissableDefaults.WebServiceQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.WebServiceQueryCachingServer_ID, new QueryCachingPatcher());
         }
 
         private void btnCreateNewLoggingServer_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
         }
         
         private void btnCreateNewIdentifierDump_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(PermissableDefaults.IdentifierDumpServer_ID, typeof(IdentifierDump.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.IdentifierDumpServer_ID, new IdentifierDumpDatabasePatcher());
         }
 
         private void btnCreateNewANOStore_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(PermissableDefaults.ANOStore, typeof(ANOStore.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.ANOStore, new ANOStorePatcher());
         }
 
         private void btnCreateNewCohortIdentificationQueryCache_Click(object sender, EventArgs e)
         {
-            CreateNewExternalServer(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, typeof(QueryCaching.Database.Class1).Assembly);
+            CreateNewExternalServer(PermissableDefaults.CohortIdentificationQueryCachingServer_ID, new QueryCachingPatcher());
         }
 
 

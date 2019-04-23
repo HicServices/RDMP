@@ -36,34 +36,30 @@ namespace MapsDirectlyToDatabaseTableUI
         private readonly ITableRepository _repository;
         private readonly Version _databaseVersion;
         private readonly Version _hostAssemblyVersion;
-
-        private readonly Assembly _databaseAssembly;
-        private readonly Assembly _hostAssembly;
-
+        
         private readonly Patch[] _patchesInDatabase;
         private readonly SortedDictionary<string, Patch> _allPatchesInAssembly;
         
+        private bool _yesToAll = false;
+        private IPatcher _patcher;
 
-        private PatchingUI(SqlConnectionStringBuilder builder, ITableRepository repository, Version databaseVersion, Assembly databaseAssembly, Assembly hostAssembly, Patch[] patchesInDatabase, SortedDictionary<string, Patch> allPatchesInAssembly)
+        private PatchingUI(SqlConnectionStringBuilder builder, ITableRepository repository, Version databaseVersion, IPatcher patcher, Patch[] patchesInDatabase, SortedDictionary<string, Patch> allPatchesInAssembly)
         {
             _builder = builder;
             _repository = repository;
             _databaseVersion = databaseVersion;
-            _databaseAssembly = databaseAssembly;
-            _hostAssembly = hostAssembly;
+            _patcher = patcher;
             
             InitializeComponent();
 
-            if (_hostAssembly == null)
+            if (_patcher == null)
                 return;
 
-            _hostAssemblyVersion = new Version(FileVersionInfo.GetVersionInfo(_hostAssembly.Location).FileVersion);
+            _hostAssemblyVersion = new Version(FileVersionInfo.GetVersionInfo(_patcher.GetDbAssembly().Location).FileVersion);
             _patchesInDatabase = patchesInDatabase;
             _allPatchesInAssembly = allPatchesInAssembly;
             
-            lblHostAssembly.Text =  hostAssembly.FullName;
-            lblPatchingAssembly.Text = databaseAssembly.FullName;
-
+            lblPatchingAssembly.Text = patcher.GetDbAssembly().FullName;
 
             if (builder == null || string.IsNullOrWhiteSpace(builder.InitialCatalog))
             {
@@ -79,14 +75,14 @@ namespace MapsDirectlyToDatabaseTableUI
 
         }
 
-        public static void ShowIfRequired(SqlConnectionStringBuilder builder, ITableRepository repository, Assembly databaseAssembly, Assembly hostAssembly)
+        public static void ShowIfRequired(SqlConnectionStringBuilder builder, ITableRepository repository, IPatcher patcher)
         {
             Version databaseVersion;
             Patch[] patchesInDatabase;
             SortedDictionary<string, Patch> allPatchesInAssembly;
 
-            if (Patch.IsPatchingRequired(builder, databaseAssembly, hostAssembly, out databaseVersion, out patchesInDatabase, out allPatchesInAssembly))
-                new PatchingUI(builder, repository, databaseVersion, databaseAssembly, hostAssembly, patchesInDatabase, allPatchesInAssembly).ShowDialog();
+            if (Patch.IsPatchingRequired(builder, patcher, out databaseVersion, out patchesInDatabase, out allPatchesInAssembly))
+                new PatchingUI(builder, repository, databaseVersion, patcher, patchesInDatabase, allPatchesInAssembly).ShowDialog();
         }
 
         private void btnAttemptPatching_Click(object sender, EventArgs e)
@@ -110,7 +106,7 @@ namespace MapsDirectlyToDatabaseTableUI
 
                         checksUI1.OnCheckPerformed(new CheckEventArgs(
                             "The database contains an unexplained patch called " + patch.locationInAssembly +
-                            " (it is not in " + _databaseAssembly.FullName + " ) so how did it get there?", CheckResult.Fail,
+                            " (it is not in " + _patcher.GetDbAssembly().FullName + " ) so how did it get there?", CheckResult.Fail,
                             null));
                         stop = true;
                     }
@@ -159,7 +155,7 @@ namespace MapsDirectlyToDatabaseTableUI
             foreach (Patch futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > _hostAssemblyVersion))
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs(
-                    "Cannot apply patch "+futurePatch.locationInAssembly+" because it's database version number is "+futurePatch.DatabaseVersionNumber+" which is higher than the currently loaded host assembly (" +_hostAssembly.FullName+ "). ", CheckResult.Fail, null));
+                    "Cannot apply patch "+futurePatch.locationInAssembly+" because it's database version number is "+futurePatch.DatabaseVersionNumber+" which is higher than the currently loaded host assembly (" +_patcher.GetDbAssembly().FullName+ "). ", CheckResult.Fail, null));
                 stop = true;
                 
             }
@@ -197,7 +193,6 @@ namespace MapsDirectlyToDatabaseTableUI
 
         }
 
-        private bool _yesToAll = false;
 
         private bool PreviewPatch(Patch patch)
         {

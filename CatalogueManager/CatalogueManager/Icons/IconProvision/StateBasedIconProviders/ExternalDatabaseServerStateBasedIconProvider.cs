@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Reflection;
 using System.Runtime.InteropServices;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Nodes;
 using CatalogueManager.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -29,11 +30,11 @@ namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
             _overlayProvider = overlayProvider;
             _default = CatalogueIcons.ExternalDatabaseServer;
             
-            _assemblyToIconDictionary.Add(typeof (DataQualityEngine.Database.Class1).Assembly.GetName().Name,CatalogueIcons.ExternalDatabaseServer_DQE);
-            _assemblyToIconDictionary.Add(typeof(ANOStore.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_ANO);
-            _assemblyToIconDictionary.Add(typeof (IdentifierDump.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
-            _assemblyToIconDictionary.Add(typeof(QueryCaching.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_Cache);
-            _assemblyToIconDictionary.Add(typeof(HIC.Logging.Database.Class1).Assembly.GetName().Name, CatalogueIcons.ExternalDatabaseServer_Logging);
+            _assemblyToIconDictionary.Add(new DataQualityEnginePatcher().Name,CatalogueIcons.ExternalDatabaseServer_DQE);
+            _assemblyToIconDictionary.Add(new ANOStorePatcher().Name, CatalogueIcons.ExternalDatabaseServer_ANO);
+            _assemblyToIconDictionary.Add(new IdentifierDumpDatabasePatcher().Name, CatalogueIcons.ExternalDatabaseServer_IdentifierDump);
+            _assemblyToIconDictionary.Add(new QueryCachingPatcher().Name, CatalogueIcons.ExternalDatabaseServer_Cache);
+            _assemblyToIconDictionary.Add(new LoggingDatabasePatcher().Name, CatalogueIcons.ExternalDatabaseServer_Logging);
 
             _typeSpecificIconsProvider = new DatabaseTypeIconProvider();
         }

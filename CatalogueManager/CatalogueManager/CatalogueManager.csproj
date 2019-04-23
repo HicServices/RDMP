@@ -1621,22 +1621,16 @@
     <None Include="verisign_key.pfx" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj" />
     <ProjectReference Include="..\..\Anonymisation\ANOStore\ANOStore.csproj" />
-    <ProjectReference Include="..\..\Anonymisation\IdentifierDump.Database\IdentifierDump.Database.csproj" />
     <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj" />
     <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj" />
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary.Database\DataExportLibrary.Database.csproj" />
     <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj" />
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj" />
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
-    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
     <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
     <ProjectReference Include="..\..\Diagnostics\Diagnostics.csproj" />
-    <ProjectReference Include="..\..\Logging\HIC.Logging.Database\HIC.Logging.Database.csproj" />
     <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
-    <ProjectReference Include="..\..\QueryCaching\QueryCaching.Database\QueryCaching.Database.csproj" />
     <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj" />
     <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj" />

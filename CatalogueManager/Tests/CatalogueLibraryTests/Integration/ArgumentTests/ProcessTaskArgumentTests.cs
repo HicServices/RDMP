@@ -344,7 +344,7 @@ namespace CatalogueLibraryTests.Integration.ArgumentTests
 
             var arg = new PipelineComponentArgument(CatalogueRepository, pc);
 
-            var server = new ExternalDatabaseServer(CatalogueRepository, "fish");
+            var server = new ExternalDatabaseServer(CatalogueRepository, "fish",null);
 
             try
             {

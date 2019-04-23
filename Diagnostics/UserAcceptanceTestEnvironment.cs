@@ -177,7 +177,7 @@ namespace Diagnostics
 
                     if(create)
                     {
-                        var raw = new ExternalDatabaseServer(RepositoryLocator.CatalogueRepository, "RAW");
+                        var raw = new ExternalDatabaseServer(RepositoryLocator.CatalogueRepository, "RAW",null);
                         raw.Server = _discoveredServerToCreateRawDataOn.Name;
                         raw.Username = builder.UserID;
                         raw.Password = builder.Password;
@@ -620,7 +620,7 @@ namespace Diagnostics
             try
             {
                 //Create new external server
-                var newServer = new ExternalDatabaseServer(repository, nameForServer)
+                var newServer = new ExternalDatabaseServer(repository, nameForServer,null)
                 {
                     Server = discoveredDatabase.Server.Name,
                     Database = discoveredDatabase.GetRuntimeName()

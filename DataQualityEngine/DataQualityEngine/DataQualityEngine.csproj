@@ -167,7 +167,6 @@
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
-    <ProjectReference Include="..\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
                                                                       </ItemGroup>

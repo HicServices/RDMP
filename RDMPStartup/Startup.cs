@@ -12,6 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CatalogueLibrary.Repositories;
 using CatalogueLibrary.Repositories.Construction;
@@ -68,36 +69,21 @@ namespace RDMPStartup
             bool foundCatalogue = false;
 
             Assembly.Load(typeof(Catalogue).Assembly.FullName);
-            Assembly.Load(typeof(CatalogueLibrary.Database.Class1).Assembly.FullName);
-
             Assembly.Load(typeof(ExtractableDataSet).Assembly.FullName);
-            Assembly.Load(typeof(DataExportLibrary.Database.Class1).Assembly.FullName);
 
             Assembly.Load(typeof(Evaluation).Assembly.FullName);
-            Assembly.Load(typeof(DataQualityEngine.Database.Class1).Assembly.FullName);
 
             Assembly.Load(typeof(LogManager).Assembly.FullName);
-            Assembly.Load(typeof(HIC.Logging.Database.Class1).Assembly.FullName);
-
-            Assembly.Load(typeof(ANOStore.Class1).Assembly.FullName);
-            Assembly.Load(typeof(ANOStore.Database.Class1).Assembly.FullName);
-
-            Assembly.Load(typeof(IdentifierDump.Class1).Assembly.FullName);
-            Assembly.Load(typeof(IdentifierDump.Database.Class1).Assembly.FullName);
-
-            Assembly.Load(typeof(QueryCachingDatabasePatcher).Assembly.FullName);
-            Assembly.Load(typeof(QueryCaching.Database.Class1).Assembly.FullName);
+            
+            var cataloguePatcher = new CataloguePatcher();
 
             try
             {
-                var hostAssembly = typeof(Catalogue).Assembly;
-                var dbAssembly = Assembly.Load("CatalogueLibrary.Database");
-
-                foundCatalogue = Find((ITableRepository) RepositoryLocator.CatalogueRepository, hostAssembly, dbAssembly, 1, RDMPPlatformType.Catalogue);
+                foundCatalogue = Find((ITableRepository) RepositoryLocator.CatalogueRepository,cataloguePatcher);
             }
             catch (Exception e)
             {
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,null,null,1, RDMPPlatformDatabaseStatus.Broken, RDMPPlatformType.Catalogue,e));
+                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,cataloguePatcher, RDMPPlatformDatabaseStatus.Broken,e));
             }
 
             if (foundCatalogue)
@@ -139,14 +125,11 @@ namespace RDMPStartup
                     if(dataExportRepository == null)
                         return;
 
-                    var hostAssembly = typeof(ExtractableDataSet).Assembly;
-                    var dbAssembly = Assembly.Load("DataExportLibrary.Database");
-
-                    Find((ITableRepository) dataExportRepository, hostAssembly, dbAssembly,1, RDMPPlatformType.DataExport);
+                    Find((ITableRepository) dataExportRepository, new DataExportPatcher());
                 }
                 catch (Exception e)
                 {
-                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,null,null,1, RDMPPlatformDatabaseStatus.Broken, RDMPPlatformType.DataExport,e));
+                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,new DataExportPatcher(), RDMPPlatformDatabaseStatus.Broken,e));
                 }
 
                 FindTier3Databases( RepositoryLocator.CatalogueRepository);
@@ -166,7 +149,7 @@ namespace RDMPStartup
                     var instance = (IPatcher)constructor.Construct(patcherType);
 
                     PluginPatcherFound(this, new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
-                    FindWithPatcher(instance, 3, RDMPPlatformType.Plugin);
+                    FindWithPatcher(instance);
 
                 }
                 catch (Exception e)
@@ -176,7 +159,7 @@ namespace RDMPStartup
             }
         }
 
-        private bool Find(ITableRepository tableRepository, Assembly hostAssembly, Assembly dbAssembly, int tier,RDMPPlatformType rdmpPlatformType)
+        private bool Find(ITableRepository tableRepository, IPatcher patcher)
         {
             //is it reachable
             try
@@ -186,7 +169,7 @@ namespace RDMPStartup
             catch (Exception ex)
             {
                 //no
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, hostAssembly, dbAssembly, tier, RDMPPlatformDatabaseStatus.Unreachable, rdmpPlatformType, ex));
+                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Unreachable, ex));
                 return false;
             }
 
@@ -200,21 +183,21 @@ namespace RDMPStartup
                 SortedDictionary<string, Patch> allPatchesInAssembly;
                 
                 
-                patchingRequired = Patch.IsPatchingRequired((SqlConnectionStringBuilder) tableRepository.ConnectionStringBuilder, dbAssembly, hostAssembly, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
+                patchingRequired = Patch.IsPatchingRequired((SqlConnectionStringBuilder) tableRepository.ConnectionStringBuilder, patcher, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
             }
             catch (Exception e)
             {
                 //database is broken (maybe the version of the db is ahead of the host assembly?)
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, hostAssembly, dbAssembly, tier, RDMPPlatformDatabaseStatus.Broken, rdmpPlatformType, e));
+                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Broken, e));
                 return false;
             }
 
             if (patchingRequired)
                 //database is broken
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, hostAssembly, dbAssembly, tier, RDMPPlatformDatabaseStatus.RequiresPatching, rdmpPlatformType));
+                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.RequiresPatching));
             else
                 //database is broken
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, hostAssembly, dbAssembly, tier, RDMPPlatformDatabaseStatus.Healthy, rdmpPlatformType));
+                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Healthy));
           
 
             return true;
@@ -222,43 +205,24 @@ namespace RDMPStartup
         private void FindTier2Databases()
         {
             //DQE
-            Type type = typeof(DataQualityEngine.Class1);
-            Debug.Assert(type != null);
-            var dqe = new DataQualityEnginePatcher();
-            FindWithPatcher(dqe,2,RDMPPlatformType.DQE);
+            FindWithPatcher(new DataQualityEnginePatcher());
 
             //Logging
-            type = typeof(HIC.Logging.Class1);
-            Debug.Assert(type != null);
-            var logging = new LoggingDatabasePatcher();
-            FindWithPatcher(logging,2,RDMPPlatformType.Logging);
+            FindWithPatcher(new LoggingDatabasePatcher());
 
             //ANO
-            type = typeof(ANOStore.Class1);
-            Debug.Assert(type != null);
-            var ano = new ANOStoreDatabasePatcher();
-            FindWithPatcher(ano,2,RDMPPlatformType.ANO);
+            FindWithPatcher(new ANOStorePatcher());
 
             //Identifier Dump
-            type = typeof(IdentifierDump.Class1);
-            Debug.Assert(type != null);
-            var identifierDump = new IdentifierDumpDatabasePatcher();
-            FindWithPatcher(identifierDump, 2, RDMPPlatformType.IdentifierDump);
+            FindWithPatcher(new IdentifierDumpDatabasePatcher());
             
             //Query cache
-            type = typeof(QueryCaching.Class1);
-            var cache = new QueryCachingDatabasePatcher();
-            FindWithPatcher(cache, 2, RDMPPlatformType.QueryCache);
-
-            Debug.Assert(type != null);
+            FindWithPatcher(new QueryCachingPatcher());
         }
 
-        private void FindWithPatcher(IPatcher patcher,int tier, RDMPPlatformType type)
+        private void FindWithPatcher(IPatcher patcher)
         {
-            Assembly hostAssembly = patcher.GetHostAssembly();
-            Assembly dbAssembly = patcher.GetDbAssembly();
-
-            var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.WasCreatedByDatabaseAssembly(dbAssembly));
+            var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.WasCreatedBy(patcher));
 
             foreach (IExternalDatabaseServer server in dbs)
             {
@@ -268,7 +232,7 @@ namespace RDMPStartup
                         .ExpectServer(server, DataAccessContext.InternalDataProcessing)
                         .Builder;
 
-                    Find(new CatalogueRepository(builder), hostAssembly, dbAssembly,tier,type);
+                    Find(new CatalogueRepository(builder), patcher);
                 }
                 catch (Exception e)
                 {

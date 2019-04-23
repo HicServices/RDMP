@@ -31,7 +31,6 @@
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(ManagedDatabaseUI));
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.pictureBox2 = new System.Windows.Forms.PictureBox();
-            this.lblHostAssembly = new System.Windows.Forms.Label();
             this.lblPatchingAssembly = new System.Windows.Forms.Label();
             this.pbDatabase = new System.Windows.Forms.PictureBox();
             this.lblDatabase = new System.Windows.Forms.Label();
@@ -63,16 +62,6 @@
             this.pictureBox2.Size = new System.Drawing.Size(20, 20);
             this.pictureBox2.TabIndex = 0;
             this.pictureBox2.TabStop = false;
-            // 
-            // lblHostAssembly
-            // 
-            this.lblHostAssembly.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblHostAssembly.Location = new System.Drawing.Point(29, 116);
-            this.lblHostAssembly.Name = "lblHostAssembly";
-            this.lblHostAssembly.Size = new System.Drawing.Size(263, 18);
-            this.lblHostAssembly.TabIndex = 1;
-            this.lblHostAssembly.Text = "lblHostAssembly";
             // 
             // lblPatchingAssembly
             // 
@@ -171,7 +160,6 @@
             this.Controls.Add(this.lblDatabase);
             this.Controls.Add(this.pbDatabase);
             this.Controls.Add(this.lblPatchingAssembly);
-            this.Controls.Add(this.lblHostAssembly);
             this.Controls.Add(this.pictureBox2);
             this.Controls.Add(this.pictureBox1);
             this.Name = "ManagedDatabaseUI";
@@ -189,7 +177,6 @@
 
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.PictureBox pictureBox2;
-        private System.Windows.Forms.Label lblHostAssembly;
         private System.Windows.Forms.Label lblPatchingAssembly;
         private System.Windows.Forms.PictureBox pbDatabase;
         private System.Windows.Forms.Label lblDatabase;

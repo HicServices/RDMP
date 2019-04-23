@@ -18,6 +18,7 @@ using CatalogueLibrary.Repositories.Managers;
 using CatalogueLibrary.Ticketing;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Repositories
@@ -125,7 +126,12 @@ namespace CatalogueLibrary.Repositories
         /// <returns></returns>
         Catalogue[] GetAllCataloguesUsing(TableInfo tableInfo);
 
-        ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type);
+        /// <summary>
+        /// Returns all <see cref="ExternalDatabaseServer"/> which were created by the patcher specified.  The patcher must have a blank constructor
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <returns></returns>
+        ExternalDatabaseServer[] GetAllDatabases<T>()where T:IPatcher,new();
         
     }
 }

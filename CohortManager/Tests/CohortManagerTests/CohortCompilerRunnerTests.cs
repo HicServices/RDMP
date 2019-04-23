@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.ExternalDatabaseServerPatching;
 using CohortManagerLibrary.Execution;
 using FAnsi;
@@ -64,10 +65,10 @@ namespace CohortManagerTests
             SetupCohort(out db, out cic, out dt);
             
             MasterDatabaseScriptExecutor e = new MasterDatabaseScriptExecutor(db);
-            var patcher = new QueryCachingDatabasePatcher();
-            e.CreateAndPatchDatabaseWithDotDatabaseAssembly(patcher.GetDbAssembly(),new AcceptAllCheckNotifier());
+            var p = new QueryCachingPatcher();
+            e.CreateAndPatchDatabase(p,new AcceptAllCheckNotifier());
             
-            var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", patcher.GetDbAssembly());
+            var serverReference = new ExternalDatabaseServer(CatalogueRepository, "Cache", p);
             serverReference.SetProperties(db);
 
             cic.QueryCachingServer_ID = serverReference.ID;

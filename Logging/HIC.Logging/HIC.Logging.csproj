@@ -112,7 +112,6 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\HIC.Logging.Database\HIC.Logging.Database.csproj" />
   </ItemGroup>
   <ItemGroup>
       </ItemGroup>

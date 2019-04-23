@@ -15,6 +15,7 @@ using System.Text.RegularExpressions;
 using CatalogueLibrary;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.DataHelper;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Repositories;
@@ -25,6 +26,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
 using RDMPStartup;
@@ -125,8 +127,8 @@ namespace Tests.Common
 
             var defaults = CatalogueRepository.GetServerDefaults();
 
-            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,typeof(DataQualityEngine.Database.Class1).Assembly);
-            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,new DataQualityEnginePatcher());
+            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
             CreateScratchArea();
@@ -172,7 +174,7 @@ namespace Tests.Common
             return settings;
         }
 
-        private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,Assembly creator)
+        private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
         {
             var opts = new PlatformDatabaseCreationOptions()
             {
@@ -186,7 +188,7 @@ namespace Tests.Common
                 builder.InitialCatalog = "";
 
             //create a new pointer
-            var externalServerPointer = new ExternalDatabaseServer(CatalogueRepository, databaseName??"RAW",creator)
+            var externalServerPointer = new ExternalDatabaseServer(CatalogueRepository, databaseName??"RAW",patcher)
             {
                 Server = builder.DataSource,
                 Database = builder.InitialCatalog,

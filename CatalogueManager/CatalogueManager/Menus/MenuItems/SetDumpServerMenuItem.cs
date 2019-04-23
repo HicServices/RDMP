@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
 using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
@@ -38,12 +39,7 @@ namespace CatalogueManager.Menus.MenuItems
 
             var cataRepo = activator.RepositoryLocator.CatalogueRepository;
 
-            _availableServers = cataRepo.GetAllObjects<ExternalDatabaseServer>()
-                .Where(
-                    s =>
-                        s.CreatedByAssembly != null &&
-                        s.CreatedByAssembly.Equals(typeof(IdentifierDump.Database.Class1).Assembly.GetName().Name)).ToArray();
-
+            _availableServers = cataRepo.GetAllDatabases<IdentifierDumpDatabasePatcher>();
 
             var miUseExisting = new ToolStripMenuItem("Use Existing...", overlay.GetOverlayNoCache(img, OverlayKind.Link),UseExisting);
             miUseExisting.Enabled = _availableServers.Any();
@@ -72,7 +68,7 @@ namespace CatalogueManager.Menus.MenuItems
 
         private void CreateNewIdentifierDumpServer(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, typeof(IdentifierDump.Database.Class1).Assembly, PermissableDefaults.IdentifierDumpServer_ID);
+            var cmd = new ExecuteCommandCreateNewExternalDatabaseServer(_activator, new IdentifierDumpDatabasePatcher(), PermissableDefaults.IdentifierDumpServer_ID);
             cmd.Execute();
 
             if (cmd.ServerCreatedIfAny != null)

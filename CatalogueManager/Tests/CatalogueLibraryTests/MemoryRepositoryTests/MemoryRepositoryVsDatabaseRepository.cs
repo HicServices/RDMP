@@ -74,7 +74,7 @@ namespace CatalogueLibraryTests.MemoryRepositoryTests
         {
             var memoryRepository = new MemoryCatalogueRepository();
 
-            var loggingServer = new ExternalDatabaseServer(memoryRepository, "My Logging Server");
+            var loggingServer = new ExternalDatabaseServer(memoryRepository, "My Logging Server",null);
             memoryRepository.SetDefault(PermissableDefaults.LiveLoggingServer_ID, loggingServer);
 
             Catalogue memCatalogue = new Catalogue(memoryRepository, "My New Catalogue");

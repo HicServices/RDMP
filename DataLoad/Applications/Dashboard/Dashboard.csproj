@@ -212,7 +212,6 @@
     <ProjectReference Include="..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
     <ProjectReference Include="..\..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj" />
     <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
-    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine.Database\DataQualityEngine.Database.csproj" />
     <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
     <ProjectReference Include="..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj" />

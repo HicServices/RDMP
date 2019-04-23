@@ -8,6 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueLibrary.Data.DataLoad;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
@@ -54,7 +55,7 @@ namespace CatalogueManager.ANOEngineeringUIs
             CommonFunctionality.AddHelp(nIntegers, "ANOTable.NumberOfIntegersToUseInAnonymousRepresentation");
             CommonFunctionality.AddHelp(nCharacters, "ANOTable.NumberOfCharactersToUseInAnonymousRepresentation");
 
-            if (!_anoTable.Server.WasCreatedByDatabaseAssembly(Tier2DatabaseType.ANOStore))
+            if (!_anoTable.Server.WasCreatedBy(new ANOStorePatcher()))
                 _serverErrorProvider.SetError(llServer, "Server is not an ANO server");
             else
                 _serverErrorProvider.Clear();

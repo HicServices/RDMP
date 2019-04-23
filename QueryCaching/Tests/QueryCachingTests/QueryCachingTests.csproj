@@ -32,7 +32,6 @@
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\..\QueryCaching.Database\QueryCaching.Database.csproj" />
     <ProjectReference Include="..\..\QueryCaching\QueryCaching.csproj" />
   </ItemGroup>
   <ItemGroup>

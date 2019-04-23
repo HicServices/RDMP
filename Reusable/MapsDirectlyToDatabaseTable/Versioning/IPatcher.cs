@@ -6,26 +6,39 @@
 
 using System.Reflection;
 
-namespace CatalogueLibrary.ExternalDatabaseServerPatching
+namespace MapsDirectlyToDatabaseTable.Versioning
 {
     /// <summary>
-    /// Identifies databases belong to a specific .Database assembly that might need patching at Startup.  Document the host and database assembly classes (e.g. CatalogueLibrary
-    /// and CatalogueLibrary.Database).
+    /// Identifies databases belong to a specific .Database assembly that might need patching at Startup.
 	///
     /// <para>If you are writing a plugin you should use IPluginPatcher instead which is MEF discoverable</para>
     /// </summary>
     public interface IPatcher
     {
         /// <summary>
-        /// Returns the assembly containing all the class definitions for objects stored in the database e.g. CatalogueLibrary.dll
-        /// </summary>
-        /// <returns></returns>
-        Assembly GetHostAssembly();
-
-        /// <summary>
         /// Returns the dot database assembly containing all the Sql scripts to run to bring the database up to the current version e.g. CatalogueLibrary.Database.dll
         /// </summary>
         /// <returns></returns>
         Assembly GetDbAssembly();
+
+        /// <summary>
+        /// The subdirectory of the .Database assembly which contains the embedded resources (sql files to create/patch the database).
+        /// </summary>
+        string ResourceSubdirectory { get; }
+
+        /// <summary>
+        /// The tier of the database, 1 for Catalogue and Data export, 2 for satellite optional databases (e.g. ANOStore) and 3 for plugin
+        /// </summary>
+        int Tier { get; }
+
+        /// <summary>
+        /// The unique name for the assembly/subdirectory
+        /// </summary>
+        string Name { get; }
+
+        /// <summary>
+        /// The legacy name (if any) that this patcher might have been known by in the past
+        /// </summary>
+        string LegacyName { get; }
     }
 }

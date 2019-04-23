@@ -16,7 +16,6 @@ using CatalogueLibrary.Data.Aggregation;
 using FAnsi.Discovery;
 using FAnsi.Naming;
 using QueryCaching.Aggregation.Arguments;
-using QueryCaching.Database;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
@@ -41,8 +40,6 @@ namespace QueryCaching.Aggregation
     {
         private readonly DiscoveredServer _server;
         private DiscoveredDatabase _database;
-
-        public static Type DbAssembly = typeof (Class1);
 
         public CachedAggregateConfigurationResultsManager(IExternalDatabaseServer server)
         {

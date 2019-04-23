@@ -9,6 +9,7 @@ using System.Reflection;
 using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueLibrary.Data
@@ -19,19 +20,11 @@ namespace CatalogueLibrary.Data
     public interface IExternalDatabaseServer : IDataAccessPoint, INamed
     {
         /// <summary>
-        /// Determines whether the given database server was created by the specified .Database assembly e.g. (DataQualityEngine.Database.dll).  If it is then the 
-        /// schema will match, database objects will be retrievable through the host assembly (e.g. DataQualityEngine.dll) etc.
-        /// </summary>
-        /// <param name="databaseAssembly"></param>
-        /// <returns></returns>
-        bool WasCreatedByDatabaseAssembly(Assembly databaseAssembly);
-
-        /// <summary>
-        /// Determines whether the given database server was created by the specified .Database assembly e.g. (DataQualityEngine.Database.dll).  If it is then the 
+        /// Determines whether the given database server was created by the specified patcher assembly e.g. (CatalogueLibrary.Database.dll).  If it is then the 
         /// schema will match, database objects will be retrievable through the host assembly (e.g. DataQualityEngine.dll) etc.
         /// </summary>
         /// <returns></returns>
-        bool WasCreatedByDatabaseAssembly(Tier2DatabaseType type);
+        bool WasCreatedBy(IPatcher patcher);
 
         /// <summary>
         /// Provides a live object for interacting directly with the server referenced by this <see cref="IExternalDatabaseServer"/>.  This will wokr

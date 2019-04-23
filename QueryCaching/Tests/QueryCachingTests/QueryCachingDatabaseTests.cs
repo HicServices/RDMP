@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Database;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
@@ -28,9 +29,10 @@ namespace QueryCachingTests
                 DiscoveredQueryCachingDatabase.Drop();
 
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(DiscoveredQueryCachingDatabase);
-            scripter.CreateAndPatchDatabaseWithDotDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
+            var p = new QueryCachingPatcher();
+            scripter.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
 
-            QueryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,QueryCachingDatabaseName);
+            QueryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository,QueryCachingDatabaseName,p);
             QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);
         }
 

@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Cohort;
+using CatalogueLibrary.Database;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -28,7 +29,7 @@ namespace CohortManager.CommandExecution.AtomicCommands
             _cic = cic;
 
             _caches = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
-                .Where(s => s.WasCreatedByDatabaseAssembly(typeof(QueryCaching.Database.Class1).Assembly)).ToArray();
+                .Where(s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
 
             if(!_caches.Any())
                 SetImpossible("There are no Query Caching databases set up");

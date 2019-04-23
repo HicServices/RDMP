@@ -20,7 +20,7 @@ namespace CatalogueLibraryTests.Integration
 
             ServerDefaults defaults = new ServerDefaults(CatalogueRepository);
 
-            var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme");
+            var databaseServer = new ExternalDatabaseServer(CatalogueRepository, "Deleteme",null);
 
             try
             {

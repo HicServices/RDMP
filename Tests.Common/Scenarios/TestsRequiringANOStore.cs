@@ -9,6 +9,8 @@ using System.Linq;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.DataLoad;
 using CatalogueLibrary.Data.Defaults;
+using CatalogueLibrary.Database;
+using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
@@ -30,9 +32,6 @@ namespace Tests.Common.Scenarios
             CreateANODatabase();
 
             CreateReferenceInCatalogueToANODatabase();
-
-            var t = typeof (ANOStore.Class1);
-            Console.WriteLine(t.Name);
         }
 
         private void DropANODatabase()
@@ -54,11 +53,9 @@ namespace Tests.Common.Scenarios
         {
             DropANODatabase();
 
-            var ano = typeof(ANOStore.Database.Class1);
-            Console.WriteLine("Was ANOStore.Database.dll also loaded into memory:" + ano);
-
             var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_Database);
-            scriptCreate.CreateAndPatchDatabase(typeof(ANOStore.Class1).Assembly, new ThrowImmediatelyCheckNotifier());
+            
+            scriptCreate.CreateAndPatchDatabase(new ANOStorePatcher(), new ThrowImmediatelyCheckNotifier());
         }
 
         private void CreateReferenceInCatalogueToANODatabase()
@@ -66,7 +63,7 @@ namespace Tests.Common.Scenarios
             RemovePreExistingReference();
 
             //now create a new reference!
-            ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,typeof(ANOStore.Database.Class1).Assembly);
+            ANOStore_ExternalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, ANOStore_DatabaseName,new ANOStorePatcher());
             ANOStore_ExternalDatabaseServer.SetProperties(ANOStore_Database);
 
             CatalogueRepository.GetServerDefaults().SetDefault(PermissableDefaults.ANOStore, ANOStore_ExternalDatabaseServer);

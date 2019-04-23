@@ -60,6 +60,5 @@
     <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\QueryCaching.Database\QueryCaching.Database.csproj" />
   </ItemGroup>
 </Project>

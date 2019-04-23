@@ -62,24 +62,17 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
         public void HandleDatabaseFound(PlatformDatabaseFoundEventArgs eventArgs)
         {
             _eventArgs = eventArgs;
-            lblDatabaseType.Text = eventArgs.DatabaseType.ToString();
+            lblDatabaseType.Text = eventArgs.Patcher.Name;
             
             lblPatchingAssembly.ForeColor = Color.Black;
-            lblHostAssembly.ForeColor = Color.Black;
-
+            
             if (eventArgs.Repository != null)
                 lblDatabase.Text = Describe(eventArgs.Repository,eventArgs.Status);
 
-            if(eventArgs.DatabaseAssembly != null)
-                lblHostAssembly.Text = Describe(lblHostAssembly, eventArgs.DatabaseAssembly);
-            else
-            {
-                lblHostAssembly.Text = "Unknown";
-                lblHostAssembly.ForeColor = Color.Red;
-            }
+            var assembly = eventArgs.Patcher?.GetDbAssembly();
 
-            if (eventArgs.HostAssembly != null)
-                lblPatchingAssembly.Text = Describe(lblPatchingAssembly, eventArgs.HostAssembly);
+            if (assembly != null)
+                lblPatchingAssembly.Text = Describe(lblPatchingAssembly, assembly);
             else
             {
                 lblPatchingAssembly.Text = "Unknown";
@@ -175,7 +168,7 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
 
         private void llPatch_LinkClicked(object sender, LinkLabelLinkClickedEventArgs e)
         {
-            PatchingUI.ShowIfRequired((SqlConnectionStringBuilder) _eventArgs.Repository.ConnectionStringBuilder,_eventArgs.Repository,_eventArgs.DatabaseAssembly,_eventArgs.HostAssembly);
+            PatchingUI.ShowIfRequired((SqlConnectionStringBuilder) _eventArgs.Repository.ConnectionStringBuilder,_eventArgs.Repository,_eventArgs.Patcher);
 
             RequestRestart();
 

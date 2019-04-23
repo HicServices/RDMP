@@ -5,9 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.SqlClient;
-using System.Reflection;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
 
 namespace RDMPStartup.Events
@@ -24,30 +23,22 @@ namespace RDMPStartup.Events
     public class PlatformDatabaseFoundEventArgs
     {
         public ITableRepository Repository { get; set; }
-        public Assembly HostAssembly { get; set; }
-        public Assembly DatabaseAssembly { get; set; }
-
-        public int Tier { get; set; }
-        public RDMPPlatformType DatabaseType { get; set; }
+        public IPatcher Patcher { get; set; }
 
         public RDMPPlatformDatabaseStatus Status { get; set; }
         public Exception Exception { get; set; }
 
-        public PlatformDatabaseFoundEventArgs(ITableRepository repository, Assembly hostAssembly, Assembly databaseAssembly, int tier, RDMPPlatformDatabaseStatus status, RDMPPlatformType databaseType,Exception exception=null)
+        public PlatformDatabaseFoundEventArgs(ITableRepository repository, IPatcher patcher, RDMPPlatformDatabaseStatus status, Exception exception=null)
         {
             Repository = repository;
-            HostAssembly = hostAssembly;
-            DatabaseAssembly = databaseAssembly;
-            Tier = tier;
+            Patcher = patcher;
             Status = status;
             Exception = exception;
-            DatabaseType = databaseType;
         }
 
         public string SummariseAsString()
         {
-            return "RDMPPlatformDatabaseStatus is " + Status + " for tier " + Tier + " database of type " +
-                   DatabaseType + " with connection string " +
+            return "RDMPPlatformDatabaseStatus is " + Status + " for tier " + Patcher.Tier + " database of type " + Patcher.Name+ " with connection string " +
                    (Repository == null ? "Unknown" : Repository.ConnectionString) + Environment.NewLine +
                    (Exception == null
                        ? "No exception"

@@ -8,13 +8,13 @@ using System;
 using System.Data;
 using System.Data.SqlClient;
 using CatalogueLibrary.Data;
+using CatalogueLibrary.Database;
 using CohortManagerLibrary.QueryBuilding;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using QueryCaching.Aggregation;
 using QueryCaching.Aggregation.Arguments;
-using QueryCaching.Database;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -33,11 +33,10 @@ namespace CohortManagerTests.QueryTests
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(queryCacheDatabase);
 
-            Console.WriteLine("QueryCachingDatabaseIs" + typeof (Class1).Assembly.FullName);
-
-            executor.CreateAndPatchDatabase(typeof(CachedAggregateConfigurationResultsManager).Assembly,new ThrowImmediatelyCheckNotifier());
+            var p = new QueryCachingPatcher();
+            executor.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
             
-            externalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, "QueryCacheForUnitTests");
+            externalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, "QueryCacheForUnitTests",p);
             externalDatabaseServer.SetProperties(queryCacheDatabase);
         }
 

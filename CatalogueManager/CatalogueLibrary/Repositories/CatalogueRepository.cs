@@ -29,6 +29,7 @@ using CatalogueLibrary.Repositories.Managers;
 using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Extensions;
@@ -206,9 +207,10 @@ namespace CatalogueLibrary.Repositories
             return typeof (DatabaseEntity).IsAssignableFrom(type);
         }
 
-        public ExternalDatabaseServer[] GetAllTier2Databases(Tier2DatabaseType type)
+        public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
         {
-            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedByDatabaseAssembly(type)).ToArray();
+            IPatcher p = new T();
+            return GetAllObjects<ExternalDatabaseServer>().Where(s=>s.WasCreatedBy(p)).ToArray();
         }
         
 
@@ -253,14 +255,5 @@ select 0", con.Connection, con.Transaction);
   where
   TableInfo_ID = {0} )", tableInfo.ID)).ToArray();
         }
-    }
-
-    public enum Tier2DatabaseType
-    {
-        Logging,
-        DataQuality,
-        QueryCaching,
-        ANOStore,
-        IdentifierDump
     }
 }

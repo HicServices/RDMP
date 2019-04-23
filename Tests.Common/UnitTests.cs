@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using ANOStore.Database;
 using CatalogueLibrary.Data;
 using CatalogueLibrary.Data.Aggregation;
 using CatalogueLibrary.Data.Cache;
@@ -21,6 +20,7 @@ using CatalogueLibrary.Data.Governance;
 using CatalogueLibrary.Data.ImportExport;
 using CatalogueLibrary.Data.Pipelines;
 using CatalogueLibrary.Data.Remoting;
+using CatalogueLibrary.Database;
 using CatalogueLibrary.Repositories;
 using DataExportLibrary.Data;
 using DataExportLibrary.Data.DataTables;
@@ -114,7 +114,7 @@ namespace Tests.Common
 
             if (typeof(T) == typeof(ExternalDatabaseServer))
             {
-                return (T)(object)Save(new ExternalDatabaseServer(Repository, "My Server"));
+                return (T)(object)Save(new ExternalDatabaseServer(Repository, "My Server",null));
             }
 
             if (typeof(T) == typeof(ANOTable))
@@ -536,7 +536,7 @@ namespace Tests.Common
         /// <inheritdoc cref="WhenIHaveA{T}()"/>
         protected ANOTable WhenIHaveA<T>(out ExternalDatabaseServer server) where T : ANOTable
         {
-            server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(Class1).Assembly);
+            server = new ExternalDatabaseServer(Repository, "ANO Server", new ANOStorePatcher());
             var anoTable = new ANOTable(Repository, server, "ANOFish", "F");
             return anoTable;
         }

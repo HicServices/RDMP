@@ -171,7 +171,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Anonymisation\ANOStore.Database\ANOStore.Database.csproj" />
     <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
     <ProjectReference Include="..\..\..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
     <ProjectReference Include="..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
