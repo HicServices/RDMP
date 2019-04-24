@@ -25,19 +25,9 @@
     <Compile Include="..\..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
-    <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
-    <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
-    <ProjectReference Include="..\..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
-    <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\..\..\..\Sharing\Sharing\Sharing.csproj" />
     <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Attachers\GenericAttachers.cd" />
-    <None Include="DataFlowSources\DelimitedFlatFileDataFlowSource.cd" />
   </ItemGroup>
   <ItemGroup>
                                                                                                                                                                                                                                                                                                   </ItemGroup>

@@ -309,15 +309,11 @@
     <None Include="Resources\Folder.png" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
     <ProjectReference Include="..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj" />
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
-    <ProjectReference Include="..\DataExportLibrary\DataExportLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />

@@ -146,17 +146,11 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
     <ProjectReference Include="..\..\CatalogueManager\CatalogueManager\CatalogueManager.csproj" />
-    <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj" />
     <ProjectReference Include="..\..\CohortManager\CohortManager\CohortManager.csproj" />
-    <ProjectReference Include="..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
     <ProjectReference Include="..\..\DataExportManager\DataExportManager\DataExportManager.csproj" />
     <ProjectReference Include="..\..\DataLoad\Applications\Dashboard\Dashboard.csproj" />
     <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj" />
-    <ProjectReference Include="..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
-    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />

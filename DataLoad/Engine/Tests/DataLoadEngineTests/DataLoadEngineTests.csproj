@@ -56,76 +56,20 @@
       <DesignTimeSharedInput>True</DesignTimeSharedInput>
       <DependentUpon>Settings.settings</DependentUpon>
     </Compile>
-    <Compile Update="Resources\Resource1.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resource1.resx</DependentUpon>
-    </Compile>
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
-    <None Include="Resources\BlankBook.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\BlankLineBook.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\kvpTestFilePK2.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\kvpTestFilePK.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\kvpTestFile_NoPK.csv">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <None Include="Resources\Test.xlsx" />
-    <None Include="Resources\z_TEMPLATE_data_folder.zip">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </None>
-    <EmbeddedResource Include="Unit\TestFile\Book1.xlsx" />
-    <EmbeddedResource Include="Unit\TestFile\FreakyBook1.xlsx" />
-    <EmbeddedResource Include="Unit\TestFile\OddFormats.xls" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
-    <ProjectReference Include="..\..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
-    <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
     <ProjectReference Include="..\..\..\..\Diagnostics\Diagnostics.csproj" />
-    <ProjectReference Include="..\..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\..\DataLoadEngine\DataLoadEngine.csproj" />
-    <ProjectReference Include="..\..\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="Resources\ExpectedData.sql" />
-    <Content Include="Resources\LiveData.sql" />
-    <Content Include="Resources\StagingData.sql" />
-    <Content Include="Resources\Test_DB.mdf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-    </Content>
-    <Content Include="Resources\Test_DB_log.ldf">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
-      <DependentUpon>Test_DB.mdf</DependentUpon>
-    </Content>
-    <None Include="Resources\XmlTestForExcel.xml" />
-  </ItemGroup>
-  <ItemGroup>
-    <EmbeddedResource Update="Resources\Resource1.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Resource1.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Integration\Cache\" />
   </ItemGroup>
 </Project>

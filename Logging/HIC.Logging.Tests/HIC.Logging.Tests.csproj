@@ -39,11 +39,11 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\HIC.Logging\HIC.Logging.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />
   </ItemGroup>
   <ItemGroup>
-                  </ItemGroup>
+    <Folder Include="Integration\" />
+  </ItemGroup>
 </Project>

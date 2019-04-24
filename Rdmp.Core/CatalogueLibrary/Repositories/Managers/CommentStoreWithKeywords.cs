@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Properties;
+using System.IO;
 using ReusableLibraryCode.Comments;
 
 namespace CatalogueLibrary.Repositories.Managers
@@ -19,7 +19,9 @@ namespace CatalogueLibrary.Repositories.Managers
         {
             base.ReadComments(directoriesToLookInForComments);
 
-            AddToHelp(Resources.KeywordHelp);
+            //todo if not found?
+                        
+            AddToHelp(File.ReadAllText("KeywordHelp.txt"));
         }
 
         private void AddToHelp(string keywordHelpFileContents)

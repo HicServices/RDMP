@@ -14,13 +14,8 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
-    <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Execution\CohortCompiler.cd" />
   </ItemGroup>
   <ItemGroup>
       </ItemGroup>

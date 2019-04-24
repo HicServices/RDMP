@@ -71,7 +71,7 @@
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
     <ProjectReference Include="..\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\ReusableUIComponents\ReusableUIComponents.csproj" />

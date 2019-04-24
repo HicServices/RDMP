@@ -34,16 +34,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
-    <ProjectReference Include="..\..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj" />
-    <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj" />
-    <ProjectReference Include="..\..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
     <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj" />
-    <ProjectReference Include="..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\..\DataExportLibrary\DataExportLibrary.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Properties\Settings.settings">

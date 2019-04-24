@@ -43,25 +43,16 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Anonymisation\ANOStore\ANOStore.csproj" />
     <ProjectReference Include="..\..\..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
-    <ProjectReference Include="..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
     <ProjectReference Include="..\..\..\CohortManager\CohortManager\CohortManager.csproj" />
-    <ProjectReference Include="..\..\..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
     <ProjectReference Include="..\..\..\DataExportManager\DataExportManager\DataExportManager.csproj" />
     <ProjectReference Include="..\..\..\DataLoad\Applications\Dashboard\Dashboard.csproj" />
-    <ProjectReference Include="..\..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj" />
-    <ProjectReference Include="..\..\..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
-    <ProjectReference Include="..\..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
     <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj" />
-    <ProjectReference Include="..\..\..\RDMPStartup\RDMPStartup.csproj" />
+    <ProjectReference Include="..\..\..\Rdmp.Core\Rdmp.Core.csproj" />
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
-    <ProjectReference Include="..\..\..\Sharing\Sharing\Sharing.csproj" />
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
-    <ProjectReference Include="..\..\CatalogueLibrary\CatalogueLibrary.csproj" />
     <ProjectReference Include="..\..\CatalogueManager\CatalogueManager.csproj" />
   </ItemGroup>
   <ItemGroup>

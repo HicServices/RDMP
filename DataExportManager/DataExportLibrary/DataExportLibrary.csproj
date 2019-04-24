@@ -33,21 +33,7 @@
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="DataRelease\DataRelease.cd" />
-    <None Include="Data\DataTables\Cohorts.cd" />
-    <None Include="ExecuteDatasetExtraction.cd" />
-    <None Include="ExtractionTimeColumns.cd" />
-    <None Include="ExtractionTime\UserPicks\Bundles.cd" />
-    <None Include="ImportingCustomData.cd" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\Caching\CachingEngine\CachingEngine.csproj" />
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
-    <ProjectReference Include="..\..\CohortManager\CohortManagerLibrary\CohortManagerLibrary.csproj" />
     <ProjectReference Include="..\..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj" />
-    <ProjectReference Include="..\..\DataQualityEngine\DataQualityEngine\DataQualityEngine.csproj" />
-    <ProjectReference Include="..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
-    <ProjectReference Include="..\..\QueryCaching\QueryCaching\QueryCaching.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />

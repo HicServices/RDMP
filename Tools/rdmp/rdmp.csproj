@@ -10,7 +10,6 @@
     <StartupObject></StartupObject>
   </PropertyGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RDMPStartup\RDMPStartup.csproj" />
-    <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
+    <ProjectReference Include="..\..\Rdmp.Core\Rdmp.Core.csproj" />
   </ItemGroup>
 </Project>

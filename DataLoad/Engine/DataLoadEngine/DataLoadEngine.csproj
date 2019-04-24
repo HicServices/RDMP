@@ -35,24 +35,9 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Caching\CachingEngine\CachingEngine.csproj" />
-    <ProjectReference Include="..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
-    <ProjectReference Include="..\..\..\Logging\HIC.Logging\HIC.Logging.csproj" />
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Checks\Checking.cd" />
-    <None Include="DataFlowPipeline\Components\Anonymisation.cd" />
-    <None Include="DataFlowPipeline\Destinations\DataTableUploadDestination.cd" />
-    <None Include="DataProvider\ReadingFromCacheInDataLoad.cd" />
-    <None Include="LoadExecution\DataLoadEngine.cd" />
-    <None Include="Migration\StagingToLiveMigration.cd" />
-    <None Include="Job\SchedulesAndJobCreation.cd" />
-  </ItemGroup>
-  <ItemGroup>
       </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Checks\Notifiers\" />
-  </ItemGroup>
 </Project>

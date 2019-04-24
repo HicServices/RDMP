@@ -16,15 +16,9 @@
     <Compile Include="..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
-    <ProjectReference Include="..\DataExportManager\DataExportLibrary\DataExportLibrary.csproj" />
-    <ProjectReference Include="..\DataLoad\Engine\DataLoadEngine\DataLoadEngine.csproj" />
-    <ProjectReference Include="..\DataLoad\Engine\LoadModules\LoadModules.Generic\LoadModules.Generic.csproj" />
-    <ProjectReference Include="..\Logging\HIC.Logging\HIC.Logging.csproj" />
+    <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
     <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
-    <ProjectReference Include="..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="TestData\Exercises\ExerciseTestData.cd" />
@@ -33,5 +27,6 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="MathNet.Numerics" Version="4.7.0" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.5.0" />
   </ItemGroup>
 </Project>

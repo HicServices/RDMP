@@ -96,11 +96,10 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\..\CatalogueManager\CatalogueLibrary\CatalogueLibrary.csproj" />
+    <ProjectReference Include="..\..\..\..\Rdmp.Core\Rdmp.Core.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
-    <ProjectReference Include="..\LoadModules.Generic\LoadModules.Generic.csproj" />
   </ItemGroup>
   <ItemGroup>
       </ItemGroup>

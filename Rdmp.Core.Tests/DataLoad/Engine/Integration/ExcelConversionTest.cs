@@ -13,7 +13,6 @@ using CatalogueLibrary;
 using CatalogueLibrary.DataFlowPipeline;
 using DataLoadEngine.Job;
 using LoadModules.Generic.DataProvider.FlatFileManipulation;
-using DataLoadEngineTests.Resources;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
@@ -58,7 +57,7 @@ namespace DataLoadEngineTests.Integration
                 fileInfo.Delete();
 
             string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xlsx");
-            File.WriteAllBytes(targetFile, Resource1.TestExcelFile1);
+            File.WriteAllBytes(targetFile, Resources.Resource1.TestExcelFile1);
 
             TestConversionFor(targetFile, "*.xlsx", 5, LoadDirectory);
         }
@@ -73,7 +72,7 @@ namespace DataLoadEngineTests.Integration
                 fileInfo.Delete();
 
             string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
-            File.WriteAllText(targetFile, Resource1.TestExcelFile2);
+            File.WriteAllText(targetFile, Resources.Resource1.TestExcelFile2);
 
             var ex = Assert.Throws<Exception>(()=>TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
 
