@@ -8,9 +8,8 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using Dashboard.CatalogueSummary.DataQualityReporting.SubComponents;
-using DataQualityEngine.Data;
+using Rdmp.Core.DataQualityEngine.Data;
 
 namespace Dashboard.CatalogueSummary.DataQualityReporting
 {

@@ -6,9 +6,9 @@
 
 using System;
 using System.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Progress;
 
 namespace CatalogueLibraryTests.Unit

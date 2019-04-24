@@ -10,9 +10,9 @@ using System.Linq;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers.Nodes.UsedByProject;
 using DataExportManager.CohortUI;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers.Nodes.UsedByProject;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

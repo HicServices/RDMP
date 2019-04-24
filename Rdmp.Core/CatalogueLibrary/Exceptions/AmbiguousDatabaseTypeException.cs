@@ -7,7 +7,7 @@
 using System;
 using FAnsi;
 
-namespace CatalogueLibrary.Exceptions
+namespace Rdmp.Core.CatalogueLibrary.Exceptions
 {
     /// <summary>
     /// Thrown when a piece of code needs to know what <see cref="DatabaseType"/> is being targetted but no determination

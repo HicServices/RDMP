@@ -8,16 +8,16 @@
 using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using LoadModules.Generic.DataProvider;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataProvider;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
-using Moq;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class ImportFilesDataProviderTests:DatabaseTests
     {

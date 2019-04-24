@@ -6,10 +6,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy
 {
     /// <summary>
     /// ILoadProgressSelectionStrategy in which all LoadProgresses are suggested and all are locked.

@@ -9,20 +9,19 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
-
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Databases;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Defines an anonymisation method for a group of related columns of the same datatype.  For example 'ANOGPCode' could be an instance/record that defines input of type 

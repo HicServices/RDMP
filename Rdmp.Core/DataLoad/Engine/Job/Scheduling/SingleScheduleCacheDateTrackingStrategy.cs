@@ -6,19 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using CachingEngine.Factories;
-using CachingEngine.Layouts;
-using CachingEngine.PipelineExecution.Destinations;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
     /// <summary>
     /// This returns dates by examining cache filenames whilst honouring the Load and Cache Progress information

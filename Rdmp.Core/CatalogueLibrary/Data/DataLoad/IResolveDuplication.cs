@@ -6,9 +6,8 @@
 
 using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Common interface for columns which can be used in RAW to resolve primary key duplication (See PrimaryKeyCollisionResolver).  This includes both PreLoadDiscardedColumns

@@ -7,20 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Attachers;
-using DataLoadEngine.DatabaseManagement;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DatabaseManagement.Operations;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution.Components.Runtime;
-using DataLoadEngine.LoadProcess;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
 {
     /// <summary>
     /// DLE component responsible for creating the RAW (first database in the RAW=>STAGING=>LIVE model of DLE loading) database (if required).  Also runs

@@ -6,7 +6,7 @@
 
 using System.IO;
 
-namespace CatalogueLibrary.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes
 {
     public interface IDirectoryInfoNode
     {

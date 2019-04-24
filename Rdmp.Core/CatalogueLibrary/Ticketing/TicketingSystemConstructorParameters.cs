@@ -6,7 +6,7 @@
 
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Ticketing
+namespace Rdmp.Core.CatalogueLibrary.Ticketing
 {
     /// <summary>
     /// All implementations of ITicketingSystem will be given this parameter as a constructor argument.  It includes the RDMP configured credentials for

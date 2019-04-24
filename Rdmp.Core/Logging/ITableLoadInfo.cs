@@ -7,7 +7,7 @@
 
 using FAnsi.Discovery;
 
-namespace HIC.Logging
+namespace Rdmp.Core.Logging
 {
     /// <summary>
     /// See TableLoadInfo

@@ -4,15 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Repositories.Construction;
-using CatalogueLibrary.Repositories.Construction.Exceptions;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction.Exceptions;
 
 namespace CatalogueLibraryTests.Unit
 {

@@ -6,7 +6,7 @@
 
 using System.Reflection;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Class for documenting properties declared as [DemandsInitialization] in a class.  Includes the DemandsInitializationAttribute (Description, Mandatory etc) and the 

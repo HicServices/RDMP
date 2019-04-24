@@ -5,12 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
 
 namespace CatalogueManager.Copying.Commands
 {

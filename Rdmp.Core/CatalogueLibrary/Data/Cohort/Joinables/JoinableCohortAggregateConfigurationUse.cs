@@ -8,13 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Cohort.Joinables
+namespace Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables
 {
     /// <summary>
     /// Indicates that a given AggregateConfiguration in a CohortIdentificationConfiguration is implicitly joined against a 'PatientIndexTable' See JoinableCohortAggregateConfiguration

@@ -11,17 +11,15 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace AnonymisationTests
+namespace Rdmp.Core.Tests.CatalogueLibrary.Anonymisation
 {
     public class ANOTableTests:TestsRequiringANOStore
     {

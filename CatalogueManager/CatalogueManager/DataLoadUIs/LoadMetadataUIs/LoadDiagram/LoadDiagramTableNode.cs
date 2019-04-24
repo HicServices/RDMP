@@ -7,14 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms.DataVisualization.Charting;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.DataLoad.Extensions;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using CatalogueManager.Copying.Commands;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 

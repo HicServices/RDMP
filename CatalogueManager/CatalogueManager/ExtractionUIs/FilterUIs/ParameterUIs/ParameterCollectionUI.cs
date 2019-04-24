@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding.Parameters;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 using ReusableUIComponents;
 using Enum = System.Enum;
 

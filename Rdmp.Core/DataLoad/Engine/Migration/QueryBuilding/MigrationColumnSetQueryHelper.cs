@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using FAnsi.Discovery;
 
-namespace DataLoadEngine.Migration.QueryBuilding
+namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
 {
     /// <summary>
     /// Helper class for generating SQL fragments that relate to columns in a MigrationColumnSet.  This is used by MigrationQueryHelper to generate SQL

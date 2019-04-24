@@ -9,7 +9,7 @@ using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Ticketing
+namespace Rdmp.Core.CatalogueLibrary.Ticketing
 {
 
     [InheritedExport(typeof(ICheckable))]

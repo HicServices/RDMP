@@ -7,13 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Providers;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
 
-namespace DataExportLibrary.Repositories.Managers.HighPerformance
+namespace Rdmp.Core.DataExport.Repositories.Managers.HighPerformance
 {
     /// <summary>
     /// Provides a memory based efficient (in terms of the number of database queries sent) way of finding all containers and subcontainers and filters in the entire DataExportManager

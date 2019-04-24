@@ -6,11 +6,10 @@
 
 using System;
 using System.Drawing;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.DataLoad.Extensions;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
-using CatalogueManager.Icons.IconOverlays;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 {

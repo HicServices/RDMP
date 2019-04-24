@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CatalogueLibrary.Data.EntityNaming
+namespace Rdmp.Core.CatalogueLibrary.Data.EntityNaming
 {
     /// <summary>
     /// Determines how to translate a TABLE (not database!) name based on the load stage of a DLE RAW=>STAGING=>LIVE migration.  E.g. Raw tables

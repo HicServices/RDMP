@@ -6,7 +6,7 @@
 
 using System;
 
-namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation
 {
     /// <summary>
     /// Thrown when there is a problem with the configuration of an ANOTable / Identifier Dump.  This can include datatype mismatches, dump not having correct

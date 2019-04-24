@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 
-namespace DataExportLibrary.Providers.Nodes
+namespace Rdmp.Core.DataExport.Providers.Nodes
 {
     /// <summary>
     /// Location on disk in which linked project extracts are generated for a given <see cref="Project"/> (assuming you are extracting to disk

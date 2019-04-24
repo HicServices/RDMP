@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Repositories;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

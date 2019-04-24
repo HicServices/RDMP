@@ -6,10 +6,9 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Reflection;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace RDMPStartup
+namespace Rdmp.Core.Startup
 {
     /// <summary>
     /// MEF discoverable version of IPluginRepositoryFinder

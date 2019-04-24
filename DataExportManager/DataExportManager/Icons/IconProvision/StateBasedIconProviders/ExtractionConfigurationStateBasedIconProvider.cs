@@ -5,11 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
-using DataExportLibrary.Data.DataTables;
-using ReusableLibraryCode.Icons.IconProvision;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 namespace DataExportManager.Icons.IconProvision.StateBasedIconProviders
 {

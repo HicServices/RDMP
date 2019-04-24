@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using ReusableLibraryCode.Comments;
 
-namespace CatalogueLibrary.Repositories.Managers
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers
 {
     /// <summary>
     /// Subclass of <see cref="CommentStore"/> which also loads <see cref="Resources.KeywordHelp"/>

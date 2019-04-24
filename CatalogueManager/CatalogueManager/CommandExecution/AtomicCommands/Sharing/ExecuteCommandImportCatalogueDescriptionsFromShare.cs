@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
 using CatalogueManager.Copying.Commands;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing

@@ -8,11 +8,11 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Sources
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources
 {
     /// <inheritdoc/>
     public class DbDataCommandDataFlowSource :  IDbDataCommandDataFlowSource

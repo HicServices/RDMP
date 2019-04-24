@@ -6,10 +6,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
 {
     /// <summary>
     /// Sometimes during caching you will identify a period of time that cannot be fetched because of problems outwith your control (the remote server data is missing etc).  

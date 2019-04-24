@@ -5,17 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Linq;
-using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using ReusableLibraryCode.DataAccess;
 
-namespace CohortManagerLibrary.Execution
+namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
     /// The runtime/compile time wrapper for CohortAggregateContainer. UNION,EXCEPT,INTERSECT containers with 0 or more AggregateConfigurations within

@@ -6,16 +6,16 @@
 
 using System;
 using System.Data;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using FAnsi.Naming;
 using NUnit.Framework;
-using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace QueryCachingTests
+namespace Rdmp.Core.Tests.QueryCaching
 {
     public class ExtractableAggregateCachingTests:QueryCachingDatabaseTests
     {

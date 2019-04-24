@@ -9,11 +9,6 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -22,8 +17,13 @@ using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Tutorials;
-using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableUIComponents.TransparentHelpSystem;
 
 namespace CatalogueManager.SimpleDialogs.ForwardEngineering

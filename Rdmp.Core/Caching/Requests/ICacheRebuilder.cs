@@ -9,7 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Requests
+namespace Rdmp.Core.Caching.Requests
 {
     /// <summary>
     /// Interface for attempting to rebuild the .\Data\Cache (or alternative) Cache directory based on files currently in the ForArchiving directory.

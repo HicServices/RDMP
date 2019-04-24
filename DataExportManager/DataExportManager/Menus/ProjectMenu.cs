@@ -6,8 +6,8 @@
 
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Menus;
-using DataExportLibrary.Data.DataTables;
 using DataExportManager.CommandExecution.AtomicCommands;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 namespace DataExportManager.Menus
 {

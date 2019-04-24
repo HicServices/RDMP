@@ -5,22 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using CachingEngine.BasicCache;
-using CachingEngine.Layouts;
-using CachingEngine.PipelineExecution.Destinations;
-using CachingEngine.Requests;
-using CatalogueLibrary.DataFlowPipeline;
-using LoadModules.Generic.DataFlowSources;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.Caching.BasicCache;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowDestinations
+namespace Rdmp.Core.DataLoad.Modules.DataFlowDestinations
 {
     /// <summary>
     /// Cache destination component which creates 10 files, one per minute, in the CacheDirectory. It can use a DoNothingCacheChunk if told to run multiple runs.

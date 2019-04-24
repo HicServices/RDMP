@@ -11,15 +11,13 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Reports;
-using CatalogueManager.AggregationUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataQualityEngine;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Reports;
+using Rdmp.Core.DataQualityEngine;
 using ReusableLibraryCode.Progress;
 
 namespace CatalogueManager.SimpleDialogs.Reports

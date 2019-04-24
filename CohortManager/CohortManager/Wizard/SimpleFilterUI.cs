@@ -6,20 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using IContainer = CatalogueLibrary.Data.IContainer;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
 
 namespace CohortManager.Wizard
 {

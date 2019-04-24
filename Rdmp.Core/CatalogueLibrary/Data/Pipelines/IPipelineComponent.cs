@@ -6,12 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.DataLoad;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data.Pipelines
+namespace Rdmp.Core.CatalogueLibrary.Data.Pipelines
 {
     /// <summary>
     /// Each Pipeline has 0 or more PipelineComponents.  A Pipeline Component is a persistence record for a user configuration of a class implementing IDataFlowComponent with

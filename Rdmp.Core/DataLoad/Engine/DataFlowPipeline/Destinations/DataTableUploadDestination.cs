@@ -9,22 +9,22 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories.Construction;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using FAnsi.Discovery.TypeTranslation;
-using HIC.Logging;
-using HIC.Logging.Listeners;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.Listeners;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Destinations
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations
 {
     /// <summary>
     /// Pipeline component (destination) which commits the DataTable(s) (in batches) to the DiscoveredDatabase (PreInitialize argument).  Supports cross platform 

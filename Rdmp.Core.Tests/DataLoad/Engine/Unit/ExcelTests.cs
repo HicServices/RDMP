@@ -9,20 +9,20 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.Job;
-using LoadModules.Generic.DataFlowSources;
-using LoadModules.Generic.DataProvider.FlatFileManipulation;
-using LoadModules.Generic.Exceptions;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Moq;
 
-namespace DataLoadEngineTests.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
     [TestFixture]
     public class ExcelTests

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Information that is not held in RDMP about an ExtractableCohort but which must be fetched at runtime from the cohort database (ExternalCohortTable)

@@ -5,18 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataLoadEngine.DatabaseManagement.Operations
+namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
 {
     /// <summary>
     /// Creates RAW / STAGING tables during a data load (See LoadMetadata).  Tables created are based on the live schema.  Depending on stage though certain

@@ -6,15 +6,15 @@
 
 using System;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Checks.SyntaxChecking;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Records how (via SQL) replace the private patient identifier column (e.g. CHI) with the release identifier (e.g. swap [biochemistry]..[chi] for 

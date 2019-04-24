@@ -6,8 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
@@ -15,17 +13,16 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataProvider;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.FileOperations
+namespace Rdmp.Core.DataLoad.Modules.FileOperations
 {
     /// <summary>
     /// load component which Unzips files in ForLoading

@@ -7,23 +7,23 @@
 using System.Diagnostics;
 using System.IO;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
 using FAnsi.Implementations.MicrosoftSQL;
-using LoadModules.Generic.DataFlowSources;
 using NPOI.HSSF.UserModel;
 using NPOI.SS.UserModel;
 using NPOI.XSSF.UserModel;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.DataProvider;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataProvider.FlatFileManipulation
+namespace Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation
 {
     /// <summary>
     /// DLE component which converts Microsoft Excel Workbooks into CSV files.  Workbooks can have multiple worksheets in which case 1 csv will be created for

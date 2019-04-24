@@ -6,11 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Checks
+namespace Rdmp.Core.CatalogueLibrary.Checks
 {
     /// <summary>
     /// Lists all plugin/dll load exceptions generated during Startup (when MEF is processed).  Also checks that all Types declared as ICheckable

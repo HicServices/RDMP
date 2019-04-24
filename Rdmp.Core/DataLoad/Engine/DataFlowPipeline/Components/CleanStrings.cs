@@ -6,18 +6,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Components
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components
 {
     /// <summary>
     /// Pipeline component which trims all strings (removes leading and trailing whitespace) and turns blank strings into proper nulls (DBNull.Value).  Columns

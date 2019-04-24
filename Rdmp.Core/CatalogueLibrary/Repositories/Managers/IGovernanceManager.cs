@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
 
-namespace CatalogueLibrary.Repositories.Managers
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers
 {
     /// <summary>
     /// Subcomponent of <see cref="ICatalogueRepository"/> which manages persisting / editting which 

@@ -5,19 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.Caching.Requests.FetchRequestProvider;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.PipelineExecution.Sources
+namespace Rdmp.Core.Caching.PipelineExecution.Sources
 {
     /// <summary>
     /// Abstract base class for a pipeline component which makes time based fetch requests to produce time specific packets of data which will be packaged into files

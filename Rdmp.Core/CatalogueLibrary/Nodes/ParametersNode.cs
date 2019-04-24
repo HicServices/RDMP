@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 
-namespace CatalogueLibrary.Nodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes
 {
     /// <summary>
     /// Shows all <see cref="ISqlParameter"/> declared in the given scope.

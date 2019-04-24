@@ -8,11 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using Tests.Common;
 
 namespace CatalogueLibraryTests

@@ -8,15 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.FilterImporting.Construction;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
-using IFilter = CatalogueLibrary.Data.IFilter;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using IFilter = Rdmp.Core.CatalogueLibrary.Data.IFilter;
 
-namespace CatalogueLibrary.FilterImporting
+namespace Rdmp.Core.CatalogueLibrary.FilterImporting
 {
     /// <summary>
     /// Handles the creation of new ISqlParameters based on the current WHERE SQL of a given IFilter.  This involves parsing the WHERE SQL for variables (@myVar).  This class

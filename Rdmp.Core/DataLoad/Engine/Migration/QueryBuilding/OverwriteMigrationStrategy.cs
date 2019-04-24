@@ -6,19 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection.Emit;
 using System.Text;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.Job;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Migration.QueryBuilding
+namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
 {
     /// <summary>
     /// Migrates from STAGING to LIVE a single table (with a MigrationColumnSet).  This is an UPSERT (new replaces old) operation achieved (in SQL) with MERGE and 

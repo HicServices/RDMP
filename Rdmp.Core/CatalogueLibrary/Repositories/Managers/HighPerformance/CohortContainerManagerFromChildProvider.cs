@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Providers;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Providers;
 
-namespace CatalogueLibrary.Repositories.Managers.HighPerformance
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers.HighPerformance
 {
     /// <summary>
     /// Performance class that builds the hierarchy of CohortIdentificationConfiguration children.  This includes containers (CohortAggregateContainer) and subcontainers

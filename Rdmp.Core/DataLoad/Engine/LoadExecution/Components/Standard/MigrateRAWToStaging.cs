@@ -6,18 +6,16 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DatabaseManagement;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DatabaseManagement.Operations;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadProcess;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components.Standard
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard
 {
     /// <summary>
     /// DLE component resonsible for streaming data off the RAW database and writing it to the STAGING database.  Happens one table at a time with the actual

@@ -6,17 +6,17 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
-using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
-using DataExportLibrary.Repositories;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.Tests
+namespace Rdmp.Core.Tests.DataExport
 {
     public class ProjectCohortIdentificationConfigurationAssociationTests
     {

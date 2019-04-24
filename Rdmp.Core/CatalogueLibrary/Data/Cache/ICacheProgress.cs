@@ -6,10 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Pipelines;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 
-namespace CatalogueLibrary.Data.Cache
+namespace Rdmp.Core.CatalogueLibrary.Data.Cache
 {
     /// <summary>
     /// See CacheProgress

@@ -7,17 +7,17 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.Job;
-using DataLoadEngine.Job.Scheduling;
-using HIC.Logging;
-using LoadModules.Generic.LoadProgressUpdating;
-using NUnit.Framework;
-using Tests.Common;
 using Moq;
+using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
+using Rdmp.Core.Logging;
+using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class DataLoadProgressUpdateInfoTests :DatabaseTests
     {

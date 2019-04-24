@@ -9,25 +9,25 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Checks;
-using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
 using Diagnostics;
 using Diagnostics.TestData;
-using HIC.Logging;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Checks;
+using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.LoadExecution;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     [Category("Database")]
     class SetupDatasetTest : TestsRequiringFullAnonymisationSuite, IDataLoadEventListener

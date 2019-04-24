@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.ExtractionTime.Commands
+namespace Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands
 {
     /// <summary>
     /// Input object to Extraction Pipelines.  Typically this is a dataset that needs to be linked with a cohort and extracted into the ExtractionDirectory. 

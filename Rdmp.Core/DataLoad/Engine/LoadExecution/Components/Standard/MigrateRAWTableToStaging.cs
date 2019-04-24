@@ -6,29 +6,23 @@
 
 using System;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Threading;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.DatabaseManagement;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DataFlowPipeline.Components;
-using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
-using DataLoadEngine.DataFlowPipeline.Destinations;
-using DataLoadEngine.DataFlowPipeline.Sources;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadProcess;
 using FAnsi.Discovery;
-using HIC.Logging;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components.Standard
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard
 {
     /// <summary>
     /// Streams records from a single table in the RAW database and writes it to the corresponding table in the STAGING database during data load.  RAW is an 

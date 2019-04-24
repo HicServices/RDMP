@@ -5,20 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading;
-using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Nodes;
 using CatalogueManager.Collections.Providers.Filtering;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Nodes;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 

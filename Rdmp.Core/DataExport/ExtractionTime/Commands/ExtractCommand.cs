@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
 
-namespace DataExportLibrary.ExtractionTime.Commands
+namespace Rdmp.Core.DataExport.ExtractionTime.Commands
 {
     public abstract class ExtractCommand:IExtractCommand
     {

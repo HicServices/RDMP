@@ -6,31 +6,28 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.ExtractionTime.Commands;
-using CatalogueLibrary.QueryBuilding;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.Repositories;
-using DataLoadEngine.DataFlowPipeline.Components;
-using DataLoadEngine.DataFlowPipeline.Sources;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using IContainer = CatalogueLibrary.Data.IContainer;
+using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
 
-namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
+namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources
 {
     /// <summary>
     /// Executes a single Dataset extraction by linking a cohort with a dataset (either core or custom data - See IExtractCommand).  Also calculates the number

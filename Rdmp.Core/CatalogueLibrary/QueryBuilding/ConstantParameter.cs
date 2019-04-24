@@ -6,16 +6,15 @@
 
 using System;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Checks.SyntaxChecking;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.QueryBuilding
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding
 {
     /// <summary>
     ///  Use this class to create standard parameters which you will always manually add in code to a QueryBuilder.  These are not editable

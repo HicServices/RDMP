@@ -5,20 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Data;
 using System.Linq;
 using System.Text;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using FAnsi.Discovery;
-using LoadModules.Generic.Exceptions;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Extensions;
+using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowSources.SubComponents
+namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 {
 
     /// <summary>

@@ -6,7 +6,7 @@
 
 using System.IO;
 
-namespace CatalogueLibrary.DataFlowPipeline.Requirements
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements
 {
     /// <summary>
     /// Wrapper for FileInfo that can be used in the IPipelineRequirement interface to indicate that component expects a FileInfo that is specifically going to have data loaded

@@ -9,17 +9,17 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Triggers;
-using CatalogueLibrary.Triggers.Implementations;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation
 {
     /// <summary>
     /// Engine class for converting a ColumnInfo and all the data in it into ANO equivalents (See ColumnInfoToANOTableConverterUI).

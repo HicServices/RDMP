@@ -6,14 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Repositories;
 using CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 using Tests.Common;
 

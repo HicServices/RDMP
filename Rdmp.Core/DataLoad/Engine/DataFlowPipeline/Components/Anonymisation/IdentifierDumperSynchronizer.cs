@@ -9,18 +9,15 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.Checks.Checkers;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation
 {
     class IdentifierDumperSynchronizer
     {

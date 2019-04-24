@@ -6,15 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Repositories;
-using DataQualityEngine.Data;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataQualityEngine.Data;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

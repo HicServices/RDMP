@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Data.ImportExport.Exceptions
+namespace Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions
 {
     /// <summary>
     /// Thrown when there are problems importing or exporting objects from RDMP (either in gathering dependencies or loading <see cref="CatalogueLibrary.Data.Serialization.ShareDefinition"/>

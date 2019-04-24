@@ -9,18 +9,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.Checks.Checkers;
-using LoadModules.Generic.Attachers;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+using Rdmp.Core.DataLoad.Modules.Attachers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.CheckingTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CheckingTests
 {
     public class ProcessTaskCheckingTests:DatabaseTests
     {

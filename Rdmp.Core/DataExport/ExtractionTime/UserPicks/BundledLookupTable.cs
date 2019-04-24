@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExtractionTime.UserPicks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
 
-namespace DataExportLibrary.ExtractionTime.UserPicks
+namespace Rdmp.Core.DataExport.ExtractionTime.UserPicks
 {
     /// <summary>
     /// Identifies a TableInfo that acts as a Lookup for a given dataset which is being extracted.  Lookup tables can be extracted along with the extracted data

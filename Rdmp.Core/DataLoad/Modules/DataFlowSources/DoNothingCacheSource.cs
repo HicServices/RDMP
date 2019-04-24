@@ -5,13 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CachingEngine.PipelineExecution.Sources;
-using CachingEngine.Requests;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.Caching.PipelineExecution.Sources;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowSources
+namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
 {
     /// <summary>
     /// Cache source component which does nothing.  Can be used by user to build a caching pipeline even when there is nothing to do.  Use this source only if

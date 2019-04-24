@@ -6,22 +6,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.ExtractionTime;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.ExtractionTime;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using Xceed.Words.NET;
 
-namespace DataExportLibrary.DataRelease.ReleasePipeline
+namespace Rdmp.Core.DataExport.DataRelease.ReleasePipeline
 {
     /// <summary>
     /// Prepares the Environment and the Source Database for the ReleaseEngine.

@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Interface for defining that a given class is dependent or operates on one or more TableInfos.  This is used when you declare a [DemandsInitialization] property on

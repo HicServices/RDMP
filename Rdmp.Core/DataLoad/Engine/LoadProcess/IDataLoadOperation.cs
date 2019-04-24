@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary;
 
-namespace DataLoadEngine.LoadProcess
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess
 {
     interface IDataLoadOperation
     {

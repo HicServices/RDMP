@@ -7,12 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Referencing;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.DataExport.Repositories;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <inheritdoc/>
     public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity, ISupplementalExtractionResults

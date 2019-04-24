@@ -6,26 +6,24 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.ExternalDatabaseServerPatching;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.CohortCreationPipeline.Destinations;
-using DataExportLibrary.CohortCreationPipeline.Sources;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Sources;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
     public class TestCohortRefreshing : TestsRequiringAnExtractionConfiguration
     {

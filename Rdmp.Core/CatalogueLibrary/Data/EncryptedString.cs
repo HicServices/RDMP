@@ -6,9 +6,9 @@
 
 using System;
 using System.Security.Cryptography;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Encrypts a string, providing access to both the encrypted and decrypted values.

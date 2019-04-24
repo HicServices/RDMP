@@ -6,16 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Input;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueManager.DashboardTabs.Construction;
 using ReusableUIComponents;
 using System.Drawing;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 
 namespace CatalogueManager.DashboardTabs
 {

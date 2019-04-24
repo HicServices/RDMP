@@ -7,7 +7,7 @@
 using System.Linq;
 using CatalogueManager.Copying.Commands;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

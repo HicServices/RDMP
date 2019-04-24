@@ -6,14 +6,13 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Governance;
 using CatalogueManager.Collections;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;

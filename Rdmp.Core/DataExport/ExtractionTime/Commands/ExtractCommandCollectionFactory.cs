@@ -4,17 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.UserPicks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 
-namespace DataExportLibrary.ExtractionTime.Commands
+namespace Rdmp.Core.DataExport.ExtractionTime.Commands
 { 
     /// <summary>
     /// Identifies all extractable components of a given ExtractionConfiguration (all datasets).  These are returned as an ExtractCommandCollection.  

@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace HIC.Common.Validation.Dependency
+namespace Rdmp.Core.Validation.Dependency
 {
     /// <summary>
     /// Regex pattern for finding references in ValidatorXML without having to deserialize it.  This is used to identify rules which reference columns and ensure

@@ -6,28 +6,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CohortManagerLibrary.Execution.Joinables;
-using CohortManagerLibrary.QueryBuilding;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CohortCreation.Execution.Joinables;
+using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 
-namespace CohortManagerLibrary.Execution
+namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
     /// Multi threading management class for CohortQueryBuilder.  Supports starting, executing and cancelling multiple cohort builder objects (ICompileable)

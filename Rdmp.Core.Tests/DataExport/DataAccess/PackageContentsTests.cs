@@ -5,17 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories.Managers;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Repositories.Managers;
 using Tests.Common;
 
-namespace DataExportLibrary.Tests.DataAccess
+namespace Rdmp.Core.Tests.DataExport.DataAccess
 {
     public class PackageContentsTests:DatabaseTests
     {

@@ -6,7 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// A collection of ExtractableDataSet which share a common concept e.g. 'Core datasets', 'Supplemental Datasets', 'Diabetes datasets' etc. These allow you to add a collection of 

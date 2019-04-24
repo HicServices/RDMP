@@ -6,12 +6,9 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
-using System.Linq;
-using CatalogueLibrary.Data;
 using FAnsi;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

@@ -5,24 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using System.Threading.Tasks;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadExecution.Delegates;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadExecution;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadProcess
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess
 {
     /// <summary>
     /// Container class for an IDataLoadExecution.  This class records the ILoadMetadata that is being executed and the current state (whether it has crashed etc).

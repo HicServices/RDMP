@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// The high level type of a ProcessTask, defines what the property Path contains.  If the ProcessTaskType is Executable then Path contains the path to an exe to run, If

@@ -7,21 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.DataHelper;
-using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace AnonymisationTests
+namespace Rdmp.Core.Tests.CatalogueLibrary.Anonymisation
 {
     public class ANOMigrationTests : TestsRequiringANOStore
     {

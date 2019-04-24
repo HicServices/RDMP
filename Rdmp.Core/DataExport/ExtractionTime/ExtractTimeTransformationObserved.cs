@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Documents the extraction time data type of an extracted column.  This is done by inspecting the Type of the DataTable column fetched when executing the

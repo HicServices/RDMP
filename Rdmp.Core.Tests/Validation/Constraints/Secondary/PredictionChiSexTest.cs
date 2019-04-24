@@ -5,12 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Secondary.Predictor;
 using NUnit.Framework;
+using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
-namespace HIC.Common.Validation.Tests.Constraints.Secondary
+namespace Rdmp.Core.Tests.Validation.Constraints.Secondary
 {
     
     class PredictionChiSexTest

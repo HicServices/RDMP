@@ -10,15 +10,15 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Sharing.Dependency.Gathering;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.Sharing.Dependency.Gathering;
 
 namespace CatalogueManager.FindAndReplace
 {

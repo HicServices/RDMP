@@ -5,11 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CachingEngine.Layouts;
-using CachingEngine.Requests;
-using CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Caching.Layouts;
 
-namespace CachingEngine.BasicCache
+namespace Rdmp.Core.Caching.BasicCache
 {
     /// <summary>
     /// Basic case of ILoadCachePathResolver in which the path .\Data\Cache is what is returned unchanged i.e. no subdirectories

@@ -6,10 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.DataFlowPipeline.Requirements
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements
 {
     /// <summary>
     /// See DataFlowPipelineContext T Generic

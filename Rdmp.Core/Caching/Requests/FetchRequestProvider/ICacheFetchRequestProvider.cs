@@ -4,10 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data.Cache;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
 {
     /// <summary>
     /// Interface for classes that make descisions about which time periods to request and in what order when caching.

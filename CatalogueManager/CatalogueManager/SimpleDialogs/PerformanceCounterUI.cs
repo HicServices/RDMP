@@ -7,11 +7,8 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Performance;
-using ReusableUIComponents;
-
 using ReusableUIComponents.Performance;
 
 namespace CatalogueManager.SimpleDialogs

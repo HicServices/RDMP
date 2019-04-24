@@ -14,7 +14,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Dashboard.CatalogueSummary.DataQualityReporting.SubComponents;
-using DataQualityEngine.Data;
+using Rdmp.Core.DataQualityEngine.Data;
 using ReusableUIComponents;
 
 namespace Dashboard.CatalogueSummary.DataQualityReporting

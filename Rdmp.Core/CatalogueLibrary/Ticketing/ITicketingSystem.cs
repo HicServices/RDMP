@@ -7,7 +7,7 @@
 using System;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Ticketing
+namespace Rdmp.Core.CatalogueLibrary.Ticketing
 {
     /// <summary>
     /// How RDMP interacts with an (optional) ticketing sytem such as Jira, Fogbugz etc.  RDMP allows you to control governance via your ticketing system and

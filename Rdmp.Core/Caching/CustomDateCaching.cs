@@ -5,19 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Threading.Tasks;
-using CachingEngine.Factories;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.Caching.Requests.FetchRequestProvider;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine
+namespace Rdmp.Core.Caching
 {
     /// <summary>
     /// Executes a caching configuration (ICacheProgress) for the specified arbitrary date/time range using either a SingleDayCacheFetchRequestProvider or a

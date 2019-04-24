@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
-using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class PrimaryKeyCollisionResolverTests : DatabaseTests
     {

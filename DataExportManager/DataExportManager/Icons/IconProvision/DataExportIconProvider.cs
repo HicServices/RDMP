@@ -7,10 +7,10 @@
 using System;
 using System.Drawing;
 using CatalogueManager.Icons.IconProvision;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Providers.Nodes;
 using DataExportManager.Icons.IconProvision.StateBasedIconProviders;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.Icons.IconProvision

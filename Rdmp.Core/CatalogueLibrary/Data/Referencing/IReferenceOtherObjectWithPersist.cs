@@ -6,7 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data.Referencing
+namespace Rdmp.Core.CatalogueLibrary.Data.Referencing
 {
     /// <summary>
     /// Interface for all objects which reference a single other object and correctly persist it to the RDMP database

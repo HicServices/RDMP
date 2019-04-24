@@ -5,17 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataLoadEngine.DataFlowPipeline.Sources;
-using NUnit.Framework;
 using Moq;
+using NUnit.Framework;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
 
-namespace DataExportLibrary.Tests.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
     class RowPeekerTests
     {

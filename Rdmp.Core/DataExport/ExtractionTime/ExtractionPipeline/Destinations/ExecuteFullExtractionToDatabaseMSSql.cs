@@ -5,38 +5,34 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.Common;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.ExtractionTime.Commands;
-using CatalogueLibrary.ExtractionTime.UserPicks;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.DataRelease;
-using DataExportLibrary.DataRelease.Exceptions;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.DataRelease.ReleasePipeline;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.UserPicks;
-using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.DataRelease.Exceptions;
+using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
+namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations
 {
     /// <summary>
     /// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an Sql Server database

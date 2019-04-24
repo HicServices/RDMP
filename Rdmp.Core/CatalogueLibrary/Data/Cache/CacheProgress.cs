@@ -8,15 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueLibrary.Data.Cache
+namespace Rdmp.Core.CatalogueLibrary.Data.Cache
 {
     /// <summary>
     /// Records the progress of fetching and caching data from a remote source e.g. a Webservice or Imaging file host.  Each CacheProgress

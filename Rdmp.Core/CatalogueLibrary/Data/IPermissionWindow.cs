@@ -6,11 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Cache;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// See PermissionWindow

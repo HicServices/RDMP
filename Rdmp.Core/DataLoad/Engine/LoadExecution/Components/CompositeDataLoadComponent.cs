@@ -5,13 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
 
-namespace DataLoadEngine.LoadExecution.Components
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
 {
     /// <summary>
     /// DataLoadComponent (DLE) that consists of running multiple subcomponents (also DataLoadComponents).  This is used for composite stages e.g. 

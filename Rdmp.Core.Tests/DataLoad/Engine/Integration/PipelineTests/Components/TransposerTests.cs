@@ -6,12 +6,12 @@
 
 using System;
 using System.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using LoadModules.Generic.DataFlowOperations;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Components
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 {
     [TestFixture]
     public class TransposerTests

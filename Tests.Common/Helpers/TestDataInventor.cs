@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using CachingEngine.PipelineExecution.Sources;
-using CachingEngine.Requests;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.Caching.PipelineExecution.Sources;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

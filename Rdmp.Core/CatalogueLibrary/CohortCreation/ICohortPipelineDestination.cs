@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 
-namespace CatalogueLibrary.CohortCreation
+namespace Rdmp.Core.CatalogueLibrary.CohortCreation
 {
     /// <summary>
     /// Destination component interface for Cohort Creation Pipelines.  Must fulfill the ICohortCreationRequest and populate the Cohort Source with the 

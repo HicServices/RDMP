@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace HIC.Common.Validation.Tests
+namespace Rdmp.Core.Tests.Validation
 {
     public class TestConstants
     {

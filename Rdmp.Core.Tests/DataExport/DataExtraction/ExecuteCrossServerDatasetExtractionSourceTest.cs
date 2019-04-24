@@ -7,17 +7,17 @@
 using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data.Pipelines;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
     public class ExecuteCrossServerDatasetExtractionSourceTest : TestsRequiringAnExtractionConfiguration
     {

@@ -4,11 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Xml.Serialization;
-using HIC.Common.Validation.Constraints.Secondary.Predictor;
-using HIC.Common.Validation.UIAttributes;
+using Rdmp.Core.Validation.UIAttributes;
 
-namespace HIC.Common.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Each column can have as many SecondaryConstraints as you want.  Each SecondaryConstraint is a general rule about the data that the column is allowed to

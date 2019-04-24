@@ -6,14 +6,13 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
 
 namespace Tests.Common.Scenarios

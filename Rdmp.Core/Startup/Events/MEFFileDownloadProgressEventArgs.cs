@@ -7,7 +7,7 @@
 using System;
 using System.IO;
 
-namespace RDMPStartup.Events
+namespace Rdmp.Core.Startup.Events
 {
     /// <summary>
     /// EventArgs for MEF downloading during Startup.cs

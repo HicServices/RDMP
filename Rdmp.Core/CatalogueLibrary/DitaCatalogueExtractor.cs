@@ -13,14 +13,14 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Web;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary
+namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
     /// Generates an extract of all the Catalogues and CatalogueItems in your Catalogue database in .dita format.  Dita is apparently all the rage when it comes to metadata

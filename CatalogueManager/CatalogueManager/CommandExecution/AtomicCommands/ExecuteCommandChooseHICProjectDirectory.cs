@@ -6,10 +6,10 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

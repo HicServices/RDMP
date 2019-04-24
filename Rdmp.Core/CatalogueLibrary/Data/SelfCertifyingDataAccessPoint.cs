@@ -4,14 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Normally to open a connection to an IDataAccessPoint (location of server/database) you also need an optional IDataAccessCredentials (username and encrypted password).  These

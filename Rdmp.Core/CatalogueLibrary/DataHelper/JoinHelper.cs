@@ -6,9 +6,9 @@
 
 using System.Collections.Generic;
 using System.Diagnostics.Contracts;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.DataHelper
+namespace Rdmp.Core.CatalogueLibrary.DataHelper
 {
     /// <summary>
     /// Generates ANSI Sql for joining tables together in the FROM line of an SQL query

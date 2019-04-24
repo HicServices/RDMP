@@ -5,20 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
-using ANOStore.ANOEngineering;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
-using DataLoadEngine.Job;
-using DataLoadEngine.Mutilators;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.ANOEngineering;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Mutilators;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Mutilators.Dilution
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution
 {
     /// <summary>
     /// load component responsible for diluting data.  For example data might be diluted from date of birth to a bit flag indicating only whether it is known or 

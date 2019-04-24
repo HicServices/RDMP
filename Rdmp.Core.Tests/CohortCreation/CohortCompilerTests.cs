@@ -7,18 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CohortManagerLibrary;
-using CohortManagerLibrary.Execution;
-using CohortManagerLibrary.Execution.Joinables;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CohortCreation;
+using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CohortCreation.Execution.Joinables;
 
-namespace CohortManagerTests
+namespace Rdmp.Core.Tests.CohortCreation
 {
     public class CohortCompilerTests:CohortIdentificationTests
     {

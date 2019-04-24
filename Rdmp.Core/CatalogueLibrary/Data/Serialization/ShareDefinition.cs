@@ -11,7 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Newtonsoft.Json;
 
-namespace CatalogueLibrary.Data.Serialization
+namespace Rdmp.Core.CatalogueLibrary.Data.Serialization
 {
     /// <summary>
     /// Describes a DatabaseEntity which has been made exportable from RDMP via <see cref="CatalogueLibrary.Data.ImportExport.ObjectExport"/>.  This class includes the properties that are

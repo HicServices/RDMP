@@ -5,11 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using System.Reflection.Emit;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.QueryBuilding.Parameters;
 using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 
 namespace CatalogueLibraryTests.Unit
 {

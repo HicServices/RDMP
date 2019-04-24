@@ -7,10 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
 using FAnsi.Discovery;
 
-namespace HIC.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Readonly historical version of DataLoadInfo.  The central hierarchical RDMP logging database records activites across all areas of the program in a central

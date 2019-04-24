@@ -6,10 +6,9 @@
 
 using System;
 using System.Drawing;
-using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;

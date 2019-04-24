@@ -7,12 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Common abstract base class for IContainer (AND/OR Where logic) classes that are persisted in the database as a <see cref="DatabaseEntity"/>

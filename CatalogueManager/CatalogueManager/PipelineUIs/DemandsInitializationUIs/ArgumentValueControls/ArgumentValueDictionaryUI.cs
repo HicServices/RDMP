@@ -7,13 +7,9 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using System.Windows.Input;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 

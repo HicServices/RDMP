@@ -7,15 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
-using DataQualityEngine.Data;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
 
-namespace DataQualityEngine.Reports
+namespace Rdmp.Core.DataQualityEngine.Reports
 {
     /// <summary>
     /// Records the total number of validation failures that occur for each column.  Results are calculated for each novel DataLoadRunId found.  The counts

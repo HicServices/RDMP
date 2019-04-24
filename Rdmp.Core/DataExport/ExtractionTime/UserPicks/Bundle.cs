@@ -6,9 +6,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
 
-namespace DataExportLibrary.ExtractionTime.UserPicks
+namespace Rdmp.Core.DataExport.ExtractionTime.UserPicks
 {
     /// <summary>
     /// Ostensibly data extraction is simple: 1 Extraction Configuration, x datasets + 1 cohort.  In practice there are bundled Lookup tables, SupportingDocuments

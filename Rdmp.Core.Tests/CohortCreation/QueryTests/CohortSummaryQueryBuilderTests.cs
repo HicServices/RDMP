@@ -5,20 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.FilterImporting;
-using CohortManagerLibrary.QueryBuilding;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CohortCreation.QueryBuilding;
 using Tests.Common;
 
-namespace CohortManagerTests.QueryTests
+namespace Rdmp.Core.Tests.CohortCreation.QueryTests
 {
     public class CohortSummaryQueryBuilderTests:DatabaseTests
     {

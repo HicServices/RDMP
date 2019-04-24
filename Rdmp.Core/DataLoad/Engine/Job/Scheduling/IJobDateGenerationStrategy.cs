@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace DataLoadEngine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
     /// <summary>
     /// Determines how DateTimes for a Scheduled load are determined.  Scheduled loads are those where the LoadMetadata has one or more LoadProgresses.  We

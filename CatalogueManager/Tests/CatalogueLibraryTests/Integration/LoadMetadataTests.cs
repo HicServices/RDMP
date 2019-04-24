@@ -5,11 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;

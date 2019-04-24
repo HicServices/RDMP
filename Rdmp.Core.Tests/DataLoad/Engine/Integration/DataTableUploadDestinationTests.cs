@@ -8,16 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class DataTableUploadDestinationTests:DatabaseTests
     {

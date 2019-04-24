@@ -6,10 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 
-namespace CatalogueLibrary.Providers
+namespace Rdmp.Core.CatalogueLibrary.Providers
 {
     /// <summary>
     /// Audit of parents for a given object in the CatalogueChildProvider hierarchy that is used to populate RDMPCollectionUIs.  Every object that is not a root level 

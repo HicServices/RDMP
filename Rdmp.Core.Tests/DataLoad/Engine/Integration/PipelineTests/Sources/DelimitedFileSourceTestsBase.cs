@@ -7,13 +7,13 @@
 using System;
 using System.Data;
 using System.IO;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Sources
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 {
     public abstract class DelimitedFileSourceTestsBase
     {

@@ -5,17 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.Checks
+namespace Rdmp.Core.DataExport.Checks
 {
     /// <summary>
     /// Checks that all the globals (<see cref="SupportingDocument"/> / <see cref="SupportingSQLTable"/>) that would be fetched as part of an

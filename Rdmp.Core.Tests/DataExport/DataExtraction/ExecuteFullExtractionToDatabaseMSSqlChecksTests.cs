@@ -4,18 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Data.SqlClient;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
-using Moq;
 
-namespace DataExportLibrary.Tests.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
     public class ExecuteFullExtractionToDatabaseMSSqlChecksTests:DatabaseTests
     {

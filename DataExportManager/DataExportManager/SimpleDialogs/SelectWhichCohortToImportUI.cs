@@ -12,8 +12,7 @@ using System.Linq.Expressions;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Data.DataTables;
-using ReusableUIComponents;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 
 namespace DataExportManager.SimpleDialogs

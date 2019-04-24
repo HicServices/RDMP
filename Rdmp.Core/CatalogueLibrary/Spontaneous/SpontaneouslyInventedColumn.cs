@@ -6,10 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Spontaneous
+namespace Rdmp.Core.CatalogueLibrary.Spontaneous
 {
     /// <summary>
     /// Spontaneous (memory only) implementation of IColumn.

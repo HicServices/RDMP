@@ -7,9 +7,8 @@
 using System;
 using FAnsi;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Triggers.Implementations
+namespace Rdmp.Core.CatalogueLibrary.Triggers.Implementations
 {
     /// <summary>
     /// Handles the creation of the appropriate <see cref="ITriggerImplementer"/> for any given <see cref="DatabaseType"/>

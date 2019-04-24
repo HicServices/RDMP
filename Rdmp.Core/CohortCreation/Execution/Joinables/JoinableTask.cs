@@ -6,21 +6,18 @@
 
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
 
-namespace CohortManagerLibrary.Execution.Joinables
+namespace Rdmp.Core.CohortCreation.Execution.Joinables
 {
     /// <summary>
     /// A single AggregateConfiguration being executed by a CohortCompiler which is defined as a JoinableCohortAggregateConfiguration.  The 

@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.LinkCreators;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.LinkCreators;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <summary>
     ///  Constructs IFilters etc for data extraction via SelectedDataSets (See IFilterFactory).  Each SelectedDataSets in an ExtractionConfiguration has (optionally)

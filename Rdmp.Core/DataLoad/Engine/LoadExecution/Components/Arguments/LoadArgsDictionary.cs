@@ -6,15 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.DataLoad.Extensions;
-using DataLoadEngine.DatabaseManagement;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 
-namespace DataLoadEngine.LoadExecution.Components.Arguments
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
 {
     /// <summary>
     /// Creates StageArgs for each LoadStage based on the supplied LoadMetadata (load configuration).  This tells the DLE where each database is etc in the 

@@ -7,21 +7,21 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
 using FAnsi;
-using HIC.Logging;
-using LoadModules.Generic.Attachers;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
-using Moq;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class RemoteDatabaseAttacherTests:DatabaseTests
     {

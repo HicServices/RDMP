@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

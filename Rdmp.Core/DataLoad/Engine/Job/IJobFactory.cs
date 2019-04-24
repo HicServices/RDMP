@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Job
+namespace Rdmp.Core.DataLoad.Engine.Job
 {
     /// <summary>
     /// Creates the DataLoadJob which will run in a given DataLoadProcess (either one off load or an iterative load of a specific range of dates - See LoadProgress).

@@ -8,13 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Repositories.Construction;
-using CatalogueLibrary.Repositories.Construction.Exceptions;
 using Newtonsoft.Json;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction.Exceptions;
 
-namespace CatalogueLibrary.Data.Serialization
+namespace Rdmp.Core.CatalogueLibrary.Data.Serialization
 {
     /// <summary>
     /// Supports Json deserialization of objects which don't have default (blank) constructors.  Pass the objects you want to use for constructor

@@ -8,18 +8,18 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CohortManagerLibrary;
-using CohortManagerLibrary.Execution;
-using QueryCaching.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CohortCreation;
+using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.CohortCreationPipeline.Sources
+namespace Rdmp.Core.DataExport.CohortCreationPipeline.Sources
 {
     /// <summary>
     /// Executes a Cohort Identification Configuration query and releases the identifiers read into the pipeline as a single column DataTable.

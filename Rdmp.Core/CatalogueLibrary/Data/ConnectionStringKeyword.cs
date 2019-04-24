@@ -13,8 +13,7 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
-
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes a specific key/value pair that should always be used (unless overriden by an API requirement) in connection strings to servers of the given <see cref="DatabaseType"/>

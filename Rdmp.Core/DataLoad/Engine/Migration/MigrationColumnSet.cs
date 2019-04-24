@@ -7,12 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Triggers;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 
-namespace DataLoadEngine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration
 {
     /// <summary>
     /// Defines the role of every field involved in a STAGING to LIVE migration during DLE execution.  When performing a selective UPDATE it is important not to

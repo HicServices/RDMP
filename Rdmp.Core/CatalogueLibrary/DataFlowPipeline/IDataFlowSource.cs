@@ -5,10 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Threading;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.DataFlowPipeline
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline
 {
     /// <summary>
     /// First component in an IDataFlowPipelineEngine, responsible for producing objects of type T via GetChunk until there are no new Ts available (e.g. reading from a

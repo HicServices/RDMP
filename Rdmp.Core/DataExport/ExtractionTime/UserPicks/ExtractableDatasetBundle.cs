@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportLibrary.ExtractionTime.UserPicks
+namespace Rdmp.Core.DataExport.ExtractionTime.UserPicks
 {
     /// <summary>
     /// The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to be extracted.  This includes

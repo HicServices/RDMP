@@ -5,15 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.LoadExecution.Components.Arguments;
-using DataLoadEngine.LoadExecution.Components.Runtime;
-using NUnit.Framework;
-using Tests.Common;
 using Moq;
+using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class RuntimeTaskFactoryTests : DatabaseTests
     {

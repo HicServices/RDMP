@@ -10,9 +10,9 @@ using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace RDMPStartup.PluginManagement
+namespace Rdmp.Core.Startup.PluginManagement
 {
     /// <summary>
     /// Evaluates a single Plugin that is committed in the current Catalogue database (and downloaded into the MEF folder - PluginDirectory).  All the files

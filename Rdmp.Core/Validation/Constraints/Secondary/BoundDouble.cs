@@ -7,7 +7,7 @@
 using System;
 using System.ComponentModel;
 
-namespace HIC.Common.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Values (if present) in a column must be within a certain range of numeric values.  This can include referencing another column.  For example you could

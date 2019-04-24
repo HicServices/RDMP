@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace CatalogueLibrary.Providers
+namespace Rdmp.Core.CatalogueLibrary.Providers
 {
     /// <summary>
     /// Returns children for a given model object (any object in an RDMPCollectionUI).  This should be fast and your IChildProvider should pre load all the objects

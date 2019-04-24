@@ -6,23 +6,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using DataQualityEngine.Data;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataQualityEngine.Data;
 using ReusableUIComponents;
 using ReusableUIComponents.Heatmapping;
 

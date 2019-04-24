@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.QueryBuilding
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding
 {
     /// <summary>
     /// The SELECT portion of QueryBuilder is built up via AddColumn which takes an IColumn.  Each IColumn is a single line of SELECT Sql which might be as

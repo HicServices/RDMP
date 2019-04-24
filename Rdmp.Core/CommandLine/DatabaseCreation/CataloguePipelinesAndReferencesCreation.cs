@@ -7,21 +7,21 @@
 using System;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.CohortCreationPipeline.Destinations;
-using DataExportLibrary.CohortCreationPipeline.Sources;
-using DataExportLibrary.DataRelease.ReleasePipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataLoadEngine.DataFlowPipeline.Destinations;
-using LoadModules.Generic.DataFlowSources;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Sources;
+using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Checks;
 
-namespace RDMPStartup.DatabaseCreation
+namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
     /// <summary>
     /// Creates default pipelines required for basic functionality in RDMP.  These are templates that work but can be expanded upon / modified by the user.  For
@@ -44,7 +44,7 @@ namespace RDMPStartup.DatabaseCreation
 
         private void DoStartup()
         {
-            var startup = new RDMPStartup.Startup(_repositoryLocator);
+            var startup = new Startup.Startup(_repositoryLocator);
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
         }
         private void CreateServers()

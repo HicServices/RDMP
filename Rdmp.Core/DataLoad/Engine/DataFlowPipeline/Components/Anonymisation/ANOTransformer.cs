@@ -5,24 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DatabaseManagement;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation
 {
     /// <summary>
     /// Substitutes identifiers in a DataTable for ANO mapped equivalents (for a single DataColumn/ANOTable only).  For example storing all LabNumbers stored in

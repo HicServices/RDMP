@@ -8,14 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Repositories;
 using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Describes where a PreLoadDiscardedColumn will ultimately end up.

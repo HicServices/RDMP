@@ -6,17 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows.Forms;
-using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueManager.Collections
 {

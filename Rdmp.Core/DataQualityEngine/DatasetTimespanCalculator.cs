@@ -5,17 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Reports;
-using CatalogueLibrary.Repositories;
-using DataQualityEngine.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Reports;
+using Rdmp.Core.DataQualityEngine.Data;
 
-namespace DataQualityEngine
+namespace Rdmp.Core.DataQualityEngine
 {
     /// <summary>
     /// Calculates the date range of data held in a dataset (Catalogue).  Optionally you can 'discardOutliers' this includes any dates in which there are

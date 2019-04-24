@@ -7,12 +7,12 @@
 using System;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.PipelineTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
 {
     public class ComponentCompatibilityTests :DatabaseTests
     {

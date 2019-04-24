@@ -11,14 +11,14 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Xceed.Words.NET;
 
-namespace CatalogueLibrary.Reports
+namespace Rdmp.Core.CatalogueLibrary.Reports
 {
     /// <summary>
     /// Describes a method that generates images for a <seealso cref="Catalogue"/> e.g. aggregate graphs

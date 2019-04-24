@@ -8,22 +8,22 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.Repositories;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <inheritdoc/>
     public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString

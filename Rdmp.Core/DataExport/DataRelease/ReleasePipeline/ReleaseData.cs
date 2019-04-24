@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease.Potential;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.DataRelease.Potential;
 
-namespace DataExportLibrary.DataRelease.ReleasePipeline
+namespace Rdmp.Core.DataExport.DataRelease.ReleasePipeline
 {
     /// <summary>
     /// Collection passed down the Release Pipeline.  Release is the process of taking extracted files for a Project, bundling them together into a release

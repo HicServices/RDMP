@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 
-namespace DataLoadEngine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 {
     class CommandLineParser
     {

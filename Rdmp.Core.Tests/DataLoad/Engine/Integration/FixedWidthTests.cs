@@ -9,15 +9,15 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using LoadModules.Generic.Attachers;
-using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class FixedWidthTests :DatabaseTests
     {

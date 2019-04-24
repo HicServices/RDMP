@@ -11,20 +11,19 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.ImportExport.Exceptions;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.DataHelper;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

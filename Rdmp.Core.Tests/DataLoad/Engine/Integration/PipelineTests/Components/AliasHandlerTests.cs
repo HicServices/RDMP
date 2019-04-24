@@ -6,16 +6,16 @@
 
 using System.Collections.Generic;
 using System.Data;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using LoadModules.Generic.DataFlowOperations.Aliases;
-using LoadModules.Generic.DataFlowOperations.Aliases.Exceptions;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Components
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 {
     public class AliasHandlerTests  : DatabaseTests
     {

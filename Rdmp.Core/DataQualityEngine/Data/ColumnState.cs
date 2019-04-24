@@ -5,14 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ReusableLibraryCode;
 
-namespace DataQualityEngine.Data
+namespace Rdmp.Core.DataQualityEngine.Data
 {
     /// <summary>
     /// Runtime class for DQE used to record the number of records passing/failing validation/null for a given column in a dataset.  These counts are incremented

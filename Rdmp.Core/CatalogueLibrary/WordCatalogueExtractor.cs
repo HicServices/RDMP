@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Reports;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Reports;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
 
-namespace CatalogueLibrary
+namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
     /// Generates tables in a Microsoft Word document describing a Catalogue, it's CatalogueItems and any Issues associated with it.  This is used in data extraction 

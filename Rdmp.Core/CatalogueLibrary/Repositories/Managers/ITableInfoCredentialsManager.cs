@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Nodes;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Nodes;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Repositories.Managers
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers
 {
     /// <summary>
     /// Models the relationship between <see cref="TableInfo"/> and the <see cref="DataAccessCredentials"/> (if any) that can be used to reach them.

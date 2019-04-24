@@ -5,15 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

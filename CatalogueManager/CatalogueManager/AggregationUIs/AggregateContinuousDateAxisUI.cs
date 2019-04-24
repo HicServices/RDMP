@@ -9,9 +9,9 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Data;
 using System.Windows.Forms;
-using CatalogueLibrary.Checks.SyntaxChecking;
-using CatalogueLibrary.Data.Aggregation;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
 namespace CatalogueManager.AggregationUIs
 {

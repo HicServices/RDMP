@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueLibrary.CommandExecution
+namespace Rdmp.Core.CatalogueLibrary.CommandExecution
 {
     /// <summary>
     /// Creates a new Lookup relationship between two <see cref="TableInfo"/>.  This will allow you to optionally extract code descriptions side by side code values (e.g. SexCode, SexCode_Desc)

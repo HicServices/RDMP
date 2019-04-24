@@ -6,7 +6,7 @@
 
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Triggers
+namespace Rdmp.Core.CatalogueLibrary.Triggers
 {
     /// <summary>
     /// Handles the creation of _Archive tables and the trigger that populates them (on UPDATE) of the live data tables.  Also creates <see cref="SpecialFieldNames"/> fields

@@ -5,23 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi;
-using ReusableLibraryCode;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableUIComponents;
 
 namespace CatalogueManager.MainFormUITabs.SubComponents

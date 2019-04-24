@@ -8,14 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueLibrary.Data.Pipelines
+namespace Rdmp.Core.CatalogueLibrary.Data.Pipelines
 {
     /// <inheritdoc cref="IPipeline"/>
     public class Pipeline : DatabaseEntity, IPipeline,IHasDependencies

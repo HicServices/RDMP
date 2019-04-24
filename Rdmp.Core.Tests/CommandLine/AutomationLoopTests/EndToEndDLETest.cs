@@ -4,16 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
 using NUnit.Framework;
-using RDMPStartup.Options;
-using RDMPStartup.Runners;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Runners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests
+namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
 {
     public class EndToEndDLETest : DatabaseTests
     {

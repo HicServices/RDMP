@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.DataFlowPipeline
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline
 {
     /// <summary>
     /// MEF discoverable version of for IDataFlowComponent.  Also forces you to write a Check implementation in which you confirm or deny that your component is in a runnable

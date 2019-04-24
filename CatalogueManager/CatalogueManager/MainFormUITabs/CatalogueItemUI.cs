@@ -7,7 +7,6 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
@@ -15,6 +14,7 @@ using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.SimpleDialogs;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;

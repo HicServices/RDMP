@@ -6,25 +6,22 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.Linq;
-using System.Reflection;
-using CachingEngine.Factories;
-using CachingEngine.Layouts;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using DataLoadEngine.Job.Scheduling;
 using FAnsi.Discovery;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataProvider.FromCache
+namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache
 {
     /// <summary>
     /// Fetches all the ILoadProgresss in the ILoadMetadata, it then selects the first scheduled task which has work to be done (e.g. data is cached but not yet loaded).  

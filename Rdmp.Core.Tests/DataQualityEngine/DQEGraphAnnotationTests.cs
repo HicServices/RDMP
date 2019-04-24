@@ -5,19 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataQualityEngine.Data;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataQualityEngine.Data;
 using Tests.Common;
 
-namespace DataQualityEngine.Tests
+namespace Rdmp.Core.Tests.DataQualityEngine
 {
     public class DQEGraphAnnotationTests:DatabaseTests
     {

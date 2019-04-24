@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Comments;
 
-namespace CatalogueLibrary.Nodes.PipelineNodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes
 {
     /// <summary>
     /// Collection of all the Pipelines compatible with a given use case. 

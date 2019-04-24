@@ -9,7 +9,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using ReusableLibraryCode;
 
-namespace RDMPStartup.Events
+namespace Rdmp.Core.Startup.Events
 {
     /// <summary>
     /// Event Args for when the .Database assembly (e.g. CatalogueLibrary.Database) managed database is located during Startup.cs

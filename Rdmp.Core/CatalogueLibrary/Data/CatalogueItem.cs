@@ -6,23 +6,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
-using ReusableLibraryCode.Checks;
 
-
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// A virtual column that is made available to researchers.  Each Catalogue has 1 or more CatalogueItems, these contain the descriptions of what is contained

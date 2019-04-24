@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CachingEngine.BasicCache;
-using CachingEngine.Layouts;
-using CachingEngine.PipelineExecution.Destinations;
-using CachingEngine.Requests;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.Caching.BasicCache;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

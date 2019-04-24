@@ -10,12 +10,11 @@ using System.IO;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace LoadModules.Generic.DataProvider
+namespace Rdmp.Core.DataLoad.Modules.DataProvider
 {
     /// <summary>
     /// Describes a website / webservice endpoint which can be accessed with an optional username / password.  Use this Type when you need a [DemandsInitialization]

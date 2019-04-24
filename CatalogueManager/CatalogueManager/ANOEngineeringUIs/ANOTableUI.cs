@@ -7,16 +7,14 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CommandLine;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 

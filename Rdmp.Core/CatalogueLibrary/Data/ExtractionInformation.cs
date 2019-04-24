@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes in a single line of SELECT SQL a transform to perform on an underlying ColumnInfo.  ExtractionInformation is the technical implementation 

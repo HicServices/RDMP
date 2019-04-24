@@ -5,19 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.Job;
-using DataLoadEngine.Mutilators;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Mutilators
+namespace Rdmp.Core.DataLoad.Modules.Mutilators
 {
     /// <summary>
     /// Widens columns on the specified table to be varchar(max).  This is useful for delaying truncation errors till later in the load.  For example if you

@@ -7,14 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Ticketing;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Ticketing;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Each Catalogue database can have 0 or 1 TicketingSystemConfiguration, this is a pointer to a plugin that handles communicating with a ticketing/issue system

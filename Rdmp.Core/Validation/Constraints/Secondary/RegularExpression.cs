@@ -7,9 +7,9 @@
 using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
-using HIC.Common.Validation.UIAttributes;
+using Rdmp.Core.Validation.UIAttributes;
 
-namespace HIC.Common.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Values being validated are expected to pass the Regex pattern

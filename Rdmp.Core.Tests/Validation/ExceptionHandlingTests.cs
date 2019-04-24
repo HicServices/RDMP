@@ -5,13 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Primary;
-using HIC.Common.Validation.Constraints.Secondary;
-using HIC.Common.Validation.Constraints.Secondary.Predictor;
 using NUnit.Framework;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Primary;
+using Rdmp.Core.Validation.Constraints.Secondary;
+using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 
-namespace HIC.Common.Validation.Tests
+namespace Rdmp.Core.Tests.Validation
 {
     
     class ExceptionHandlingTests

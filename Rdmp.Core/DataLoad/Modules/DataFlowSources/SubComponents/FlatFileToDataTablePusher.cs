@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Extensions;
+using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowSources.SubComponents
+namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 {
     /// <summary>
     /// This class is a sub component of <see cref="DelimitedFlatFileDataFlowSource"/>, it is responsible for adding rows read from the CSV file to

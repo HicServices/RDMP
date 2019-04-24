@@ -6,13 +6,12 @@
 
 using System;
 using System.Linq;
-using CachingEngine.Layouts;
-using CatalogueLibrary.Data;
-using DataLoadEngine.Factories;
-using DataLoadEngine.LoadProcess.Scheduling.Strategy;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataLoad.Engine.Factories;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
     /// <summary>
     /// Decides the date generation strategy (e.g. pick next X days from the head of the LoadProgress or base dates loaded on next files available in cache)

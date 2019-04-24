@@ -6,7 +6,7 @@
 
 using System.Drawing;
 
-namespace CatalogueLibrary.Reports
+namespace Rdmp.Core.CatalogueLibrary.Reports
 {
     /// <summary>
     /// Describes an Aggregate Graph or Heatmap etc with optional description/headers

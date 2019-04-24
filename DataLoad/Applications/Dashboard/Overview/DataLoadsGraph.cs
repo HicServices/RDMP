@@ -11,8 +11,6 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
@@ -20,8 +18,10 @@ using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Dashboard.CommandExecution.AtomicCommands;
-using HIC.Logging;
-using HIC.Logging.PastEvents;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 
 namespace Dashboard.Overview
 {

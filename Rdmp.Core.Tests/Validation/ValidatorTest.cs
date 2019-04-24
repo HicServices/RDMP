@@ -7,14 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Primary;
-using HIC.Common.Validation.Constraints.Secondary;
-using HIC.Common.Validation.Tests.TestData;
 using NUnit.Framework;
+using Rdmp.Core.Tests.Validation.TestData;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Primary;
+using Rdmp.Core.Validation.Constraints.Secondary;
 
-namespace HIC.Common.Validation.Tests
+namespace Rdmp.Core.Tests.Validation
 {
 
     

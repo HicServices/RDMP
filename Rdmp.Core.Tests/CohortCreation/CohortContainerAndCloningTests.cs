@@ -5,19 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
-using CohortManagerLibrary.QueryBuilding;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.CohortCreation.QueryBuilding;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace CohortManagerTests
+namespace Rdmp.Core.Tests.CohortCreation
 {
     public class CohortContainerAndCloningTests : CohortIdentificationTests
     {

@@ -8,11 +8,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
 using CatalogueManager.Copying.Commands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

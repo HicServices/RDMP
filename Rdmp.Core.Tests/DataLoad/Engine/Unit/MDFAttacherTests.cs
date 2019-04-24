@@ -9,19 +9,19 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Attachers;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
-using LoadModules.Generic.Attachers;
-using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Attachers;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
     [Category("Integration")]
     public class MDFAttacherTests : DatabaseTests

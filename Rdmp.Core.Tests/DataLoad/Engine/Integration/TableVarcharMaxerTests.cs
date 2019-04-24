@@ -7,20 +7,20 @@
 using System;
 using System.Collections.Generic;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
-using LoadModules.Generic.Mutilators;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
-using Moq;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class TableVarcharMaxerTests : DatabaseTests
     {

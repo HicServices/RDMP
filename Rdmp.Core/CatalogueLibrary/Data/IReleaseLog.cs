@@ -7,7 +7,7 @@
 using System;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// See ReleaseLogEntry

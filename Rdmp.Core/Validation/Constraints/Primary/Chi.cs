@@ -7,7 +7,7 @@
 using System;
 using System.Text.RegularExpressions;
 
-namespace HIC.Common.Validation.Constraints.Primary
+namespace Rdmp.Core.Validation.Constraints.Primary
 {
     /// <summary>
     /// Field must contain a chi number, this is a 10 digit number in which the first 6 digits are the patients date of birth and the last 2 digits are

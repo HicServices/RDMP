@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes to QueryBuilder a secondary/tertiary etc join requirement when making a Lookup join (see <see cref="Lookup"/>)

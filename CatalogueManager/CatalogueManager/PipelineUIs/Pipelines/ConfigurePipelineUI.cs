@@ -7,11 +7,8 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
-using CommandLine;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
 namespace CatalogueManager.PipelineUIs.Pipelines
 {

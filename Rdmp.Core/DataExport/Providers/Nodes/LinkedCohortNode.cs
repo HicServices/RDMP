@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportLibrary.Providers.Nodes
+namespace Rdmp.Core.DataExport.Providers.Nodes
 {
     /// <summary>
     /// The saved cohort (list of patient identifiers) which will be linked with the datasets in the associated <see cref="ExtractionConfiguration"/>

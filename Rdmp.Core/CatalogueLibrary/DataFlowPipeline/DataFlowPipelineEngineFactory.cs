@@ -8,17 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.DataFlowPipeline
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline
 {
     /// <summary>
     /// Creates DataFlowPipelineEngines from IPipelines.  An IPipeline is the persistent user configured reusable list of components (and arguments for those components) which

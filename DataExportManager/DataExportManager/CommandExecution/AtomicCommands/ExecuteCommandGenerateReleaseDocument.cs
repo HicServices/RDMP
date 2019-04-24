@@ -10,11 +10,10 @@ using System.Linq;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace DataExportManager.CommandExecution.AtomicCommands

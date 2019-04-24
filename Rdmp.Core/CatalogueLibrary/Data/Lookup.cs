@@ -7,13 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes a relationship between 3 ColumnInfos in which 2 are from a lookup table (e.g. z_drugName), these are a primary

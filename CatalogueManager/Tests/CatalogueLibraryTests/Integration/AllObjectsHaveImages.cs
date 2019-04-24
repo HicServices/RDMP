@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode;
 using Tests.Common;
 

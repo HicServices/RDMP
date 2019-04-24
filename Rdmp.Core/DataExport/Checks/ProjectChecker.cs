@@ -7,11 +7,10 @@
 using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.Checks
+namespace Rdmp.Core.DataExport.Checks
 {
     /// <summary>
     /// Runs checks on a Project to make sure it has an extraction folder, project number etc.  Also checks ExtractionConfigurations that are part of the project

@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using MapsDirectlyToDatabaseTable.Versioning;
+﻿using MapsDirectlyToDatabaseTable.Versioning;
 
-namespace CatalogueLibrary.Database
+namespace Rdmp.Core.Databases
 {
     public sealed class DataQualityEnginePatcher:Patcher
     {

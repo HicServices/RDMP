@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.Checks
+namespace Rdmp.Core.DataExport.Checks
 {
     /// <summary>
     /// Checks that a given <see cref="SupportingSQLTable"/> is reachable by the current user and that the <see cref="SupportingSQLTable.SQL"/> can be executed and returns data.

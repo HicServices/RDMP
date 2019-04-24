@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Triggers;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 
-namespace DataLoadEngine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration
 {
     /// <summary>
     /// Checks that LIVE has appropriate fields to support the migration of records from STAGING to LIVE and assigns fields roles such that artifact fields

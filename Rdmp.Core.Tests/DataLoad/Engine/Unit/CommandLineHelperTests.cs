@@ -7,11 +7,11 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
-using DataLoadEngine.LoadExecution.Components.Arguments;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
-namespace DataLoadEngineTests.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
     class CommandLineHelperTests
     {

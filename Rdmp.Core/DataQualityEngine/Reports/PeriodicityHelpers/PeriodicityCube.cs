@@ -5,11 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Data.Common;
-using DataQualityEngine.Data;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Validation.Constraints;
 
-namespace DataQualityEngine.Reports.PeriodicityHelpers
+namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers
 {
     /// <summary>
     /// Records the number of records passing / failing validation with each consquence (See PeriodicityState).

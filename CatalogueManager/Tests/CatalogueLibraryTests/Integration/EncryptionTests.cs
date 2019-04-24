@@ -6,9 +6,8 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode;
 using Tests.Common;
 

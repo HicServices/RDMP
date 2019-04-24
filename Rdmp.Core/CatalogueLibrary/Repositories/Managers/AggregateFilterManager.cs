@@ -6,10 +6,10 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
-namespace CatalogueLibrary.Repositories.Managers
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers
 {
     class AggregateFilterManager : IFilterManager
     {

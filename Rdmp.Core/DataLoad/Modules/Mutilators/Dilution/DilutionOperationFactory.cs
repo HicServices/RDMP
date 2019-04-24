@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using ANOStore.ANOEngineering;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.ANOEngineering;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace LoadModules.Generic.Mutilators.Dilution
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution
 {
     /// <summary>
     /// Creates IDilutionOperations by reflection based on Type name and hydrates with the target IPreLoadDiscardedColumn.  See Dilution.

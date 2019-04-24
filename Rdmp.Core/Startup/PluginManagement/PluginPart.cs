@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Primitives;
 
-namespace RDMPStartup.PluginManagement
+namespace Rdmp.Core.Startup.PluginManagement
 {
     /// <summary>
     /// Describes a Type declared in a dll (LoadModuleAssembly) that is part of a Plugin downloaded into the MEF directory and being analysed by a PluginAnalyser.

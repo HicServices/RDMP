@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Globalization;
 
-namespace HIC.Common.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Values (if present) in a column must be within a certain range of dates.  This can include referencing another column.  For example you could specify that

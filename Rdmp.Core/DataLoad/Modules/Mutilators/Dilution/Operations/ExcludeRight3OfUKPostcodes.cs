@@ -4,17 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery.TypeTranslation;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode.Checks;
 
-namespace LoadModules.Generic.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
 {
     /// <summary>
     /// Dilutes data in the ColumnToDilute which is expected to contain postcodes by replacing stripping the last 3 digits such that DD3 7LX becomes DD3.

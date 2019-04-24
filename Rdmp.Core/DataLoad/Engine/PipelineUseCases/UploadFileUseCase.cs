@@ -6,12 +6,12 @@
 
 using System.Data;
 using System.IO;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
 
-namespace DataLoadEngine.PipelineUseCases
+namespace Rdmp.Core.DataLoad.Engine.PipelineUseCases
 {
     /// <summary>
     /// Describes the use case of uploading a <see cref="FileInfo"/> to a target database server.  Compatible pipelines for achieving this must have a destination

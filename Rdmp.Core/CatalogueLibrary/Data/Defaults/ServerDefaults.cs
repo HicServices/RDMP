@@ -6,11 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data.Defaults
+namespace Rdmp.Core.CatalogueLibrary.Data.Defaults
 {
     /// <inheritdoc cref="IServerDefaults"/>
     class ServerDefaults : IServerDefaults

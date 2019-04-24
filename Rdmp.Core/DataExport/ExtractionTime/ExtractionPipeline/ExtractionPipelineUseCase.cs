@@ -7,21 +7,20 @@
 using System;
 using System.Data;
 using System.Linq;
-using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.ExtractionTime.Commands;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.ExtractionTime.ExtractionPipeline
+namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline
 {
     /// <summary>
     /// Use case for linking and extracting Project Extraction Configuration datasets and custom data (See IExtractCommand).

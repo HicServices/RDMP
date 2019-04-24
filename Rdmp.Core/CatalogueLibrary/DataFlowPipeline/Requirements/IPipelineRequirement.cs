@@ -6,7 +6,7 @@
 
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.DataFlowPipeline.Requirements
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements
 {
     /// <summary>
     /// Used to model Runtime initialization.  IDataFlowComponents which implement this interface (you can implement for multiple T) will be Initialized with a compatible Initialization

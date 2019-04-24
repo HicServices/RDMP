@@ -7,14 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes an SQL query that can be run to generate useful information for the understanding of a given Catalogue (dataset).  If it is marked as 

@@ -6,14 +6,14 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job;
-using DataLoadEngine.Migration.QueryBuilding;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration
 {
     /// <summary>
     /// Migrates records from STAGING database tables to LIVE database tables by applying the OverwriteMigrationStrategy (MERGE statement - colloquially known

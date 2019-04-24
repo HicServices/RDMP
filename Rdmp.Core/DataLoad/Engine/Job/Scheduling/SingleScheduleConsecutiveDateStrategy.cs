@@ -6,10 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using DataLoadEngine.Job.Scheduling.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 
-namespace DataLoadEngine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
     /// <summary>
     /// Returns dates consecutively with reference to a LoadProgress, starting from the last successful load (DataLoadProgress) or OriginDate if no load has yet

@@ -8,10 +8,10 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Checks.SyntaxChecking
+namespace Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking
 {
     /// <summary>
     /// Checks whether an IColumn has an alias and if so whether it is wrapped and whether it contains invalid characters or whitespace

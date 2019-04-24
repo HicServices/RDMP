@@ -7,16 +7,15 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Database;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.Databases;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Menus.MenuItems

@@ -8,26 +8,21 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Net.Sockets;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-
-using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <inheritdoc/>
     public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed

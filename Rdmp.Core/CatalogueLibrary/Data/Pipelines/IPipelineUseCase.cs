@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.Data.Pipelines
+namespace Rdmp.Core.CatalogueLibrary.Data.Pipelines
 {
     /// <summary>
     /// Describes a specific use case for executing an IPipeline under.  This includes specifying the type T of the data flow, if there is an explicit

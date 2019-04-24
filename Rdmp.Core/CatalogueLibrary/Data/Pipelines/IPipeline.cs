@@ -5,11 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
 
-namespace CatalogueLibrary.Data.Pipelines
+namespace Rdmp.Core.CatalogueLibrary.Data.Pipelines
 {
     /// <summary>
     /// Describes the flow of strongly typed objects (usually DataTables) from a source to a destination (e.g. extracting linked cohort data into a flat file ).  

@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.DataRelease.ReleasePipeline
+namespace Rdmp.Core.DataExport.DataRelease.ReleasePipeline
 {
     /// <summary>
     /// To be used at design time only. Using this in runtime will generate Not Implemented Exceptions.

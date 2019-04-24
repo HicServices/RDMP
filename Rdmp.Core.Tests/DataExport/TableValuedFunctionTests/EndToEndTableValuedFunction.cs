@@ -6,34 +6,34 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.QueryBuilding;
-using CohortManagerLibrary.QueryBuilding;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.CohortCreationPipeline.Destinations;
-using DataExportLibrary.CohortCreationPipeline.Sources;
-using DataExportLibrary.CohortDatabaseWizard;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Sources;
+using Rdmp.Core.DataExport.CohortDatabaseWizard;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataExportLibrary.Tests.TableValuedFunctionTests
+namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests
 {
     public class EndToEndTableValuedFunction:DatabaseTests
     {

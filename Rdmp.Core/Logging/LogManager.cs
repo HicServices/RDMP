@@ -12,11 +12,11 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using HIC.Logging.PastEvents;
+using Rdmp.Core.Logging.PastEvents;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace HIC.Logging
+namespace Rdmp.Core.Logging
 {
     /// <summary>
     /// Entry point for the RDMP relational logging database.  This class requires to be pointed at an existing logging database with the correct schema (Defined 

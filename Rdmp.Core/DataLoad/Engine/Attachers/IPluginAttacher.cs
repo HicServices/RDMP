@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 
-namespace DataLoadEngine.Attachers
+namespace Rdmp.Core.DataLoad.Engine.Attachers
 {
     /// <summary>
     /// MEF discoverable version of IAttacher (See Attacher).

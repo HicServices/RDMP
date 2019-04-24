@@ -9,22 +9,22 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.Database;
-using CohortManagerLibrary.QueryBuilding;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
-using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.Databases;
+using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace CohortManagerTests.QueryTests
+namespace Rdmp.Core.Tests.CohortCreation.QueryTests
 {
     public class JoinableCohortConfigurationTests : CohortIdentificationTests
     {

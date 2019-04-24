@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using MapsDirectlyToDatabaseTable.Versioning;
 
-namespace CatalogueLibrary.ExternalDatabaseServerPatching
+namespace Rdmp.Core.CatalogueLibrary.ExternalDatabaseServerPatching
 {
     /// <summary>
     /// MEF discoverable version of IPatcher

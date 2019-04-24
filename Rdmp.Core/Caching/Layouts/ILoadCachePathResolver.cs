@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using System.IO;
 
-namespace CachingEngine.Layouts
+namespace Rdmp.Core.Caching.Layouts
 {
     /// <summary>
     /// Translates a root cache directory (usually .\Data\Cache e.g. C:\temp\DemographyLoading\Data\Cache) into a subdirectory based on arbitrary logic. For example

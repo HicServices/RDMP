@@ -9,22 +9,22 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Triggers.Implementations;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job;
-using DataLoadEngine.Migration;
 using FAnsi;
-using HIC.Logging;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Migration;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 {
     public class CrossDatabaseMergeCommandTest:DatabaseTests
     {

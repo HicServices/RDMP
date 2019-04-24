@@ -9,18 +9,18 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data.Aggregation
+namespace Rdmp.Core.CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
     /// Entry point for the aggregation system.  This class describes what a given aggregation is supposed to achieve (e.g. summarise the number of records in a 

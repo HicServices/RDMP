@@ -4,15 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.ComponentModel.Composition;
 using System.IO;
-using CachingEngine.Layouts;
-using CachingEngine.PipelineExecution.Destinations;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace CachingEngine.BasicCache
+namespace Rdmp.Core.Caching.BasicCache
 {
     /// <summary>
     /// Specifies how files are laid out by date.  This is the default implementation in which the cache root directory (usually .\Data\Cache) is populated with folders

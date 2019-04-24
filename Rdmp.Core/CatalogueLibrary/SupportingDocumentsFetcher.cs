@@ -6,11 +6,10 @@
 
 using System;
 using System.IO;
-using System.Threading;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary
+namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
     /// Copies SupportingDocuments associated with a project extraction request to the output directory.

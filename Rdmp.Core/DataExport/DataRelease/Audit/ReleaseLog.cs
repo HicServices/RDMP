@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.DataRelease.Potential;
 using ReusableLibraryCode;
 
-namespace DataExportLibrary.DataRelease.Audit
+namespace Rdmp.Core.DataExport.DataRelease.Audit
 {
     /// <summary>
     /// Records the fact that a given extracted dataset has been released.  It audits the user performing the release, the environmental release potential,

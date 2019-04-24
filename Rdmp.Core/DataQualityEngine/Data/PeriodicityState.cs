@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints;
 using ReusableLibraryCode;
 
-namespace DataQualityEngine.Data
+namespace Rdmp.Core.DataQualityEngine.Data
 {
     /// <summary>
     /// Runtime class for DQE used to record the number of rows passing/failing validation/null overall.  This is calculated by validating every column in the row

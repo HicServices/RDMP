@@ -5,23 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Drawing;
-using System.Data;
-using System.Linq;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.LocationsMenu;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.Startup;
 
 namespace CatalogueManager.TestsAndSetup.StartupUI
 {

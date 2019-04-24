@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.RelationalBulkTestDataTests.TestData
 {
     class RelationalBulkTestData
     {

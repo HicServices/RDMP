@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Data Export Manager keeps a record of the final SQL generated/used to perform an extraction of any ExtractionConfiguration in records called CumulativeExtractionResults.

@@ -7,15 +7,15 @@
 using System;
 using System.Data;
 using System.IO;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.Job;
-using LoadModules.Generic.DataFlowSources;
-using LoadModules.Generic.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers
 {
     /// <summary>
     /// See AnySeparatorFileAttacher

@@ -7,17 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics.Contracts;
-using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode.Annotations;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <summary>
     /// Sometimes when extracting data in an ExtractionConfiguration of a Project you don't want to extract all the available (extractable) columns in a dataset.  For example you might

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary
+namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
     /// Occurs when attempting to synchronize the RDMP catalogue state with a live database state.  For example dropping a table from your live database which

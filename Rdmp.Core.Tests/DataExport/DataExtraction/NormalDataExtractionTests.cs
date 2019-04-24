@@ -5,17 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.CodeDom;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
     public class NormalDataExtractionTests:TestsRequiringAnExtractionConfiguration
     {

@@ -8,7 +8,7 @@ using System;
 using System.Data;
 using NUnit.Framework;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Sources
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 {
     public class DelimitedFileSourceTests_AutomaticallyResolved : DelimitedFileSourceTestsBase
     {

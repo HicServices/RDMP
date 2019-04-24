@@ -12,7 +12,6 @@ using CatalogueManager.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Exceptions;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.Menus.MenuItems

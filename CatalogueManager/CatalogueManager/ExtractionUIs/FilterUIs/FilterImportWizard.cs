@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.QueryBuilding.Options;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Options;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs
 {

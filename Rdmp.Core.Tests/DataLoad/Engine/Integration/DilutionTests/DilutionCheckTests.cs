@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.DataLoad;
-using LoadModules.Generic.Mutilators.Dilution.Exceptions;
-using LoadModules.Generic.Mutilators.Dilution.Operations;
-using NUnit.Framework;
-using ReusableLibraryCode.Checks;
 using Moq;
+using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
+using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
+using ReusableLibraryCode.Checks;
 
-namespace DataLoadEngineTests.Integration.DilutionTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests
 {
     public class DilutionCheckTests
     {

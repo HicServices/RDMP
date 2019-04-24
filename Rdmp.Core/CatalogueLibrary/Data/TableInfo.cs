@@ -5,19 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Text.RegularExpressions;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.DataLoad.Extensions;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Triggers;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
@@ -25,13 +15,20 @@ using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes an sql table (or table valued function) on a given Server from which you intend to either extract and/or load / curate data.

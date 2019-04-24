@@ -6,13 +6,13 @@
 
 using System.ComponentModel.Composition;
 using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using Dashboard.CatalogueSummary.LoadEvents;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Dashboard.CommandExecution.AtomicCommands

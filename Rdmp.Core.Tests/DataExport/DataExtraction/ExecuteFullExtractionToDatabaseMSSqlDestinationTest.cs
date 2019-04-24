@@ -6,23 +6,23 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Pipelines;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.ExtractionTime.UserPicks;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests.DataExtraction
+namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
     public class ExecuteFullExtractionToDatabaseMSSqlDestinationTest :TestsRequiringAnExtractionConfiguration
     {

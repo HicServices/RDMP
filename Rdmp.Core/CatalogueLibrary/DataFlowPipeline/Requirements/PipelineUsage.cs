@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Logging;
 
-namespace CatalogueLibrary.DataFlowPipeline.Requirements
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements
 {
     /// <summary>
     /// Default options for creating common pipeline contexts

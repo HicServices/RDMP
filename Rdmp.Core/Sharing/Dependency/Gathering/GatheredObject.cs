@@ -8,15 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.ImportExport.Exceptions;
-using CatalogueLibrary.Data.Serialization;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
 using ReusableLibraryCode;
 
-namespace Sharing.Dependency.Gathering
+namespace Rdmp.Core.Sharing.Dependency.Gathering
 {
     /// <summary>
     /// The described Object is only tenously related to the original object and you shouldn't worry too much if during refactoring you don't find any references. 

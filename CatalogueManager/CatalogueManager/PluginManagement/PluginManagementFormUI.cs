@@ -15,19 +15,19 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup.PluginManagement;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Sharing.Transmission;
+using Rdmp.Core.Startup.PluginManagement;
 using ReusableLibraryCode;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
-using Sharing.Transmission;
 
 namespace CatalogueManager.PluginManagement
 {
@@ -133,7 +133,7 @@ namespace CatalogueManager.PluginManagement
 
         private void TreeListViewOnFormatRow(object sender, FormatRowEventArgs formatRowEventArgs)
         {
-            var plugin = formatRowEventArgs.Model as CatalogueLibrary.Data.Plugin;
+            var plugin = formatRowEventArgs.Model as Rdmp.Core.CatalogueLibrary.Data.Plugin;
             var lma = formatRowEventArgs.Model as LoadModuleAssembly;
             var part = formatRowEventArgs.Model as PluginPart;
             var exception = formatRowEventArgs.Model as Exception;
@@ -261,8 +261,8 @@ namespace CatalogueManager.PluginManagement
 
         #endregion
 
-        private IList<CatalogueLibrary.Data.Plugin> wrongPlugins;
-        private IList<CatalogueLibrary.Data.Plugin> compatiblePlugins;
+        private IList<Rdmp.Core.CatalogueLibrary.Data.Plugin> wrongPlugins;
+        private IList<Rdmp.Core.CatalogueLibrary.Data.Plugin> compatiblePlugins;
         BackgroundWorker analyser;
 
         private void RefreshUIFromDatabase()
@@ -277,7 +277,7 @@ namespace CatalogueManager.PluginManagement
             olvLegacyPlugins.ClearObjects();
 
             compatiblePlugins = Activator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins().ToList();
-            wrongPlugins = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueLibrary.Data.Plugin>().Except(compatiblePlugins).ToList();
+            wrongPlugins = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.CatalogueLibrary.Data.Plugin>().Except(compatiblePlugins).ToList();
 
             olvPlugins.AddObjects(compatiblePlugins.SelectMany(p => p.LoadModuleAssemblies).ToArray());
             olvLegacyPlugins.AddObjects(wrongPlugins.SelectMany(p => p.LoadModuleAssemblies).ToArray());
@@ -299,7 +299,7 @@ namespace CatalogueManager.PluginManagement
 
             var mef = Activator.RepositoryLocator.CatalogueRepository.MEF;
 
-            foreach (CatalogueLibrary.Data.Plugin plugin in compatiblePlugins)
+            foreach (Rdmp.Core.CatalogueLibrary.Data.Plugin plugin in compatiblePlugins)
             {
                 var pluginDir = plugin.GetPluginDirectoryName(mef.DownloadDirectory);
                 var pa = new PluginAnalyser(plugin, new DirectoryInfo(pluginDir), mef.SafeDirectoryCatalog);
@@ -327,7 +327,7 @@ namespace CatalogueManager.PluginManagement
 
         }
 
-        private Dictionary<CatalogueLibrary.Data.Plugin, PluginAnalyser> analysers = new Dictionary<CatalogueLibrary.Data.Plugin, PluginAnalyser>();
+        private Dictionary<Rdmp.Core.CatalogueLibrary.Data.Plugin, PluginAnalyser> analysers = new Dictionary<Rdmp.Core.CatalogueLibrary.Data.Plugin, PluginAnalyser>();
 
         protected override void OnLoad(EventArgs e)
         {
@@ -361,7 +361,7 @@ namespace CatalogueManager.PluginManagement
                     }
 
                     //delete any plugins for which there are no dlls left
-                    foreach (CatalogueLibrary.Data.Plugin emptyPlugin in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CatalogueLibrary.Data.Plugin>().Where(p => !p.LoadModuleAssemblies.Any()))
+                    foreach (Rdmp.Core.CatalogueLibrary.Data.Plugin emptyPlugin in Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Rdmp.Core.CatalogueLibrary.Data.Plugin>().Where(p => !p.LoadModuleAssemblies.Any()))
                         emptyPlugin.DeleteInDatabase();
                 }
             }

@@ -6,13 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 using Moq;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.Caching.Requests.FetchRequestProvider;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 
 namespace CatalogueLibraryTests.Unit
 {

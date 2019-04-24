@@ -8,7 +8,7 @@ using System;
 using NLog;
 using ReusableLibraryCode.Checks;
 
-namespace HIC.Logging.Listeners.Extensions
+namespace Rdmp.Core.Logging.Listeners.Extensions
 {
     public static class CheckEventArgsExtensions
     {

@@ -7,15 +7,15 @@
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
 
-namespace CohortManagerLibrary.Execution
+namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
     /// A single AggregateConfiguration being executed by a CohortCompiler.  The AggregateConfiguration will be a query like 'select distinct patientId from 

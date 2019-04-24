@@ -8,15 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExtractionTime;
-using CatalogueLibrary.ExtractionTime.Commands;
-using CatalogueLibrary.ExtractionTime.UserPicks;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data;
 
-namespace DataExportLibrary.ExtractionTime.Commands
+namespace Rdmp.Core.DataExport.ExtractionTime.Commands
 {
     /// <summary>
     /// Command representing a desire to extract a given dataset in an ExtractionConfiguration through an extraction pipeline.  This includes bundled content 

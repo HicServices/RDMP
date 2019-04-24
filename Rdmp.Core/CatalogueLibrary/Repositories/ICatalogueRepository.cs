@@ -6,22 +6,19 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Referencing;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories.Managers;
-using CatalogueLibrary.Ticketing;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.CatalogueLibrary.Ticketing;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Comments;
 
-namespace CatalogueLibrary.Repositories
+namespace Rdmp.Core.CatalogueLibrary.Repositories
 {
     /// <summary>
     /// See CatalogueRepository
@@ -81,7 +78,7 @@ namespace CatalogueLibrary.Repositories
         IPluginManager PluginManager { get; }
 
         /// <summary>
-        /// Returns a new <see cref="HIC.Logging.LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
+        /// Returns a new <see cref="LogManager"/> that audits in the default logging server specified by <see cref="ServerDefaults"/>
         /// </summary>
         /// <returns></returns>
         LogManager GetDefaultLogManager();

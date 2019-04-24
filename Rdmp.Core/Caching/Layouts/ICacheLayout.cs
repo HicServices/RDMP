@@ -8,11 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using CachingEngine.PipelineExecution.Destinations;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Layouts
+namespace Rdmp.Core.Caching.Layouts
 {
     /// <summary>
     ///'static' information about the cache layout, as opposed to the resolver which will give information for specific cache configurations

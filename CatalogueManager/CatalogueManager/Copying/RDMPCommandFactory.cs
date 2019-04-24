@@ -4,28 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Nodes;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
 using CatalogueManager.Copying.Commands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Copying
 {

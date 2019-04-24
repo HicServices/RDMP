@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.LinkCreators;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.LinkCreators;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <inheritdoc/>
     public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForcedJoin, IInjectKnown<TableInfo>

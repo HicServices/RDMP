@@ -11,7 +11,7 @@ using System.Security.Cryptography;
 using System.Xml.Serialization;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Repositories.Managers
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers
 {
     /// <summary>
     /// The file system location of the RSA private decryption key used to decrypt passwords stored in RDMP database.  There can only ever be one PasswordEncryptionKeyLocation

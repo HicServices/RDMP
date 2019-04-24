@@ -7,21 +7,21 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.DataHelper;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DatabaseManagement.Operations;
 using FAnsi;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     class DatabaseOperationTests : DatabaseTests
     {

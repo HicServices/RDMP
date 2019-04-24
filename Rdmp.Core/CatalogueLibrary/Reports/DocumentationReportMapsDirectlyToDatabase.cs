@@ -11,7 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 
-namespace CatalogueLibrary.Reports
+namespace Rdmp.Core.CatalogueLibrary.Reports
 {
     /// <summary>
     /// Extracts comments from SourceCodeForSelfAwareness.zip for all IMapsDirectlyToDatabaseTable object Types (all things that the user can store in the Catalogue/Data Export

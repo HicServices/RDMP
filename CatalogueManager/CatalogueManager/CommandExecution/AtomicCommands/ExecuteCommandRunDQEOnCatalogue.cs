@@ -6,11 +6,11 @@
 
 using System.ComponentModel.Composition;
 using System.Drawing;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
 using CatalogueManager.DataQualityUIs;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

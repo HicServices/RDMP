@@ -8,11 +8,11 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
 using FAnsi;
 using FAnsi.Implementations.MicrosoftSQL;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.DataHelper
+namespace Rdmp.Core.CatalogueLibrary.DataHelper
 {
     /// <summary>
     /// Legacy helper functions for manipulating Sql.  Many methods are Microsoft Sql Server specific.  If possible you should use IQuerySyntaxHelper instead since that is

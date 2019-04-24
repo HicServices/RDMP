@@ -7,10 +7,10 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands

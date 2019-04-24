@@ -6,13 +6,13 @@
 
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.Checks
+namespace Rdmp.Core.DataExport.Checks
 {
     /// <summary>
     /// Checks <see cref="ExtractionConfiguration"/> to ensure they are in a valid state for execution (have a cohort, linkable patient columns etc).  Optionally also checks

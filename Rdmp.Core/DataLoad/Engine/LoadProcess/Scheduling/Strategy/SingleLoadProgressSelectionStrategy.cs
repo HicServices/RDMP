@@ -4,12 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy
 {
     /// <summary>
     /// Hacky ILoadProgressSelectionStrategy in which only the specific LoadProgress in the constructor to this class is ever suggested.

@@ -7,13 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
-namespace HIC.Logging.Listeners
+namespace Rdmp.Core.Logging.Listeners
 {
     /// <summary>
     /// Handles transparently all the logging complexity by using the IDataLoadEventListener interface.  Use this interface if you want to log to the

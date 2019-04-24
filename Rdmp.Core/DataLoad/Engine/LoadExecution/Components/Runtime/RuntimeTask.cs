@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.LoadExecution.Components.Arguments;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
 {
     /// <summary>
     /// Runtime realisation of a ProcessTask.  ProcessTask is the DesignTime template configured by the user.  RuntimeTask is the 'ready to execute' version.

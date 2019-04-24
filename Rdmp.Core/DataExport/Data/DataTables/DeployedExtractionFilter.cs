@@ -8,20 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Checks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode.Checks;
-using IFilter = CatalogueLibrary.Data.IFilter;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <summary>
     /// Sometimes it is necessary to restrict which records are extracted for a given ExtractionConfiguration beyond the linkage against a cohort.  For example you might want to extract

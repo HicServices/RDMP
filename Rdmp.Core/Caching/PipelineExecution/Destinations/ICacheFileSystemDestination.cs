@@ -4,17 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel.Composition;
-using CachingEngine.Layouts;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 
-namespace CachingEngine.PipelineExecution.Destinations
+namespace Rdmp.Core.Caching.PipelineExecution.Destinations
 {
     /// <summary>
     /// Interface for minimum requirements of a cache destination pipeline component.  See abstract base class CacheFilesystemDestination for details on what this is.  This

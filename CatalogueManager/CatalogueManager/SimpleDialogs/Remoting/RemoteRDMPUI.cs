@@ -6,11 +6,11 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Remoting;
 using CatalogueManager.Collections;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Rdmp.Core.CatalogueLibrary.Data.Remoting;
 using ReusableUIComponents;
 
 namespace CatalogueManager.SimpleDialogs.Remoting

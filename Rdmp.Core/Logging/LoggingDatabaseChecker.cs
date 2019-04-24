@@ -6,18 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using System.Security.Cryptography;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace HIC.Logging
+namespace Rdmp.Core.Logging
 {
     /// <summary>
     /// Checks that a logging database is accessible and that the default system statuses and dataset names are present.

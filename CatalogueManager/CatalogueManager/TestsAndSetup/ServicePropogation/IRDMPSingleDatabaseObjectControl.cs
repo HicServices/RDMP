@@ -6,8 +6,8 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.TestsAndSetup.ServicePropogation

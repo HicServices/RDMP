@@ -7,21 +7,19 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.LoadExecution.Components.Arguments;
-using DataLoadEngine.LoadExecution.Components.Runtime;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {

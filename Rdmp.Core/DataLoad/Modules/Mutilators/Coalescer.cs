@@ -6,16 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Mutilators
+namespace Rdmp.Core.DataLoad.Modules.Mutilators
 {
     /// <summary>
     /// Resolves primary key collisions that are the result of non primary key fields being null in some records and not null in others (where primary keys of those records

@@ -5,16 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowOperations
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
 {
     /// <summary>
     /// Pipeline component designed to prevent unwanted data existing within DataTables passing through the pipeline.  The component will crash the entire pipeline

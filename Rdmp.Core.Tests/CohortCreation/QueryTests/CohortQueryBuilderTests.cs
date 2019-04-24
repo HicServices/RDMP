@@ -6,16 +6,16 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.Repositories;
-using CohortManagerLibrary.QueryBuilding;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CohortCreation.QueryBuilding;
 using Tests.Common;
 
-namespace CohortManagerTests.QueryTests
+namespace Rdmp.Core.Tests.CohortCreation.QueryTests
 {
     public class CohortQueryBuilderTests : CohortIdentificationTests
     {

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Data.DataLoad.Extensions
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions
 {
     /// <summary>
     /// Static extensions for <see cref="LoadStage"/>

@@ -8,19 +8,19 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.CohortCreationPipeline.Destinations;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
-using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests.Cohort
+namespace Rdmp.Core.Tests.DataExport.Cohort
 {
     public class CommittingNewCohortsTests : TestsRequiringACohort
     {

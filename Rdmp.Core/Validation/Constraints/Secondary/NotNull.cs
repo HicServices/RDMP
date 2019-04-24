@@ -6,7 +6,7 @@
 
 using System;
 
-namespace HIC.Common.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Values must appear in this column, if there are nulls (or whitespace) then the validation will fail.  While this kind of thing is trivially easy to implement

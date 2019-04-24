@@ -7,12 +7,12 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Database;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.Databases;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents.ChecksUI;

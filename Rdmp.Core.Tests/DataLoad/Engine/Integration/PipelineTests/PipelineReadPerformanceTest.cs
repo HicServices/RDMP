@@ -8,14 +8,14 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataFlowPipeline.Sources;
 using Diagnostics.TestData;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.PipelineTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
 {
     public class PipelineReadPerformanceTest:DatabaseTests
     {

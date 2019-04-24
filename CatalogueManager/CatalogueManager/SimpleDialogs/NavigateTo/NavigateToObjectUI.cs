@@ -13,13 +13,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
-using CatalogueLibrary.Providers;
-using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
 using CatalogueManager.Collections.Providers;
 using CatalogueManager.Collections.Providers.Filtering;
@@ -28,14 +21,19 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Theme;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers.Nodes;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
+using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents.ScintillaHelper;
-using IContainer = CatalogueLibrary.Data.IContainer;
+using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
 
 namespace CatalogueManager.SimpleDialogs.NavigateTo
 {

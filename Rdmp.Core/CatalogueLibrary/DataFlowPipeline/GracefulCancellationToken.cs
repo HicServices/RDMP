@@ -6,7 +6,7 @@
 
 using System.Threading;
 
-namespace CatalogueLibrary.DataFlowPipeline
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline
 {
     /// <summary>
     /// Wrapper for two System.Threading.CancellationTokens.  One for Stopping (please stop when you are finished with the current job) and one for Aborting (please stop 

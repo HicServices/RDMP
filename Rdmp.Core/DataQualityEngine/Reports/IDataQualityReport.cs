@@ -5,12 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Threading;
-using CatalogueLibrary.Data;
-
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataQualityEngine.Reports
+namespace Rdmp.Core.DataQualityEngine.Reports
 {
     /// <summary>
     /// Shared interface for any DQE run implementation (currently only CatalogueConstraintReport).  Supports confirming that the report can be run on a given

@@ -6,15 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
     /// <summary>
     /// DataLoadJob that is part of an ongoing data load where only specific dates are loaded.  Typically this involves advancing the head of a LoadProgress

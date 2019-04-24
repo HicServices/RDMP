@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CatalogueLibrary.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// An executable command with variable target.  SetTarget should be obvious based on your class name e.g. ExecuteCommandRelease (pass a Project to release).

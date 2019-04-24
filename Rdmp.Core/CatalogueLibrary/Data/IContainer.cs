@@ -5,11 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Aggregation;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes which logical keyword to use to interspace IFilters (and sub IContainers) within an IContainer.  If you have an IContainer with only one IFilter in it then

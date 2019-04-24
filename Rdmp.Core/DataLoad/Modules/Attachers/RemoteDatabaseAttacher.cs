@@ -8,21 +8,21 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.Attachers;
-using DataLoadEngine.DataFlowPipeline.Destinations;
-using DataLoadEngine.DataFlowPipeline.Sources;
-using DataLoadEngine.Job;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Attachers;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers
 {
     /// <summary>
     /// Data load component for loading RAW tables with records read from a remote database server. 

@@ -5,19 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel.Composition.Primitives;
 using System.Drawing;
-using System.Data;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
 using CatalogueManager.PipelineUIs.Pipelines.Models;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 

@@ -5,14 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
-namespace QueryCaching.Aggregation.Arguments
+namespace Rdmp.Core.QueryCaching.Aggregation.Arguments
 {
     /// <summary>
     /// Request to cache an AggregateConfiguration that results in a DataTable suitable for producing a useful graph (e.g. 'number of records per year in 

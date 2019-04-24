@@ -7,12 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram

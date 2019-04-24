@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Repositories
+namespace Rdmp.Core.CatalogueLibrary.Repositories
 {
     /// <summary>
     /// Use when you have an already initialized set of repositories and only want to fetch objects from the catalogue/data export repositories

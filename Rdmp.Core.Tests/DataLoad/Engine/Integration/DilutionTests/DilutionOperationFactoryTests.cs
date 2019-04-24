@@ -5,16 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using ANOStore.ANOEngineering;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using LoadModules.Generic.Mutilators.Dilution;
-using LoadModules.Generic.Mutilators.Dilution.Operations;
-using NUnit.Framework;
-using Tests.Common;
 using Moq;
+using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.ANOEngineering;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
+using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
+using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.DilutionTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests
 {
     public class DilutionOperationFactoryTests : DatabaseTests
     {

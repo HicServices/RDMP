@@ -6,9 +6,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Reports
+namespace Rdmp.Core.CatalogueLibrary.Reports
 {
     /// <summary>
     /// Arguments for the <see cref="MetadataReport"/> class which generates a descriptive human readable report about what columns are extracted from the dataset and the 

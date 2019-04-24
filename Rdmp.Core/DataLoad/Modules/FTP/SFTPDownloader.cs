@@ -8,11 +8,11 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary;
 using Renci.SshNet;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.FTP
+namespace Rdmp.Core.DataLoad.Modules.FTP
 {
     /// <summary>
     /// load component which downloads files from a remote SFTP (Secure File Transfer Protocol) server to the ForLoading directory

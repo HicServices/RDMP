@@ -5,24 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.QueryBuilding.Parameters;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.ExtractionUIs.FilterUIs.Options;
-using CohortManagerLibrary.QueryBuilding;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.UserPicks;
-using ReusableUIComponents;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options

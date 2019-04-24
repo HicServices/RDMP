@@ -8,14 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
-using System.IO.Compression;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// A collection of LoadModuleAssembly objects that make up a complete Plugin.  The Plugin is the head in which a name, upload location and verison are recorded then each

@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace CatalogueLibrary.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes
 {
     /// <summary>
     /// Collection of all the <see cref="Catalogue"/>s which are currently associated with a given <see cref="Data.DataLoad.LoadMetadata"/>.  This governs

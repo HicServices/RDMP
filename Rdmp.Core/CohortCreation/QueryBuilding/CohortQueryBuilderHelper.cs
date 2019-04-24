@@ -7,18 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.QueryBuilding.Parameters;
-using CatalogueLibrary.Spontaneous;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
-using QueryCaching.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.QueryCaching.Aggregation;
 
-namespace CohortManagerLibrary.QueryBuilding
+namespace Rdmp.Core.CohortCreation.QueryBuilding
 {
     /// <summary>
     /// Helper for CohortQueryBuilder which contains code for building individual cohort identification subqueries.  Subqueries are actually built by 

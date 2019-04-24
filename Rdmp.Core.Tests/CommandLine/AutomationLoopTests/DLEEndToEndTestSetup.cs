@@ -8,22 +8,21 @@ using System;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using Diagnostics;
 using FAnsi.Discovery;
-using HIC.Logging;
-using HIC.Logging.PastEvents;
 using NUnit.Framework;
-using RDMPStartup.Options;
-using RDMPStartup.Runners;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Runners;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests
+namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
 {
     public class DLEEndToEndTestSetup
     {

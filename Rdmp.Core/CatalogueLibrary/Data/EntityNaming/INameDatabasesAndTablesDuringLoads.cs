@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace CatalogueLibrary.Data.EntityNaming
+namespace Rdmp.Core.CatalogueLibrary.Data.EntityNaming
 {
     /// <summary>
     /// Provides service for determining/checking a table's name at a particular stage in the load process, as the same canonical table name may be different at different stages.

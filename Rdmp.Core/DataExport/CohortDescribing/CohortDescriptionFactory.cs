@@ -4,16 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportLibrary.CohortDescribing
+namespace Rdmp.Core.DataExport.CohortDescribing
 {
     /// <summary>
     /// Creates ExtractableCohortDescription objects for each of your cohorts, this involves issuing an async request to the cohort endpoints to calcualte things like 

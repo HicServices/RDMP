@@ -5,20 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CachingEngine.PipelineExecution.Destinations;
-using CachingEngine.PipelineExecution.Sources;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.PipelineExecution.Sources;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.Caching.Requests.FetchRequestProvider;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Factories
+namespace Rdmp.Core.Caching.Factories
 {
     /// <summary>
     /// Describes the use case under which a caching is attempted for a given ICacheProgress.  This involves working out the ICacheFetchRequestProvider, 

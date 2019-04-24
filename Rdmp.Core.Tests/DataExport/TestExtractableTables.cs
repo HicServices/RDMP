@@ -9,13 +9,13 @@ using System.Collections;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests
+namespace Rdmp.Core.Tests.DataExport
 {
     [Category("Database")]
     public class TestExtractableTables : TestsRequiringACohort

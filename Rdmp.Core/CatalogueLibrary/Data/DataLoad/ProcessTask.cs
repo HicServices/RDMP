@@ -6,21 +6,20 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Describes a specific operation carried out at a specific step of a LoadMetadata.  This could be 'unzip all files called *.zip in for loading' or

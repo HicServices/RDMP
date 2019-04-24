@@ -7,15 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueLibrary.Data.Dashboarding
+namespace Rdmp.Core.CatalogueLibrary.Data.Dashboarding
 {
     /// <summary>
     /// Describes a named collection of windows helpful for achieving a given task (usually data summarisation).  This class is the root object and has name (e.g. Dave's Dashboard).  It then

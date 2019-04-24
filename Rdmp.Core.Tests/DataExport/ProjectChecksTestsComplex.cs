@@ -5,17 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.DataFlowPipeline;
-using DataExportLibrary.Tests.DataExtraction;
-using DataExportLibrary.Checks;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataExport.Checks;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests
+namespace Rdmp.Core.Tests.DataExport
 {
     public class ProjectChecksTestsComplex:TestsRequiringAnExtractionConfiguration
     {

@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace RDMPStartup.PluginManagement
+namespace Rdmp.Core.Startup.PluginManagement
 {
     /// <summary>
     /// A method declared on a MEF exportable class in a dll that is part of a Plugin being analysed in a PluginAnalyser.  Contains a list of all

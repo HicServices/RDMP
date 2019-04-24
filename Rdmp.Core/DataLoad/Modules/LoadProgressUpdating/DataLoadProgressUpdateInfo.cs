@@ -7,18 +7,14 @@
 using System;
 using System.Data.SqlClient;
 using System.Text;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine;
-using DataLoadEngine.Job.Scheduling;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.LoadProgressUpdating
+namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
 {
     /// <summary>
     /// Represents a user made descision about how to upload a LoadProgress after a succesful data load.  LoadProgress has a field DataLoadProgress which stores

@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 
-namespace DataLoadEngine.DataProvider
+namespace Rdmp.Core.DataLoad.Engine.DataProvider
 {
     /// <summary>
     /// MEF discoverable (Plugin) version of IDataProvider

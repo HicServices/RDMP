@@ -5,9 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Annotations;
 
 namespace DataExportManager.ProjectUI.Datasets.Node

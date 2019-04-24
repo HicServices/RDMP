@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Describes how to join two tables together.  This is used to during Query Building (See JoinHelper) to build the JOIN section of the query once all required tables

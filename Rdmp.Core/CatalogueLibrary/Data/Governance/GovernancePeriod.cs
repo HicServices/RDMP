@@ -7,17 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using MapsDirectlyToDatabaseTable.Revertable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data.Governance
+namespace Rdmp.Core.CatalogueLibrary.Data.Governance
 {
     /// <summary>
     /// A GovernancePeriod is used to track the fact that a given set of datasets requires external approval for your agency to hold.  This is not the same as releasing data

@@ -4,10 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Nodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes
 {
     /// <summary>
     /// Container tree node for all the documentation bits of a Catalogue including SupportingDocuments and SupportingSQLTables 

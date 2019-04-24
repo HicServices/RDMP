@@ -10,14 +10,14 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataLoadEngine.Job;
-using LoadModules.Generic.DataFlowSources;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers
 {
     /// <summary>
     /// Data load component for loading Microsoft Excel files into RAW tables.  This class relies on pipeline source component ExcelDataFlowSource for the actual

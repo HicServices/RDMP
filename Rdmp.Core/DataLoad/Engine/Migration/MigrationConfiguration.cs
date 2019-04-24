@@ -8,14 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery;
 using FAnsi.Discovery.Constraints;
-using MySqlX.XDevAPI.Relational;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataLoadEngine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration
 {
     /// <summary>
     /// Converts a list of TableInfos into MigrationColumnSets to achieve migration of records from STAGING to LIVE during a DLE execution.

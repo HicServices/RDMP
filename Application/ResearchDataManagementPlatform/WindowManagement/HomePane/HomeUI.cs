@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
 using CatalogueManager.CommandExecution.AtomicCommands.WindowArranging;
@@ -17,9 +16,10 @@ using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CohortManager.CommandExecution.AtomicCommands;
-using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.Core.DataExport.Providers;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace ResearchDataManagementPlatform.WindowManagement.HomePane

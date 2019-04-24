@@ -5,28 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Data.Remoting;
-using CatalogueLibrary.Providers;
 using CatalogueManager.Refreshing;
-using DataExportLibrary.Data.DataTables;
-using HIC.Common.Validation.Constraints.Primary;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Data.Remoting;
+using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableUIComponents;
 
 namespace CatalogueManager.Collections

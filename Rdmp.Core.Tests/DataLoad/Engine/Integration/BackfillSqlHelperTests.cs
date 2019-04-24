@@ -8,16 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Triggers;
 using FAnsi.Discovery;
-using LoadModules.Generic.Mutilators.QueryBuilders;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class BackfillSqlHelperTests : DatabaseTests
     {

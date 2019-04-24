@@ -7,16 +7,16 @@
 using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DataProvider.FromCache;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Tests.Common;
 using Tests.Common.Helpers;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests
+namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
 {
     public class EndToEndDLECacheTest:DatabaseTests
     {

@@ -7,18 +7,18 @@
 using System;
 using System.Data;
 using System.IO;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.ExtractionTime.Commands;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.Sharing.CommandExecution;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Sharing.CommandExecution;
 
-namespace LoadModules.Generic.DataFlowOperations
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
 {
     /// <summary>
     /// Extraction component that will generate share definition files for the catalogues involved in the extraction.

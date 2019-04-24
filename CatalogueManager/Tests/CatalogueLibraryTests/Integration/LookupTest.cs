@@ -7,15 +7,13 @@
 using System;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.CommandExecution;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
 using FAnsi;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.CommandExecution;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

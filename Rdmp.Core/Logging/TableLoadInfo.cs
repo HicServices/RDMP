@@ -9,7 +9,7 @@ using System.Data;
 using System.Data.SqlClient;
 using FAnsi.Discovery;
 
-namespace HIC.Logging
+namespace Rdmp.Core.Logging
 {
     /// <summary>
     /// A 'table' that is being loaded as part of a logged activity (See DataLoadInfo).  While it is called a table you can actualy audit any endpoint for records

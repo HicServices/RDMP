@@ -6,11 +6,11 @@
 
 using System;
 using System.IO;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.DataRelease.ReleasePipeline
+namespace Rdmp.Core.DataExport.DataRelease.ReleasePipeline
 {
     /// <summary>
     /// Prepares the Source Global Folder for the ReleaseEngine.

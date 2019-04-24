@@ -10,7 +10,7 @@ using FAnsi;
 using NUnit.Framework;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 {
     class HowDoWeAchieveMd5Test:DatabaseTests
     {

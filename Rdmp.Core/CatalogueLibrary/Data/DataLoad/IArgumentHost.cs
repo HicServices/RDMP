@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Interface for all classes which make use of the IArgument/Argument system to record user configured values of [DemandsInitialization] properties.  Allows you

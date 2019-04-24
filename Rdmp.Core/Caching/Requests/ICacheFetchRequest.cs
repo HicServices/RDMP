@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 
-namespace CachingEngine.Requests
+namespace Rdmp.Core.Caching.Requests
 {
     /// <summary>
     /// An instruction for an ICacheSource to request a specific date/time range of data.  The ICacheFetchRequest will also be available in the ICacheChunk which is the T 

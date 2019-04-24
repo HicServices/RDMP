@@ -6,14 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Triggers;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 
-namespace DataLoadEngine.DatabaseManagement
+namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement
 {
     
     /// <summary>

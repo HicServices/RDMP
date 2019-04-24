@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using LoadModules.Generic.DataFlowSources;
-using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Sources
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 {
     public class DelimitedFileSourceTests_ResolvedAccordingToStrategy : DelimitedFileSourceTestsBase
     {

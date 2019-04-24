@@ -6,9 +6,9 @@
 
 using System;
 using System.Reflection;
-using CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 
-namespace CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions
 {
     /// <summary>
     /// Thrown when a component blueprint (<see cref="PipelineComponent"/>) could not be resolved into an instance because a given property on the

@@ -7,7 +7,7 @@
 using System;
 using System.Data.Common;
 
-namespace HIC.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Readonly audit of a historical 'data source' (See HIC.Logging.DataSource) that contributed records to a table that was loaded in the last (See 

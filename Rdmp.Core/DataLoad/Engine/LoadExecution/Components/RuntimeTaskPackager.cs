@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.LoadExecution.Components.Arguments;
-using DataLoadEngine.LoadExecution.Components.Runtime;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
-namespace DataLoadEngine.LoadExecution.Components
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
 {
     /// <summary>
     /// Converts multiple user defined DLE ProcessTasks into a single hydrated CompositeDataLoadComponent.  This involves converting the ProcessTasks

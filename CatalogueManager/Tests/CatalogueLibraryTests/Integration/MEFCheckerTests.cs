@@ -5,16 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using NUnit.Framework;
-using RDMPStartup;
+using Rdmp.Core.CatalogueLibrary.Checks;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

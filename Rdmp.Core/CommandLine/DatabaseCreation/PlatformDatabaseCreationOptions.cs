@@ -6,11 +6,10 @@
 
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using CatalogueLibrary.Repositories;
 using CommandLine;
 using CommandLine.Text;
 
-namespace RDMPStartup.DatabaseCreation
+namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
     /// <summary>
     /// Command line arguments for DatabaseCreation.exe

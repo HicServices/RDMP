@@ -7,13 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Allows you to limit the number of rows returned by an aggregate graph built by AggregateBuilder (or the number of PIVOT lines in a graph).  If your AggregateConfiguration has no pivot

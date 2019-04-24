@@ -5,20 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Nodes.PipelineNodes;
-using CatalogueLibrary.Nodes.SharingNodes;
-using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes;
+using Rdmp.Core.CatalogueLibrary.Nodes.SharingNodes;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 
-namespace CatalogueLibrary.Providers
+namespace Rdmp.Core.CatalogueLibrary.Providers
 {
     /// <summary>
     /// Extension of IChildProvider which also lists all the high level cached objects so that if you need to fetch objects from the database to calculate 

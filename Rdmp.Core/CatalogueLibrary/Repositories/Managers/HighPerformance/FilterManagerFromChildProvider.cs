@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Providers;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Providers;
 
-namespace CatalogueLibrary.Repositories.Managers.HighPerformance
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers.HighPerformance
 {
 
     /// <summary>

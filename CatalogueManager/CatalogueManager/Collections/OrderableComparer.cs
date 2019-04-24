@@ -8,8 +8,8 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueManager.Collections
 {

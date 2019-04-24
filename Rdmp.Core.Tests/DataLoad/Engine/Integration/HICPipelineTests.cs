@@ -8,26 +8,26 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
-using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
-using RDMPStartup.Options;
-using RDMPStartup.Runners;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Runners;
+using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class HICPipelineTests : DatabaseTests
     {

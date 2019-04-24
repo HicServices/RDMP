@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Data.Dashboarding
+namespace Rdmp.Core.CatalogueLibrary.Data.Dashboarding
 {
     /// <summary>
     /// Occurs when there is an error restoring a specific Persistence String.  Often occurs when a UI class has been renamed or a plugin unloaded between 

@@ -5,16 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using DataLoadEngine.Job;
-using DataLoadEngine.Migration;
-using DataLoadEngine.Migration.QueryBuilding;
 using FAnsi.Connections;
 using FAnsi.Discovery;
-using NUnit.Framework;
-using Tests.Common;
 using Moq;
+using NUnit.Framework;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Migration;
+using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
+using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     class MigrationStrategyTests : DatabaseTests
     {

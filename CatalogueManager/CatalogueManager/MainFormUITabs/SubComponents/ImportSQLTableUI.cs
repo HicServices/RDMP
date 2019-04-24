@@ -8,8 +8,6 @@ using System;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using CatalogueManager.ItemActivation;
@@ -17,8 +15,9 @@ using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.MainFormUITabs.SubComponents

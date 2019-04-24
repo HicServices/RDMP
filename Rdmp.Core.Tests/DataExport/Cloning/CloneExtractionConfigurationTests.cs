@@ -5,19 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.FilterImporting.Construction;
-using DataExportLibrary.Tests.DataExtraction;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.UserPicks;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-
-namespace DataExportLibrary.Tests.Cloning
+namespace Rdmp.Core.Tests.DataExport.Cloning
 {
     public class CloneExtractionConfigurationTests:TestsRequiringAnExtractionConfiguration
     {

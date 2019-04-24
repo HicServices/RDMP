@@ -8,16 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.CohortCreation;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CatalogueLibrary.CohortCreation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations.IdentifierAllocation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.CohortCreationPipeline.Destinations
+namespace Rdmp.Core.DataExport.CohortCreationPipeline.Destinations
 {
     /// <summary>
     /// Destination component for Cohort Creation Pipelines, responsible for bulk inserting patient identifiers into the cohort database specified in the

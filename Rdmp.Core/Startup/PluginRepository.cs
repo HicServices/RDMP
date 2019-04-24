@@ -6,12 +6,12 @@
 
 using System;
 using System.Data.Common;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
-namespace RDMPStartup
+namespace Rdmp.Core.Startup
 {
     /// <summary>
     /// Repository for constructing/saving/deleting <see cref="DatabaseEntity"/> objects that are are stored in your plugin database.

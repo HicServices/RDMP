@@ -9,22 +9,18 @@ using System.Collections.Generic;
 using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
-using CachingEngine;
-using CachingEngine.Factories;
-using CachingEngine.Requests;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.Caching;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
-using Moq;
 
-namespace CachingEngineTests.Integration
+namespace Rdmp.Core.Tests.Caching.Integration
 {
     public class CachingHostTests : UnitTests
     {

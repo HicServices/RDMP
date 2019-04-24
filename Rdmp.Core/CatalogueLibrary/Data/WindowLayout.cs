@@ -11,7 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Persisted window layout of RDMPMainForm as Xml.  This can be used to reload RDMP to a given layout of windows and can be shared between users.

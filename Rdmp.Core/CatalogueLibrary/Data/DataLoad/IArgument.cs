@@ -5,10 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Records the user configured value of a property marked with [DemandsInitialization] declared on a data flow/dle component (including plugin components).

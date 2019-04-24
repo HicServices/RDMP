@@ -8,10 +8,10 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Checks.SyntaxChecking
+namespace Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking
 {
     /// <summary>
     /// Base class for all Checkers which check the Sql Syntax of an object e.g. an IFilter's WhereSQL

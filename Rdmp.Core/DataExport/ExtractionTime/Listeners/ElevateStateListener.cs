@@ -4,11 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.ExtractionTime.Listeners
+namespace Rdmp.Core.DataExport.ExtractionTime.Listeners
 {
 
     /// <summary>

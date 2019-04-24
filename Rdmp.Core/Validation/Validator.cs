@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
 using System.IO;
@@ -14,15 +13,14 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using CatalogueLibrary.Repositories;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Primary;
-using HIC.Common.Validation.Constraints.Secondary;
-using HIC.Common.Validation.Constraints.Secondary.Predictor;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Primary;
+using Rdmp.Core.Validation.Constraints.Secondary;
+using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 using ReusableLibraryCode.Checks;
 
-namespace HIC.Common.Validation
+namespace Rdmp.Core.Validation
 {
     /// <summary>
     /// The Validator is the main entry point into this API. A client would typically create a Validator instance and then

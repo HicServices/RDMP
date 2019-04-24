@@ -8,15 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportLibrary.Data
+namespace Rdmp.Core.DataExport.Data
 {
     /// <inheritdoc/>
     public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IProjectCohortIdentificationConfigurationAssociation,IInjectKnown<CohortIdentificationConfiguration>

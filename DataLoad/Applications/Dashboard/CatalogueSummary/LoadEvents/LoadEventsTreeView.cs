@@ -14,14 +14,14 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Logging;
-using HIC.Logging.PastEvents;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 

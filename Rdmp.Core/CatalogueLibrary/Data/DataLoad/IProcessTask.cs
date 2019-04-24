@@ -6,11 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Cohort;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <inheritdoc cref="ProcessTask"/>
     public interface IProcessTask : IRevertable, IArgumentHost, ILoadProgressHost, IOrderable, IDisableable

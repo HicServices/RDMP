@@ -6,18 +6,14 @@
 
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.MainFormUITabs;
 using CohortManager.SubComponents;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
 {

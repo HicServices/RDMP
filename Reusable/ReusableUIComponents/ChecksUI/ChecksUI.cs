@@ -5,16 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Markup;
 using BrightIdeasSoftware;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Icons;
 

@@ -5,18 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Repositories;
 using NUnit.Framework;
-using Sharing.Dependency.Gathering;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.Sharing.Dependency.Gathering;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.ImportTests
@@ -39,11 +35,11 @@ namespace CatalogueLibraryTests.ImportTests
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             var tripart = new Version(version);
 
-            CatalogueLibrary.Data.Plugin p = new CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
+            Rdmp.Core.CatalogueLibrary.Data.Plugin p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
             p.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 1);
             p.SaveToDatabase();
 
-            CatalogueLibrary.Data.Plugin p2 = new CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
+            Rdmp.Core.CatalogueLibrary.Data.Plugin p2 = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
             p2.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 5);
             p2.SaveToDatabase();
 
@@ -62,7 +58,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.dll"));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
 
-            CatalogueLibrary.Data.Plugin p = new CatalogueLibrary.Data.Plugin(CatalogueRepository,fi);
+            Rdmp.Core.CatalogueLibrary.Data.Plugin p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository,fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
             
             //Give it some pdb bytes
@@ -82,7 +78,7 @@ namespace CatalogueLibraryTests.ImportTests
             p.DeleteInDatabase();
 
             //import it again
-            p = new CatalogueLibrary.Data.Plugin(sm, list[0]);
+            p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(sm, list[0]);
             lma = new LoadModuleAssembly(sm, list[1]);
             
             Assert.AreEqual(1,lma.Pdb.Length); //1 byte in pdb
@@ -101,7 +97,7 @@ namespace CatalogueLibraryTests.ImportTests
             //and delete pluing (CASCADE deletes lma too)
             p.DeleteInDatabase();
 
-            p = new CatalogueLibrary.Data.Plugin(sm, list[0]);
+            p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(sm, list[0]);
             lma = new LoadModuleAssembly(sm, list[1]);
 
             Assert.IsNull(lma.Pdb);
@@ -121,7 +117,7 @@ namespace CatalogueLibraryTests.ImportTests
             var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah3.dll"));
             File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
-            CatalogueLibrary.Data.Plugin p = new CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
+            Rdmp.Core.CatalogueLibrary.Data.Plugin p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
             var lma2 = new LoadModuleAssembly(CatalogueRepository, fi3, p);
             

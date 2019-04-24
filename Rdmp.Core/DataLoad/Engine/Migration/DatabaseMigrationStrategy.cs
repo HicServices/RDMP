@@ -6,15 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.SqlClient;
-using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using DataLoadEngine.Migration.QueryBuilding;
 using FAnsi.Connections;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.Logging;
 
-namespace DataLoadEngine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration
 {
     public delegate void TableMigrationComplete(string tableName, int numInserts, int numUpdates);
 

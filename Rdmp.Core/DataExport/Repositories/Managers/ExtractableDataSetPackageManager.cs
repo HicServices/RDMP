@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories.Managers;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportLibrary.Repositories.Managers
+namespace Rdmp.Core.DataExport.Repositories.Managers
 {
     /// <inheritdoc/>
     public class ExtractableDataSetPackageManager : IExtractableDataSetPackageManager

@@ -9,17 +9,17 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
-using LoadModules.Generic.DataFlowSources;
-using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Sources
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 {
     public class DelimitedFileSourceTests
     {

@@ -7,13 +7,13 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Security.Cryptography;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.Logging;
 using Tests.Common;
 
-namespace HIC.Logging.Tests.Integration
+namespace Rdmp.Core.Tests.Logging
 {
     
     class FatalErrorLoggingTest : DatabaseTests

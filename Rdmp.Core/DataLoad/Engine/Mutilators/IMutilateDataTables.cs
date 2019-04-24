@@ -4,15 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Mutilators
+namespace Rdmp.Core.DataLoad.Engine.Mutilators
 {
     /// <summary>
     /// A user configurable component which will run during Data Load Engine execution and result in the modification of an existing table in of the load

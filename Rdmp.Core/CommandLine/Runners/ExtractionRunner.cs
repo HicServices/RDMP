@@ -8,23 +8,23 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.ExtractionTime.Commands;
-using DataExportLibrary.Checks;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources;
-using DataExportLibrary.ExtractionTime.Listeners;
-using DataExportLibrary.ExtractionTime.UserPicks;
-using HIC.Logging;
-using HIC.Logging.Listeners;
-using RDMPStartup.Options;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.DataExport.Checks;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataExport.ExtractionTime.Listeners;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.Listeners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPStartup.Runners
+namespace Rdmp.Core.CommandLine.Runners
 {
     /// <summary>
     /// Runs the extraction process for an <see cref="ExtractionConfiguration"/> in which all the datasets are linked and extracted to appropriate destination

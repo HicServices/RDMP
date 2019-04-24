@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints;
 
-namespace HIC.Common.Validation
+namespace Rdmp.Core.Validation
 {
     /// <summary>
     /// Storage class for recording the number of rows failing validation with each Consequence subdivided by Column.

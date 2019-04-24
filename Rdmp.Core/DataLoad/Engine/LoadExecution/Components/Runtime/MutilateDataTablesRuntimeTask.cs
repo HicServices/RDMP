@@ -5,18 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution.Components.Arguments;
-using DataLoadEngine.Mutilators;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Engine.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
 {
     /// <summary>
     /// RuntimeTask that hosts an IMutilateDataTables.  The instance is hydrated from the users configuration (ProcessTask and ProcessTaskArguments) See

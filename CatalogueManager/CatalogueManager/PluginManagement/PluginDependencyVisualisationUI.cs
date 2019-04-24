@@ -10,7 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using RDMPStartup.PluginManagement;
+using Rdmp.Core.Startup.PluginManagement;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.PluginManagement

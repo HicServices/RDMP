@@ -6,9 +6,8 @@
 
 using System;
 using System.Globalization;
-using HIC.Common.Validation.Constraints.Primary;
 
-namespace HIC.Common.Validation.Constraints.Secondary.Predictor
+namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor
 {
     /// <summary>
     /// Validation rule that checks that the second from last digit in a CHI matches the patient gender.  CHI numbers second last digit should be even for

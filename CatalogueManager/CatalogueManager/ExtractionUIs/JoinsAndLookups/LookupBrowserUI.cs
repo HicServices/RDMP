@@ -4,20 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
-using CatalogueManager.Copying;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;

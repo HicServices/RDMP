@@ -6,17 +6,17 @@
 
 using System.Data;
 using System.IO;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.ExtractionTime.Commands;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.DataRelease.ReleasePipeline;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.Logging;
 
-namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations
+namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations
 {
     /// <summary>
     /// Destination for Extraction Pipelines.  Saves the extracted (anonymous) data contained in the DataTables received (which arrive in batches) to some location

@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.DataFlowPipeline.Requirements
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements
 {
     /// <summary>
     /// Low level description of what an IPipeline must look like to be compatible with a given use case for a IDataFlowPipelineEngine.  This includes whether there must be

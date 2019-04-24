@@ -4,16 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataQualityEngine.Data;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Validation.Constraints;
 
-namespace DataQualityEngine.Reports.PeriodicityHelpers
+namespace Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers
 {
     /// <summary>
     /// Accumulates counts for populating into the PeriodicityState table of the DQE.  This table contains row evaluation counts (passing / failing validation) and

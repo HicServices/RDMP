@@ -6,10 +6,10 @@
 
 using System;
 using System.Drawing;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.FilterImporting.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

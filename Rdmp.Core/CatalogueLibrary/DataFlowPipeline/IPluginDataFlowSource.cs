@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.DataFlowPipeline
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline
 {
     /// <summary>
     /// MEF discoverable version of IDataFlowSource

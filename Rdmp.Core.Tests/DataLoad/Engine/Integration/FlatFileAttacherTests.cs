@@ -4,26 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
-using LoadModules.Generic.Attachers;
-using LoadModules.Generic.Exceptions;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class FlatFileAttacherTests : DatabaseTests
     {

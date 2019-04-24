@@ -9,34 +9,34 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Data.Remoting;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.DataRelease;
-using DataExportLibrary.DataRelease.Audit;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
-using LoadModules.Generic.DataFlowOperations;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Data.Remoting;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.DataRelease;
+using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 
 namespace Tests.Common
 {
@@ -234,15 +234,15 @@ namespace Tests.Common
                 return (T)(object)joinable.AddUser(config);
             }
             
-            if (typeof (T) == typeof(CatalogueLibrary.Data.Plugin))
-                return (T)(object)new CatalogueLibrary.Data.Plugin(Repository,new FileInfo("bob.zip"));
+            if (typeof (T) == typeof(Rdmp.Core.CatalogueLibrary.Data.Plugin))
+                return (T)(object)new Rdmp.Core.CatalogueLibrary.Data.Plugin(Repository,new FileInfo("bob.zip"));
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
                 var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.dll");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
-                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<CatalogueLibrary.Data.Plugin>());
+                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.CatalogueLibrary.Data.Plugin>());
             }
             
             if (typeof (T) == typeof(AggregateContinuousDateAxis))

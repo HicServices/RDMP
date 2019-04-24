@@ -8,10 +8,8 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using ReusableUIComponents;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs

@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
 using FAnsi;
-using LoadModules.Generic.DataFlowOperations.Aliases;
-using LoadModules.Generic.DataFlowOperations.Aliases.Exceptions;
-using LoadModules.Generic.DataFlowOperations.Swapping;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Components
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 {
     class ColumnSwapperTests:DatabaseTests
     {

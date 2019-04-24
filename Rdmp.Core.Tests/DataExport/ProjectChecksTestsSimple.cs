@@ -5,22 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Reflection;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using DataExportLibrary.Checks;
-using DataExportLibrary.Data.DataTables;
 using NUnit.Framework;
+using Rdmp.Core.DataExport.Checks;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Checks;
-using Moq;
 using Tests.Common;
 
-namespace DataExportLibrary.Tests
+namespace Rdmp.Core.Tests.DataExport
 {
     public class ProjectChecksTestsSimple:DatabaseTests
     {

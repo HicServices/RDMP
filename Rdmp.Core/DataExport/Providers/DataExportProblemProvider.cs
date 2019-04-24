@@ -5,13 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary.Providers;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Providers.Nodes;
-using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Providers.Nodes;
+using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
 
-namespace DataExportLibrary.Providers
+namespace Rdmp.Core.DataExport.Providers
 {
     /// <summary>
     /// Identifies all rapidly detectable problems with the configurations of Data Export items

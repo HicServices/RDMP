@@ -7,7 +7,7 @@
 using System;
 using System.Text;
 
-namespace HIC.Logging
+namespace Rdmp.Core.Logging
 {
     /// <summary>
     /// Decides which records to fetch from the hierarchical logging database including row filter for specific

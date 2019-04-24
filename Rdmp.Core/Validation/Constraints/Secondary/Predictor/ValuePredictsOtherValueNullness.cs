@@ -4,7 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace HIC.Common.Validation.Constraints.Secondary.Predictor
+namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor
 {
     /// <summary>
     /// Validation rule for use with a Prediction Constraint.  Indicates that the 'nullness' of the columns must match (i.e. if one is null the other must be too)

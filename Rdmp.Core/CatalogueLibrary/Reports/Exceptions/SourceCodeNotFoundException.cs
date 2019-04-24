@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Reports.Exceptions
+namespace Rdmp.Core.CatalogueLibrary.Reports.Exceptions
 {
     /// <summary>
     /// Thrown if the "SourceCodeForSelfAwareness.zip" file is not present where it is expected.  RDMP bundles it's source code in a flattened zip file called 

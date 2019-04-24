@@ -4,11 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data;
 using FAnsi;
 using NUnit.Framework;
-using ReusableLibraryCode;
-using Tests.Common;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 
 namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderTests
 {
@@ -20,7 +19,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
             _ti.DatabaseType = DatabaseType.MySql;
             _ti.SaveToDatabase();
 
-            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);
+            var builder = new AggregateBuilder(null, "count(*)", null);
             builder.AddColumn(_dimension1);
 
             var topx = new AggregateTopX(CatalogueRepository, _configuration, 32);
@@ -51,7 +50,7 @@ LIMIT 32"),CollapseWhitespace(builder.SQL.Trim()));
             _ti.DatabaseType = DatabaseType.MySql;
             _ti.SaveToDatabase();
 
-            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);
+            var builder = new AggregateBuilder(null, "count(*)", null);
             builder.AddColumn(_dimension1);
 
             var topx = new AggregateTopX(CatalogueRepository, _configuration, 31);

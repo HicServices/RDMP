@@ -7,20 +7,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Newtonsoft.Json;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Sharing.Refactoring;
 using ReusableLibraryCode.Checks;
-using Sharing.Refactoring;
 
-namespace ANOStore.ANOEngineering
+namespace Rdmp.Core.CatalogueLibrary.ANOEngineering
 {
     /// <summary>
     /// Configuration class for ForwardEngineerANOCatalogueEngine (See ForwardEngineerANOCatalogueEngine).  This class stores which anonymisation transforms/dilutions

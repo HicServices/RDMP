@@ -6,15 +6,13 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Repositories;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using ReusableLibraryCode.Checks;
-using LogManager = HIC.Logging.LogManager;
+using LogManager = Rdmp.Core.Logging.LogManager;
 
-namespace DataLoadEngine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 {
     class MetadataLoggingConfigurationChecks : ICheckable
     {

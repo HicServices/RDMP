@@ -9,15 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using HIC.Logging.Listeners;
-using RDMPStartup.Options;
-using RDMPStartup.Options.Abstracts;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.Logging.Listeners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPStartup.Runners
+namespace Rdmp.Core.CommandLine.Runners
 {
     public abstract class ManyRunner:IRunner
     {

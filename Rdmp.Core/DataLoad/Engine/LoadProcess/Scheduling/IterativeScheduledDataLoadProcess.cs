@@ -5,19 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job.Scheduling;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess.Scheduling.Strategy;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Engine.LoadExecution;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadProcess.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling
 {
     /// <summary>
     /// DataLoadProcess for LoadMetadata's which have one or more LoadProgresses (See ScheduledDataLoadProcess).  This version of ScheduledDataLoadProcess will

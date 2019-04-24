@@ -7,16 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.DataRelease.Audit;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <inheritdoc/>
     public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>

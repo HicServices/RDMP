@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Spontaneous
+namespace Rdmp.Core.CatalogueLibrary.Spontaneous
 {
     /// <summary>
     /// Spontaneous (memory only) implementation of IFilter.  This is the preferred method of injecting lines of WHERE Sql into an ISqlQueryBuilder dynamically in code

@@ -7,17 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
-using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.DataHelper
+namespace Rdmp.Core.CatalogueLibrary.DataHelper
 {
     /// <summary>
     /// Generates TableInfo entries in the ICatalogueRepository based the table/view specified on the live database server.  Can also be used to import new ColumnInfos into existing

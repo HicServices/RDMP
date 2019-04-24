@@ -6,10 +6,10 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Repositories;
 using Newtonsoft.Json;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Serialization
+namespace Rdmp.Core.CatalogueLibrary.Data.Serialization
 {
     /// <summary>
     /// Facilitates the use of <see cref="DatabaseEntityJsonConverter"/> and <see cref="PickAnyConstructorJsonConverter"/> by configuring appropriate <see cref="JsonSerializerSettings"/> etc

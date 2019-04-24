@@ -9,27 +9,27 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Exceptions;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Exceptions;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <inheritdoc cref="ICatalogue"/>
     public class Catalogue : DatabaseEntity, IComparable, ICatalogue, ICheckable, IInjectKnown<CatalogueItem[]>,IInjectKnown<CatalogueExtractabilityStatus>
@@ -1102,7 +1102,7 @@ namespace CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Gets the <see cref="HIC.Logging.LogManager"/> for logging load events related to this Catalogue / it's LoadMetadata (if it has one).  This will throw if no
+        /// Gets the <see cref="LogManager"/> for logging load events related to this Catalogue / it's LoadMetadata (if it has one).  This will throw if no
         /// logging server has been configured.
         /// </summary>
         /// <returns></returns>

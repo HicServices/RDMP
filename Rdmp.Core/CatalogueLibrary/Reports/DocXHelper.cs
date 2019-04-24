@@ -12,7 +12,7 @@ using System.Linq;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
 
-namespace CatalogueLibrary.Reports
+namespace Rdmp.Core.CatalogueLibrary.Reports
 {
     /// <summary>
     /// Base class for all reports which generate Microsoft DocX files.  Note that the DocX library is used to create the .docx file so it doesn't actually require Microsoft

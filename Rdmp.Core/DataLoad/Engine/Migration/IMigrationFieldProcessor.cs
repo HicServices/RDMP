@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using FAnsi.Discovery;
 
-namespace DataLoadEngine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration
 {
     /// <summary>
     /// Handles the routing of columns in a MigrationColumnSet to either FieldsToDiff or FieldsToUpdate during a MERGE query in which records are written into

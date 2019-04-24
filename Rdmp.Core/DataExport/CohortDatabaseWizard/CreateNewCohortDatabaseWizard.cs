@@ -7,19 +7,20 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.CohortDatabaseWizard
+namespace Rdmp.Core.DataExport.CohortDatabaseWizard
 {
     /// <summary>
     /// Creates an ExternalCohortTable database implementation.  The implementation will be based on your live IsExtractionIdentifier columns 
-    /// (PrivateIdentifierPrototype) and a release identifier allocation strategy (<see cref="DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation.IAllocateReleaseIdentifiers"/>)
+    /// (PrivateIdentifierPrototype) and a release identifier allocation strategy (<see cref="IAllocateReleaseIdentifiers"/>)
     ///  e.g. varchar(10) private patient identifier gets mapped to a new GUID.
     /// 
     /// <para>This implementation is intended to be a basic solution only and lacks advanced features such having the same release identifier for the same primary

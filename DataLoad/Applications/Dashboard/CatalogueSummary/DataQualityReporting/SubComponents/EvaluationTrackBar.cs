@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using DataQualityEngine.Data;
+using Rdmp.Core.DataQualityEngine.Data;
 
 namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
 {

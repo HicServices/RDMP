@@ -7,27 +7,19 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Security.Cryptography.X509Certificates;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataHelper;
-using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using Diagnostics.TestData;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace AnonymisationTests
+namespace Rdmp.Core.Tests.CatalogueLibrary.Anonymisation
 {
     public class IdentifierDumpFunctionalityTests:TestsRequiringFullAnonymisationSuite
     {

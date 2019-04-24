@@ -6,11 +6,11 @@
 
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using DataLoadEngine.Job;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
 {
     /// <summary>
     /// DLE post load disposal operation which deletes all the files in the ForLoading directory.  This is added to the disposal stack and should be executed

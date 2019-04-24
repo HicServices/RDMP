@@ -5,19 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadProcess;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components.Standard
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard
 {
     /// <summary>
     /// Copies all files in ForLoading directory of a DLE load into the ForArchiving folder zipped up in a file named x.zip where x is the ID of the data load run

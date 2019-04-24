@@ -5,12 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary;
-using DataLoadEngine;
-using DataLoadEngine.Job.Scheduling;
-using ReusableLibraryCode.Progress;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
-namespace LoadModules.Generic.LoadProgressUpdating
+namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
 {
     /// <summary>
     /// UpdateProgressIfLoadsuccessful which uses a fixed 'specificValue' to update the LoadProgress.DataLoadProgress to 

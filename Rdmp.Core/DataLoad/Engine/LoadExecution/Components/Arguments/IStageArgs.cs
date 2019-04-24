@@ -5,13 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace DataLoadEngine.LoadExecution.Components.Arguments
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
 {
     /// <summary>
     /// See StageArgs

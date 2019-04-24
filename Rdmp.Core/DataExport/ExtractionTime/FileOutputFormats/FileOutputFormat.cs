@@ -5,9 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using System.Data.SqlClient;
 
-namespace DataExportLibrary.ExtractionTime.FileOutputFormats
+namespace Rdmp.Core.DataExport.ExtractionTime.FileOutputFormats
 {
     public abstract class FileOutputFormat:IFileOutputFormat
     {

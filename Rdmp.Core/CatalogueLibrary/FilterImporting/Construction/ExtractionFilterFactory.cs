@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.FilterImporting.Construction
+namespace Rdmp.Core.CatalogueLibrary.FilterImporting.Construction
 {
     /// <summary>
     /// Constructs IFilters etc for main Catalogue database filter (ExtractionFilter).  These are the master filters which are copied out as needed for cohort identification,

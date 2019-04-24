@@ -6,12 +6,12 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Managers;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportLibrary.Repositories
+namespace Rdmp.Core.DataExport.Repositories
 {
     /// <summary>
     /// Memory only implementation of <see cref="IDataExportRepository"/>.  Also implements <see cref="ICatalogueRepository"/>.  All objects are created in 

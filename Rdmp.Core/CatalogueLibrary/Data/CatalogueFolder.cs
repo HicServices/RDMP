@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Diagnostics.Contracts;
 using System.Linq;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// The virtual 'folder' in which to display Catalogues.  This should be a helpful subdivision e.g. "\core datasets\labsystems\"

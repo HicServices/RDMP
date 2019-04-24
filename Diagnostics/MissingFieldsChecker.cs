@@ -10,13 +10,13 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 

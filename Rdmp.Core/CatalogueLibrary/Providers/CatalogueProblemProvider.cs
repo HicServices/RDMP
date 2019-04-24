@@ -7,16 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 
-namespace CatalogueLibrary.Providers
+namespace Rdmp.Core.CatalogueLibrary.Providers
 {
     /// <summary>
     /// Identifies all problems with all objects found in the Catalogue database.  This only includes problems that are fast to detect at runtime.

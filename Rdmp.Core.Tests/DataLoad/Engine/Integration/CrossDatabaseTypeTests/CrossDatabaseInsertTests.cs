@@ -11,7 +11,7 @@ using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 {
     public class CrossDatabaseInsertTests : DatabaseTests
     {

@@ -5,18 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.LogViewer;
 using CatalogueManager.LogViewer.Tabs;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Databases;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

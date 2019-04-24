@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.QueryBuilding
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding
 {
     /// <summary>
     /// Thrown when there is a problem with QueryBuilding e.g. being unable to find a compatible IJoin (JoinInfo) between two TableInfos required by a query (based on the columns

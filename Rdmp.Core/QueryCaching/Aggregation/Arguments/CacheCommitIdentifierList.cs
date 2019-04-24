@@ -5,15 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
-namespace QueryCaching.Aggregation.Arguments
+namespace Rdmp.Core.QueryCaching.Aggregation.Arguments
 {
     /// <summary>
     /// Request to cache an AggregateConfiguration that is a cohort identifier list subquery from a CohortIdentificationConfiguration (it is a query that 

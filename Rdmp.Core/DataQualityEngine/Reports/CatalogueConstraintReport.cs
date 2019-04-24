@@ -10,23 +10,23 @@ using System.Data.Common;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using DataQualityEngine.Data;
-using DataQualityEngine.Reports.PeriodicityHelpers;
 using FAnsi.Discovery;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Secondary.Predictor;
-using HIC.Logging;
-using HIC.Logging.Listeners;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.DataQualityEngine.Reports.PeriodicityHelpers;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.Listeners;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataQualityEngine.Reports
+namespace Rdmp.Core.DataQualityEngine.Reports
 {
     /// <summary>
     /// Runs the DQE and populates Evaluation and sub tables with the results.  This includes counts of the number of rows / columns passing / failing validation

@@ -5,19 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.SqlClient;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataLoadEngine.DatabaseManagement.EntityNaming
+namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
 {
     /// <summary>
     /// Wrapper for StandardDatabaseHelper (which tells you where RAW, STAGING and LIVE databases are during data load execution).  This class exists for two reasons

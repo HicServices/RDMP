@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using DataExportLibrary.Data.DataTables;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode;
 
 namespace Tests.Common.Scenarios

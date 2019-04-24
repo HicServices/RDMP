@@ -6,8 +6,8 @@
 
 using System;
 using System.Drawing;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.Icons.IconOverlays;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders

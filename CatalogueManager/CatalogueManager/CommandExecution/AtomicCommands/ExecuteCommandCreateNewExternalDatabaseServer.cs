@@ -7,15 +7,14 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Versioning;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;

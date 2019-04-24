@@ -12,13 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Implementation;
@@ -29,9 +22,16 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
-using RDMPStartup;
-using RDMPStartup.DatabaseCreation;
-using RDMPStartup.Events;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandLine.DatabaseCreation;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.Startup;
+using Rdmp.Core.Startup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -68,7 +68,7 @@ namespace Tests.Common
 
         static DatabaseTests()
         {
-            CatalogueLibrary.Repositories.CatalogueRepository.SuppressHelpLoading = true;
+            CatalogueRepository.SuppressHelpLoading = true;
             
             ImplementationManager.Load(
                 typeof(MicrosoftSQLImplementation).Assembly,

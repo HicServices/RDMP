@@ -9,18 +9,18 @@ using System.Data;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution.Components.Standard;
-using DataLoadEngine.LoadProcess;
-using HIC.Logging;
-using NUnit.Framework;
-using Tests.Common;
 using Moq;
+using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.Logging;
+using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.PipelineTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
 {
     public class ArchiveFilesTests : DatabaseTests
     {

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace HIC.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Interface for all Logging messages/objects fetched out of the logging database (immutable PastEvents).  The RDMP logging database supports both logging 

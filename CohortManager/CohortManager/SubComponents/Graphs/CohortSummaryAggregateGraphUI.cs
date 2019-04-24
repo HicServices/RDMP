@@ -6,16 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms.VisualStyles;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.AggregationUIs;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManagerLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CohortCreation.QueryBuilding;
 
 namespace CohortManager.SubComponents.Graphs
 {

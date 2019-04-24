@@ -9,26 +9,25 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Referencing;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
-using IContainer = CatalogueLibrary.Data.IContainer;
+using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
 
-namespace CatalogueLibrary.Repositories
+namespace Rdmp.Core.CatalogueLibrary.Repositories
 {
     /// <summary>
     /// Memory only implementation of <see cref="ICatalogueRepository"/> in which all objects are created in 

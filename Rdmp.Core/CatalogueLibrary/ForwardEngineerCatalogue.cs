@@ -5,10 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary
+namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
     /// Creates a Catalogue from a TableInfo (See TableInfoImporter for how to create a TableInfo from your live database table).  A Catalogue is an extractable dataset

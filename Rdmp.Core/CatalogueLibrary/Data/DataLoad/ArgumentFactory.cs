@@ -11,7 +11,7 @@ using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.Exceptions;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Provides methods for creating Argument values in the database for [DemandsInitialization] properties on classes (See Argument).  Every public property marked with

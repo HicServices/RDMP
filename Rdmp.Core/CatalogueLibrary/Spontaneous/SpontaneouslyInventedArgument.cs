@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.DataLoad;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace CatalogueLibrary.Spontaneous
+namespace Rdmp.Core.CatalogueLibrary.Spontaneous
 {
     /// <summary>
     /// Spontaneous (memory only) implementation of IArgument.

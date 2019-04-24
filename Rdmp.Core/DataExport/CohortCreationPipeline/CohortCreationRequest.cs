@@ -5,24 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.Data.SqlClient;
-using CatalogueLibrary.CohortCreation;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.DataRelease.Exceptions;
-using DataExportLibrary.Repositories;
 using FAnsi.Connections;
+using Rdmp.Core.CatalogueLibrary.CohortCreation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.DataRelease.Exceptions;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.CohortCreationPipeline
+namespace Rdmp.Core.DataExport.CohortCreationPipeline
 {
     /// <summary>
     /// All metadata details nessesary to create a cohort including which project it goes into, it's name, version etc.  There are no identifiers for the cohort.

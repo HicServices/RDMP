@@ -8,20 +8,19 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using System.Reflection;
-using CatalogueLibrary.Checks.SyntaxChecking;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Referencing;
-using CatalogueLibrary.Exceptions;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.CatalogueLibrary.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data.Cohort
+namespace Rdmp.Core.CatalogueLibrary.Data.Cohort
 {
     /// <summary>
     /// Allows you to override ALL instances of a given named parameter e.g. @studyStartDate in ALL AggregateFilterParameters in a given CohortIdentificationConfiguration

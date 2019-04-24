@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.DashboardTabs.Construction.Exceptions;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
 
 namespace CatalogueManager.DashboardTabs.Construction
 {

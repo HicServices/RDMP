@@ -6,13 +6,13 @@
 
 using System;
 using System.IO;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using CsvHelper.Configuration;
-using LoadModules.Generic.Exceptions;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowSources.SubComponents
+namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 {
 
     /// <summary>

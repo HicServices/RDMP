@@ -6,19 +6,17 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
 using DataExportManager.CommandExecution.AtomicCommands;
 using DataExportManager.ProjectUI;
 using MapsDirectlyToDatabaseTableUI;
 using CatalogueManager.Copying.Commands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 
 namespace DataExportManager.Menus
 {

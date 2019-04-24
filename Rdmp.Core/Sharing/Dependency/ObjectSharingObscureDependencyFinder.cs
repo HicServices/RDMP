@@ -5,12 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace Sharing.Dependency
+namespace Rdmp.Core.Sharing.Dependency
 {
     /// <summary>
     /// Handles preventing deletion of shareable references to existing classes e.g. if a Catalogue is shared (has an entry in ObjectExport table) then you

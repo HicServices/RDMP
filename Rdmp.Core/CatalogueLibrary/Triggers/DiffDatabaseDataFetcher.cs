@@ -5,23 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
 using FAnsi;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Triggers
+namespace Rdmp.Core.CatalogueLibrary.Triggers
 {
     /// <summary>
     /// Calculates the changes that occured during a given DLE execution (identified by the unique DataLoadRunID of the load).  This involves generating and running SELECT

@@ -7,10 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace DataLoadEngine.LoadExecution.Components.Arguments
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
 {
     /// <summary>
     /// Stores all the user defined arguments of a ProcessTask (See DemandsInitializationAttribute) and all the runtime arguments for the stage it is in 

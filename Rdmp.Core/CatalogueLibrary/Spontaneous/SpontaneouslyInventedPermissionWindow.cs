@@ -7,13 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 
-namespace CatalogueLibrary.Spontaneous
+namespace Rdmp.Core.CatalogueLibrary.Spontaneous
 {
     /// <summary>
     /// Spontaneous (non database persisted) version of PermissionWindow.  Use this class when you want to define a runtime only (in memory) window of execution for

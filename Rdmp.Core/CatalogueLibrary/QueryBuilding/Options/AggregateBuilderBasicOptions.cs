@@ -6,11 +6,11 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
-namespace CatalogueLibrary.QueryBuilding.Options
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding.Options
 {
     /// <summary>
     /// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running in 'graph mode' 

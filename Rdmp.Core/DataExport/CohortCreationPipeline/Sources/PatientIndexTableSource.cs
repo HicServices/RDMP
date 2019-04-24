@@ -6,13 +6,13 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CohortManagerLibrary.QueryBuilding;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.CohortCreationPipeline.Sources
+namespace Rdmp.Core.DataExport.CohortCreationPipeline.Sources
 {
     /// <summary>
     /// Pipeline source component which executes an AggregateConfiguration query in a CohortIdentificationConfiguration which has the role of 

@@ -7,14 +7,13 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableUIComponents;
 
 namespace CatalogueManager.MainFormUITabs

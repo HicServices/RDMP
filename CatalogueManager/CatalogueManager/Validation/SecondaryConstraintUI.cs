@@ -5,24 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Reflection;
-using System.Security.Cryptography;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.MainFormUITabs.SubComponents;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Secondary;
-using HIC.Common.Validation.Constraints.Secondary.Predictor;
-using HIC.Common.Validation.UIAttributes;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Secondary;
+using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
+using Rdmp.Core.Validation.UIAttributes;
 
 namespace CatalogueManager.Validation
 {

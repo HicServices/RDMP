@@ -4,13 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel.Composition;
 using System.IO;
-using CachingEngine.Layouts;
-using CachingEngine.PipelineExecution.Destinations;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace CachingEngine.BasicCache
+namespace Rdmp.Core.Caching.BasicCache
 {
     /// <summary>
     /// Alternative cache layout to BasicCacheLayout in which files are expected to be in a zip file instead of a directory (e.g. in .\Data\Cache\2001-01-01.zip, .\Data\Cache\2001-01-02.zip etc)

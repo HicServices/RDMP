@@ -8,7 +8,7 @@ using System;
 using System.Globalization;
 using System.Text.RegularExpressions;
 
-namespace HIC.Common.Validation.Constraints.Primary
+namespace Rdmp.Core.Validation.Constraints.Primary
 {
     /// <summary>
     /// A Constraint specifying that the date must be a valid, delimited EU format date. e.g. 25-09-67 or 25-9-1967.

@@ -5,19 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
-using System.Windows.Forms;
-using BrightIdeasSoftware;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Nodes.CohortNodes;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CohortManager.CommandExecution.AtomicCommands;
-using CohortManager.Menus;
-using DataExportLibrary.Providers;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Nodes.CohortNodes;
+using Rdmp.Core.DataExport.Providers;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace CohortManager.Collections

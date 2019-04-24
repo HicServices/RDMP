@@ -7,16 +7,14 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.DataRelease.Potential;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.DataRelease.Potential;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 
 namespace DataExportManager.CommandExecution.AtomicCommands

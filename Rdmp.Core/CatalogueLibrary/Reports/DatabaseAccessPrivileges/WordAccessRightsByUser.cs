@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 using FAnsi.Discovery;
 using Xceed.Words.NET;
 
-namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
+namespace Rdmp.Core.CatalogueLibrary.Reports.DatabaseAccessPrivileges
 {
     /// <summary>
     /// Generates a historic report of which user accounts have access to which databases by user (requires AccessRightsReportPrerequisites to have been run on 

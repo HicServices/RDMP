@@ -6,24 +6,19 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.DashboardTabs.Construction;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.LocationsMenu;
 using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
-using DataQualityEngine.Data;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.DataQualityEngine.Data;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Dashboard.Raceway

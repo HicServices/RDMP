@@ -6,11 +6,10 @@
 
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace Sharing.Dependency
+namespace Rdmp.Core.Sharing.Dependency
 {
     
     /// <summary>

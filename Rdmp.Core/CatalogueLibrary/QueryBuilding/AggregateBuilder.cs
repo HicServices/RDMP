@@ -7,14 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.QueryBuilding.Parameters;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 
-namespace CatalogueLibrary.QueryBuilding
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding
 {
     /// <summary>
     /// Assembles GROUP BY queries based on the specified IColumns, IContainers, IFilters etc.  There are three main types of query AggregateBuilder can create

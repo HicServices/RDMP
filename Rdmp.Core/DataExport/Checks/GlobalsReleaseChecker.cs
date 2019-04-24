@@ -7,17 +7,17 @@
 using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.ExtractionTime;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.Checks
+namespace Rdmp.Core.DataExport.Checks
 {
     /// <summary>
     /// Checks the release state of the Globals that should have been extracted as part of the given <see cref="ExtractionConfiguration"/>.  If they

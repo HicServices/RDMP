@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.CohortCreation;
+using Rdmp.Core.CatalogueLibrary.CohortCreation;
 
-namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
+namespace Rdmp.Core.DataExport.CohortCreationPipeline.Destinations.IdentifierAllocation
 {
     /// <summary>
     /// Allocates a Guid for each private identifier supplied.  This will not keep track of duplicates (every call results in a new guid regardless of the input).

@@ -4,13 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data;
 using System.IO;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableUIComponents;
 
 namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls

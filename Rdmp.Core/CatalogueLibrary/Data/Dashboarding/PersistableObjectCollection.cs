@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data.Dashboarding
+namespace Rdmp.Core.CatalogueLibrary.Data.Dashboarding
 {
     public abstract class PersistableObjectCollection : IPersistableObjectCollection
     {

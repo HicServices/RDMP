@@ -7,20 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using System.Threading;
 using System.Threading.Tasks;
-using CachingEngine.DataRetrievers;
-using CachingEngine.PipelineExecution;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.Caching.DataRetrievers;
+using Rdmp.Core.Caching.PipelineExecution;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine
+namespace Rdmp.Core.Caching
 {
     /// <summary>
     /// The CachingHost has two public interfaces: 'Start' and 'StartDaemon'. 

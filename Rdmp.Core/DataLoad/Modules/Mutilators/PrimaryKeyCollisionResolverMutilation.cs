@@ -5,22 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
-using System.ComponentModel.Composition;
 using System.Data.SqlClient;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.QueryBuilding;
-using DataLoadEngine.Job;
-using DataLoadEngine.Mutilators;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Mutilators
+namespace Rdmp.Core.DataLoad.Modules.Mutilators
 {
     /// <summary>
     /// Data load component which can delete records in an (unconstrained) RAW table to enforce uniqueness of the primary key field (as it is configured in LIVE).

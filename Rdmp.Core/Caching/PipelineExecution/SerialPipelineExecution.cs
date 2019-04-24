@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.PipelineExecution
+namespace Rdmp.Core.Caching.PipelineExecution
 {
     /// <summary>
     /// Strategy for executing several IDataFlowPipelineEngines one after the other in serial.  This will fully exhaust each IDataFlowPipelineEngine one 

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace LoadModules.Generic.Exceptions
+namespace Rdmp.Core.DataLoad.Modules.Exceptions
 {
     /// <summary>
     /// Thrown when a file pattern expected to identify only a single file matches multiple files.

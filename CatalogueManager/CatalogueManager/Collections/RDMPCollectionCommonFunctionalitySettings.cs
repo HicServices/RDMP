@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CatalogueLibrary.Providers;
+
 namespace CatalogueManager.Collections
 {
     public class RDMPCollectionCommonFunctionalitySettings
@@ -30,7 +32,7 @@ namespace CatalogueManager.Collections
         public bool AddIDColumn { get; set; }
 
         /// <summary>
-        /// False to automatically set up tree hierarchy children based on the <see cref="CatalogueLibrary.Providers.ICoreChildProvider"/> in the
+        /// False to automatically set up tree hierarchy children based on the <see cref="ICoreChildProvider"/> in the
         /// <see cref="CatalogueManager.ItemActivation.IActivateItems"/> at construction time.  True if you plan to handle object children yourself
         ///  <para>Defaults to false</para>
         /// </summary>

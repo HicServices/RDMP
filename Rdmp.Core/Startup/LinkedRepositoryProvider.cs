@@ -7,17 +7,17 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Reports.Exceptions;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary;
-using DataExportLibrary.Repositories;
-using HIC.Common.Validation.Dependency;
 using MapsDirectlyToDatabaseTable;
-using Sharing.Dependency;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Reports.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.DataExport;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.Sharing.Dependency;
+using Rdmp.Core.Validation.Dependency;
 
-namespace RDMPStartup
+namespace Rdmp.Core.Startup
 {
     /// <summary>
     /// Records the location of the Catalogue and DataExport databases in which RDMP stores all configuration information (what datasets there are, what extraction

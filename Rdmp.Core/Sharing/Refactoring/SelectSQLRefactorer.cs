@@ -5,13 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary.Data;
 using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
-using Sharing.Refactoring.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Sharing.Refactoring.Exceptions;
 
-namespace Sharing.Refactoring
+namespace Rdmp.Core.Sharing.Refactoring
 {
     /// <summary>
     /// Handles making changes to SelectSQL properties that revolve around changing which underlying table/column drives the SQL.  For example when a user

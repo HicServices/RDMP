@@ -6,14 +6,14 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Ticketing;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Ticketing;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Represents a collection of datasets (Catalogues), ExtractableColumns, ExtractionFilters etc and a single ExtractableCohort for a Project.  You can have multiple active

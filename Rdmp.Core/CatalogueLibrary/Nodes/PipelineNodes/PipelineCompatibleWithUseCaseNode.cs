@@ -5,13 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 
-namespace CatalogueLibrary.Nodes.PipelineNodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes
 {
     /// <summary>
     /// This class is a wrapper for a <see cref="Pipeline"/> that has been found to be compatible with a given <see cref="PipelineUseCase"/> (in terms of the source / 

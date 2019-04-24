@@ -6,14 +6,14 @@
 
 using System;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup.Options;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandLine.Options.Abstracts;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPStartup.Runners
+namespace Rdmp.Core.CommandLine.Runners
 {
     class ListRunner :IRunner
     {

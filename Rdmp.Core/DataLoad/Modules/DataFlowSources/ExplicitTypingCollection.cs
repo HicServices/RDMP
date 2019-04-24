@@ -9,13 +9,11 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
-using System.Xml.Serialization;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace LoadModules.Generic.DataFlowSources
+namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
 {
     /// <summary>
     /// A collection of column names with explicitly defined column types that the user wants to force where present.  e.g. they loading a CSV and they get values 

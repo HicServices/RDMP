@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.Referencing;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Referencing;
 
-namespace RDMPStartup
+namespace Rdmp.Core.Startup
 {
     /// <summary>
     /// Plugin databases can have an IRepository for interacting with them (the easiest way to implement this is to inherit from TableRepository).  However

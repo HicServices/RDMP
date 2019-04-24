@@ -5,9 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <inheritdoc cref="PreLoadDiscardedColumn"/>
     public interface IPreLoadDiscardedColumn : IResolveDuplication,IMapsDirectlyToDatabaseTable

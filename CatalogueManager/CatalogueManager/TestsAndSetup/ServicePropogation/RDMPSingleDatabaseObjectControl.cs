@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Rules;
@@ -16,6 +15,7 @@ using CatalogueManager.SimpleControls;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 

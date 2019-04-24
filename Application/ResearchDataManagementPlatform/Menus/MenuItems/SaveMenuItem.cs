@@ -6,7 +6,6 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems

@@ -7,21 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Managers;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.DataRelease.Exceptions;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.Repositories.Managers;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.DataRelease.Exceptions;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Calculates the Extraction SQL for extracting a given ExtractDatasetCommand.  This is done by creating a normal QueryBuilder and then adding adjustment 

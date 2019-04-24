@@ -6,23 +6,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Reports;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Reports;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
-using IFilter = CatalogueLibrary.Data.IFilter;
+using IFilter = Rdmp.Core.CatalogueLibrary.Data.IFilter;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Generates a Microsoft Word docx file containing information about a researchers extract including the file generated, the number of rows, distinct patients, the

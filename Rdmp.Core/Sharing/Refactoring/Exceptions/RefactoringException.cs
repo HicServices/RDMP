@@ -6,7 +6,7 @@
 
 using System;
 
-namespace Sharing.Refactoring.Exceptions
+namespace Rdmp.Core.Sharing.Refactoring.Exceptions
 {
     /// <summary>
     /// Thrown when there is a problem performing renaming refactoring on an SQL string (e.g. SelectSQL / WhereSQL etc)

@@ -7,15 +7,15 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace Sharing.Dependency.Gathering
+namespace Rdmp.Core.Sharing.Dependency.Gathering
 {
     /// <summary>
     /// Gathers dependencies of a given object in a more advanced/selective way than simply using methods of IHasDependencies

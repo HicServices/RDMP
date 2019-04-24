@@ -5,13 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Windows;
 using System.Windows.Forms;
 using ReusableUIComponents.Dialogs;
 using Brushes = System.Drawing.Brushes;

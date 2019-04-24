@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Triggers;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 
-namespace DataLoadEngine.Migration
+namespace Rdmp.Core.DataLoad.Engine.Migration
 {
     /// <summary>
     /// IMigrationFieldProcessor for StagingBackfillMutilator (See StagingBackfillMutilator).

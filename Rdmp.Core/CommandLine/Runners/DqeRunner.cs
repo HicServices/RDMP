@@ -5,16 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Triggers;
-using DataQualityEngine.Reports;
-using RDMPStartup.Options;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.DataQualityEngine.Reports;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPStartup.Runners
+namespace Rdmp.Core.CommandLine.Runners
 {
     internal class DqeRunner:IRunner
     {

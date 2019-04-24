@@ -14,7 +14,7 @@ using Diagnostics.TestData;
 using FAnsi.Discovery;
 using ReusableLibraryCode;
 
-namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.RelationalBulkTestDataTests.TestData
 {
     class CIATestAgent
     {

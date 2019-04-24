@@ -7,9 +7,8 @@
 using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
-using RDMPStartup.Options.Abstracts;
 
-namespace RDMPStartup.Options
+namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
     /// <summary>
     /// Options for the Extraction Engine which performs cohort linkage against datasets and extracts anonymous datasets

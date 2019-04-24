@@ -10,16 +10,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.ImportExport.Exceptions;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using CatalogueLibrary.Repositories.Construction.Exceptions;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction.Exceptions;
 
-namespace CatalogueLibrary.Data.ImportExport
+namespace Rdmp.Core.CatalogueLibrary.Data.ImportExport
 {
     /// <summary>
     /// Handles querying/updating the ObjectExport and ObjectImport tables (See ObjectExport and ObjectImport classes).  These tables record which objects have

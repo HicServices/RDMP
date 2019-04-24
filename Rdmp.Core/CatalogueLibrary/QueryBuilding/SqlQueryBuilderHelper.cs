@@ -7,16 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Managers;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.QueryBuilding
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding
 {
     /// <summary>
     /// Helps generate SELECT and GROUP By queries for ISqlQueryBuilders.  This includes all the shared functionality such as finding all IFilters, Lookups,

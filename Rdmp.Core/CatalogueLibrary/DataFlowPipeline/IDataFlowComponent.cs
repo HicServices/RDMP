@@ -5,10 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.DataFlowPipeline
+namespace Rdmp.Core.CatalogueLibrary.DataFlowPipeline
 {
     /// <summary>
     /// A single component in an IDataFlowPipelineEngine T.  The component should do a single operation on the flowing data (e.g. if T is a System.Data.DataTable the component

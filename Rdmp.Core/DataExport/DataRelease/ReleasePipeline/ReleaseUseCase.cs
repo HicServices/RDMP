@@ -6,17 +6,17 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 
-namespace DataExportLibrary.DataRelease.ReleasePipeline
+namespace Rdmp.Core.DataExport.DataRelease.ReleasePipeline
 {
     /// <summary>
     /// Describes the use case in which a <see cref="Pipeline"/> takes artifacts produced as part of one or more <see cref="ExtractionConfiguration"/> for a <see cref="Project"/>.  

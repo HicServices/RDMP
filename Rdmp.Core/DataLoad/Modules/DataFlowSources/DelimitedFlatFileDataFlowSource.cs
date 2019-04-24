@@ -8,19 +8,18 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Reflection.Emit;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using CsvHelper.Configuration;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
-using LoadModules.Generic.DataFlowSources.SubComponents;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowSources
+namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
 {
     /// <summary>
     /// Pipeline component (source) for reading from a flat file delimited by by a specific character (or string) e.g. csv.  The file is batch processed into

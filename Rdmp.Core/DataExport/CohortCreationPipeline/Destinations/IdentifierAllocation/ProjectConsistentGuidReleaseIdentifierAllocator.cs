@@ -6,11 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.CohortCreation;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.DataRelease.Exceptions;
+using Rdmp.Core.CatalogueLibrary.CohortCreation;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.DataRelease.Exceptions;
 
-namespace DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation
+namespace Rdmp.Core.DataExport.CohortCreationPipeline.Destinations.IdentifierAllocation
 {
     /// <summary>
     /// Allocates a Guid for each private identifier supplied.  This is similar to <see cref="GuidReleaseIdentifierAllocator"/> except that it will preserve previous

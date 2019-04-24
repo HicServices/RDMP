@@ -7,12 +7,12 @@
 using System;
 using System.Linq;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Ticketing;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Ticketing;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.DataRelease
+namespace Rdmp.Core.DataExport.DataRelease
 {
     /// <summary>
     /// Evaluates things that are not within the control area of the DataExportManager but which might prevent a release e.g. ticketing system is not available

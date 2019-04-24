@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using HIC.Logging.Listeners.Extensions;
 using NLog;
+using Rdmp.Core.Logging.Listeners.Extensions;
 using ReusableLibraryCode.Progress;
 
-namespace HIC.Logging.Listeners
+namespace Rdmp.Core.Logging.Listeners
 {
     /// <summary>
     /// Writes log messages to file, mainly used by Automation Service to log progress to file.

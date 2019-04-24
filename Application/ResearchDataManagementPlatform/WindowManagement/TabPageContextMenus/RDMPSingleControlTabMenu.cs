@@ -7,7 +7,6 @@
 using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TabPageContextMenus

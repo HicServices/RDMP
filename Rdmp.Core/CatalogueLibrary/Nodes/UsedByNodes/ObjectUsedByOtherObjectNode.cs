@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 
-namespace CatalogueLibrary.Nodes.UsedByNodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes.UsedByNodes
 {
     public class ObjectUsedByOtherObjectNode<T, T2> : IObjectUsedByOtherObjectNode<T,T2> 
         where T:class 

@@ -10,8 +10,8 @@ using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using DataExportLibrary.Data.DataTables;
 using DataExportManager.Wizard;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

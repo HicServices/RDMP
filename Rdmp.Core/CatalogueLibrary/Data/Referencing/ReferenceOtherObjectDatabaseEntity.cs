@@ -6,10 +6,10 @@
 
 using System;
 using System.Data.Common;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Referencing
+namespace Rdmp.Core.CatalogueLibrary.Data.Referencing
 {
     /// <summary>
     /// Abstract base class for all database objects that reference a single other arbitrary database object e.g. <see cref="Favourite"/>.

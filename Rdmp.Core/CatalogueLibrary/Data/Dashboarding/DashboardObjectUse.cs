@@ -7,14 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.Referencing;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Dashboarding
+namespace Rdmp.Core.CatalogueLibrary.Data.Dashboarding
 {
     /// <summary>
     /// Describes a specific object used by a DashboardControl.  For example if you create a pie chart of issues on a specific catalogue on your DashboardLayout then there will be a 

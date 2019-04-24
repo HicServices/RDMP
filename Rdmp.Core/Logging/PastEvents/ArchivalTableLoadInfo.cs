@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
 
-namespace HIC.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).

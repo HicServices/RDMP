@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data;
 
-namespace DataExportLibrary.DataRelease.Exceptions
+namespace Rdmp.Core.DataExport.DataRelease.Exceptions
 {
     /// <summary>
     /// Thrown when a given <see cref="IProject"/> doesn't have a <see cref="IProject.ProjectNumber"/> configured yet (null) or that number

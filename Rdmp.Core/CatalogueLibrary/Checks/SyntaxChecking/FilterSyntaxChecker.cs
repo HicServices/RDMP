@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Checks.SyntaxChecking
+namespace Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking
 {
     /// <summary>
     /// Checks bracket parity of where SQL of IFilter and syntax validity of parameters which are char based 

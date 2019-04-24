@@ -4,18 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery.TypeTranslation;
-using LoadModules.Generic.Mutilators.Dilution.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
 using ReusableLibraryCode.Checks;
 
-namespace LoadModules.Generic.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
 {
     /// <summary>
     /// See IDilutionOperation

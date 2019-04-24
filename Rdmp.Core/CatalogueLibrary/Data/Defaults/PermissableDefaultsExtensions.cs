@@ -5,11 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.Databases;
 
-namespace CatalogueLibrary.Data.Defaults
+namespace Rdmp.Core.CatalogueLibrary.Data.Defaults
 {
     public static class PermissableDefaultsExtensions
     {

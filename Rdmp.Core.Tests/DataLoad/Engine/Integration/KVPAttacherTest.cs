@@ -8,18 +8,18 @@ using System;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using LoadModules.Generic.Attachers;
-using LoadModules.Generic.DataFlowOperations;
-using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class KVPAttacherTest:DatabaseTests
     {

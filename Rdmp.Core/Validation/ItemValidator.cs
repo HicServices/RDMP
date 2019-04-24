@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Primary;
-using HIC.Common.Validation.Constraints.Secondary;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Primary;
+using Rdmp.Core.Validation.Constraints.Secondary;
 
-namespace HIC.Common.Validation
+namespace Rdmp.Core.Validation
 {
     /// <summary>
     /// An ItemValidator is created for each item in the target object (row) you want to validate.

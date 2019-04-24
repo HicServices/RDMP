@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataLoadEngine.LoadProcess.Scheduling.Strategy
+namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy
 {
     /// <summary>
     /// Decides which LoadProgress (if any) to advance in a ScheduledDataLoadProcess.

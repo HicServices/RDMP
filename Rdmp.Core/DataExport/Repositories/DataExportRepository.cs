@@ -8,17 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using CatalogueLibrary.Repositories.Managers;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Repositories.Managers;
 
-namespace DataExportLibrary.Repositories
+namespace Rdmp.Core.DataExport.Repositories
 {
     /// <summary>
     /// Pointer to the Data Export Repository database in which all DatabaseEntities declared in DataExportLibrary.dll are stored.  Ever DatabaseEntity class must exist in a

@@ -6,8 +6,8 @@
 
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data;
 
 namespace CatalogueManager.Menus
 {

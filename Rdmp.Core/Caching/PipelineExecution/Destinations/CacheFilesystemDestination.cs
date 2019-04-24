@@ -5,23 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using System.IO;
-using CachingEngine.Factories;
-using CachingEngine.Layouts;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.PipelineExecution.Destinations
+namespace Rdmp.Core.Caching.PipelineExecution.Destinations
 {
     /// <summary>
     /// Time period for which cache chunks are stored / fetched.  Some caching tasks produce so many file system entries it is nessesary to subdivide the cache by Hour.

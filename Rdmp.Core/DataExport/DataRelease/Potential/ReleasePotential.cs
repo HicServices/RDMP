@@ -8,17 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.UserPicks;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 using ReusableLibraryCode.Checks;
 
-namespace DataExportLibrary.DataRelease.Potential
+namespace Rdmp.Core.DataExport.DataRelease.Potential
 {
     /// <summary>
     /// Determines whether a given ExtractableDataSet in an ExtractionConfiguration is ready for Release. 

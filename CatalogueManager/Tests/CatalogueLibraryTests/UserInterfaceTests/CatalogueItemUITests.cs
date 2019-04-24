@@ -5,11 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary.Data;
 using CatalogueManager.MainFormUITabs;
 using CatalogueManager.SimpleDialogs;
 using NUnit.Framework;
-using ScintillaNET;
+using Rdmp.Core.CatalogueLibrary.Data;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {

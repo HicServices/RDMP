@@ -6,24 +6,24 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.Checks;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job.Scheduling;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
-using DataLoadEngine.LoadProcess.Scheduling;
-using DataLoadEngine.LoadProcess.Scheduling.Strategy;
-using HIC.Logging;
-using RDMPStartup.Options;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.DataLoad.Engine.Checks;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Engine.LoadExecution;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPStartup.Runners
+namespace Rdmp.Core.CommandLine.Runners
 {
     /// <summary>
     /// <see cref="IRunner"/> for the Data Load Engine.  Supports both check and execute commands.

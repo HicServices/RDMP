@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data.Aggregation
+namespace Rdmp.Core.CatalogueLibrary.Data.Aggregation
 {
     class AggregateForcedJoin : IAggregateForcedJoinManager
     {

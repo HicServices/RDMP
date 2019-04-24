@@ -5,19 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Triggers.Exceptions;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
 
-namespace CatalogueLibrary.Triggers.Implementations
+namespace Rdmp.Core.CatalogueLibrary.Triggers.Implementations
 {
     /// <summary>
     /// Creates an _Archive table to match a live table and a Database Trigger On Update which moves old versions of records to the _Archive table when the main table

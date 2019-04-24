@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataFlowPipeline.Components;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Components
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 {
     public class RemoveDuplicatesTests
     {

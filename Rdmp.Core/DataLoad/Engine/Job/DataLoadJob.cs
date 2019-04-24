@@ -8,20 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.DatabaseManagement.Operations;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Job
+namespace Rdmp.Core.DataLoad.Engine.Job
 {
     /// <summary>
     /// Documents an ongoing load that is executing in the Data Load Engine.  This includes the load configuration (LoadMetadata), Logging object (DataLoadInfo),
@@ -102,7 +100,7 @@ namespace DataLoadEngine.Job
                 throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
             if (!DataLoadInfo.IsClosed)
-                DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnProgress, senderName, message);
+                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnProgress, senderName, message);
         }
 
         public void LogError(string message, Exception exception)
@@ -132,7 +130,7 @@ namespace DataLoadEngine.Job
                 throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
             if(!DataLoadInfo.IsClosed)
-                DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnInformation, senderName, message);
+                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, senderName, message);
         }
 
         public void LogWarning(string senderName, string message)
@@ -141,7 +139,7 @@ namespace DataLoadEngine.Job
                 throw new Exception("Logging hasn't been started for this job (call StartLogging first)");
 
             if (!DataLoadInfo.IsClosed)
-                DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnWarning, senderName, message);
+                DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, senderName, message);
         }
 
         public void CreateTablesInStage(DatabaseCloner cloner, LoadBubble stage)
@@ -169,13 +167,13 @@ namespace DataLoadEngine.Job
                     case ProgressEventType.Debug:
                         break;
                     case ProgressEventType.Information:
-                        DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : ""));
+                        DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnInformation, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : ""));
                         break;
                     case ProgressEventType.Warning:
-                        DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true) : ""));
+                        DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnWarning, sender.GetType().Name, e.Message + (e.Exception != null ? "Exception=" + ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception,true) : ""));
                         break;
                     case ProgressEventType.Error:
-                        DataLoadInfo.LogProgress(HIC.Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name, e.Message);
+                        DataLoadInfo.LogProgress(Logging.DataLoadInfo.ProgressEventType.OnTaskFailed, sender.GetType().Name, e.Message);
                         DataLoadInfo.LogFatalError(sender.GetType().Name, e.Exception != null ? ExceptionHelper.ExceptionToListOfInnerMessages(e.Exception, true) : e.Message);
                         break;
                     default:

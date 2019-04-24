@@ -11,7 +11,7 @@ using System.Data.Common;
 using System.Data.SqlClient;
 using FAnsi.Discovery;
 
-namespace HIC.Logging
+namespace Rdmp.Core.Logging
 {
     /// <summary>
     /// Root object for an ongoing logged activity e.g. 'Loading Biochemistry'.  Includes the package name (exe or class name that is primarily responsible

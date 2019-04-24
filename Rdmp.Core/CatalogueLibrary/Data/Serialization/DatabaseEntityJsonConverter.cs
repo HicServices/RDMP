@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Repositories;
 using Newtonsoft.Json;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Serialization
+namespace Rdmp.Core.CatalogueLibrary.Data.Serialization
 {
     /// <summary>
     /// Handles Serialization of Database Entity classes.  Writing is done by by storing the ID, Type and RepositoryType where the object is stored.  Reading is done by

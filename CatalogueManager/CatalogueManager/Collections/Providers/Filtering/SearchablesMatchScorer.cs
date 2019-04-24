@@ -9,9 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Providers;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Providers;
 using ReusableLibraryCode;
 
 namespace CatalogueManager.Collections.Providers.Filtering
@@ -69,11 +70,11 @@ namespace CatalogueManager.Collections.Providers.Filtering
                     return 0;
 
            //don't suggest AND/OR containers it's not helpful to navigate to these
-            if (kvp.Key is CatalogueLibrary.Data.IContainer)
+            if (kvp.Key is IContainer)
                 return 0;
 
             //don't suggest AND/OR containers it's not helpful to navigate to these
-            if (kvp.Key is CatalogueLibrary.Data.Cohort.CohortAggregateContainer)
+            if (kvp.Key is CohortAggregateContainer)
                 return 0;
 
             //if there are no tokens
@@ -108,7 +109,7 @@ namespace CatalogueManager.Collections.Providers.Filtering
 
                     if (parent != null)
                     {
-                        if (!(parent is CatalogueLibrary.Data.IContainer))
+                        if (!(parent is IContainer))
                         {
                             score += Weights[i] * CountMatchToString(regexes, parent);
                             score += Weights[i] * CountMatchType(regexes, parent);

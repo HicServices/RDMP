@@ -6,11 +6,11 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Repositories.Managers;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 using ReusableLibraryCode;
 
-namespace DataExportLibrary.Repositories.Managers
+namespace Rdmp.Core.DataExport.Repositories.Managers
 {
     /// <summary>
     /// String based properties that are configured once per Data Export Database.  This includes how to implement Hashing and any text to appear in the Release 

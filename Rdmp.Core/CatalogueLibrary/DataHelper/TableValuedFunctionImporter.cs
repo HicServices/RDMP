@@ -6,14 +6,14 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.DataHelper
+namespace Rdmp.Core.CatalogueLibrary.DataHelper
 {
     /// <summary>
     /// Generates TableInfo entries in the ICatalogueRepository based the Table Valued Function specified on the live database server.  Table Valued Functions are Microsoft

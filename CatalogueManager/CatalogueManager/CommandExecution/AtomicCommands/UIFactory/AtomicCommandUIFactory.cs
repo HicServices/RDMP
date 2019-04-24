@@ -8,11 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
 using CatalogueManager.Menus.MenuItems;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

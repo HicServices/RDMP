@@ -12,11 +12,11 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Logging;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 

@@ -9,12 +9,11 @@ using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Components
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components
 {
     /// <summary>
     /// PipelineComponent which removes 100% duplicate rows from a DataTable during Pipeline execution based on row hashes.

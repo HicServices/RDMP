@@ -7,14 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data.Remoting
+namespace Rdmp.Core.CatalogueLibrary.Data.Remoting
 {
     /// <summary>
     /// This represent a Remote Installation of RDMP which can accept connections at multiple endpoints

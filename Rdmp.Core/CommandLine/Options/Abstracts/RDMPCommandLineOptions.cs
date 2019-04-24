@@ -5,11 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data.SqlClient;
-using CatalogueLibrary.Repositories;
 using CommandLine;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 
-namespace RDMPStartup.Options.Abstracts
+namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
     /// <summary>
     /// Abstract base class for all command line options that can be supplied to the rdmp cli (includes overriding app.config to get connection strings to platform metadata databases)
@@ -55,7 +56,7 @@ namespace RDMPStartup.Options.Abstracts
         }
         public IRDMPPlatformRepositoryServiceLocator DoStartup()
         {
-            Startup startup = new Startup(GetRepositoryLocator());
+            Startup.Startup startup = new Startup.Startup(GetRepositoryLocator());
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
             return startup.RepositoryLocator;
         }

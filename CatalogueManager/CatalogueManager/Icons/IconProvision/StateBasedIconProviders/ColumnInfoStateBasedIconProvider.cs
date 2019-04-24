@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconOverlays;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders

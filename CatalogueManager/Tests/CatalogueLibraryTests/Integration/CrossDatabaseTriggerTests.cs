@@ -7,14 +7,13 @@
 using System;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.Triggers;
-using CatalogueLibrary.Triggers.Exceptions;
-using CatalogueLibrary.Triggers.Implementations;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.CatalogueLibrary.Triggers.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

@@ -7,22 +7,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.DatabaseManagement;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
-using DataLoadEngine.Migration;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.DataLoad.Engine.Migration;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataLoadEngine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 {
     class CatalogueLoadChecks:ICheckable
     {

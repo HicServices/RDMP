@@ -9,13 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Xml.Linq;
-using CatalogueLibrary.Reports;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Dashboarding
+namespace Rdmp.Core.CatalogueLibrary.Data.Dashboarding
 {
     /// <summary>
     /// Helps you create simple string based argument lists

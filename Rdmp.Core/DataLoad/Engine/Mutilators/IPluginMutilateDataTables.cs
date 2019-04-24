@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 
-namespace DataLoadEngine.Mutilators
+namespace Rdmp.Core.DataLoad.Engine.Mutilators
 {
     /// <summary>
     /// MEF discoverable version of IMutilateDataTables

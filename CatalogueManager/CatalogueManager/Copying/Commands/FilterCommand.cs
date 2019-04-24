@@ -5,14 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.FilterImporting.Construction;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Copying.Commands
 {

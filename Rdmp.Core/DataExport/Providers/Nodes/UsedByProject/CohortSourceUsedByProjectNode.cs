@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Nodes.UsedByNodes;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Nodes.UsedByNodes;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportLibrary.Providers.Nodes.UsedByProject
+namespace Rdmp.Core.DataExport.Providers.Nodes.UsedByProject
 {
     /// <summary>
     /// Collection of all cohort databases which contain cohorts that can be used in a given <see cref="Project"/>

@@ -8,7 +8,7 @@ using System;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Note all times are stored as UTC

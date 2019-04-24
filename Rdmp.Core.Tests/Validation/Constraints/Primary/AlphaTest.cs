@@ -4,13 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Primary;
 using NUnit.Framework;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Primary;
 
-namespace HIC.Common.Validation.Tests.Constraints.Primary
+namespace Rdmp.Core.Tests.Validation.Constraints.Primary
 {
     
     class AlphaTest

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Used by classes to indicate that a complex POCO property should have all its properties initialized from a ProcessTaskArgument

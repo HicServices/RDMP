@@ -7,20 +7,14 @@
 using System;
 using System.IO;
 using System.Linq;
-using System.Threading;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Reports;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Managers;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories.Managers;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Reports;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.DataExport.Data.DataTables;
 using Xceed.Words.NET;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Generates a Microsoft Word DocX file containing information about all the datasets extracted (and released) as part of a Data Release.  This includes

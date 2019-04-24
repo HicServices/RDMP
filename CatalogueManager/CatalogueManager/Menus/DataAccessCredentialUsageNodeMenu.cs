@@ -6,17 +6,9 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Refreshing;
-using RDMPStartup;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Nodes;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.Menus
 {

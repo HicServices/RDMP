@@ -8,11 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CohortManagerLibrary.Execution.Joinables;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CohortCreation.Execution.Joinables;
 
-namespace CohortManagerLibrary.Execution
+namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
     /// Manages the adding and executing of tasks in a CohortCompiler to execute a CohortIdentificationConfiguration in the most optimised way when a cache server is present.  For example it

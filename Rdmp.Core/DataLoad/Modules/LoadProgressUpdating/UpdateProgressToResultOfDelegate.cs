@@ -5,12 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary;
-using DataLoadEngine.Job.Scheduling;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.LoadProgressUpdating
+namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
 {
     /// <summary>
     /// UpdateProgressIfLoadsuccessful which executes an arbitrary Func in order to determine what date to update the LoadProgress.DataLoadProgress to 

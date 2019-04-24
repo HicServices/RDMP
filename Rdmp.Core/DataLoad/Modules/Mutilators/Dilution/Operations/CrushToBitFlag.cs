@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery.TypeTranslation;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
 
-namespace LoadModules.Generic.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
 {
     /// <summary>
     ///  Dilutes data in the ColumnToDilute by replacing all non null values with 1 and all null values with 0 then alters the column type to bit

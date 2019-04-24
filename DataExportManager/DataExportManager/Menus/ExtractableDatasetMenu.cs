@@ -4,23 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Diagnostics;
-using System.Linq;
-using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
-using DataExportLibrary.Data.DataTables;
-using DataExportManager.CohortUI;
-using DataExportManager.CohortUI.CohortSourceManagement;
-using MapsDirectlyToDatabaseTableUI;
-using ReusableUIComponents;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 namespace DataExportManager.Menus
 {

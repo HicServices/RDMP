@@ -7,11 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using CatalogueLibrary;
-using DataLoadEngine.Job.Scheduling;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataProvider.FromCache
+namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache
 {
     /// <summary>
     /// UpdateProgressIfLoadsuccessful (See UpdateProgressIfLoadsuccessful) which also deletes files in the ForLoading directory that were generated during the

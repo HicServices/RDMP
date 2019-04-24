@@ -7,13 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using IFilter = Rdmp.Core.CatalogueLibrary.Data.IFilter;
 
-using IFilter = CatalogueLibrary.Data.IFilter;
-
-namespace CatalogueLibrary.QueryBuilding.Parameters
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters
 {
     /// <summary>
     /// Handles the accumulation of Parameters in SQL queries ('DECLARE @bob as varchar(10); SET @bob = 'bob').  Because ISqlParameters can exist at many levels

@@ -5,21 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Text.RegularExpressions;
-using System.Xml.XPath;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using FAnsi.Discovery;
 using FAnsi.Naming;
-using QueryCaching.Aggregation.Arguments;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace QueryCaching.Aggregation
+namespace Rdmp.Core.QueryCaching.Aggregation
 {
     /// <summary>
     /// Handles the caching and versioning of AggregateConfigurations in a QueryCaching database (QueryCaching.Database.csproj).  Query caching is the process

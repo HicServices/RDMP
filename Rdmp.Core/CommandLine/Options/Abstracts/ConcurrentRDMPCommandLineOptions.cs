@@ -6,7 +6,7 @@
 
 using CommandLine;
 
-namespace RDMPStartup.Options.Abstracts
+namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
     public abstract class ConcurrentRDMPCommandLineOptions:RDMPCommandLineOptions
     {

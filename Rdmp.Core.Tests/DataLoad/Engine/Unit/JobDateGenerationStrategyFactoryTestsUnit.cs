@@ -5,15 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using DataLoadEngine.Job.Scheduling;
-using DataLoadEngine.Job.Scheduling.Exceptions;
-using DataLoadEngine.LoadProcess.Scheduling.Strategy;
 using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngineTests.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
     public class JobDateGenerationStrategyFactoryTestsUnit
     {

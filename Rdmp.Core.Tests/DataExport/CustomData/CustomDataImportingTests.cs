@@ -7,17 +7,16 @@
 using System.Data;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using DataExportLibrary.ExtractionTime.UserPicks;
-using DataExportLibrary.Tests.DataExtraction;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 using Tests.Common.Scenarios;
 
-namespace DataExportLibrary.Tests.CustomData
+namespace Rdmp.Core.Tests.DataExport.CustomData
 {
     public class CustomDataImportingTests : TestsRequiringAnExtractionConfiguration
     {

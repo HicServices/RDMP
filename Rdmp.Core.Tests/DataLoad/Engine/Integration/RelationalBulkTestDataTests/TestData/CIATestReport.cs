@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using FAnsi.Discovery;
 
-namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.RelationalBulkTestDataTests.TestData
 {
     class CIATestReport
     {

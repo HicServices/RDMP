@@ -7,14 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Applies Catalogue.ValidationXML to rows extracted during a Data Extraction Pipeline (See ExecuteDatasetExtractionSource).  Because the columns which 

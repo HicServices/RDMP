@@ -6,9 +6,9 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Cohort;
 using CatalogueManager.Copying.Commands;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

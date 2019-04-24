@@ -6,7 +6,7 @@
 
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Interface that allows you to be supported as a [DemandsInitialization] property of a DLE / pipeline component (see Argument) despite having a horribly complex Type.

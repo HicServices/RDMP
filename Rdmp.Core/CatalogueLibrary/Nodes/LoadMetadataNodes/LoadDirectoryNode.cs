@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace CatalogueLibrary.Nodes.LoadMetadataNodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes
 {
     public class LoadDirectoryNode: IDirectoryInfoNode, IOrderable
     {

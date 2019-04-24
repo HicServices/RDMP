@@ -8,23 +8,22 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Managers;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
-using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class BackfillTests : DatabaseTests
     {

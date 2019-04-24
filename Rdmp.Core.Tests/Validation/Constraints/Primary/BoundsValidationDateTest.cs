@@ -6,11 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Secondary;
 using NUnit.Framework;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Secondary;
 
-namespace HIC.Common.Validation.Tests.Constraints.Primary
+namespace Rdmp.Core.Tests.Validation.Constraints.Primary
 {
     
     class BoundsValidationDateTest

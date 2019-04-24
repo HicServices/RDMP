@@ -6,14 +6,12 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
-using DataExportLibrary.Data.DataTables;
 
-namespace DataExportLibrary.ExtractionTime.FileOutputFormats
+namespace Rdmp.Core.DataExport.ExtractionTime.FileOutputFormats
 {
     /// <summary>
     /// Helper class for writing data to CSV files.  This is a simplified version of Rfc4180Writer in that it simply strips out all problem fields rather

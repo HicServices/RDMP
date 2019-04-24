@@ -8,13 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
 using FAnsi.Connections;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode;
 using Tests.Common;
 

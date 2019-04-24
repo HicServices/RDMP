@@ -6,25 +6,21 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.CohortCreationPipeline.Destinations;
-using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation;
-using DataExportLibrary.CohortDatabaseWizard;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Repositories;
 using FAnsi;
 using NUnit.Framework;
-using NUnit.Framework.Constraints;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.DataExport.CohortDatabaseWizard;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataExportLibrary.Tests.Cohort
+namespace Rdmp.Core.Tests.DataExport.Cohort
 {
     public class CreateNewCohortDatabaseWizardTests:DatabaseTests
     {

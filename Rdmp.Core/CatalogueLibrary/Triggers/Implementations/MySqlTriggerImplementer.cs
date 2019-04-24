@@ -10,7 +10,7 @@ using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
 
-namespace CatalogueLibrary.Triggers.Implementations
+namespace Rdmp.Core.CatalogueLibrary.Triggers.Implementations
 {
     internal class MySqlTriggerImplementer:TriggerImplementer
     {

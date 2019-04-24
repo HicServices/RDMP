@@ -6,20 +6,14 @@
 
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleDialogs.SimpleFileImporting;
-using DataExportLibrary.Data.DataTables;
 using CatalogueManager.Copying.Commands;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.CommandExecution;
 
 
 namespace CatalogueManager.CommandExecution.AtomicCommands

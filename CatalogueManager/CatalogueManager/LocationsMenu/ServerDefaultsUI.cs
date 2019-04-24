@@ -6,17 +6,14 @@
 
 using System;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Versioning;
 using MapsDirectlyToDatabaseTableUI;
-using ReusableUIComponents;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.Databases;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.LocationsMenu

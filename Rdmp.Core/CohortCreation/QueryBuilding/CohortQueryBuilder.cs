@@ -7,19 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.QueryBuilding.Parameters;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
-using QueryCaching.Aggregation;
-using ReusableLibraryCode.Checks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 
-namespace CohortManagerLibrary.QueryBuilding
+namespace Rdmp.Core.CohortCreation.QueryBuilding
 {
     /// <summary>
     /// Builds complex cohort identification queries by combining subqueries with SQL set operations (UNION / INTERSECT / EXCEPT).  Cohort identification

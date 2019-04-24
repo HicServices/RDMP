@@ -5,22 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Logging;
-using HIC.Logging.PastEvents;
 using CatalogueManager.Copying;
-using ReusableUIComponents;
-
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.PastEvents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

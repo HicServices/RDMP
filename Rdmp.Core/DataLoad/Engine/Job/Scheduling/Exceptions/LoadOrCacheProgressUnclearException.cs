@@ -5,12 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace DataLoadEngine.Job.Scheduling.Exceptions
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions
 {
     /// <summary>
     /// Thrown when it is not possible to determine the starting date of a scheduled data load e.g. when there is a LoadProgress record where there is no 

@@ -12,7 +12,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using CatalogueManager.ItemActivation;
-using HIC.Logging;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 

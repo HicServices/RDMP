@@ -5,16 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Factories;
-using DataLoadEngine.LoadProcess;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Factories;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
 using ReusableLibraryCode.Checks;
 
-namespace DataLoadEngine.Checks
+namespace Rdmp.Core.DataLoad.Engine.Checks
 {
     /// <summary>
     /// Checks a LoadMetadata it is in a fit state to be executed (does it have primary keys, backup trigger etc).

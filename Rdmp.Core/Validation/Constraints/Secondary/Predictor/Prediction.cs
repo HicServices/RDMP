@@ -6,11 +6,9 @@
 
 using System;
 using System.ComponentModel;
-using System.Diagnostics.Contracts;
-using CatalogueLibrary.Data.DataLoad;
-using HIC.Common.Validation.UIAttributes;
+using Rdmp.Core.Validation.UIAttributes;
 
-namespace HIC.Common.Validation.Constraints.Secondary.Predictor
+namespace Rdmp.Core.Validation.Constraints.Secondary.Predictor
 {
     /// <summary>
     /// Validation rule in which two columns are dependent on one another for validation according to a given PredictionRule.  For example the CHI number contains

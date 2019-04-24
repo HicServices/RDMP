@@ -5,17 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery.TypeTranslation;
-using LoadModules.Generic.Mutilators.Dilution.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode.Checks;
 
-namespace LoadModules.Generic.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
 {
     /// <summary>
     ///  Dilutes data in the ColumnToDilute by rounding all dates to the middle of the quarter they appear in (column type must be date and is not changed by

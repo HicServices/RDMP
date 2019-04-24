@@ -5,13 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 
-namespace DataLoadEngine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 {
     /// <summary>
     /// Wrapper class for checking Anonymisation configurations (if any) of a TableInfo.  The wrapped classes are ANOTableInfoSynchronizer and IdentifierDumper.

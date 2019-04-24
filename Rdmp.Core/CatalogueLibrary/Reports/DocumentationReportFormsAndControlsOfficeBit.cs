@@ -13,7 +13,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using Xceed.Words.NET;
 
-namespace CatalogueLibrary.Reports
+namespace Rdmp.Core.CatalogueLibrary.Reports
 {
     public delegate Bitmap RequestTypeImagesHandler(Type t);
 

@@ -7,24 +7,22 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Diagnostics.Contracts;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.Job;
-using DataLoadEngine.Migration.QueryBuilding;
 using FAnsi.Discovery;
-using LoadModules.Generic.Mutilators.QueryBuilders;
-using DataLoadEngine.Migration;
-using DataLoadEngine.Mutilators;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Migration;
+using Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding;
+using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Mutilators
+namespace Rdmp.Core.DataLoad.Modules.Mutilators
 {
     /// <summary>
     /// Deletes records in STAGING which are 'older' versions of records that currently exist in LIVE.  Normally RMDP supports a 'newer is better' policy in which

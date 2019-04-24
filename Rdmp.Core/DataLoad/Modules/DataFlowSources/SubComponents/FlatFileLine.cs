@@ -6,7 +6,7 @@
 
 using CsvHelper;
 
-namespace LoadModules.Generic.DataFlowSources.SubComponents
+namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 {
 
     /// <summary>

@@ -7,7 +7,7 @@
 using System.Drawing;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 namespace DataExportManager.Icons.IconProvision.StateBasedIconProviders
 {

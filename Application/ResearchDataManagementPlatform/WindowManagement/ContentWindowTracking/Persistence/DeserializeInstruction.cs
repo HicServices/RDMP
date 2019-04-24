@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.Dashboarding;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
 {

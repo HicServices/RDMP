@@ -10,7 +10,6 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.Collections;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.DashboardTabs.Construction.Exceptions;
@@ -18,6 +17,7 @@ using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 

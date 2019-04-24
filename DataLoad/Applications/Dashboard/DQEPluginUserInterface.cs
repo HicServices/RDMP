@@ -6,11 +6,8 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataQualityUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LoadExecutionUIs;
 using CatalogueManager.PluginChildProvision;
@@ -18,6 +15,8 @@ using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Validation;
 using Dashboard.CommandExecution.AtomicCommands;
 using Dashboard.Menus.MenuItems;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Dashboard

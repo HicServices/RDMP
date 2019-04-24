@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Data.DataLoad.Extensions
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions
 {
     /// <summary>
     /// Static type extensions for Enum <see cref="LoadBubble"/>

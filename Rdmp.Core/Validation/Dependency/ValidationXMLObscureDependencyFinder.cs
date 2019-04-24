@@ -9,15 +9,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Secondary;
-using HIC.Common.Validation.Dependency.Exceptions;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Validation.Constraints.Secondary;
+using Rdmp.Core.Validation.Dependency.Exceptions;
 using ReusableLibraryCode;
 
-namespace HIC.Common.Validation.Dependency
+namespace Rdmp.Core.Validation.Dependency
 {
     /// <summary>
     /// Prevents deleting objects which are referenced in the ValidatorXML of Catalogues.  This is done by processing the ValidatorXML as a string for speed

@@ -7,14 +7,14 @@
 using System;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowOperations
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
 {
     /// <summary>
     /// Renames DataTables in the pipeline so that they do not collide with any tables at the destination database.  This is done by appending V1,V2,V3 etc to the table

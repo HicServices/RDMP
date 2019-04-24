@@ -4,21 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Data.SqlClient;
-using System.Drawing;
-using System.Text.RegularExpressions;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-
-using ScintillaNET;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

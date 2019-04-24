@@ -10,10 +10,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using Tests.Common;
 
-namespace HIC.Logging.Tests.Integration
+namespace Rdmp.Core.Tests.Logging
 {
     public class LogManagerTest : DatabaseTests
     {

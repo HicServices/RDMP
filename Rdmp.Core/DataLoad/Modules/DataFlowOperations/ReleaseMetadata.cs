@@ -5,24 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataExportLibrary.DataRelease;
-using DataExportLibrary.DataRelease.ReleasePipeline;
-using DataExportLibrary.ExtractionTime;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.Sharing.CommandExecution;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Sharing.CommandExecution;
-using Sharing.Dependency.Gathering;
 
-namespace LoadModules.Generic.DataFlowOperations
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
 {
     /// <summary>
     /// Data release pipeline component which generates <see cref="CatalogueLibrary.Data.Serialization.ShareDefinition"/> files for all <see cref="Catalogue"/> being

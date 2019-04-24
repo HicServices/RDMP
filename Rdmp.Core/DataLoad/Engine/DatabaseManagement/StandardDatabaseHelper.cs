@@ -4,16 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
 
-namespace DataLoadEngine.DatabaseManagement
+namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement
 {
     /// <summary>
     /// Stores the location of all the databases (RAW, STAGING, LIVE) available during a Data Load (See LoadMetadata).

@@ -8,7 +8,7 @@ using System;
 using System.Windows.Forms;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.TestsAndSetup.StartupUI;
-using RDMPStartup;
+using Rdmp.Core.Startup;
 using ReusableUIComponents.Dialogs;
 using ScintillaNET;
 

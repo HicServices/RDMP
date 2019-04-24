@@ -10,7 +10,7 @@ using System.IO;
 using System.IO.Compression;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataProvider.FromCache
+namespace Rdmp.Core.DataLoad.Engine.DataProvider.FromCache
 {
     internal interface IArchivedFileExtractor
     {

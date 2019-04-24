@@ -7,16 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.DatabaseManagement;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataLoadEngine.Checks.Checkers
+namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 {
     /// <summary>
     /// Checks DLE databases (RAW, STAGING, LIVE) are in a correct state ahead of running a data load (See LoadMetadata).

@@ -7,13 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.UserPicks;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 
-namespace DataExportLibrary.ExtractionTime.Commands
+namespace Rdmp.Core.DataExport.ExtractionTime.Commands
 {
     /// <summary>
     /// Extraction command for the data export engine which mandates the extraction of all global (not dataset specific) files in an <see cref="ExtractionConfiguration"/> (e.g.

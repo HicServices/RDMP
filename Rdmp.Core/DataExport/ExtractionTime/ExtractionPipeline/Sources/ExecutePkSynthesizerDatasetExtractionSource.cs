@@ -8,17 +8,16 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Spontaneous;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.ExtractionTime.Commands;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
+namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources
 {
     /// <summary>
     /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="CatalogueLibrary.Data.IColumn.IsPrimaryKey"/> of the

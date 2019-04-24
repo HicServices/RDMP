@@ -6,14 +6,13 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using RDMPStartup.Options;
-using RDMPStartup.Options.Abstracts;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CommandLine.Options.Abstracts;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataQualityUIs

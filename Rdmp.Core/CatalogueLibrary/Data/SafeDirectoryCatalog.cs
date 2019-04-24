@@ -9,15 +9,13 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Managed Extensibility Framework (MEF) Catalog of Class Types that are exposed via [InheritedExport(typeof(X))].  Constructing this class will process the directories

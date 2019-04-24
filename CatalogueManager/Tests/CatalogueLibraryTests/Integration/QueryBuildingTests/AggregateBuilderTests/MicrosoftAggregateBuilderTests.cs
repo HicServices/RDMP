@@ -4,13 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Data.SqlClient;
-using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.QueryBuilding;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 
 namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderTests
 {
@@ -21,7 +18,7 @@ namespace CatalogueLibraryTests.Integration.QueryBuildingTests.AggregateBuilderT
         [Test]
         public void TestAggregateBuilding_NoConfigurationOneDimension()
         {
-            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);
+            var builder = new AggregateBuilder(null, "count(*)", null);
             builder.AddColumn(_dimension1);
 
             Assert.AreEqual(CollapseWhitespace(@"/**/
@@ -42,7 +39,7 @@ Col1"),CollapseWhitespace(builder.SQL));
         [Test]
         public void TestAggregateBuilding_AS_InCount()
         {
-            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(cast(1 AS int))", null);
+            var builder = new AggregateBuilder(null, "count(cast(1 AS int))", null);
             builder.AddColumn(_dimension1);
 
             Assert.AreEqual(CollapseWhitespace(@"/**/
@@ -60,7 +57,7 @@ Col1"),CollapseWhitespace(builder.SQL));
         [Test]
         public void TestAggregateBuilding_NoConfigurationTwoDimension()
         {
-            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null);
+            var builder = new AggregateBuilder(null, "count(*)", null);
             builder.AddColumn(_dimension1);
             builder.AddColumn(_dimension2);
 
@@ -82,7 +79,7 @@ Col2")),CollapseWhitespace(builder.SQL));
         [Test]
         public void TestAggregateBuilding_ConfigurationTwoDimension()
         {
-            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", _configuration);
+            var builder = new AggregateBuilder(null, "count(*)", _configuration);
             builder.AddColumn(_dimension1);
             builder.AddColumn(_dimension2);
 
@@ -180,7 +177,7 @@ Col1 " + (asc ? "asc" : "desc")), CollapseWhitespace(builder.SQL));
         [Test]
         public void TestAggregateBuilding_NoConfigurationNoDimensions()
         {
-            var builder = new CatalogueLibrary.QueryBuilding.AggregateBuilder(null, "count(*)", null,new []{_ti});
+            var builder = new AggregateBuilder(null, "count(*)", null,new []{_ti});
             
             Assert.AreEqual(CollapseWhitespace(@"/**/
 SELECT 

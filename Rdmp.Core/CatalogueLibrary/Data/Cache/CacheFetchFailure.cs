@@ -7,12 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
-using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode;
 
-namespace CatalogueLibrary.Data.Cache
+namespace Rdmp.Core.CatalogueLibrary.Data.Cache
 {
     /// <summary>
     /// Describes a failed attempt to contact a caching service including the time it occurred and any associated Exception as well as whether it has been 

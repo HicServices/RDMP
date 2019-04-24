@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms.DataVisualization.Charting;
-using DataQualityEngine.Data;
+using Rdmp.Core.DataQualityEngine.Data;
 
 namespace Dashboard.CatalogueSummary.DataQualityReporting
 {

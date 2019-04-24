@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.ExtractionTime
+namespace Rdmp.Core.CatalogueLibrary.ExtractionTime
 {
     /// <summary>
     /// See ExtractionDirectory

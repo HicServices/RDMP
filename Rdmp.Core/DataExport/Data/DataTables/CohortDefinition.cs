@@ -6,9 +6,9 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataExportLibrary.Data.DataTables
+namespace Rdmp.Core.DataExport.Data.DataTables
 {
     /// <summary>
     /// This data class reflects a single row in a cohortDefinition table (see <see cref="ExternalCohortTable"/>).  It may also reflect 

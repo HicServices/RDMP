@@ -6,11 +6,10 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Data;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using LoadModules.Generic.DataProvider;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Modules.DataProvider;
 
 namespace LoadModules.GenericUIs.DataProvider
 {

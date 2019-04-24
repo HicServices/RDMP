@@ -6,7 +6,7 @@
 
 using System;
 using System.Drawing;
-using CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 {

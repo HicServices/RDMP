@@ -6,9 +6,8 @@
 
 using System.Collections.Generic;
 using CommandLine;
-using RDMPStartup.Options.Abstracts;
 
-namespace RDMPStartup.Options
+namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
     /// <summary>
     /// Options for the Release Engine which is responsible for gathering all the artifacts produced by the Extraction Engine (anonymised project extracts, bundled lookups and documents etc)

@@ -6,12 +6,12 @@
 
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Aggregation
+namespace Rdmp.Core.CatalogueLibrary.Data.Aggregation
 {
     /// <summary>
     /// Each AggregateConfiguration graph can have a single AggregateDimension defined as a date axis, this specifies the start/end and increment of the aggregate e.g.

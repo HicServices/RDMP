@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using CatalogueManager.Menus;
-using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands;
+using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
 
 namespace DataExportManager.Menus
 {

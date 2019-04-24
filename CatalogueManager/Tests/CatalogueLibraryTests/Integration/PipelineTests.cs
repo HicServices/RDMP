@@ -5,20 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Data;
 using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Pipelines;
-using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
-using DataLoadEngine.DataFlowPipeline.Destinations;
-using LoadModules.Generic.Attachers;
-using LoadModules.Generic.DataFlowOperations;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

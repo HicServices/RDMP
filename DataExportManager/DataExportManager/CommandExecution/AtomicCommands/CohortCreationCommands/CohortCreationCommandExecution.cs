@@ -8,18 +8,18 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
 using DataExportManager.CohortUI.ImportCustomData;
-using HIC.Logging;
-using HIC.Logging.Listeners;
 using CatalogueManager.PipelineUIs.Pipelines;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.Listeners;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands

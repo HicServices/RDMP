@@ -7,12 +7,12 @@
 using System;
 using System.Diagnostics;
 using System.Threading;
-using CatalogueLibrary.Data.Cohort;
-using CohortManagerLibrary.Execution;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CohortCreation.Execution;
 using ReusableLibraryCode.DataAccess;
 
-namespace CohortManagerLibrary
+namespace Rdmp.Core.CohortCreation
 {
     /// <summary>
     /// A cohort identification container (AggregateContainer) or sub query (AggregateConfiguration) that is running in a CohortCompiler and will be 

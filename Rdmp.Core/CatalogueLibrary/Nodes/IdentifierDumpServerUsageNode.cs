@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Nodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes
 {
     /// <summary>
     /// Identifies a database which is used to 'split off' identifiable data (columns) during a data load instead of loading it into the LIVE database (from which you

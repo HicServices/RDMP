@@ -9,10 +9,8 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
 using CsvHelper;
 using CsvHelper.Configuration;
-using LoadModules.Generic.DataFlowSources;
 
 namespace Diagnostics.TestData
 {

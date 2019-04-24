@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 
-namespace CatalogueLibrary
+namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
     /// Basic implementation of ILoadDirectory including support for creating new templates on the file system.

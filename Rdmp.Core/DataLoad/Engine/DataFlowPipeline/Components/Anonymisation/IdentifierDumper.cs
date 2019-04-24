@@ -10,21 +10,17 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement;
 using FAnsi.Discovery;
 using FAnsi.Naming;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Components.Anonymisation
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation
 {
     /// <summary>
     /// Anonymises data during a Data Load by dropping columns prior to it reaching the LIVE table.  This is done for all PreLoadDiscardedColumns configured

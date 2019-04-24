@@ -5,15 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using System.Text;
 using System.Threading.Tasks;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataExportLibrary.CohortDescribing
+namespace Rdmp.Core.DataExport.CohortDescribing
 {
     /// <summary>
     /// Async class for fetching the number of unique patients / custom tables in every cohort (ExtractableCohort) in a cohort database (ExternalCohortTable)

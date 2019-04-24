@@ -6,10 +6,10 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Job.Scheduling
+namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling
 {
     /// <summary>
     /// Data Load Engine disposal step for scheduled data loads (See ScheduledDataLoadJob) in which the LoadProgress head pointer date is updated.  E.g. if the 

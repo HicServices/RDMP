@@ -6,7 +6,7 @@
 
 using ReusableLibraryCode.Progress;
 
-namespace HIC.Logging.Listeners
+namespace Rdmp.Core.Logging.Listeners
 {
     /// <summary>
     /// Acts as wrapper for another <see cref="IDataLoadEventListener"/> but changes all messages that flow through to appear to come from the same

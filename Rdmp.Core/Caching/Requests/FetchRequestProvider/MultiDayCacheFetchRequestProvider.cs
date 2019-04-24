@@ -5,10 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data.Cache;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
 {
     /// <summary>
     /// Generates ICacheFetchRequest incrementally until the given end date.  You must provide an initial request. 

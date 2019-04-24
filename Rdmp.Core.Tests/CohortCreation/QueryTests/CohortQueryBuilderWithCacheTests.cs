@@ -4,21 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using System.Data;
-using System.Data.SqlClient;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Database;
-using CohortManagerLibrary.QueryBuilding;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
-using QueryCaching.Aggregation;
-using QueryCaching.Aggregation.Arguments;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.Databases;
+using Rdmp.Core.QueryCaching.Aggregation;
+using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace CohortManagerTests.QueryTests
+namespace Rdmp.Core.Tests.CohortCreation.QueryTests
 {
     public class CohortQueryBuilderWithCacheTests : CohortIdentificationTests
     {

@@ -7,9 +7,8 @@
 using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
-using RDMPStartup.Options.Abstracts;
 
-namespace RDMPStartup.Options
+namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
     /// <summary>
     /// Command line options for the Data Load Engine

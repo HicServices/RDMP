@@ -7,7 +7,7 @@
 using System;
 using System.Data.Common;
 
-namespace HIC.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)

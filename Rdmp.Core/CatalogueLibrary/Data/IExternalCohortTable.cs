@@ -11,7 +11,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Since every agency handles cohort management differently the RDMP is built to supports diverse cohort source schemas.  Unlike the logging, dqe, catalogue databases etc there

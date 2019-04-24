@@ -10,17 +10,14 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
-using CachingEngine.BasicCache;
-using CachingEngine.Factories;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
 using NUnit.Framework;
+using Rdmp.Core.Caching.BasicCache;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngineTests.Unit
+namespace Rdmp.Core.Tests.Caching.Unit
 {
     public interface IFileDataFlowDestination : TestIFileDataFlowComponent
     {

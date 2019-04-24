@@ -5,17 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.ImportExport.Exceptions;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataProvider;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataProvider
+namespace Rdmp.Core.DataLoad.Modules.DataProvider
 {
     /// <summary>
     /// Data Provider Process Task for DLE which will look for *.sd files and import them into RDMP

@@ -7,14 +7,14 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using DataLoadEngine.Attachers;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngine.Mutilators;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.Attachers;
+using Rdmp.Core.DataLoad.Engine.DataProvider;
+using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.DataLoad.Engine.Mutilators;
 
 namespace CatalogueManager.Menus
 {

@@ -6,7 +6,7 @@
 
 using System.Drawing;
 using CatalogueManager.Icons.IconOverlays;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders

@@ -8,7 +8,6 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using CatalogueManager.ItemActivation;
-using CommandLine;
 using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.Rules

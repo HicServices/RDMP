@@ -6,22 +6,20 @@
 
 using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Repositories;
-using DataLoadEngine.LoadExecution.Components.Arguments;
-using DataLoadEngine.LoadExecution.Components.Runtime;
-using FAnsi;
 using FAnsi.Discovery;
-using FAnsi.Implementations.MicrosoftSQL;
-using LoadModules.Generic.Attachers;
-using LoadModules.Generic.Mutilators;
 using NUnit.Framework;
-using Sharing.Dependency.Gathering;
 using Tests.Common;
 using Moq;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
+using Rdmp.Core.Sharing.Dependency.Gathering;
 
 namespace CatalogueLibraryTests.ImportTests
 {

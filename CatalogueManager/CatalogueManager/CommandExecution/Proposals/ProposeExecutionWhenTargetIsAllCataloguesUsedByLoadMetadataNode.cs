@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Copying.Commands;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

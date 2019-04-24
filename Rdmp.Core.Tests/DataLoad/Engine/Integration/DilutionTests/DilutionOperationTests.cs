@@ -6,20 +6,20 @@
 
 using System;
 using System.Data;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job;
 using FAnsi;
-using LoadModules.Generic.Mutilators.Dilution;
-using LoadModules.Generic.Mutilators.Dilution.Operations;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
+using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
-using Moq;
 
-namespace DataLoadEngineTests.Integration.DilutionTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests
 {
     public class DilutionOperationTests:DatabaseTests
     {

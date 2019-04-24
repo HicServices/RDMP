@@ -7,8 +7,8 @@
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using CatalogueLibrary.Data.Cache;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;

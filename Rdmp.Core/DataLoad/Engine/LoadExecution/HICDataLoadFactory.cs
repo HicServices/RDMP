@@ -7,19 +7,18 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.LoadExecution.Components;
-using DataLoadEngine.LoadExecution.Components.Arguments;
-using DataLoadEngine.LoadExecution.Components.Standard;
-using DataLoadEngine.LoadExecution.Components.Runtime;
-using DataLoadEngine.LoadProcess;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution
 {
     /// <summary>
     /// This is factored out more for documentation's sake. It is a description of the HIC data load pipeline, in factory form!

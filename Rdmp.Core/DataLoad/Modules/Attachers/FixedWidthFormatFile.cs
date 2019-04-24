@@ -8,9 +8,9 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
-using LoadModules.Generic.Exceptions;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 
-namespace LoadModules.Generic.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers
 {
     /// <summary>
     /// User generated file describing the layout of a fixed width file (See FixedWidthAttacher).  Includes the character positions of each named field and date

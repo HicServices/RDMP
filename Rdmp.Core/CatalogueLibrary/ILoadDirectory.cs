@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 
-namespace CatalogueLibrary
+namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
     /// Defines a rigid file structure in which there is a \Data\ diretory \ForLoading directory \ForArchiving\ etc.  This structure is used to drive the DLE and allows 

@@ -7,19 +7,17 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline.Events;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.PipelineUIs.Pipelines;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using DataExportLibrary.Data.DataTables;
-using DataLoadEngine.DataFlowPipeline.Destinations;
-using DataLoadEngine.PipelineUseCases;
 using FAnsi.Discovery;
-using ReusableUIComponents;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Events;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Engine.PipelineUseCases;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.SimpleDialogs.SimpleFileImporting

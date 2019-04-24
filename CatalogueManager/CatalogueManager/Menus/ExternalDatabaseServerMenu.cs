@@ -6,15 +6,13 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Database;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.DataViewing;
 using CatalogueManager.DataViewing.Collections.Arbitrary;
 using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.LogViewer;
-using HIC.Logging;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Databases;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.DataAccess;
 
 namespace CatalogueManager.Menus

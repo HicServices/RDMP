@@ -7,18 +7,16 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using DataExportLibrary.Tests.DataExtraction;
-using DataExportLibrary;
 using FAnsi.Discovery;
-using LoadModules.Generic.DataFlowSources;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataExportLibrary.Tests
+namespace Rdmp.Core.Tests.DataExport
 {
     public class ImportFileTests:DatabaseTests
     {

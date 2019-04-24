@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.ComponentModel.Composition;
-using ANOStore.ANOEngineering;
+using Rdmp.Core.CatalogueLibrary.ANOEngineering;
 using ReusableLibraryCode.Checks;
 
-namespace LoadModules.Generic.Mutilators.Dilution.Operations
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
 {
     /// <summary>
     /// MEF discoverable version of IDilutionOperation

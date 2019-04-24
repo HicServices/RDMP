@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CachingEngine.Requests;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
 
-namespace CachingEngine.Factories
+namespace Rdmp.Core.Caching.Factories
 {
     /// <summary>
     /// Gets the next reasonable date range to fetch from an ICacheProgress.  This is usually CacheFillProgress + ChunkPeriod.  Does not take into account

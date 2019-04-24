@@ -6,9 +6,8 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace CatalogueManager.Copying.Commands
 {

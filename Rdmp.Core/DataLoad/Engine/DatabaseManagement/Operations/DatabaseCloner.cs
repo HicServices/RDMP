@@ -7,16 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using FAnsi.Discovery;
-using ReusableLibraryCode.DataAccess;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DatabaseManagement.Operations
+namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
 {
     /// <summary>
     /// Clones databases and tables using ColumnInfos, and records operations so the cloning can be undone.

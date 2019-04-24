@@ -10,32 +10,32 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Data.EntityNaming;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.Checks;
-using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using FAnsi.Discovery.TypeTranslation;
-using HIC.Logging;
-using LoadModules.Generic.Attachers;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Engine.Checks;
+using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadExecution;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.CrossDatabaseTypeTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 {
 
     /*

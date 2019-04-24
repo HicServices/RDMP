@@ -9,15 +9,14 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using LoadModules.Generic.DataProvider.FlatFileManipulation;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     [Category("Integration")]
     public class ExcelConversionTest

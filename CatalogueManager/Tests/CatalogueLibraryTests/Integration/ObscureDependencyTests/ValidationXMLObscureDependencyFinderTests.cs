@@ -7,16 +7,15 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using DataQualityEngine.Data;
 using Diagnostics.TestData;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints.Secondary;
-using HIC.Common.Validation.Dependency;
-using HIC.Common.Validation.Dependency.Exceptions;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
-using RDMPStartup;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Startup;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints.Secondary;
+using Rdmp.Core.Validation.Dependency;
+using Rdmp.Core.Validation.Dependency.Exceptions;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

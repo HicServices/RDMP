@@ -7,21 +7,17 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Triggers;
-using DataLoadEngine.Migration;
 using FAnsi.Discovery;
-using HIC.Logging;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.DataFlowPipeline.Destinations
+namespace Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations
 {
     /// <summary>
     /// Bulk inserts data into an (already existing) table, one chunk at a time

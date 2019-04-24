@@ -11,10 +11,10 @@ using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Sharing.CommandExecution;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using Sharing.CommandExecution;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
 {

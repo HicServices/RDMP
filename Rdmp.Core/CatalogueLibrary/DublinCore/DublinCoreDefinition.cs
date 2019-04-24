@@ -10,7 +10,7 @@ using System.Linq;
 using System.Security;
 using System.Xml.Linq;
 
-namespace CatalogueLibrary.DublinCore
+namespace Rdmp.Core.CatalogueLibrary.DublinCore
 {
     /// <summary>
     /// Class describing the RDMP exposed attributes defined in Dublin Core metadata format.

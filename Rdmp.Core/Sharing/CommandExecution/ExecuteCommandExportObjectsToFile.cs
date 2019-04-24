@@ -7,15 +7,15 @@
 using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Sharing.Dependency.Gathering;
 using ReusableLibraryCode.CommandExecution;
-using Sharing.Dependency.Gathering;
 
-namespace Sharing.CommandExecution
+namespace Rdmp.Core.Sharing.CommandExecution
 {
     /// <summary>
     /// Gathers dependencies of the supplied objects and extracts the share definitions to a directory.  This will have the side effect of creating an ObjectExport declaration

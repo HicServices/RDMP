@@ -8,11 +8,11 @@ using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Xml.Serialization;
-using CatalogueLibrary.Data;
-using HIC.Common.Validation.UIAttributes;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Validation.UIAttributes;
 
-namespace HIC.Common.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Values being validated are expected to pass the Regex pattern.  The pattern itself is a reference to a StandardRegex which is a central curated definition

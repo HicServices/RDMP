@@ -7,12 +7,12 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.DashboardTabs.Construction;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DashboardTabs

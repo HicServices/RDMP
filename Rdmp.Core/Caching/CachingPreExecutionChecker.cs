@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CachingEngine.Factories;
-using CatalogueLibrary.Checks;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.CatalogueLibrary.Checks;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine
+namespace Rdmp.Core.Caching
 {
     /// <summary>
     /// Determines whether a given CacheProgress can be run.  This includes checking if there is a data time period to process, whether it is Locked, whether the classes required in the Pipeline

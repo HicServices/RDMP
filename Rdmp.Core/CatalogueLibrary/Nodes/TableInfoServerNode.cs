@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
 using FAnsi;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Nodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes
 {
     public class TableInfoServerNode
     {

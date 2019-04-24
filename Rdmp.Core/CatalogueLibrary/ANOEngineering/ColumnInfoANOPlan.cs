@@ -7,15 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
 using ReusableLibraryCode.Checks;
 
-namespace ANOStore.ANOEngineering
+namespace Rdmp.Core.CatalogueLibrary.ANOEngineering
 {
     /// <summary>
     /// Records all ANO descisions made about a single ColumnInfo (e.g. whether to ANO it, Drop it, Dillute it etc)

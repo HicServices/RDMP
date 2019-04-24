@@ -6,8 +6,6 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.Icons.IconProvision;
@@ -15,6 +13,8 @@ using CatalogueManager.Theme;
 using CohortManager.Collections;
 using DataExportManager.Collections;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;

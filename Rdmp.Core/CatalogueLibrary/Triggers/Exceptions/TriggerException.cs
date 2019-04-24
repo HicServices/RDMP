@@ -5,12 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace CatalogueLibrary.Triggers.Exceptions
+namespace Rdmp.Core.CatalogueLibrary.Triggers.Exceptions
 {
     /// <summary>
     /// Exception describing a problem with a backup trigger <see cref="ITriggerImplementer"/> or a problem that prevents one being created etc.

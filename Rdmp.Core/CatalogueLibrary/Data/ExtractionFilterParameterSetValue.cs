@@ -7,14 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Checks.SyntaxChecking;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Stores a known specific useful value for a given ExtractionFilterParameter.  See <see cref="CatalogueLibrary.Data.ExtractionFilterParameterSet"/> for a use case for this.

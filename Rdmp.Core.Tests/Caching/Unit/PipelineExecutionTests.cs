@@ -4,17 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
-using CachingEngine.PipelineExecution;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using NUnit.Framework;
-using ReusableLibraryCode.Progress;
-using Moq;
 using System;
+using System.Collections.Generic;
+using Moq;
+using NUnit.Framework;
+using Rdmp.Core.Caching.PipelineExecution;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using ReusableLibraryCode.Progress;
 
-namespace CachingEngineTests.Unit
+namespace Rdmp.Core.Tests.Caching.Unit
 {
     public class PipelineExecutionTests
     {

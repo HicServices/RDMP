@@ -7,11 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace LoadModules.Generic.Mutilators.QueryBuilders
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders
 {
     /// <summary>
     /// Helps generate sql queries for reverting/deleting STAGING based on records in LIVE during a backfill data load (See StagingBackfillMutilator).

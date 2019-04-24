@@ -1,13 +1,12 @@
 using System;
 using System.Data.SqlClient;
-using System.Reflection;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.Repositories;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
 
-namespace RDMPStartup.DatabaseCreation
+namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
     public class PlatformDatabaseCreation
     {

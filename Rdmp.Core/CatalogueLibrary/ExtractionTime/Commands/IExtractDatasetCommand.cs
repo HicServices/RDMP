@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExtractionTime.UserPicks;
-using CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 
-namespace CatalogueLibrary.ExtractionTime.Commands
+namespace Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands
 {
     /// <summary>
     /// See ExtractDatasetCommand

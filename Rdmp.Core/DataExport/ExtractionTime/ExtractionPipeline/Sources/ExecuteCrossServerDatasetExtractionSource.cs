@@ -6,25 +6,18 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.Common;
-using System.Linq;
-using System.Net.Sockets;
-using System.Text.RegularExpressions;
 using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using DataExportLibrary.Data.DataTables;
-using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
+namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources
 {
     /// <summary>
     /// Data Extraction Source which can fulfill the IExtractCommand even when the dataset in the command is on a different server from the cohort.  This is done

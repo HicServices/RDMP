@@ -6,18 +6,18 @@
 
 using System;
 using System.Linq;
-using CachingEngine;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
-using HIC.Logging;
-using HIC.Logging.Listeners;
-using RDMPStartup.Options;
+using Rdmp.Core.Caching;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Logging.Listeners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPStartup.Runners
+namespace Rdmp.Core.CommandLine.Runners
 {
     /// <summary>
     /// Automation task that runs a single CacheProgress until it is up-to-date (all available data read) or crashes.

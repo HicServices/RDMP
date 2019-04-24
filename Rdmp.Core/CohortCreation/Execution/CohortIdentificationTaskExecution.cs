@@ -7,15 +7,13 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace CohortManagerLibrary.Execution
+namespace Rdmp.Core.CohortCreation.Execution
 {
     /// <summary>
     /// An ongoing async execution of a cohort identification subquery in the CohortCompiler.  Includes the query used to fetch the cohort identifiers, the 

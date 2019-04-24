@@ -5,16 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Menus;
 using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
 namespace CatalogueManager.Collections.Providers

@@ -6,19 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using System.Runtime.InteropServices.ComTypes;
-using CachingEngine.PipelineExecution.Destinations;
-using CachingEngine.Requests;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Layouts
+namespace Rdmp.Core.Caching.Layouts
 {
     /// <summary>
     /// Abstract base ICacheLayout, see ICacheLayout for description or BasicCacheLayout for example of how to use this class.

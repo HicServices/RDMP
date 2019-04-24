@@ -7,24 +7,24 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using CachingEngine.BasicCache;
-using CachingEngine.Layouts;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngine.Job;
-using DataLoadEngine.Job.Scheduling;
 using FAnsi.Discovery;
-using HIC.Logging;
 using Moq;
 using NUnit.Framework;
+using Rdmp.Core.Caching.BasicCache;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class CachedFileRetrieverTests : DatabaseTests
     {

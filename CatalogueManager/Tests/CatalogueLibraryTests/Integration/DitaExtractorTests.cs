@@ -7,9 +7,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Triggers.Exceptions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.TypeTranslation;
+using Rdmp.Core.CatalogueLibrary.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Triggers.Implementations
+namespace Rdmp.Core.CatalogueLibrary.Triggers.Implementations
 {
     public abstract class TriggerImplementer:ITriggerImplementer
     {

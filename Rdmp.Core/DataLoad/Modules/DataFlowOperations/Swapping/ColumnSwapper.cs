@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
-using LoadModules.Generic.DataFlowOperations.Aliases;
-using LoadModules.Generic.DataFlowOperations.Aliases.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowOperations.Swapping
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping
 {
     /// <summary>
     /// Swaps values stored in a given column for values found in a mapping table (e.g. swap ReleaseID for PrivateID)

@@ -6,8 +6,8 @@
 
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Providers.Nodes;
 using CatalogueManager.Copying.Commands;
+using Rdmp.Core.DataExport.Providers.Nodes;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

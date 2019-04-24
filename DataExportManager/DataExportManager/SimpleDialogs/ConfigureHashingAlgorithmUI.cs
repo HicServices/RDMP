@@ -6,10 +6,10 @@
 
 using System;
 using System.ComponentModel;
-using CatalogueLibrary.Repositories.Managers;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Copying;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 using ReusableLibraryCode;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;

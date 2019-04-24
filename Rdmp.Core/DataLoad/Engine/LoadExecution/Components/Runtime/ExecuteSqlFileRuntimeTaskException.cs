@@ -6,7 +6,7 @@
 
 using System;
 
-namespace DataLoadEngine.LoadExecution.Components.Runtime
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
 {
     /// <summary>
     /// Exception thrown when there is an error in assembling/running an <see cref="ExecuteSqlFileRuntimeTask"/>.  This does not include SqlExceptions thrown as a result

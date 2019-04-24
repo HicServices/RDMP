@@ -6,14 +6,14 @@
 
 using System;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.NavigateTo;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
-using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 

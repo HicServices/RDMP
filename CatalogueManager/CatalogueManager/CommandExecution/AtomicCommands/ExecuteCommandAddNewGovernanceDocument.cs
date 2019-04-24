@@ -7,9 +7,9 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Governance;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data.Governance;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

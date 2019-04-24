@@ -6,10 +6,9 @@
 
 using System;
 using System.IO;
-using System.Xml;
 using System.Xml.Linq;
-using CatalogueLibrary.DublinCore;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.DublinCore;
 using Tests.Common;
 
 namespace CatalogueLibraryTests

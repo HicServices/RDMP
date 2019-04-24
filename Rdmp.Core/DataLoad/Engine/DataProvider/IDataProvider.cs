@@ -4,14 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 
-namespace DataLoadEngine.DataProvider
+namespace Rdmp.Core.DataLoad.Engine.DataProvider
 {
     /// <summary>
     /// DLE component ostensibly responsible for 'fetching data'.  This typically involves fetching data and saving it into the ILoadDirectory (e.g. into 

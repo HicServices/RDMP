@@ -6,14 +6,12 @@
 
 using System;
 using System.Data.Common;
-using System.Data.SqlClient;
-using CatalogueLibrary.Data.DataLoad;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common.Scenarios;
 
-namespace AnonymisationTests
+namespace Rdmp.Core.Tests.CatalogueLibrary.Anonymisation
 {
     public class ANOStoreFunctionalityTests:TestsRequiringFullAnonymisationSuite
     {

@@ -6,17 +6,17 @@
 
 using System;
 using System.Data;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CohortManagerLibrary.QueryBuilding;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CohortCreation.QueryBuilding;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.CohortCreationPipeline.Sources
+namespace Rdmp.Core.DataExport.CohortCreationPipeline.Sources
 {
     /// <summary>
     /// Pipeline source component which executes an AggregateConfiguration query (e.g. Aggregate Graph / Joinable patient index table)

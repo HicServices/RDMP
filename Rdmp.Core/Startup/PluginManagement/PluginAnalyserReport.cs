@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 
-namespace RDMPStartup.PluginManagement
+namespace Rdmp.Core.Startup.PluginManagement
 {
     /// <summary>
     /// Describes all the MEF exports in the current dll (LoadModuleAssembly) which is part of a Plugin.  Each MEF exposed Type has a PluginPart created for it

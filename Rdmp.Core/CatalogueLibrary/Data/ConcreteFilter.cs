@@ -5,21 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data.Common;
-using CatalogueLibrary.Checks.SyntaxChecking;
-using CatalogueLibrary.Exceptions;
-using CatalogueLibrary.FilterImporting.Construction;
-using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.CatalogueLibrary.Exceptions;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// Abstract base class for all IFilters which are database entities (Stored in the Catalogue/Data Export database as objects). 

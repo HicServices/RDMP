@@ -7,23 +7,23 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary.Checks;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.DataRelease;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.DataRelease.ReleasePipeline;
-using DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations;
-using HIC.Logging.Listeners;
 using MapsDirectlyToDatabaseTable;
-using RDMPStartup.Options;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.DataExport.Checks;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.DataRelease;
+using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.Logging.Listeners;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPStartup.Runners
+namespace Rdmp.Core.CommandLine.Runners
 {
     /// <summary>
     /// Runs the release process for one or more <see cref="ExtractionConfiguration"/> in the same <see cref="Project"/>.  This is the proces by which we gather all the artifacts

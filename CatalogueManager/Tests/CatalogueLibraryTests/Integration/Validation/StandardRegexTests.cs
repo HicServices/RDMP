@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueLibrary.Data;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints.Secondary;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints.Secondary;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration.Validation

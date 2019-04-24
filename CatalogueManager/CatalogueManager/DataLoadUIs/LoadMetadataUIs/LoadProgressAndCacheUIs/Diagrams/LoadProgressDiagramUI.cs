@@ -9,11 +9,11 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms.DataVisualization.Charting;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataQualityEngine.Reports;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataQualityEngine.Reports;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams

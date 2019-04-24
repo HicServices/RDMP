@@ -8,13 +8,12 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataQualityEngine.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataQualityEngine.Data;
 using ReusableUIComponents;
 
 namespace Dashboard.CatalogueSummary

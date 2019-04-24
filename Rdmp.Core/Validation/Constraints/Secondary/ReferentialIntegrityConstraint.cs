@@ -9,15 +9,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Xml.Serialization;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using HIC.Common.Validation.UIAttributes;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Validation.UIAttributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace HIC.Common.Validation.Constraints.Secondary
+namespace Rdmp.Core.Validation.Constraints.Secondary
 {
     /// <summary>
     /// Specifies that values in the column must (or must not - see InvertLogic) appear in another column.  This lets you have a database table which contains a

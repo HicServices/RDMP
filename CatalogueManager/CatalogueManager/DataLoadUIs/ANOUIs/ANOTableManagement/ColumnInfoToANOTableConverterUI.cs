@@ -5,34 +5,27 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.QueryBuilding;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataLoadEngine.DataFlowPipeline.Components.Anonymisation;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.SqlDialogs;
 
 namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement

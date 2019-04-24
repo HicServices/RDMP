@@ -8,16 +8,16 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.AutoComplete;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.Copying;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
@@ -115,7 +115,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
             _autoComplete.RegisterForEvents(_scintilla);
         }
 
-        bool objectSaverButton1_BeforeSave(CatalogueLibrary.Data.DatabaseEntity arg)
+        bool objectSaverButton1_BeforeSave(DatabaseEntity arg)
         {
             File.WriteAllText(_processTask.Path,_scintilla.Text);
             _scintilla.SetSavePoint();

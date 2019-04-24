@@ -5,25 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using ANOStore.ANOEngineering;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.QueryBuilding;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable.Attributes;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.ANOEngineering;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace AnonymisationTests
+namespace Rdmp.Core.Tests.CatalogueLibrary.Anonymisation
 {
     public class ForwardEngineerANOCatalogueTwoTableTests : TestsRequiringANOStore
     {

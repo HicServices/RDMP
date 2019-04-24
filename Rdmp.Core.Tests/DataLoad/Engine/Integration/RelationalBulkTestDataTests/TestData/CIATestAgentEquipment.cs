@@ -8,7 +8,7 @@ using System;
 using System.Data;
 using System.Text;
 
-namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.RelationalBulkTestDataTests.TestData
 {
     class CIATestAgentEquipment
     {

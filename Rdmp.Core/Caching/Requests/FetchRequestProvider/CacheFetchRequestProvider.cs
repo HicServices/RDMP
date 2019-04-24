@@ -6,7 +6,7 @@
 
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
 {
     public class CacheFetchRequestProvider : ICacheFetchRequestProvider
     {

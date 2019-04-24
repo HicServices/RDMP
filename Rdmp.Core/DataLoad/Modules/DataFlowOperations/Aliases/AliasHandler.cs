@@ -8,16 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
-using System.Threading;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
-using LoadModules.Generic.DataFlowOperations.Aliases.Exceptions;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.DataFlowOperations.Aliases
+namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases
 {
     /// <summary>
     /// Pipeline component for resolving the situation where a given unique patient identifier isn't unique (i.e. a person has aliases) by applying an

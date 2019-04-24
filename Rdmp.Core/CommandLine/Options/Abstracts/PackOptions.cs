@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
 
-namespace RDMPStartup.Options
+namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
     /// <summary>
     /// Command line arguments for PluginPackager.exe

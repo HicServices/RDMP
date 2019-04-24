@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueLibrary.Data.Cache
+namespace Rdmp.Core.CatalogueLibrary.Data.Cache
 {
     /// <summary>
     /// Describes the period of time for which data should not be fetched during caching (See <see cref="CacheProgress"/>) in Months/Days.  This allows for the fact that

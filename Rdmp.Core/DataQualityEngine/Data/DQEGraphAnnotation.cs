@@ -7,12 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Linq;
-using CatalogueLibrary.Data;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataQualityEngine.Data
+namespace Rdmp.Core.DataQualityEngine.Data
 {
     /// <summary>
     /// The DQE graphs in Dashboard show the states of datasets over time (every time the DQE is run - see Evaluation).  This table stores annotations that the user has added to specific

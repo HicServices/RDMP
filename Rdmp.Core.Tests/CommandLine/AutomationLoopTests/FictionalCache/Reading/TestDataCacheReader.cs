@@ -5,25 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CachingEngine.Layouts;
-using CachingEngine.Requests;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngine.Job;
 using FAnsi.Discovery;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace RDMPAutomationServiceTests.AutomationLoopTests.FictionalCache.Reading
+namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests.FictionalCache.Reading
 {
     public class TestDataCacheReader : ICachedDataProvider
     {

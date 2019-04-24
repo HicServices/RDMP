@@ -6,7 +6,7 @@
 
 using System;
 
-namespace LoadModules.Generic.Exceptions
+namespace Rdmp.Core.DataLoad.Modules.Exceptions
 {
     /// <summary>
     /// Thrown by flat file reading components (e.g. DelimitedFlatFileDataFlowSource) when there is a structural problem with the file (e.g. 3 headers and 3 cells

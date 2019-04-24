@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.QueryBuilding.Parameters;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 
-namespace CatalogueLibrary.QueryBuilding.Options
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding.Options
 {
     /// <summary>
     /// Describes what parts of the GROUP BY statement are allowed for <see cref="AggregateConfiguration"/> that are running as a 'cohort set' 

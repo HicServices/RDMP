@@ -8,11 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.ExtractionTime;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.ExtractionTime;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// The target directory for a given ExtractionConfiguration on a given day.  This is where linked anonymised project extracts will appear when 

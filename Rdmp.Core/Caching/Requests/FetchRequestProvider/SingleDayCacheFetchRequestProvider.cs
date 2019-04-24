@@ -4,10 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data.Cache;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.Requests.FetchRequestProvider
+namespace Rdmp.Core.Caching.Requests.FetchRequestProvider
 {
     /// <summary>
     /// Generates ICacheFetchRequests until the end of the day.  Day is based on the initial request.  This can be still be multiple requests if the ICacheProgress

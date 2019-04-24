@@ -7,14 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Drawing;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// A reusable regular expression which is available system wide.  Use these to record important standardised concepts which you need to use in RDMP.  For example if you have a

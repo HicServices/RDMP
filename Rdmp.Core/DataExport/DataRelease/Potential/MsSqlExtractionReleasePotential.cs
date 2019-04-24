@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.ExtractionTime;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.ExtractionTime;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataExportLibrary.DataRelease.Potential
+namespace Rdmp.Core.DataExport.DataRelease.Potential
 {
 
     /// <summary>

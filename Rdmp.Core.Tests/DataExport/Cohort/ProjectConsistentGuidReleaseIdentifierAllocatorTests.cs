@@ -6,21 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.CohortCreationPipeline.Destinations.IdentifierAllocation;
-using DataExportLibrary.CohortDatabaseWizard;
-using DataExportLibrary.Data.DataTables;
 using FAnsi;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
-using ReusableLibraryCode;
+using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.DataExport.CohortDatabaseWizard;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
-namespace DataExportLibrary.Tests.Cohort
+namespace Rdmp.Core.Tests.DataExport.Cohort
 {
     class ProjectConsistentGuidReleaseIdentifierAllocatorTests:DatabaseTests
     {

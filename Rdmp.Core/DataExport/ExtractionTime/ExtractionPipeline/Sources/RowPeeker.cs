@@ -6,9 +6,9 @@
 
 using System;
 using System.Data;
-using DataLoadEngine.DataFlowPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
 
-namespace DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources
+namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources
 {
     /// <summary>
     /// Class for selectively reading from a <see cref="DbDataCommandDataFlowSource"/> until a condition

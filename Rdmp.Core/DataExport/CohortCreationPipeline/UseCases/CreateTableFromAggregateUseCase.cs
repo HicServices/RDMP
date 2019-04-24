@@ -4,20 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.CohortCreationPipeline.Sources;
-using DataExportLibrary.Data.DataTables;
-using DataLoadEngine.DataFlowPipeline.Destinations;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.CohortCreationPipeline.Sources;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
 using ReusableLibraryCode.Progress;
 
-namespace DataExportLibrary.CohortCreationPipeline.UseCases
+namespace Rdmp.Core.DataExport.CohortCreationPipeline.UseCases
 {
     /// <summary>
     /// Use case which describes creating a new table in the database containing all rows matched by the <see cref="AggregateConfiguration"/>.

@@ -6,10 +6,10 @@
 
 using System;
 using System.Reflection;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueLibrary.Data.Pipelines
+namespace Rdmp.Core.CatalogueLibrary.Data.Pipelines
 {
     /// <summary>
     /// Helper for standardising access to properties on a class which reference a Pipeline.  Because many classes reference Pipelines and some reference multiple Pipelines 

@@ -7,22 +7,22 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngine.Job.Scheduling;
-using DataLoadEngine.Job.Scheduling.Exceptions;
-using DataLoadEngine.LoadProcess.Scheduling.Strategy;
-using DataLoadEngineTests.Integration.PipelineTests;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
+using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
+using Rdmp.Core.DataLoad.Modules.DataProvider;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 using Tests.Common.Helpers;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class JobDateGenerationStrategyFactoryTestsIntegration:DatabaseTests
     {
@@ -63,7 +63,7 @@ namespace DataLoadEngineTests.Integration
         public void CacheProvider_NonCachingOne()
         {
             var pt = new ProcessTask(CatalogueRepository, _lmd, LoadStage.GetFiles);
-            pt.Path = typeof (LoadModules.Generic.DataProvider.DoNothingDataProvider).FullName;
+            pt.Path = typeof (DoNothingDataProvider).FullName;
             pt.ProcessTaskType = ProcessTaskType.DataProvider;
             pt.Name = "DoNothing";
             pt.SaveToDatabase();

@@ -5,13 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data.SqlClient;
-using CatalogueLibrary.Triggers;
-using CatalogueLibrary.Triggers.Implementations;
 using FAnsi.Discovery;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     internal class HousekeepingTests : DatabaseTests
     {

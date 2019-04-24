@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.PipelineUIs.DataObjects;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 
 namespace CatalogueManager.PipelineUIs.Pipelines.Models
 {

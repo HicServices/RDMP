@@ -6,10 +6,10 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Spontaneous
+namespace Rdmp.Core.CatalogueLibrary.Spontaneous
 {
     /// <summary>
     /// SpontaneousObjects are 'memory only' versions of IMapsDirectlyToDatabaseTable classes which throw NotSupportedException on any attempt to persist / delete them etc but which

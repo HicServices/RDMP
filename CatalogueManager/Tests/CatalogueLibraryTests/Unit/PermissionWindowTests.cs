@@ -6,9 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using HIC.Common.Validation;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Unit

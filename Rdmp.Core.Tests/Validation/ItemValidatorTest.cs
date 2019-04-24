@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Primary;
 using NUnit.Framework;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Primary;
 
-namespace HIC.Common.Validation.Tests
+namespace Rdmp.Core.Tests.Validation
 {
     /*
      * Unit-tests for the ItemValidator.

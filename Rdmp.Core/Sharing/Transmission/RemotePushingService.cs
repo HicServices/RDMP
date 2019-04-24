@@ -10,16 +10,15 @@ using System.Net;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Remoting;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Remoting;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Sharing.Dependency.Gathering;
 using ReusableLibraryCode.Progress;
-using Sharing.Dependency.Gathering;
 
-namespace Sharing.Transmission
+namespace Rdmp.Core.Sharing.Transmission
 {
     /// <summary>
     /// Serializes collections of RDMP objects into BINARY Json and streams to a RemoteRDMP endpoint.

@@ -6,21 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Runtime.CompilerServices;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Spontaneous;
-using DataExportLibrary.Data.DataTables;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Injection;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation.ClassFileEvaluation

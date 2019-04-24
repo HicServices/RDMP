@@ -6,7 +6,7 @@
 
 using System;
 using System.Drawing;
-using CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 
 namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
 {

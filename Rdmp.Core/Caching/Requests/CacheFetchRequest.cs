@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CachingEngine.Requests
+namespace Rdmp.Core.Caching.Requests
 {
     /// <summary>
     /// Describes a normal caching request for a period of days/hours for an ICacheSource to request.  This includes start / end date which will be the next logical period

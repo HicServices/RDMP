@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Drawing;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using RDMPStartup.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options.Abstracts;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 

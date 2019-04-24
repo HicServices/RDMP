@@ -11,25 +11,23 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Database;
-using CatalogueLibrary.ExternalDatabaseServerPatching;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using DataExportLibrary.Data.DataTables;
-using DataQualityEngine.Data;
 using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
-using HIC.Common.Validation;
-using HIC.Logging;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
-using RDMPStartup.Events;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Startup.Events;
+using Rdmp.Core.Validation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-
-namespace RDMPStartup
+namespace Rdmp.Core.Startup
 {
     /// <summary>
     /// Locates main databases (Catalogue / Data Export - called Tier1 databases) and satellite databases (DQE, Logging etc - called Tier2 

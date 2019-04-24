@@ -6,7 +6,7 @@
 
 using System;
 
-namespace LoadModules.Generic.Mutilators.Dilution.Exceptions
+namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions
 {
     /// <summary>
     /// Thrown when you try to use a DilutionOperation when the target ColumnToDilute has not been set.

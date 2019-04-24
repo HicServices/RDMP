@@ -10,7 +10,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using Xceed.Words.NET;
 
-namespace CatalogueLibrary.Reports.DatabaseAccessPrivileges
+namespace Rdmp.Core.CatalogueLibrary.Reports.DatabaseAccessPrivileges
 {
     /// <summary>
     /// Generates a historic report of which user accounts have access to which databases by database (requires AccessRightsReportPrerequisites to have been run on 

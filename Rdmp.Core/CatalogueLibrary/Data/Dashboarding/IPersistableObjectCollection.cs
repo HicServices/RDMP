@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data.Dashboarding
+namespace Rdmp.Core.CatalogueLibrary.Data.Dashboarding
 {
     /// <summary>
     /// A collection of database objects used to drive an IObjectCollectionControl which is a user interface tab that requires multiple root objects in order to be created

@@ -7,13 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Checks
+namespace Rdmp.Core.CatalogueLibrary.Checks
 {
     /// <summary>
     /// This class checks for the existence of a given MEF export e.g. [Export(typeof(IDataFlowSource))].  The class to find should be a fully expressed path to the class

@@ -10,12 +10,9 @@ using System.Data;
 using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Repositories;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Counts the number of unique patients / records encountered while executing an ExtractionConfiguration's dataset (linked to the project cohort).  The input

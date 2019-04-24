@@ -10,20 +10,15 @@ using System.ComponentModel.Composition;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
-using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.RegularExpressions;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Repositories
+namespace Rdmp.Core.CatalogueLibrary.Repositories
 {
     /// <summary>
     /// MEF stands for Managed Extensibility Framework which is a Microsoft library for building Extensions (Plugins) into programs.  It involves decoarting classes as

@@ -6,15 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.Common;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode;
 
-namespace DataQualityEngine.Data
+namespace Rdmp.Core.DataQualityEngine.Data
 {
     /// <summary>
     /// Root object for a DQE run including the time the DQE engine was run, the Catalogue being evaluated and all the results.  This class basically follows an 

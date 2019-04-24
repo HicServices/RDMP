@@ -5,21 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Copying;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dialogs;
 

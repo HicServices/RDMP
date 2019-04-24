@@ -7,8 +7,8 @@
 using System;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.Data.DataTables;
 using DataExportManager.CohortUI.CohortSourceManagement.WizardScreens;
+using Rdmp.Core.DataExport.Data.DataTables;
 
 namespace DataExportManager.CohortUI.CohortSourceManagement
 {

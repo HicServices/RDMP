@@ -7,16 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Repositories;
 using CatalogueManager.Collections;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.Reports;
-using CommandLine;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using WeifenLuo.WinFormsUI.Docking;

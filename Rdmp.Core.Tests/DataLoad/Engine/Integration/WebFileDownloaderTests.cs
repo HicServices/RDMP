@@ -11,7 +11,7 @@ using System.Net;
 using System.Text;
 using NUnit.Framework;
 
-namespace DataLoadEngineTests.Integration
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class WebFileDownloaderTests
     {

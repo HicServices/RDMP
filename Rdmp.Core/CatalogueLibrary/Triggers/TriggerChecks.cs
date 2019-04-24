@@ -6,12 +6,12 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Triggers.Exceptions;
-using CatalogueLibrary.Triggers.Implementations;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Triggers.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.Triggers
+namespace Rdmp.Core.CatalogueLibrary.Triggers
 {
     /// <summary>
     /// Checks that the specified table has a backup trigger <see cref="ITriggerImplementer"/> on it.  Also inspects the _Archive table schema and compares it

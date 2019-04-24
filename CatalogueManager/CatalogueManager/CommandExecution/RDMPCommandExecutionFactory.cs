@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Copying.Commands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;

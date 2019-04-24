@@ -6,11 +6,11 @@
 
 using System;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Ticketing
+namespace Rdmp.Core.CatalogueLibrary.Ticketing
 {
     /// <summary>
     /// RDMP can have a single ITicketingSystem configured (optional).  This factory creates the ITicketingSystem instance based on the 

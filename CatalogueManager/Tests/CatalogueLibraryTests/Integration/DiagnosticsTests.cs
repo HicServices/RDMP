@@ -11,11 +11,8 @@ using System.Linq;
 using System.Reflection;
 using Diagnostics;
 using Diagnostics.TestData.Exercises;
-using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

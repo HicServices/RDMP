@@ -6,33 +6,28 @@
 
 using System;
 using System.Data;
-using System.Data.Common;
-using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.QueryBuilding;
-using DataLoadEngine.Attachers;
-using DataLoadEngine.DataFlowPipeline.Destinations;
-using DataLoadEngine.DataFlowPipeline.Sources;
-using DataLoadEngine.Job;
-using DataLoadEngine.Job.Scheduling;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
-using HIC.Logging;
-using LoadModules.Generic.LoadProgressUpdating;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Attachers;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
+using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace LoadModules.Generic.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers
 {
     /// <summary>
     /// Data load component for loading RAW tables with records read from a remote database server.  Runs the specified query (which can include a date parameter)

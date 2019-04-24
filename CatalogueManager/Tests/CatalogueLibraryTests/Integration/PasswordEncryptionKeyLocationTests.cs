@@ -6,10 +6,9 @@
 
 using System;
 using System.IO;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories.Managers;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.Integration

@@ -7,7 +7,7 @@
 using System;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueLibrary.Data.Cache
+namespace Rdmp.Core.CatalogueLibrary.Data.Cache
 {
     /// <summary>
     /// See CacheFetchFailure

@@ -7,7 +7,7 @@
 using System;
 using System.Runtime.InteropServices;
 
-namespace LoadModules.Generic
+namespace Rdmp.Core.DataLoad.Modules
 {
     class CopyWithProgress
     {

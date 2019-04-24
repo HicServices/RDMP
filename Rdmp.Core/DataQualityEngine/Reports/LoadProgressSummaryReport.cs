@@ -9,19 +9,16 @@ using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using CachingEngine.Factories;
-using CachingEngine.Layouts;
-using CachingEngine.PipelineExecution.Destinations;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataQualityEngine.Data;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataQualityEngine.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
-namespace DataQualityEngine.Reports
+namespace Rdmp.Core.DataQualityEngine.Reports
 {
     /// <summary>
     /// Generates two DataTable.  One containing the row counts (according to DQE) for every Catalogue in a LoadMetadata.  The second containing all cached fetch

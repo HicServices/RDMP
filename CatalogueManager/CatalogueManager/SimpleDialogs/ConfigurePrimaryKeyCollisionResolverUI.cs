@@ -6,21 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
-using ScintillaNET;
 
 namespace CatalogueManager.SimpleDialogs
 {

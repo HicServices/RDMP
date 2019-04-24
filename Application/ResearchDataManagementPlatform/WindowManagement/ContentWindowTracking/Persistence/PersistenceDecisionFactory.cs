@@ -7,14 +7,14 @@
 using System;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
 using CatalogueManager.Collections;
 using CatalogueManager.LoadExecutionUIs;
 using Dashboard.Raceway;
 using DataExportManager.ProjectUI;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
 {

@@ -7,17 +7,15 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using ANOStore;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Serialization;
-using CatalogueLibrary.Database;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
-using ReusableLibraryCode.Annotations;
-using Sharing.Dependency.Gathering;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.Databases;
+using Rdmp.Core.Sharing.Dependency.Gathering;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.ImportTests
@@ -115,7 +113,7 @@ namespace CatalogueLibraryTests.ImportTests
             var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1.dll"));
             File.WriteAllBytes(f2.FullName, new byte[] { 0x3, 0x3 });
 
-            var plugin = new CatalogueLibrary.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
+            var plugin = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
             var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
             var lma2 = new LoadModuleAssembly(CatalogueRepository, f2, plugin);
 

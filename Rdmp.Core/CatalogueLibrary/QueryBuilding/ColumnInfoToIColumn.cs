@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Checks.SyntaxChecking;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Spontaneous;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueLibrary.QueryBuilding
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding
 {
     /// <summary>
     /// Allows you to convert a ColumnInfo into an IColumn (the column concept in query building).  IColumn has Alias and Order which do not exist in ColumnInfo 

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
-namespace CatalogueLibrary.Data.Serialization
+namespace Rdmp.Core.CatalogueLibrary.Data.Serialization
 {
     /// <summary>
     /// Allows Json serialization of complex key Types.

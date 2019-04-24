@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
 using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
 {

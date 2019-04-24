@@ -10,10 +10,10 @@ using System.ComponentModel.Composition;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
-using CatalogueLibrary.Repositories.Construction.Exceptions;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction.Exceptions;
 
-namespace CatalogueLibrary.Repositories.Construction
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Construction
 {
     /// <summary>
     /// Simplifies identifying and invoking ConstructorInfos on Types (reflection).  This includes identifying a suitable Constructor on a class Type based on the

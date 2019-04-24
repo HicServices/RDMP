@@ -7,12 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using DataExportLibrary.Data.DataTables;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataExportLibrary.ExtractionTime.UserPicks
+namespace Rdmp.Core.DataExport.ExtractionTime.UserPicks
 {
     /// <summary>
     /// Bundle containing references to all the globally extractable (supplied with every project extraction regardless of dataset) documents and tables that need

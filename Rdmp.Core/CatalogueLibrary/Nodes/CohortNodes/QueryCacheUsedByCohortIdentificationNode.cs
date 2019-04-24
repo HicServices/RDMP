@@ -4,12 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Nodes.UsedByNodes;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Nodes.UsedByNodes;
 
-namespace CatalogueLibrary.Nodes.CohortNodes
+namespace Rdmp.Core.CatalogueLibrary.Nodes.CohortNodes
 {
     /// <summary>
     /// Indicates that a <see cref="CohortIdentificationConfiguration"/> has a database in which to store temporary tables in that reflect the reuslts of subcomponents 

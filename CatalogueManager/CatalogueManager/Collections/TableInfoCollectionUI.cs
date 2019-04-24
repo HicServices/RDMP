@@ -5,37 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes;
-using CatalogueLibrary.Nodes.PipelineNodes;
-using CatalogueLibrary.Nodes.SharingNodes;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution;
 using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.LocationsMenu;
-using CatalogueManager.Menus;
-using CatalogueManager.Menus.MenuItems;
 using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using MapsDirectlyToDatabaseTable;
-using CatalogueManager.Copying;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes;
+using Rdmp.Core.CatalogueLibrary.Nodes.SharingNodes;
+using Rdmp.Core.CatalogueLibrary.Providers;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents.TreeHelper;
 
 namespace CatalogueManager.Collections
 {

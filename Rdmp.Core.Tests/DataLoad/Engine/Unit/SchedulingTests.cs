@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CachingEngine.PipelineExecution.Destinations;
-using DataLoadEngine.Job.Scheduling;
 using NUnit.Framework;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
-namespace DataLoadEngineTests.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
     public class SchedulingTests
     {

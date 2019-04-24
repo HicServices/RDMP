@@ -8,19 +8,16 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using BrightIdeasSoftware;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.Refreshing;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
-using DataExportLibrary.Repositories;
 using MapsDirectlyToDatabaseTableUI;
-
+using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.DataExport.Repositories;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using Point = System.Drawing.Point;
 

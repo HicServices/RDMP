@@ -6,7 +6,7 @@
 
 using NUnit.Framework;
 
-namespace DataLoadEngineTests.Unit
+namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
     public class IAttacherCompositionTests
     {

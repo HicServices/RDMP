@@ -6,17 +6,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.Linq;
 using System.Text.RegularExpressions;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding.Parameters;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 using ReusableLibraryCode.Checks;
-using IFilter = CatalogueLibrary.Data.IFilter;
+using IFilter = Rdmp.Core.CatalogueLibrary.Data.IFilter;
 
-namespace CatalogueLibrary.QueryBuilding
+namespace Rdmp.Core.CatalogueLibrary.QueryBuilding
 {
     /// <summary>
     /// This class maintains a list of user defined ExtractionInformation objects.  It can produce SQL which will try to 

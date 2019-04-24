@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.QueryBuilding;
-using DataLoadEngineTests.Integration.RelationalBulkTestDataTests.TestData;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.Tests.DataLoad.Engine.Integration.RelationalBulkTestDataTests.TestData;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.RelationalBulkTestDataTests
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.RelationalBulkTestDataTests
 {
     public class RelationalBulkTestDataSetup:DatabaseTests
     {

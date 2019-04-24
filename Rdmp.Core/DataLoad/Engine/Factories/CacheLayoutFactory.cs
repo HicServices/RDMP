@@ -6,16 +6,15 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CachingEngine.Factories;
-using CachingEngine.Layouts;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DataProvider.FromCache;
-using DataLoadEngine.Job.Scheduling.Exceptions;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
+using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.Factories
+namespace Rdmp.Core.DataLoad.Engine.Factories
 {
     /// <summary>
     /// Creates <see cref="ICacheLayout"/> instances based on the <see cref="ICachedDataProvider"/>s declared in the load <see cref="ILoadMetadata"/>.  There

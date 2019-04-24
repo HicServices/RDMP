@@ -6,10 +6,9 @@
 
 using System.Data;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Repositories;
 using FAnsi;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 

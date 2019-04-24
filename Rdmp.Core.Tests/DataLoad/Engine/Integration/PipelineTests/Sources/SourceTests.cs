@@ -6,19 +6,19 @@
 
 using System;
 using System.Data;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
-using CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
-using CatalogueLibrary.Repositories;
-using DataLoadEngine.DataFlowPipeline.Sources;
-using DataLoadEngine.Job;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 
-namespace DataLoadEngineTests.Integration.PipelineTests.Sources
+namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 {
     public class SourceTests:DatabaseTests
     {
@@ -106,7 +106,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.FixedSource | PipelineUsage.FixedDestination | PipelineUsage.LoadsSingleTableInfo);
 
-            var pipeline = new CatalogueLibrary.Data.Pipelines.Pipeline(CatalogueRepository, "DeleteMePipeline");
+            var pipeline = new Pipeline(CatalogueRepository, "DeleteMePipeline");
             var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0);
 
             Assert.IsTrue(context.IsAllowable(pipeline));
@@ -121,7 +121,7 @@ namespace DataLoadEngineTests.Integration.PipelineTests.Sources
             var contextFactory = new DataFlowPipelineContextFactory<DataTable>();
             var context = contextFactory.Create(PipelineUsage.FixedDestination);
 
-            var pipeline = new CatalogueLibrary.Data.Pipelines.Pipeline(CatalogueRepository, "DeleteMePipeline");
+            var pipeline = new Pipeline(CatalogueRepository, "DeleteMePipeline");
             var component = new PipelineComponent(CatalogueRepository, pipeline, typeof(TestObject_RequiresTableInfo), 0);
             component.Name = "TestPipeComponent";
             component.SaveToDatabase();

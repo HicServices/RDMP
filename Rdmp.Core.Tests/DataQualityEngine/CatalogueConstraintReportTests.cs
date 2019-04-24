@@ -6,24 +6,20 @@
 
 using System;
 using System.Linq;
-using System.Linq.Expressions;
 using System.Threading;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Triggers;
-using DataQualityEngine.Data;
-using DataQualityEngine.Reports;
 using Diagnostics.TestData;
-using HIC.Logging;
-using HIC.Logging.PastEvents;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.DataQualityEngine.Reports;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
-using Tests.Common;
 using Tests.Common.Scenarios;
 
-namespace DataQualityEngine.Tests
+namespace Rdmp.Core.Tests.DataQualityEngine
 {
     public class CatalogueConstraintReportTests : TestsRequiringAnExtractionConfiguration
     {

@@ -9,28 +9,25 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
-using CachingEngine;
-using CachingEngine.BasicCache;
-using CachingEngine.Factories;
-using CachingEngine.Layouts;
-using CachingEngine.PipelineExecution.Destinations;
-using CachingEngine.PipelineExecution.Sources;
-using CachingEngine.Requests;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataFlowPipeline.Requirements;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.Caching;
+using Rdmp.Core.Caching.BasicCache;
+using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.PipelineExecution.Sources;
+using Rdmp.Core.Caching.Requests;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
-using Moq;
 
-namespace CachingEngineTests.Integration
+namespace Rdmp.Core.Tests.Caching.Integration
 {
     [Category("Integration")]
     public class CustomDateCachingTests : DatabaseTests

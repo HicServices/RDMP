@@ -7,9 +7,6 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CachingEngine.Factories;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Pipelines;
 using CatalogueManager.Collections;
 using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.ItemActivation;
@@ -17,6 +14,9 @@ using CatalogueManager.Rules;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
 using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using ReusableUIComponents;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs

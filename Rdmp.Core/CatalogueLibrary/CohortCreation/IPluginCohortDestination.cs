@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
-using CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 
-namespace CatalogueLibrary.CohortCreation
+namespace Rdmp.Core.CatalogueLibrary.CohortCreation
 {
     /// <summary>
     /// MEF discoverble version of ICohortPipelineDestination (See ICohortPipelineDestination).  Implement this interface if you are writing a custom cohort

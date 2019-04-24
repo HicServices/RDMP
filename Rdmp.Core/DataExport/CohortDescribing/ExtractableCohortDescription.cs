@@ -7,12 +7,9 @@
 using System;
 using System.Data;
 using System.Linq;
-using DataExportLibrary.Data.DataTables;
-using HIC.Common.Validation.Constraints.Primary;
+using Rdmp.Core.DataExport.Data.DataTables;
 
-using ReusableLibraryCode;
-
-namespace DataExportLibrary.CohortDescribing
+namespace Rdmp.Core.DataExport.CohortDescribing
 {
     /// <summary>
     /// Summary of all useful information about an ExtractableCohort including the number of unique patients and rowcount (can differ if there are aliases 

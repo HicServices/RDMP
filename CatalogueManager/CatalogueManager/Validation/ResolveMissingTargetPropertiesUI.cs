@@ -9,9 +9,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using HIC.Common.Validation;
-using ReusableUIComponents;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Validation;
 
 
 namespace CatalogueManager.Validation

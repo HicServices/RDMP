@@ -7,13 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
 
-
-namespace CatalogueLibrary.FilterImporting
+namespace Rdmp.Core.CatalogueLibrary.FilterImporting
 {
     /// <summary>
     /// Facilitates the import of one IFilter type into the scope of another IFilter collection.  IFilters are lines of WHERE Sql.  This class is what allows you to import

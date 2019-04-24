@@ -10,13 +10,10 @@ using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
-using System.Reflection;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 
 

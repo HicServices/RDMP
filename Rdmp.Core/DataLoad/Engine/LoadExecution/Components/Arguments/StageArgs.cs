@@ -6,14 +6,11 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
 using FAnsi.Discovery;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace DataLoadEngine.LoadExecution.Components.Arguments
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
 {
     /// <summary>
     /// Identifies the database target of a given DLE LoadStage (e.g. AdjustRaw would contain a DiscoveredDatabase pointed at the RAW database). Also includes

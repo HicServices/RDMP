@@ -6,7 +6,7 @@
 
 using FAnsi.Naming;
 
-namespace CatalogueLibrary.Data.DataLoad
+namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {
     /// <summary>
     /// Interface for an object that has a name that varies depending on which stage of a data load you are attempting to reference.  For example TableInfo will have a 

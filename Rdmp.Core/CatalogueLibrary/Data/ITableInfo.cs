@@ -6,15 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.EntityNaming;
 using FAnsi.Discovery;
 using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// A persistent reference to an existing Database Table (See TableInfo).

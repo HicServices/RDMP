@@ -4,10 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Nodes.LoadMetadataNodes;
 using CatalogueManager.Copying.Commands;
 using CatalogueManager.ItemActivation;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {

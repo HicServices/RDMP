@@ -6,12 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Dashboarding;
 using CatalogueManager.AutoComplete;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 

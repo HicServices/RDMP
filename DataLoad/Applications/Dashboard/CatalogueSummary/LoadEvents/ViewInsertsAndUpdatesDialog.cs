@@ -6,21 +6,15 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Triggers;
 using FAnsi.Implementations.MicrosoftSQL;
-using HIC.Logging.PastEvents;
-using ReusableLibraryCode;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.Logging.PastEvents;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 

@@ -6,9 +6,9 @@
 
 using System;
 using System.Data.Common;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace DataExportLibrary.Data
+namespace Rdmp.Core.DataExport.Data
 {
     /// <inheritdoc/>
     public class ExternalCohortDefinitionData : IExternalCohortDefinitionData

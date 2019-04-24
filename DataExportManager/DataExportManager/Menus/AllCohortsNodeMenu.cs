@@ -6,25 +6,13 @@
 
 using System;
 using System.ComponentModel.Composition;
-using System.Diagnostics;
-using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Icons.IconOverlays;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
-using CatalogueManager.Refreshing;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers.Nodes;
-using DataExportManager.CohortUI;
 using DataExportManager.CommandExecution.AtomicCommands;
 using FAnsi;
-using MapsDirectlyToDatabaseTableUI;
-using ReusableLibraryCode;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers.Nodes;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 
 namespace DataExportManager.Menus
 {

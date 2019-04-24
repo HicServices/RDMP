@@ -7,11 +7,11 @@
 using System;
 using System.IO;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace DataLoadEngine.LoadExecution.Components.Arguments
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
 {
     /// <summary>
     /// Helper class for assembling a command line parameters strings for an .exe.  This will wrap with quotes when there is whitespace etc.  Class can

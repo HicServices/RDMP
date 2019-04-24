@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Settings;
 
-namespace RDMPStartup
+namespace Rdmp.Core.Startup
 {
     /// <summary>
     /// Records connection strings to the Catalogue and DataExport databases (See LinkedRepositoryProvider) in the user settings file for the current

@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using ReusableLibraryCode.Extensions;
 
-namespace CatalogueLibrary.Repositories.Managers
+namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers
 {
     /// <inheritdoc/>
     public class PluginManager : IPluginManager

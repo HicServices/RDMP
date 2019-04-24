@@ -7,9 +7,9 @@
 using System;
 using System.IO;
 using System.Linq;
-using LoadModules.Generic.Exceptions;
+using Rdmp.Core.DataLoad.Modules.Exceptions;
 
-namespace LoadModules.Generic.Attachers
+namespace Rdmp.Core.DataLoad.Modules.Attachers
 {
     /// <summary>
     /// Container class for recording the various directories involved in attaching a microsoft database file (MDF) to an Sql Server Instance.

@@ -6,18 +6,18 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Revertable;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueLibrary.Data
+namespace Rdmp.Core.CatalogueLibrary.Data
 {
     /// <summary>
     /// The central class for the RDMP, a Catalogue is a virtual dataset e.g. 'Hospital Admissions'.  A Catalogue can be a merging of multiple underlying tables and exists 
@@ -39,12 +39,12 @@ namespace CatalogueLibrary.Data
 
         /// <summary>
         /// Name of a task in the logging database which should be used for documenting the loading of this Catalogue. 
-        /// <seealso cref="HIC.Logging.LogManager"/>
+        /// <seealso cref="LogManager"/>
         /// </summary>
         string LoggingDataTask { get; set; }
 
         /// <summary>
-        /// The ID of the logging server that is to be used to log data loads of the dataset <see cref="HIC.Logging.LogManager"/>
+        /// The ID of the logging server that is to be used to log data loads of the dataset <see cref="LogManager"/>
         /// </summary>
         int? LiveLoggingServer_ID { get; set; }
 

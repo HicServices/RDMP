@@ -4,18 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using CatalogueLibrary.Data;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using CatalogueManager.CommandExecution.Proposals;
 using CatalogueManager.ItemActivation;
-using DataExportLibrary.Providers.Nodes.ProjectCohortNodes;
 using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using CatalogueManager.Copying.Commands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 

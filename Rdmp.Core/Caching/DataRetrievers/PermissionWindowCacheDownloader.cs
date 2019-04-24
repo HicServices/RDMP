@@ -8,17 +8,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using CachingEngine.Factories;
-using CachingEngine.PipelineExecution;
-using CachingEngine.Requests.FetchRequestProvider;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.PipelineExecution;
+using Rdmp.Core.Caching.Requests.FetchRequestProvider;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngine.DataRetrievers
+namespace Rdmp.Core.Caching.DataRetrievers
 {
     /// <summary>
     /// Responsible for executing the caching pipeline(s) for a given PermissionWindow and/or set of CacheProgress items.

@@ -9,9 +9,9 @@ using System.Linq;
 using System.Windows.Forms;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.Menus;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Providers;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Providers;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace DataExportManager.Menus

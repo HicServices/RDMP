@@ -7,17 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataQualityEngine.Data
+namespace Rdmp.Core.DataQualityEngine.Data
 {
     /// <summary>
     /// Pointer to the Data Qualilty Engine Repository database in which all DatabaseEntities declared in DataQualityEngine.dll are stored.  Ever DatabaseEntity class must exist in a

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 
-namespace CatalogueLibrary.Reports
+namespace Rdmp.Core.CatalogueLibrary.Reports
 {
     /// <summary>
     /// Extracts comments from SourceCodeForSelfAwareness.zip for the requested Types which are made available in the public property Summaries.  This ensures that you always

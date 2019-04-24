@@ -8,21 +8,19 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.CommandExecution.AtomicCommands;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.DataFlowPipeline;
-using CatalogueLibrary.DataHelper;
 using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
 using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using DataExportLibrary.CohortCreationPipeline;
-using DataExportLibrary.CohortCreationPipeline.UseCases;
-using DataExportLibrary.Data.DataTables;
 using CatalogueManager.PipelineUIs.Pipelines;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Events;
+using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.DataExport.CohortCreationPipeline.UseCases;
+using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
 
 namespace CatalogueManager.CommandExecution.AtomicCommands
 {
@@ -94,7 +92,7 @@ namespace CatalogueManager.CommandExecution.AtomicCommands
             Activator.ShowWindow(ui, true);
         }
 
-        void ui_PipelineExecutionFinishedsuccessfully(object sender, CatalogueLibrary.DataFlowPipeline.Events.PipelineEngineEventArgs args)
+        void ui_PipelineExecutionFinishedsuccessfully(object sender, PipelineEngineEventArgs args)
         {
             if(!_table.Exists())
                 throw new Exception("Pipeline execute succesfully but the expected table '" + _table +"' did not exist");

@@ -7,15 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 

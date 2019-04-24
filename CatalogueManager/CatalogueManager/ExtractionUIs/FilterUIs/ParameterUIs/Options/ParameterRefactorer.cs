@@ -7,10 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.FilterImporting;
-using CatalogueLibrary.Spontaneous;
-using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableUIComponents;
 
 namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options

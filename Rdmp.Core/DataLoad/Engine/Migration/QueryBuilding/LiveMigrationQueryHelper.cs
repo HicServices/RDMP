@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary.Triggers;
+using Rdmp.Core.CatalogueLibrary.Triggers;
 
-namespace DataLoadEngine.Migration.QueryBuilding
+namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
 {
     /// <summary>
     /// See MigrationQueryHelper

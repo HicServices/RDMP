@@ -6,7 +6,7 @@
 
 using System;
 
-namespace HIC.Logging
+namespace Rdmp.Core.Logging
 {
     /// <summary>
     /// A conceptual 'source' which contributed records to a table being loaded during a logged activity (See TableLoadInfo).  This can be as explicit

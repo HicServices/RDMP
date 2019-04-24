@@ -7,25 +7,21 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Configuration;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
 using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using CatalogueManager.SimpleControls;
 using CatalogueManager.TestsAndSetup.ServicePropogation;
-using HIC.Common.Validation;
-using HIC.Common.Validation.Constraints;
-using HIC.Common.Validation.Constraints.Primary;
-using HIC.Common.Validation.Constraints.Secondary;
 using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Validation;
+using Rdmp.Core.Validation.Constraints;
+using Rdmp.Core.Validation.Constraints.Primary;
+using Rdmp.Core.Validation.Constraints.Secondary;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.SingleControlForms;
 
 namespace CatalogueManager.Validation
 {

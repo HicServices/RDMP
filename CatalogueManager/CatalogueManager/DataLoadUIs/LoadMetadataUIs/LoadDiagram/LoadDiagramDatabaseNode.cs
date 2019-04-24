@@ -8,12 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
 using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using CatalogueManager.Icons.IconProvision;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode;
 
 namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram

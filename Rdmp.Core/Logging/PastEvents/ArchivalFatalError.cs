@@ -6,9 +6,8 @@
 
 using System;
 using System.Data.Common;
-using System.Security.Policy;
 
-namespace HIC.Logging.PastEvents
+namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Readonly audit of a historical error which resulted in the failure of the logged activity (which is also a past / readonly event).

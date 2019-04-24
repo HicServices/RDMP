@@ -6,15 +6,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.DataProvider;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution.Components.Runtime;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution.Components
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
 {
     /// <summary>
     /// DLE component responsible for the LoadStage.GetFiles.  This includes running any user configured ProcessTask (which will be RuntimeTasks in _components).

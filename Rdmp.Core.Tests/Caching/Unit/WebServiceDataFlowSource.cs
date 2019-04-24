@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using ReusableLibraryCode.Progress;
 
-namespace CachingEngineTests.Unit
+namespace Rdmp.Core.Tests.Caching.Unit
 {
     public class WebServiceDataFlowSource : IFileDataFlowSource
     {

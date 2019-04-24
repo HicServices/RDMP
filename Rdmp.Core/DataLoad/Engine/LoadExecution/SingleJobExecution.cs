@@ -6,13 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueLibrary;
-using CatalogueLibrary.DataFlowPipeline;
-using DataLoadEngine.Job;
-using DataLoadEngine.LoadExecution.Components;
+using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Engine.LoadExecution.Components;
 using ReusableLibraryCode.Progress;
 
-namespace DataLoadEngine.LoadExecution
+namespace Rdmp.Core.DataLoad.Engine.LoadExecution
 {
     /// <summary>
     /// Pipeline which processes a single job through all stages before accepting another.  Execution involves running each DataLoadComponent with the current 

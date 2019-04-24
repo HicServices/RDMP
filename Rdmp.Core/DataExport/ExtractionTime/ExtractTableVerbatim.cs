@@ -6,11 +6,10 @@
 
 using System.Data.Common;
 using System.IO;
-using DataExportLibrary.ExtractionTime.FileOutputFormats;
 using FAnsi.Discovery;
+using Rdmp.Core.DataExport.ExtractionTime.FileOutputFormats;
 
-
-namespace DataExportLibrary.ExtractionTime
+namespace Rdmp.Core.DataExport.ExtractionTime
 {
     /// <summary>
     /// Helper class for fetching entire tables from a database and writing them to CSV.  It uses CSVOutputFormat.CleanString to strip out problem characters.

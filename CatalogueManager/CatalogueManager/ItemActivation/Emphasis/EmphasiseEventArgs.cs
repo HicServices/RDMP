@@ -6,7 +6,6 @@
 
 using System;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTable;
 
 namespace CatalogueManager.ItemActivation.Emphasis
 {

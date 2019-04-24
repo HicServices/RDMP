@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueLibrary.Exceptions
+namespace Rdmp.Core.CatalogueLibrary.Exceptions
 {
     /// <summary>
     /// Thrown when an object which should be associated with a single <see cref="ColumnInfo"/> cannot be resolved to one (e.g. an <see cref="ExtractionInformation"/> which

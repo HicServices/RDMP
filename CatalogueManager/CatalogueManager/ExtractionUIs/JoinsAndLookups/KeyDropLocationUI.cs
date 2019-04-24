@@ -7,8 +7,8 @@
 using System;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueLibrary.Data;
 using CatalogueManager.Icons.IconProvision;
+using Rdmp.Core.CatalogueLibrary.Data;
 
 namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
 {

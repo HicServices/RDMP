@@ -6,17 +6,16 @@
 
 using System;
 using System.Collections.Generic;
-using System.Diagnostics.Contracts;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Repositories;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Extensions;
 
-namespace RDMPStartup.PluginManagement
+namespace Rdmp.Core.Startup.PluginManagement
 {
     /// <summary>
     /// Commits a .zip file containing dlls, pdbs and source code that constitutes an RDMP Plugin (Use PluginPackager.Packager to package up a .sln into such a
