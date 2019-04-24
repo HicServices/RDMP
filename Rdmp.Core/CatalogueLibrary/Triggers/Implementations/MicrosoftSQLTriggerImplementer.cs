@@ -30,7 +30,7 @@ namespace Rdmp.Core.CatalogueLibrary.Triggers.Implementations
     /// <para>Also contains methods for confirming that a trigger exists on a given table, that the primary keys still match when it was created and the _Archive table hasn't
     /// got a different schema to the live table (e.g. if you made a change to the live table this would pick up that the _Archive wasn't updated).</para>
     /// </summary>
-    internal class MicrosoftSQLTriggerImplementer:TriggerImplementer
+    public class MicrosoftSQLTriggerImplementer:TriggerImplementer
     {
         private string _schema;
         private string _triggerName;

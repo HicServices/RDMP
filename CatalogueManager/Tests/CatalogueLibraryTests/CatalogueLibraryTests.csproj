@@ -44,16 +44,13 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\Application\ResearchDataManagementPlatform\ResearchDataManagementPlatform.csproj" />
-    <ProjectReference Include="..\..\..\CohortManager\CohortManager\CohortManager.csproj" />
-    <ProjectReference Include="..\..\..\DataExportManager\DataExportManager\DataExportManager.csproj" />
-    <ProjectReference Include="..\..\..\DataLoad\Applications\Dashboard\Dashboard.csproj" />
     <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj" />
     <ProjectReference Include="..\..\..\Rdmp.Core\Rdmp.Core.csproj" />
+    <ProjectReference Include="..\..\..\Rdmp.UI\Rdmp.UI.csproj" />
     <ProjectReference Include="..\..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
     <ProjectReference Include="..\..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj" />
-    <ProjectReference Include="..\..\CatalogueManager\CatalogueManager.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Integration\CommitAssemblyTest.cd" />

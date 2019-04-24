@@ -14,7 +14,7 @@ namespace Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes
     /// <summary>
     /// Collection of all the Pipelines compatible with a given use case. 
     /// </summary>
-    class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
+    public class StandardPipelineUseCaseNode : SingletonNode,IKnowWhatIAm
     {
         private readonly CommentStore _commentStore;
         public PipelineUseCase UseCase { get; set; }
