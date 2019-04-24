@@ -7,14 +7,14 @@ namespace CatalogueLibrary.Database
 {
     public sealed class DataQualityEnginePatcher:Patcher
     {
-        public DataQualityEnginePatcher() : base(2, "DataQualityEngineDatabase")
+        public DataQualityEnginePatcher() : base(2, "Databases.DataQualityEngineDatabase")
         {
             LegacyName = "DataQualityEngine.Database";
         }
     }
     public sealed class LoggingDatabasePatcher:Patcher
     {
-        public LoggingDatabasePatcher():base(2,"LoggingDatabase")
+        public LoggingDatabasePatcher():base(2,"Databases.LoggingDatabase")
         {
             LegacyName = "HIC.Logging.Database";
         }
@@ -22,7 +22,7 @@ namespace CatalogueLibrary.Database
 
     public sealed class ANOStorePatcher:Patcher
     {
-        public ANOStorePatcher():base(2,"ANOStoreDatabase")
+        public ANOStorePatcher():base(2,"Databases.ANOStoreDatabase")
         {
             LegacyName = "ANOStore.Database";
         }
@@ -30,7 +30,7 @@ namespace CatalogueLibrary.Database
 
     public sealed class IdentifierDumpDatabasePatcher:Patcher
     {
-        public IdentifierDumpDatabasePatcher():base(2,"IdentifierDumpDatabase")
+        public IdentifierDumpDatabasePatcher():base(2,"Databases.IdentifierDumpDatabase")
         {
             LegacyName = "IdentifierDump.Database";
         }
@@ -38,7 +38,7 @@ namespace CatalogueLibrary.Database
 
     public sealed class QueryCachingPatcher:Patcher
     {
-        public QueryCachingPatcher():base(2,"QueryCachingDatabase")
+        public QueryCachingPatcher():base(2,"Databases.QueryCachingDatabase")
         {
             LegacyName = "QueryCaching.Database";
         }
@@ -46,7 +46,7 @@ namespace CatalogueLibrary.Database
 
     public sealed class DataExportPatcher:Patcher
     {
-        public DataExportPatcher():base(1,"DataExportDatabase")
+        public DataExportPatcher():base(1,"Databases.DataExportDatabase")
         {
             
         }
@@ -54,7 +54,7 @@ namespace CatalogueLibrary.Database
 
     public sealed class CataloguePatcher:Patcher
     {
-        public CataloguePatcher():base(1,"CatalogueDatabase")
+        public CataloguePatcher():base(1,"Databases.CatalogueDatabase")
         {
         }
     }

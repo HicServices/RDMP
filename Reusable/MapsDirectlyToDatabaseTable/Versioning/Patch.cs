@@ -88,7 +88,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             if(string.IsNullOrWhiteSpace(subdirectory))
                 initialCreationRegex = new Regex(@".*\.runAfterCreateDatabase\..*\.sql");
             else
-                initialCreationRegex = new Regex(@".*\."+subdirectory+@"\.runAfterCreateDatabase\..*\.sql");
+                initialCreationRegex = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.runAfterCreateDatabase\..*\.sql");
             
             var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
 
@@ -114,7 +114,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             if(string.IsNullOrWhiteSpace(subdirectory))
                 upgradePatchesRegexPattern =  new Regex(@".*\.up\.(.*\.sql)");
             else
-                upgradePatchesRegexPattern = new Regex(@".*\."+subdirectory+@"\.up\.(.*\.sql)");
+                upgradePatchesRegexPattern = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.up\.(.*\.sql)");
 
             var files = new SortedDictionary<string, Patch>();
             
