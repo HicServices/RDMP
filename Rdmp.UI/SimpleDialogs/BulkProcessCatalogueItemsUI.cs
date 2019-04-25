@@ -10,14 +10,14 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Sometimes you will be called upon to host datasets that are a mile wide (e.g. 200 columns) from which researchers only ever receive/care about 10 or 20.  In this case it can be

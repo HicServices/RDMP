@@ -7,16 +7,15 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CohortManager.Wizard;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Wizard;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CohortManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// Creates a new persistent database query configuration for identifying cohort sets of patients.

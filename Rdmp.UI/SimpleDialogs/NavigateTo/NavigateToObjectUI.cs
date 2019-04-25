@@ -13,14 +13,6 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Collections.Providers.Filtering;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data;
@@ -31,11 +23,19 @@ using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using Rdmp.Core.CatalogueLibrary.Providers;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers.Nodes;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.Collections.Providers.Filtering;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Theme;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
 
-namespace CatalogueManager.SimpleDialogs.NavigateTo
+namespace Rdmp.UI.SimpleDialogs.NavigateTo
 {
     /// <summary>
     /// Allows you to search all objects in your database and rapidly select 1 which will be shown via the Emphasis system.

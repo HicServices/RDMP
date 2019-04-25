@@ -1,7 +1,7 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.AggregationUIs;
+using Rdmp.UI.LocationsMenu.Ticketing;
 
-namespace CohortManager.SubComponents
+namespace Rdmp.UI.SubComponents
 {
     partial class CohortIdentificationConfigurationUI
     {
@@ -46,9 +46,9 @@ namespace CohortManager.SubComponents
             this.olvNameCol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.CohortCompilerUI1 = new CohortManager.SubComponents.CohortCompilerUI();
+            this.CohortCompilerUI1 = new CohortCompilerUI();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.ticket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.ticket = new TicketingControlUI();
             this.btnAbortLoad = new System.Windows.Forms.Button();
             this.btnExecute = new System.Windows.Forms.Button();
             this.label5 = new System.Windows.Forms.Label();
@@ -308,7 +308,7 @@ namespace CohortManager.SubComponents
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbID;
         private System.Windows.Forms.Label lblName;
-        private CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI ticket;
+        private TicketingControlUI ticket;
         private System.Windows.Forms.Label lblDescription;
         private System.Windows.Forms.TextBox tbDescription;
         private System.Windows.Forms.TextBox tbName;

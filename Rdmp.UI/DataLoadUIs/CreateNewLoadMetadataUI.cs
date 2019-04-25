@@ -6,12 +6,12 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace CatalogueManager.DataLoadUIs
+namespace Rdmp.UI.DataLoadUIs
 {
     /// <summary>
     /// There is a M-1 relationship between Catalogues (datasets) and LoadMetadata (data load recipes).  This window is accessed by right clicking a Catalogue and choosing

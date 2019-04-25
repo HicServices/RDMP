@@ -8,17 +8,17 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.Icons.IconOverlays;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandCreateNewProcessTask : BasicUICommandExecution, IAtomicCommand
     {

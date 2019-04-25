@@ -14,18 +14,18 @@ using System.Text;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus.MenuItems;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace Dashboard.CatalogueSummary.LoadEvents
+namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
     /// Shows the longitudinal history of all data loads of the selected Catalogue (dataset).  This is an expandable tree including all progress messages, errors, table load notifications

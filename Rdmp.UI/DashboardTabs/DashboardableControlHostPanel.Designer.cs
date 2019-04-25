@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.DashboardTabs
+﻿namespace Rdmp.UI.DashboardTabs
 {
     partial class DashboardableControlHostPanel
     {

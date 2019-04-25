@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
+﻿namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {
     partial class ExeProcessTaskUI
     {
@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.loadStageIconUI1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadStageIconUI();
+            this.loadStageIconUI1 = new LoadStageIconUI();
             this.tbID = new System.Windows.Forms.TextBox();
             this.lblID = new System.Windows.Forms.Label();
             this.btnBrowse = new System.Windows.Forms.Button();

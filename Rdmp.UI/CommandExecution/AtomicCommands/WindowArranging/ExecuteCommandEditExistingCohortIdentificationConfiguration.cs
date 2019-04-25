@@ -6,14 +6,14 @@
 
 using System.ComponentModel.Composition;
 using System.Drawing;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.WindowArranging
+namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
 {
     public class ExecuteCommandEditExistingCohortIdentificationConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
     {

@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.MainFormUITabs
+﻿namespace Rdmp.UI.MainFormUITabs
 {
     partial class ConnectionStringKeywordUI
     {

@@ -1,7 +1,6 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
 
-namespace DataExportManager.Collections
+namespace Rdmp.UI.Collections
 {
     partial class DataExportCollectionUI
     {

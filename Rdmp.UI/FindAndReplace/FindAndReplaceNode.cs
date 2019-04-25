@@ -11,7 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.Extensions;
 
-namespace CatalogueManager.FindAndReplace
+namespace Rdmp.UI.FindAndReplace
 {
     internal class FindAndReplaceNode:IMasqueradeAs
     {

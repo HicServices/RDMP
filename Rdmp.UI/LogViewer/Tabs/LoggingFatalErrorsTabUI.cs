@@ -6,7 +6,7 @@
 
 using Rdmp.Core.Logging;
 
-namespace CatalogueManager.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer.Tabs
 {
     /// <summary>
     /// A view of all the exceptions and failure messages captured during a run.  If there are any of these then the run can be assumed to have failed.

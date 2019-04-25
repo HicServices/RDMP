@@ -1,6 +1,6 @@
 ﻿using ReusableLibraryCode.Checks;
 
-namespace Dashboard.CatalogueSummary.LoadEvents
+namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     partial class ViewInsertsAndUpdatesDialog : ICheckNotifier
     {
@@ -41,7 +41,7 @@ namespace Dashboard.CatalogueSummary.LoadEvents
             this.label4 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
-            this.diffDataTables1 = new Dashboard.CatalogueSummary.LoadEvents.DiffDataTables();
+            this.diffDataTables1 = new DiffDataTables();
             this.label1 = new System.Windows.Forms.Label();
             this.tbBatchSizeToGet = new System.Windows.Forms.TextBox();
             this.tbTimeout = new System.Windows.Forms.TextBox();

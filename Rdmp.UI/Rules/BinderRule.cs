@@ -7,10 +7,10 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.UI.ItemActivation;
 
-namespace CatalogueManager.Rules
+namespace Rdmp.UI.Rules
 {
     abstract class BinderRule<T> : IBinderRule where T : IMapsDirectlyToDatabaseTable
     {

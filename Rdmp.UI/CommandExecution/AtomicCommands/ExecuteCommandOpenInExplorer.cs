@@ -6,14 +6,13 @@
 
 using System.Drawing;
 using System.IO;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandOpenInExplorer:BasicUICommandExecution,IAtomicCommand
     {

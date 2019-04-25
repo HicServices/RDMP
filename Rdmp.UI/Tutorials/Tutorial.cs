@@ -8,7 +8,7 @@ using System;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Settings;
 
-namespace CatalogueManager.Tutorials
+namespace Rdmp.UI.Tutorials
 {
     public class Tutorial
     {

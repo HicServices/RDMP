@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.SimpleDialogs.Reports
+﻿namespace Rdmp.UI.SimpleDialogs.Reports
 {
     partial class GenerateTestDataUI
     {

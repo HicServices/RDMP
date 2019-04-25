@@ -9,20 +9,20 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
+namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
 
     /// <summary>

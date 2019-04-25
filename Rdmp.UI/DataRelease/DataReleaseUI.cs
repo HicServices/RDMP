@@ -11,13 +11,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using CatalogueManager.PipelineUIs.Pipelines;
-using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.CommandLine.Options.Abstracts;
@@ -26,9 +20,15 @@ using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.Providers;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PipelineUIs.Pipelines;
+using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace DataExportManager.DataRelease
+namespace Rdmp.UI.DataRelease
 {
     /// <summary>
     /// The ultimate end point of the Data Export Manager is the provision of a packaged up Release of all the anonymised datasets for all the cohort(s) (e.g. 'Cases' and 'Controls') in

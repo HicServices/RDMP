@@ -1,6 +1,6 @@
-﻿using CatalogueManager.LocationsMenu.Ticketing;
+﻿using Rdmp.UI.LocationsMenu.Ticketing;
 
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class SupportingSQLTableUI
     {
@@ -43,7 +43,7 @@ namespace CatalogueManager.SimpleDialogs
             this.ddExternalServers = new System.Windows.Forms.ComboBox();
             this.btnAdd = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.tcTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.tcTicket = new TicketingControlUI();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 

@@ -8,10 +8,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using DataExportManager.CohortUI.ImportCustomData;
-using CatalogueManager.PipelineUIs.Pipelines;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
@@ -20,9 +16,12 @@ using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.Listeners;
+using Rdmp.UI.CohortUI.ImportCustomData;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PipelineUIs.Pipelines;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
 {
     public abstract class CohortCreationCommandExecution :BasicUICommandExecution,IAtomicCommandWithTarget
     {

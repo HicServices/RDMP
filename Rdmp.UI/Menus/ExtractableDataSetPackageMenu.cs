@@ -7,14 +7,13 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Menus;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.Menus
+namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class ExtractableDataSetPackageMenu : RDMPContextMenuStrip

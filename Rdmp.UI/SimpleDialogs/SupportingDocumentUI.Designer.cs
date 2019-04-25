@@ -1,6 +1,6 @@
-﻿using CatalogueManager.LocationsMenu.Ticketing;
+﻿using Rdmp.UI.LocationsMenu.Ticketing;
 
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class SupportingDocumentUI
     {
@@ -43,7 +43,7 @@ namespace CatalogueManager.SimpleDialogs
             this.cbIsGlobal = new System.Windows.Forms.CheckBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.ticketingControl1 = new TicketingControlUI();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 

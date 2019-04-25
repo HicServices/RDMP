@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.Copying.Commands;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.ItemActivation;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
 {
     internal class ExecuteCommandImportFilterDescriptionsFromShare : ExecuteCommandImportShare
     {

@@ -15,7 +15,7 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
     public class ArgumentValueUIFactory
     {

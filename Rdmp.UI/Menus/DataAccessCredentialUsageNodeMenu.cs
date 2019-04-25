@@ -6,11 +6,11 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     class DataAccessCredentialUsageNodeMenu : RDMPContextMenuStrip
     {

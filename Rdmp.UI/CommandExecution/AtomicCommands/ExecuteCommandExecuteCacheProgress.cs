@@ -6,15 +6,15 @@
 
 using System.ComponentModel.Composition;
 using System.Drawing;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.LoadExecutionUIs;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.LoadExecutionUIs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandExecuteCacheProgress:BasicUICommandExecution,IAtomicCommandWithTarget
     {

@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {
     /// <summary>
     /// Icon for describing something relates to a given data LoadStage (e.g. AdjustRaw, AdjustStaging etc)

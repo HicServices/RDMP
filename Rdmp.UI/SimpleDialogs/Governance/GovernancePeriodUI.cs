@@ -9,19 +9,19 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.SimpleDialogs.Governance
+namespace Rdmp.UI.SimpleDialogs.Governance
 {
     /// <summary>
     /// The RDMP is designed to store sensitive clinical datasets and make them available in research ready (anonymous) form.  This usually requires governance approval from the data

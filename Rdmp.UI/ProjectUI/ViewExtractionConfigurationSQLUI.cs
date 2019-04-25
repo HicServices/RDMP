@@ -7,17 +7,17 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.LinkCreators;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     /// <summary>
     /// Shows you the SQL that will currently be executed as part of the ExtractionConfiguration of a data export project dataset.  This includes the join against the project cohort and any

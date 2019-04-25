@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.Validation
+namespace Rdmp.UI.Validation
 {
     partial class ValidationSetupUI
     {

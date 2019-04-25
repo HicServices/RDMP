@@ -9,14 +9,14 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Copying.Commands;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
 {
     /// <summary>
     /// Opens a <see cref="ShareDefinition"/> (which must be a share of a <see cref="Catalogue"/>) and imports all descriptions including for CatalogueItems

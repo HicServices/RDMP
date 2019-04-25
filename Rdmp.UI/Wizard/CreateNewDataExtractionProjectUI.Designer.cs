@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace DataExportManager.Wizard
+namespace Rdmp.UI.Wizard
 {
     partial class CreateNewDataExtractionProjectUI
     {

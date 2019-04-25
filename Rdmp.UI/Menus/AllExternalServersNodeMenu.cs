@@ -6,13 +6,13 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.Databases;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     internal class AllExternalServersNodeMenu : RDMPContextMenuStrip

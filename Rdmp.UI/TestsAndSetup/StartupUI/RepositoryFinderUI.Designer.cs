@@ -1,6 +1,4 @@
-﻿using ReusableLibraryCode.Checks;
-
-namespace CatalogueManager.TestsAndSetup.StartupUI
+﻿namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     partial class RepositoryFinderUI 
     {

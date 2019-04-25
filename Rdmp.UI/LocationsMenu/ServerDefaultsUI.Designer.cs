@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.LocationsMenu
+﻿namespace Rdmp.UI.LocationsMenu
 {
     partial class ServerDefaultsUI
     {

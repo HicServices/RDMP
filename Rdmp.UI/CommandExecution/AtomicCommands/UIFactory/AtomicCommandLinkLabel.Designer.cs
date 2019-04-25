@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
+﻿namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 {
     partial class AtomicCommandLinkLabel
     {

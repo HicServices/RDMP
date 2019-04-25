@@ -9,7 +9,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.Copying.Commands
+namespace Rdmp.UI.Copying.Commands
 {
     public class DataAccessCredentialsCommand : ICommand
     {

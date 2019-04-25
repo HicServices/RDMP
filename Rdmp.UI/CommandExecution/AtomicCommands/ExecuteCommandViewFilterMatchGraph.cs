@@ -6,15 +6,15 @@
 
 using System.Drawing;
 using System.Linq;
-using CatalogueManager.ExtractionUIs.FilterUIs;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.UI.ExtractionUIs.FilterUIs;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandViewFilterMatchGraph : BasicUICommandExecution,IAtomicCommand
     {

@@ -6,15 +6,15 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.PipelineUIs.Pipelines;
-using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.PipelineUIs.Pipelines;
+using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
     /// <summary>
     /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)

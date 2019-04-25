@@ -7,7 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using ReusableLibraryCode.DataAccess;
 
-namespace CohortManager.SubComponents.EmptyLineElements
+namespace Rdmp.UI.SubComponents.EmptyLineElements
 {
     public class CohortIdentificationHeader
     {

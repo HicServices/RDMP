@@ -7,19 +7,18 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Logging;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 
-
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Every dataset (Catalogue) can have it's own Logging task and Logging server.  If you have multiple logging servers (e.g. a test logging server and a live logging server). You 

@@ -9,17 +9,16 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 
-
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// The RDMP allows you at attach both documents and auxiliary tables (SupportingSQLTable) to your datasets (Catalogue).  These artifacts are then available to data analysts who

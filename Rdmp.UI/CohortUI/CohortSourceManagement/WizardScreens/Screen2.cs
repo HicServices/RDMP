@@ -6,13 +6,13 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.DataExport.CohortDatabaseWizard;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ChecksUI;
 
-namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
+namespace Rdmp.UI.CohortUI.CohortSourceManagement.WizardScreens
 {
     /// <summary>
     /// <para>Allows you to specify the private and release identifier column name/datatypes for the cohort database you are creating.  It is anticipated that you will have some datasets already

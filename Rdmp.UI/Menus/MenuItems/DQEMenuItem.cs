@@ -5,17 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus.MenuItems;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.Databases;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents.Dialogs;
 
-namespace Dashboard.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems
 {
     public class DQEMenuItem:RDMPToolStripMenuItem
     {

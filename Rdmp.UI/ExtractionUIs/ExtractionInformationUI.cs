@@ -8,25 +8,24 @@ using System;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueManager.AutoComplete;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Copying;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.AutoComplete;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-
-namespace CatalogueManager.ExtractionUIs
+namespace Rdmp.UI.ExtractionUIs
 {
     /// <summary>
     /// The RDMP is intended to curate research datasets, including which recording which columns in a given dataset are extractable and the Governance level for those columns (e.g. can

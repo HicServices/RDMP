@@ -9,8 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using AutocompleteMenuNS;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
@@ -19,9 +17,11 @@ using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ScintillaNET;
 
-namespace CatalogueManager.AutoComplete
+namespace Rdmp.UI.AutoComplete
 {
     public class AutoCompleteProvider
     {

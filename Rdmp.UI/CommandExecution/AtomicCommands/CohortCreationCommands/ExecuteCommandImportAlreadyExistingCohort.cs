@@ -7,15 +7,14 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using DataExportManager.SimpleDialogs;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
 {
     internal class ExecuteCommandImportAlreadyExistingCohort : BasicUICommandExecution,IAtomicCommand
     {

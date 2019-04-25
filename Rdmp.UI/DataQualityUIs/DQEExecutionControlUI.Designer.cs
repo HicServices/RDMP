@@ -1,4 +1,6 @@
-﻿namespace CatalogueManager.DataQualityUIs
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.DataQualityUIs
 {
     partial class DQEExecutionControlUI
     {
@@ -28,7 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.checkAndExecuteUI1 = new CheckAndExecuteUI();
             this.SuspendLayout();
             // 
             // checkAndExecuteUI1

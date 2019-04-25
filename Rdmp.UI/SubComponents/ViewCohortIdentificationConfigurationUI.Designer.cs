@@ -1,4 +1,4 @@
-﻿namespace CohortManager.SubComponents
+﻿namespace Rdmp.UI.SubComponents
 {
     partial class ViewCohortIdentificationConfigurationUI
     {

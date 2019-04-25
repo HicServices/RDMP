@@ -20,7 +20,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Constraints.Secondary.Predictor;
 using Rdmp.Core.Validation.UIAttributes;
 
-namespace CatalogueManager.Validation
+namespace Rdmp.UI.Validation
 {
     internal delegate void RequestDeletionHandler(object sender);
 

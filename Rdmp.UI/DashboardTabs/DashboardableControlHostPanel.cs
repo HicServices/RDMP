@@ -7,15 +7,15 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.DashboardTabs.Construction;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.UI.DashboardTabs.Construction;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.DashboardTabs
+namespace Rdmp.UI.DashboardTabs
 {
     /// <summary>
     /// TECHNICAL: wrapper class for a hosted IDashboardableControl.  Is responsible for rendering the close box and the border of the control.

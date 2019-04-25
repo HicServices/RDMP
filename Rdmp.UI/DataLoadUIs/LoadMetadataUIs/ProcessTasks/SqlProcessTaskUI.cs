@@ -8,21 +8,21 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueManager.AutoComplete;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Copying;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.UI.AutoComplete;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {
 
     /// <summary>

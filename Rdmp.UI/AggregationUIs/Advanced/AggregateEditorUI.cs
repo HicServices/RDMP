@@ -10,32 +10,32 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.AutoComplete;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using CatalogueManager.Copying;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
 using Rdmp.Core.CatalogueLibrary.Exceptions;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding.Options;
+using Rdmp.UI.AutoComplete;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace CatalogueManager.AggregationUIs.Advanced
+namespace Rdmp.UI.AggregationUIs.Advanced
 {
     /// <summary>
     /// Allows you to adjust an Aggregate.  This can either be a breakdown of your dataset by columns possibly including a graph (Basic Aggregate), a list of patient identifiers (Identifier 

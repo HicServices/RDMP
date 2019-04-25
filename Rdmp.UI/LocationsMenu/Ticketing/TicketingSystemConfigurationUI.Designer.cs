@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.LocationsMenu.Ticketing
+﻿namespace Rdmp.UI.LocationsMenu.Ticketing
 {
     partial class TicketingSystemConfigurationUI
     {

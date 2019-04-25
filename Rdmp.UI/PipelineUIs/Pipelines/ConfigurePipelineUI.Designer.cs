@@ -1,8 +1,6 @@
-﻿using System.Data;
-using System.Security.AccessControl;
-using System.Windows.Forms;
+﻿using System.Windows.Forms;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     partial class ConfigurePipelineUI
     {

@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.AggregationUIs.Advanced
+namespace Rdmp.UI.AggregationUIs.Advanced
 {
     partial class AggregateEditorUI
     {
@@ -41,7 +41,7 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.gbAxis = new System.Windows.Forms.GroupBox();
             this.btnClearAxis = new System.Windows.Forms.Button();
             this.ddAxisDimension = new System.Windows.Forms.ComboBox();
-            this.aggregateContinuousDateAxisUI1 = new CatalogueManager.AggregationUIs.AggregateContinuousDateAxisUI();
+            this.aggregateContinuousDateAxisUI1 = new AggregateContinuousDateAxisUI();
             this.gbPivot = new System.Windows.Forms.GroupBox();
             this.btnClearPivotDimension = new System.Windows.Forms.Button();
             this.ddPivotDimension = new System.Windows.Forms.ComboBox();
@@ -54,8 +54,8 @@ namespace CatalogueManager.AggregationUIs.Advanced
             this.imageList1 = new System.Windows.Forms.ImageList(this.components);
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.label2 = new System.Windows.Forms.Label();
-            this._aggregateTopXui1 = new CatalogueManager.AggregationUIs.Advanced.AggregateTopXUI();
-            this.selectColumnUI1 = new CatalogueManager.AggregationUIs.Advanced.SelectColumnUI();
+            this._aggregateTopXui1 = new AggregateTopXUI();
+            this.selectColumnUI1 = new SelectColumnUI();
             this.panel1 = new System.Windows.Forms.Panel();
             this.tbName = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();

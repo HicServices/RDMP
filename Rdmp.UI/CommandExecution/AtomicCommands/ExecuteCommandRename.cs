@@ -6,17 +6,16 @@
 
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
     {

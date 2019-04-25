@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.PluginChildProvision;
-using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PluginChildProvision;
 
-namespace DataExportManager.CommandExecution
+namespace Rdmp.UI.CommandExecution
 {
     public class DataExportPluginUserInterface:PluginUserInterface
     {

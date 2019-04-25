@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
+namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 {
     /// <summary>
     /// Provides access to an IAtomicCommand which takes as input a database object e.g. Edit a Catalogue command in which you must fist select which Catalogue you want to edit from a list.

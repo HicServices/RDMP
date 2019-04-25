@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents.TransparentHelpSystem;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
-namespace CatalogueManager.Tutorials
+namespace Rdmp.UI.Tutorials
 {
     public class TutorialTracker : IHelpWorkflowProgressProvider
     {

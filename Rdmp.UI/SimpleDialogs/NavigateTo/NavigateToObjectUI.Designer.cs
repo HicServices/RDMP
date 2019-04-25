@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace CatalogueManager.SimpleDialogs.NavigateTo
+namespace Rdmp.UI.SimpleDialogs.NavigateTo
 {
     partial class NavigateToObjectUI
     {

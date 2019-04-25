@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
     partial class ParameterCollectionUI
     {
@@ -43,7 +43,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
             this.tpDesign = new System.Windows.Forms.TabPage();
             this.tpSql = new System.Windows.Forms.TabPage();
             this.hiParameters = new ReusableUIComponents.HelpIcon();
-            this.parameterEditorScintillaControl1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterEditorScintillaControlUI();
+            this.parameterEditorScintillaControl1 = new ParameterEditorScintillaControlUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).BeginInit();
             this.tabControl1.SuspendLayout();
             this.tpDesign.SuspendLayout();

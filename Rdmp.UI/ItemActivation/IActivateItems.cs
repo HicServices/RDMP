@@ -7,17 +7,6 @@
 using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation.Arranging;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.PluginChildProvision;
-using CatalogueManager.Refreshing;
-using CatalogueManager.Rules;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
@@ -26,12 +15,23 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.Providers;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.DataViewing.Collections;
+using Rdmp.UI.ExtractionUIs.FilterUIs;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation.Arranging;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.PluginChildProvision;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.Rules;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Theme;
 
-namespace CatalogueManager.ItemActivation
+namespace Rdmp.UI.ItemActivation
 {
     /// <summary>
     /// Central component class for handling all low level RDMP main user interface systems. This includes things like Tree object child provision, Icon provision,

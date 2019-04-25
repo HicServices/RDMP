@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportManager.CohortUI.CohortSourceManagement.WizardScreens;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.CohortUI.CohortSourceManagement.WizardScreens;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace DataExportManager.CohortUI.CohortSourceManagement
+namespace Rdmp.UI.CohortUI.CohortSourceManagement
 {
     /// <summary>
     /// Wizard with three screens allowing you to create a Cohort database for use with Data Export Manager.  A cohort database is a database which stores all the patient identifier lists 

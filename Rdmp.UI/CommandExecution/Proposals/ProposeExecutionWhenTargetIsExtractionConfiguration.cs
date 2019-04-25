@@ -5,17 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.Proposals;
-using CatalogueManager.ItemActivation;
-using DataExportManager.ProjectUI;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ProjectUI;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
-namespace DataExportManager.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals
 {
     class ProposeExecutionWhenTargetIsExtractionConfiguration:RDMPCommandExecutionProposal<ExtractionConfiguration>
     {

@@ -1,6 +1,6 @@
-﻿using CatalogueManager.LocationsMenu.Ticketing;
+﻿using Rdmp.UI.LocationsMenu.Ticketing;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     partial class ExtractionConfigurationUI
     {
@@ -34,8 +34,8 @@ namespace DataExportManager.ProjectUI
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.tbCreated = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
-            this.tcRelease = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
-            this.tcRequest = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.tcRelease = new TicketingControlUI();
+            this.tcRequest = new TicketingControlUI();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.pChooseExtractionPipeline = new System.Windows.Forms.Panel();

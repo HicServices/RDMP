@@ -7,18 +7,18 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Menus.MenuItems;
-using CatalogueManager.SimpleDialogs;
 using MapsDirectlyToDatabaseTableUI;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
 using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -26,7 +26,7 @@ using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class TableInfoMenu : RDMPContextMenuStrip

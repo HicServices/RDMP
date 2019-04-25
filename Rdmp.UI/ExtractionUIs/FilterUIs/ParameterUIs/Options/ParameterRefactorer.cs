@@ -12,7 +12,7 @@ using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableUIComponents;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
     /// <summary>
     /// Handles renaming a parameter in the WHERE SQL of it's parent (if it has one).  Use this when you want the user to be able to change the name of a parameter and for this

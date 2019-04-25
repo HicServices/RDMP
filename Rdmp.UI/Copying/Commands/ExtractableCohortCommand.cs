@@ -10,7 +10,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueManager.Copying.Commands
+namespace Rdmp.UI.Copying.Commands
 {
     public class ExtractableCohortCommand : ICommand
     {

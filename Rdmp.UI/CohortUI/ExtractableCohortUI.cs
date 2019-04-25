@@ -9,23 +9,23 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Copying;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace DataExportManager.CohortUI
+namespace Rdmp.UI.CohortUI
 {
     
     /// <summary>
@@ -115,10 +115,10 @@ namespace DataExportManager.CohortUI
             _extractableCohort.AuditLog = auditLogEditor.Text;
         }
 
-        [DesignerSerializationVisibilityAttribute( DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility( DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryPreview { get; set; }
 
-        [DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         private Scintilla auditLogEditor;
 
         

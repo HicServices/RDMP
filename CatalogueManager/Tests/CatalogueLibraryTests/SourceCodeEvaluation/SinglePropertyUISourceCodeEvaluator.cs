@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.MainFormUITabs;
-using CohortManager.SubComponents;
-using Dashboard.Raceway;
-using DataExportManager.ProjectUI;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.MainFormUITabs;
+using Rdmp.UI.ProjectUI;
+using Rdmp.UI.Raceway;
+using Rdmp.UI.SubComponents;
 
 namespace CatalogueLibraryTests.SourceCodeEvaluation
 {

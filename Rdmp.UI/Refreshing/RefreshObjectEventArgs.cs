@@ -8,7 +8,7 @@ using System;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Providers;
 
-namespace CatalogueManager.Refreshing
+namespace Rdmp.UI.Refreshing
 {
     public class RefreshObjectEventArgs
     {

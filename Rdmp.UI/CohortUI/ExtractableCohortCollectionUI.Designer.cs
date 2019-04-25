@@ -1,6 +1,6 @@
-﻿using CatalogueManager.Refreshing;
+﻿using Rdmp.UI.Refreshing;
 
-namespace DataExportManager.CohortUI
+namespace Rdmp.UI.CohortUI
 {
     partial class ExtractableCohortCollectionUI : ILifetimeSubscriber
     {

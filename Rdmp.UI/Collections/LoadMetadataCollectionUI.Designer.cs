@@ -1,7 +1,7 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
+using Rdmp.UI.Refreshing;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     partial class LoadMetadataCollectionUI : ILifetimeSubscriber
     {

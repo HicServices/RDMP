@@ -1,6 +1,4 @@
-﻿using BrightIdeasSoftware;
-
-namespace DataExportManager.CohortUI.CohortSourceManagement
+﻿namespace Rdmp.UI.CohortUI.CohortSourceManagement
 {
     partial class CreateNewCohortDatabaseWizardUI
     {

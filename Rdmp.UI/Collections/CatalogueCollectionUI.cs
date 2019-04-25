@@ -7,18 +7,18 @@
 using System;
 using System.Linq;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections.Providers.Filtering;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Governance;
 using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.UI.Collections.Providers.Filtering;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// Main window for Data Management, this Control lets you view all your datasets, curate descriptive metadata, configure extractable columns, generate reports etc

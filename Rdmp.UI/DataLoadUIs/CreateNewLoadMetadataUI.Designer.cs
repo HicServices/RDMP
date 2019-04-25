@@ -1,6 +1,6 @@
-﻿using CatalogueManager.Collections;
+﻿using Rdmp.UI.SimpleDialogs;
 
-namespace CatalogueManager.DataLoadUIs
+namespace Rdmp.UI.DataLoadUIs
 {
     partial class CreateNewLoadMetadataUI
     {
@@ -33,7 +33,7 @@ namespace CatalogueManager.DataLoadUIs
             this.btnCreate = new System.Windows.Forms.Button();
             this.tbLoadMetadataNameToCreate = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.chooseLoggingTaskUI1 = new CatalogueManager.SimpleDialogs.ChooseLoggingTaskUI();
+            this.chooseLoggingTaskUI1 = new ChooseLoggingTaskUI();
             this.SuspendLayout();
             // 
             // btnCreate

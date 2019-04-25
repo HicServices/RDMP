@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CommandLine.Options.Abstracts;
 
-namespace CatalogueManager.SimpleControls
+namespace Rdmp.UI.SimpleControls
 {
     public delegate RDMPCommandLineOptions CommandGetterHandler(CommandLineActivity activityRequested);
 }

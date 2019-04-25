@@ -7,9 +7,6 @@
 using System;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.PipelineUIs.Pipelines;
-using CatalogueManager.SimpleDialogs.ForwardEngineering;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Events;
@@ -18,9 +15,12 @@ using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.PipelineUseCases;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PipelineUIs.Pipelines;
+using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
+namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 {
     /// <summary>
     /// Allows you to take data in a single data table and bulk insert it into a database (which you pick at the top of the screen).  You must select or create an appropriate pipeline.

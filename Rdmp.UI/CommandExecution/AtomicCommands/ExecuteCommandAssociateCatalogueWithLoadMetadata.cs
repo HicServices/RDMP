@@ -7,15 +7,15 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAssociateCatalogueWithLoadMetadata:BasicUICommandExecution,IAtomicCommand
     {

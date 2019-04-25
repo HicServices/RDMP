@@ -15,7 +15,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Providers;
 using ReusableLibraryCode;
 
-namespace CatalogueManager.Collections.Providers.Filtering
+namespace Rdmp.UI.Collections.Providers.Filtering
 {
     public class SearchablesMatchScorer
     {

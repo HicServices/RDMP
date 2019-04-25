@@ -7,12 +7,12 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueManager.Rules
+namespace Rdmp.UI.Rules
 {
     public class BinderWithErrorProviderFactory
     {

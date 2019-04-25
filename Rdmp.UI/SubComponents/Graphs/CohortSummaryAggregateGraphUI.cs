@@ -6,17 +6,17 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueManager.AggregationUIs;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.UI.AggregationUIs;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace CohortManager.SubComponents.Graphs
+namespace Rdmp.UI.SubComponents.Graphs
 {
     /// <summary>
     /// Allows you to execute a Frankenstein AggregateGraph that combines the dimensions, pivots, joins etc of a regular Aggregate Chart with the results of a 'Cohort Set'.  This allows you

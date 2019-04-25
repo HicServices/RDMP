@@ -1,8 +1,6 @@
-﻿using CatalogueManager.SimpleControls;
-using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Progress;
+﻿using Rdmp.UI.SimpleControls;
 
-namespace CatalogueManager.LoadExecutionUIs
+namespace Rdmp.UI.LoadExecutionUIs
 {
     partial class ExecuteLoadMetadataUI
     {
@@ -45,7 +43,7 @@ namespace CatalogueManager.LoadExecutionUIs
             this.cbAbortShouldActuallyCancelInstead = new System.Windows.Forms.CheckBox();
             this.flpControls = new System.Windows.Forms.FlowLayoutPanel();
             this.panel2 = new System.Windows.Forms.Panel();
-            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.checkAndExecuteUI1 = new CheckAndExecuteUI();
             ((System.ComponentModel.ISupportInitialize)(this.udDaysPerJob)).BeginInit();
             this.gbLoadProgresses.SuspendLayout();
             this.flpControls.SuspendLayout();

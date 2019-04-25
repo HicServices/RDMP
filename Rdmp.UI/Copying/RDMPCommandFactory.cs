@@ -10,7 +10,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
@@ -20,10 +19,11 @@ using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 
-namespace CatalogueManager.Copying
+namespace Rdmp.UI.Copying
 {
     public class RDMPCommandFactory:ICommandFactory
     {

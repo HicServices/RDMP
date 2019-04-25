@@ -6,14 +6,14 @@
 
 using System;
 using System.Drawing;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding.Options;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace CatalogueManager.AggregationUIs.Advanced
+namespace Rdmp.UI.AggregationUIs.Advanced
 {
     /// <summary>
     /// Allows you to limit the graph generated to X bars (in the case of a graph without an axis) or restrict the number of Pivot values returned.  For example you can graph 'Top 10 most

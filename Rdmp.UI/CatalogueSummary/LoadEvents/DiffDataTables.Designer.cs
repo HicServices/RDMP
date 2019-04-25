@@ -1,4 +1,4 @@
-﻿namespace Dashboard.CatalogueSummary.LoadEvents
+﻿namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     partial class DiffDataTables
     {

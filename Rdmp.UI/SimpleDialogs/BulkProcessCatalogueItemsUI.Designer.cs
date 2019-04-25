@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class BulkProcessCatalogueItemsUI
     {

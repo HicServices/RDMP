@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands.Automation;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.Core.CommandLine.Runners;
+using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.SingleControlForms;
 using ReusableUIComponents.TransparentHelpSystem;
 
-namespace CatalogueManager.SimpleControls
+namespace Rdmp.UI.SimpleControls
 {
     /// <summary>
     /// Enables the launching of one of the core RDMP engines (<see cref="RDMPCommandLineOptions"/>) either as a detatched process or as a hosted process (where the 

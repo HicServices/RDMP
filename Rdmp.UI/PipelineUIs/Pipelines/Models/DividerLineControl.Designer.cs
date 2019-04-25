@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.PipelineUIs.Pipelines.Models
+﻿namespace Rdmp.UI.PipelineUIs.Pipelines.Models
 {
     partial class DividerLineControl
     {

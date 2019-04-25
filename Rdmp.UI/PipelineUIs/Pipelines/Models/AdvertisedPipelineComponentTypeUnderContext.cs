@@ -7,10 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.PipelineUIs.DataObjects;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.UI.PipelineUIs.DataObjects;
 
-namespace CatalogueManager.PipelineUIs.Pipelines.Models
+namespace Rdmp.UI.PipelineUIs.Pipelines.Models
 {
     /// <summary>
     /// Describes an IDataFlowComponent which may or may not be compatible with a specific DataFlowPipelineContext.  It describes how/if it's requirements conflict with the context

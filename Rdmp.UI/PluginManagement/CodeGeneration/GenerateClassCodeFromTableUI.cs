@@ -10,7 +10,7 @@ using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace CatalogueManager.PluginManagement.CodeGeneration
+namespace Rdmp.UI.PluginManagement.CodeGeneration
 {
     /// <summary>
     /// TECHNICAL: Allows you as a C# programmer to generate RDMP code automatically to help you build plugins and particularly plugin ITableRepository databases more efficiently.

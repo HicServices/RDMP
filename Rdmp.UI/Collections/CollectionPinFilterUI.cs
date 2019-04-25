@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.Data;
@@ -19,9 +18,10 @@ using Rdmp.Core.CatalogueLibrary.Data.Governance;
 using Rdmp.Core.CatalogueLibrary.Data.Remoting;
 using Rdmp.Core.CatalogueLibrary.Providers;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Refreshing;
 using ReusableUIComponents;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// User interface component for indicating to the user that there is a Pinned object in an RDMPCollectionUI.  Bumps the collection tree down 19 pixels (or docks top).

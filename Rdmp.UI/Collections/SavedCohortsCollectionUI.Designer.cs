@@ -1,4 +1,4 @@
-﻿namespace DataExportManager.Collections
+﻿namespace Rdmp.UI.Collections
 {
     partial class SavedCohortsCollectionUI
     {

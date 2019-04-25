@@ -13,7 +13,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.CohortCreation.QueryBuilding;
 
-namespace CohortManager.SubComponents.Graphs
+namespace Rdmp.UI.SubComponents.Graphs
 {
     public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollection
     {

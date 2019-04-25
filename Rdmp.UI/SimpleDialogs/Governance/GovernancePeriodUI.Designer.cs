@@ -1,7 +1,7 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.LocationsMenu.Ticketing;
+using Rdmp.UI.LocationsMenu.Ticketing;
 
-namespace CatalogueManager.SimpleDialogs.Governance
+namespace Rdmp.UI.SimpleDialogs.Governance
 {
     partial class GovernancePeriodUI
     {
@@ -52,7 +52,7 @@ namespace CatalogueManager.SimpleDialogs.Governance
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.tbID = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
-            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.ticketingControl1 = new TicketingControlUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvCatalogues)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();

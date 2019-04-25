@@ -5,11 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace DataExportManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractionConfigurationStateBasedIconProvider : IObjectStateBasedIconProvider
     {

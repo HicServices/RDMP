@@ -7,19 +7,19 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.Proposals;
 
-namespace CatalogueManager.CommandExecution
+namespace Rdmp.UI.CommandExecution
 {
     public class RDMPCommandExecutionFactory : ICommandExecutionFactory
     {

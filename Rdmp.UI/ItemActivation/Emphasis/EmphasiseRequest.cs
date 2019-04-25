@@ -6,7 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueManager.ItemActivation.Emphasis
+namespace Rdmp.UI.ItemActivation.Emphasis
 {
     public class EmphasiseRequest
     {

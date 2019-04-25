@@ -9,15 +9,15 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
-using CatalogueManager.PipelineUIs.Pipelines.Models;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
+using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     /// <summary>
     /// Main component control of ConfigurePipelineUI (See ConfigurePipelineUI for details).  Shows you all compatible components on the left including any plugin components.  Components in 

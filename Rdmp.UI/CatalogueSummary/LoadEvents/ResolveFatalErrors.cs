@@ -7,15 +7,15 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Copying;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace Dashboard.CatalogueSummary.LoadEvents
+namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
     /// Fatal errors are crashes of the data load engine when it is attempting to load data.  If you use the RAW / STAGING / LIVE model this should almost never result in contaminating your

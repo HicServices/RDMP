@@ -8,7 +8,7 @@ using System;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ChecksUI;
 
-namespace CatalogueManager.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
     public class BeforeCheckingEventArgs : EventArgs
     {

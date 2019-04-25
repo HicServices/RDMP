@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
     partial class LoadDiagramUI
     {
@@ -32,7 +33,7 @@ namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
         {
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoadDiagramUI));
-            this.loadStateUI1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery.LoadStateUI();
+            this.loadStateUI1 = new LoadStateUI();
             this.cbOnlyShowDynamicColumns = new System.Windows.Forms.CheckBox();
             this.tlvLoadedTables = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));

@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using ReusableUIComponents;
 
-namespace CatalogueManager.PipelineUIs.Pipelines.Models
+namespace Rdmp.UI.PipelineUIs.Pipelines.Models
 {
     /// <summary>
     /// Used in PipelineDiagram to indicate an area you can drag and drop a 'Middle' flow component into your Pipeline.  Also allows you to drag and drop 'Middle' flow components that

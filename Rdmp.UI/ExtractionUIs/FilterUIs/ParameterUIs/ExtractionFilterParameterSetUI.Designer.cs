@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
+﻿namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
     partial class ExtractionFilterParameterSetUI
     {
@@ -38,7 +38,7 @@
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             
             this.btnRefreshParameters = new System.Windows.Forms.Button();
-            this.parameterCollectionUI1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterCollectionUI();
+            this.parameterCollectionUI1 = new ParameterCollectionUI();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();

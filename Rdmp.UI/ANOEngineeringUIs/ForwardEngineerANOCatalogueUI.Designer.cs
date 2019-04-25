@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.ANOEngineeringUIs
+namespace Rdmp.UI.ANOEngineeringUIs
 {
     partial class ForwardEngineerANOCatalogueUI
     {

@@ -8,16 +8,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandChooseCohort : BasicUICommandExecution,IAtomicCommand
     {

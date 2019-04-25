@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using Rdmp.Core.CatalogueLibrary.Repositories;
@@ -15,8 +14,9 @@ using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     internal class LoadStageNodeMenu : RDMPContextMenuStrip
     {

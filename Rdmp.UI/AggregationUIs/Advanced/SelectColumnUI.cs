@@ -11,25 +11,25 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.AutoComplete;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using CatalogueManager.Copying;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding.Options;
+using Rdmp.UI.AutoComplete;
+using Rdmp.UI.Copying;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 
-namespace CatalogueManager.AggregationUIs.Advanced
+namespace Rdmp.UI.AggregationUIs.Advanced
 {
     /// <summary>
     /// Allows you to pick which columns are used to build an AggregateConfiguration.  This includes all AggregateDimensions (and the count column) as well as all available columns which could

@@ -7,12 +7,12 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.PipelineUIs.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.UI.PipelineUIs.Pipelines;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
-namespace CatalogueManager.PipelineUIs.DataObjects
+namespace Rdmp.UI.PipelineUIs.DataObjects
 {
 
     /// <summary>

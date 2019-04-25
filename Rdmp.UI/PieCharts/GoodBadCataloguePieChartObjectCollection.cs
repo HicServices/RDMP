@@ -10,7 +10,7 @@ using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 
-namespace Dashboard.PieCharts
+namespace Rdmp.UI.PieCharts
 {
     public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollection
     {

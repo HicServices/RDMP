@@ -6,7 +6,7 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.Tutorials;
+using Rdmp.UI.Tutorials;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {

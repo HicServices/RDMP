@@ -7,16 +7,16 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace DataExportManager.CohortUI.CohortSourceManagement
+namespace Rdmp.UI.CohortUI.CohortSourceManagement
 {
     /// <summary>
     /// Allows you to edit an external cohort reference.  This is the location of a cohort database and includes the names of the Cohort table and the names of 

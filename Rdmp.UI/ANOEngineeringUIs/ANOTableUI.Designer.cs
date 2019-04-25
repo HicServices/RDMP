@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.ANOEngineeringUIs
+﻿namespace Rdmp.UI.ANOEngineeringUIs
 {
     partial class ANOTableUI
     {

@@ -7,15 +7,14 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.AutoComplete;
-using CatalogueManager.DataViewing.Collections;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace DataExportManager.DataViewing.Collections
+namespace Rdmp.UI.DataViewing.Collections
 {
     internal class ViewCohortExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {

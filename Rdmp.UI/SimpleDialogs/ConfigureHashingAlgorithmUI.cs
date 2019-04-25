@@ -6,15 +6,15 @@
 
 using System;
 using System.ComponentModel;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Copying;
 using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace DataExportManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Any column in a data extraction which is marked with 'Hash On Data Release' (See ExtractionInformationUI) will be wrapped with this SQL string.  Use this to call a scalar valued
@@ -29,7 +29,7 @@ namespace DataExportManager.SimpleDialogs
     /// </summary>
     public partial class ConfigureHashingAlgorithmUI : RDMPForm
     {
-        [DesignerSerializationVisibilityAttribute(DesignerSerializationVisibility.Hidden)]
+        [DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
         public Scintilla QueryPreview { get; set; }
 
         public ConfigureHashingAlgorithmUI(IActivateItems activator):base(activator)

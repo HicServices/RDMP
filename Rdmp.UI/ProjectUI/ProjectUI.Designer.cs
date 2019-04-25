@@ -1,8 +1,8 @@
 ﻿using System.Windows.Forms;
-using CatalogueManager.LocationsMenu.Ticketing;
-using CatalogueManager.SimpleControls;
+using Rdmp.UI.CohortUI;
+using Rdmp.UI.LocationsMenu.Ticketing;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     partial class ProjectUI
     {
@@ -44,8 +44,8 @@ namespace DataExportManager.ProjectUI
             this.tbProjectNumber = new System.Windows.Forms.TextBox();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.extractableCohortCollection1 = new DataExportManager.CohortUI.ExtractableCohortCollectionUI();
-            this.tcMasterTicket = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.extractableCohortCollection1 = new ExtractableCohortCollectionUI();
+            this.tcMasterTicket = new TicketingControlUI();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();

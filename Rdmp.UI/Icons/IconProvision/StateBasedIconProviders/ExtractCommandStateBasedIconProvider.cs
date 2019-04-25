@@ -8,7 +8,7 @@ using System;
 using System.Drawing;
 using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
 
-namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExtractCommandStateBasedIconProvider : IObjectStateBasedIconProvider
     {

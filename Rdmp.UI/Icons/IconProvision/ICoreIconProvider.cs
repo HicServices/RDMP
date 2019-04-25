@@ -7,7 +7,7 @@
 using System.Windows.Forms;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.Icons.IconProvision
+namespace Rdmp.UI.Icons.IconProvision
 {
     public interface ICoreIconProvider:IIconProvider
     {

@@ -6,8 +6,8 @@
 
 using System;
 using System.Runtime.InteropServices;
-using CatalogueManager.TestsAndSetup;
 using CommandLine;
+using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
 
 namespace ResearchDataManagementPlatform

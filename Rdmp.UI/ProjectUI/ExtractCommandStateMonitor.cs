@@ -9,7 +9,7 @@ using System.Linq;
 using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     internal class ExtractCommandStateMonitor
     {

@@ -11,7 +11,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Performance;
 using ReusableUIComponents.Performance;
 
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// This form is mainly used for diagnostic purposes and lets you track every SQL query sent to the RDMP Data Catalogue and Data Export Manager databases.  This is useful for diagnosing

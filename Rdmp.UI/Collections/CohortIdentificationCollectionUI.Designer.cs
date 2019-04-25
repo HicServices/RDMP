@@ -1,7 +1,7 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
+using Rdmp.UI.Refreshing;
 
-namespace CohortManager.Collections
+namespace Rdmp.UI.Collections
 {
     partial class CohortIdentificationCollectionUI : ILifetimeSubscriber
     {

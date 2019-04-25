@@ -5,13 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
-using CatalogueManager.DataViewing;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
+using Rdmp.UI.DataViewing;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     class FilterMenu : RDMPContextMenuStrip
     {

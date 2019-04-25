@@ -1,7 +1,7 @@
 ﻿using System.Windows.Forms;
 using BrightIdeasSoftware;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     partial class PipelineWorkAreaUI
     {

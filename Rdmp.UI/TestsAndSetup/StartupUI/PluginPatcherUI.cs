@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Startup.Events;
 using ReusableUIComponents;
 
-namespace CatalogueManager.TestsAndSetup.StartupUI
+namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     /// <summary>
     /// There are 3 'tiers' of platform database in the RDMP:

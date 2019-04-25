@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using ReusableUIComponents;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
 {
     /// <summary>
     /// Part of ColumnStatesChart, shows what proportion of a given column in the dataset is passing/failing validation.  See ColumnStatesChart for a description of the use case.

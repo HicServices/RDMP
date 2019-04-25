@@ -9,19 +9,19 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.DashboardTabs.Construction;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.UI.DashboardTabs.Construction;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Dashboard.Raceway
+namespace Rdmp.UI.Raceway
 {
     /// <summary>
     /// Allows you to quickly view the timespan of each of your datasets, which sections of your datasets are failing validation (e.g. 'Prescribing' 2001-2002 records are all failing

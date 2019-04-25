@@ -11,12 +11,12 @@ using System.Data.Common;
 using System.IO;
 using System.Linq;
 using System.Text;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.Logging;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandExportLoggedDataToCsv : ExecuteCommandViewLoggedData
     {

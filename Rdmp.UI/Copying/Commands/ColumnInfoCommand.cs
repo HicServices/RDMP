@@ -9,7 +9,7 @@ using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueManager.Copying.Commands
+namespace Rdmp.UI.Copying.Commands
 {
     public class ColumnInfoCommand : ICommand
     {

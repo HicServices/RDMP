@@ -1,6 +1,7 @@
-﻿using Dashboard.CatalogueSummary.LoadEvents;
+﻿using Rdmp.UI.CatalogueSummary.DataQualityReporting;
+using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 
-namespace Dashboard.CatalogueSummary
+namespace Rdmp.UI.CatalogueSummary
 {
     partial class CatalogueDQEResultsUI
     {
@@ -31,11 +32,11 @@ namespace Dashboard.CatalogueSummary
         private void InitializeComponent()
         {
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
-            this.timePeriodicityChart1 = new Dashboard.CatalogueSummary.DataQualityReporting.TimePeriodicityChart();
+            this.timePeriodicityChart1 = new TimePeriodicityChart();
             this.splitContainer3 = new System.Windows.Forms.SplitContainer();
-            this.dqePivotCategorySelector1 = new Dashboard.CatalogueSummary.DataQualityReporting.SubComponents.DQEPivotCategorySelector();
-            this.columnStatesChart1 = new Dashboard.CatalogueSummary.DataQualityReporting.ColumnStatesChart();
-            this.evaluationTrackBar1 = new Dashboard.CatalogueSummary.DataQualityReporting.SubComponents.EvaluationTrackBar();
+            this.dqePivotCategorySelector1 = new DQEPivotCategorySelector();
+            this.columnStatesChart1 = new ColumnStatesChart();
+            this.evaluationTrackBar1 = new EvaluationTrackBar();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -114,7 +115,7 @@ namespace Dashboard.CatalogueSummary
             this.evaluationTrackBar1.Name = "evaluationTrackBar1";
             this.evaluationTrackBar1.Size = new System.Drawing.Size(1034, 71);
             this.evaluationTrackBar1.TabIndex = 4;
-            this.evaluationTrackBar1.EvaluationSelected += new Dashboard.CatalogueSummary.DataQualityReporting.SubComponents.EvaluationSelectedHandler(this.evaluationTrackBar1_EvaluationSelected);
+            this.evaluationTrackBar1.EvaluationSelected += new EvaluationSelectedHandler(this.evaluationTrackBar1_EvaluationSelected);
             // 
             // CatalogueSummaryScreen
             // 

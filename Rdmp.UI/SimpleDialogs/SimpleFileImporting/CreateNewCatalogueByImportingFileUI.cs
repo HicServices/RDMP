@@ -9,13 +9,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Tutorials;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
@@ -25,13 +18,20 @@ using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.PipelineUseCases;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs.ForwardEngineering;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Tutorials;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
 using ReusableUIComponents.TransparentHelpSystem;
 
-namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
+namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 {
     /// <summary>
     /// Allows you to import a flat file into your database with appropriate column data types based on the values read from the file.  This data table will then be referenced by an RDMP

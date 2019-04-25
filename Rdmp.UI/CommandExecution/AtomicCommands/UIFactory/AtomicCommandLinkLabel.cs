@@ -10,7 +10,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
+namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 {
     /// <summary>
     /// Provides access to an IAtomicCommand including showing the command name, help text etc.  When the link label is clicked the command .Execute is run.

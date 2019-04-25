@@ -1,6 +1,4 @@
-﻿using CatalogueManager.PipelineUIs.DemandsInitializationUIs;
-
-namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
+﻿namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
 {
     partial class ArgumentCollectionUI
     {

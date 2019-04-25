@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DublinCore;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
 {
     internal class ExecuteCommandExportInDublinCoreFormat : BasicUICommandExecution,IAtomicCommand
     {

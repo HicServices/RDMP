@@ -17,7 +17,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
-namespace CatalogueManager.PipelineUIs.DataObjects
+namespace Rdmp.UI.PipelineUIs.DataObjects
 {
     /// <summary>
     /// TECHNICAL: Base class for PipelineComponentVisualisation but can also include empty components (no type selected yet)

@@ -1,9 +1,8 @@
-﻿using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.Refreshing;
+﻿using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
+using Rdmp.UI.Refreshing;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
     partial class ExtractionFilterUI : ILifetimeSubscriber
     {
@@ -47,7 +46,7 @@ namespace CatalogueManager.ExtractionUIs.FilterUIs
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.pParameters = new System.Windows.Forms.Panel();
             this.label3 = new System.Windows.Forms.Label();
-            this.parameterCollectionUI1 = new CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ParameterCollectionUI();
+            this.parameterCollectionUI1 = new ParameterCollectionUI();
             this.panel1.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();

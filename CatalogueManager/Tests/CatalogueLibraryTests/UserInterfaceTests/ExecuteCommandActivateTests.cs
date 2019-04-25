@@ -8,10 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Tests.Common;
 
 namespace CatalogueLibraryTests.UserInterfaceTests

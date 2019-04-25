@@ -4,14 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-namespace CatalogueManager
+using System;
+using System.Collections.Generic;
+using System.Drawing;
+using System.Linq;
+using System.Windows.Forms;
+
+namespace Rdmp.UI
 {
-    using System;
     // if you would like to use ArrayList insted
-    using System.Collections.Generic;   // here we use Generic Type List<string>
-    using System.Drawing;
-    using System.Linq;
-    using System.Windows.Forms;
+    // here we use Generic Type List<string>
+
     //from HANSHAMMEL
     //http://www.codeproject.com/Articles/251110/AutoComplete-TextBox-with-substing-search-similar
 

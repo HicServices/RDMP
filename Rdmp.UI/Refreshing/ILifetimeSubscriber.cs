@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 
-namespace CatalogueManager.Refreshing
+namespace Rdmp.UI.Refreshing
 {
     public interface ILifetimeSubscriber:IContainerControl,IRefreshBusSubscriber
     {

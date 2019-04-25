@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.SimpleControls
+﻿namespace Rdmp.UI.SimpleControls
 {
     partial class CheckAndExecuteUI
     {

@@ -7,7 +7,7 @@
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Exceptions;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {
     public class ExtractionFilterUIOptions : FilterUIOptions
     {

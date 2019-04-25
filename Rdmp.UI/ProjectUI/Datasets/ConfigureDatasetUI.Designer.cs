@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace DataExportManager.ProjectUI.Datasets
+namespace Rdmp.UI.ProjectUI.Datasets
 {
     partial class ConfigureDatasetUI
     {

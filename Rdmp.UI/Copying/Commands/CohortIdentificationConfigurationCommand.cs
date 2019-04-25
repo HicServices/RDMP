@@ -7,7 +7,7 @@
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueManager.Copying.Commands
+namespace Rdmp.UI.Copying.Commands
 {
     public class CohortIdentificationConfigurationCommand:ICommand
     {

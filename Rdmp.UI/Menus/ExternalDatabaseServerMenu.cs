@@ -6,16 +6,16 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataViewing;
-using CatalogueManager.DataViewing.Collections.Arbitrary;
-using CatalogueManager.Icons.IconProvision;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Logging;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.DataViewing;
+using Rdmp.UI.DataViewing.Collections.Arbitrary;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     class ExternalDatabaseServerMenu : RDMPContextMenuStrip
     {

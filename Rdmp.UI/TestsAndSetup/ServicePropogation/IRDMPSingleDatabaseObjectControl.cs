@@ -6,11 +6,11 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.ItemActivation;
 using ReusableUIComponents.SingleControlForms;
 
-namespace CatalogueManager.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
     public interface IRDMPSingleDatabaseObjectControl : IContainerControl, INamedTab, IConsultableBeforeClosing,IRDMPControl
     {

@@ -8,10 +8,6 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using CatalogueManager.PipelineUIs.Pipelines;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
@@ -20,9 +16,13 @@ using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Events;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
 using Rdmp.Core.DataExport.CohortCreationPipeline.UseCases;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PipelineUIs.Pipelines;
+using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration : BasicUICommandExecution,IAtomicCommandWithTarget
     {

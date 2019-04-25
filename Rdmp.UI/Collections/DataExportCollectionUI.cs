@@ -6,18 +6,17 @@
 
 using System;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.SimpleDialogs.NavigateTo;
-using DataExportManager.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
 using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
 
-namespace DataExportManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// Contains a list of all the currently configured data export projects you have.  A data export Project is a collection of one or more datasets combined with a cohort (or multiple

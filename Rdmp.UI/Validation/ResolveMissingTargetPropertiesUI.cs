@@ -12,8 +12,7 @@ using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.Validation;
 
-
-namespace CatalogueManager.Validation
+namespace Rdmp.UI.Validation
 {
     /// <summary>
     /// Allows you to recover from a mismatch in columns in a Catalogue when validation rules were originally written for it and the state it is in now.  You will automatically see this 

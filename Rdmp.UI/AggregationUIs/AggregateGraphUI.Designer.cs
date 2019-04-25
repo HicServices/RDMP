@@ -1,6 +1,6 @@
 ﻿using ReusableUIComponents.Heatmapping;
 
-namespace CatalogueManager.AggregationUIs
+namespace Rdmp.UI.AggregationUIs
 {
     partial class AggregateGraphUI
     {

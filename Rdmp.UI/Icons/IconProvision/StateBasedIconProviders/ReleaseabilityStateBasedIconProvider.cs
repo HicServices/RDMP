@@ -9,7 +9,7 @@ using System.Drawing;
 using Rdmp.Core.CatalogueLibrary.Ticketing;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 
-namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public class ReleaseabilityStateBasedIconProvider : IObjectStateBasedIconProvider
     {

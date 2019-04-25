@@ -8,16 +8,16 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.MainFormUITabs.SubComponents
+namespace Rdmp.UI.MainFormUITabs.SubComponents
 {
     /// <summary>
     /// Allows you to change the connection strings of a known ExternalDatabaseServer.

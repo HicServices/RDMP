@@ -5,17 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// This collection Shows all your data load configurations.  Each load configuration (LoadMetadata) is associated with 1 or more Catalogues. But each Catalogue can only have one load configuration

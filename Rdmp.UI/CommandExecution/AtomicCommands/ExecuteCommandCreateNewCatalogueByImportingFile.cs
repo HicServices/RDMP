@@ -6,17 +6,16 @@
 
 using System.Drawing;
 using System.IO;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.SimpleDialogs.SimpleFileImporting;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs.SimpleFileImporting;
 using ReusableLibraryCode.Icons.IconProvision;
 
-
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewCatalogueByImportingFile:BasicUICommandExecution, IAtomicCommandWithTarget
     {

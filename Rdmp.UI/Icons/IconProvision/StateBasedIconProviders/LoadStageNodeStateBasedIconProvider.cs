@@ -11,7 +11,7 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
 using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 
-namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public class LoadStageNodeStateBasedIconProvider : IObjectStateBasedIconProvider
     {

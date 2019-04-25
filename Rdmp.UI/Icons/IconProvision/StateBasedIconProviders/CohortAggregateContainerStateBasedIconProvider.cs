@@ -8,7 +8,7 @@ using System;
 using System.Drawing;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 
-namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public class CohortAggregateContainerStateBasedIconProvider : IObjectStateBasedIconProvider
     {

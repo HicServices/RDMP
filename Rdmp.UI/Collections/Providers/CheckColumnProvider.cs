@@ -9,11 +9,11 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Icons.IconProvision;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 
-namespace CatalogueManager.Collections.Providers
+namespace Rdmp.UI.Collections.Providers
 {
     /// <summary>
     /// Handles creating the Checks column in a tree list view where the value is populated for all models that are ICheckable and you have decided to

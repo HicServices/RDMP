@@ -1,7 +1,6 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.ItemActivation;
 
-namespace CohortManager.SubComponents
+namespace Rdmp.UI.SubComponents
 {
     partial class CohortCompilerUI 
     {

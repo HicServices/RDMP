@@ -9,8 +9,7 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable.Revertable;
 using ReusableUIComponents;
 
-
-namespace CatalogueManager.SimpleDialogs.Revertable
+namespace Rdmp.UI.SimpleDialogs.Revertable
 {
     /// <summary>
     /// The RDMP uses a database (Catalogue Manager Database / Data Export Manager Database) to store all information about your datasets (Technical, descriptive, validation, attachments 

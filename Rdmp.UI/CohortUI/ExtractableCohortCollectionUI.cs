@@ -9,16 +9,16 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace DataExportManager.CohortUI
+namespace Rdmp.UI.CohortUI
 {
     /// <summary>
     /// Shows a collection of cohorts that are ready for data extraction (typically all the cohorts associated with a project or a global list of all cohorts).  These are identifier lists

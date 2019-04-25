@@ -6,20 +6,19 @@
 
 using System.Collections.Generic;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataQualityUIs;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.LoadExecutionUIs;
-using CatalogueManager.PluginChildProvision;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Validation;
-using Dashboard.CommandExecution.AtomicCommands;
-using Dashboard.Menus.MenuItems;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.DataQualityUIs;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.LoadExecutionUIs;
+using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.PluginChildProvision;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Validation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace Dashboard
+namespace Rdmp.UI
 {
     internal class DQEPluginUserInterface : PluginUserInterface
     {

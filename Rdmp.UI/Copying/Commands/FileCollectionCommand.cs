@@ -7,7 +7,7 @@
 using System.IO;
 using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueManager.Copying.Commands
+namespace Rdmp.UI.Copying.Commands
 {
     public class FileCollectionCommand : ICommand
     {

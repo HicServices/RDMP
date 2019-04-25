@@ -7,10 +7,10 @@
 using System;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Icons.IconProvision;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Icons.IconProvision;
 
-namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
+namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
     /// <summary>
     /// Part of JoinConfiguration and LookupConfiguration, allows you to drop a ColumnInfo into it to declare it as a key in a relationship being built (either a Lookup or a JoinInfo). Clicking

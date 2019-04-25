@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.PluginManagement
+namespace Rdmp.UI.PluginManagement
 {
     partial class PluginManagementFormUI
     {
@@ -34,7 +34,7 @@ namespace CatalogueManager.PluginManagement
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvPluginName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvVersion = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.pluginDependencyVisualisation1 = new CatalogueManager.PluginManagement.PluginDependencyVisualisationUI();
+            this.pluginDependencyVisualisation1 = new PluginDependencyVisualisationUI();
             this.pbAnalysing = new System.Windows.Forms.ProgressBar();
             this.lblProgressAnalysing = new System.Windows.Forms.Label();
             this.btnBrowse = new System.Windows.Forms.Button();

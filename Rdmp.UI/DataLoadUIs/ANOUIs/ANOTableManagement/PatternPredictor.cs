@@ -7,7 +7,7 @@
 using Rdmp.Core.CatalogueLibrary.Data;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
+namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
 {
     internal class PatternPredictor
     {

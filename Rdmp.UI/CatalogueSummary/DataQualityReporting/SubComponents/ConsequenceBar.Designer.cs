@@ -1,4 +1,4 @@
-﻿namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
+﻿namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
 {
     partial class ConsequenceBar
     {

@@ -6,14 +6,14 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {
     /// <summary>
     /// Allows you to record a user friendly indepth description for your LoadMetadata, how it works and how to use it/maintain it.

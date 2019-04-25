@@ -1,6 +1,4 @@
-﻿using ReusableLibraryCode.Checks;
-
-namespace CatalogueManager.PipelineUIs.DataObjects
+﻿namespace Rdmp.UI.PipelineUIs.DataObjects
 {
     partial class DataFlowComponentVisualisation 
     {

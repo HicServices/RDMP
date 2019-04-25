@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.SimpleDialogs.Revertable
+﻿namespace Rdmp.UI.SimpleDialogs.Revertable
 {
     partial class OfferChanceToSaveDialogUI
     {

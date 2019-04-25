@@ -10,17 +10,17 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
 {
     public class ExecuteCommandImportShareDefinitionList : BasicUICommandExecution,IAtomicCommand
     {

@@ -9,16 +9,16 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 
-namespace CohortManager.Wizard
+namespace Rdmp.UI.Wizard
 {
     /// <summary>
     /// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to modify how a dataset Catalogue is filtered to identify patients.  Selecting prescribing will result in a cohort

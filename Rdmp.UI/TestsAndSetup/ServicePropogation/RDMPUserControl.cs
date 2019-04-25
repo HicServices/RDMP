@@ -6,10 +6,10 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
+using Rdmp.UI.ItemActivation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
     
     /// <summary>

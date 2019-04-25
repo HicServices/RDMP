@@ -1,4 +1,4 @@
-﻿namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
+﻿namespace Rdmp.UI.CohortUI.CohortSourceManagement.WizardScreens
 {
     partial class Screen2
     {

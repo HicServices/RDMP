@@ -7,9 +7,9 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
+using Rdmp.UI.Icons.IconProvision;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
 {
     /// <summary>
     /// Tells you what state the LoadDiagram is in.  This starts at 'Unknown' which means no database requests have been sent and the visible tables are the 'Anticipated' state of the tables

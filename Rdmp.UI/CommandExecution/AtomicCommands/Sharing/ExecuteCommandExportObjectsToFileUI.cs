@@ -8,15 +8,15 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Sharing.CommandExecution;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
 {
     internal class ExecuteCommandExportObjectsToFileUI : BasicUICommandExecution, IAtomicCommand
     {

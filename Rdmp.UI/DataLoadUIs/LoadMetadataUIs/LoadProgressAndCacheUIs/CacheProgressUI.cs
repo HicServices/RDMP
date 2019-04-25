@@ -7,19 +7,19 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.Core.Caching.Factories;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 {
     /// <summary>
     /// Caching is method by which long term transfer tasks take place in the RDMP.  These are usually of files and are expected to run all the time (up to 24/7).  Cached data must always be 

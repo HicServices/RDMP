@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks
+﻿namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {
     partial class SqlProcessTaskUI
     {
@@ -37,7 +37,7 @@
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
             this.tbName = new System.Windows.Forms.TextBox();
-            this.loadStageIconUI1 = new CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadStageIconUI();
+            this.loadStageIconUI1 = new LoadStageIconUI();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
             // 

@@ -8,10 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CatalogueManager.Icons.IconProvision {
-    using System;
-    
-    
+namespace Rdmp.UI.Icons.IconProvision {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>

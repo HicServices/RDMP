@@ -6,19 +6,17 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Menus;
-using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.ProjectUI;
 using MapsDirectlyToDatabaseTableUI;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ProjectUI;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.Menus
+namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class ExtractionConfigurationMenu:RDMPContextMenuStrip

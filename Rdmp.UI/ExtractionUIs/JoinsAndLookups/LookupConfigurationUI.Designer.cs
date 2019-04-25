@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
+namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
     partial class LookupConfigurationUI
     {
@@ -54,12 +54,12 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             this.btnPrimaryKeyCompositeHelp = new System.Windows.Forms.Button();
             this.btnCreateLookup = new System.Windows.Forms.Button();
             this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
-            this.fk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.fk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.fk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.fk3 = new KeyDropLocationUI();
+            this.fk2 = new KeyDropLocationUI();
+            this.fk1 = new KeyDropLocationUI();
+            this.pk2 = new KeyDropLocationUI();
+            this.pk3 = new KeyDropLocationUI();
+            this.pk1 = new KeyDropLocationUI();
             this.tbFilter = new System.Windows.Forms.TextBox();
             this.label5 = new System.Windows.Forms.Label();
             ((System.ComponentModel.ISupportInitialize)(this.olvExtractionInformations)).BeginInit();
@@ -321,7 +321,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // fk3
             // 
             this.fk3.IsValidGetter = null;
-            this.fk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk3.KeyType = JoinKeyType.PrimaryKey;
             this.fk3.Location = new System.Drawing.Point(826, 369);
             this.fk3.Name = "fk3";
             this.fk3.Size = new System.Drawing.Size(226, 35);
@@ -330,7 +330,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // fk2
             // 
             this.fk2.IsValidGetter = null;
-            this.fk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk2.KeyType = JoinKeyType.PrimaryKey;
             this.fk2.Location = new System.Drawing.Point(826, 328);
             this.fk2.Name = "fk2";
             this.fk2.Size = new System.Drawing.Size(226, 35);
@@ -339,7 +339,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // fk1
             // 
             this.fk1.IsValidGetter = null;
-            this.fk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk1.KeyType = JoinKeyType.PrimaryKey;
             this.fk1.Location = new System.Drawing.Point(826, 285);
             this.fk1.Name = "fk1";
             this.fk1.Size = new System.Drawing.Size(226, 35);
@@ -348,7 +348,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // pk2
             // 
             this.pk2.IsValidGetter = null;
-            this.pk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk2.KeyType = JoinKeyType.PrimaryKey;
             this.pk2.Location = new System.Drawing.Point(575, 328);
             this.pk2.Name = "pk2";
             this.pk2.Size = new System.Drawing.Size(226, 35);
@@ -357,7 +357,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // pk3
             // 
             this.pk3.IsValidGetter = null;
-            this.pk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk3.KeyType = JoinKeyType.PrimaryKey;
             this.pk3.Location = new System.Drawing.Point(575, 369);
             this.pk3.Name = "pk3";
             this.pk3.Size = new System.Drawing.Size(226, 35);
@@ -366,7 +366,7 @@ namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
             // pk1
             // 
             this.pk1.IsValidGetter = null;
-            this.pk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk1.KeyType = JoinKeyType.PrimaryKey;
             this.pk1.Location = new System.Drawing.Point(575, 285);
             this.pk1.Name = "pk1";
             this.pk1.Size = new System.Drawing.Size(226, 35);

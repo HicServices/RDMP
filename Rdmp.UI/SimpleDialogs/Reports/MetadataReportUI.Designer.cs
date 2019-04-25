@@ -1,6 +1,6 @@
-﻿using CatalogueManager.AggregationUIs;
+﻿using Rdmp.UI.AggregationUIs;
 
-namespace CatalogueManager.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports
 {
     partial class MetadataReportUI
     {
@@ -42,7 +42,7 @@ namespace CatalogueManager.SimpleDialogs.Reports
             this.tbTimeout = new System.Windows.Forms.TextBox();
             this.cbIncludeRowCounts = new System.Windows.Forms.CheckBox();
             this.cbIncludeDistinctIdentifiers = new System.Windows.Forms.CheckBox();
-            this.aggregateGraph1 = new CatalogueManager.AggregationUIs.AggregateGraphUI();
+            this.aggregateGraph1 = new AggregateGraphUI();
             this.cbIncludeGraphs = new System.Windows.Forms.CheckBox();
             this.nMaxLookupRows = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();

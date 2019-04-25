@@ -6,7 +6,7 @@
 
 using ReusableUIComponents.CommandExecution;
 
-namespace CatalogueManager.CommandExecution
+namespace Rdmp.UI.CommandExecution
 {
     internal class CachedDropTarget
     {

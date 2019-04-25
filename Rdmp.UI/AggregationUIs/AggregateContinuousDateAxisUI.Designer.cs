@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.AggregationUIs
+﻿namespace Rdmp.UI.AggregationUIs
 {
     partial class AggregateContinuousDateAxisUI
     {

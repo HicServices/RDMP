@@ -17,7 +17,7 @@ using Rdmp.Core.CatalogueLibrary.QueryBuilding.Options;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
     public class FilterImportWizard
     {

@@ -1,6 +1,6 @@
-﻿using Dashboard.CatalogueSummary.DataQualityReporting.SubComponents;
+﻿using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 {
     partial class ColumnStatesChart
     {
@@ -32,7 +32,7 @@ namespace Dashboard.CatalogueSummary.DataQualityReporting
         {
             this.gbKey = new System.Windows.Forms.GroupBox();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.consequenceKey1 = new Dashboard.CatalogueSummary.DataQualityReporting.SubComponents.ConsequenceKey();
+            this.consequenceKey1 = new ConsequenceKey();
             this.gbKey.SuspendLayout();
             this.SuspendLayout();
             // 

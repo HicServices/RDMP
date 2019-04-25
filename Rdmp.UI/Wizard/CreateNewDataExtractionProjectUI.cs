@@ -8,11 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using DataExportManager.CohortUI.CohortSourceManagement;
-using DataExportManager.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.CohortCreation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
@@ -24,11 +19,16 @@ using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
 using Rdmp.Core.DataExport.Repositories;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.UI.CohortUI.CohortSourceManagement;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents.SingleControlForms;
 
-namespace DataExportManager.Wizard
+namespace Rdmp.UI.Wizard
 {
     /// <summary>
     /// Provides a single screen allowing you to execute a CohortIdentificationConfiguration or load an IdentifierList into the snapshot store, allocate release identifiers and build an 

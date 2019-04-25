@@ -9,14 +9,14 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
 
-namespace CohortManager.Wizard
+namespace Rdmp.UI.Wizard
 {
     /// <summary>
     /// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to view and edit the parameters (if any) of a Filter you have added (or was Mandatory) on a dataset.  For example if

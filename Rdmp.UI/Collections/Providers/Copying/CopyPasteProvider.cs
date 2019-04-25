@@ -6,9 +6,9 @@
 
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Copying;
+using Rdmp.UI.Copying;
 
-namespace CatalogueManager.Collections.Providers.Copying
+namespace Rdmp.UI.Collections.Providers.Copying
 {
     public class CopyPasteProvider
     {

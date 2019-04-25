@@ -8,9 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
 using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
@@ -21,9 +18,12 @@ using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes;
 using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Icons.IconOverlays;
+using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.Icons.IconProvision
+namespace Rdmp.UI.Icons.IconProvision
 {
     public class CatalogueIconProvider: ICoreIconProvider
     {

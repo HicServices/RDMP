@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueManager.SimpleControls
+namespace Rdmp.UI.SimpleControls
 {
     public class ExecutionEventArgs:EventArgs
     {

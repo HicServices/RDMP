@@ -12,7 +12,7 @@ using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {
     /// <summary>
     /// Allows you to either create a new LoadDirectory or point the software to an existing one.  These folders have a special hierarchy including Cache,ForArchiving, ForLoading, 

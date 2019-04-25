@@ -5,13 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.Menus;
-using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers.Nodes.UsedByProject;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 
-namespace DataExportManager.Menus
+namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class ExternalCohortTableMenu : RDMPContextMenuStrip

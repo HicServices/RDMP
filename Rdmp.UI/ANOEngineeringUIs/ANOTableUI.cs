@@ -7,18 +7,18 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.Databases;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Rules;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
-namespace CatalogueManager.ANOEngineeringUIs
+namespace Rdmp.UI.ANOEngineeringUIs
 {
     /// <summary>
     /// Displays the live status of an ANOTable (is it pushed or not) and how many rows it has.  Also allows dropping/changing the anonymisation schema (number of

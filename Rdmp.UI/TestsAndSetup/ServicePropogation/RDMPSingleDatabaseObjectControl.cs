@@ -8,18 +8,18 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.Refreshing;
-using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.Theme;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 
-namespace CatalogueManager.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
     /// <summary>
     /// TECHNICAL: base abstract class for all Controls which are concerned with a single root DatabaseEntity e.g. AggregateGraph is concerned only with an AggregateConfiguration
@@ -208,7 +208,7 @@ namespace CatalogueManager.TestsAndSetup.ServicePropogation
         }
 
         /// <summary>
-        /// Triggers a refresh only of this form (calls <see cref="SetDatabaseObject(CatalogueManager.ItemActivation.IActivateItems,T)"/>)
+        /// Triggers a refresh only of this form (calls <see cref="SetDatabaseObject(Rdmp.UI.ItemActivation.IActivateItems,T)"/>)
         /// </summary>
         protected void PublishToSelfOnly()
         {

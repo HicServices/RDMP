@@ -9,7 +9,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
 using ReusableLibraryCode.Annotations;
 
-namespace DataExportManager.ProjectUI.Datasets.Node
+namespace Rdmp.UI.ProjectUI.Datasets.Node
 {
     internal class AvailableForceJoinNode : IMasqueradeAs
     {

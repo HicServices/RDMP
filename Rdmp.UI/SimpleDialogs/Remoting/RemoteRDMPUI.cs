@@ -6,14 +6,14 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data.Remoting;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.SimpleDialogs.Remoting
+namespace Rdmp.UI.SimpleDialogs.Remoting
 {
     /// <summary>
     /// Lets you change the settings for a RemoteRDMP which is a set of web credentials / url to reach another RDMP instance across the network/internet via a web service.

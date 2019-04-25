@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.SimpleDialogs.Governance
+﻿namespace Rdmp.UI.SimpleDialogs.Governance
 {
     partial class GovernanceDocumentUI
     {

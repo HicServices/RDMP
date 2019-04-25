@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
     public interface IParameterRefactorer
     {

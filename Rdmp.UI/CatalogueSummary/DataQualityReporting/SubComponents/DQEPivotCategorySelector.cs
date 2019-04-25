@@ -8,7 +8,7 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.DataQualityEngine.Data;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
 {
     /// <summary>
     /// Data Quality Engine records all validation results in a relational database, this includes recording with each result the Pivot column value found when evaluating the row.  A Pivot

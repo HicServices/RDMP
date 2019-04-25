@@ -7,7 +7,7 @@
 using System.Windows.Forms.DataVisualization.Charting;
 using Rdmp.Core.DataQualityEngine.Data;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 {
     internal class DQEGraphAnnotationUI
     {

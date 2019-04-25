@@ -11,9 +11,6 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.DataViewing;
-using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
 using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
@@ -21,11 +18,14 @@ using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.UI.DataViewing;
+using Rdmp.UI.DataViewing.Collections;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     public delegate void ExtractCommandSelectedHandler(object sender, IExtractCommand command);
     

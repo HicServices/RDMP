@@ -7,13 +7,13 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
 {
     public class ExecuteCommandCreateNewCohortFromFile:CohortCreationCommandExecution
     {

@@ -6,15 +6,14 @@
 
 using System;
 using System.ComponentModel.Composition;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Menus;
-using DataExportManager.CommandExecution.AtomicCommands;
 using FAnsi;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Providers.Nodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.Menus
+namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class AllCohortsNodeMenu:RDMPContextMenuStrip

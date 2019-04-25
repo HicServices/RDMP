@@ -7,13 +7,13 @@
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandShowCacheFetchFailures : BasicUICommandExecution,IAtomicCommand
     {

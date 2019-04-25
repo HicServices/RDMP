@@ -9,8 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Reports.DatabaseAccessPrivileges;
 using ReusableUIComponents.Dialogs;
 
-
-namespace CatalogueManager.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports
 {
     /// <summary>
     /// The RDMP is designed to store sensitive clinical datasets and make them available in research ready (anonymous) form.  In this context it is a good idea to know who has access to 

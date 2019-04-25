@@ -7,17 +7,16 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.DataExport.Data.LinkCreators;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.SqlDialogs;
 
-namespace DataExportManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomicCommand
     {

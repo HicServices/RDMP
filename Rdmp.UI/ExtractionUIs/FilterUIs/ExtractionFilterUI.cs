@@ -9,26 +9,26 @@ using System.ComponentModel;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueManager.AutoComplete;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataViewing;
-using CatalogueManager.ExtractionUIs.FilterUIs.Options;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
-using CatalogueManager.Copying;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.UI.AutoComplete;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying;
+using Rdmp.UI.DataViewing;
+using Rdmp.UI.ExtractionUIs.FilterUIs.Options;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
     /// <summary>
     /// One major problem with research data curation/provision is that data analysts who routinely work with datasets build up an in-depth knowledge of the data and how to identify 

@@ -1,8 +1,4 @@
-﻿using BrightIdeasSoftware;
-using CatalogueManager.MainFormUITabs.SubComponents;
-using CatalogueManager.Refreshing;
-
-namespace CatalogueManager.MainFormUITabs
+﻿namespace Rdmp.UI.MainFormUITabs
 {
     partial class CatalogueItemUI
     {

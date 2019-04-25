@@ -5,17 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Copying.Commands;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
     public class LoadDiagramColumnNode : ICommandSource, IHasLoadDiagramState, IKnowWhatIAm
     {

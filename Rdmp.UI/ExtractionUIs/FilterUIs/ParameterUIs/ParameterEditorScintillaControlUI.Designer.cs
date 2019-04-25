@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
+﻿namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
     partial class ParameterEditorScintillaControlUI
     {

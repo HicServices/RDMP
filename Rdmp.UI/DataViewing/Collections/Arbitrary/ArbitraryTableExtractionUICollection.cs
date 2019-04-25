@@ -6,16 +6,16 @@
 
 using System;
 using System.Collections.Generic;
-using CatalogueManager.AutoComplete;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.DataViewing.Collections.Arbitrary
+namespace Rdmp.UI.DataViewing.Collections.Arbitrary
 {
     internal class ArbitraryTableExtractionUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection, IDataAccessPoint, IDataAccessCredentials
     {

@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueManager.Icons.IconProvision.Exceptions
+namespace Rdmp.UI.Icons.IconProvision.Exceptions
 {
     public class IconProvisionException:Exception
     {

@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.DataLoadUIs.ANOUIs.PreLoadDiscarding
+﻿namespace Rdmp.UI.DataLoadUIs.ANOUIs.PreLoadDiscarding
 {
     partial class PreLoadDiscardedColumnUI
     {

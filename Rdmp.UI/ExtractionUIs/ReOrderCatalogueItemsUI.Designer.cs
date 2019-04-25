@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.ExtractionUIs
+namespace Rdmp.UI.ExtractionUIs
 {
     partial class ReOrderCatalogueItemsUI
     {

@@ -1,7 +1,4 @@
-﻿using BrightIdeasSoftware;
-using CatalogueManager.ExtractionUIs.FilterUIs;
-
-namespace CatalogueManager.ExtractionUIs
+﻿namespace Rdmp.UI.ExtractionUIs
 {
     partial class ExtractionInformationUI
     {

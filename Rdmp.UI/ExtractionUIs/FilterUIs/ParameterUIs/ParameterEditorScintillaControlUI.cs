@@ -6,21 +6,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
-using CatalogueManager.Copying;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
     public delegate void ParameterEventHandler(object sender, ISqlParameter parameter);
 

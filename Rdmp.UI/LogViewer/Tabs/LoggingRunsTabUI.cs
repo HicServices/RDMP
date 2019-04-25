@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using Rdmp.Core.Logging;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer.Tabs
 {
     /// <summary>
     /// Records each separate execution of a given Task for example one Data Extraction for Project 2301 (of datasets Biochemistry, Prescribing and Haematology) including when it started 

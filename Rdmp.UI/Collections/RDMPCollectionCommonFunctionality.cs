@@ -11,27 +11,27 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.Collections.Providers.Copying;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus;
-using CatalogueManager.Menus.MenuItems;
-using CatalogueManager.Refreshing;
-using CatalogueManager.Theme;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Providers;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.Collections.Providers.Copying;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus;
+using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.Theme;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents.TreeHelper;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// Provides centralised functionality for all RDMPCollectionUI classes.  This includes configuring TreeListView to use the correct icons, have the correct row 

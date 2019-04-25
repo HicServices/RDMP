@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.TestsAndSetup.StartupUI
+﻿namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     partial class ManagedDatabaseUI
     {

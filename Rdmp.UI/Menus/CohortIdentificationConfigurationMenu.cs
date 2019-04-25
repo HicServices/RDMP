@@ -5,17 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Menus;
-using CohortManager.CommandExecution.AtomicCommands;
-using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.UI.Icons.IconProvision;
 
-namespace CohortManager.Menus
+namespace Rdmp.UI.Menus
 {
 
     [System.ComponentModel.DesignerCategory("")]

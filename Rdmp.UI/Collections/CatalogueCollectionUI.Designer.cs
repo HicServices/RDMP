@@ -1,9 +1,9 @@
 ﻿using System.ComponentModel;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
+using Rdmp.UI.Refreshing;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     partial class CatalogueCollectionUI : ILifetimeSubscriber
     {

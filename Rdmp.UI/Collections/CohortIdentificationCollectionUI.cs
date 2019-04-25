@@ -5,16 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CohortManager.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Nodes.CohortNodes;
 using Rdmp.Core.DataExport.Providers;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CohortManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// Displays all the cohort identification configurations you have configured in RDMP. Cohort Identification Configurations (CIC) are created to identify specific patients e.g. 'all patients 

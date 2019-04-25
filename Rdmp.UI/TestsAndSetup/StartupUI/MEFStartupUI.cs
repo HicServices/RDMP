@@ -11,7 +11,7 @@ using Rdmp.Core.Startup.Events;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
-namespace CatalogueManager.TestsAndSetup.StartupUI
+namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     /// <summary>
     /// The RDMP software is built to be extensible, we recognise that sometimes as data analysts we are called upon to routinely load a particularly crazy/proprietary file type or 

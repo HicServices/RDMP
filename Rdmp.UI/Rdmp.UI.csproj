@@ -5,7 +5,11 @@
     <AssemblyTitle>Rdmp.UI</AssemblyTitle>
     <Product>Rdmp.UI</Product>
     <Copyright>Copyright ©  2019</Copyright>
+    <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />
+  </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
     <PackageReference Include="HIC.FAnsiSql" Version="0.11.0" />

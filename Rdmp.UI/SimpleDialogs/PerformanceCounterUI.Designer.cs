@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.SimpleDialogs
+﻿namespace Rdmp.UI.SimpleDialogs
 {
     partial class PerformanceCounterUI
     {

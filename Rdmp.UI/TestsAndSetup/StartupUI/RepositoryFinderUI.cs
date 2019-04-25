@@ -8,13 +8,13 @@ using System;
 using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataExport.Repositories;
 using Rdmp.Core.Startup;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.TestsAndSetup.StartupUI
+namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     /// <summary>
     /// Part of StartupUIMainForm, this control is visible only in the 'Technical' view.  It describes the state of the users connection strings for RDMP.  This is how the software finds

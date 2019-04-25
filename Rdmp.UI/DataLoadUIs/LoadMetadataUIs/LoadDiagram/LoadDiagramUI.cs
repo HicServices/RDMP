@@ -12,25 +12,25 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers.Copying;
-using CatalogueManager.CommandExecution;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
-using CatalogueManager.DataViewing;
-using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.DataViewing.Collections.Arbitrary;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Copying;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Collections.Providers.Copying;
+using Rdmp.UI.CommandExecution;
+using Rdmp.UI.Copying;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
+using Rdmp.UI.DataViewing;
+using Rdmp.UI.DataViewing.Collections;
+using Rdmp.UI.DataViewing.Collections.Arbitrary;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
     /// <summary>
     ///  This control functions in two ways. 

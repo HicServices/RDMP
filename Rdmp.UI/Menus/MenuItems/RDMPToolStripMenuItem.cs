@@ -5,15 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-
-namespace CatalogueManager.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems
 {
     [System.ComponentModel.DesignerCategory("")]
     public abstract class RDMPToolStripMenuItem : ToolStripMenuItem

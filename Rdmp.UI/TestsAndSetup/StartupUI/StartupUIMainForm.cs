@@ -11,18 +11,18 @@ using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using Timer = System.Windows.Forms.Timer;
 
-namespace CatalogueManager.TestsAndSetup.StartupUI
+namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     /// <summary>
     /// Shows every time an RDMP application is launched.  The 'User Friendly' view tells you whether there are any problems with your current platform databases / plugins by way of a large

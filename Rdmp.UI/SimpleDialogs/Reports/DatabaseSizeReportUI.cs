@@ -6,12 +6,12 @@
 
 using System;
 using System.Linq;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Reports;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace CatalogueManager.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports
 {
     /// <summary>
     /// Allows you to generate a report of how big in MB and records each database in your live data repository is.  The tool will evaluate every database on each server for which you

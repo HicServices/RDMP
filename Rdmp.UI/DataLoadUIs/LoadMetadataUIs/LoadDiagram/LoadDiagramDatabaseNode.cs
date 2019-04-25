@@ -8,14 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
-using CatalogueManager.Icons.IconProvision;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
     public class LoadDiagramDatabaseNode : IHasLoadDiagramState, IKnowWhatIAm
     {

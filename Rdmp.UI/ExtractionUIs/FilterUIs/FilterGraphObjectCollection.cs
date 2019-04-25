@@ -6,14 +6,14 @@
 
 using System;
 using System.Linq;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.UI.Refreshing;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
     public class FilterGraphObjectCollection : PersistableObjectCollection
     {

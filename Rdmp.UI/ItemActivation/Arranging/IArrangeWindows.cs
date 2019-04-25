@@ -9,7 +9,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace CatalogueManager.ItemActivation.Arranging
+namespace Rdmp.UI.ItemActivation.Arranging
 {
     public interface IArrangeWindows
     {

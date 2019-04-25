@@ -1,6 +1,4 @@
-﻿using BrightIdeasSoftware;
-
-namespace DataExportManager.CohortUI.ImportCustomData
+﻿namespace Rdmp.UI.CohortUI.ImportCustomData
 {
     partial class CohortCreationRequestUI
     {

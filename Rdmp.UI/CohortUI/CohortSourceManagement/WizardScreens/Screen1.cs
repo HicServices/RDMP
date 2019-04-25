@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 
-namespace DataExportManager.CohortUI.CohortSourceManagement.WizardScreens
+namespace Rdmp.UI.CohortUI.CohortSourceManagement.WizardScreens
 {
     /// <summary>
     /// Describes what a cohort is in terms of the RDMP (a list of patient identifiers for a project with accompanying release identifiers).  It is important that you understand

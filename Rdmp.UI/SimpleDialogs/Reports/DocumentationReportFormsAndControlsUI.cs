@@ -11,16 +11,16 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Reports;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
-namespace CatalogueManager.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports
 {
     /// <summary>
     /// Generates documentation including screenshots of every Form and Control in the RDMP codebase (Based on SourceCodeForSelfAwareness.zip).  Reflection is used to identify all inheritors

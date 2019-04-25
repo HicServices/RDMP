@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.Collections
+﻿namespace Rdmp.UI.Collections
 {
     partial class FavouritesCollectionUI
     {

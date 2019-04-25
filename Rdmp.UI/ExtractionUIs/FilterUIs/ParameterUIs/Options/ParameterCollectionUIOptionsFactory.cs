@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using CatalogueManager.ExtractionUIs.FilterUIs.Options;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
@@ -15,9 +14,10 @@ using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CohortCreation.QueryBuilding;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.ExtractionUIs.FilterUIs.Options;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
     public class ParameterCollectionUIOptionsFactory
     {

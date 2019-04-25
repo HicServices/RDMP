@@ -7,7 +7,7 @@
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// The Tree data model that is served by TreeFactoryGetter in RDMPCollectionCommonFunctionality.  Allows overriding of default TreeListView object model

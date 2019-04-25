@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using CatalogueManager.AggregationUIs.Advanced;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.UI.AggregationUIs.Advanced;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {

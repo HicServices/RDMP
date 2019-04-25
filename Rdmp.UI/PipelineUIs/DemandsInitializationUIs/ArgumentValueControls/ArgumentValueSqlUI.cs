@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.Copying;
+using Rdmp.UI.Copying;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 
-namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
     /// <summary>
     /// Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)

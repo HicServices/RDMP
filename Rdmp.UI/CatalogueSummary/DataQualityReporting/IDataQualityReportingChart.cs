@@ -6,7 +6,7 @@
 
 using Rdmp.Core.DataQualityEngine.Data;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 {
     public interface IDataQualityReportingChart
     {

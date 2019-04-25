@@ -6,7 +6,7 @@
 
 using FAnsi.Discovery;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
 {
     /// <summary>
     /// Depicts a table which was found in the loading tables of a DLE load.  These tables are unexpected (i.e. not created by RDMP).  They may be

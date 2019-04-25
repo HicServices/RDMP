@@ -7,7 +7,7 @@
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 
-namespace CatalogueManager.Collections.Providers
+namespace Rdmp.UI.Collections.Providers
 {
     /// <summary>
     /// Handles creating the ID column in a tree list view where the ID is populated for all models of Type IMapsDirectlyToDatabaseTable and null

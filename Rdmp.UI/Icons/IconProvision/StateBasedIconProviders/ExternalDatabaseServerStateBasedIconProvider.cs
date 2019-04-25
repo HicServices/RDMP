@@ -7,13 +7,13 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
-using CatalogueManager.Icons.IconOverlays;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.Databases;
+using Rdmp.UI.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public class ExternalDatabaseServerStateBasedIconProvider : IObjectStateBasedIconProvider
     {

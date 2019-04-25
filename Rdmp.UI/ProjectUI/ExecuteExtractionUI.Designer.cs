@@ -1,8 +1,9 @@
 ﻿
 
 using BrightIdeasSoftware;
+using Rdmp.UI.SimpleControls;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     partial class ExecuteExtractionUI
     {
@@ -41,7 +42,7 @@ namespace DataExportManager.ProjectUI
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvState = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
-            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.checkAndExecuteUI1 = new CheckAndExecuteUI();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();
             this.splitContainer1.Panel1.SuspendLayout();
             this.splitContainer1.Panel2.SuspendLayout();
@@ -173,7 +174,7 @@ namespace DataExportManager.ProjectUI
         private TreeListView tlvDatasets;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbFilter;
-        private CatalogueManager.SimpleControls.CheckAndExecuteUI checkAndExecuteUI1;
+        private CheckAndExecuteUI checkAndExecuteUI1;
         private OLVColumn olvName;
         private OLVColumn olvState;
         private ReusableUIComponents.HelpIcon helpIcon1;

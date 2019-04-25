@@ -8,19 +8,19 @@ using System;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.ForwardEngineering;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs.ForwardEngineering;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.MainFormUITabs.SubComponents
+namespace Rdmp.UI.MainFormUITabs.SubComponents
 {
     /// <summary>
     /// This control offers the preferred method of telling RDMP about your existing datasets.  It lets you select a table on your server and then forward engineer an RDMP Catalogue

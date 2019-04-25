@@ -7,7 +7,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace CatalogueManager.ItemActivation.Emphasis
+namespace Rdmp.UI.ItemActivation.Emphasis
 {
     public class EmphasiseEventArgs:EventArgs
     {

@@ -8,7 +8,7 @@ using System.Linq;
 using System.Text;
 using FAnsi.Discovery;
 
-namespace CatalogueManager.PluginManagement.CodeGeneration
+namespace Rdmp.UI.PluginManagement.CodeGeneration
 {
     public class MapsDirectlyToDatabaseTableClassCodeGenerator
     {

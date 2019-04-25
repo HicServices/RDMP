@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CatalogueLibrary.Data;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {
     public abstract class FilterUIOptions
     {

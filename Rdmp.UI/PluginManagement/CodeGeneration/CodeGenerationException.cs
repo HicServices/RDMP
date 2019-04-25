@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueManager.PluginManagement.CodeGeneration
+namespace Rdmp.UI.PluginManagement.CodeGeneration
 {
     public class CodeGenerationException : Exception
     {

@@ -8,12 +8,12 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents.ChecksUI;
 
-namespace CatalogueManager.MainFormUITabs
+namespace Rdmp.UI.MainFormUITabs
 {
     /// <summary>
     /// RDMP supports extracting all your metadata into DITA format (http://dita.xml.org/ - DITA OASIS Standard).  This is an XML standard with good tool support.  This form lets you

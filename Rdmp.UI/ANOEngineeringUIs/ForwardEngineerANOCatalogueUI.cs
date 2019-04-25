@@ -12,11 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.ANOEngineering;
@@ -26,10 +21,15 @@ using Rdmp.Core.CatalogueLibrary.Data.Serialization;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.ANOEngineeringUIs
+namespace Rdmp.UI.ANOEngineeringUIs
 {
     /// <summary>
     /// Allows you to create an anonymous version of a Catalogue by selecting which columns to anonymise and which to drop etc.  This will create a new table in the

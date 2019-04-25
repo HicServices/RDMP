@@ -1,6 +1,6 @@
 ﻿using System.Windows.Forms;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     partial class ConfigureAndExecutePipelineUI
     {

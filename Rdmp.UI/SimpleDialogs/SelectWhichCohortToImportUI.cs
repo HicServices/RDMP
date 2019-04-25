@@ -10,12 +10,11 @@ using System.Drawing;
 using System.Linq;
 using System.Linq.Expressions;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-
-namespace DataExportManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Allows you to select a cohort from your Cohort Database which is not yet been imported into the RDMP.  The RDMP lets you import cohorts directly into the cohort database through

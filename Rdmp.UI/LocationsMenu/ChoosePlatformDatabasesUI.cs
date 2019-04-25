@@ -21,7 +21,7 @@ using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 
-namespace CatalogueManager.LocationsMenu
+namespace Rdmp.UI.LocationsMenu
 {
     /// <summary>
     /// All metadata in RDMP is stored in one of two main databases.  The Catalogue database records all the technical, descriptive, governance, data load, filtering logic etc about 

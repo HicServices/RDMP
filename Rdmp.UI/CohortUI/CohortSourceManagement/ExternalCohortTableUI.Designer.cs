@@ -1,6 +1,4 @@
-﻿using CatalogueManager.Refreshing;
-
-namespace DataExportManager.CohortUI.CohortSourceManagement
+﻿namespace Rdmp.UI.CohortUI.CohortSourceManagement
 {
     partial class ExternalCohortTableUI
     {

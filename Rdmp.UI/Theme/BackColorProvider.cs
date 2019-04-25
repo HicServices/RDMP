@@ -6,9 +6,9 @@
 
 using System;
 using System.Drawing;
-using CatalogueManager.Collections;
+using Rdmp.UI.Collections;
 
-namespace CatalogueManager.Theme
+namespace Rdmp.UI.Theme
 {
     /// <summary>
     /// Determines which colour to use for the background on controls relating to this collection concept

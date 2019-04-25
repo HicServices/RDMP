@@ -9,15 +9,15 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 
-namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
 {
     /// <summary>
     /// Allows you to specify values for any IArgumentHost class.  This control is used by the user at 'design time' (e.g. when they are building a data load configuration) and the values

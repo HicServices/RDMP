@@ -1,6 +1,7 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.SimpleControls;
 
-namespace DataExportManager.DataRelease
+namespace Rdmp.UI.DataRelease
 {
     partial class DataReleaseUI
     {
@@ -32,7 +33,7 @@ namespace DataExportManager.DataRelease
         {
             this.components = new System.ComponentModel.Container();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.checkAndExecuteUI1 = new CheckAndExecuteUI();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.tlvReleasePotentials = new BrightIdeasSoftware.TreeListView();
             this.olvName = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
@@ -135,7 +136,7 @@ namespace DataExportManager.DataRelease
         #endregion
 
         private System.Windows.Forms.Panel panel1;
-        private CatalogueManager.SimpleControls.CheckAndExecuteUI checkAndExecuteUI1;
+        private CheckAndExecuteUI checkAndExecuteUI1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private BrightIdeasSoftware.TreeListView tlvReleasePotentials;
         private OLVColumn olvName;

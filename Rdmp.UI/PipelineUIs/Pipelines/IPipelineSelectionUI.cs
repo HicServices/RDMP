@@ -7,7 +7,7 @@
 using System;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     public interface IPipelineSelectionUI
     {

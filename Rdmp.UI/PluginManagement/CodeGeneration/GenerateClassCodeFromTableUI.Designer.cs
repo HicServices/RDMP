@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.PluginManagement.CodeGeneration
+﻿namespace Rdmp.UI.PluginManagement.CodeGeneration
 {
     partial class GenerateClassCodeFromTableUI
     {

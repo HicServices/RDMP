@@ -1,6 +1,4 @@
-﻿using CatalogueManager.Refreshing;
-
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs
+﻿namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {
     partial class LoadMetadataUI
     {

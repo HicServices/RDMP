@@ -1,4 +1,4 @@
-﻿namespace CohortManager.Wizard
+﻿namespace Rdmp.UI.Wizard
 {
     partial class SimpleParameterUI
     {

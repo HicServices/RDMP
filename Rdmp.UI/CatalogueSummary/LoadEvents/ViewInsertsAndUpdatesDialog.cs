@@ -18,8 +18,7 @@ using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.SqlDialogs;
 
-
-namespace Dashboard.CatalogueSummary.LoadEvents
+namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
     /// Allows you to view a sample of the data in your dataset before and after a data load.  This includes a sample of the new records added and a side by side comparison of the 

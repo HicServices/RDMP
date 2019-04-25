@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using Diagnostics.TestData.Exercises;
 using ReusableLibraryCode.Progress;
 
-namespace CatalogueManager.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports
 {
     /// <summary>
     /// Part of GenerateTestDataUI  (See GenerateTestDataUI).  This control lets you decide how many records in the dataset to create.  This data is fictional although it is designed to look

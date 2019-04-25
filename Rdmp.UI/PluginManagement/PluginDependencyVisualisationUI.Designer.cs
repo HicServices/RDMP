@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace CatalogueManager.PluginManagement
+namespace Rdmp.UI.PluginManagement
 {
     partial class PluginDependencyVisualisationUI
     {

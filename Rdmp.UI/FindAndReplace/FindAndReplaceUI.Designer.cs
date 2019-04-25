@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.FindAndReplace
+﻿namespace Rdmp.UI.FindAndReplace
 {
     partial class FindAndReplaceUI
     {

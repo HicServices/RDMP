@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueManager.Icons.IconProvision;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     internal class AllDataAccessCredentialsNodeMenu : RDMPContextMenuStrip
     {

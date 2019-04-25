@@ -6,11 +6,11 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.SingleControlForms;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// TECHNICAL: the base class for all collections of RDMP objects in a given toolbox.

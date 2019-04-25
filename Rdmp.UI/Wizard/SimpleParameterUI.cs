@@ -7,11 +7,11 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 
-namespace CohortManager.Wizard
+namespace Rdmp.UI.Wizard
 {
     /// <summary>
     /// Part of SimpleFilterUI.  Allows you to specify the value of a given parameter of the filter.  There can be multiple parameters on a given filter (or none).  For example a filter

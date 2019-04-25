@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueManager.CommandExecution.AtomicCommands;
 using Rdmp.Core.Logging;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer.Tabs
 {
     /// <summary>
     /// During a run all destinations for data will appear in this control, for data loading this includes STAGING load and LIVE load (with 1 record per table being loaded).  It includes 

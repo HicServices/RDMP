@@ -1,6 +1,6 @@
-﻿using CatalogueManager.PipelineUIs.Pipelines;
+﻿using Rdmp.UI.PipelineUIs.Pipelines;
 
-namespace CatalogueManager.SimpleDialogs.SimpleFileImporting
+namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 {
     partial class CreateNewCatalogueByImportingFileUI_Advanced
     {

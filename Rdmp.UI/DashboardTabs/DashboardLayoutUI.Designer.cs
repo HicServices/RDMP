@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CatalogueManager.DashboardTabs
+﻿namespace Rdmp.UI.DashboardTabs
 {
     partial class DashboardLayoutUI
     {

@@ -6,17 +6,17 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.PluginChildProvision;
-using CohortManager.CommandExecution.AtomicCommands;
-using CohortManager.SubComponents.Graphs;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CohortCreation.QueryBuilding;
 using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PluginChildProvision;
+using Rdmp.UI.SubComponents.Graphs;
 
-namespace CohortManager
+namespace Rdmp.UI
 {
     public class CohortManagerPluginUserInterface:PluginUserInterface
     {

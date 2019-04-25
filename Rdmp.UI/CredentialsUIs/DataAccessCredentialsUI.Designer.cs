@@ -1,6 +1,4 @@
-﻿using CatalogueManager.CredentialsUIs;
-
-namespace CatalogueManager.CredentialsUIs
+﻿namespace Rdmp.UI.CredentialsUIs
 {
     partial class DataAccessCredentialsUI
     {

@@ -9,17 +9,17 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
-using CatalogueManager.PipelineUIs.DataObjects;
-using CatalogueManager.PipelineUIs.Pipelines.Models;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.PipelineUIs.DataObjects;
+using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
 
     public delegate void PipelineComponentSelectedHandler(object sender, IPipelineComponent selected);

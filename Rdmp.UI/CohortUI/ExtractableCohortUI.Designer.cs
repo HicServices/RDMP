@@ -1,7 +1,6 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
 
-namespace DataExportManager.CohortUI
+namespace Rdmp.UI.CohortUI
 {
     partial class ExtractableCohortUI
     {

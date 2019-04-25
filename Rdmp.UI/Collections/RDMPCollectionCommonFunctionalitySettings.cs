@@ -5,8 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.UI.ItemActivation;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     public class RDMPCollectionCommonFunctionalitySettings
     {
@@ -33,7 +34,7 @@ namespace CatalogueManager.Collections
 
         /// <summary>
         /// False to automatically set up tree hierarchy children based on the <see cref="ICoreChildProvider"/> in the
-        /// <see cref="CatalogueManager.ItemActivation.IActivateItems"/> at construction time.  True if you plan to handle object children yourself
+        /// <see cref="IActivateItems"/> at construction time.  True if you plan to handle object children yourself
         ///  <para>Defaults to false</para>
         /// </summary>
         public bool SuppressChildrenAdder { get; set; }

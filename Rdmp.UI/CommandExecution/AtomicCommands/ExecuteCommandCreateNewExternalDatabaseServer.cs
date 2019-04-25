@@ -7,19 +7,19 @@
 using System;
 using System.ComponentModel.Composition;
 using System.Drawing;
-using CatalogueManager.Icons.IconOverlays;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Icons.IconProvision.StateBasedIconProviders;
-using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable.Versioning;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.UI.Icons.IconOverlays;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewExternalDatabaseServer : BasicUICommandExecution,IAtomicCommand
     {

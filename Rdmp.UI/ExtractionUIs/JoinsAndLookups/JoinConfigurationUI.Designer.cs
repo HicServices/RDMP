@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.ExtractionUIs.JoinsAndLookups
+﻿namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
     partial class JoinConfigurationUI
     {
@@ -54,12 +54,12 @@
             this.rbAllRightHandTableRecords = new System.Windows.Forms.RadioButton();
             this.rbJoinInner = new System.Windows.Forms.RadioButton();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.pk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.pk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.fk1 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.fk3 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
-            this.fk2 = new CatalogueManager.ExtractionUIs.JoinsAndLookups.KeyDropLocationUI();
+            this.pk1 = new KeyDropLocationUI();
+            this.pk3 = new KeyDropLocationUI();
+            this.pk2 = new KeyDropLocationUI();
+            this.fk1 = new KeyDropLocationUI();
+            this.fk3 = new KeyDropLocationUI();
+            this.fk2 = new KeyDropLocationUI();
             this.panel2 = new System.Windows.Forms.Panel();
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.label1 = new System.Windows.Forms.Label();
@@ -375,7 +375,7 @@
             // pk1
             // 
             this.pk1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk1.KeyType = JoinKeyType.PrimaryKey;
             this.pk1.Location = new System.Drawing.Point(242, 29);
             this.pk1.Name = "pk1";
             this.pk1.Size = new System.Drawing.Size(226, 35);
@@ -385,7 +385,7 @@
             // pk3
             // 
             this.pk3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk3.KeyType = JoinKeyType.PrimaryKey;
             this.pk3.Location = new System.Drawing.Point(242, 113);
             this.pk3.Name = "pk3";
             this.pk3.Size = new System.Drawing.Size(226, 35);
@@ -395,7 +395,7 @@
             // pk2
             // 
             this.pk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.pk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.pk2.KeyType = JoinKeyType.PrimaryKey;
             this.pk2.Location = new System.Drawing.Point(242, 72);
             this.pk2.Name = "pk2";
             this.pk2.Size = new System.Drawing.Size(226, 35);
@@ -405,7 +405,7 @@
             // fk1
             // 
             this.fk1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.fk1.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk1.KeyType = JoinKeyType.PrimaryKey;
             this.fk1.Location = new System.Drawing.Point(493, 29);
             this.fk1.Name = "fk1";
             this.fk1.Size = new System.Drawing.Size(226, 35);
@@ -415,7 +415,7 @@
             // fk3
             // 
             this.fk3.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.fk3.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk3.KeyType = JoinKeyType.PrimaryKey;
             this.fk3.Location = new System.Drawing.Point(493, 113);
             this.fk3.Name = "fk3";
             this.fk3.Size = new System.Drawing.Size(226, 35);
@@ -425,7 +425,7 @@
             // fk2
             // 
             this.fk2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.fk2.KeyType = CatalogueManager.ExtractionUIs.JoinsAndLookups.JoinKeyType.PrimaryKey;
+            this.fk2.KeyType = JoinKeyType.PrimaryKey;
             this.fk2.Location = new System.Drawing.Point(493, 72);
             this.fk2.Name = "fk2";
             this.fk2.Size = new System.Drawing.Size(226, 35);

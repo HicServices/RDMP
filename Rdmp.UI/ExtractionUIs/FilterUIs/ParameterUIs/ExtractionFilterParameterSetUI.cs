@@ -7,14 +7,14 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
     /// <summary>
     /// Extraction Filter Parameter Sets are 'known good values' of 1 or more parameters of an extraction filter.  For example you might have a filter 'Hospitalised with conditions'

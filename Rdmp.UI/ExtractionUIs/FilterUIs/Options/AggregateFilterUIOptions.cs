@@ -9,7 +9,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding.Options;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.Options
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {
     public class AggregateFilterUIOptions : FilterUIOptions
     {

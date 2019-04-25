@@ -14,7 +14,7 @@ using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode;
 
-namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
     public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {

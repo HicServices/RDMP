@@ -1,7 +1,6 @@
 ﻿using BrightIdeasSoftware;
-using CatalogueManager.Refreshing;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     partial class TableInfoCollectionUI 
     {

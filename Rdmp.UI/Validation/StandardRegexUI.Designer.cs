@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.Validation
+﻿namespace Rdmp.UI.Validation
 {
     partial class StandardRegexUI
     {

@@ -6,11 +6,11 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.PluginChildProvision;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.PluginChildProvision;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems
 {
     [System.ComponentModel.DesignerCategory("")]
     public class PluginUserInterfaceCrashedMenuItem : ToolStripMenuItem

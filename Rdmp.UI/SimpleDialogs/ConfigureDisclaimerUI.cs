@@ -6,11 +6,11 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace DataExportManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// As part of a data extraction, a ReleaseDocument is generated.  This is a Microsoft Word document which lists in tabular format the datasets released, the filters applied, the number

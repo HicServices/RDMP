@@ -8,17 +8,16 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Arranging;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.LoadExecutionUIs;
-using DataExportManager.CommandExecution.AtomicCommands;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Arranging;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.LoadExecutionUIs;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging

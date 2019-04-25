@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.AggregationUIs.Advanced
+﻿namespace Rdmp.UI.AggregationUIs.Advanced
 {
     partial class AggregateTopXUI
     {

@@ -5,13 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using CatalogueManager.AutoComplete;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.DataViewing.Collections
+namespace Rdmp.UI.DataViewing.Collections
 {
     public interface IViewSQLAndResultsCollection:IPersistableObjectCollection, IHasQuerySyntaxHelper
     {

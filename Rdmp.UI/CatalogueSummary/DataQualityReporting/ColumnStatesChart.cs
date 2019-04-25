@@ -8,10 +8,10 @@ using System;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Dashboard.CatalogueSummary.DataQualityReporting.SubComponents;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 {
     /// <summary>
     /// Only visible after running the data quality engine on a dataset (Catalogue).   Shows each extractable column in the dataset with a horizontal bar indicating what proportion

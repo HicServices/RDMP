@@ -7,13 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 
-namespace CatalogueManager.Collections.Providers
+namespace Rdmp.UI.Collections.Providers
 {
     public class FavouritesProvider
     {

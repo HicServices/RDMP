@@ -8,15 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus;
-using CatalogueManager.Menus.MenuItems;
 using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus;
+using Rdmp.UI.Menus.MenuItems;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.UIFactory
+namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 {
     public class AtomicCommandUIFactory
     {

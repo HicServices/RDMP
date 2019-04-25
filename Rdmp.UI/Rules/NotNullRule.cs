@@ -6,10 +6,10 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.UI.ItemActivation;
 
-namespace CatalogueManager.Rules
+namespace Rdmp.UI.Rules
 {
     class NotNullRule<T> : BinderRule<T> where T : IMapsDirectlyToDatabaseTable
     {

@@ -6,14 +6,13 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.TestsAndSetup.StartupUI;
 using Rdmp.Core.Startup;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.TestsAndSetup.StartupUI;
 using ReusableUIComponents.Dialogs;
 using ScintillaNET;
 
-
-namespace CatalogueManager.TestsAndSetup
+namespace Rdmp.UI.TestsAndSetup
 {
     public class RDMPBootStrapper<T> where T : RDMPForm, new()
     {

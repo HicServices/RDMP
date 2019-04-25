@@ -1,4 +1,4 @@
-﻿namespace Dashboard.Raceway
+﻿namespace Rdmp.UI.Raceway
 {
     partial class DatasetRaceway
     {
@@ -38,7 +38,7 @@
             this.ddShowPeriod = new System.Windows.Forms.ToolStripComboBox();
             this.cbIgnoreRowCounts = new System.Windows.Forms.ToolStripButton();
             this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
-            this.racewayRenderArea = new Dashboard.Raceway.RacewayRenderAreaUI();
+            this.racewayRenderArea = new RacewayRenderAreaUI();
             this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 

@@ -6,10 +6,10 @@
 
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.ItemActivation;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     public class RDMPContextMenuStripArgs
     {

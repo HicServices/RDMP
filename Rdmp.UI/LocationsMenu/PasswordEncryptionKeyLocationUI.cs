@@ -8,13 +8,13 @@ using System;
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.LocationsMenu
+namespace Rdmp.UI.LocationsMenu
 {
     /// <summary>
     /// RDMP supports both Integrated Security (Windows User Account Security) and SQL Authentication.  The later requires the storing of usernames and passwords for sending at query time

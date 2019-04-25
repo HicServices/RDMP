@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     partial class ChooseExtractablesUI
     {

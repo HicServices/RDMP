@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
     public class ParameterEditorScintillaSection
     {

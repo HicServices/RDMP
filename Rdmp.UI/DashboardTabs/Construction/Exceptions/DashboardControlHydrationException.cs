@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueManager.DashboardTabs.Construction.Exceptions
+namespace Rdmp.UI.DashboardTabs.Construction.Exceptions
 {
     public class DashboardControlHydrationException : Exception
     {

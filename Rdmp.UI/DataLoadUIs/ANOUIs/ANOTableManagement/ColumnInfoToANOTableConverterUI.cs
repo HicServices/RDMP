@@ -11,10 +11,6 @@ using System.Data.Common;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
@@ -22,13 +18,17 @@ using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.UI.Collections;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 
-namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
+namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
 {
     /// <summary>
     /// Converts the contents of an existing column of your live data into anonymous identifiers.  You should only use this after backing up your database first and being very certain

@@ -6,15 +6,15 @@
 
 using System;
 using System.Linq;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.LogViewer.Tabs;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Logging;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.LogViewer.Tabs;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandViewLoggedData : BasicUICommandExecution,IAtomicCommand
     {

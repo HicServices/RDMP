@@ -6,7 +6,7 @@
 
 using System.Drawing;
 
-namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public interface IObjectStateBasedIconProvider
     {

@@ -6,7 +6,7 @@
 
 using Rdmp.Core.Logging;
 
-namespace CatalogueManager.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer.Tabs
 {
     /// <summary>
     /// All messages generated during a run appear in this control.  This is the least structured table in logging and is most comparable with other simple logging methods

@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace Dashboard.Overview
+namespace Rdmp.UI.Overview
 {
     partial class DataLoadsGraph
     {

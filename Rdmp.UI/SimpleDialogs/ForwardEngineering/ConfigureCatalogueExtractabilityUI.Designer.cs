@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.SimpleDialogs.ForwardEngineering
+﻿namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 {
     partial class ConfigureCatalogueExtractabilityUI
     {

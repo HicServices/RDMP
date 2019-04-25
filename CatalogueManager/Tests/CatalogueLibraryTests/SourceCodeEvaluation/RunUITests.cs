@@ -7,13 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.Automation;
-using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
-using CatalogueManager.SimpleDialogs.NavigateTo;
-using CohortManager.CommandExecution.AtomicCommands;
-using DataExportManager.CommandExecution.AtomicCommands;
 using NUnit.Framework;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
+using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
+using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using Tests.Common;
 

@@ -8,7 +8,7 @@ using System;
 using System.Drawing;
 using ReusableLibraryCode.Checks;
 
-namespace CatalogueManager.Icons.IconProvision.StateBasedIconProviders
+namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {
     public class CheckResultStateBasedIconProvider : IObjectStateBasedIconProvider
     {

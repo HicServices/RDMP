@@ -11,7 +11,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
 using ReusableLibraryCode.CommandExecution;
 
-namespace CatalogueManager.Copying.Commands
+namespace Rdmp.UI.Copying.Commands
 {
     public class AggregateConfigurationCommand : ICommand
     {

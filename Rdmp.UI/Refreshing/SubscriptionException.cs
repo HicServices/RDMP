@@ -6,7 +6,7 @@
 
 using System;
 
-namespace CatalogueManager.Refreshing
+namespace Rdmp.UI.Refreshing
 {
     public class SubscriptionException : Exception
     {

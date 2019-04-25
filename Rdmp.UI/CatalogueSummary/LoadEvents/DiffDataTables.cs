@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
 
-namespace Dashboard.CatalogueSummary.LoadEvents
+namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     /// <summary>
     /// Part of ViewInsertsAndUpdatesDialog (in the Updates tab), this control shows a sample of the updates that occurred as part of a data load.  The data load engine operates a 'newer

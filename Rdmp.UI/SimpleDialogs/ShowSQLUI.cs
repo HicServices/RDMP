@@ -8,7 +8,7 @@ using System.ComponentModel;
 using System.Windows.Forms;
 using ReusableUIComponents.ScintillaHelper;
 
-namespace CatalogueManager.SimpleDialogs
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Allows you to view a given piece of SQL.  This dialog is used whenever the RDMP wants to show you some SQL and includes syntax highlighting.  It may be readonly or editable

@@ -16,7 +16,7 @@ using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Startup.Events;
 using ReusableUIComponents;
 
-namespace CatalogueManager.TestsAndSetup.StartupUI
+namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     /// <summary>
     /// Part of the 'Technical' view of StartupUIMainForm, this control tells you about the healthiness of a platform database (e.g. Data Catalogue database, Logging database, ANO database

@@ -4,13 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.CommandExecution.Proposals;
 
-namespace CatalogueManager.CommandExecution.Proposals
+namespace Rdmp.UI.CommandExecution.Proposals
 {
     public abstract class RDMPCommandExecutionProposal<T>:ICommandExecutionProposal where T : class
     {
@@ -28,7 +29,7 @@ namespace CatalogueManager.CommandExecution.Proposals
         /// Decides which (if any) command should be advertised/run when combining the dragged object (cmd) with the drop target
         /// </summary>
         /// <param name="cmd">Self contained class describing both the object(s) being dragged and salient facts about it e.g. if  it is a
-        /// <see cref="CatalogueManager.Copying.Commands.CatalogueCommand"/> then it will know whether the dragged <see cref="Catalogue"/>
+        /// <see cref="CatalogueCommand"/> then it will know whether the dragged <see cref="Catalogue"/>
         /// has at least one patient identifier column.</param>
         /// 
         /// <param name="target"> The object the cursor is currently hovering over </param>

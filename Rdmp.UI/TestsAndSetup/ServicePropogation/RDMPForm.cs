@@ -6,12 +6,11 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.SimpleControls;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleControls;
 using ReusableUIComponents;
 
-
-namespace CatalogueManager.TestsAndSetup.ServicePropogation
+namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
     /// <summary>
     /// TECHNICAL: Base class for all Forms in all RDMP applications which require to know where the DataCatalogue Repository and/or DataExportManager Repository databases are stored.

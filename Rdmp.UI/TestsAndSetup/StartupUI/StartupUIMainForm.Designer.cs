@@ -1,6 +1,6 @@
 ﻿using ReusableLibraryCode.Checks;
 
-namespace CatalogueManager.TestsAndSetup.StartupUI
+namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     partial class StartupUIMainForm : ICheckNotifier
     {
@@ -54,10 +54,10 @@ namespace CatalogueManager.TestsAndSetup.StartupUI
             this.flpTier3Databases = new System.Windows.Forms.FlowLayoutPanel();
             this.flpTier2Databases = new System.Windows.Forms.FlowLayoutPanel();
             this.btnSetupPlatformDatabases = new System.Windows.Forms.Button();
-            this.repositoryFinderUI1 = new CatalogueManager.TestsAndSetup.StartupUI.RepositoryFinderUI();
-            this.Catalogue = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
-            this.mefStartupUI1 = new CatalogueManager.TestsAndSetup.StartupUI.MEFStartupUI();
-            this.DataExport = new CatalogueManager.TestsAndSetup.StartupUI.ManagedDatabaseUI();
+            this.repositoryFinderUI1 = new RepositoryFinderUI();
+            this.Catalogue = new ManagedDatabaseUI();
+            this.mefStartupUI1 = new MEFStartupUI();
+            this.DataExport = new ManagedDatabaseUI();
             this.tabControl1.SuspendLayout();
             this.tpUserFriendly.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbWhereIsDatabase)).BeginInit();

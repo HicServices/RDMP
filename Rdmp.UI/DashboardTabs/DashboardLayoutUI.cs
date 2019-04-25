@@ -10,18 +10,18 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.DashboardTabs.Construction;
-using CatalogueManager.DashboardTabs.Construction.Exceptions;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.UI.Collections;
+using Rdmp.UI.DashboardTabs.Construction;
+using Rdmp.UI.DashboardTabs.Construction.Exceptions;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
-namespace CatalogueManager.DashboardTabs
+namespace Rdmp.UI.DashboardTabs
 {
     /// <summary>
     /// Allows you to create an arrangement of IDashboardableControls on a Form that is stored in the Catalogue database and viewable by all RDMP users.  Use the task bar at the top of the 

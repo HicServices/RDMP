@@ -15,21 +15,21 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.CommandExecution.AtomicCommands.Sharing;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.Sharing.Transmission;
 using Rdmp.Core.Startup.PluginManagement;
+using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Progress;
 using ReusableUIComponents.SingleControlForms;
 
-namespace CatalogueManager.PluginManagement
+namespace Rdmp.UI.PluginManagement
 {
     /// <summary>
     /// Shows all the currently configured Plugins you have uploaded into your Catalogue Database.  Plugins are .zip files which contain one or more dlls.  The name of the zip file is the name

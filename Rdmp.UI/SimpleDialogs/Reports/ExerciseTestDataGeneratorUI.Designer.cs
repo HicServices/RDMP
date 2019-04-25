@@ -1,6 +1,6 @@
 ﻿using ReusableLibraryCode.Progress;
 
-namespace CatalogueManager.SimpleDialogs.Reports
+namespace Rdmp.UI.SimpleDialogs.Reports
 {
     partial class ExerciseTestDataGeneratorUI : IDataLoadEventListener
     {

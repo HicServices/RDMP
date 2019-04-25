@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
 {
     /// <summary>
     /// All validation rules configured in the RDMP have an associated 'Consequence', this is like a severity level.  The lowest is 'Missing' and indicates that the failure of the 

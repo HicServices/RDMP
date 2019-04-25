@@ -7,16 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.AutoComplete;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 
-namespace CatalogueManager.DataViewing.Collections
+namespace Rdmp.UI.DataViewing.Collections
 {
     public class ViewTableInfoExtractUICollection :PersistableObjectCollection, IViewSQLAndResultsCollection
     {

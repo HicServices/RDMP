@@ -6,12 +6,12 @@
 
 using System.IO;
 using System.Xml.Linq;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DublinCore;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Sharing
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
 {
     internal class ExecuteCommandImportDublinCoreFormat : BasicUICommandExecution,IAtomicCommand
     {

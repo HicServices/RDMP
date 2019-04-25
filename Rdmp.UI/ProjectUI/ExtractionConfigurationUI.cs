@@ -8,24 +8,24 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Rules;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.PipelineUIs.Pipelines;
-using CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.DataExport.CohortCreationPipeline;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.PipelineUIs.Pipelines;
+using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 
-namespace DataExportManager.ProjectUI
+namespace Rdmp.UI.ProjectUI
 {
     /// <summary>
     /// Allows you to change high level attributes of an ExtractionConfiguration in a data extraction Project.  Executing an ExtractionConfiguration involves joining the 

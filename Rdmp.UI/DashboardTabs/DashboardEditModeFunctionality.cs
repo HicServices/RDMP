@@ -6,12 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Windows.Forms;
-using ReusableUIComponents;
 using System.Drawing;
+using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using ReusableUIComponents;
 
-namespace CatalogueManager.DashboardTabs
+namespace Rdmp.UI.DashboardTabs
 {
     public class DashboardEditModeFunctionality
     {

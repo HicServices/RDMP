@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.DataViewing;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.DataViewing;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     [System.ComponentModel.DesignerCategory("")]
     class ColumnInfoMenu : RDMPContextMenuStrip

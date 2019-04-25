@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.DataViewing
+﻿namespace Rdmp.UI.DataViewing
 {
     partial class ViewSQLAndResultsWithDataGridUI
     {

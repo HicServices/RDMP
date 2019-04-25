@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.SimpleDialogs.Remoting
+﻿namespace Rdmp.UI.SimpleDialogs.Remoting
 {
     partial class RemoteRDMPUI
     {

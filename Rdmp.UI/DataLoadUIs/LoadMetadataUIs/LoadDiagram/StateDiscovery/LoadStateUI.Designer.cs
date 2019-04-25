@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
+﻿namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery
 {
     partial class LoadStateUI
     {

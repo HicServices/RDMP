@@ -6,14 +6,14 @@
 
 using System;
 using System.ComponentModel;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
-namespace CatalogueManager.AggregationUIs
+namespace Rdmp.UI.AggregationUIs
 {
     /// <summary>
     /// One Dimension (Group By Column) can be set to be a 'Continuous Date Axis'.  This must be a DateTime or Date field or a transform that yields a Date/DateTime.  Normally with SQL

@@ -5,19 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using System.Data;
+using System.Drawing;
 using System.Globalization;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using Dashboard.CatalogueSummary.DataQualityReporting.SubComponents;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
 {
     /// <summary>
     /// Only visible after running the Data Quality Engine at least once on a given dataset (Catalogue).  Shows the number of records each month in the dataset that are passing/failing

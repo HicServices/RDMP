@@ -7,12 +7,12 @@
 using System;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Refreshing;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.Collections.Providers
+namespace Rdmp.UI.Collections.Providers
 {
     public class RenameProvider
     {

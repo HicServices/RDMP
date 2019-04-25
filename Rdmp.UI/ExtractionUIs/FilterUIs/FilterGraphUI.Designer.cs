@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.ExtractionUIs.FilterUIs
+﻿namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
     partial class FilterGraphUI
     {

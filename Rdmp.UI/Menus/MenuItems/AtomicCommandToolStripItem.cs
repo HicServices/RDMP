@@ -6,10 +6,10 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems
 {
     public class AtomicCommandToolStripItem : ToolStripButton
     {

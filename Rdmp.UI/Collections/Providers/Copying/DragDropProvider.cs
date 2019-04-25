@@ -15,7 +15,7 @@ using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.Collections.Providers.Copying
+namespace Rdmp.UI.Collections.Providers.Copying
 {
     public class DragDropProvider:SimpleDragSource
     {

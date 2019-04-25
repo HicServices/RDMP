@@ -11,7 +11,7 @@ using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
 
-namespace CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.Options
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
     public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector,string parameterName);
 

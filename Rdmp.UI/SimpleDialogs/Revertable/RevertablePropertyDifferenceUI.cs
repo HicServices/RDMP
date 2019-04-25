@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace CatalogueManager.SimpleDialogs.Revertable
+namespace Rdmp.UI.SimpleDialogs.Revertable
 { 
     /// <summary>
     /// Used by OfferChanceToSaveDialog to tell you about a property difference between an RDMP object that is visible in an RDMP application but which has unaccountably become different

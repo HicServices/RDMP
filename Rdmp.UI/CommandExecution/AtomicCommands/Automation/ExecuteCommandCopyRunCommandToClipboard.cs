@@ -6,13 +6,13 @@
 
 using System;
 using System.Drawing;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation
 {
     public class ExecuteCommandCopyRunCommandToClipboard : AutomationCommandExecution, IAtomicCommand
     {

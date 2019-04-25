@@ -13,7 +13,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.Startup.PluginManagement;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.PluginManagement
+namespace Rdmp.UI.PluginManagement
 {
     /// <summary>
     /// Part of PluginManagementForm, this control lists all the exportable (plugin) classes in your selected plugin dll.  Each class can be expanded to see the methods, each method can be 

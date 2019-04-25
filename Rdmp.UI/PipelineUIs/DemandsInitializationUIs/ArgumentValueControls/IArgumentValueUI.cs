@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 
-namespace CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
     public interface IArgumentValueUI : IContainerControl
     {

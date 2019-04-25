@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.DashboardTabs.Construction.Exceptions;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.UI.DashboardTabs.Construction.Exceptions;
+using Rdmp.UI.ItemActivation;
 
-namespace CatalogueManager.DashboardTabs.Construction
+namespace Rdmp.UI.DashboardTabs.Construction
 {
     public class DashboardControlFactory
     {

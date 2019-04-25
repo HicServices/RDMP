@@ -1,7 +1,7 @@
 ﻿using ReusableLibraryCode.Checks;
 using ReusableUIComponents.LinkLabels;
 
-namespace CatalogueManager.TestsAndSetup.StartupUI
+namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     partial class MEFStartupUI : ICheckNotifier
     {

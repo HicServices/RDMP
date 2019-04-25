@@ -7,12 +7,12 @@
 using System;
 using System.Drawing;
 using BrightIdeasSoftware;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Settings;
 
-namespace CatalogueManager.Collections.Providers
+namespace Rdmp.UI.Collections.Providers
 {
     public class FavouriteColumnProvider
     {

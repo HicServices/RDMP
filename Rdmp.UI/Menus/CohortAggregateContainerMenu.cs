@@ -7,21 +7,20 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Menus;
-using CohortManager.Collections.Providers;
 using MapsDirectlyToDatabaseTableUI;
-using CatalogueManager.Copying.Commands;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 
-namespace CohortManager.Menus
+namespace Rdmp.UI.Menus
 {
     internal class CohortAggregateContainerMenu : RDMPContextMenuStrip
     {

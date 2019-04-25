@@ -6,10 +6,10 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.UI.ItemActivation;
 
-namespace CohortManager.Wizard
+namespace Rdmp.UI.Wizard
 {
     /// <summary>
     /// Part of CreateNewCohortIdentificationConfigurationUI.  Allows you to determine how the datasets in the CohortIdentificationConfiguration are combined to identify patients.  The options

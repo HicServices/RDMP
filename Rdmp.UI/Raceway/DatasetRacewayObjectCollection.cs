@@ -10,7 +10,7 @@ using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 
-namespace Dashboard.Raceway
+namespace Rdmp.UI.Raceway
 {
     public class DatasetRacewayObjectCollection : PersistableObjectCollection
     {

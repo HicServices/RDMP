@@ -11,19 +11,19 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using CatalogueManager.DashboardTabs.Construction;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using Dashboard.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.DashboardTabs.Construction;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Dashboard.Overview
+namespace Rdmp.UI.Overview
 {
     /// <summary>
     /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have not configured any data

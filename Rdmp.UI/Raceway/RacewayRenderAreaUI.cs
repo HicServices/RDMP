@@ -10,16 +10,16 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.DashboardTabs.Construction;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.UI.DashboardTabs.Construction;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
 using ReusableUIComponents;
 using ReusableUIComponents.Heatmapping;
 
-namespace Dashboard.Raceway
+namespace Rdmp.UI.Raceway
 {
     /// <summary>
     /// Part of DatasetRaceway, this control shows a miniature bar chart with 1 bar per month of data held within the dataset.  Bar colour indicates the proportion of records in that month

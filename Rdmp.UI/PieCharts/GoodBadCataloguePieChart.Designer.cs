@@ -1,4 +1,4 @@
-﻿namespace Dashboard.PieCharts
+﻿namespace Rdmp.UI.PieCharts
 {
     partial class GoodBadCataloguePieChart
     {

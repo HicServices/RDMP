@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.MainFormUITabs.SubComponents
+﻿namespace Rdmp.UI.MainFormUITabs.SubComponents
 {
     partial class TableInfoUI
     {

@@ -6,17 +6,17 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using CatalogueManager.Collections;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Copying;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace CohortManager.SubComponents
+namespace Rdmp.UI.SubComponents
 {
     /// <summary>
     /// Allows you to view the code that will be executed when a  Cohort Identification Configuration is executed.  This includes any cache fetches SQL.

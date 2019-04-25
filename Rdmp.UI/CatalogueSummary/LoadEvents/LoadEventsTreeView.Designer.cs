@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace Dashboard.CatalogueSummary.LoadEvents
+namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
     partial class LoadEventsTreeView
     {

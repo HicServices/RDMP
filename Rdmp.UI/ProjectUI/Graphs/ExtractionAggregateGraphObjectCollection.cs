@@ -8,7 +8,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.DataExport.Data.LinkCreators;
 
-namespace DataExportManager.ProjectUI.Graphs
+namespace Rdmp.UI.ProjectUI.Graphs
 {
     public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollection
     {

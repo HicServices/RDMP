@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.DataQualityEngine.Data;
 
-namespace Dashboard.CatalogueSummary.DataQualityReporting.SubComponents
+namespace Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents
 {
     /// <summary>
     /// The Data Quality Engine stores all validation results in a relational database.  This includes the time the DQE was run.  This allows us to 'rewind' and look at previous results

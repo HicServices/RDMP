@@ -7,14 +7,14 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Ticketing;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.LocationsMenu.Ticketing
+namespace Rdmp.UI.LocationsMenu.Ticketing
 {
     /// <summary>
     /// The RDMP recognises that there are a wide array of software systems for tracking time worked, issues,project requests, bug reports etc.  The RDMP is designed to support gated 

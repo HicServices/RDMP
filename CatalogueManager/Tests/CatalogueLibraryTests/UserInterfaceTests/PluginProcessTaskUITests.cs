@@ -7,11 +7,11 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 
 namespace CatalogueLibraryTests.UserInterfaceTests
 {

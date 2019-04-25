@@ -1,8 +1,7 @@
 ﻿using System.Windows.Forms;
-using CatalogueManager.LocationsMenu.Ticketing;
-using CatalogueManager.MainFormUITabs.SubComponents;
+using Rdmp.UI.LocationsMenu.Ticketing;
 
-namespace CatalogueManager.MainFormUITabs
+namespace Rdmp.UI.MainFormUITabs
 {
     partial class CatalogueUI
     {
@@ -110,7 +109,7 @@ namespace CatalogueManager.MainFormUITabs
             this.label29 = new System.Windows.Forms.Label();
             this.label15 = new System.Windows.Forms.Label();
             this.tbAdministrativeContactName = new System.Windows.Forms.TextBox();
-            this.ticketingControl1 = new CatalogueManager.LocationsMenu.Ticketing.TicketingControlUI();
+            this.ticketingControl1 = new TicketingControlUI();
             this.errorProvider1 = new System.Windows.Forms.ErrorProvider(this.components);
             this.panel1 = new System.Windows.Forms.Panel();
             ((System.ComponentModel.ISupportInitialize)(this.splitContainer1)).BeginInit();

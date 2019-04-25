@@ -1,6 +1,4 @@
-﻿using CatalogueManager.Refreshing;
-
-namespace DataExportManager.ProjectUI
+﻿namespace Rdmp.UI.ProjectUI
 {
     partial class ViewExtractionConfigurationSQLUI 
     {

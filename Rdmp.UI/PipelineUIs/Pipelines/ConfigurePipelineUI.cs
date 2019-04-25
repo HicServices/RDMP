@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     /// <summary>
     /// Allows you to name, describe and configure a Data Flow Pipeline (IPipeline).  This is a flow of objects (usually DataTables) from a Source through 0 or more Components to a Destination.

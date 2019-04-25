@@ -10,7 +10,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Providers;
 using ReusableLibraryCode.Settings;
 
-namespace CatalogueManager.Collections.Providers.Filtering
+namespace Rdmp.UI.Collections.Providers.Filtering
 {
     public class CatalogueCollectionFilter : IModelFilter
     {

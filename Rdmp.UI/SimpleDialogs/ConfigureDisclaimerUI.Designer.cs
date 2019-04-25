@@ -1,4 +1,4 @@
-﻿namespace DataExportManager.SimpleDialogs
+﻿namespace Rdmp.UI.SimpleDialogs
 {
     partial class ConfigureDisclaimerUI
     {

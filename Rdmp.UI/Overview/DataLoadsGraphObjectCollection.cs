@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 
-namespace Dashboard.Overview
+namespace Rdmp.UI.Overview
 {
     public class DataLoadsGraphObjectCollection : PersistableObjectCollection
     {

@@ -13,7 +13,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Repositories;
 using ReusableLibraryCode.Annotations;
 
-namespace CatalogueManager.PipelineUIs.Pipelines
+namespace Rdmp.UI.PipelineUIs.Pipelines
 {
     /// <summary>
     /// Allows you to pick an IPipeline (or create a new one) to achieve a data flow task (e.g. load a file as a new dataset or attach custom data to a cohort etc).  See ConfigureAndExecutePipeline

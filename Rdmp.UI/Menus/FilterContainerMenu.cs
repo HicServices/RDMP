@@ -7,7 +7,7 @@
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data.DataTables;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     class FilterContainerMenu : ContainerMenu
     {

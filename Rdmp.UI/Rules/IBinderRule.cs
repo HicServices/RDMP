@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 
-namespace CatalogueManager.Rules
+namespace Rdmp.UI.Rules
 {
     public interface IBinderRule
     {

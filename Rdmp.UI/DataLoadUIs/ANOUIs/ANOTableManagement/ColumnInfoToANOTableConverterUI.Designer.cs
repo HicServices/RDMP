@@ -1,4 +1,4 @@
-﻿namespace CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement
+﻿namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
 {
     partial class ColumnInfoToANOTableConverterUI
     {

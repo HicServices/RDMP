@@ -6,10 +6,6 @@
 
 using System;
 using System.Linq;
-using CatalogueManager.AggregationUIs;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
@@ -19,8 +15,12 @@ using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.UI.AggregationUIs;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace DataExportManager.ProjectUI.Graphs
+namespace Rdmp.UI.ProjectUI.Graphs
 {
     /// <summary>
     /// As part of the ongoing effort to ensure extracted project data is correct (releasing incorrect data to a researcher is about the worst mistake you can make as a data analyst) a 

@@ -7,19 +7,17 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Menus;
-using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.ProjectUI.Graphs;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ProjectUI.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents.Dialogs;
 
-namespace DataExportManager.Menus
+namespace Rdmp.UI.Menus
 {
     class SelectedDataSetsMenu : RDMPContextMenuStrip
     {

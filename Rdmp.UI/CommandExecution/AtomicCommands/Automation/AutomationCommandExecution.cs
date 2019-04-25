@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueManager.ItemActivation;
 using CommandLine;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.UI.ItemActivation;
 
-namespace CatalogueManager.CommandExecution.AtomicCommands.Automation
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation
 {
     public abstract class AutomationCommandExecution : BasicUICommandExecution
     {

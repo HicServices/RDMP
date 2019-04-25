@@ -1,4 +1,6 @@
-﻿namespace CatalogueManager.LoadExecutionUIs
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.LoadExecutionUIs
 {
     partial class ExecuteCacheProgressUI
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             this.cbFailures = new System.Windows.Forms.CheckBox();
-            this.checkAndExecuteUI1 = new CatalogueManager.SimpleControls.CheckAndExecuteUI();
+            this.checkAndExecuteUI1 = new CheckAndExecuteUI();
             this.panel1 = new System.Windows.Forms.Panel();
             this.panel1.SuspendLayout();
             this.SuspendLayout();

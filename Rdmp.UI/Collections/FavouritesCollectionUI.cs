@@ -7,12 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 
-namespace CatalogueManager.Collections
+namespace Rdmp.UI.Collections
 {
     /// <summary>
     /// Collection that shows all of a users favourited objects.  Only root objects will be displayed (this means that if you favourite a Catalogue and 3 

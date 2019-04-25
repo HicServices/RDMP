@@ -8,13 +8,13 @@ using System;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
+using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Exceptions;
 using ReusableUIComponents.Dialogs;
 
-namespace CatalogueManager.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems
 {
     [System.ComponentModel.DesignerCategory("")]
     public class AtomicCommandMenuItem : ToolStripMenuItem

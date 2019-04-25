@@ -1,4 +1,4 @@
-﻿namespace CohortManager.Wizard
+﻿namespace Rdmp.UI.Wizard
 {
     partial class CreateNewCohortIdentificationConfigurationUI
     {
@@ -39,12 +39,12 @@
             this.tbName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.inclusionCriteria1 = new CohortManager.Wizard.SimpleCohortSetUI();
-            this.setOperationInclude = new CohortManager.Wizard.SimpleSetOperation();
-            this.inclusionCriteria2 = new CohortManager.Wizard.SimpleCohortSetUI();
-            this.setOperationExclude = new CohortManager.Wizard.SimpleSetOperation();
-            this.exclusionCriteria1 = new CohortManager.Wizard.SimpleCohortSetUI();
-            this.exclusionCriteria2 = new CohortManager.Wizard.SimpleCohortSetUI();
+            this.inclusionCriteria1 = new SimpleCohortSetUI();
+            this.setOperationInclude = new SimpleSetOperation();
+            this.inclusionCriteria2 = new SimpleCohortSetUI();
+            this.setOperationExclude = new SimpleSetOperation();
+            this.exclusionCriteria1 = new SimpleCohortSetUI();
+            this.exclusionCriteria2 = new SimpleCohortSetUI();
             ((System.ComponentModel.ISupportInitialize)(this.pbBigImageTopLeft)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();

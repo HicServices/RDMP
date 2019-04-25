@@ -6,14 +6,13 @@
 
 using System;
 using System.Drawing;
-using CatalogueManager.Icons.IconProvision;
-using DataExportManager.Icons.IconProvision.StateBasedIconProviders;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.Data.LinkCreators;
 using Rdmp.Core.DataExport.Providers.Nodes;
+using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace DataExportManager.Icons.IconProvision
+namespace Rdmp.UI.Icons.IconProvision
 {
     public class DataExportIconProvider : CatalogueIconProvider
     {

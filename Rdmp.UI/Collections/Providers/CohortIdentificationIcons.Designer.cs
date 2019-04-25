@@ -8,10 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace CohortManager.Collections.Providers {
-    using System;
-    
-    
+namespace Rdmp.UI.Collections.Providers {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
