@@ -7,6 +7,11 @@
     <Copyright>Copyright ©  2019</Copyright>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Remove="Resources\**" />
+    <EmbeddedResource Remove="Resources\**" />
+    <None Remove="Resources\**" />
+  </ItemGroup>
+  <ItemGroup>
     <None Remove="DataLoad\Engine\Resources\ExpectedData.sql" />
     <None Remove="DataLoad\Engine\Resources\LiveData.sql" />
     <None Remove="DataLoad\Engine\Resources\StagingData.sql" />
@@ -35,11 +40,17 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="DataLoad\Engine\Integration\Cache\" />
-    <Folder Include="Resources\" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
     <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="CatalogueLibrary\TestResources.Designer.cs">
+      <DependentUpon>TestResources.resx</DependentUpon>
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="DataLoad\Engine\Resources\Resource1.resx">
