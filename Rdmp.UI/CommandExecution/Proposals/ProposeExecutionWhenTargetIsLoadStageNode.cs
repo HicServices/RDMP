@@ -6,7 +6,7 @@
 
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;

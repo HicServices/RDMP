@@ -8,9 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Providers;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.Providers;
 
 namespace Rdmp.Core.Repositories.Managers.HighPerformance
 {

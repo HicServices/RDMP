@@ -6,7 +6,7 @@
 
 using System.Drawing;
 using System.Threading.Tasks;
-using Rdmp.Core.CohortComitting.Pipeline;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

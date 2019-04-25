@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Providers;
-using Rdmp.Core.DataExport.Providers.Nodes;
+using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 

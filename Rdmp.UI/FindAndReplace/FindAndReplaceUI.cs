@@ -13,7 +13,7 @@ using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;

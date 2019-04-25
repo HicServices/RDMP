@@ -10,7 +10,7 @@ using BrightIdeasSoftware;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Governance;
-using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;

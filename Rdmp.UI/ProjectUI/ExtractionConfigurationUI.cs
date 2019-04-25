@@ -10,7 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CohortComitting.Pipeline;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
 using Rdmp.UI.Collections;

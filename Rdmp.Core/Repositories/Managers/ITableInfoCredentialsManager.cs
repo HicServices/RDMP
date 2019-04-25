@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Repositories.Managers

@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CohortComitting.Pipeline;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;

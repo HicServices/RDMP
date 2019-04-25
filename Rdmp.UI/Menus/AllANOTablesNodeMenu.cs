@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
-using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.Databases;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 

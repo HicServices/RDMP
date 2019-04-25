@@ -9,8 +9,8 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Providers;
-using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
+using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 

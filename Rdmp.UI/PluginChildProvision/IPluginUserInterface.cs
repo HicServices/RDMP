@@ -8,7 +8,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.Providers;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;

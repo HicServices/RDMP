@@ -6,7 +6,7 @@
 
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;

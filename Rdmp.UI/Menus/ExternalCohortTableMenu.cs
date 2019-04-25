@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Providers.Nodes.UsedByProject;
+using Rdmp.Core.Providers.Nodes.UsedByProject;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 

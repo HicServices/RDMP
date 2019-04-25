@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;

@@ -7,7 +7,7 @@
 using System.Linq;
 using BrightIdeasSoftware;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.Providers;
 using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers.Filtering

@@ -6,7 +6,7 @@
 
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.DataAccess;
 

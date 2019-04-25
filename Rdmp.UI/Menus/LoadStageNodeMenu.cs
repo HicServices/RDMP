@@ -8,11 +8,11 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 

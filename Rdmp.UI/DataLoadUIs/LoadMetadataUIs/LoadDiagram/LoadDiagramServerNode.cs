@@ -10,8 +10,8 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram

@@ -1,0 +1,424 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Rdmp.Core.Providers.Nodes.Node" Collapsed="true">
+    <Position X="14" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\Node.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.AllCataloguesUsedByLoadMetadataNode" Collapsed="true">
+    <Position X="20.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAAAEAAAAAAAEgAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\AllCataloguesUsedByLoadMetadataNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.AllProcessTasksUsedByLoadMetadataNode" Collapsed="true">
+    <Position X="25.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAAAAAAAAAAAEgAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\AllProcessTasksUsedByLoadMetadataNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.LoadDirectoryNode" Collapsed="true">
+    <Position X="32" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEFAAAAAAAAAAAAEgAAAAAAAAAAAAIAAAAAAAAEAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\LoadDirectoryNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.LoadMetadataScheduleNode" Collapsed="true">
+    <Position X="38.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAAAAAAAAAAAEgAAAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\LoadMetadataScheduleNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.LoadStageNode" Collapsed="true">
+    <Position X="23" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AEEAAAAAAAAAAAAEgAAAAAAAAAAAAIBAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\LoadStageNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.PermissionWindowUsedByCacheProgressNode" Collapsed="true">
+    <Position X="29.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAEgAQAACAAEAAAAIgAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\PermissionWindowUsedByCacheProgressNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ProjectCohortNodes.ProjectCohortIdentificationConfigurationAssociationsNode" Collapsed="true">
+    <Position X="38.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\ProjectCohortNodes\ProjectCohortIdentificationConfigurationAssociationsNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ProjectCohortNodes.ProjectCohortsNode" Collapsed="true">
+    <Position X="23" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAiA=</HashCode>
+      <FileName>Providers\Nodes\ProjectCohortNodes\ProjectCohortsNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ProjectCohortNodes.ProjectSavedCohortsNode" Collapsed="true">
+    <Position X="18.5" Y="1.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\ProjectCohortNodes\ProjectSavedCohortsNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.UsedByNodes.ObjectUsedByOtherObjectNode&lt;T, T2&gt;" Collapsed="true">
+    <Position X="4.5" Y="2.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAABAAAAABAAAAAEgAAAAAAAAAACAIAAAAAAIAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\UsedByNodes\ObjectUsedByOtherObjectNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AggregatesNode" Collapsed="true">
+    <Position X="29.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAACAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AggregatesNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.CatalogueItemsNode" Collapsed="true">
+    <Position X="36.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAACAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\CatalogueItemsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.CatalogueLookupsNode" Collapsed="true">
+    <Position X="20.75" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAACAAAAAAAAAIAAAAAAAAAQAAA=</HashCode>
+      <FileName>Providers\Nodes\CatalogueLookupsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.CohortSetsNode" Collapsed="true">
+    <Position X="27.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAACAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\CohortSetsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.DataAccessCredentialUsageNode" Collapsed="true">
+    <Position X="36.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAAAAAEgAQAAAAAAAAEAIAAAABAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\DataAccessCredentialUsageNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.DocumentationNode" Collapsed="true">
+    <Position X="20.75" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAACAAAAAACAIIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\DocumentationNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ExtractionConfigurationsNode" Collapsed="true">
+    <Position X="25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\ExtractionConfigurationsNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ExtractionDirectoryNode" Collapsed="true">
+    <Position X="29.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAEAAAA=</HashCode>
+      <FileName>Providers\Nodes\ExtractionDirectoryNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.FrozenExtractionConfigurationsNode" Collapsed="true">
+    <Position X="32" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\FrozenExtractionConfigurationsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.IdentifierDumpServerUsageNode" Collapsed="true">
+    <Position X="31.5" Y="4.25" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAQAAAAAAAAAAIAAAABAAAgAAAA=</HashCode>
+      <FileName>Providers\Nodes\IdentifierDumpServerUsageNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.JoinableCollectionNode" Collapsed="true">
+    <Position X="23" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEBAAAAAAAAAIoEgAAUAAEAAAAAAYAEgEAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\JoinableCollectionNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LinkedCohortNode" Collapsed="true">
+    <Position X="27.5" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAABAAAAAEgAQAAAAAAAAAAIAAgAAAgAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LinkedCohortNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LinkedColumnInfoNode" Collapsed="true">
+    <Position X="34.25" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAACAABAAAAAEgAQAAAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LinkedColumnInfoNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.PackageContentNode" Collapsed="true">
+    <Position X="18.5" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAFgAQQAAAAAAAAAIAAAAAAAgAAAAA=</HashCode>
+      <FileName>Providers\Nodes\PackageContentNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Orientation="Left" Position="0.491" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ParametersNode" Collapsed="true">
+    <Position X="25.25" Y="3" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAEAAAEgAAAAAAAAAAAAIAAAAAAAAQAAAA=</HashCode>
+      <FileName>Providers\Nodes\ParametersNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.PreLoadDiscardedColumnsNode" Collapsed="true">
+    <Position X="34.25" Y="3" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAAAAAAAAAAAAIAAAABAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\PreLoadDiscardedColumnsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ProjectCataloguesNode" Collapsed="true">
+    <Position X="18.5" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAAACAAAAAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\ProjectCataloguesNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.SingletonNode" Collapsed="true">
+    <Position X="14" Y="4" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAEgAAAAAAAAAAAAIAACAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\SingletonNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.TableInfoServerNode" Collapsed="true">
+    <Position X="27.25" Y="4.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIAAgAAAAAAAACEgAAAAAAAAAAAAIAAAAAAAACAAAA=</HashCode>
+      <FileName>Providers\Nodes\TableInfoServerNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.CohortNodes.AllFreeCohortIdentificationConfigurationsNode" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\CohortNodes\AllFreeCohortIdentificationConfigurationsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.CohortNodes.AllProjectCohortIdentificationConfigurationsNode" Collapsed="true">
+    <Position X="2.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\CohortNodes\AllProjectCohortIdentificationConfigurationsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.PipelineNodes.AllPipelinesNode" Collapsed="true">
+    <Position X="5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\PipelineNodes\AllPipelinesNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.PipelineNodes.OtherPipelinesNode" Collapsed="true">
+    <Position X="7.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\PipelineNodes\OtherPipelinesNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.PipelineNodes.StandardPipelineUseCaseNode" Collapsed="true">
+    <Position X="9.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAACAAE=</HashCode>
+      <FileName>Providers\Nodes\PipelineNodes\StandardPipelineUseCaseNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.SharingNodes.AllObjectExportsNode" Collapsed="true">
+    <Position X="11.75" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\SharingNodes\AllObjectExportsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.SharingNodes.AllObjectImportsNode" Collapsed="true">
+    <Position X="14" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\SharingNodes\AllObjectImportsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.SharingNodes.AllObjectSharingNode" Collapsed="true">
+    <Position X="16.25" Y="5.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\SharingNodes\AllObjectSharingNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllANOTablesNode" Collapsed="true">
+    <Position X="18.5" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllANOTablesNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllCohortsNode" Collapsed="true">
+    <Position X="20.75" Y="6.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllCohortsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllConnectionStringKeywordsNode" Collapsed="true">
+    <Position X="0.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllConnectionStringKeywordsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllDataAccessCredentialsNode" Collapsed="true">
+    <Position X="2.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllDataAccessCredentialsNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllExternalServersNode" Collapsed="true">
+    <Position X="5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllExternalServersNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllGovernanceNode" Collapsed="true">
+    <Position X="7.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllGovernanceNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllLoadMetadatasNode" Collapsed="true">
+    <Position X="9.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllLoadMetadatasNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllPermissionWindowsNode" Collapsed="true">
+    <Position X="11.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllPermissionWindowsNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllRDMPRemotesNode" Collapsed="true">
+    <Position X="14" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllRDMPRemotesNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllServersNode" Collapsed="true">
+    <Position X="16.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllServersNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.AllStandardRegexesNode" Collapsed="true">
+    <Position X="18.5" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\AllStandardRegexesNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.ArbitraryFolderNode" Collapsed="true">
+    <Position X="20.75" Y="7.5" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\ArbitraryFolderNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.DecryptionPrivateKeyNode" Collapsed="true">
+    <Position X="22.75" Y="7" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\DecryptionPrivateKeyNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.CohortNodes.QueryCacheUsedByCohortIdentificationNode" Collapsed="true">
+    <Position X="0.5" Y="3.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\CohortNodes\QueryCacheUsedByCohortIdentificationNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.CatalogueUsedByLoadMetadataNode" Collapsed="true">
+    <Position X="4.25" Y="3.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\CatalogueUsedByLoadMetadataNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.LoadMetadataNodes.OverrideRawServerNode" Collapsed="true">
+    <Position X="7.5" Y="3.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAIAAAAAAAAEAAQAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\LoadMetadataNodes\OverrideRawServerNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.UsedByProject.CohortSourceUsedByProjectNode" Collapsed="true">
+    <Position X="10.25" Y="3.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Providers\Nodes\UsedByProject\CohortSourceUsedByProjectNode.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.PipelineNodes.PipelineCompatibleWithUseCaseNode" Collapsed="true">
+    <Position X="0.5" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACABAAAAAEgAQAAAAAAAAAAIgAAAAAAAACAAA=</HashCode>
+      <FileName>Providers\Nodes\PipelineNodes\PipelineCompatibleWithUseCaseNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

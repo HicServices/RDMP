@@ -13,7 +13,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Events;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CohortComitting.Pipeline;
+using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Icons.IconProvision;

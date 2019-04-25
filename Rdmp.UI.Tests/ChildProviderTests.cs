@@ -6,8 +6,8 @@
 
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Nodes;
-using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.Tests

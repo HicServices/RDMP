@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel.Composition;
 using FAnsi;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;

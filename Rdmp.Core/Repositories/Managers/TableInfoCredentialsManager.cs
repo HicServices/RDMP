@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Nodes;
+using Rdmp.Core.Providers.Nodes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 

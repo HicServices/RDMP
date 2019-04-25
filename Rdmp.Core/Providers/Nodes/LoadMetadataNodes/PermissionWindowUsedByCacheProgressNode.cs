@@ -1,0 +1,73 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Cache;
+
+namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
+{
+    public class PermissionWindowUsedByCacheProgressNode: Node,IDeletableWithCustomMessage
+    {
+        public CacheProgress CacheProgress { get; set; }
+        public PermissionWindow PermissionWindow { get; private set; }
+        public bool DirectionIsCacheToPermissionWindow { get; set; }
+
+        public PermissionWindowUsedByCacheProgressNode(CacheProgress cacheProgress, PermissionWindow permissionWindow, bool directionIsCacheToPermissionWindow)
+        {
+            CacheProgress = cacheProgress;
+            PermissionWindow = permissionWindow;
+            DirectionIsCacheToPermissionWindow = directionIsCacheToPermissionWindow;
+        }
+
+        public override string ToString()
+        {
+            return DirectionIsCacheToPermissionWindow ? PermissionWindow.Name : CacheProgress.ToString();
+        }
+
+        public void DeleteInDatabase()
+        {
+            CacheProgress.PermissionWindow_ID = null;
+            CacheProgress.SaveToDatabase();
+        }
+
+        public string GetDeleteMessage()
+        {
+            return "stop using a PermissionWindow with this CacheProgress";
+        }
+        
+        #region Equality Members
+        protected bool Equals(PermissionWindowUsedByCacheProgressNode other)
+        {
+            return CacheProgress.Equals(other.CacheProgress) && PermissionWindow.Equals(other.PermissionWindow) && DirectionIsCacheToPermissionWindow.Equals(other.DirectionIsCacheToPermissionWindow);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((PermissionWindowUsedByCacheProgressNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            unchecked
+            {
+                int hashCode = CacheProgress.GetHashCode();
+                hashCode = (hashCode*397) ^ PermissionWindow.GetHashCode();
+                hashCode = (hashCode*397) ^ DirectionIsCacheToPermissionWindow.GetHashCode();
+                return hashCode;
+            }
+        }
+        #endregion
+
+        public object GetImageObject()
+        {
+            return DirectionIsCacheToPermissionWindow ? PermissionWindow : (object)CacheProgress;
+        }
+    }
+}

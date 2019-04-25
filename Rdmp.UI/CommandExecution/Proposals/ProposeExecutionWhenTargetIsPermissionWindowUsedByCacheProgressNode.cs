@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
-using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution;

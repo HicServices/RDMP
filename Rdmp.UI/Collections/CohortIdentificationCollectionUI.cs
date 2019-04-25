@@ -6,8 +6,8 @@
 
 using System;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Nodes.CohortNodes;
-using Rdmp.Core.DataExport.Providers;
+using Rdmp.Core.Providers;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;

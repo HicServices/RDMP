@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.Providers;
 
 namespace Rdmp.Core.Repositories.Managers.HighPerformance
 {

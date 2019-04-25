@@ -6,7 +6,7 @@
 
 using System;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.Providers;
 
 namespace Rdmp.UI.Refreshing
 {

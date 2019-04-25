@@ -10,6 +10,7 @@ using System.Data.Common;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 
@@ -84,7 +85,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
         /// joined on during query generation and which servers are connected to during query execution etc.  
         /// 
         /// <para>This field can be null only if the <see cref="ColumnInfo"/> has been deleted rendering this an orphan and broken.  This is considered a problem by 
-        /// <see cref="CatalogueLibrary.Providers.CatalogueProblemProvider"/> and as such it is the users responsibility to fix it, you shouldn't worry too much about null
+        /// <see cref="CatalogueProblemProvider"/> and as such it is the users responsibility to fix it, you shouldn't worry too much about null
         /// checking this field.</para> 
         /// </summary>
         [NoMappingToDatabase]

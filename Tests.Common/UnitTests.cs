@@ -436,7 +436,16 @@ namespace Tests.Common
                 return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(Repository,WhenIHaveA<Project>(),WhenIHaveA<CohortIdentificationConfiguration>());
             
             if (typeof (T) == typeof(ExternalCohortTable))
-                return (T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer);
+                return (T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
+                {
+                    Database="MyCohortsDb",
+                    DefinitionTableForeignKeyField = "c_id",
+                    PrivateIdentifierField = "priv",
+                    ReleaseIdentifierField = "rel",
+                    TableName = "Cohorts",
+                    DefinitionTableName = "InventoryTable",
+                    Server = "localhost\\sqlexpress"
+                };
 
             if (typeof (T) == typeof(ExtractableCohort))
                 throw new NotSupportedException("You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");

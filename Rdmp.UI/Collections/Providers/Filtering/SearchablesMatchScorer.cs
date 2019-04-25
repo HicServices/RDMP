@@ -12,7 +12,7 @@ using System.Threading;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Providers;
+using Rdmp.Core.Providers;
 using ReusableLibraryCode;
 
 namespace Rdmp.UI.Collections.Providers.Filtering

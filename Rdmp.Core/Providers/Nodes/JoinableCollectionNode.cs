@@ -1,0 +1,106 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using ReusableLibraryCode.DataAccess;
+
+namespace Rdmp.Core.Providers.Nodes
+{
+    /// <summary>
+    /// Collection of queries which can be joined against when building cohorts (e.g. to find all hospital admissions within 6 
+    /// months of a prescription for drug X).  See <see cref="JoinableCohortAggregateConfiguration"/>.
+    /// </summary>
+    public class JoinableCollectionNode:Node,IOrderable
+    {
+        public CohortIdentificationConfiguration Configuration { get; set; }
+        public JoinableCohortAggregateConfiguration[] Joinables { get; set; }
+
+        public JoinableCollectionNode(CohortIdentificationConfiguration configuration, JoinableCohortAggregateConfiguration[] joinables)
+        {
+            Configuration = configuration;
+            Joinables = joinables;
+        }
+
+        public string GetCatalogueName()
+        {
+            return "";
+        }
+
+        public IMapsDirectlyToDatabaseTable Child
+        {
+            get { return null; }
+        }
+
+        public IDataAccessPoint[] GetDataAccessPoints()
+        {
+            return null;
+        }
+
+        public override string ToString()
+        {
+            return "Patient Index Table(s)";
+        }
+
+        public string FinalRowCount()
+        {
+            return "";
+        }
+        public int? CumulativeRowCount { set; get; }
+        
+
+        public string GetStateDescription()
+        {
+            return "";
+        }
+
+        public string Order()
+        {
+            return "";
+        }
+        
+        public string ElapsedTime = "";
+
+        public string GetCachedQueryUseCount()
+        {
+            return "";
+        }
+
+        public string DescribePurpose()
+        {
+
+            return @"Drop Aggregates (datasets) here to create patient index tables (Tables with interesting
+patient specific dates/fields which you need to use in other datasets). For example if you are
+interested in studying hospitalisations for condition X and all other patient identification 
+criteria are 'in the 6 months' / 'in the 12 months' post hospitalisation date per patient)";
+        }
+
+        protected bool Equals(JoinableCollectionNode other)
+        {
+            return Equals(Configuration, other.Configuration);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            if (ReferenceEquals(this, obj)) return true;
+            if (obj.GetType() != this.GetType()) return false;
+            return Equals((JoinableCollectionNode) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return (Configuration != null ? Configuration.GetHashCode() : 0) * GetType().GetHashCode();
+        }
+
+        int IOrderable.Order
+        {
+            get { return 9999; }
+            set { }
+        }
+    }
+}
