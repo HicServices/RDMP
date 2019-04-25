@@ -12,12 +12,11 @@ using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.DataExport.Repositories;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Tests.Common;
 

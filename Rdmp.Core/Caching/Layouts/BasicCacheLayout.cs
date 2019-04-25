@@ -6,7 +6,7 @@
 
 using System.ComponentModel.Composition;
 using System.IO;
-using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
 namespace Rdmp.Core.Caching.Layouts

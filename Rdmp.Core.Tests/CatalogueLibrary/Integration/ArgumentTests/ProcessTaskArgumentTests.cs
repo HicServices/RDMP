@@ -14,7 +14,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration.ArgumentTests

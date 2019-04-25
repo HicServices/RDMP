@@ -7,7 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.UI.Collections;

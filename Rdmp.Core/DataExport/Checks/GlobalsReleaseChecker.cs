@@ -9,12 +9,12 @@ using System.IO;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.Checks

@@ -8,8 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.UserPicks
 {

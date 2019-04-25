@@ -10,7 +10,7 @@ using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 

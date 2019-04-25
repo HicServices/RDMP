@@ -11,7 +11,7 @@ using System.Linq;
 using System.Text;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 

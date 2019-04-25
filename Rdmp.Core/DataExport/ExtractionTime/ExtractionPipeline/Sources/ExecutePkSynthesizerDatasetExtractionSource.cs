@@ -12,7 +12,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

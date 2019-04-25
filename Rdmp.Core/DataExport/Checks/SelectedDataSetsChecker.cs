@@ -13,8 +13,6 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.Data.LinkCreators;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;

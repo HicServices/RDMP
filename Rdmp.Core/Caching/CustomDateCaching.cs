@@ -6,12 +6,12 @@
 
 using System;
 using System.Threading.Tasks;
-using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.Caching.Requests.FetchRequestProvider;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching

@@ -10,9 +10,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.Core.Logging.Listeners;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

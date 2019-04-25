@@ -10,7 +10,7 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines

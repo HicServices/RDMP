@@ -10,7 +10,7 @@ using System.IO;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Reports;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
 using Rdmp.UI.Collections;

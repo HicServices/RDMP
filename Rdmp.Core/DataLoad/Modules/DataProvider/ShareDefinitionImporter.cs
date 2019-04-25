@@ -8,7 +8,6 @@ using System.IO;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.DataProvider;
 using Rdmp.Core.DataLoad.Engine.Job;

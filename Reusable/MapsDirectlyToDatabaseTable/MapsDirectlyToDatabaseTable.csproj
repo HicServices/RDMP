@@ -19,8 +19,7 @@
     <ProjectReference Include="..\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
-      </ItemGroup>
-  <ItemGroup>
     <PackageReference Include="NLog" Version="4.6.2" />
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.5.0" />
   </ItemGroup>
 </Project>

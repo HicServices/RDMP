@@ -15,7 +15,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

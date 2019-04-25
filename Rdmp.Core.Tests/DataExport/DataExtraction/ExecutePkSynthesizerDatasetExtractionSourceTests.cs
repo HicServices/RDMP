@@ -11,14 +11,14 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.CommandExecution;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 

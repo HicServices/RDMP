@@ -13,8 +13,8 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 

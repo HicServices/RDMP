@@ -7,7 +7,7 @@
 using System.IO;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 
 namespace Rdmp.Core.DataExport.Providers.Nodes

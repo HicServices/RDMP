@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.IO;
-using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Progress;
 

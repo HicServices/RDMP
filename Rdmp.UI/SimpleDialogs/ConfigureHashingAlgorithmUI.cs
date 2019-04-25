@@ -6,7 +6,7 @@
 
 using System;
 using System.ComponentModel;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.Repositories.Managers;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

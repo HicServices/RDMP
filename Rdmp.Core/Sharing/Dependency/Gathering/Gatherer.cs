@@ -12,8 +12,8 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Sharing.Dependency.Gathering
 {

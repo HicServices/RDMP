@@ -16,7 +16,7 @@ using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.SharingNodes;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.CatalogueLibrary.Providers
 {

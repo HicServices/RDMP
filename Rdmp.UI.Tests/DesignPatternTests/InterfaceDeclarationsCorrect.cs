@@ -10,7 +10,7 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.Tests.DesignPatternTests
 {

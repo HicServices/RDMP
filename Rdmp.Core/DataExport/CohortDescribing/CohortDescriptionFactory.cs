@@ -6,8 +6,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.CohortDescribing
 {

@@ -16,7 +16,7 @@ using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Referencing;
 using Rdmp.Core.CatalogueLibrary.Exceptions;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 

@@ -17,7 +17,7 @@ using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes;
-using Rdmp.Core.DataExport.CohortCreationPipeline;
+using Rdmp.Core.CohortComitting.Pipeline;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;

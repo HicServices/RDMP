@@ -12,8 +12,8 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 

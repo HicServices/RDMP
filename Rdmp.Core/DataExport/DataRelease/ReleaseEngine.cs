@@ -9,12 +9,12 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
-using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
 using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 

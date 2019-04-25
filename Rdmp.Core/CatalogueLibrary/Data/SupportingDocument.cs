@@ -10,7 +10,7 @@ using System.Data.Common;
 using System.IO;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.CatalogueLibrary.Data

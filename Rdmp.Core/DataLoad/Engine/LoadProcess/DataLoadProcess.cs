@@ -8,11 +8,11 @@ using System;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.Caching.Factories;
+using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.CatalogueLibrary.Checks;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;

@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Rdmp.Core.Caching.PipelineExecution.Sources;
+using Rdmp.Core.Caching.Pipeline.Sources;
 using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;

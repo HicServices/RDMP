@@ -10,7 +10,7 @@ using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Nodes;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;

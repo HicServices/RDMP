@@ -11,7 +11,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 

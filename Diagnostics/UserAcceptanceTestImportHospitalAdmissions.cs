@@ -15,7 +15,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 

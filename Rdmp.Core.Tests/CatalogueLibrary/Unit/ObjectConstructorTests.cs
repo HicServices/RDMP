@@ -6,8 +6,7 @@
 
 using System.ComponentModel.Composition;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction.Exceptions;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Unit
 {

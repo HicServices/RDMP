@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.Providers;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Copying;

@@ -9,9 +9,8 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport
 {

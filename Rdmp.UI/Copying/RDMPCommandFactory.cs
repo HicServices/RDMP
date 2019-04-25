@@ -18,7 +18,6 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.UI.Copying.Commands;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;

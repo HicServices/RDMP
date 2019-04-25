@@ -7,7 +7,7 @@
 using System.Data;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Components;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components

@@ -10,9 +10,9 @@ using System.Data.Common;
 using System.IO;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.DataExport.DataRelease.Audit

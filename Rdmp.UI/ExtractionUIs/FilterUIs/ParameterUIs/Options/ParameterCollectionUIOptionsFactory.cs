@@ -11,9 +11,9 @@ using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CohortCreation.QueryBuilding;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.ExtractionUIs.FilterUIs.Options;
 using ReusableUIComponents.Dialogs;
 

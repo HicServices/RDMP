@@ -26,9 +26,9 @@ using Rdmp.Core.CatalogueLibrary.Nodes.CohortNodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.SharingNodes;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers.HighPerformance;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.Repositories.Managers.HighPerformance;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 

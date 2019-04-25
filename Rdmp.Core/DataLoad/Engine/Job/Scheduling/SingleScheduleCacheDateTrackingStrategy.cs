@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.Caching.Factories;
 using Rdmp.Core.Caching.Layouts;
-using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.Pipeline;
+using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using ReusableLibraryCode.Progress;

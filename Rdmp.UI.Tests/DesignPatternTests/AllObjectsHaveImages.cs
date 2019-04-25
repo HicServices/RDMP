@@ -13,7 +13,7 @@ using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode;
 using Tests.Common;
 
-namespace Rdmp.Core.Tests.CatalogueLibrary.Integration
+namespace Rdmp.UI.Tests.DesignPatternTests
 {
     public class AllObjectsHaveImages:DatabaseTests
     {

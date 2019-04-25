@@ -19,8 +19,8 @@ using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Data.Remoting;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {

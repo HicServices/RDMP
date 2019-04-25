@@ -12,11 +12,10 @@ using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.DataRelease.Exceptions;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.DataExport.ExtractionTime
 {

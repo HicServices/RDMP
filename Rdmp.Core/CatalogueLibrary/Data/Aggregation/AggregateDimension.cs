@@ -13,7 +13,7 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 

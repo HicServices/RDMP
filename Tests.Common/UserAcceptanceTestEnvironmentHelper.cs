@@ -7,7 +7,7 @@
 using System;
 using System.Data.SqlClient;
 using Diagnostics;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
 namespace Tests.Common

@@ -11,11 +11,10 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.DataRelease.Potential

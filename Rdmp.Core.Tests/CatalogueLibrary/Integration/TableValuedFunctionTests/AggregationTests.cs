@@ -9,7 +9,7 @@ using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration.TableValuedFunctionTests

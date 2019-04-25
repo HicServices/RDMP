@@ -14,7 +14,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 

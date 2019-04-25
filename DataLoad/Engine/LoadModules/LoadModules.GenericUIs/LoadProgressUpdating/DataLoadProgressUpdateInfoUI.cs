@@ -9,8 +9,8 @@ using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
+using Rdmp.Core.Repositories;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

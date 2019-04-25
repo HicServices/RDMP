@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Referencing;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.ImportExport
 {

@@ -6,8 +6,7 @@
 
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Providers;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.Providers.Nodes;
 using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
 

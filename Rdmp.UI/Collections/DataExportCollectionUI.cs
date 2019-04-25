@@ -7,7 +7,7 @@
 using System;
 using BrightIdeasSoftware;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.Providers;
 using Rdmp.Core.DataExport.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;

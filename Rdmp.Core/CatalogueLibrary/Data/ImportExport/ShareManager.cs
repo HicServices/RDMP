@@ -13,11 +13,9 @@ using System.Text;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction.Exceptions;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.ImportExport
 {

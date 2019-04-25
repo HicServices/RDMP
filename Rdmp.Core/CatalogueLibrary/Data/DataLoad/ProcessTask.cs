@@ -15,7 +15,7 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 

@@ -11,8 +11,8 @@ using System.Reflection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.Repositories;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary

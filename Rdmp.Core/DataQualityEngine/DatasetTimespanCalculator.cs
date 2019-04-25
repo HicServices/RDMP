@@ -9,6 +9,7 @@ using System.Data;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Reports;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataQualityEngine
 {

@@ -9,7 +9,7 @@ using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 using Tests.Common;

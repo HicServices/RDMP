@@ -9,10 +9,11 @@ using System.Collections.Generic;
 using FAnsi;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
-using Rdmp.Core.DataExport.CohortCreationPipeline;
-using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations.IdentifierAllocation;
-using Rdmp.Core.DataExport.CohortDatabaseWizard;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.CohortComitting.CohortDatabaseWizard;
+using Rdmp.Core.CohortComitting.Pipeline;
+using Rdmp.Core.CohortComitting.Pipeline.Destinations.IdentifierAllocation;
+using Rdmp.Core.CohortComitting.CohortDatabaseWizard;
+using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

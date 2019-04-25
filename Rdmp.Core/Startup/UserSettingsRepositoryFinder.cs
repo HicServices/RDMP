@@ -6,7 +6,7 @@
 
 using System;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Settings;
 

@@ -7,7 +7,7 @@
 using System;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {

@@ -9,8 +9,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 

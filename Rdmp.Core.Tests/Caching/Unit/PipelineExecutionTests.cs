@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.Caching.PipelineExecution;
+using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;

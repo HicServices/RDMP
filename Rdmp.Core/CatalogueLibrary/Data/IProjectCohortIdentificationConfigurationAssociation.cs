@@ -6,6 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CatalogueLibrary.Data
 {

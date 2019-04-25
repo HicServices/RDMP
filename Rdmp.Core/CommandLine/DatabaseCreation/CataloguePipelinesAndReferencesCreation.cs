@@ -10,15 +10,15 @@ using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CohortComitting.Pipeline.Destinations;
+using Rdmp.Core.CohortComitting.Pipeline.Sources;
 using Rdmp.Core.Databases;
-using Rdmp.Core.DataExport.CohortCreationPipeline.Destinations;
-using Rdmp.Core.DataExport.CohortCreationPipeline.Sources;
-using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation

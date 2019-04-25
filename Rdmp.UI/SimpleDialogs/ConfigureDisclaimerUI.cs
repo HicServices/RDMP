@@ -6,7 +6,7 @@
 
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.Repositories.Managers;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 

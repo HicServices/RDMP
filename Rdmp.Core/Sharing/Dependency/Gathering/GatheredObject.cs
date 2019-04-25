@@ -12,7 +12,6 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport.Exceptions;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
 using ReusableLibraryCode;
 

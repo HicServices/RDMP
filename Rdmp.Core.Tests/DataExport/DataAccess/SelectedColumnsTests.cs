@@ -7,8 +7,7 @@
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Data;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataExport.DataAccess

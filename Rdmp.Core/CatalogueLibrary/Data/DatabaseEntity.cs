@@ -13,7 +13,7 @@ using System.Runtime.CompilerServices;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.CatalogueLibrary.Data

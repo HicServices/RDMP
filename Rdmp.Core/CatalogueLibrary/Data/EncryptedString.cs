@@ -6,7 +6,7 @@
 
 using System;
 using System.Security.Cryptography;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CatalogueLibrary.Data
 {

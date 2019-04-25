@@ -8,8 +8,8 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {

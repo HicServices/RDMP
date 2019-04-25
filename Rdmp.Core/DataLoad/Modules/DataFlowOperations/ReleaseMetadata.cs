@@ -10,9 +10,9 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
-using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.ExtractionTime;
-using Rdmp.Core.Sharing.CommandExecution;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

@@ -6,7 +6,7 @@
 
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
-using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.UI.ProjectUI.Graphs
 {

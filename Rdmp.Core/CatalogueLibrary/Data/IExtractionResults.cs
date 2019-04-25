@@ -8,6 +8,7 @@ using System;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CatalogueLibrary.Data
 {

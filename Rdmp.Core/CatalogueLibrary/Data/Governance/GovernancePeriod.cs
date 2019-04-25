@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 

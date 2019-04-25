@@ -6,7 +6,6 @@
 
 using System;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.ExtractionTime.UserPicks;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.UserPicks
 {

@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;

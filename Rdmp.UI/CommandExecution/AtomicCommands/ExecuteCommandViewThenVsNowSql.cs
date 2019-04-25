@@ -7,7 +7,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

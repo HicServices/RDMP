@@ -9,11 +9,9 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Reports.Exceptions;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
 using Rdmp.Core.DataExport;
-using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Sharing.Dependency;
 using Rdmp.Core.Validation.Dependency;
 

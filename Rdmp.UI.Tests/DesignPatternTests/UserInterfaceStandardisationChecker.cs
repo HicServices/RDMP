@@ -15,7 +15,7 @@ using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.PipelineNodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.UsedByNodes;
 using Rdmp.Core.CatalogueLibrary.Providers;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.CatalogueSummary.DataQualityReporting;
 using Rdmp.UI.CatalogueSummary.LoadEvents;
 using Rdmp.UI.DashboardTabs;

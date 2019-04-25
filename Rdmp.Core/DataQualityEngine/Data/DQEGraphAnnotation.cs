@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataQualityEngine.Data
 {

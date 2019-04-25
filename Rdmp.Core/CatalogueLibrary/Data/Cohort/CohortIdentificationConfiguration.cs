@@ -15,7 +15,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;

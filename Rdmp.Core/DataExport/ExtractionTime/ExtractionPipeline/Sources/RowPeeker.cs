@@ -6,7 +6,7 @@
 
 using System;
 using System.Data;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources
 {

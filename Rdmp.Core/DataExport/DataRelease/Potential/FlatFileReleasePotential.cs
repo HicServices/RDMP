@@ -9,7 +9,8 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.DataRelease.Potential
 {

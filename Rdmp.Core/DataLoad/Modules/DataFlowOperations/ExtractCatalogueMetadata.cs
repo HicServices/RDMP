@@ -10,11 +10,10 @@ using System.IO;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
-using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
-using Rdmp.Core.Sharing.CommandExecution;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

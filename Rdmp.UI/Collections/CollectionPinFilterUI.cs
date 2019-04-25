@@ -17,7 +17,7 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Governance;
 using Rdmp.Core.CatalogueLibrary.Data.Remoting;
 using Rdmp.Core.CatalogueLibrary.Providers;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Refreshing;
 using ReusableUIComponents;
 

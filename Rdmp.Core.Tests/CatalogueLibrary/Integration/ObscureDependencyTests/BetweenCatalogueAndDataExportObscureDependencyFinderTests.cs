@@ -9,7 +9,7 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Startup;
 using Tests.Common;
 

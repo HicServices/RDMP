@@ -9,11 +9,11 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.CommandExecution;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Repositories;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration

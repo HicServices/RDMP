@@ -12,7 +12,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.DataLoad
 {

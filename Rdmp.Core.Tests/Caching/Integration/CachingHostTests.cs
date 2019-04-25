@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.Caching.Integration
 {
     public class CachingHostTests : UnitTests
     {
-                /// <summary>
+        /// <summary>
         /// Makes sure that a cache progress pipeline will not be run if we are outside the permission window
         /// </summary>
         [Test]
@@ -56,9 +56,16 @@ namespace Rdmp.Core.Tests.Caching.Integration
             permissionWindow.Name = "Test Permission Window";
 
             
-            TimeSpan yesterdayStart = DateTime.Now.Subtract(new DateTime(0,0,1,0,10,0));
-            TimeSpan yesterdayStop = DateTime.Now.Subtract(new DateTime(0,0,1,0,5,0));
-            permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new []{new PermissionWindowPeriod((int)new DateTime(yesterdayStart.Ticks).DayOfWeek,yesterdayStart,yesterdayStop)}));
+            //Create a time period that we are outwith (1 hour ago to 30 minutes ago).
+            TimeSpan start = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,1,0,0));
+            TimeSpan stop = DateTime.Now.TimeOfDay.Subtract(new TimeSpan(0,0,30,0));
+            permissionWindow.SetPermissionWindowPeriods(new List<PermissionWindowPeriod>(new []
+            {
+                new PermissionWindowPeriod(
+                    (int)DateTime.Now.DayOfWeek,
+                    start,
+                    stop)
+            }));
             permissionWindow.SaveToDatabase();
 
             cp.PermissionWindow_ID = permissionWindow.ID;

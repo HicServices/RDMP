@@ -27,16 +27,13 @@ using Rdmp.Core.CatalogueLibrary.Data.Governance;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.Data.Remoting;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.Data.LinkCreators;
 using Rdmp.Core.DataExport.DataRelease;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.DataRelease.Potential;
-using Rdmp.Core.DataExport.Repositories;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+using Rdmp.Core.Repositories;
 
 namespace Tests.Common
 {

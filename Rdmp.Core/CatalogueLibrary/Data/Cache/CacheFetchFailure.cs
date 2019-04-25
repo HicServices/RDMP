@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.Cache

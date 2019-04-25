@@ -9,10 +9,10 @@ using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Job

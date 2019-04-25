@@ -17,7 +17,7 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
 using Rdmp.Core.Databases;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;

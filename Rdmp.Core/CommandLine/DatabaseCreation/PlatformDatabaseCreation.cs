@@ -2,8 +2,8 @@ using System;
 using System.Data.SqlClient;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.Databases;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation

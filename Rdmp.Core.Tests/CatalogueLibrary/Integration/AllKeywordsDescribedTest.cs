@@ -10,8 +10,8 @@ using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.DataQualityEngine.Data;
+using Rdmp.Core.Repositories;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration

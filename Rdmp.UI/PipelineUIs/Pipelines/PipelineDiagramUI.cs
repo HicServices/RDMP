@@ -11,7 +11,7 @@ using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.DataObjects;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using ReusableLibraryCode.Progress;

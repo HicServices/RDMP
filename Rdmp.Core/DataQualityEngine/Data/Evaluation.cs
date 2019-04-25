@@ -10,6 +10,7 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.DataQualityEngine.Data
@@ -19,15 +20,21 @@ namespace Rdmp.Core.DataQualityEngine.Data
     /// IMapsDirectlyToDatabaseTable/DatabaseEntity pattern except that it doesn't allow for modification/saving since a DQE run is immutable and only created after
     /// a succesful run.
     /// </summary>
-    public class Evaluation:IDeleteable
+    public class Evaluation:DatabaseEntity
     {
-        public int ID { get; private set; }
-        public Catalogue Catalogue { get; private set; }
         public DateTime DateOfEvaluation { get; private set; }
+        public int CatalogueID {get; set; }
 
+        [NoMappingToDatabase]
+        public Catalogue Catalogue { get; private set; }
+        
+        [NoMappingToDatabase]
         public RowState[] RowStates { get; set; }
+
+        [NoMappingToDatabase]
         public ColumnState[] ColumnStates { get; set; }
 
+        [NoMappingToDatabase]
         public DQERepository DQERepository { get; set; }
 
         public IEnumerable<DQEGraphAnnotation> GetAllDQEGraphAnnotations(string pivotCategory = null)
@@ -37,48 +44,45 @@ namespace Rdmp.Core.DataQualityEngine.Data
         }
 
         /// <summary>
-        /// Starts a new evaluation with the given transaction
+        /// 
         /// </summary>
-        public Evaluation(DQERepository dqeRepository,Catalogue c)
+        /// <param name="repository"></param>
+        /// <param name="r"></param>
+        internal Evaluation(DQERepository repository,DbDataReader r):base(repository,r)
         {
-            DQERepository = dqeRepository;
+            DQERepository = repository;
 
-            using(var con = dqeRepository.GetConnection())
-            {
-                DateOfEvaluation = DateTime.Now;
-                Catalogue = c;
-
-                var cmd = DatabaseCommandHelper.GetCommand("INSERT INTO Evaluation(DateOfEvaluation,CatalogueID) VALUES (@dateOfEvaluation," + c.ID + "); SELECT @@IDENTITY;", con.Connection, con.Transaction);
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@dateOfEvaluation",cmd,DateOfEvaluation);
-
-                ID = int.Parse(cmd.ExecuteScalar().ToString());
-            }
-        }
-
-        #region Getting values out of the database
-        
-        //reading data out constructor
-        internal Evaluation(DQERepository dqeRepository, DbDataReader r)
-        {
-            DQERepository = dqeRepository;
-
-            ID = int.Parse(r["ID"].ToString());
             DateOfEvaluation = DateTime.Parse(r["DateOfEvaluation"].ToString());
-
-            int catalogueID = int.Parse(r["CatalogueID"].ToString());
+            CatalogueID = int.Parse(r["CatalogueID"].ToString());
 
             try
             {
-                Catalogue = DQERepository.CatalogueRepository.GetObjectByID<Catalogue>(catalogueID);
+                Catalogue = DQERepository.CatalogueRepository.GetObjectByID<Catalogue>(CatalogueID);
             }
             catch (Exception e)
             {
-                throw new Exception("Could not create a DataQualityEngine.Evaluation for Evaluation with ID "+ID+" because it is a report of an old Catalogue that has been deleted or otherwise does not exist/could not be retrieved (CatalogueID was:" + catalogueID+").  See inner exception for full details",e);
+                throw new Exception("Could not create a DataQualityEngine.Evaluation for Evaluation with ID "+ID+" because it is a report of an old Catalogue that has been deleted or otherwise does not exist/could not be retrieved (CatalogueID was:" + CatalogueID+").  See inner exception for full details",e);
             }
+            
         }
-        #endregion
 
-        public void AddRowState( int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,string pivotCategory,DbConnection con, DbTransaction transaction)
+        /// <summary>
+        /// Starts a new evaluation with the given transaction
+        /// </summary>
+        internal Evaluation(DQERepository dqeRepository,Catalogue c)
+        {
+            DQERepository = dqeRepository;
+            Catalogue = c;
+
+            dqeRepository.InsertAndHydrate(this,
+                new Dictionary<string, object>()
+                {
+                    {"CatalogueID",c.ID},
+                    {"DateOfEvaluation" , DateTime.Now}
+                });
+        }
+        
+        internal void AddRowState( int dataLoadRunID, int correct, int missing, int wrong, int invalid, string validatorXml,string pivotCategory,DbConnection con, DbTransaction transaction)
         {
             new RowState(this, dataLoadRunID, correct, missing, wrong, invalid, validatorXml, pivotCategory, con, transaction);
         }

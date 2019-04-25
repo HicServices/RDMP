@@ -6,8 +6,9 @@
 
 using System.IO;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.DataRelease.Potential

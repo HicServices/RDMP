@@ -10,11 +10,12 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
-using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
-using Rdmp.Core.DataExport.DataRelease.ReleasePipeline;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.Logging;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations
 {

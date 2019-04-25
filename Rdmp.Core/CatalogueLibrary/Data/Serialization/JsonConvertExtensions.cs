@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using Newtonsoft.Json;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.Serialization
 {

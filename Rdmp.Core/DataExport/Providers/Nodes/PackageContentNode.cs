@@ -6,7 +6,8 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories.Managers;
 
 namespace Rdmp.Core.DataExport.Providers.Nodes
 {

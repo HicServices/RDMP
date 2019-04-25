@@ -13,8 +13,8 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements.Exceptions;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

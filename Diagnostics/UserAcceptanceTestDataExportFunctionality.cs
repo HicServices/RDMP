@@ -13,14 +13,12 @@ using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.Data.LinkCreators;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 

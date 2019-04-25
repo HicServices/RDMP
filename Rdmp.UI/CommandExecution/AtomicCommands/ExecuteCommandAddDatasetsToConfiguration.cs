@@ -6,7 +6,7 @@
 
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 

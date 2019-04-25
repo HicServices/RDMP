@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common.Scenarios;

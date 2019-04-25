@@ -12,6 +12,7 @@ using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.ExtractionTime

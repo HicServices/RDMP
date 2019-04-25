@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Text.RegularExpressions;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.DataExport.ExtractionTime
 {

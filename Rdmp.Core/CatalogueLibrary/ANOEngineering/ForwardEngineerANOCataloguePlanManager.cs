@@ -15,8 +15,8 @@ using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Sharing.Refactoring;
 using ReusableLibraryCode.Checks;
 

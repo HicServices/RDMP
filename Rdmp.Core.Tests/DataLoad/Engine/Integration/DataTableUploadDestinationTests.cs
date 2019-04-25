@@ -12,7 +12,7 @@ using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Destinations;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 using Tests.Common;

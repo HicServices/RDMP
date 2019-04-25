@@ -8,8 +8,8 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CatalogueLibrary.Data
 {

@@ -13,10 +13,9 @@ using System.Reflection;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Spontaneous;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.Repositories;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 

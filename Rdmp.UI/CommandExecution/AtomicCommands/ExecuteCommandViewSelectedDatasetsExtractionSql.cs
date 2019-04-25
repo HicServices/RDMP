@@ -6,10 +6,9 @@
 
 using System.ComponentModel.Composition;
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.CommandExecution.AtomicCommands;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
-using Rdmp.Core.DataExport.Data.LinkCreators;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI;

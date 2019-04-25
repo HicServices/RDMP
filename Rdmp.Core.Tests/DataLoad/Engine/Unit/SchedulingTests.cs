@@ -6,7 +6,7 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit

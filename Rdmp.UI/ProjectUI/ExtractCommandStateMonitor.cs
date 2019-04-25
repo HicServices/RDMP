@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 
 namespace Rdmp.UI.ProjectUI

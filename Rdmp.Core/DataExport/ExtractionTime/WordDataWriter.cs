@@ -11,7 +11,7 @@ using System.Linq;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Reports;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using Rdmp.Core.Validation;

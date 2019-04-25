@@ -26,4 +26,5 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             ResourceSubdirectory = resourceSubdirectory;
         }
     }
+
 }

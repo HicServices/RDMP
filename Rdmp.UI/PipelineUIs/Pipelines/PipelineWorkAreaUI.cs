@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;
 using ReusableUIComponents;

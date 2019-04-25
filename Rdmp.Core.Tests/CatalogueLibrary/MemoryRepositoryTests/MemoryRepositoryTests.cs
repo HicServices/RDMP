@@ -11,7 +11,7 @@ using FAnsi.Implementations.Oracle;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.MemoryRepositoryTests
 {

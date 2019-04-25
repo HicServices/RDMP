@@ -7,7 +7,7 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.Providers.Nodes.UsedByProject;
 using Rdmp.UI.CohortUI;
 using Rdmp.UI.Icons.IconProvision;

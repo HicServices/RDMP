@@ -14,8 +14,8 @@ using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding.Options;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {

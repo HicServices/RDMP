@@ -6,7 +6,7 @@
 
 using System.IO;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.Commands
 {

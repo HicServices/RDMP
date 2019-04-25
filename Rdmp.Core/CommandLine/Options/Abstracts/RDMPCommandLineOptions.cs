@@ -6,7 +6,7 @@
 
 using System.Data.SqlClient;
 using CommandLine;
-using Rdmp.Core.CatalogueLibrary.Repositories;
+using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 

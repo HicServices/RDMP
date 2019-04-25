@@ -10,7 +10,7 @@ using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using ReusableLibraryCode.Progress;
 

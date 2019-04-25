@@ -7,10 +7,10 @@
 using System;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CatalogueLibrary.Triggers;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.Core.DataQualityEngine.Reports;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

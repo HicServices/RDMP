@@ -1,0 +1,117 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="The cohort being extracted">
+    <Position X="8.833" Y="2.031" Height="0.333" Width="2.023" />
+  </Comment>
+  <Comment CommentText="The database the cohort is stored in">
+    <Position X="12.25" Y="2.198" Height="0.333" Width="2.346" />
+  </Comment>
+  <Comment CommentText="Record of succesfully extracted artifacts so far">
+    <Position X="8.844" Y="4.917" Height="0.333" Width="2.887" />
+  </Comment>
+  <Comment CommentText="Record of succesfully released artifacts">
+    <Position X="8.906" Y="6.479" Height="0.333" Width="2.44" />
+  </Comment>
+  <Comment CommentText="WHERE logic AND/OR containers and IFilters">
+    <Position X="8.844" Y="11.573" Height="0.333" Width="2.815" />
+  </Comment>
+  <Comment CommentText="Dataset(s) being extracted in configuration">
+    <Position X="4.671" Y="12.513" Height="0.291" Width="2.815" />
+  </Comment>
+  <Comment CommentText="Configuration (e.g. Cases / Controls)">
+    <Position X="3.521" Y="7.156" Height="0.333" Width="2.44" />
+  </Comment>
+  <Comment CommentText="All extraction activities start with one of these">
+    <Position X="0.5" Y="3.423" Height="0.333" Width="2.784" />
+  </Comment>
+  <Interface Name="Rdmp.Core.DataExport.Data.IProject">
+    <Position X="0.5" Y="0.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAQAAAAAEAAAAGAUAAAAAAAAEAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataExport\Data\IProject.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="ExtractionConfigurations" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="Rdmp.Core.DataExport.Data.IExtractionConfiguration">
+    <Position X="4.5" Y="1" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>gBwCCAAIAAAgICAggRgAiAQAAAAAABMAAgAAoBAghAg=</HashCode>
+      <FileName>DataExport\Data\IExtractionConfiguration.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Cohort" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="CumulativeExtractionResults" />
+      <Property Name="SupplementalExtractionResults" />
+      <Property Name="SelectedDataSets" />
+      <Property Name="ReleaseLog" />
+    </ShowAsCollectionAssociation>
+  </Interface>
+  <Interface Name="Rdmp.Core.DataExport.Data.IExtractableCohort" Collapsed="true">
+    <Position X="8.75" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AEAABAIAAAAAAAAUAAAAAgQIABAIAAAAAMEAACAAMAA=</HashCode>
+      <FileName>DataExport\Data\IExtractableCohort.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="ExternalCohortTable" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Rdmp.Core.DataExport.Data.ICumulativeExtractionResults" Collapsed="true">
+    <Position X="9" Y="3" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAAAAAAAAAAAgBAAAACEAAAKACAgAAAAgAA=</HashCode>
+      <FileName>DataExport\Data\ICumulativeExtractionResults.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.ISupplementalExtractionResults" Collapsed="true">
+    <Position X="9" Y="4" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAAAAAAAAAAEAAAgAAAAACAAAAAAAAA=</HashCode>
+      <FileName>CatalogueLibrary\Data\ISupplementalExtractionResults.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.DataExport.Data.ISelectedDataSets">
+    <Position X="4.75" Y="8.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQQAAAAAEAIAAAAAAAAAAAAAAAKACAAAAAACAA=</HashCode>
+      <FileName>DataExport\Data\ISelectedDataSets.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="RootFilterContainer" />
+      <Property Name="ExtractableDataSet" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.IContainer">
+    <Position X="9" Y="8.25" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
+      <FileName>CatalogueLibrary\Data\IContainer.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.DataExport.Data.IExtractableDataSet" Collapsed="true">
+    <Position X="5" Y="11.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAEAAAAAACAAAAAAAIAAEAAAAAAAAAAAA=</HashCode>
+      <FileName>DataExport\Data\IExtractableDataSet.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.DataExport.Data.IExternalCohortTable" Collapsed="true">
+    <Position X="12.5" Y="1" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAQAAAAAACAAAAAAAAAQAAAAAQAAAAIAIAAEQAAAAA=</HashCode>
+      <FileName>DataExport\Data\IExternalCohortTable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.DataExport.DataRelease.Audit.IReleaseLog" Collapsed="true">
+    <Position X="9" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAACAAAAAABAAAAAIQAAAAAAAAAAAAAACAEAgAAAAgA=</HashCode>
+      <FileName>DataExport\DataRelease\Audit\IReleaseLog.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -8,7 +8,7 @@ using System;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Repositories.Construction;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Startup

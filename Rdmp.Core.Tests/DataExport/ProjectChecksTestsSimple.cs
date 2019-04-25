@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
 using Rdmp.Core.DataExport.Checks;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

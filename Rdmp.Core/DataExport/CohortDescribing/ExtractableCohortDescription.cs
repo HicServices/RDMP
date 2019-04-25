@@ -7,7 +7,7 @@
 using System;
 using System.Data;
 using System.Linq;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.DataExport.CohortDescribing
 {

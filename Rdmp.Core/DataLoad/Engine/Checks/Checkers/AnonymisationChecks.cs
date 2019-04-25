@@ -6,7 +6,7 @@
 
 using System;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Components.Anonymisation;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers

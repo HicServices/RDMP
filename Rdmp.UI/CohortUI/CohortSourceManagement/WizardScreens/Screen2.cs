@@ -6,8 +6,8 @@
 
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.DataExport.CohortDatabaseWizard;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.CohortComitting.CohortDatabaseWizard;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ChecksUI;

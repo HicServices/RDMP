@@ -21,7 +21,7 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Nodes;
 using Rdmp.Core.CatalogueLibrary.Nodes.LoadMetadataNodes;
 using Rdmp.Core.CatalogueLibrary.Providers;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.Providers.Nodes;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;

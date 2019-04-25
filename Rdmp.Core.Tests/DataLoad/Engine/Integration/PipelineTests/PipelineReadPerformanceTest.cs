@@ -11,7 +11,7 @@ using System.Diagnostics;
 using Diagnostics.TestData;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.DataLoad.Engine.DataFlowPipeline.Sources;
+using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

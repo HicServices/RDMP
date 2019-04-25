@@ -12,8 +12,8 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
 using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Repositories;
-using Rdmp.Core.CatalogueLibrary.Repositories.Managers;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 

@@ -11,8 +11,8 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
-using Rdmp.Core.CatalogueLibrary.Repositories;
 using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.Repositories;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests

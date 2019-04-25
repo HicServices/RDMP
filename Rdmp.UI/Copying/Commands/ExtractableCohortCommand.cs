@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.Copying.Commands

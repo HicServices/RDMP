@@ -7,7 +7,7 @@
 using System;
 using System.Data;
 using System.Threading.Tasks;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.CohortDescribing

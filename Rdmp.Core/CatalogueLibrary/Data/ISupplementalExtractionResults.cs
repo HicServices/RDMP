@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CatalogueLibrary.Data
 {

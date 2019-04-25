@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using Rdmp.Core.CatalogueLibrary.Nodes.UsedByNodes;
-using Rdmp.Core.DataExport.Data.DataTables;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.DataExport.Providers.Nodes.UsedByProject
 {
