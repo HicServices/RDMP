@@ -36,7 +36,7 @@ namespace Rdmp.UI.Icons.IconOverlays {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CatalogueManager.Icons.IconOverlays.Overlays", typeof(Overlays).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.UI.Icons.IconOverlays.Overlays", typeof(Overlays).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

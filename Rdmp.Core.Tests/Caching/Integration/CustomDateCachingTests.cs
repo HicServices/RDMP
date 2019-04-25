@@ -12,7 +12,6 @@ using System.Threading.Tasks;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
-using Rdmp.Core.Caching.BasicCache;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.PipelineExecution.Destinations;
 using Rdmp.Core.Caching.PipelineExecution.Sources;

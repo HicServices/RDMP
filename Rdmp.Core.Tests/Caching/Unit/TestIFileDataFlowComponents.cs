@@ -11,7 +11,7 @@ using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.Caching.BasicCache;
+using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
 using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;

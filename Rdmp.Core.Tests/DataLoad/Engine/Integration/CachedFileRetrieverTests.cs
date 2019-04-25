@@ -10,7 +10,6 @@ using System.IO;
 using FAnsi.Discovery;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.Caching.BasicCache;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;

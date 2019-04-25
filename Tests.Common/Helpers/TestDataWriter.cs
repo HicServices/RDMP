@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using Rdmp.Core.Caching.BasicCache;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.PipelineExecution.Destinations;
 using Rdmp.Core.Caching.Requests;

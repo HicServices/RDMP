@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Threading;
-using Rdmp.Core.Caching.BasicCache;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.PipelineExecution.Destinations;
 using Rdmp.Core.Caching.Requests;

@@ -4,57 +4,35 @@
     <Position X="9.708" Y="0.5" Height="0.844" Width="2.877" />
   </Comment>
   <Comment CommentText="CachingHost creates a set of PermissionWindowCacheDownloader objects based on which CacheProgress objects are to be cached. PermissionWindows effectively group together CacheProgress objects while also specifying what time of day/night they can be run during.">
-    <Position X="0.5" Y="4.75" Height="1.199" Width="3.252" />
+    <Position X="0.573" Y="5.75" Height="1.199" Width="3.252" />
   </Comment>
-  <Class Name="CachingEngine.CachingHost">
-    <Position X="0.5" Y="1" Width="2.75" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
+  <Class Name="Rdmp.Core.Caching.CachingHost">
+    <Position X="1.5" Y="2" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAWBAAAQAAAAAQAAAAAAAAAAYAAAIAgAASAA=</HashCode>
-      <FileName>CachingHost.cs</FileName>
+      <HashCode>AAAAAAAAAWBAAAQAAAAAQAAAAAAAAAAIAAAIAgAASAA=</HashCode>
+      <FileName>Caching\CachingHost.cs</FileName>
     </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Property Name="CacheProgressList" />
+    </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="CachingEngine.PipelineExecution.RoundRobinPipelineExecution" Collapsed="true">
-    <Position X="9.75" Y="3.75" Width="2.5" />
+  <Class Name="Rdmp.Core.Caching.CachingPreExecutionChecker">
+    <Position X="1.25" Y="0.5" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
-      <FileName>PipelineExecution\RoundRobinPipelineExecution.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="CachingEngine.PipelineExecution.SerialPipelineExecution" Collapsed="true">
-    <Position X="9.75" Y="3" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
-      <FileName>PipelineExecution\SerialPipelineExecution.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" Collapsed="true" />
-  </Class>
-  <Class Name="CachingEngine.DataRetrievers.PermissionWindowCacheDownloader">
-    <Position X="3.5" Y="1" Width="3.75" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>gAAQIABAAABCABAEAAAAEAAQAAAkAAQABAEAEAAACBI=</HashCode>
-      <FileName>DataRetrievers\PermissionWindowCacheDownloader.cs</FileName>
+      <HashCode>AAAAAAgAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Caching\CachingPreExecutionChecker.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
-      <Field Name="_pipelineEngineExecutionStrategy" />
+      <Field Name="_cacheProgress" />
     </ShowAsAssociation>
+    <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="CachingEngine.PipelineExecution.IMultiPipelineEngineExecutionStrategy" Collapsed="true">
-    <Position X="9.75" Y="1.5" Width="3" />
+  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.Cache.ICacheProgress" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAQAAAAAAAAAAAAAA=</HashCode>
-      <FileName>PipelineExecution\IMultiPipelineEngineExecutionStrategy.cs</FileName>
+      <HashCode>AAAQgAACAQAAAAgAgAAgACAAABQAACUAAAAAACBQAAA=</HashCode>
+      <FileName>CatalogueLibrary\Data\Cache\ICacheProgress.cs</FileName>
     </TypeIdentifier>
-  </Interface>
-  <Interface Name="CatalogueLibrary.Data.IPermissionWindow" Collapsed="true">
-    <Position X="7.75" Y="5" Width="2" />
-    <TypeIdentifier />
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

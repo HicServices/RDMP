@@ -36,7 +36,7 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("CatalogueManager.Icons.IconProvision.FamFamFamIcons", typeof(FamFamFamIcons).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.UI.Icons.IconProvision.FamFamFamIcons", typeof(FamFamFamIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

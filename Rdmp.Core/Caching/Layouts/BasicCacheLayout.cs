@@ -6,11 +6,10 @@
 
 using System.ComponentModel.Composition;
 using System.IO;
-using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.PipelineExecution.Destinations;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace Rdmp.Core.Caching.BasicCache
+namespace Rdmp.Core.Caching.Layouts
 {
     /// <summary>
     /// Specifies how files are laid out by date.  This is the default implementation in which the cache root directory (usually .\Data\Cache) is populated with folders

@@ -80,6 +80,7 @@
     <None Remove="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <None Remove="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
     <None Remove="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
+    <None Remove="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
     <None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
     <None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
     <None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -191,6 +192,7 @@
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
@@ -240,5 +242,8 @@
     <Content Include="CatalogueLibrary\KeywordHelp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Caching\BasicCache\" />
   </ItemGroup>
 </Project>

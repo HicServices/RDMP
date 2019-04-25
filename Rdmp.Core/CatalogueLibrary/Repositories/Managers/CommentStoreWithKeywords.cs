@@ -21,7 +21,7 @@ namespace Rdmp.Core.CatalogueLibrary.Repositories.Managers
 
             //todo if not found?
                         
-            AddToHelp(File.ReadAllText("KeywordHelp.txt"));
+            AddToHelp(File.ReadAllText("./CatalogueLibrary/KeywordHelp.txt"));
         }
 
         private void AddToHelp(string keywordHelpFileContents)

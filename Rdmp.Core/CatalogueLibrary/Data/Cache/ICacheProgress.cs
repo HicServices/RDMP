@@ -11,9 +11,7 @@ using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.Cache
 {
-    /// <summary>
-    /// See CacheProgress
-    /// </summary>
+    /// <inheritdoc/>
     public interface ICacheProgress : INamed
     {
         /// <summary>

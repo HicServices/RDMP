@@ -5,18 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using Rdmp.Core.Caching.Layouts;
+using Rdmp.Core.Caching.PipelineExecution.Destinations;
+using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 
-namespace Rdmp.Core.Caching.BasicCache
+namespace Rdmp.Core.Caching.Layouts
 {
     /// <summary>
-    /// Basic case of ILoadCachePathResolver in which the path .\Data\Cache is what is returned unchanged i.e. no subdirectories
+    /// Alternative cache layout to BasicCacheLayout in which files are expected to be in a zip file instead of a directory (e.g. in .\Data\Cache\2001-01-01.zip, .\Data\Cache\2001-01-02.zip etc)
     /// </summary>
-    public class NoSubdirectoriesCachePathResolver : ILoadCachePathResolver
+    public class ZipCacheLayoutOnePerDay : CacheLayout
     {
-        public DirectoryInfo GetLoadCacheDirectory(DirectoryInfo cacheRootDirectory)
+        public ZipCacheLayoutOnePerDay(DirectoryInfo rootCacheDirectory,ILoadCachePathResolver resolver)
+            : base(rootCacheDirectory, "yyyy-MM-dd", CacheArchiveType.Zip, CacheFileGranularity.Day,resolver)
         {
-            return cacheRootDirectory;
+            
         }
+            
     }
 }
