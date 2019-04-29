@@ -69,7 +69,7 @@ namespace Rdmp.Core.Tests.DataExport
             p.ExtractionDirectory = @"C:\|||";
 
             var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
-            Assert.AreEqual(@"Project ExtractionDirectory ('C:\|||') is not a valid directory name ", ex.Message);
+            Assert.AreEqual(@"Project ExtractionDirectory ('C:\|||') Does Not Exist", ex.Message);
         }
 
         [Test]

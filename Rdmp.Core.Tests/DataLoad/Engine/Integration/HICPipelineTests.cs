@@ -114,7 +114,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 {
                     Name = "Attach CSV file",
                     Order = 1,
-                    Path = "LoadModules.Generic.Attachers.AnySeparatorFileAttacher",
+                    Path = "Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher",
                     ProcessTaskType = ProcessTaskType.Attacher
                 };
                 attacherTask.SaveToDatabase();

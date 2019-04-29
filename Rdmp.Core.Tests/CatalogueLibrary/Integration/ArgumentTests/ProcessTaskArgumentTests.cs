@@ -190,7 +190,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.Integration.ArgumentTests
                     pta.SetType(typeof(PreLoadDiscardedColumn));
                     //then surprise! heres a TableInfo!
                     var ex = Assert.Throws<Exception>(()=>pta.SetValue(tableInfo));
-                    StringAssert.Contains("has an incompatible Type specified (CatalogueLibrary.Data.DataLoad.PreLoadDiscardedColumn)",ex.Message);
+                    StringAssert.Contains("has an incompatible Type specified (Rdmp.Core.Curation.Data.DataLoad.PreLoadDiscardedColumn)",ex.Message);
 
                 }
                 finally

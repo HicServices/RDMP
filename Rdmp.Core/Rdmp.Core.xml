@@ -18152,7 +18152,7 @@
         </member>
         <member name="T:Rdmp.Core.Repositories.Managers.CommentStoreWithKeywords">
             <summary>
-            Subclass of <see cref="T:ReusableLibraryCode.Comments.CommentStore"/> which also loads <see cref="!:Resources.KeywordHelp"/>
+            Subclass of <see cref="T:ReusableLibraryCode.Comments.CommentStore"/> which also loads KeywordHelp.txt
             </summary>
         </member>
         <member name="M:Rdmp.Core.Repositories.Managers.DataExportFilterManager.GetSubContainers(Rdmp.Core.Curation.Data.IContainer)">

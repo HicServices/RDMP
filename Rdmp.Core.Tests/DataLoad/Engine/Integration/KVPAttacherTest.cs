@@ -158,7 +158,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void KVPAttacherCheckTest_TableNameMissing()
         {
             var ex = Assert.Throws<Exception>(() => new KVPAttacher().Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Either argument TableName or TableToLoad must be set LoadModules.Generic.Attachers.KVPAttacher, you should specify this value.",ex.Message);
+            Assert.AreEqual("Either argument TableName or TableToLoad must be set Rdmp.Core.DataLoad.Modules.Attachers.KVPAttacher, you should specify this value.",ex.Message);
         }
 
         [Test]
@@ -229,7 +229,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private void CopyToBin(LoadDirectory projDir, string file)
         {
             
-            string testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,"Resources" , file);
+            string testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,@"DataLoad/Engine/Resources" , file);
             Assert.IsTrue(File.Exists(testFileLocation));
 
             File.Copy(testFileLocation, projDir.ForLoading.FullName + "\\" + file, true);

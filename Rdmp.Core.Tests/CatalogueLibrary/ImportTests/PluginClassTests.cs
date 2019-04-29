@@ -18,12 +18,18 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
 {
 
-    public class PluginClassTests:DatabaseTests
+    public class PluginClassTests:UnitTests
     {
+        [OneTimeSetUp]
+        public void Once()
+        {
+            SetupMEF();
+        }
+
         [SetUp]
         public void ClearImportExportDefinitions()
         {
-            RunBlitzDatabases(RepositoryLocator);
+            Repository.Clear();
         }
 
         [Test]
@@ -35,15 +41,15 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             var tripart = new Version(version);
 
-            Curation.Data.Plugin p = new Curation.Data.Plugin(CatalogueRepository, fi);
+            Curation.Data.Plugin p = new Curation.Data.Plugin(Repository, fi);
             p.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 1);
             p.SaveToDatabase();
 
-            Curation.Data.Plugin p2 = new Curation.Data.Plugin(CatalogueRepository, fi);
+            Curation.Data.Plugin p2 = new Curation.Data.Plugin(Repository, fi);
             p2.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 5);
             p2.SaveToDatabase();
 
-            var plugins = CatalogueRepository.PluginManager.GetCompatiblePlugins();
+            var plugins = Repository.PluginManager.GetCompatiblePlugins();
             Assert.That(plugins, Has.Length.EqualTo(1));
             Assert.That(plugins[0], Is.EqualTo(p2));
         }
@@ -58,8 +64,8 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.dll"));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
 
-            Curation.Data.Plugin p = new Curation.Data.Plugin(CatalogueRepository,fi);
-            var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
+            Curation.Data.Plugin p = new Curation.Data.Plugin(Repository,fi);
+            var lma = new LoadModuleAssembly(Repository, fi2, p);
             
             //Give it some pdb bytes
             lma.Pdb = new byte[]{0x1};
@@ -71,7 +77,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var list = g.GatherDependencies(p).ToShareDefinitionWithChildren(sm);
 
             //Delete export definitions
-            foreach (var e in CatalogueRepository.GetAllObjects<ObjectExport>())
+            foreach (var e in Repository.GetAllObjects<ObjectExport>())
                 e.DeleteInDatabase();
 
             //and delete pluing (CASCADE deletes lma too)
@@ -91,7 +97,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             list = g.GatherDependencies(p).ToShareDefinitionWithChildren(sm);
             
             //Delete export definitions
-            foreach (var e in CatalogueRepository.GetAllObjects<ObjectExport>())
+            foreach (var e in Repository.GetAllObjects<ObjectExport>())
                 e.DeleteInDatabase();
 
             //and delete pluing (CASCADE deletes lma too)
@@ -117,9 +123,9 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah3.dll"));
             File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
-            Curation.Data.Plugin p = new Curation.Data.Plugin(CatalogueRepository, fi);
-            var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
-            var lma2 = new LoadModuleAssembly(CatalogueRepository, fi3, p);
+            Curation.Data.Plugin p = new Curation.Data.Plugin(Repository, fi);
+            var lma = new LoadModuleAssembly(Repository, fi2, p);
+            var lma2 = new LoadModuleAssembly(Repository, fi3, p);
             
             //gather dependencies of the plugin (plugin[0] + lma[1])
             Gatherer g = new Gatherer(RepositoryLocator);
@@ -127,7 +133,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var list = g.GatherDependencies(p).ToShareDefinitionWithChildren(sm);
 
             //Delete export definitions
-            foreach (var e in CatalogueRepository.GetAllObjects<ObjectExport>())
+            foreach (var e in Repository.GetAllObjects<ObjectExport>())
                 e.DeleteInDatabase();
 
             //and delete pluing (CASCADE deletes lma too)
@@ -139,14 +145,14 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             //There should be 3
             Assert.AreEqual(3, created.Count());
 
-            Assert.AreEqual(3,CatalogueRepository.GetAllObjects<ObjectImport>().Count());
+            Assert.AreEqual(3,Repository.GetAllObjects<ObjectImport>().Count());
 
             lma2 = (LoadModuleAssembly) created[2];
 
             //now delete lma2 only
             lma2.DeleteInDatabase();
             
-            Assert.AreEqual(2, CatalogueRepository.GetAllObjects<ObjectImport>().Count());
+            Assert.AreEqual(2, Repository.GetAllObjects<ObjectImport>().Count());
 
             //import them
             var created2 = sm.ImportSharedObject(list);

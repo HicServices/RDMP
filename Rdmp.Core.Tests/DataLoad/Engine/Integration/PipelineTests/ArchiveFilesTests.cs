@@ -70,16 +70,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
                 directoryHelper.TearDown();
             }
         }
-
-        [Test]
-        public void HowDoesMEFHandleTypeNames()
-        {
-
-            string expected = "CatalogueLibrary.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
-
-            Assert.AreEqual(expected, MEF.GetMEFNameForType(typeof(IDataFlowSource<DataTable>)));
-        }
-
+        
         [Test]
         public void CreateArchiveWithNoFiles_ShouldThrow()
         {

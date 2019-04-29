@@ -16,12 +16,18 @@ using Tests.Common;
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration
 {
     
-    public class MEFCheckerTests:DatabaseTests
+    public class MEFCheckerTests:UnitTests
     {
+        [OneTimeSetUp]
+        public void Once()
+        {
+            SetupMEF();
+        }
+
         [Test]
         public void FindClass_EmptyString()
         {
-            MEFChecker m = new MEFChecker(CatalogueRepository.MEF, "", s => Assert.Fail()); 
+            MEFChecker m = new MEFChecker(Repository.MEF, "", s => Assert.Fail()); 
             var ex =  Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
             Assert.AreEqual("MEFChecker was asked to check for the existence of an Export class but the _classToFind string was empty",ex.Message);
         }
@@ -29,14 +35,14 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.Integration
         [Test]
         public void FindClass_CorrectNamespace()
         {
-            MEFChecker m = new MEFChecker(CatalogueRepository.MEF, "LoadModules.Generic.Attachers.AnySeparatorFileAttacher", s => Assert.Fail());
+            MEFChecker m = new MEFChecker(Repository.MEF, "Rdmp.Core.DataLoad.Modules.Attachers.AnySeparatorFileAttacher", s => Assert.Fail());
             m.Check(new ThrowImmediatelyCheckNotifier());
         }
 
         [Test]
         public void FindClass_WrongNamespace()
         {
-            MEFChecker m = new MEFChecker(CatalogueRepository.MEF, "CatalogueLibrary.AnySeparatorFileAttacher", s => Assert.Pass());
+            MEFChecker m = new MEFChecker(Repository.MEF, "CatalogueLibrary.AnySeparatorFileAttacher", s => Assert.Pass());
             m.Check(new AcceptAllCheckNotifier());
 
             Assert.Fail("Expected the class not to be found but to be identified under the correct namespace (above)");
@@ -45,7 +51,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.Integration
         [Test]
         public void FindClass_NonExistant()
         {
-            MEFChecker m = new MEFChecker(CatalogueRepository.MEF, "CatalogueLibrary.UncleSam", s => Assert.Fail());
+            MEFChecker m = new MEFChecker(Repository.MEF, "CatalogueLibrary.UncleSam", s => Assert.Fail());
             var ex = Assert.Throws<Exception>(()=>m.Check(new ThrowImmediatelyCheckNotifier()));
             StringAssert.Contains("Could not find MEF class called CatalogueLibrary.UncleSam in LoadModuleAssembly.GetAllTypes() and couldn't even find any with the same basic name",ex.Message);
         }
@@ -60,9 +66,9 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.Integration
             
             badDir.Create();
 
-            var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"LoadModules.Generic.dll"));
+            var dllToCopy = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Rdmp.Core.dll"));
 
-            File.Copy(dllToCopy.FullName, Path.Combine(badDir.FullName,"LoadModules.Generic.dll"));
+            File.Copy(dllToCopy.FullName, Path.Combine(badDir.FullName,"Rdmp.Core.dll"));
 
             var tomem = new ToMemoryCheckNotifier();
 

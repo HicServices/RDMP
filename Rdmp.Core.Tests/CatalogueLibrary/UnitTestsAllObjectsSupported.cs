@@ -24,7 +24,8 @@ namespace Rdmp.Core.Tests.CatalogueLibrary
         {
             "TestColumn",
             "ExtractableCohort",
-            "DQEGraphAnnotation"
+            "DQEGraphAnnotation",
+            "Evaluation"
         });
             
         /// <summary>
@@ -77,7 +78,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary
                         //and that it returns an instance
                         Assert.IsNotNull(instance);
                         Assert.IsTrue(instance.Exists());
-                        Assert.AreEqual(ChangeDescription.NoChanges, instance.HasLocalChanges().Evaluation);
+                        Assert.AreEqual(ChangeDescription.NoChanges, instance.HasLocalChanges().Evaluation,"Type was '" + t.Name+"'");
                     }
                     catch (Exception e)
                     {

@@ -33,6 +33,9 @@ using Rdmp.Core.Startup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using YamlDotNet.RepresentationModel;
+using YamlDotNet.Serialization;
+using YamlDotNet.Serialization.NamingConventions;
 
 namespace Tests.Common
 {
@@ -79,23 +82,20 @@ namespace Tests.Common
 
         private static void ReadSettingsFile()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Tests.Common.TestDatabases.txt";
+            const string settingsFile = "TestDatabases.txt";
 
             //see if there is a local text file first
-            var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            var f = dir.GetFiles("TestDatabases.txt").SingleOrDefault();
+            var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,settingsFile));
+
+            if (!f.Exists) 
+                throw new FileNotFoundException("Could not find file '" + f.FullName + "'");
+
+            using(StreamReader s = new StreamReader(f.OpenRead()))
+            {
+                var deserializer = new DeserializerBuilder()
+                    .Build();
             
-            //there is a local text file so favour that one
-            if (f != null)
-            {
-                TestDatabaseSettings = ReadSettingsFileFromStream(f.OpenRead());
-            }
-            else
-            {
-                //otherwise use the embedded resource file
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                    TestDatabaseSettings = ReadSettingsFileFromStream(stream);
+                TestDatabaseSettings = (TestDatabasesSettings) deserializer.Deserialize(s, typeof(TestDatabasesSettings));
             }
         }
 
@@ -147,29 +147,6 @@ namespace Tests.Common
 
             if (TestDatabaseSettings.Oracle != null)
                 _discoveredOracleServer = new DiscoveredServer(TestDatabaseSettings.Oracle, DatabaseType.Oracle);
-        }
-
-        
-
-        private static TestDatabasesSettings ReadSettingsFileFromStream(Stream stream)
-        {
-            var settings = new TestDatabasesSettings();
-
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                string result = reader.ReadToEnd();
-
-
-                foreach (PropertyInfo p in typeof(TestDatabasesSettings).GetProperties())
-                {
-                    var match = Regex.Match(result, "^" + p.Name + ":(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                    
-                    if(match.Success)
-                        p.SetValue(settings, match.Groups[1].Value.Trim());
-
-                }
-            }
-            return settings;
         }
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)

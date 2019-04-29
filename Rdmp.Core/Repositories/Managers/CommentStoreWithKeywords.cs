@@ -11,7 +11,7 @@ using ReusableLibraryCode.Comments;
 namespace Rdmp.Core.Repositories.Managers
 {
     /// <summary>
-    /// Subclass of <see cref="CommentStore"/> which also loads <see cref="Resources.KeywordHelp"/>
+    /// Subclass of <see cref="CommentStore"/> which also loads KeywordHelp.txt
     /// </summary>
     public class CommentStoreWithKeywords : CommentStore
     {
@@ -21,7 +21,7 @@ namespace Rdmp.Core.Repositories.Managers
 
             //todo if not found?
                         
-            AddToHelp(File.ReadAllText("./CatalogueLibrary/KeywordHelp.txt"));
+            AddToHelp(File.ReadAllText("./Curation/KeywordHelp.txt"));
         }
 
         private void AddToHelp(string keywordHelpFileContents)

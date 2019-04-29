@@ -18,8 +18,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
     public class RuntimeTaskFactoryTests : DatabaseTests
     {
         [Test]
-        [TestCase("LoadModules.Generic.Web.WebFileDownloader")]
-        [TestCase("LoadModules.Generic.DataProvider.FlatFileManipulation.ExcelToCSVFilesConverter")]
+        [TestCase("Rdmp.Core.DataLoad.Modules.Web.WebFileDownloader")]
+        [TestCase("Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation.ExcelToCSVFilesConverter")]
         public void RuntimeTaskFactoryTest(string className)
         {
 

@@ -436,7 +436,7 @@ namespace Tests.Common
                 return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(Repository,WhenIHaveA<Project>(),WhenIHaveA<CohortIdentificationConfiguration>());
             
             if (typeof (T) == typeof(ExternalCohortTable))
-                return (T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
+                return Save((T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
                 {
                     Database="MyCohortsDb",
                     DefinitionTableForeignKeyField = "c_id",
@@ -445,7 +445,7 @@ namespace Tests.Common
                     TableName = "Cohorts",
                     DefinitionTableName = "InventoryTable",
                     Server = "localhost\\sqlexpress"
-                };
+                });
 
             if (typeof (T) == typeof(ExtractableCohort))
                 throw new NotSupportedException("You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");
@@ -486,7 +486,7 @@ namespace Tests.Common
                 return (T)(object)filter.GetFilterFactory().CreateNewParameter(filter, "DECLARE @had as varchar(100)");
             }
             
-            throw new TestCaseNotWrittenYetException();
+            throw new TestCaseNotWrittenYetException(typeof(T));
         }
 
         private void WhenIHaveTwoTables(out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)

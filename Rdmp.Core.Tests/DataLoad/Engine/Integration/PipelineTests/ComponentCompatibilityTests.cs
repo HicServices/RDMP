@@ -14,12 +14,18 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
 {
-    public class ComponentCompatibilityTests :DatabaseTests
+    public class ComponentCompatibilityTests :UnitTests
     {
+        [OneTimeSetUp]
+        public void Once()
+        {
+            SetupMEF();
+        }
+
         [Test]
         public void GetComponentsCompatibleWithBulkInsertContext()
         {
-            Type[] array = CatalogueRepository.MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
+            Type[] array = MEF.GetTypes<IDataFlowComponent<DataTable>>().ToArray();
 
             Assert.Greater(array.Count(),0);
         }
@@ -27,13 +33,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
         [Test]
         public void HowDoesMEFHandleTypeNames()
         {
-
-            string expected = "CatalogueLibrary.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
+            string expected = "Rdmp.Core.DataFlowPipeline.IDataFlowSource(System.Data.DataTable)";
 
             Assert.AreEqual(expected, MEF.GetMEFNameForType(typeof(IDataFlowSource<DataTable>)));
         }
-
-      
     }
 }
 

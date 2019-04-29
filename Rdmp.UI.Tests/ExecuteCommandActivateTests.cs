@@ -25,7 +25,8 @@ namespace Rdmp.UI.Tests
             "TestColumn",
             "ExtractableCohort",
             "DQEGraphAnnotation",
-            "WindowLayout"
+            "WindowLayout",
+            "Evaluation"
         });
 
         /// <summary>
@@ -38,9 +39,9 @@ namespace Rdmp.UI.Tests
             SetupMEF();
             
             List<Exception> ex;
-            var types = Repository.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)
+            var types = typeof(Catalogue).Assembly.GetTypes()
                 .Where(t => t != null && typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
-
+            
             var methods = typeof (UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
             var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
