@@ -7,7 +7,7 @@
 using System;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers

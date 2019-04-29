@@ -11,9 +11,9 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Triggers;
-using Rdmp.Core.CatalogueLibrary.Triggers.Exceptions;
-using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
+using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.DataLoad.Triggers.Exceptions;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

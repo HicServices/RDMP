@@ -10,17 +10,18 @@ using System.Data;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources
 {
     /// <summary>
-    /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="CatalogueLibrary.Data.IColumn.IsPrimaryKey"/> of the
+    /// Extraction source which creates a PrimaryKey on the DataTable being extracted.  This is based on <see cref="IColumn.IsPrimaryKey"/> of the
     /// columns extracted and is not garuanteed to actually be unique (depending on how you have configured the flags).  
     /// 
     /// <para>The primary use case for this is when extracting to database where you want to have meaningful primary keys</para>

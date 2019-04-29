@@ -10,7 +10,7 @@ using System.Data.Common;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 

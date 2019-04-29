@@ -8,8 +8,8 @@ using System;
 using System.Data;
 using System.IO;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Progress;
 

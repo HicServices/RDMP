@@ -15,7 +15,9 @@ using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Ticketing;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
@@ -68,7 +70,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data.Cohort
 
         /// <summary>
         /// Name of a ticket in your company issue tracking application (if you have one) for logging time/issues with this <see cref="CohortIdentificationConfiguration"/>.
-        /// Ties in with <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> if a compatible plugin is installed.
+        /// Ties in with <see cref="ITicketingSystem"/> if a compatible plugin is installed.
         /// </summary>
         public string Ticket
         {

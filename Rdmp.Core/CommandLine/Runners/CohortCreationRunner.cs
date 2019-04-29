@@ -6,10 +6,10 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

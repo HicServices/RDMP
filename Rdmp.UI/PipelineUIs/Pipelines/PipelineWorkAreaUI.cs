@@ -10,7 +10,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.DemandsInitializationUIs;
 using Rdmp.UI.PipelineUIs.Pipelines.Models;

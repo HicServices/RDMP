@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.Reports.ExtractionTime;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;

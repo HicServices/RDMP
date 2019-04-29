@@ -8,7 +8,7 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 

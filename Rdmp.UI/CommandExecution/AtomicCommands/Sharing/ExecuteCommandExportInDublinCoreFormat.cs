@@ -6,7 +6,7 @@
 
 using System.IO;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.DublinCore;
+using Rdmp.Core.Reports.DublinCore;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 

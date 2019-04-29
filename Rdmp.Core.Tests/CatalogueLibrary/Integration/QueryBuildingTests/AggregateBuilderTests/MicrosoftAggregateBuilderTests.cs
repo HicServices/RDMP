@@ -7,7 +7,7 @@
 using System.Data.SqlClient;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration.QueryBuildingTests.AggregateBuilderTests
 {

@@ -6,7 +6,7 @@
 
 using Rdmp.Core.Caching.Requests.FetchRequestProvider;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 
 namespace Rdmp.Core.Caching.Pipeline.Sources
 {

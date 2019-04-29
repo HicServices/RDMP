@@ -2,12 +2,12 @@
 using System.Linq;
 using FAnsi;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;

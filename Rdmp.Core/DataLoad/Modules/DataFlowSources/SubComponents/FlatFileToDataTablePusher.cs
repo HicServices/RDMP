@@ -10,7 +10,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
 

@@ -8,8 +8,8 @@ using System;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 

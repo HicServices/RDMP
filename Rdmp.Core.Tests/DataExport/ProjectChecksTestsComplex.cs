@@ -6,9 +6,9 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;

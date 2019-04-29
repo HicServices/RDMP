@@ -87,7 +87,7 @@
             <para>The count column appears in Wheat background color and can be modified to any GROUP BY aggregate function e.g. max(dt)</para>
             </summary>
         </member>
-        <member name="M:Rdmp.UI.AggregationUIs.Advanced.SelectColumnUI.Save(Rdmp.Core.CatalogueLibrary.Data.IColumn)">
+        <member name="M:Rdmp.UI.AggregationUIs.Advanced.SelectColumnUI.Save(Rdmp.Core.QueryBuilding.IColumn)">
             <summary>
             saves changes to an IColumn made by the user and publishes that the AggregateConfiguration has changed
             </summary>
@@ -5032,14 +5032,14 @@
             The right list contains ExtractableColumn which is a more advanced class that contains runtime configurations such as order to be outputed in etc.
             </summary>
         </member>
-        <member name="M:Rdmp.UI.ProjectUI.Datasets.ConfigureDatasetUI.IsAlreadySelected(Rdmp.Core.CatalogueLibrary.Data.IColumn)">
+        <member name="M:Rdmp.UI.ProjectUI.Datasets.ConfigureDatasetUI.IsAlreadySelected(Rdmp.Core.QueryBuilding.IColumn)">
             <summary>
             Determines whether this potential extractable column (identified by the catalogue) is already selected and configured
             </summary>
             <param name="info"></param>
             <returns></returns>
         </member>
-        <member name="M:Rdmp.UI.ProjectUI.Datasets.ConfigureDatasetUI.AddColumnToExtraction(Rdmp.Core.CatalogueLibrary.Data.IColumn)">
+        <member name="M:Rdmp.UI.ProjectUI.Datasets.ConfigureDatasetUI.AddColumnToExtraction(Rdmp.Core.QueryBuilding.IColumn)">
             <summary>
             The user has selected an extractable thing in the catalogue and opted to include it in the extraction
             So we have to convert it to an ExtractableColumn (which has configuration specific stuff - and lets
@@ -6330,7 +6330,7 @@
             Do not use this constructor, it is used only for deserialization during persistence on form loading after application closing
             </summary>
         </member>
-        <member name="M:Rdmp.UI.SubComponents.Graphs.CohortSummaryAggregateGraphObjectCollection.#ctor(Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration,Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration,Rdmp.Core.CohortCreation.QueryBuilding.CohortSummaryAdjustment)">
+        <member name="M:Rdmp.UI.SubComponents.Graphs.CohortSummaryAggregateGraphObjectCollection.#ctor(Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration,Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration,Rdmp.Core.QueryBuilding.CohortSummaryAdjustment)">
             <summary>
             Use this constructor at runtime
             </summary>

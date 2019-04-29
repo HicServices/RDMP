@@ -15,9 +15,8 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
-using Rdmp.Core.CohortCreation.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 

@@ -7,7 +7,7 @@
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation.QueryTests

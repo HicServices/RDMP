@@ -13,7 +13,7 @@ using Rdmp.Core.CatalogueLibrary.ANOEngineering;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Tests.Common;

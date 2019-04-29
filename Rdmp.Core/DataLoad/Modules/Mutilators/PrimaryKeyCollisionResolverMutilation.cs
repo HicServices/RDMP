@@ -7,10 +7,9 @@
 using System;
 using System.Data.SqlClient;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.Mutilators;
 using ReusableLibraryCode.Checks;

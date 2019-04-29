@@ -17,6 +17,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.DataExport.Checks;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;

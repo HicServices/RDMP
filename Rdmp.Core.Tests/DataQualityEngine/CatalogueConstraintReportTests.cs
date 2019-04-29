@@ -11,7 +11,7 @@ using Diagnostics.TestData;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
-using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports;
 using Rdmp.Core.Logging;

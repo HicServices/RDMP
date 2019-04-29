@@ -13,9 +13,9 @@ using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.Data.Referencing;
-using Rdmp.Core.CatalogueLibrary.Ticketing;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.Ticketing;
 using ReusableLibraryCode.Comments;
 
 namespace Rdmp.Core.Repositories

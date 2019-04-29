@@ -18,7 +18,7 @@ using Rdmp.Core.CatalogueLibrary.ANOEngineering;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
 using Rdmp.UI.Collections;

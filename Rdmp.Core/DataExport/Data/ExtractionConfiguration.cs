@@ -17,6 +17,7 @@ using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
 using Rdmp.Core.Logging;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;

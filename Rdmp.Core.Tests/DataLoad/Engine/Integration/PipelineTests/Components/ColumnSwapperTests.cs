@@ -11,7 +11,7 @@ using System.Linq;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Swapping;

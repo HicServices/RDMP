@@ -12,7 +12,7 @@ using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
+using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;

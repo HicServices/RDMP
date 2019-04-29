@@ -7,7 +7,7 @@
 using System;
 using System.Data;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 

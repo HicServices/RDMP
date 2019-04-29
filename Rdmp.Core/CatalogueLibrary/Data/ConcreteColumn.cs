@@ -9,8 +9,9 @@ using System.Data.Common;
 using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CatalogueLibrary.Data
@@ -34,7 +35,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
         private int _order;
 
         /// <summary>
-        /// The order the column should be in when part of a SELECT statement built by an <see cref="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder"/>
+        /// The order the column should be in when part of a SELECT statement built by an <see cref="ISqlQueryBuilder"/>
         /// </summary>
         public int Order
         {

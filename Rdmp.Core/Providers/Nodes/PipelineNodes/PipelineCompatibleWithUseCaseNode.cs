@@ -8,7 +8,7 @@ using System;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
 
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes
 {

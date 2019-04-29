@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;

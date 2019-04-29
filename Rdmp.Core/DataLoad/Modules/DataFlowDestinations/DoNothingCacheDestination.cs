@@ -10,7 +10,7 @@ using System.Threading;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Caching.Requests;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowDestinations

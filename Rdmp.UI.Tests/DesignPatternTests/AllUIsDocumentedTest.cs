@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Reports;
+using Rdmp.Core.Reports;
 using Rdmp.UI.ProjectUI;
 using Rdmp.UI.Raceway;
 using ReusableLibraryCode.Checks;

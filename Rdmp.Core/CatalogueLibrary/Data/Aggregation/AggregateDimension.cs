@@ -11,8 +11,9 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
-using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -96,19 +97,19 @@ namespace Rdmp.Core.CatalogueLibrary.Data.Aggregation
         
         #region Relationships
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.HashOnDataRelease"/>
+        /// <inheritdoc cref="IColumn.HashOnDataRelease"/>
         [NoMappingToDatabase]
         public bool HashOnDataRelease { get { return _knownExtractionInformation.Value.HashOnDataRelease; } }
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.IsExtractionIdentifier"/>
+        /// <inheritdoc cref="IColumn.IsExtractionIdentifier"/>
         [NoMappingToDatabase]
         public bool IsExtractionIdentifier { get { return _knownExtractionInformation.Value.IsExtractionIdentifier; } }
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.IsPrimaryKey"/>
+        /// <inheritdoc cref="IColumn.IsPrimaryKey"/>
         [NoMappingToDatabase]
         public bool IsPrimaryKey { get { return _knownExtractionInformation.Value.IsPrimaryKey; } }
 
-        /// <inheritdoc cref="CatalogueLibrary.Data.IColumn.ColumnInfo"/>
+        /// <inheritdoc cref="IColumn.ColumnInfo"/>
         [NoMappingToDatabase]
         public ColumnInfo ColumnInfo { get { return _knownExtractionInformation.Value.ColumnInfo; } }
 

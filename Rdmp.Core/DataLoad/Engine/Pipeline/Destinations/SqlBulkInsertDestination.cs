@@ -10,10 +10,10 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode.Progress;
 

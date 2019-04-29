@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Ticketing;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.DataAccess;
 
@@ -102,7 +103,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the table
+        /// <see cref="ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the table
         /// </summary>
         public string Ticket
         {

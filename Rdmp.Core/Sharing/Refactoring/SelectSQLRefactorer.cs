@@ -8,6 +8,7 @@ using System.Linq;
 using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Sharing.Refactoring.Exceptions;
 
 namespace Rdmp.Core.Sharing.Refactoring

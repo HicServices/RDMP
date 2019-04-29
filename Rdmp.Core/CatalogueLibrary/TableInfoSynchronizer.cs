@@ -19,7 +19,7 @@ using ReusableLibraryCode.DataAccess;
 namespace Rdmp.Core.CatalogueLibrary
 {
     /// <summary>
-    /// Synchronizes a TableInfo against the live table on your database server.  This involves confirming it still exists, identifying new ColumnInfos and ones that have
+    /// Synchronizes a <see cref="TableInfo"/> against the live table on your database server.  This involves confirming it still exists, identifying new ColumnInfos and ones that have
     /// disapeared as well as checking column types and primary keys etc still match the current RDMP records.
     /// </summary>
     public class TableInfoSynchronizer

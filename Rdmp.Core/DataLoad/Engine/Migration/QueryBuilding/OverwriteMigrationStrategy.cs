@@ -11,9 +11,9 @@ using System.Text;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
-using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
+using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding

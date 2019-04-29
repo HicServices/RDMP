@@ -13,7 +13,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;

@@ -6,8 +6,8 @@
 
 using System.Collections.Generic;
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Ticketing;
 using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.Ticketing;
 
 namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {

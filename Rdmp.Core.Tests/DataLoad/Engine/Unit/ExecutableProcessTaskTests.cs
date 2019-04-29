@@ -9,7 +9,7 @@ using MapsDirectlyToDatabaseTable;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 

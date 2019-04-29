@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {

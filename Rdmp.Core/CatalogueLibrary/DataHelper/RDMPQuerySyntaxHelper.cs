@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.CatalogueLibrary.DataHelper
 {

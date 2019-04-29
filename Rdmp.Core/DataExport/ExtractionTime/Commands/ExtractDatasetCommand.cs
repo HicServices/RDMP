@@ -9,9 +9,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.Commands

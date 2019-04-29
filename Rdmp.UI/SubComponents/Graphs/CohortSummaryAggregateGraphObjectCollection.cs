@@ -11,7 +11,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
-using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.UI.SubComponents.Graphs
 {

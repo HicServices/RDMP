@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching.Pipeline

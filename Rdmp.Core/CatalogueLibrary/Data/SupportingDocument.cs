@@ -11,6 +11,7 @@ using System.IO;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Ticketing;
 using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.CatalogueLibrary.Data
@@ -74,7 +75,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the document
+        /// <see cref="ITicketingSystem"/> identifier of a ticket for logging time curating / updating etc the document
         /// </summary>
         public string Ticket
         {

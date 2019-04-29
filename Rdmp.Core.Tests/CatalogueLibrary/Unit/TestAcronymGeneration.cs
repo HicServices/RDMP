@@ -6,6 +6,7 @@
 
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Reports;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Unit

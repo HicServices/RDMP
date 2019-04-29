@@ -22,6 +22,7 @@ using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 using Rdmp.Core.Logging;
+using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Progress;
 
 namespace Tests.Common.Scenarios

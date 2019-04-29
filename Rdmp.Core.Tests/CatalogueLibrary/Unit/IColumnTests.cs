@@ -9,10 +9,11 @@ using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Unit

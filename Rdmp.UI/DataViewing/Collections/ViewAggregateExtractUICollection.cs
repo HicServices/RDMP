@@ -11,7 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
-using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 

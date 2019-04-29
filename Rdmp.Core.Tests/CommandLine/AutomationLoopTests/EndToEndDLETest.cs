@@ -6,9 +6,9 @@
 
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.Core.CommandLine.Runners;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;

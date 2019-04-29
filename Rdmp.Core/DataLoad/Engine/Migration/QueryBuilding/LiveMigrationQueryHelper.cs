@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
 {

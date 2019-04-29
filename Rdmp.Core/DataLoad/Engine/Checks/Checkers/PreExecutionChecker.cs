@@ -10,9 +10,9 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Triggers;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 

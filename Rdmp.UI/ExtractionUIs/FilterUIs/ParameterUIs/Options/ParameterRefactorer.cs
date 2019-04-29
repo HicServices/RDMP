@@ -8,8 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
 using ReusableUIComponents;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options

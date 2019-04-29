@@ -7,7 +7,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;

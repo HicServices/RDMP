@@ -7,8 +7,8 @@
 using System.Data.SqlClient;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Triggers;
-using Rdmp.Core.CatalogueLibrary.Triggers.Implementations;
+using Rdmp.Core.DataLoad.Triggers;
+using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration

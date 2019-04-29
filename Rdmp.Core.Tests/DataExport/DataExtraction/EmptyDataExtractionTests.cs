@@ -9,11 +9,12 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
+using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
 

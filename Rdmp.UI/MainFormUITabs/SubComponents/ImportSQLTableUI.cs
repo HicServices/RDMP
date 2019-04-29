@@ -9,6 +9,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;

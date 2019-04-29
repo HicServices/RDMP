@@ -6,9 +6,10 @@
 
 using System.Collections.Generic;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.Commands
 {

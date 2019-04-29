@@ -14,7 +14,7 @@ using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;

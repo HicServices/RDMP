@@ -272,7 +272,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
 
         /// <summary>
         /// Creates a new record of a column found on a database server in the table referenced by <see cref="TableInfo"/>.  This constructor will be used
-        /// when first importing a table reference (See <see cref="CatalogueLibrary.DataHelper.TableInfoImporter"/>)  and again whenever there are new columns
+        /// when first importing a table reference (See <see cref="TableInfoImporter"/>)  and again whenever there are new columns
         /// discovered during table sync (See <see cref="TableInfoSynchronizer"/>)
         /// </summary>
         /// <param name="repository"></param>

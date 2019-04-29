@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline

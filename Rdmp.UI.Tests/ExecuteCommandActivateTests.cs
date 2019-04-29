@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Spontaneous;
+using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Tests.Common;
 

@@ -6,7 +6,7 @@
 
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 
 namespace Rdmp.Core.Caching.Pipeline.Destinations
 {

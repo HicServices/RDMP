@@ -10,6 +10,7 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Reports;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
 

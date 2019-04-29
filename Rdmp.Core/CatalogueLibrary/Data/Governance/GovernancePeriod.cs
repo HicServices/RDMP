@@ -11,6 +11,7 @@ using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.Ticketing;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
@@ -78,7 +79,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data.Governance
         }
 
         /// <summary>
-        /// <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> ticket number for tracking effort / progress towards obtaining the governance
+        /// <see cref="ITicketingSystem"/> ticket number for tracking effort / progress towards obtaining the governance
         /// </summary>
         public string Ticket
         {

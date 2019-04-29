@@ -6,7 +6,7 @@
 
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Reports.DatabaseAccessPrivileges;
+using Rdmp.Core.Reports.DatabaseAccessPrivileges;
 using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.SimpleDialogs.Reports

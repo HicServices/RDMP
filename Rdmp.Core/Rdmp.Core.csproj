@@ -246,4 +246,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="CohortCreation\QueryBuilding\" />
+  </ItemGroup>
 </Project>

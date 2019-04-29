@@ -7,8 +7,8 @@
 using System.Linq;
 using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding.Parameters;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.QueryBuilding.Parameters;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Unit
 {

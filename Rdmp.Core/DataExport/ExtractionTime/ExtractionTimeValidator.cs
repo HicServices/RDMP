@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 

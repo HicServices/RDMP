@@ -13,8 +13,8 @@ using NUnit.Framework;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
-using Rdmp.Core.CatalogueLibrary.Triggers;
 using Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
+using Rdmp.Core.DataLoad.Triggers;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration

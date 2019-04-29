@@ -8,7 +8,7 @@ using System.Data;
 using System.IO;
 using FAnsi.Discovery;
 using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline

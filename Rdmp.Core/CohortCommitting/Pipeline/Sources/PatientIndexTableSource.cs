@@ -7,9 +7,9 @@
 using System;
 using System.Linq;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
-using Rdmp.Core.CohortCreation.QueryBuilding;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline.Sources

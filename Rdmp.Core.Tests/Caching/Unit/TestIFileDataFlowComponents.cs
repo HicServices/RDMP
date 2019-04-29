@@ -14,7 +14,7 @@ using NUnit.Framework;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cache;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Caching.Unit

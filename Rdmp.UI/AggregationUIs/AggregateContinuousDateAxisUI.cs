@@ -10,7 +10,7 @@ using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Checks.SyntaxChecking;
+using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 
 namespace Rdmp.UI.AggregationUIs

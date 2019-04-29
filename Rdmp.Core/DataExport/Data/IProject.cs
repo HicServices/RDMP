@@ -7,8 +7,8 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Ticketing;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Ticketing;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.DataExport.Data

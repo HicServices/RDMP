@@ -15,6 +15,7 @@ using MapsDirectlyToDatabaseTable.Injection;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
@@ -425,7 +426,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
         /// <summary>
         /// Changes the CatalogueItem in the database to be based off of the specified ColumnInfo (or none if null is specified).  This will
         /// likely result in the ExtractionInformation being corrupt / out of sync in terms of the SQL appearing in it's
-        /// <see cref="CatalogueLibrary.Data.IColumn.SelectSQL"/>.
+        /// <see cref="IColumn.SelectSQL"/>.
         /// </summary>
         /// <param name="columnInfo"></param>
         public void SetColumnInfo(ColumnInfo columnInfo)

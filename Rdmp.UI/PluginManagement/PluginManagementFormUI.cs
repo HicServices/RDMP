@@ -18,6 +18,7 @@ using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.CommandLine.Packing;
 using Rdmp.Core.Sharing.Transmission;
 using Rdmp.Core.Startup.PluginManagement;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;

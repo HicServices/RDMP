@@ -20,10 +20,10 @@ using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
 using Rdmp.Core.CatalogueLibrary.Data.Defaults;
 using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
 using Rdmp.Core.CatalogueLibrary.Data.Serialization;
-using Rdmp.Core.CatalogueLibrary.Exceptions;
-using Rdmp.Core.CatalogueLibrary.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Ticketing;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
@@ -402,7 +402,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
         }
 
         /// <summary>
-        /// Identifier for a ticket in your <see cref="CatalogueLibrary.Ticketing.ITicketingSystem"/> for documenting / auditing work on the Catalogue and for 
+        /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for 
         /// recording issues (if you are not using the RDMP issue system (See <see cref="CatalogueItemIssue"/>))
         /// </summary>
         public string Ticket
@@ -694,7 +694,7 @@ namespace Rdmp.Core.CatalogueLibrary.Data
         /// <summary>
         /// Declares a new empty virtual dataset with the given Name.  This will not have any virtual columns and will not be tied to any underlying tables.  
         /// 
-        /// <para>The preferred method of getting a Catalogue is to use <see cref="CatalogueLibrary.DataHelper.TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
+        /// <para>The preferred method of getting a Catalogue is to use <see cref="TableInfoImporter"/> and <see cref="ForwardEngineerCatalogue"/></para>
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="name"></param>

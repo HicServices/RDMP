@@ -6,6 +6,7 @@
 
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.DataHelper;
 using Rdmp.Core.Validation;

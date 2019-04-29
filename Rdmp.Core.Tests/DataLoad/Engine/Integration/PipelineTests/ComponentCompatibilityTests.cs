@@ -8,7 +8,7 @@ using System;
 using System.Data;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 

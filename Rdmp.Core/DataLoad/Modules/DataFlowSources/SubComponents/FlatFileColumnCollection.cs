@@ -12,7 +12,7 @@ using System.Linq;
 using System.Text;
 using CsvHelper;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;

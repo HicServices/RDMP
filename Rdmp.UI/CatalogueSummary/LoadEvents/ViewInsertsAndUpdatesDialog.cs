@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Triggers;
+using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging.PastEvents;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;

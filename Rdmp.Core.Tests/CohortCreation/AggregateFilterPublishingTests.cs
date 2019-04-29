@@ -12,7 +12,7 @@ using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
 using Rdmp.Core.CatalogueLibrary.FilterImporting;
 using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
-using Rdmp.Core.CohortCreation.QueryBuilding;
+using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {

@@ -5,7 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataFlowPipeline;
+using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CatalogueLibrary.Data.Pipelines
@@ -42,13 +43,13 @@ namespace Rdmp.Core.CatalogueLibrary.Data.Pipelines
         IDataFlowPipelineContext GetContext();
 
         /// <summary>
-        /// The fixed runtime instance of <see cref="CatalogueLibrary.DataFlowPipeline.IDataFlowSource{T}"/> that will be used instead of an <see cref="IPipelineComponent"/> when
+        /// The fixed runtime instance of <see cref="IDataFlowSource{T}"/> that will be used instead of an <see cref="IPipelineComponent"/> when
         /// running this use case. If this is populated then <see cref="Pipeline"/>s cannot have a user configured source component.
         /// </summary>
         object ExplicitSource { get; }
 
         /// <summary>
-        /// The fixed runtime instance of <see cref="CatalogueLibrary.DataFlowPipeline.IDataFlowDestination{T}"/> that will be used instead of an <see cref="IPipelineComponent"/> when
+        /// The fixed runtime instance of <see cref="IDataFlowDestination{T}"/> that will be used instead of an <see cref="IPipelineComponent"/> when
         /// running this use case. If this is populated then <see cref="Pipeline"/>s cannot have a user configured destination component.
         /// </summary>
         object ExplicitDestination { get; }

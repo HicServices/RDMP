@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Xml.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.DublinCore;
+using Rdmp.Core.Reports.DublinCore;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary
