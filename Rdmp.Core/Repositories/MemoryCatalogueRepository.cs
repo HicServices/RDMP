@@ -12,21 +12,21 @@ using System.Reflection;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.Defaults;
-using Rdmp.Core.CatalogueLibrary.Data.Governance;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.Referencing;
-using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Referencing;
+using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
-using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
+using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.Repositories
 {

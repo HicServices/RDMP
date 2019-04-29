@@ -7,8 +7,8 @@
 using System.Linq;
 using FAnsi;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.EntityNaming;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration

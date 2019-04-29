@@ -13,7 +13,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;

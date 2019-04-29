@@ -7,9 +7,9 @@
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
-using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using ReusableLibraryCode.Checks;
 

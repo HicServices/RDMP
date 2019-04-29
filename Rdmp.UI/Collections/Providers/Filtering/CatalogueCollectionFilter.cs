@@ -6,7 +6,7 @@
 
 using System.Linq;
 using BrightIdeasSoftware;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Settings;
 

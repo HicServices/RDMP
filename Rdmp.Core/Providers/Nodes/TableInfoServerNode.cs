@@ -6,7 +6,7 @@
 
 using System;
 using FAnsi;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Providers.Nodes
 {

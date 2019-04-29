@@ -10,7 +10,7 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations.Aliases.Exceptions;

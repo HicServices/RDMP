@@ -11,7 +11,6 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;

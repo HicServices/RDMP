@@ -6,9 +6,9 @@
 
 using Newtonsoft.Json;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 

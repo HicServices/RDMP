@@ -7,9 +7,9 @@
 using System;
 using System.Data;
 using FAnsi.Connections;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline;

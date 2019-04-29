@@ -6,8 +6,8 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy
 {

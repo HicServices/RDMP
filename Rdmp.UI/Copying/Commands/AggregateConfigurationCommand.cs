@@ -6,9 +6,9 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.Copying.Commands

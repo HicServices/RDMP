@@ -11,7 +11,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.VisualStudioSolutionFileProcessing;
 

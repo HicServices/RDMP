@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Xml;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
 {

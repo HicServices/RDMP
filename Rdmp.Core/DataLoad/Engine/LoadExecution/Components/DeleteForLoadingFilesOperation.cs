@@ -6,7 +6,6 @@
 
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Progress;
 

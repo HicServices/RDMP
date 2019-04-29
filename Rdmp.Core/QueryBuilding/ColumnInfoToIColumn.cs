@@ -7,8 +7,8 @@
 using System;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using ReusableLibraryCode.Checks;
 

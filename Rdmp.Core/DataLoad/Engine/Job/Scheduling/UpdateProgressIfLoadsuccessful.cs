@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling

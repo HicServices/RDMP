@@ -6,9 +6,9 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Defaults;
 using ReusableLibraryCode.Checks;
 using LogManager = Rdmp.Core.Logging.LogManager;
 

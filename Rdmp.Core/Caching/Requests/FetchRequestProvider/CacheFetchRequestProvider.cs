@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cache;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching.Requests.FetchRequestProvider

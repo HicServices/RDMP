@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using ReusableUIComponents;
 
 namespace Rdmp.UI.DashboardTabs

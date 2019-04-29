@@ -11,9 +11,8 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode;
 

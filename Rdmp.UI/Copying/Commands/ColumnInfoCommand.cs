@@ -6,7 +6,7 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.Copying.Commands

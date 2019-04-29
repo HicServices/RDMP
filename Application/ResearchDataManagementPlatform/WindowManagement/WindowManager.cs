@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconProvision;

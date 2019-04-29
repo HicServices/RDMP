@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
-using Rdmp.Core.CatalogueLibrary.FilterImporting;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
 

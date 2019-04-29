@@ -10,8 +10,8 @@ using System.Collections.ObjectModel;
 using System.Linq;
 using FAnsi.Discovery;
 using FAnsi.Discovery.Constraints;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.EntityNaming;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration

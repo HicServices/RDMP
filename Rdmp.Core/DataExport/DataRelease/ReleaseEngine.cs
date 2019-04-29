@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;

@@ -10,8 +10,8 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.DataHelper;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.QueryBuilding

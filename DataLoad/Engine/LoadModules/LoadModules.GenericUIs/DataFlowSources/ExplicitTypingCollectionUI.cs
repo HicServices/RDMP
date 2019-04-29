@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Repositories;
 using ReusableUIComponents.Dialogs;

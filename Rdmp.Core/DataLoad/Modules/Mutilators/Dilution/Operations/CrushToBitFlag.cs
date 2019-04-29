@@ -6,8 +6,8 @@
 
 using System;
 using FAnsi.Discovery.TypeTranslation;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.EntityNaming;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations
 {

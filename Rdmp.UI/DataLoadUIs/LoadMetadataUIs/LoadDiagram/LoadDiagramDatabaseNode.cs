@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.Icons.IconProvision;

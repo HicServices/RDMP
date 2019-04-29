@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort;
 using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.Copying.Commands

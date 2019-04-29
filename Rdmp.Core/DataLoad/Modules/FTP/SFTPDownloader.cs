@@ -8,7 +8,7 @@ using System;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 using Renci.SshNet;
 using ReusableLibraryCode.Progress;
 

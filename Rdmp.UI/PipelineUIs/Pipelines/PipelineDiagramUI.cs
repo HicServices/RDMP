@@ -9,7 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.DataObjects;

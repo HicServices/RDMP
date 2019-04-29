@@ -9,7 +9,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 

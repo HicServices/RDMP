@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.UsedByNodes;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes

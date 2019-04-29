@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.ComponentModel.Composition;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.DataViewing.Collections;
 using Rdmp.UI.ItemActivation;

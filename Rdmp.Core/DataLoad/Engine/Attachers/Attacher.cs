@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;

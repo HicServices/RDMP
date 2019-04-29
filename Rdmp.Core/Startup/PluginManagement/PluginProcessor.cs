@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Extensions;
@@ -63,10 +63,10 @@ namespace Rdmp.Core.Startup.PluginManagement
                 throw new NotSupportedException(String.Format("Plugin version {0} is incompatible with current running version of RDMP.", pluginVersion));
             
             // delete EXACT old versions of the Plugin
-            var oldVersion = _repository.GetAllObjects<CatalogueLibrary.Data.Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
+            var oldVersion = _repository.GetAllObjects<Curation.Data.Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
 
             List<LoadModuleAssembly> legacyDlls = new List<LoadModuleAssembly>();
-            CatalogueLibrary.Data.Plugin plugin = null;
+            Curation.Data.Plugin plugin = null;
 
             if (oldVersion != null)
             {
@@ -75,7 +75,7 @@ namespace Rdmp.Core.Startup.PluginManagement
                 plugin = oldVersion;
             }
             else
-                plugin = new CatalogueLibrary.Data.Plugin(_repository, toCommit, pluginVersion);
+                plugin = new Curation.Data.Plugin(_repository, toCommit, pluginVersion);
 
             try
             {
@@ -110,7 +110,7 @@ namespace Rdmp.Core.Startup.PluginManagement
             return toReturn;
         }
 
-        private void ProcessFile(CatalogueLibrary.Data.Plugin plugin, FileInfo toCommit, List<LoadModuleAssembly> legacyDlls)
+        private void ProcessFile(Curation.Data.Plugin plugin, FileInfo toCommit, List<LoadModuleAssembly> legacyDlls)
         {
             if (LoadModuleAssembly.IsDllProhibited(toCommit))
                 return;

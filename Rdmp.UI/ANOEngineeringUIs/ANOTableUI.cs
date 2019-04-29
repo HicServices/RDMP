@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Databases;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;

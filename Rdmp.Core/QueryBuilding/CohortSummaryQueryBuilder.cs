@@ -6,10 +6,10 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.Repositories;
 

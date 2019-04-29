@@ -6,8 +6,8 @@
 
 using System;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.AutoComplete;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;

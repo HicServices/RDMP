@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dialogs;

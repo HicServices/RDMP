@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Data.Remoting;
+using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;

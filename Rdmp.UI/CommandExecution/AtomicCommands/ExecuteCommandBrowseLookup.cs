@@ -6,7 +6,7 @@
 
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

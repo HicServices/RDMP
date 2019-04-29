@@ -8,8 +8,8 @@ using System;
 using System.Linq;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data.Cohort;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

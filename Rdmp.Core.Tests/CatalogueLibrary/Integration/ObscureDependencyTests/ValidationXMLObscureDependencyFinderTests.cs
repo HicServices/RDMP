@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 using Diagnostics.TestData;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Dependency;

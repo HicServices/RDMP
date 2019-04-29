@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;

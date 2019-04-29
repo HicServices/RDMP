@@ -7,10 +7,10 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.FilterImporting;
-using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Tests.Common;

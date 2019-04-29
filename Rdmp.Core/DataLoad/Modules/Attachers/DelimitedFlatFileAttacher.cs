@@ -7,7 +7,7 @@
 using System;
 using System.Data;
 using System.IO;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Job;

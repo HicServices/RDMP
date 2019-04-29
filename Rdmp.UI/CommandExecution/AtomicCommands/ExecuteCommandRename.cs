@@ -7,8 +7,8 @@
 using System.Drawing;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;

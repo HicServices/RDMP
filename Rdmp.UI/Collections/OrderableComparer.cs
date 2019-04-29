@@ -8,8 +8,8 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.UI.Collections
 {

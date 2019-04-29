@@ -152,7 +152,7 @@
             after the other which violetates the 1 subscription per control rule (see base.SetDatabaseObject)
             </summary>
         </member>
-        <member name="M:Rdmp.UI.AggregationUIs.AggregateGraphUI.SetAggregate(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration)">
+        <member name="M:Rdmp.UI.AggregationUIs.AggregateGraphUI.SetAggregate(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration)">
             <summary>
             Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a derrived class who has it's own subscription or if you plan
             to load multiple different graphs into this control one after the other).
@@ -864,7 +864,7 @@
              
              <para>A data load takes place across 3 stages (RAW, STAGING, LIVE - see UserManual.docx).  Each stage can have 0 or more tasks associated with it (See PluginProcessTaskUI).  The minimum requirement
              for a data load is to have an Attacher (class which populates RAW) e.g. AnySeparatorFileAttacher for comma separated files.  This supposes that your project folder loading directory 
-             already has the files you are trying to load (See <see cref="T:Rdmp.Core.CatalogueLibrary.ILoadDirectory"/>).  If you want to build an elegant automated solution then you may choose to use a GetFiles process such as 
+             already has the files you are trying to load (See <see cref="T:Rdmp.Core.Curation.ILoadDirectory"/>).  If you want to build an elegant automated solution then you may choose to use a GetFiles process such as 
              FTPDownloader to fetch new files directly off a data providers server.  After this you may need to write some bespoke SQL/Python scripts etc to deal with unclean/unloadable data or 
              just to iron out idiosyncrasies in the data.</para>
               
@@ -1207,7 +1207,7 @@
             <param name="to"></param>
             <param name="skipNameProperty"></param>
         </member>
-        <member name="M:Rdmp.UI.CommandExecution.AtomicCommands.ExecuteCommandRelease.SetTarget(Rdmp.Core.CatalogueLibrary.Data.DatabaseEntity)">
+        <member name="M:Rdmp.UI.CommandExecution.AtomicCommands.ExecuteCommandRelease.SetTarget(Rdmp.Core.Curation.Data.DatabaseEntity)">
             <summary>
             Sets the thing being released, valid targets are <see cref="T:Rdmp.Core.DataExport.Data.Project"/>, <see cref="T:Rdmp.Core.DataExport.Data.ExtractionConfiguration"/> and <see cref="T:Rdmp.Core.DataExport.Data.ISelectedDataSets"/>.
             </summary>
@@ -1222,15 +1222,15 @@
             <param name="classOrProperty">Name of a documented class/interface/property (e.g. "CohortIdentificationConfiguration.QueryCachingServer_ID")</param>
             <param name="title"></param>
         </member>
-        <member name="M:Rdmp.UI.CommandExecution.AtomicCommands.ExecuteCommandViewData.#ctor(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.UI.DataViewing.ViewType,Rdmp.Core.CatalogueLibrary.Data.ColumnInfo)">
+        <member name="M:Rdmp.UI.CommandExecution.AtomicCommands.ExecuteCommandViewData.#ctor(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.UI.DataViewing.ViewType,Rdmp.Core.Curation.Data.ColumnInfo)">
             <summary>
-            Fetches the <paramref name="viewType"/> of the data in <see cref="T:Rdmp.Core.CatalogueLibrary.Data.ColumnInfo"/> <paramref name="c"/>
+            Fetches the <paramref name="viewType"/> of the data in <see cref="T:Rdmp.Core.Curation.Data.ColumnInfo"/> <paramref name="c"/>
             </summary>
             <param name="activator"></param>
             <param name="viewType"></param>
             <param name="c"></param>
         </member>
-        <member name="M:Rdmp.UI.CommandExecution.AtomicCommands.ExecuteCommandViewData.#ctor(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.Core.CatalogueLibrary.Data.TableInfo)">
+        <member name="M:Rdmp.UI.CommandExecution.AtomicCommands.ExecuteCommandViewData.#ctor(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.Core.Curation.Data.TableInfo)">
             <summary>
             Views the top 100 records of the <paramref name="tableInfo"/>
             </summary>
@@ -1239,7 +1239,7 @@
         </member>
         <member name="T:Rdmp.UI.CommandExecution.AtomicCommands.Sharing.ExecuteCommandImportCatalogueDescriptionsFromShare">
             <summary>
-            Opens a <see cref="T:Rdmp.Core.CatalogueLibrary.Data.Serialization.ShareDefinition"/> (which must be a share of a <see cref="T:Rdmp.Core.CatalogueLibrary.Data.Catalogue"/>) and imports all descriptions including for CatalogueItems
+            Opens a <see cref="T:Rdmp.Core.Curation.Data.Serialization.ShareDefinition"/> (which must be a share of a <see cref="T:Rdmp.Core.Curation.Data.Catalogue"/>) and imports all descriptions including for CatalogueItems
             </summary>
         </member>
         <member name="M:Rdmp.UI.CommandExecution.AtomicCommands.Sharing.ExecuteCommandImportShare.#ctor(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.UI.Copying.Commands.FileCollectionCommand)">
@@ -1299,14 +1299,14 @@
             Decides which (if any) command should be advertised/run when combining the dragged object (cmd) with the drop target
             </summary>
             <param name="cmd">Self contained class describing both the object(s) being dragged and salient facts about it e.g. if  it is a
-            <see cref="T:Rdmp.UI.Copying.Commands.CatalogueCommand"/> then it will know whether the dragged <see cref="T:Rdmp.Core.CatalogueLibrary.Data.Catalogue"/>
+            <see cref="T:Rdmp.UI.Copying.Commands.CatalogueCommand"/> then it will know whether the dragged <see cref="T:Rdmp.Core.Curation.Data.Catalogue"/>
             has at least one patient identifier column.</param>
             
             <param name="target"> The object the cursor is currently hovering over </param>
             <param name="insertOption">Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it)</param>
             <returns></returns>
         </member>
-        <member name="M:Rdmp.UI.Copying.Commands.CatalogueCommand.GenerateAggregateConfigurationFor(Rdmp.Core.CatalogueLibrary.Data.Cohort.CohortAggregateContainer,System.Boolean,System.String)">
+        <member name="M:Rdmp.UI.Copying.Commands.CatalogueCommand.GenerateAggregateConfigurationFor(Rdmp.Core.Curation.Data.Cohort.CohortAggregateContainer,System.Boolean,System.String)">
             <summary>
             Creates a new AggregateConfiguration based on the Catalogue and returns it as an AggregateConfigurationCommand, you should only use this method during EXECUTE as you do not
             want to be randomly creating these as the user waves an object around over the user interface trying to decide where to drop it.
@@ -1352,7 +1352,7 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="M:Rdmp.UI.DashboardTabs.Construction.DashboardControlFactory.Create(Rdmp.Core.CatalogueLibrary.Data.Dashboarding.DashboardControl)">
+        <member name="M:Rdmp.UI.DashboardTabs.Construction.DashboardControlFactory.Create(Rdmp.Core.Curation.Data.Dashboarding.DashboardControl)">
             <summary>
             Creates an instance of the user control described by the database record DashboardControl, including providing the control with a hydrated IPersistableObjectCollection that reflects
             the last saved state of the control.  Then mounts it on a DashboardableControlHostPanel and returns it
@@ -1360,7 +1360,7 @@
             <param name="toCreate"></param>
             <returns></returns>
         </member>
-        <member name="M:Rdmp.UI.DashboardTabs.Construction.DashboardControlFactory.Create(Rdmp.Core.CatalogueLibrary.Data.Dashboarding.DashboardLayout,System.Type,Rdmp.UI.DashboardTabs.DashboardableControlHostPanel@)">
+        <member name="M:Rdmp.UI.DashboardTabs.Construction.DashboardControlFactory.Create(Rdmp.Core.Curation.Data.Dashboarding.DashboardLayout,System.Type,Rdmp.UI.DashboardTabs.DashboardableControlHostPanel@)">
             <summary>
             Creates a new instance of Type t (which must be an IDashboardableControl derrived ultimately from UserControl) which is then hydrated with an empty collection and a database
             record is created which can be used to save it's collection state for the lifetime of the control (allowing you to restore the state later)
@@ -1397,7 +1397,7 @@
              
              </summary>
         </member>
-        <member name="M:Rdmp.UI.DashboardTabs.Construction.IDashboardableControl.ConstructEmptyCollection(Rdmp.Core.CatalogueLibrary.Data.Dashboarding.DashboardControl)">
+        <member name="M:Rdmp.UI.DashboardTabs.Construction.IDashboardableControl.ConstructEmptyCollection(Rdmp.Core.Curation.Data.Dashboarding.DashboardControl)">
             <summary>
             unlike regular Dashboardable controls
             </summary>
@@ -2183,7 +2183,7 @@
             the contents of this method with the code editor.
             </summary>
         </member>
-        <member name="M:Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options.IParameterRefactorer.HandleRename(Rdmp.Core.CatalogueLibrary.Data.ISqlParameter,System.String,System.String)">
+        <member name="M:Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options.IParameterRefactorer.HandleRename(Rdmp.Core.Curation.Data.ISqlParameter,System.String,System.String)">
             <summary>
             
             </summary>
@@ -2192,7 +2192,7 @@
             <param name="newName"></param>
             <returns>true if you changed the parameters owner</returns>
         </member>
-        <member name="M:Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options.ParameterCollectionUIOptions.CreateNewParameterDefaultImplementation(Rdmp.Core.CatalogueLibrary.Data.ICollectSqlParameters,System.String)">
+        <member name="M:Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options.ParameterCollectionUIOptions.CreateNewParameterDefaultImplementation(Rdmp.Core.Curation.Data.ICollectSqlParameters,System.String)">
             <summary>
             Method called when creating new parameters if no CreateNewSqlParameterHandler was provided during construction
             </summary>
@@ -3834,7 +3834,7 @@
             <param name="databaseObject"></param>
             <returns></returns>
         </member>
-        <member name="M:Rdmp.UI.ItemActivation.IActivateItems.Activate``1(Rdmp.Core.CatalogueLibrary.Data.Dashboarding.IPersistableObjectCollection)">
+        <member name="M:Rdmp.UI.ItemActivation.IActivateItems.Activate``1(Rdmp.Core.Curation.Data.Dashboarding.IPersistableObjectCollection)">
             <summary>
             Launches a new instance of the specified IObjectCollectionControl with the supplied collection.
             </summary>
@@ -4193,7 +4193,7 @@
         </member>
         <member name="T:Rdmp.UI.MainFormUITabs.ConnectionStringKeywordUI">
             <summary>
-            Allows you to set up a <see cref="T:Rdmp.Core.CatalogueLibrary.Data.ConnectionStringKeyword"/> which will be used with all connections made against databases of the given <see cref="T:FAnsi.DatabaseType"/>.
+            Allows you to set up a <see cref="T:Rdmp.Core.Curation.Data.ConnectionStringKeyword"/> which will be used with all connections made against databases of the given <see cref="T:FAnsi.DatabaseType"/>.
             Take great care when doing this as you can easily render your datasources unreachable by all system users.
             </summary>
         </member>
@@ -4437,7 +4437,7 @@
             property) and an appropriate user control for providing a value (for example an enum will show a dropdown while a string property will show a text box - See ArgumentUI).  
             </summary>
         </member>
-        <member name="M:Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentCollectionUI.Setup(Rdmp.Core.CatalogueLibrary.Data.DataLoad.IArgumentHost,System.Type,Rdmp.Core.Repositories.ICatalogueRepository)">
+        <member name="M:Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentCollectionUI.Setup(Rdmp.Core.Curation.Data.DataLoad.IArgumentHost,System.Type,Rdmp.Core.Repositories.ICatalogueRepository)">
             <summary>
             Reconfigures this UI (can be called multiple times throughout controls lifetime) to facilitate the population of DemandsInitialization
             properties on an underlying type (e.g. if your collection is ProcessTask and your argument type is ProcessTaskArgument then your underlying type could
@@ -4615,7 +4615,7 @@
             <summary>
             Allows you to specify the value of an IArugment (the database persistence value of a [DemandsInitialization] decorated Property on a MEF class e.g. a Pipeline components public property that the user can set)
             
-            <para>This Control is for setting Properties that are Pipeline, (Requires the class to implement <see cref="T:Rdmp.Core.CatalogueLibrary.Data.Pipelines.IDemandToUseAPipeline"/>).</para>
+            <para>This Control is for setting Properties that are Pipeline, (Requires the class to implement <see cref="T:Rdmp.Core.Curation.Data.Pipelines.IDemandToUseAPipeline"/>).</para>
             </summary>
         </member>
         <member name="F:Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValuePipelineUI.components">
@@ -4897,7 +4897,7 @@
             <param name="treeObject"></param>
             <returns></returns>
         </member>
-        <member name="M:Rdmp.UI.PluginChildProvision.IPluginUserInterface.GetAdditionalCommandsForControl(Rdmp.UI.TestsAndSetup.ServicePropogation.IRDMPSingleDatabaseObjectControl,Rdmp.Core.CatalogueLibrary.Data.DatabaseEntity)">
+        <member name="M:Rdmp.UI.PluginChildProvision.IPluginUserInterface.GetAdditionalCommandsForControl(Rdmp.UI.TestsAndSetup.ServicePropogation.IRDMPSingleDatabaseObjectControl,Rdmp.Core.Curation.Data.DatabaseEntity)">
             <summary>
             Return a list of commands that should be exposed on the given user interface tab control (<paramref name="control"/>) when displaying the
             given <paramref name="databaseEntity"/> object.  These will be shown as buttons on the control (where the control invokes
@@ -5150,7 +5150,7 @@
             Constructor used for persistence
             </summary>
         </member>
-        <member name="M:Rdmp.UI.ProjectUI.Graphs.ExtractionAggregateGraphObjectCollection.#ctor(Rdmp.Core.DataExport.Data.SelectedDataSets,Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration)">
+        <member name="M:Rdmp.UI.ProjectUI.Graphs.ExtractionAggregateGraphObjectCollection.#ctor(Rdmp.Core.DataExport.Data.SelectedDataSets,Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration)">
             <summary>
             Use this constructor at runtime
             </summary>
@@ -6286,7 +6286,7 @@
             <para>If you have a large data repository or plan to use lots of different datasets or complex filters in your CohortIdentificationCriteria you should configure a caching database
             from the dropdown menu.</para>
             
-            <para>Next you should add datasets and set operations (<see cref="T:Rdmp.Core.CatalogueLibrary.Data.Cohort.CohortAggregateContainer"/>) either by right clicking or dragging and dropping into the tree view</para>
+            <para>Next you should add datasets and set operations (<see cref="T:Rdmp.Core.Curation.Data.Cohort.CohortAggregateContainer"/>) either by right clicking or dragging and dropping into the tree view</para>
             
             <para>In the above example you might have </para>
             
@@ -6330,7 +6330,7 @@
             Do not use this constructor, it is used only for deserialization during persistence on form loading after application closing
             </summary>
         </member>
-        <member name="M:Rdmp.UI.SubComponents.Graphs.CohortSummaryAggregateGraphObjectCollection.#ctor(Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration,Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration,Rdmp.Core.QueryBuilding.CohortSummaryAdjustment)">
+        <member name="M:Rdmp.UI.SubComponents.Graphs.CohortSummaryAggregateGraphObjectCollection.#ctor(Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration,Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration,Rdmp.Core.QueryBuilding.CohortSummaryAdjustment)">
             <summary>
             Use this constructor at runtime
             </summary>
@@ -6338,7 +6338,7 @@
             <param name="graph"></param>
             <param name="adjustment"></param>
         </member>
-        <member name="M:Rdmp.UI.SubComponents.Graphs.CohortSummaryAggregateGraphObjectCollection.#ctor(Rdmp.Core.CatalogueLibrary.Data.Cohort.CohortAggregateContainer,Rdmp.Core.CatalogueLibrary.Data.Aggregation.AggregateConfiguration)">
+        <member name="M:Rdmp.UI.SubComponents.Graphs.CohortSummaryAggregateGraphObjectCollection.#ctor(Rdmp.Core.Curation.Data.Cohort.CohortAggregateContainer,Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration)">
             <summary>
             Overload that does the operation on a container with (WhereExtractionIdentifiersIn - the only permissable option)
             </summary>
@@ -6407,7 +6407,7 @@
             
             </summary>
         </member>
-        <member name="M:Rdmp.UI.TestsAndSetup.ServicePropogation.IObjectCollectionControl.SetCollection(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.Core.CatalogueLibrary.Data.Dashboarding.IPersistableObjectCollection)">
+        <member name="M:Rdmp.UI.TestsAndSetup.ServicePropogation.IObjectCollectionControl.SetCollection(Rdmp.UI.ItemActivation.IActivateItems,Rdmp.Core.Curation.Data.Dashboarding.IPersistableObjectCollection)">
             <summary>
             Provides a fully hydrated collection either created by a user action or by deserializing a persistence string in PersistableObjectCollectionDockContent.  Either way the
             collection will be fully hydrated.
@@ -6615,7 +6615,7 @@
             <param name="tb"></param>
             <param name="action">Method to call if a valid Uri is entered into the text box.  Called with null if text box is blank</param>
         </member>
-        <member name="M:Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl`1.Publish(Rdmp.Core.CatalogueLibrary.Data.DatabaseEntity)">
+        <member name="M:Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl`1.Publish(Rdmp.Core.Curation.Data.DatabaseEntity)">
             <summary>
             Triggers an application refresh because a change has been made to <paramref name="e"/>
             </summary>

@@ -7,8 +7,8 @@
 using System.Linq;
 using Diagnostics.TestData;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 using Tests.Common;
 

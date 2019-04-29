@@ -6,8 +6,8 @@
 
 using System;
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;

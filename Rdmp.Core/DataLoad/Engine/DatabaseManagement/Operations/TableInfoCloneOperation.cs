@@ -6,8 +6,8 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.DataAccess;
 

@@ -10,9 +10,9 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Checks;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.Curation.Checks;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 

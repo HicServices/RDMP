@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data

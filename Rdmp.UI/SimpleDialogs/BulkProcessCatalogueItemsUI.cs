@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

@@ -6,7 +6,7 @@
 
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableUIComponents.SingleControlForms;
 

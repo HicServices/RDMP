@@ -11,7 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;

@@ -7,7 +7,7 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.DataViewing.Collections;
 using Rdmp.UI.Icons.IconProvision;

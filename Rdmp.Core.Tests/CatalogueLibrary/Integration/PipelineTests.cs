@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.Attachers;

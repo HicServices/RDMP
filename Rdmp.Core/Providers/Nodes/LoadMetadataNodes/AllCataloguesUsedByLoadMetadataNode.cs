@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
 {
     /// <summary>
-    /// Collection of all the <see cref="Catalogue"/>s which are currently associated with a given <see cref="CatalogueLibrary.Data.DataLoad.LoadMetadata"/>.  This governs
+    /// Collection of all the <see cref="Catalogue"/>s which are currently associated with a given <see cref="Curation.Data.DataLoad.LoadMetadata"/>.  This governs
     /// which tables are created in RAW=>STAGING=>LIVE.
     /// </summary>
     public class AllCataloguesUsedByLoadMetadataNode : Node, IOrderable

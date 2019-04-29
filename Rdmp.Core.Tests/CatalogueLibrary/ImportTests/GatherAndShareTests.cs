@@ -10,10 +10,10 @@ using System.Linq;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Tests.Common;
@@ -113,7 +113,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1.dll"));
             File.WriteAllBytes(f2.FullName, new byte[] { 0x3, 0x3 });
 
-            var plugin = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
+            var plugin = new Curation.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
             var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
             var lma2 = new LoadModuleAssembly(CatalogueRepository, f2, plugin);
 

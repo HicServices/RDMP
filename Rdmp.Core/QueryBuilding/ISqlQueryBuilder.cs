@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding.Parameters;
 
 namespace Rdmp.Core.QueryBuilding

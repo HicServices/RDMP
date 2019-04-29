@@ -6,7 +6,7 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using ReusableUIComponents;

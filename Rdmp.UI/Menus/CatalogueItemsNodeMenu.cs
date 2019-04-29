@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;

@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;

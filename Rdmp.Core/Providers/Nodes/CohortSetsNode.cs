@@ -4,14 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.Providers.Nodes
 {
     /// <summary>
-    /// Collection of all <see cref="AggregateConfiguration"/> in a <see cref="Catalogue"/> that are involved in cohort creation (See <see cref="CohortIdentificationConfiguration"/>).
+    /// Collection of all <see cref="AggregateConfiguration"/> in a <see cref="Curation.Data.Catalogue"/> that are involved in cohort creation (See <see cref="CohortIdentificationConfiguration"/>).
     /// </summary>
     public class CohortSetsNode:Node
     {

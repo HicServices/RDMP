@@ -7,10 +7,10 @@
 using System;
 using System.Linq;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.UI.SubComponents.Graphs

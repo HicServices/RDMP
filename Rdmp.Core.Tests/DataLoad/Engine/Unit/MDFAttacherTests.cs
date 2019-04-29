@@ -11,7 +11,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Attachers;

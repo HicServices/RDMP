@@ -6,9 +6,9 @@
 
 using System;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Spontaneous;
 
 namespace Rdmp.Core.Providers.Nodes.PipelineNodes
 {

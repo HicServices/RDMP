@@ -8,7 +8,7 @@ using System;
 using System.Reflection;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.Collections;

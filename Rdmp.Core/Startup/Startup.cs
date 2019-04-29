@@ -15,7 +15,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine.Data;

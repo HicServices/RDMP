@@ -7,9 +7,9 @@
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

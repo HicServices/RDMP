@@ -6,7 +6,7 @@
 
 using System;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Dashboarding;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
 {

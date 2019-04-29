@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;

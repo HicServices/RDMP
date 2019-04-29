@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Unit

@@ -6,8 +6,8 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 
 namespace Tests.Common.Helpers

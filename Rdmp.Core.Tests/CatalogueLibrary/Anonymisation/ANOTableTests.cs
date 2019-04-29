@@ -13,7 +13,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

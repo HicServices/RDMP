@@ -7,9 +7,9 @@
 using System;
 using FAnsi.Discovery;
 using Rdmp.Core.Caching.Layouts;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components;

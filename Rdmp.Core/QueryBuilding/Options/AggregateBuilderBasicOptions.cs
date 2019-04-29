@@ -7,8 +7,8 @@
 using System;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.QueryBuilding.Options

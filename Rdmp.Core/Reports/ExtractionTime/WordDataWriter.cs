@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
@@ -17,7 +17,7 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using ReusableLibraryCode;
 using Xceed.Words.NET;
-using IFilter = Rdmp.Core.CatalogueLibrary.Data.IFilter;
+using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
 namespace Rdmp.Core.Reports.ExtractionTime
 {

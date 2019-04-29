@@ -7,8 +7,7 @@
 using System.Data;
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Job;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

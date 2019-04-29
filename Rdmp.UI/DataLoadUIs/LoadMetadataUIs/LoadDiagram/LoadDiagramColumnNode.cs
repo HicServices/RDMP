@@ -6,9 +6,9 @@
 
 using System;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.Icons.IconProvision;

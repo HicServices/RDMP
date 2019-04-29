@@ -8,7 +8,7 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
 

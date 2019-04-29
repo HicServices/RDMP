@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.ComponentModel.Composition;
-using Rdmp.Core.CatalogueLibrary.ANOEngineering;
+using Rdmp.Core.Curation.ANOEngineering;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations

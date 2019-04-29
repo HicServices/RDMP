@@ -13,7 +13,7 @@ using FAnsi;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode;

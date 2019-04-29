@@ -6,7 +6,7 @@
 
 using System;
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
 {

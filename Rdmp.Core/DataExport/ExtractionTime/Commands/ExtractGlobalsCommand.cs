@@ -7,7 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
 using Rdmp.Core.Repositories;
@@ -16,7 +16,7 @@ namespace Rdmp.Core.DataExport.ExtractionTime.Commands
 {
     /// <summary>
     /// Extraction command for the data export engine which mandates the extraction of all global (not dataset specific) files in an <see cref="ExtractionConfiguration"/> (e.g.
-    /// <see cref="CatalogueLibrary.Data.SupportingSQLTable"/>)
+    /// <see cref="SupportingSQLTable"/>)
     /// </summary>
     public class ExtractGlobalsCommand : ExtractCommand
     {

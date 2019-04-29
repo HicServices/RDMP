@@ -7,8 +7,8 @@
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;

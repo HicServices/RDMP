@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;

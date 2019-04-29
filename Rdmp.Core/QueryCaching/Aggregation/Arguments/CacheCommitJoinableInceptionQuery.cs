@@ -6,7 +6,7 @@
 
 using System.Data;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Aggregation;
 
 namespace Rdmp.Core.QueryCaching.Aggregation.Arguments
 {

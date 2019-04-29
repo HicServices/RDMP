@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;

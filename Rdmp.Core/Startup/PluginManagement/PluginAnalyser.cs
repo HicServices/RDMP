@@ -10,7 +10,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Startup.PluginManagement
 {
@@ -26,14 +26,14 @@ namespace Rdmp.Core.Startup.PluginManagement
     /// </summary>
     public class PluginAnalyser
     {
-        public CatalogueLibrary.Data.Plugin Plugin { get; set; }
+        public Curation.Data.Plugin Plugin { get; set; }
         public DirectoryInfo PluginDirectory { get; set; }
         public SafeDirectoryCatalog Catalog { get; set; }
 
         public Dictionary<LoadModuleAssembly,PluginAnalyserReport> Reports = new Dictionary<LoadModuleAssembly, PluginAnalyserReport>();
         public event PluginAnalyserProgressEventHandler ProgressMade = delegate { };
 
-        public PluginAnalyser(CatalogueLibrary.Data.Plugin plugin,DirectoryInfo pluginDirectory,SafeDirectoryCatalog catalog)
+        public PluginAnalyser(Curation.Data.Plugin plugin,DirectoryInfo pluginDirectory,SafeDirectoryCatalog catalog)
         {
             Plugin = plugin;
             PluginDirectory = pluginDirectory;

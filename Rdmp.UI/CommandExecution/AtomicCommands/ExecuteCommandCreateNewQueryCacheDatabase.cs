@@ -7,8 +7,8 @@
 using System.Data.SqlClient;
 using System.Drawing;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

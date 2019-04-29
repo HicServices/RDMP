@@ -7,7 +7,7 @@
 using System.Drawing;
 using System.IO;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;

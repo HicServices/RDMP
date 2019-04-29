@@ -6,7 +6,7 @@
 
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.DataViewing;

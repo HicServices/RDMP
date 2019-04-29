@@ -7,8 +7,10 @@
 using System;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataFlowPipeline;
@@ -19,11 +21,11 @@ using ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
 {
     /// <summary>
-    /// Data release pipeline component which generates <see cref="CatalogueLibrary.Data.Serialization.ShareDefinition"/> files for all <see cref="Catalogue"/> being
+    /// Data release pipeline component which generates <see cref="ShareDefinition"/> files for all <see cref="Catalogue"/> being
     /// extracted.  These contain the dataset and column descriptions in a format that can be loaded by any remote RDMP instance via ExecuteCommandImportShareDefinitionList.
     /// 
     /// <para>This serialization includes the allocation of SharingUIDs to allow for later updates and to prevent duplicate loading in the destination.  In addition it handles
-    /// system boundaries e.g. it doesn't serialize <see cref="CatalogueLibrary.Data.DataLoad.LoadMetadata"/> of the <see cref="Catalogue"/> or other deployment specific objects</para>
+    /// system boundaries e.g. it doesn't serialize <see cref="LoadMetadata"/> of the <see cref="Catalogue"/> or other deployment specific objects</para>
     /// </summary>
     public class ReleaseMetadata : IPluginDataFlowComponent<ReleaseAudit>, IPipelineRequirement<ReleaseData>
     {

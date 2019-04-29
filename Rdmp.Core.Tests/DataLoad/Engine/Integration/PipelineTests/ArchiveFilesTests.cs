@@ -11,7 +11,7 @@ using System.IO.Compression;
 using System.Linq;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard;

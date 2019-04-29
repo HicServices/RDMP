@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.Icons.IconProvision;

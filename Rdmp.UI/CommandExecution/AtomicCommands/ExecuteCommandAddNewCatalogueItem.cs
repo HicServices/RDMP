@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

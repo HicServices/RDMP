@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Tests.DataLoad.Engine.Integration.RelationalBulkTestDataTests.TestData;

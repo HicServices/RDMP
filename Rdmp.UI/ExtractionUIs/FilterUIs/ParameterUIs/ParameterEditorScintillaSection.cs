@@ -6,7 +6,7 @@
 
 using System;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 

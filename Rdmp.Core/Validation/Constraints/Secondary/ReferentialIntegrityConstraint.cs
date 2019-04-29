@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Data.Common;
 using System.Xml.Serialization;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Validation.UIAttributes;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;

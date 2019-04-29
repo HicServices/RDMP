@@ -4,13 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes
 {
     /// <summary>
-    /// All virtual columns in this <see cref="Rdmp.Core.CatalogueLibrary.Data.TableInfo"/> which appear in the data load (RAW) but do not exist in the live database (or are diluted).  This enables
+    /// All virtual columns in this <see cref="Curation.Data.TableInfo"/> which appear in the data load (RAW) but do not exist in the live database (or are diluted).  This enables
     /// anonymisation or dropping of columns during the data load (See <see cref="PreLoadDiscardedColumn"/>)
     /// </summary>
     public class PreLoadDiscardedColumnsNode:Node

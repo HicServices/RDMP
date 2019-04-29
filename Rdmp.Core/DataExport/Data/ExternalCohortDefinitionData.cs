@@ -6,7 +6,6 @@
 
 using System;
 using System.Data.Common;
-using Rdmp.Core.CatalogueLibrary.Data;
 
 namespace Rdmp.Core.DataExport.Data
 {

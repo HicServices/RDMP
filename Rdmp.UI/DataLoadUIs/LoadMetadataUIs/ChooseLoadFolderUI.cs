@@ -8,8 +8,8 @@ using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data.DataLoad;
 using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs

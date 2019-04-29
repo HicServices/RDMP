@@ -7,8 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
 
 namespace Rdmp.UI.Raceway
 {

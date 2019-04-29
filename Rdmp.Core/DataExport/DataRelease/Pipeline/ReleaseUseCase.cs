@@ -6,7 +6,7 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;

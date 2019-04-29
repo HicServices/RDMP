@@ -6,7 +6,7 @@
 
 using System;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data.Referencing;
+using Rdmp.Core.Curation.Data.Referencing;
 
 namespace Rdmp.Core.Startup
 {

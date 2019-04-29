@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Dependency.Exceptions;

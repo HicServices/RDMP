@@ -6,8 +6,8 @@
 
 using System;
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;

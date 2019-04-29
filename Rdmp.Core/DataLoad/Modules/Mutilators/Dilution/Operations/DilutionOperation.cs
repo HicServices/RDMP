@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery.TypeTranslation;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
 using ReusableLibraryCode.Checks;
 

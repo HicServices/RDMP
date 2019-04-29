@@ -7,7 +7,7 @@
 using System;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit

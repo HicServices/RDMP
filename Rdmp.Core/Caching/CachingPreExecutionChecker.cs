@@ -6,9 +6,9 @@
 
 using System;
 using Rdmp.Core.Caching.Pipeline;
-using Rdmp.Core.CatalogueLibrary.Checks;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Checks;
+using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Pipelines;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 

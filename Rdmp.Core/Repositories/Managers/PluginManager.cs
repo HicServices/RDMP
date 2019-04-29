@@ -22,7 +22,7 @@ namespace Rdmp.Core.Repositories.Managers
             _repository = repository;
         }
 
-        public CatalogueLibrary.Data.Plugin[] GetCompatiblePlugins()
+        public Curation.Data.Plugin[] GetCompatiblePlugins()
         {
             var location = Assembly.GetExecutingAssembly().Location;
             if(location == null)
@@ -31,7 +31,7 @@ namespace Rdmp.Core.Repositories.Managers
             var fileVersion = FileVersionInfo.GetVersionInfo(location).FileVersion;
             var version = new Version(fileVersion);
 
-            var plugins = _repository.GetAllObjects<CatalogueLibrary.Data.Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(version, 3));
+            var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(version, 3));
             var uniquePlugins = plugins.GroupBy(p => new { name = p.Name, ver = new Version(p.PluginVersion.Major, p.PluginVersion.Minor, p.PluginVersion.Build) })
                 .ToDictionary(g => g.Key, p => p.OrderByDescending(pv => pv.PluginVersion).First());
             return uniquePlugins.Values.ToArray();

@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling

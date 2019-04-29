@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel;
 using System.IO;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;

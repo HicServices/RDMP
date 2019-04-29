@@ -6,8 +6,8 @@
 
 using System.Collections.Generic;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
 

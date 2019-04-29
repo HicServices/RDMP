@@ -6,7 +6,7 @@
 
 using System.IO;
 using System.Xml;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 
 namespace Tests.Common
 {

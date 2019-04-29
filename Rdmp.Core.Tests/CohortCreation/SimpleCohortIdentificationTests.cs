@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.CohortCreation

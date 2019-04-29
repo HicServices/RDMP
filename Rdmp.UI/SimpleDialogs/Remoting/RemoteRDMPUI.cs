@@ -6,7 +6,7 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Remoting;
+using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;

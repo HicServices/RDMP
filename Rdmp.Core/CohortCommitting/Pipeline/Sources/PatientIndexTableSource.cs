@@ -6,7 +6,7 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.QueryBuilding;

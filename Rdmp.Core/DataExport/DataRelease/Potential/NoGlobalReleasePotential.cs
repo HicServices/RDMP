@@ -5,14 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.DataRelease.Potential
 {
     /// <summary>
-    /// Release potential for global objects (e.g. <see cref="CatalogueLibrary.Data.SupportingDocument"/>) that have never been recorded as extracted for a given extraction project 
+    /// Release potential for global objects (e.g. <see cref="SupportingDocument"/>) that have never been recorded as extracted for a given extraction project 
     /// (i.e. no <see cref="ISupplementalExtractionResults"/> exists for them).
     /// </summary>
     public class NoGlobalReleasePotential : GlobalReleasePotential

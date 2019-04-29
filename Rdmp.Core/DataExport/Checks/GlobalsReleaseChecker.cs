@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataExport.ExtractionTime;

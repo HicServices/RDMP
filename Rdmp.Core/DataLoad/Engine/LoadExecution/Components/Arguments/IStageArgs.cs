@@ -6,8 +6,8 @@
 
 using System.Collections.Generic;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
 {

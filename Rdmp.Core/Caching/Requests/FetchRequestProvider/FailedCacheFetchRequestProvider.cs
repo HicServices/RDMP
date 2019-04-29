@@ -6,7 +6,7 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Curation.Data.Cache;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching.Requests.FetchRequestProvider

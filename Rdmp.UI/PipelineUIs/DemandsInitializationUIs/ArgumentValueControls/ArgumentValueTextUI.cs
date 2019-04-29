@@ -6,7 +6,7 @@
 
 using System.IO;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using ReusableUIComponents;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls

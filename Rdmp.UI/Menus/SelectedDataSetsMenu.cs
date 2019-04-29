@@ -7,8 +7,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;

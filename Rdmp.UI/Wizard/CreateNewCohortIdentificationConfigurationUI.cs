@@ -7,7 +7,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;

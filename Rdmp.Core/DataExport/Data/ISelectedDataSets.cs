@@ -6,7 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.DataExport.Data
 {

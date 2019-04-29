@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Caching.Layouts;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.LoadProcess.Scheduling.Strategy;
 using ReusableLibraryCode.Progress;
 

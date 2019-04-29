@@ -6,7 +6,7 @@
 
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Sharing.Dependency
@@ -24,9 +24,9 @@ namespace Rdmp.Core.Sharing.Dependency
             _shareManager = new ShareManager(repositoryLocator);
         }
 
-        public CatalogueLibrary.Data.Plugin Import(Stream stream)
+        public Curation.Data.Plugin Import(Stream stream)
         {
-            return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<CatalogueLibrary.Data.Plugin>().Single();
+            return _shareManager.ImportSharedObject(stream, deleteExisting: true).OfType<Curation.Data.Plugin>().Single();
         }
     }
 }

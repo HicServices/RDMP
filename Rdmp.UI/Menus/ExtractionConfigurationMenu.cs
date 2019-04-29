@@ -7,7 +7,6 @@
 using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;

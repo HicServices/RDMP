@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.DataHelper;
+using Rdmp.Core.Curation.DataHelper;
 using ReusableLibraryCode.Checks;
 using Tests.Common.Scenarios;
 

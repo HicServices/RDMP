@@ -10,8 +10,8 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode;
 

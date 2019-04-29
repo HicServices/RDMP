@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

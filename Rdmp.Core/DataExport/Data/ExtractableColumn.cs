@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.Common;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
@@ -206,7 +206,7 @@ namespace Rdmp.Core.DataExport.Data
         }
         
         /// <summary>
-        /// Returns true if the underlying column (<see cref="CatalogueLibrary.Data.ColumnInfo"/>) referenced by this class has disapeared since it's creation.
+        /// Returns true if the underlying column (<see cref="Curation.Data.ColumnInfo"/>) referenced by this class has disapeared since it's creation.
         /// </summary>
         /// <returns></returns>
         public bool HasOriginalExtractionInformationVanished()

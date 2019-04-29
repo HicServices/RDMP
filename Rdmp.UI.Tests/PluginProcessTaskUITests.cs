@@ -8,8 +8,8 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks;
 

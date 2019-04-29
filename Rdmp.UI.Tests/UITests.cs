@@ -12,7 +12,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

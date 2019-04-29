@@ -7,7 +7,7 @@
 using System;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.Copying.Commands
 {

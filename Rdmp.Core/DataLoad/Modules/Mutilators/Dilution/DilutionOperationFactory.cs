@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CatalogueLibrary.ANOEngineering;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.ANOEngineering;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators.Dilution

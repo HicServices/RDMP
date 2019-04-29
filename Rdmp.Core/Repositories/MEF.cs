@@ -14,7 +14,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -65,7 +65,6 @@ namespace Rdmp.Core.Repositories
 
         public void Setup(SafeDirectoryCatalog result)
         {
-
             SafeDirectoryCatalog = result;
             HaveDownloadedAllAssemblies = true;
         }

@@ -6,7 +6,7 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using ReusableLibraryCode.Checks;

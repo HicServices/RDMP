@@ -10,9 +10,9 @@ using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Serialization;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.Sharing.Dependency.Gathering

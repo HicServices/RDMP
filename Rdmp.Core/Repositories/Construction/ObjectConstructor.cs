@@ -11,6 +11,7 @@ using System.Data.Common;
 using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Repositories.Construction
 {
@@ -63,7 +64,7 @@ namespace Rdmp.Core.Repositories.Construction
         }
 
         /// <summary>
-        /// Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r) (See <see cref="CatalogueLibrary.Data.DatabaseEntity"/>).
+        /// Constructs a new instance of Type objectType by invoking the constructor MyClass(IRepository x, DbDataReader r) (See <see cref="DatabaseEntity"/>).
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="objectType"></param>

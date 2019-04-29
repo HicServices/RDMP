@@ -6,7 +6,7 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;

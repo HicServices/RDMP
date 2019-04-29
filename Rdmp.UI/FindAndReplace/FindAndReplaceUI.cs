@@ -12,7 +12,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Rdmp.UI.CommandExecution.AtomicCommands;

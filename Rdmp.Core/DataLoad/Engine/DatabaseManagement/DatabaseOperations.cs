@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement

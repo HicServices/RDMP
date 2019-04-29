@@ -6,9 +6,9 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.FilterImporting;
-using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 

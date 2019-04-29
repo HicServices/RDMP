@@ -6,9 +6,9 @@
 
 using System.Data;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;

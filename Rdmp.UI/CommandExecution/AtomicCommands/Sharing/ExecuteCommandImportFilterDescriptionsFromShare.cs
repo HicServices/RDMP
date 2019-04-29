@@ -7,9 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.Serialization;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 

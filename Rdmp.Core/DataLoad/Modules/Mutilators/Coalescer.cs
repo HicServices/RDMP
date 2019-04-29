@@ -10,8 +10,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.Mutilators

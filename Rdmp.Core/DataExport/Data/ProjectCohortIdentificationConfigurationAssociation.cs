@@ -10,8 +10,8 @@ using System.Data.Common;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Injection;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
@@ -33,7 +33,7 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <summary>
-        /// The <see cref="CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
+        /// The <see cref="Curation.Data.Cohort.CohortIdentificationConfiguration"/> which is associated with the given <see cref="Project_ID"/>.
         /// </summary>
         public int CohortIdentificationConfiguration_ID
         {

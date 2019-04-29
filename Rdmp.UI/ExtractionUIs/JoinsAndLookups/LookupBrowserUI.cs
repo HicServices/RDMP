@@ -7,8 +7,8 @@
 using System.ComponentModel;
 using System.Data;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ItemActivation;

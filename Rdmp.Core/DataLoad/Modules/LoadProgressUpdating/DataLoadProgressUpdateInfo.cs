@@ -8,7 +8,7 @@ using System;
 using System.Data.SqlClient;
 using System.Text;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;

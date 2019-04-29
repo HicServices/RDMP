@@ -6,8 +6,8 @@
 
 using System;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;

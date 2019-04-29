@@ -5,7 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Caching.Layouts;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 
 namespace Rdmp.Core.Caching.Pipeline.Destinations

@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 
@@ -33,7 +33,7 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering
             _functions.Add(typeof(Catalogue), o => GatherDependencies((Catalogue)o));
             _functions.Add(typeof(ColumnInfo),o=>GatherDependencies((ColumnInfo)o));
             _functions.Add(typeof(ANOTable), o => GatherDependencies((ANOTable)o));
-            _functions.Add(typeof(CatalogueLibrary.Data.Plugin), o => GatherDependencies((CatalogueLibrary.Data.Plugin)o));
+            _functions.Add(typeof(Curation.Data.Plugin), o => GatherDependencies((Curation.Data.Plugin)o));
 
             _functions.Add(typeof(LoadMetadata), o => GatherDependencies((LoadMetadata)o));
 
@@ -73,7 +73,7 @@ namespace Rdmp.Core.Sharing.Dependency.Gathering
             return root;
         }
 
-        public GatheredObject GatherDependencies(CatalogueLibrary.Data.Plugin plugin)
+        public GatheredObject GatherDependencies(Curation.Data.Plugin plugin)
         {
             var root = new GatheredObject(plugin);
 

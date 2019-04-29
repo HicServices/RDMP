@@ -8,7 +8,7 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;

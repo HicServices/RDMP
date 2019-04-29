@@ -6,7 +6,7 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
 using Tests.Common;

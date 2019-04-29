@@ -7,8 +7,8 @@
 using System;
 using System.Data;
 using System.IO;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataFlowPipeline;

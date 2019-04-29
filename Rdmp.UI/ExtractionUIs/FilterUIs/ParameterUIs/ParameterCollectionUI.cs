@@ -11,7 +11,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

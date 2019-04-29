@@ -7,7 +7,7 @@
 using System;
 using System.Data;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using ReusableLibraryCode.Checks;

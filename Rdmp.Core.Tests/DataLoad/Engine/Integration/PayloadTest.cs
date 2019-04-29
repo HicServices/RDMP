@@ -7,9 +7,9 @@
 using System.IO;
 using Diagnostics.TestData;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.Defaults;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Attachers;

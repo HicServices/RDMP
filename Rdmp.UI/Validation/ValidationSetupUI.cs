@@ -11,7 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;

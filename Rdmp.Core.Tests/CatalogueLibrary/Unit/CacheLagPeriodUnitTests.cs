@@ -6,7 +6,7 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Curation.Data.Cache;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Unit
 {

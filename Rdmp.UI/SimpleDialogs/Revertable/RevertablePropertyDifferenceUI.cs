@@ -6,7 +6,7 @@
 
 using System.Drawing;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents.ScintillaHelper;

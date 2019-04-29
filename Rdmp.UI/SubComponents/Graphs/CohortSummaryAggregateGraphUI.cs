@@ -6,8 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.AggregationUIs;
 using Rdmp.UI.Collections;

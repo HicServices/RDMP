@@ -7,11 +7,11 @@
 using System;
 using System.Data.SqlClient;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Defaults;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
 using Rdmp.Core.CohortCommitting.Pipeline.Destinations;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;

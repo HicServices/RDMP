@@ -7,7 +7,6 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;

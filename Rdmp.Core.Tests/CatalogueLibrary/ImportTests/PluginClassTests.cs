@@ -10,8 +10,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Tests.Common;
 
@@ -35,11 +35,11 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             var tripart = new Version(version);
 
-            Rdmp.Core.CatalogueLibrary.Data.Plugin p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
+            Curation.Data.Plugin p = new Curation.Data.Plugin(CatalogueRepository, fi);
             p.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 1);
             p.SaveToDatabase();
 
-            Rdmp.Core.CatalogueLibrary.Data.Plugin p2 = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
+            Curation.Data.Plugin p2 = new Curation.Data.Plugin(CatalogueRepository, fi);
             p2.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 5);
             p2.SaveToDatabase();
 
@@ -58,7 +58,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.dll"));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
 
-            Rdmp.Core.CatalogueLibrary.Data.Plugin p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository,fi);
+            Curation.Data.Plugin p = new Curation.Data.Plugin(CatalogueRepository,fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
             
             //Give it some pdb bytes
@@ -78,7 +78,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             p.DeleteInDatabase();
 
             //import it again
-            p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(sm, list[0]);
+            p = new Curation.Data.Plugin(sm, list[0]);
             lma = new LoadModuleAssembly(sm, list[1]);
             
             Assert.AreEqual(1,lma.Pdb.Length); //1 byte in pdb
@@ -97,7 +97,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             //and delete pluing (CASCADE deletes lma too)
             p.DeleteInDatabase();
 
-            p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(sm, list[0]);
+            p = new Curation.Data.Plugin(sm, list[0]);
             lma = new LoadModuleAssembly(sm, list[1]);
 
             Assert.IsNull(lma.Pdb);
@@ -117,7 +117,7 @@ namespace Rdmp.Core.Tests.CatalogueLibrary.ImportTests
             var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah3.dll"));
             File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
-            Rdmp.Core.CatalogueLibrary.Data.Plugin p = new Rdmp.Core.CatalogueLibrary.Data.Plugin(CatalogueRepository, fi);
+            Curation.Data.Plugin p = new Curation.Data.Plugin(CatalogueRepository, fi);
             var lma = new LoadModuleAssembly(CatalogueRepository, fi2, p);
             var lma2 = new LoadModuleAssembly(CatalogueRepository, fi3, p);
             

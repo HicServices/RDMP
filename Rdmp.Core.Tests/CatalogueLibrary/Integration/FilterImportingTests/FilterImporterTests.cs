@@ -7,9 +7,9 @@
 using FAnsi.Implementations.MicrosoftSQL;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.FilterImporting;
-using Rdmp.Core.CatalogueLibrary.FilterImporting.Construction;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 
 namespace Rdmp.Core.Tests.CatalogueLibrary.Integration.FilterImportingTests
 {

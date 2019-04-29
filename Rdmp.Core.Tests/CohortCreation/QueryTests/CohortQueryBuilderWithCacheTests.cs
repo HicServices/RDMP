@@ -8,7 +8,7 @@ using System.Data;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryCaching.Aggregation;

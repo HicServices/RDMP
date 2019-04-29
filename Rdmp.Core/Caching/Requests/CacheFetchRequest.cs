@@ -6,8 +6,8 @@
 
 using System;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Caching.Requests

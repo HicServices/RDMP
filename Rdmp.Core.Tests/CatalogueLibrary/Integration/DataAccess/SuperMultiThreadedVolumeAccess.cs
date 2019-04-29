@@ -12,7 +12,7 @@ using System.Threading;
 using FAnsi.Connections;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
 using Tests.Common;
 

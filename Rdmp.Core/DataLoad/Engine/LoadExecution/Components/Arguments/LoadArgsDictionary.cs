@@ -6,9 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments

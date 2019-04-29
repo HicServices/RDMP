@@ -12,7 +12,7 @@
     <None Remove="Databases\CatalogueDatabase\up\views\**" />
   </ItemGroup>
   <ItemGroup>
-    <None Remove="CatalogueLibrary\KeywordHelp.txt" />
+    <None Remove="Curation\KeywordHelp.txt" />
     <None Remove="Databases\ANOStoreDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <None Remove="Databases\CatalogueDatabase\runAfterCreateDatabase\CreateCatalogue.sql" />
     <None Remove="Databases\CatalogueDatabase\up\001_AddCacheLagPeriodToLoadSchedule.sql" />
@@ -242,11 +242,8 @@
     <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Content Include="CatalogueLibrary\KeywordHelp.txt">
+    <Content Include="Curation\KeywordHelp.txt">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="CohortCreation\QueryBuilding\" />
   </ItemGroup>
 </Project>

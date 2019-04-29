@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Attachers;

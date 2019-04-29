@@ -10,7 +10,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode;
 using Tests.Common.Scenarios;

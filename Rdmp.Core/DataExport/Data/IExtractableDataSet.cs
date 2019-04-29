@@ -6,7 +6,7 @@
 
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
@@ -22,7 +22,7 @@ namespace Rdmp.Core.DataExport.Data
     public interface IExtractableDataSet:IMapsDirectlyToDatabaseTable,IRevertable
     {
         /// <summary>
-        /// The <see cref="Catalogue"/> (dataset) which this object allows the extraction of.  The Catalogue object will exist in
+        /// The <see cref="Curation.Data.Catalogue"/> (dataset) which this object allows the extraction of.  The Catalogue object will exist in
         /// the <see cref="ICatalogueRepository"/> database (while the <see cref="IExtractableDataSet"/> exists in the <see cref="IDataExportRepository"/>).
         /// </summary>
         int Catalogue_ID { get; set; }

@@ -8,7 +8,7 @@ using System;
 using System.Data;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;

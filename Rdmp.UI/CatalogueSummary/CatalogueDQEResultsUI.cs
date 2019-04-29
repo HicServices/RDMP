@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;

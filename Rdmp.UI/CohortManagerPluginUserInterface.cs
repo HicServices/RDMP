@@ -6,8 +6,8 @@
 
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution.AtomicCommands;

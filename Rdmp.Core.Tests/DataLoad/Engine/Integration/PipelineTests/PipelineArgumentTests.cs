@@ -6,7 +6,7 @@
 
 using System;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests

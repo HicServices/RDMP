@@ -7,7 +7,6 @@
 using System;
 using System.IO;
 using System.Linq;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 

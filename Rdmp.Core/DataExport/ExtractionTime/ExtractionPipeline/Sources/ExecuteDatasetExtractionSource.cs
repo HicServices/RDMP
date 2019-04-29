@@ -11,7 +11,7 @@ using System.Diagnostics;
 using System.Linq;
 using System.Threading.Tasks;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
@@ -24,7 +24,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
+using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources
 {

@@ -8,7 +8,7 @@ using System;
 using System.ComponentModel.Composition;
 using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.Caching.Requests.FetchRequestProvider;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Repositories;

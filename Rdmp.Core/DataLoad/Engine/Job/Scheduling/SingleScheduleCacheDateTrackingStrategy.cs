@@ -10,8 +10,8 @@ using System.Linq;
 using Rdmp.Core.Caching.Layouts;
 using Rdmp.Core.Caching.Pipeline;
 using Rdmp.Core.Caching.Pipeline.Destinations;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cache;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.Job.Scheduling

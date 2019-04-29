@@ -16,17 +16,17 @@ using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cache;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.Governance;
-using Rdmp.Core.CatalogueLibrary.Data.ImportExport;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
-using Rdmp.Core.CatalogueLibrary.Data.Remoting;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease;
@@ -231,15 +231,15 @@ namespace Tests.Common
                 return (T)(object)joinable.AddUser(config);
             }
             
-            if (typeof (T) == typeof(Rdmp.Core.CatalogueLibrary.Data.Plugin))
-                return (T)(object)new Rdmp.Core.CatalogueLibrary.Data.Plugin(Repository,new FileInfo("bob.zip"));
+            if (typeof (T) == typeof(Rdmp.Core.Curation.Data.Plugin))
+                return (T)(object)new Rdmp.Core.Curation.Data.Plugin(Repository,new FileInfo("bob.zip"));
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
                 var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.dll");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
-                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.CatalogueLibrary.Data.Plugin>());
+                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>());
             }
             
             if (typeof (T) == typeof(AggregateContinuousDateAxis))

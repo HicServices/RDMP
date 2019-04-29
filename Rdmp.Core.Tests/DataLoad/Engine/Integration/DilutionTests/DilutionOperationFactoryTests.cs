@@ -7,9 +7,9 @@
 using System;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.ANOEngineering;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.ANOEngineering;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 using Tests.Common;

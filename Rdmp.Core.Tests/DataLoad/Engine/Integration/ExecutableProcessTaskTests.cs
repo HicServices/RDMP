@@ -6,7 +6,7 @@
 
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 using Tests.Common;

@@ -8,8 +8,8 @@ using System;
 using System.IO;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Checks;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Checks;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

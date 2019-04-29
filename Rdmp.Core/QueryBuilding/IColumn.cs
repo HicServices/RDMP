@@ -7,8 +7,8 @@
 using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.QueryBuilding
@@ -54,7 +54,7 @@ namespace Rdmp.Core.QueryBuilding
 
         /// <summary>
         /// Indicates whether this column is the Primary Key (or part of a composite Primary Key) when extracted.  This flag is not copied / imputed from 
-        /// <see cref="CatalogueLibrary.Data.ColumnInfo.IsPrimaryKey"/> because primary keys can often contain sensitive information (e.g. lab number) and
+        /// <see cref="Curation.Data.ColumnInfo.IsPrimaryKey"/> because primary keys can often contain sensitive information (e.g. lab number) and
         /// you may have a transform or hash configured or your <see cref="Catalogue"/> may involve joining multiple <see cref="TableInfo"/> together.
         /// </summary>
         bool IsPrimaryKey { get; }

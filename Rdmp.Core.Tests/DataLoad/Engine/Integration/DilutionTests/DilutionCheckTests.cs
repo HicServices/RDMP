@@ -7,7 +7,7 @@
 using System;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Exceptions;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution.Operations;
 using ReusableLibraryCode.Checks;

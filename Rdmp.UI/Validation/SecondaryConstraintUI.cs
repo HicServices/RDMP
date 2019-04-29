@@ -12,7 +12,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;

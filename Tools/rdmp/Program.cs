@@ -7,7 +7,6 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using NLog;
-using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.Core.CommandLine.Packing;

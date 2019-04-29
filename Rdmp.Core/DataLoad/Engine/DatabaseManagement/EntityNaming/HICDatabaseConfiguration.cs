@@ -7,10 +7,10 @@
 using System;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.Defaults;
-using Rdmp.Core.CatalogueLibrary.Data.EntityNaming;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.EntityNaming;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming

@@ -6,7 +6,7 @@
 
 using System;
 using System.Reflection;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 
 namespace Rdmp.Core.DataFlowPipeline.Requirements.Exceptions
 {

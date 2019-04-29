@@ -8,7 +8,6 @@ using System;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary;
 using Rdmp.Core.Reports;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;

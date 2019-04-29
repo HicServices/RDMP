@@ -8,7 +8,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Extensions;
 
 namespace Rdmp.UI.FindAndReplace

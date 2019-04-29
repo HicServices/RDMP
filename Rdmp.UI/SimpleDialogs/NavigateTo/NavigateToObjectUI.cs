@@ -15,9 +15,9 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
@@ -32,7 +32,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
-using IContainer = Rdmp.Core.CatalogueLibrary.Data.IContainer;
+using IContainer = Rdmp.Core.Curation.Data.IContainer;
 
 namespace Rdmp.UI.SimpleDialogs.NavigateTo
 {

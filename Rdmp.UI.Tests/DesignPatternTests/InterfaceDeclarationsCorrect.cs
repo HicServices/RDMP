@@ -9,7 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.Tests.DesignPatternTests

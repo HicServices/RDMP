@@ -6,8 +6,8 @@
 
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;

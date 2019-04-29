@@ -10,7 +10,7 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI.Collections;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.DashboardTabs.Construction.Exceptions;

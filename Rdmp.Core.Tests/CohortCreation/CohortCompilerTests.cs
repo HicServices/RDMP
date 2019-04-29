@@ -8,12 +8,12 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort.Joinables;
 using Rdmp.Core.CohortCreation;
 using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {

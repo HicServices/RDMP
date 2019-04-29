@@ -10,7 +10,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;

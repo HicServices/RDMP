@@ -6,8 +6,8 @@
 
 using System.Linq;
 using NUnit.Framework;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.AggregationUIs.Advanced;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 

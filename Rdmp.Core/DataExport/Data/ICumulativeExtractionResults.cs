@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.DataRelease.Audit;
 
 namespace Rdmp.Core.DataExport.Data

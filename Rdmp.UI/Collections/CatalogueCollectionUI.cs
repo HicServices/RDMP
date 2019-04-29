@@ -7,9 +7,9 @@
 using System;
 using System.Linq;
 using BrightIdeasSoftware;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Governance;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.CommandExecution.AtomicCommands;

@@ -9,7 +9,7 @@ using System.Data.Common;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
-using Rdmp.Core.CatalogueLibrary;
+using Rdmp.Core.Curation;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.Repositories.Managers

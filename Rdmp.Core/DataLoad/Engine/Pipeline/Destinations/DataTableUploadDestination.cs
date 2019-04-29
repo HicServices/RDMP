@@ -13,7 +13,7 @@ using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 using FAnsi.Discovery.TypeTranslation;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Logging;

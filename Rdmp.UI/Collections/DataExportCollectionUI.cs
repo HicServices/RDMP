@@ -6,7 +6,7 @@
 
 using System;
 using BrightIdeasSoftware;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;

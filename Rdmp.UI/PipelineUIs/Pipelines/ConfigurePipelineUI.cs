@@ -7,7 +7,7 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines

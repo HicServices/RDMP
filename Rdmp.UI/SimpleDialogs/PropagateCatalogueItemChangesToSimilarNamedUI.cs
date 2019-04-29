@@ -11,7 +11,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

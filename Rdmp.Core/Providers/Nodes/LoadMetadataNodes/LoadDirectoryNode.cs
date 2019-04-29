@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.IO;
-using Rdmp.Core.CatalogueLibrary.Data.Cohort;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
 
 namespace Rdmp.Core.Providers.Nodes.LoadMetadataNodes
 {

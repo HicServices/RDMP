@@ -6,9 +6,9 @@
 
 using System;
 using System.Drawing;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad;
-using Rdmp.Core.CatalogueLibrary.Data.DataLoad.Extensions;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 
 namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders

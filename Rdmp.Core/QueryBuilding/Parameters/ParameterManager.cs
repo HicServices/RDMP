@@ -8,9 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
-using IFilter = Rdmp.Core.CatalogueLibrary.Data.IFilter;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Spontaneous;
+using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
 namespace Rdmp.Core.QueryBuilding.Parameters
 {

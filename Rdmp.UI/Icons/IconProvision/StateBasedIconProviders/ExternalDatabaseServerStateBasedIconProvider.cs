@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using System.Drawing;
 using System.Reflection;
-using Rdmp.Core.CatalogueLibrary.Data;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Icons.IconOverlays;

@@ -9,8 +9,8 @@ using System.Collections.Generic;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Caching.Pipeline;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
 using ReusableLibraryCode.Progress;
 

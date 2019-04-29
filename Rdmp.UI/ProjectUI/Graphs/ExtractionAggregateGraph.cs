@@ -7,10 +7,10 @@
 using System;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
-using Rdmp.Core.CatalogueLibrary.Data.Dashboarding;
-using Rdmp.Core.CatalogueLibrary.Data.Spontaneous;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataExport.ExtractionTime.Commands;
 using Rdmp.Core.DataExport.ExtractionTime.UserPicks;

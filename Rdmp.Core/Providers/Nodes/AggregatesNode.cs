@@ -4,19 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CatalogueLibrary.Data;
-using Rdmp.Core.CatalogueLibrary.Data.Aggregation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
 
 namespace Rdmp.Core.Providers.Nodes
 {
     /// <summary>
-    /// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Catalogue"/>.
+    /// Collection of all <see cref="AggregateConfiguration"/> graphs for visualising data in the <see cref="Curation.Data.Catalogue"/>.
     /// </summary>
     public class AggregatesNode:Node
     {
 
         /// <summary>
-        /// The <see cref="Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
+        /// The <see cref="Curation.Data.Catalogue"/> to which all the <see cref="AggregateConfiguration"/> belong
         /// </summary>
         public Catalogue Catalogue { get; set; }
 

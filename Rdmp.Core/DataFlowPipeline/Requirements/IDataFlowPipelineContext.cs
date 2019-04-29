@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using Rdmp.Core.CatalogueLibrary.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Pipelines;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataFlowPipeline.Requirements

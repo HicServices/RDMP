@@ -6,8 +6,8 @@
 
 using System.Drawing;
 using System.IO;
-using Rdmp.Core.CatalogueLibrary.Data;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
