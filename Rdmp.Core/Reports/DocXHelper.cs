@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.Util;
 using NPOI.XWPF.UserModel;
 using ReusableLibraryCode;
@@ -64,7 +65,8 @@ namespace Rdmp.Core.Reports
         protected void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
         {
             var cell = table.GetRow(row).GetCell(col);
-            var para = cell.AddParagraph();
+
+            var para = cell.Paragraphs[0];
             var run = para.CreateRun();
             
             run.SetText(value??"");
@@ -166,12 +168,21 @@ namespace Rdmp.Core.Reports
         
         protected void InsertSectionPageBreak(XWPFDocument document)
         {
-            //todo
+            var pageBreak = document.CreateParagraph();
+            var pageBreakRun = pageBreak.CreateRun();
+            pageBreakRun.AddBreak(BreakType.PAGE);
         }
         
         protected void SetLandscape(XWPFDocumentFile document)
         {
-            //todo
+            document.Document.body.sectPr = document.Document.body.sectPr??new CT_SectPr();
+            document.Document.body.sectPr.pgSz = document.Document.body.sectPr.pgSz ?? new CT_PageSz();
+            
+            document.Document.body.sectPr.pgSz.orient = ST_PageOrientation.landscape;
+            document.Document.body.sectPr.pgSz.w = (842 * 20);
+            document.Document.body.sectPr.pgSz.h = (595 * 20);
+        
+
             //document.PageLayout.Orientation = Orientation.Landscape;
         }
         protected void InsertTableOfContents(XWPFDocumentFile document)
@@ -182,11 +193,21 @@ namespace Rdmp.Core.Reports
         
         protected void AutoFit(XWPFTable table)
         {
-            //todo
+            //tables auto fit already with NPOI
             //table.AutoFit = AutoFit.Contents;
         }
+
+        /// <summary>
+        /// Sets the page margins to <paramref name="marginSize"/> in hundredths of an inch e.g. 20 = 0.20"
+        /// </summary>
+        /// <param name="document"></param>
+        /// <param name="marginSize"></param>
         protected void SetMargins(XWPFDocumentFile document, int marginSize)
         {
+            document.Document.body.sectPr = document.Document.body.sectPr??new CT_SectPr();
+            document.Document.body.sectPr.pgMar.right = (ulong) (marginSize * 14.60);
+            document.Document.body.sectPr.pgMar.left = (ulong) (marginSize * 14.60);
+
             /*document.MarginLeft = marginSize;
             document.MarginRight= marginSize;
             document.MarginTop = marginSize;

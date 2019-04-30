@@ -171,12 +171,12 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
+            var report = new DocumentationReportDatabaseEntities();
             report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
                 new PopupChecksUI("Generating class summaries", false),
                 Activator.CoreIconProvider,
-                typeof(Catalogue).Assembly,
-                typeof(ExtractionConfiguration).Assembly);
+                Activator.RepositoryLocator.CatalogueRepository.MEF,
+                true);
         }
 
         private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)

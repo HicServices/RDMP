@@ -48,8 +48,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                     ).ToArray();
 
 
-            DocumentationReportFormsAndControls controlsDescriptions = new DocumentationReportFormsAndControls(CatalogueRepository.CommentStore,types.ToArray());
-            controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier());
+            var controlsDescriptions = new DocumentationReportFormsAndControls();
+            controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier(),CatalogueRepository.CommentStore,types.ToArray());
             
             foreach (var key in controlsDescriptions.Summaries.Keys.OrderBy(t=>t.ToString()))
             {

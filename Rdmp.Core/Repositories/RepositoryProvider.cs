@@ -50,6 +50,10 @@ namespace Rdmp.Core.Repositories
 
         public bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID)
         {
+            //if the repository/object type is unknown then it doesn't exist
+            if (string.IsNullOrWhiteSpace(repositoryTypeName) || string.IsNullOrWhiteSpace(databaseObjectTypeName))
+                return false;
+
             IRepository repository = GetRepository(repositoryTypeName);
             Type objectType = GetTypeByName(databaseObjectTypeName, typeof(IMapsDirectlyToDatabaseTable));
 

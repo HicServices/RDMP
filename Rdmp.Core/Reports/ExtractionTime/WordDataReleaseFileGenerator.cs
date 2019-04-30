@@ -61,7 +61,10 @@ namespace Rdmp.Core.Reports.ExtractionTime
                 
                 //actually changes it to landscape :)
                 SetLandscape(document);
-                                
+                               
+                InsertHeader(document, "Project:"+ Project.Name,1);
+                InsertHeader(document, Configuration.Name,2);
+                
                 string disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
                 if(disclaimer != null)
@@ -86,18 +89,35 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
         private void CreateTopTable1(XWPFDocument document)
         {
-            var table = InsertTable(document, 1, 5);
+            bool hasTicket = !string.IsNullOrWhiteSpace(Project.MasterTicket);
+            bool hasProchi = Cohort.GetReleaseIdentifier().ToLower().Contains("prochi");
 
-            SetTableCell(table,0, 0, "Project:"+Environment.NewLine + Project.Name);
-            SetTableCell(table,0, 1, "Master Issue:" +  Project.MasterTicket);
-            SetTableCell(table,0, 2, "ReleaseIdentifier:" + Cohort.GetReleaseIdentifier(true));
-            SetTableCell(table,0, 3, "Configuration ID:" + Configuration.ID + Environment.NewLine + "Name:" + Configuration.Name);
+            int currentRow = 0;
+            int requiredRows = 1;
 
-            if (!Cohort.GetReleaseIdentifier().ToLower().Contains("prochi"))
-                SetTableCell(table,0, 4,"Prefix:N/A");
-            else
-                SetTableCell(table,0, 4, "Prefix:"+ GetFirstProCHIPrefix());
+            if (hasProchi)
+                requiredRows++;
+            if (hasTicket)
+                requiredRows++;
             
+            var table = InsertTable(document, requiredRows, 2);
+
+            if(hasTicket)
+            {
+                SetTableCell(table, currentRow, 0, "Master Issue");
+                SetTableCell(table, currentRow, 1, Project.MasterTicket);
+                currentRow++;
+            }
+
+            SetTableCell(table,currentRow, 0, "ReleaseIdentifier");
+            SetTableCell(table,currentRow, 1, Cohort.GetReleaseIdentifier(true));
+            currentRow++;
+
+            if (hasProchi)
+            {
+                SetTableCell(table,currentRow, 0,"Prefix");
+                SetTableCell(table, currentRow, 1, GetFirstProCHIPrefix());
+            }
         }
 
         /// <summary>
@@ -121,25 +141,22 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
         private void CreateCohortDetailsTable(XWPFDocument document)
         {
-            var table = InsertTable(document, 2, 6);
+            var table = InsertTable(document, 2, 4);
             
             int tableLine = 0;
 
-            SetTableCell(table,tableLine, 0,"Cohort ID (DataExportManager)");
-            SetTableCell(table,tableLine, 1,"Origin ID (External)");
-            SetTableCell(table,tableLine, 2, "Version");
-            SetTableCell(table,tableLine, 3, "Description");
-            SetTableCell(table,tableLine, 4, "dtCreated");
-            SetTableCell(table,tableLine, 5, "Unique Patient Counts");
+            SetTableCell(table,tableLine, 0, "Version");
+            SetTableCell(table,tableLine, 1, "Description");
+            SetTableCell(table,tableLine, 2, "dtCreated");
+            SetTableCell(table,tableLine, 3, "Unique Patient Count");
             tableLine++;
             
-            SetTableCell(table,tableLine, 0, Cohort.ID.ToString());
-            SetTableCell(table,tableLine, 1, Cohort.OriginID.ToString());
-            SetTableCell(table,tableLine, 2, Cohort.GetExternalData().ExternalVersion.ToString());
-            SetTableCell(table,tableLine, 3, Cohort.ToString());//description fetched from CONSUS
-            SetTableCell(table,tableLine, 4, ExtractionResults.Max(r => r.DateOfExtraction).ToString());
-            SetTableCell(table,tableLine, 5, Cohort.CountDistinct.ToString());
-            tableLine++;
+            SetTableCell(table,tableLine, 0, Cohort.GetExternalData().ExternalVersion.ToString());
+            SetTableCell(table,tableLine, 1, string.Format("{0} (ID={1}, OriginID={2})" , Cohort,Cohort.ID,Cohort.OriginID));//description fetched from remote table
+
+            var lastExtracted = ExtractionResults.Any() ? ExtractionResults.Max(r => r.DateOfExtraction).ToString() : "Never";
+            SetTableCell(table,tableLine, 2, lastExtracted);
+            SetTableCell(table,tableLine, 3, Cohort.CountDistinct.ToString());
         }
 
         private void CreateFileSummary(XWPFDocument document)
@@ -152,7 +169,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             SetTableCell(table,tableLine, 1, "Notes");
             SetTableCell(table,tableLine, 2, "Filename");
             SetTableCell(table,tableLine, 3, "No. of records extracted");
-            SetTableCell(table,tableLine, 4, "Unique Patient Counts");
+            SetTableCell(table,tableLine, 4, "Unique Patient Count");
             tableLine++;
 
             foreach (var result in ExtractionResults)

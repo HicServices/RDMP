@@ -109,7 +109,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
                     }
                 }
                 
-                var office = new DocumentationReportFormsAndControlsOfficeBit();
+                var office = new DocumentationReportFormsAndControls();
                 var images = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager).ToStringDictionary(12);
 
 

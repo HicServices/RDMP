@@ -83,7 +83,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             _report = new MetadataReport(Activator.RepositoryLocator.CatalogueRepository, args);
 
             _report.RequestCatalogueImages += report_RequestCatalogueImages;
-            _report.GenerateWordFileAsync(progressBarsUI1);
+            _report.GenerateWordFileAsync(progressBarsUI1,true);
 
             btnGenerateReport.Enabled = false;
             btnStop.Enabled = true;
