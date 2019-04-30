@@ -96,8 +96,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
             testTableInfo.Name = "Test Table Info";
 
             var ex = Assert.Throws<Exception>(()=>context.PreInitialize(new ThrowImmediatelyDataLoadEventListener(), component, testTableInfo));
-            Assert.IsTrue(ex.Message.Contains(
-                "The following expected types were not passed to PreInitialize:LoadModuleAssembly\r\nThe object types passed were:\r\nCatalogueLibrary.Data.TableInfo:Test Table Info"));
+            StringAssert.Contains("The following expected types were not passed to PreInitialize:LoadModuleAssembly\r\nThe object types passed were:\r\nRdmp.Core.Curation.Data.TableInfo:Test Table Info",ex.Message);
         }
 
         [Test]

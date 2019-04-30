@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using Xceed.Words.NET;
+using NPOI.XWPF.UserModel;
 
 namespace Rdmp.Core.Reports.DatabaseAccessPrivileges
 {
@@ -37,9 +39,7 @@ namespace Rdmp.Core.Reports.DatabaseAccessPrivileges
         /// </summary>
         public void GenerateWordFile()
         {
-            var f = GetUniqueFilenameInWorkArea("RightsByDatabase");
-
-            using (DocX document = DocX.Create(f.FullName))
+            using(var document = GetNewDocFile("RightsByDatabase"))
             {
                 InsertHeader(document,"Database Access Report:" + _dbInfo.Server.Name);
 
@@ -51,18 +51,16 @@ namespace Rdmp.Core.Reports.DatabaseAccessPrivileges
                 {
                     if (database.Equals("master") || database.Equals("msdb") || database.Equals("tempdb") || database.Equals("ReportServer") || database.Equals("ReportServerTempDB"))
                         continue;
-
+                    
                     InsertHeader(document,"Database:" + database);
                     CreateDatabaseTable(document,database);
                 }
 
-                document.Save();
-                ShowFile(f);
+                ShowFile(document);
             }
         }
 
-     
-        private void CreateAdministratorsTable(DocX document)
+        private void CreateAdministratorsTable(XWPFDocument document)
         {
 
             using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
@@ -72,7 +70,7 @@ namespace Rdmp.Core.Reports.DatabaseAccessPrivileges
 
                 int numberOfAdmins = int.Parse(cmdNumberOfAdmins.ExecuteScalar().ToString());
 
-                Table table = InsertTable(document, numberOfAdmins + 1, 9);
+                var table = InsertTable(document, numberOfAdmins + 1, 9);
 
                 var fontSize = 5;
 
@@ -122,7 +120,7 @@ AND sysadmin + securityadmin + serveradmin + setupadmin + processadmin + diskadm
         }
             
 
-        private void CreateDatabaseTable(DocX document, string database)
+        private void CreateDatabaseTable(XWPFDocument document, string database)
         {
             using (var con = (SqlConnection) _dbInfo.Server.GetConnection())
             {
@@ -131,7 +129,7 @@ AND sysadmin + securityadmin + serveradmin + setupadmin + processadmin + diskadm
 
                 int numberOfUsers = int.Parse(cmdNumberOfUsers.ExecuteScalar().ToString());
 
-                Table table = InsertTable(document, numberOfUsers + 1, 5);
+                var table = InsertTable(document, numberOfUsers + 1, 5);
 
                 var fontSize = 5;
 

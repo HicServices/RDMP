@@ -17575,6 +17575,38 @@
             <para>Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.</para>
             </summary>
         </member>
+        <member name="M:Rdmp.Core.Reports.DocXHelper.ShowFile(System.IO.FileInfo)">
+            <summary>
+            Opens windows explorer to show the file
+            </summary>
+            <param name="document"></param>
+        </member>
+        <member name="M:Rdmp.Core.Reports.DocXHelper.ShowFile(Rdmp.Core.Reports.DocXHelper.XWPFDocumentFile)">
+            <summary>
+            Opens windows explorer to show the document
+            </summary>
+            <param name="document"></param>
+        </member>
+        <member name="M:Rdmp.Core.Reports.DocXHelper.GetNewDocFile(System.String)">
+            <summary>
+            Creates a new document in Work Area (temp) - see <see cref="M:Rdmp.Core.Reports.DocXHelper.GetUniqueFilenameInWorkArea(System.String,System.String)"/>
+            </summary>
+            <param name="filename"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Rdmp.Core.Reports.DocXHelper.GetNewDocFile(System.IO.FileInfo)">
+            <summary>
+            Creates a new document in the location of <paramref name="fileInfo"/>
+            </summary>
+            <param name="fileInfo"></param>
+            <returns></returns>
+        </member>
+        <member name="T:Rdmp.Core.Reports.DocXHelper.XWPFDocumentFile">
+            <summary>
+            An <see cref="T:NPOI.XWPF.UserModel.XWPFDocument"/> pointed at a <see cref="T:System.IO.FileStream"/> that implements <see cref="T:System.IDisposable"/> and
+            disposes of underlying stream when that happens.
+            </summary>
+        </member>
         <member name="T:Rdmp.Core.Reports.DublinCore.DublinCoreDefinition">
             <summary>
             Class describing the RDMP exposed attributes defined in Dublin Core metadata format.

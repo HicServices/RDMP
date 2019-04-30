@@ -9,10 +9,10 @@
 using System;
 using System.Linq;
 using System.Reflection;
+using NPOI.XWPF.UserModel;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.Icons.IconProvision;
-using Xceed.Words.NET;
 
 namespace Rdmp.Core.Reports
 {
@@ -32,8 +32,7 @@ namespace Rdmp.Core.Reports
                 _report = new DocumentationReportMapsDirectlyToDatabase(commentStore, assemblies);
                 _report.Check(notifier);
 
-                var f = GetUniqueFilenameInWorkArea("RDMPDocumentation");
-                using (DocX document = DocX.Create(f.FullName))
+                using (var document = GetNewDocFile("RDMPDocumentation"))
                 {
                     var t = InsertTable(document,(_report.Summaries.Count *2) +1, 1);
                     
@@ -49,13 +48,15 @@ namespace Rdmp.Core.Reports
                         var bmp = iconProvider.GetImage(keys[i]);
 
                         if (bmp != null)
-                            t.Rows[(i*2) + 1].Cells[0].Paragraphs.First().InsertPicture(GetPicture(document, bmp));
+                        {
+                            var run = t.Rows[(i*2) + 1].GetCell(0).Paragraphs.First().Runs.First();
+                            GetPicture(run,bmp);
+                        }
 
                         SetTableCell(t,(i*2) + 2, 0, _report.Summaries[keys[i]]);
                     }
 
-                    document.Save();
-                    ShowFile(f);
+                    ShowFile(document);
                 }
             }
             catch (Exception e)

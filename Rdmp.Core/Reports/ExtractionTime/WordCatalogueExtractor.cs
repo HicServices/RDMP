@@ -10,7 +10,7 @@ using System.Linq;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
-using Xceed.Words.NET;
+using NPOI.XWPF.UserModel;
 
 namespace Rdmp.Core.Reports.ExtractionTime
 {
@@ -68,10 +68,10 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
         };
 
-        private DocX _document;
+        private XWPFDocument _document;
 
 
-        public WordCatalogueExtractor(ICatalogue catalogue, DocX document)
+        public WordCatalogueExtractor(ICatalogue catalogue, XWPFDocument document)
         {
             Catalogue = catalogue;
             _document = document;
@@ -106,7 +106,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     requiredRowsCount += supplementalData[catalogueItem].Length;
                 
                 //create a new table
-                var t = InsertTable(_document, requiredRowsCount, 2, TableDesign.TableGrid);
+                var t = InsertTable(_document, requiredRowsCount, 2);
                 
                 if(supplementalData!=null && supplementalData.ContainsKey(catalogueItem))
                     GenerateObjectPropertiesAsRowUsingReflection(t, catalogueItem,supplementalData[catalogueItem]);
@@ -133,7 +133,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             return count;
         }
 
-        private void GenerateObjectPropertiesAsRowUsingReflection(Table table, object o, Tuple<string,string>[] supplementalData )
+        private void GenerateObjectPropertiesAsRowUsingReflection(XWPFTable table, object o, Tuple<string,string>[] supplementalData )
         {
             PropertyInfo[] propertyInfo = o.GetType().GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
 
@@ -167,7 +167,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     currentRow++;
                 }
 
-            table.AutoFit = AutoFit.Contents;
+            //table.AutoFit = AutoFit.Contents;
         }
         
         

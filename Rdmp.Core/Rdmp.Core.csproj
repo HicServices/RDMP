@@ -230,7 +230,6 @@
     <EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="DocX" Version="1.3.0" />
     <PackageReference Include="ExcelNumberFormat" Version="1.0.5" />
     <PackageReference Include="HIC.FAnsiSql" Version="0.11.0" />
     <PackageReference Include="NPOI" Version="2.4.1" />

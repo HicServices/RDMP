@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Threading;
 using Rdmp.Core.Curation.Data;
@@ -16,7 +17,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
-using Xceed.Words.NET;
+using NPOI.XWPF.UserModel;
 
 namespace Rdmp.Core.Reports
 {
@@ -55,14 +56,14 @@ namespace Rdmp.Core.Reports
 
         Thread thread;
 
-        public void GenerateWordFileAsync(IDataLoadEventListener listener)
+        public void GenerateWordFileAsync(IDataLoadEventListener listener, bool showFile)
         {
 
-            thread = new Thread(() => GenerateWordFile(listener));
+            thread = new Thread(() => GenerateWordFile(listener,showFile));
             thread.Start();
         }
 
-        private void GenerateWordFile(IDataLoadEventListener listener)
+        public FileInfo GenerateWordFile(IDataLoadEventListener listener, bool showFile)
         {
             try
             {
@@ -70,31 +71,13 @@ namespace Rdmp.Core.Reports
                 //if theres only one catalogue call it 'prescribing.docx' etc
                 string filename = _args.Catalogues.Length == 1 ? _args.Catalogues[0].Name : "MetadataReport";
 
-                var f = GetUniqueFilenameInWorkArea(filename);
-
-                using (DocX document = DocX.Create(f.FullName))
+                using (var document = GetNewDocFile(filename))
                 {
                     const int marginSize = 20;
-                    try
-                    {
-                        document.MarginLeft = marginSize;
-                    }
-                    catch (Exception e)
-                    {
-                        if (e.Message.Contains("The message filter indicated that the application is busy"))
-                            listener.OnNotify(this,
-                                new NotifyEventArgs(
-                                    ProgressEventType.Error, 
-                                    "Word is trying to display a dialog (probably asking you about file associations or somethihg), you must manually launch Microsoft Word - resolve any popup dialogs and tick any boxes marked 'never warn me about this again'.  Once Word launches properly (without throwing up dialog boxes) this report will work",
-                                    e));
-                        else
-                            throw;
-                    }
-                    document.MarginRight= marginSize;
-                    document.MarginTop = marginSize;
-                    document.MarginBottom = marginSize;
+                    
+                    SetMargins(document,20);
 
-                    PageWidthInPixels = document.PageWidth;
+                    PageWidthInPixels = GetPageWidth(document);
                     
                     var sw = Stopwatch.StartNew();
 
@@ -126,7 +109,7 @@ namespace Rdmp.Core.Reports
                             }
 
                             InsertHeader(document,c.Name);
-
+                            
                             if (_args.TimespanCalculator != null)
                             {
                                 string timespan = _args.TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true);
@@ -135,14 +118,14 @@ namespace Rdmp.Core.Reports
                             }
 
                             InsertParagraph(document,c.Description, TextFontSize);
-
+                            
                             if (gotRecordCount)
                             {
                                 InsertHeader(document,"Record Count", 3);
                                 CreateCountTable(document,recordCount, distinctRecordCount, identifierName);
                             }
 
-                            if (!_args.SkipImages)
+                            if (!_args.SkipImages && RequestCatalogueImages != null)
                             {
                                 BitmapWithDescription[] onRequestCatalogueImages = RequestCatalogueImages(c);
 
@@ -159,7 +142,7 @@ namespace Rdmp.Core.Reports
 
                             //if this is not the last Catalogue create a new page
                             if (completed != _args.Catalogues.Length)
-                                document.InsertSectionPageBreak();
+                                InsertSectionPageBreak(document);
 
                             listener.OnProgress(this, new ProgressEventArgs("Extracting", new ProgressMeasurement(completed, ProgressType.Records, _args.Catalogues.Length), sw.Elapsed));
                         }
@@ -167,14 +150,15 @@ namespace Rdmp.Core.Reports
                         if (LookupsEncounteredToAppearInAppendix.Any())
                             CreateLookupAppendix(document, listener);
 
-                        document.Save();
-                        ShowFile(f);
+                        if(showFile)
+                            ShowFile(document);
+
+                        return document.FileInfo;
                     }
                     catch (ThreadInterruptedException)
                     {
                         //user hit abort   
                     }
-
                 }
                 
             }
@@ -182,11 +166,13 @@ namespace Rdmp.Core.Reports
             {
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error, "Entire process failed, see Exception for details", e));
             }
+
+            return null;
         }
 
-        private void CreateLookupAppendix(DocX document, IDataLoadEventListener listener)
+        private void CreateLookupAppendix(XWPFDocument document, IDataLoadEventListener listener)
         {
-            document.InsertSectionPageBreak();
+            InsertSectionPageBreak(document);
             InsertHeader(document,"Appendix 1 - Lookup Tables");
             
             //foreach lookup
@@ -247,11 +233,12 @@ namespace Rdmp.Core.Reports
                     }
                 }
 
-                table.AutoFit = AutoFit.Contents;
+                AutoFit(table);
 
                 listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Wrote out lookup table " + lookupTable.Name + " successfully"));
             }
         }
+
 
         private DataTable GetLookupTableInfoContentsFromDatabase(TableInfo lookupTable)
         {
@@ -270,7 +257,7 @@ namespace Rdmp.Core.Reports
             }
         }
 
-        private void AddImages(DocX document, BitmapWithDescription[] onRequestCatalogueImages)
+        private void AddImages(XWPFDocument document, BitmapWithDescription[] onRequestCatalogueImages)
         {
             foreach (BitmapWithDescription image in onRequestCatalogueImages)
             {
@@ -280,11 +267,11 @@ namespace Rdmp.Core.Reports
                 if (!string.IsNullOrWhiteSpace(image.Description))
                     InsertParagraph(document, image.Description);
 
-                InsertPicture(document,image.Bitmap);
+                GetPicture(document,image.Bitmap);
             }
         }
 
-        private void CreateDescriptionsTable(DocX document, Catalogue c)
+        private void CreateDescriptionsTable(XWPFDocument document, Catalogue c)
         {
             var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(Include).ToList();
             extractionInformations.Sort(IsExtractionIdentifiersFirstOrder);
@@ -330,7 +317,7 @@ namespace Rdmp.Core.Reports
                 tableLine++;
             }
 
-            table.AutoFit = AutoFit.Contents;
+            AutoFit(table);
         }
 
         private int IsExtractionIdentifiersFirstOrder(ExtractionInformation x, ExtractionInformation y)
@@ -365,7 +352,7 @@ namespace Rdmp.Core.Reports
             }
         }
 
-        private void CreateCountTable(DocX document, int recordCount, int distinctCount, string identifierName)
+        private void CreateCountTable(XWPFDocument document, int recordCount, int distinctCount, string identifierName)
         {
             var table = InsertTable(document,2, identifierName != null && _args.IncludeDistinctIdentifierCounts ? 2 : 1);
             

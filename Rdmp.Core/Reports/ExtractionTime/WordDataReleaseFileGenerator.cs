@@ -10,7 +10,7 @@ using System.Linq;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
-using Xceed.Words.NET;
+using NPOI.XWPF.UserModel;
 
 namespace Rdmp.Core.Reports.ExtractionTime
 {
@@ -56,12 +56,12 @@ namespace Rdmp.Core.Reports.ExtractionTime
                 f = new FileInfo(saveAsFilename);
 
             // Create an instance of Word  and make it visible.=
-            using (DocX document = DocX.Create(f.FullName))
+            using (var document = GetNewDocFile(f))
             {
                 
                 //actually changes it to landscape :)
-                document.PageLayout.Orientation = Orientation.Landscape;
-                
+                SetLandscape(document);
+                                
                 string disclaimer = _repository.DataExportPropertyManager.GetValue(DataExportProperty.ReleaseDocumentDisclaimer);
 
                 if(disclaimer != null)
@@ -76,9 +76,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
                 InsertParagraph(document,Environment.NewLine);
 
                 CreateFileSummary(document);
-
-                document.Save();
-                
+                                
                 //interactive mode, user didn't ask us to save to a specific location so we created it in temp and so we can now show them where that file is
                 if (string.IsNullOrWhiteSpace(saveAsFilename))
                     ShowFile(f);
@@ -86,9 +84,9 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
         }
 
-        private void CreateTopTable1(DocX document)
+        private void CreateTopTable1(XWPFDocument document)
         {
-            Table table = InsertTable(document, 1, 5, TableDesign.TableGrid);
+            var table = InsertTable(document, 1, 5);
 
             SetTableCell(table,0, 0, "Project:"+Environment.NewLine + Project.Name);
             SetTableCell(table,0, 1, "Master Issue:" +  Project.MasterTicket);
@@ -121,9 +119,9 @@ namespace Rdmp.Core.Reports.ExtractionTime
             }
         }
 
-        private void CreateCohortDetailsTable(DocX document)
+        private void CreateCohortDetailsTable(XWPFDocument document)
         {
-            Table table = InsertTable(document, 2, 6, TableDesign.TableGrid);
+            var table = InsertTable(document, 2, 6);
             
             int tableLine = 0;
 
@@ -144,9 +142,9 @@ namespace Rdmp.Core.Reports.ExtractionTime
             tableLine++;
         }
 
-        private void CreateFileSummary(DocX document)
+        private void CreateFileSummary(XWPFDocument document)
         {
-            Table table = InsertTable(document, ExtractionResults.Length + 1, 5, TableDesign.TableGrid);
+            var table = InsertTable(document, ExtractionResults.Length + 1, 5);
             
             int tableLine = 0;
 

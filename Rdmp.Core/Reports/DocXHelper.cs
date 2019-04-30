@@ -9,8 +9,9 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Linq;
+using NPOI.Util;
+using NPOI.XWPF.UserModel;
 using ReusableLibraryCode;
-using Xceed.Words.NET;
 
 namespace Rdmp.Core.Reports
 {
@@ -21,34 +22,67 @@ namespace Rdmp.Core.Reports
     /// <para>Also contains all the helper methods for simplifying (even further) the awesome DocX API for adding paragraphs/pictures/tables.</para>
     /// </summary>
     public class DocXHelper
-    {
-        protected void InsertParagraph(DocX document, string ptext, int textFontSize = -1)
+    {        
+        
+        const int H1Size = 16;
+        const int H2Size = 13;
+        const int H3Size = 12;  
+        const int H4Size = 11;
+
+        protected void InsertParagraph(XWPFDocument document, string ptext, int textFontSize = -1)
         {
-            var h = document.InsertParagraph();
-
+            var h = document.CreateParagraph();
+            XWPFRun r0 = h.CreateRun();
             //file data
-            h.InsertText(ptext);
+            r0.SetText(ptext??"");
 
-            if (textFontSize != -1)
-                h.FontSize(textFontSize);
+            r0.FontSize = textFontSize != -1 ? textFontSize : 10;
         }
 
-        protected void InsertHeader(DocX document, string htext, int headSize = 1)
+        protected void InsertHeader(XWPFDocument document, string htext, int headSize = 1)
         {
-            var h = document.InsertParagraph();
-            h.StyleName = "Heading" + headSize;
+            var h = document.CreateParagraph();
+            XWPFRun r0 = h.CreateRun();
+            r0.FontSize = GetSize(headSize);
 
             //file data
-            h.InsertText(htext);
+            r0.SetText(htext??"");
         }
 
-        protected void SetTableCell(Table table, int row, int col, string value, int fontSize = -1)
+        private int GetSize(int headSize)
         {
-            table.Rows[row].Cells[col].Paragraphs.First().Append(value);
+            switch(headSize)
+            {
+                case 1: return H1Size;
+                case 2: return H2Size;
+                case 3: return H3Size;
+                case 4: return H4Size;
+                default: throw new ArgumentOutOfRangeException();
+            }
+        }
+
+        protected void SetTableCell(XWPFTable table, int row, int col, string value, int fontSize = -1)
+        {
+            var cell = table.GetRow(row).GetCell(col);
+            var para = cell.AddParagraph();
+            var run = para.CreateRun();
+            
+            run.SetText(value??"");
+
             if (fontSize != -1)
-                table.Rows[row].Cells[col].Paragraphs.First().FontSize(fontSize);
+                run.FontSize = fontSize;
         }
-        protected Picture GetPicture(DocX document, Bitmap bmp)
+         public const int PICTURE_TYPE_PNG =	6;
+
+        protected XWPFPicture GetPicture(XWPFDocument document, Bitmap bmp)
+        {
+            var para = document.CreateParagraph();
+            var run = para.CreateRun();
+            
+            return GetPicture(run,bmp);
+        }
+
+        protected XWPFPicture GetPicture(XWPFRun run, Bitmap bmp)
         {
             using (var ms = new MemoryStream())
             {
@@ -57,29 +91,13 @@ namespace Rdmp.Core.Reports
                 ms.Seek(0, 0);
 
                 // Add an image into the document.    
-                var image = document.AddImage(ms);
-
-                // Create a picture (A custom view of an Image).
-                return image.CreatePicture();
+                return run.AddPicture(ms,PICTURE_TYPE_PNG,"",Units.ToEMU(bmp.Width), Units.ToEMU(bmp.Height));
             }
         }
 
-        protected void InsertPicture(DocX document, Bitmap img)
+        protected XWPFTable InsertTable(XWPFDocument document, int rowCount, int colCount,bool autoFit = true)
         {
-            Paragraph p = document.InsertParagraph();
-            p.InsertPicture(GetPicture(document,img));
-        }
-
-        protected Table InsertTable(DocX document, int rowCount, int colCount, TableDesign design = TableDesign.LightList,bool autoFit = true)
-        {
-            var t = document.InsertTable(rowCount, colCount);
-
-            if (autoFit)
-                t.AutoFit = AutoFit.Contents;
-
-            t.Design = design;
-            
-            return t;
+            return document.CreateTable(rowCount, colCount);
         }
 
         protected FileInfo GetUniqueFilenameInWorkArea(string desiredName, string extension = ".docx")
@@ -109,9 +127,101 @@ namespace Rdmp.Core.Reports
             return new DirectoryInfo(Path.GetTempPath());
         }
 
+        /// <summary>
+        /// Opens windows explorer to show the file
+        /// </summary>
+        /// <param name="document"></param>
         protected void ShowFile(FileInfo fileInfo)
         {
             UsefulStuff.GetInstance().ShowFileInWindowsExplorer(fileInfo);
+        }
+        /// <summary>
+        /// Opens windows explorer to show the document
+        /// </summary>
+        /// <param name="document"></param>
+        protected void ShowFile(XWPFDocumentFile document)
+        {
+            ShowFile(document.FileInfo);
+        }
+        /// <summary>
+        /// Creates a new document in Work Area (temp) - see <see cref="GetUniqueFilenameInWorkArea(string, string)"/>
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <returns></returns>
+        protected XWPFDocumentFile GetNewDocFile(string filename)
+        {
+            FileInfo fi = GetUniqueFilenameInWorkArea(filename);
+            return new XWPFDocumentFile(fi,new FileStream(fi.FullName,FileMode.Create));
+        }
+        
+        /// <summary>
+        /// Creates a new document in the location of <paramref name="fileInfo"/>
+        /// </summary>
+        /// <param name="fileInfo"></param>
+        /// <returns></returns>
+        protected XWPFDocumentFile GetNewDocFile(FileInfo fileInfo)
+        {
+            return new XWPFDocumentFile(fileInfo,new FileStream(fileInfo.FullName,FileMode.Create));
+        }
+        
+        protected void InsertSectionPageBreak(XWPFDocument document)
+        {
+            //todo
+        }
+        
+        protected void SetLandscape(XWPFDocumentFile document)
+        {
+            //todo
+            //document.PageLayout.Orientation = Orientation.Landscape;
+        }
+        protected void InsertTableOfContents(XWPFDocumentFile document)
+        {
+            //todo
+            //document.InsertTableOfContents("Contents", new TableOfContentsSwitches());
+        }
+        
+        protected void AutoFit(XWPFTable table)
+        {
+            //todo
+            //table.AutoFit = AutoFit.Contents;
+        }
+        protected void SetMargins(XWPFDocumentFile document, int marginSize)
+        {
+            /*document.MarginLeft = marginSize;
+            document.MarginRight= marginSize;
+            document.MarginTop = marginSize;
+            document.MarginBottom = marginSize;*/
+        }
+
+        protected float GetPageWidth(XWPFDocumentFile document)
+        {
+            return 500;
+            //return document.PageWidth;
+        }
+        /// <summary>
+        /// An <see cref="XWPFDocument"/> pointed at a <see cref="FileStream"/> that implements <see cref="IDisposable"/> and
+        /// disposes of underlying stream when that happens.
+        /// </summary>
+        protected class XWPFDocumentFile : XWPFDocument, IDisposable
+        {
+            public FileInfo FileInfo { get; }
+            private readonly FileStream _stream;
+            
+            public XWPFDocumentFile(FileInfo fileInfo,FileStream stream)
+            {
+                FileInfo = fileInfo;
+                this._stream = stream;
+            }
+
+
+            public void Dispose()
+            {
+                //saves?
+                Write(_stream);
+                _stream.Close();
+                _stream.Dispose();
+
+            }
         }
     }
 }

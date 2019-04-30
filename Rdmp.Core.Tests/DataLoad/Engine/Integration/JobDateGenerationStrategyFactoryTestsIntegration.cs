@@ -139,8 +139,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             try
             {
-                var ex = Assert.Throws<Exception>(()=>_factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
-                Assert.AreEqual("Don't know when to begin loading the cache from. Neither CacheProgress or LoadProgress has a relevant date.",ex.Message);
+                var ex = Assert.Throws<InvalidOperationException>(()=>_factory.Create(_lp,new ThrowImmediatelyDataLoadEventListener()));
+                Assert.AreEqual("Caching has not begun for this CacheProgress ("+_cp.ID+"), so there is nothing to load and this strategy should not be used.",ex.Message);
             }
             finally
             {

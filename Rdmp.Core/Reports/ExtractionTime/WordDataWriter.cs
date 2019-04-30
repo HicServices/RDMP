@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.ExtractionTime;
@@ -16,7 +17,6 @@ using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using ReusableLibraryCode;
-using Xceed.Words.NET;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
 namespace Rdmp.Core.Reports.ExtractionTime
@@ -59,13 +59,11 @@ namespace Rdmp.Core.Reports.ExtractionTime
         {
             lock (oLockOnWordUsage)
             {
-                string outputFilename = Path.Combine(_destination.DirectoryPopulated.FullName, _destination.GetFilename() + ".docx");
-
-                using (DocX document = DocX.Create(outputFilename))
+                using (var document = GetNewDocFile(new FileInfo(Path.Combine(_destination.DirectoryPopulated.FullName, _destination.GetFilename() + ".docx"))))
                 {
                     InsertHeader(document,Executer.Source.Request.DatasetBundle.DataSet + " Meta Data");
 
-                    document.InsertTableOfContents("Contents", new TableOfContentsSwitches());
+                    InsertTableOfContents(document);
 
                     InsertHeader(document,"File Data");
 
@@ -75,70 +73,69 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     else
                         rowCount = 5;
 
-                    var t = InsertTable(document, rowCount, 2, TableDesign.TableGrid);
-                    t.Design = TableDesign.LightList;
+                    var t = InsertTable(document, rowCount, 2);
+                    
                     int rownum = 0;
                     if (_destination.GeneratesFiles)
                     {
-                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("File Name");
-                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(new FileInfo(_destination.OutputFile).Name);
+                        SetTableCell(t,rownum,0,"File Name");
+                        SetTableCell(t,rownum,1,new FileInfo(_destination.OutputFile).Name);
                         rownum++;
                     }
 
-                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Cohort Size (Distinct)");
-                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Source.Request.ExtractableCohort.CountDistinct.ToString());
+                    SetTableCell(t,rownum,0,"Cohort Size (Distinct)");
+                    SetTableCell(t,rownum,1,Executer.Source.Request.ExtractableCohort.CountDistinct.ToString());
                     rownum++;
 
-                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Cohorts Found In Dataset");
-                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
+                    SetTableCell(t,rownum,0,"Cohorts Found In Dataset");
+                    SetTableCell(t,rownum,1,Executer.Source.UniqueReleaseIdentifiersEncountered.Count.ToString());
                     rownum++;
 
-                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Dataset Line Count");
-                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.Inserts.ToString());
+                    SetTableCell(t,rownum,0,"Dataset Line Count");
+                    SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.Inserts.ToString());
                     rownum++;
 
                     if (_destination.GeneratesFiles)
                     {
-                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("MD5");
-                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(UsefulStuff.MD5File(_destination.OutputFile));
+                        SetTableCell(t,rownum,0,"MD5");
+                        SetTableCell(t,rownum,1,UsefulStuff.MD5File(_destination.OutputFile));
                         rownum++;
                     
                         FileInfo f = new FileInfo(_destination.OutputFile);
-                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("File Size");
-                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(f.Length + "bytes (" + (f.Length / 1024) + "KB)");
+                        SetTableCell(t,rownum,0,"File Size");
+                        SetTableCell(t,rownum,1,f.Length + "bytes (" + (f.Length / 1024) + "KB)");
                         rownum++;
                     }
 
-                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Extraction Date");
-                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.EndTime.ToString());
+                    SetTableCell(t,rownum,0,"Extraction Date");
+                    SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.EndTime.ToString());
                     rownum++;
 
-                    t.Rows[rownum].Cells[0].Paragraphs.First().Append("Table Load ID (for HIC)");
-                    t.Rows[rownum].Cells[1].Paragraphs.First().Append(Executer.Destination.TableLoadInfo.ID.ToString());
+                    SetTableCell(t,rownum,0,"Table Load ID (for HIC)");
+                    SetTableCell(t,rownum,1,Executer.Destination.TableLoadInfo.ID.ToString());
                     rownum++;
 
                     if (_destination.GeneratesFiles)
                     {
-                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("Separator");
-                        t.Rows[rownum].Cells[1].Paragraphs.First()
-                            .Append(Executer.Source.Request.Configuration.Separator + "\t(" +
+                        SetTableCell(t,rownum,0,"Separator");
+                        SetTableCell(t,rownum,1,Executer.Source.Request.Configuration.Separator + "\t(" +
                                     _destination.SeparatorsStrippedOut + " values stripped from data)");
                         rownum++;
 
-                        t.Rows[rownum].Cells[0].Paragraphs.First().Append("Date Format");
-                        t.Rows[rownum].Cells[1].Paragraphs.First().Append(_destination.DateFormat);
+                        SetTableCell(t,rownum,0,"Date Format");
+                        SetTableCell(t,rownum,1,_destination.DateFormat);
                         rownum++;
                     }
 
                     if (Executer.Source.ExtractionTimeValidator != null && Executer.Source.Request.IncludeValidation)
                     {
-                        document.InsertSectionPageBreak();
+                        InsertSectionPageBreak(document);
 
                         InsertHeader(document,"Validation Information");
 
                         CreateValidationRulesTable(document);
 
-                        document.InsertSectionPageBreak();
+                        InsertSectionPageBreak(document);
 
                         CreateValidationResultsTable(document);
                     }
@@ -148,7 +145,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     {
                         try
                         {
-                            document.InsertSectionPageBreak();
+                            InsertSectionPageBreak(document);
                             InsertHeader(document, "Dataset Timespan");
                             
                             CreateTimespanGraph(Executer.Source.ExtractionTimeTimeCoverageAggregator);
@@ -161,21 +158,21 @@ namespace Rdmp.Core.Reports.ExtractionTime
 
                     }
 
-                    document.InsertSectionPageBreak();
+                    InsertSectionPageBreak(document);
 
                     AddAllCatalogueItemMetaData(document);
 
                     //technical data
-                    document.InsertSectionPageBreak();
+                    InsertSectionPageBreak(document);
 
                     AddFiltersAndParameters(document);
-                    
-                    document.Save();
                 }
             }
         }
+
         
-        private void AddFiltersAndParameters(DocX document)
+
+        private void AddFiltersAndParameters(XWPFDocument document)
         {
             var request = Executer.Source.Request;
             FilterContainer fc = (FilterContainer)request.Configuration.GetFilterContainerFor(request.DatasetBundle.DataSet);
@@ -191,7 +188,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             }
         }
 
-        private void WriteOutParameters(DocX document, List<IFilter> filtersUsed)
+        private void WriteOutParameters(XWPFDocument document, List<IFilter> filtersUsed)
         {
             InsertHeader(document,"Parameters");
 
@@ -200,7 +197,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             var globalParameters = Executer.Source.Request.Configuration.GlobalExtractionFilterParameters.ToArray();
             linesRequred += globalParameters.Length;
 
-            Table t = InsertTable(document,linesRequred + 1, 3);
+            var t = InsertTable(document,linesRequred + 1, 3);
             SetTableCell(t,0,0,"Name");
             SetTableCell(t, 0, 1, "Comment");
             SetTableCell(t, 0, 2, "Value");
@@ -225,11 +222,11 @@ namespace Rdmp.Core.Reports.ExtractionTime
             }
         }
 
-        private void  WriteOutFilters(DocX document, List<IFilter> filtersUsed)
+        private void  WriteOutFilters(XWPFDocument document, List<IFilter> filtersUsed)
         {
             InsertHeader(document,"Filters");
 
-            Table t = InsertTable(document,filtersUsed.Count + 1, 3);
+            var t = InsertTable(document,filtersUsed.Count + 1, 3);
 
             SetTableCell(t,0, 0, "Name");
             SetTableCell(t,0, 1, "Description");
@@ -244,7 +241,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             }
         }
 
-        private void AddAllCatalogueItemMetaData(DocX document)
+        private void AddAllCatalogueItemMetaData(XWPFDocument document)
         {
             var cata = Executer.Source.Request.Catalogue;
             WordCatalogueExtractor catalogueMetaData = new WordCatalogueExtractor(cata,document);
@@ -378,14 +375,14 @@ namespace Rdmp.Core.Reports.ExtractionTime
         */
         }
 
-        private void CreateValidationRulesTable(DocX document)
+        private void CreateValidationRulesTable(XWPFDocument document)
         {
             Validator validator = Executer.Source.ExtractionTimeValidator.Validator;
 
             int rowCount = validator.ItemValidators.Count +
                            Executer.Source.ExtractionTimeValidator.IgnoredBecauseColumnHashed.Count + 1;
 
-            Table t = InsertTable(document,rowCount, 2);
+            var t = InsertTable(document,rowCount, 2);
 
             int tableLine = 0;
             //output table header
@@ -434,11 +431,11 @@ namespace Rdmp.Core.Reports.ExtractionTime
             }
         }
 
-        private void CreateValidationResultsTable(DocX document)
+        private void CreateValidationResultsTable(XWPFDocument document)
         {
             VerboseValidationResults results = Executer.Source.ExtractionTimeValidator.Results;
 
-            Table t = InsertTable(document,results.DictionaryOfFailure.Count + 1, 4);
+            var t = InsertTable(document,results.DictionaryOfFailure.Count + 1, 4);
             
             int tableLine = 0;
             

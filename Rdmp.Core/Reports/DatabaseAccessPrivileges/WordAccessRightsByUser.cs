@@ -8,8 +8,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
+using System.IO;
 using FAnsi.Discovery;
-using Xceed.Words.NET;
+using NPOI.XWPF.UserModel;
 
 namespace Rdmp.Core.Reports.DatabaseAccessPrivileges
 {
@@ -38,9 +39,7 @@ namespace Rdmp.Core.Reports.DatabaseAccessPrivileges
         /// </summary>
         public void GenerateWordFile()
         {
-            var f = GetUniqueFilenameInWorkArea("DatabaseAccessRightsByUser");
-
-            using (DocX document = DocX.Create(f.FullName))
+            using (var document = GetNewDocFile("DatabaseAccessRightsByUser"))
             {
                 InsertHeader(document,"Database Access Report:" + _dbInfo.Server.Name);
 
@@ -83,9 +82,7 @@ namespace Rdmp.Core.Reports.DatabaseAccessPrivileges
                     con.Close();
                 }
                 
-
-                document.Save();
-                ShowFile(f);
+                ShowFile(document);
             }
             
 
@@ -171,13 +168,13 @@ and
             return cmd;
         }
 
-        private void QueryToWordTable(DocX document, SqlDataReader r, bool doubleUpColumns)
+        private void QueryToWordTable(XWPFDocument document, SqlDataReader r, bool doubleUpColumns)
         {
 
             System.Data.DataTable dataTable = new DataTable();
             dataTable.Load(r);
             
-            Table wordTable;
+            XWPFTable wordTable;
 
             //doubling up columns is for long datasets with few columns e.g. 100 rows, 2 columns (e.g. name, age).  In this case we half the dataset and duplicate the columns so that the table looks like name,age,<empty column to break up space>,name,age
             //this allows 2 source rows to be fit into one Word table row and save space in the document.
