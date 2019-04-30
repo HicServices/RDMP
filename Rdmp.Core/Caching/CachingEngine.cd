@@ -8,20 +8,10 @@
   </Comment>
   <Class Name="Rdmp.Core.Caching.CachingHost">
     <Position X="1.5" Y="2" Width="2.25" />
-    <AssociationLine Name="CacheProgressList" Type="Rdmp.Core.CatalogueLibrary.Data.Cache.ICacheProgress" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="3.75" Y="3.344" />
-        <Point X="6.375" Y="3.344" />
-        <Point X="6.375" Y="1.191" />
-      </Path>
-    </AssociationLine>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAWBAAAQAAAAAQAAAAAAAAAAIAAAIAgAASAA=</HashCode>
       <FileName>Caching\CachingHost.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="CacheProgressList" />
-    </ShowAsCollectionAssociation>
   </Class>
   <Class Name="Rdmp.Core.Caching.CachingPreExecutionChecker">
     <Position X="1.25" Y="0.5" Width="2.75" />
@@ -36,7 +26,7 @@
   </Class>
   <Class Name="Rdmp.Core.Caching.Pipeline.CachingPipelineUseCase">
     <Position X="7.5" Y="4.25" Width="2.25" />
-    <AssociationLine Name="_cacheProgress" Type="Rdmp.Core.CatalogueLibrary.Data.Cache.ICacheProgress">
+    <AssociationLine Name="_cacheProgress" Type="Rdmp.Core.Curation.Data.Cache.ICacheProgress">
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="-1.255" Y="1.383" />
       </MemberNameLabel>
@@ -47,51 +37,37 @@
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_cacheProgress" />
-      <Field Name="_permissionWindow" />
-      <Field Name="_pipeline" />
       <Field Name="_providerIfAny" />
+      <Field Name="_pipeline" />
+      <Field Name="_permissionWindow" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="Rdmp.Core.Caching.DataRetrievers.PermissionWindowCacheDownloader">
-    <Position X="2" Y="7.5" Width="2.75" />
-    <AssociationLine Name="_cacheProgressItems" Type="Rdmp.Core.CatalogueLibrary.Data.Cache.ICacheProgress" FixedFromPoint="true" FixedToPoint="true">
-      <Path>
-        <Point X="3.844" Y="7.5" />
-        <Point X="3.844" Y="7.125" />
-        <Point X="6.75" Y="7.125" />
-        <Point X="6.75" Y="1.191" />
-      </Path>
-      <MemberNameLabel ManuallyPlaced="true">
-        <Position X="-1.577" Y="0.362" />
-      </MemberNameLabel>
-    </AssociationLine>
+  <Class Name="Rdmp.Core.Caching.PermissionWindowCacheDownloader" Collapsed="true">
+    <Position X="2.5" Y="7.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAIABAAABCABAEAAAAEAAQAAAkAAQABAEAEAAACBI=</HashCode>
-      <FileName>Caching\DataRetrievers\PermissionWindowCacheDownloader.cs</FileName>
+      <FileName>Caching\PermissionWindowCacheDownloader.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="_cacheProgressItems" />
-    </ShowAsCollectionAssociation>
   </Class>
-  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.Cache.ICacheProgress" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Cache.ICacheProgress" Collapsed="true">
     <Position X="6.25" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAQgAACAQAAAAgAgAAgACAAABQAACUAAAAAACBQAAA=</HashCode>
-      <FileName>CatalogueLibrary\Data\Cache\ICacheProgress.cs</FileName>
+      <FileName>Curation\Data\Cache\ICacheProgress.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.IPermissionWindow" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.IPermissionWindow" Collapsed="true">
     <Position X="11.75" Y="4" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAACAAACAgAAAAAAAAAAAAAAAAAAACFAAAAAAAAAA=</HashCode>
-      <FileName>CatalogueLibrary\Data\IPermissionWindow.cs</FileName>
+      <FileName>Curation\Data\IPermissionWindow.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.Pipelines.IPipeline" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipeline" Collapsed="true">
     <Position X="11.75" Y="7" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAgAAAAAAIAAAAAQAQAAAAEAAAAAAAAABA=</HashCode>
-      <FileName>CatalogueLibrary\Data\Pipelines\IPipeline.cs</FileName>
+      <FileName>Curation\Data\Pipelines\IPipeline.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.Caching.Requests.FetchRequestProvider.ICacheFetchRequestProvider" Collapsed="true">

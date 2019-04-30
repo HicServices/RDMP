@@ -27,7 +27,7 @@
   <Comment CommentText="Instance of Extraction Pipeline (1 per config, custom data, globals)">
     <Position X="3.419" Y="13.907" Height="0.355" Width="3.952" />
   </Comment>
-  <Class Name="DataExportLibrary.Data.DataTables.Project" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.Project" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3.5" Y="1" Width="2.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -38,7 +38,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.ExtractableColumn" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.ExtractableColumn" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="13" Y="3" Width="1.75" />
     <TypeIdentifier>
       <HashCode>BAAwgAQAIAAIAAQlABAAgAgABAAAAQACACAABCAABAA=</HashCode>
@@ -46,7 +46,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.ExtractableDataSet" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.ExtractableDataSet" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="9" Y="1.5" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAEAAAEEAEABQCAAgAAAAoBAEIAABABEAAABA=</HashCode>
@@ -54,7 +54,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.ExtractionConfiguration" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.ExtractionConfiguration" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="6.5" Y="1" Width="2" />
     <TypeIdentifier>
       <HashCode>gBwGIAAKARRgIiSmgR0AqIQZBBIgBJEAAgJI4BAghgk=</HashCode>
@@ -62,7 +62,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.Data.LinkCreators.SelectedDataSets">
+  <Class Name="Rdmp.Core.DataExport.Data.LinkCreators.SelectedDataSets">
     <Position X="0.75" Y="3.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAYQAAAABkAsIBCAAAgAAAEAAAAKACAAAEAACAA=</HashCode>
@@ -70,39 +70,25 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.WordDataWriter">
-    <Position X="0.75" Y="0.75" Width="2.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-      <Compartment Name="Methods" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AAAACAAAAAAAACABAAIAAEQCAAAAAAgIBEAAAGAAAAA=</HashCode>
-      <FileName>ExtractionTime\WordDataWriter.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.ExtractionTimeValidator" Collapsed="true">
+  <Class Name="Rdmp.Core.DataExport.ExtractionTime.ExtractionTimeValidator" Collapsed="true">
     <Position X="5.75" Y="8.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACCBAQAAAAAAAAAACAAAAAIAgAAAAAAAABA=</HashCode>
-      <FileName>ExtractionTime\ExtractionTimeValidator.cs</FileName>
+      <FileName>DataExport\ExtractionTime\ExtractionTimeValidator.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Validator" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="HIC.Common.Validation.Validator" Collapsed="true">
     <Position X="9.25" Y="8.5" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.DeployedExtractionFilter" Collapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.DeployedExtractionFilter" Collapsed="true">
     <Position X="15.25" Y="3" Width="2" />
     <TypeIdentifier>
       <HashCode>AIIAAAgAAAAAACAMABEIAAAABIEAAAAAAAAIAQAAAAA=</HashCode>
       <FileName>Data\DataTables\DeployedExtractionFilter.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.DeployedExtractionFilterParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.DeployedExtractionFilterParameter" Collapsed="true">
     <Position X="17.5" Y="3" Width="3" />
     <TypeIdentifier>
       <HashCode>AhgAAAgEEAAAAAAEACQEAAAAAAAAABAAAAAgEAAAAAA=</HashCode>
@@ -110,7 +96,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.FilterContainer" Collapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.FilterContainer" Collapsed="true">
     <Position X="11.25" Y="2" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AgACAAgAAQACEAAEAAQCRgEgIQAAAAAAAAEAAAAAgAA=</HashCode>
@@ -123,83 +109,105 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionFilter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilter" Collapsed="true">
     <Position X="16.25" Y="6.5" Width="2" />
-    <TypeIdentifier />
+    <TypeIdentifier>
+      <HashCode>AKAAAAAAAAAAACAMAAEACAAIBIGAAAAAAAAAQQAAAAA=</HashCode>
+      <FileName>Curation\Data\ExtractionFilter.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionFilterParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilterParameter" Collapsed="true">
     <Position X="19" Y="6.5" Width="2" />
-    <TypeIdentifier />
+    <TypeIdentifier>
+      <HashCode>ABgAAAgEEAAAAAAEgCQGAAAIAAAAABAAAAAgUAABAAA=</HashCode>
+      <FileName>Curation\Data\ExtractionFilterParameter.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionInformation" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionInformation" Collapsed="true">
     <Position X="14" Y="6.5" Width="2" />
-    <TypeIdentifier />
+    <TypeIdentifier>
+      <HashCode>BAAAAICAAABIAAAUADEAAAgoAAAAAIAAAAAEQAAABAA=</HashCode>
+      <FileName>Curation\Data\ExtractionInformation.cs</FileName>
+    </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.QueryBuilding.QueryBuilder" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.QueryBuilding.QueryBuilder" Collapsed="true">
     <Position X="8.25" Y="6.25" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.ExtractionPipeline.ExtractionPipelineUseCase">
+  <Class Name="Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.ExtractionPipelineUseCase">
     <Position X="3.5" Y="10.25" Width="3" />
     <TypeIdentifier>
       <HashCode>AACAAAAAAgACAAQAACAAAABAAAIAAAAEAAEEAAABAAA=</HashCode>
-      <FileName>ExtractionTime\ExtractionPipeline\ExtractionPipelineUseCase.cs</FileName>
+      <FileName>DataExport\ExtractionTime\ExtractionPipeline\ExtractionPipelineUseCase.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_pipeline" />
-      <Property Name="ExtractCommand" />
       <Property Name="Source" />
       <Property Name="Destination" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource">
+  <Class Name="Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource">
     <Position X="11.25" Y="9.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAEqAA0MACAgISBAAQEAAIAAEgACghAAAAUUmABKIBA=</HashCode>
-      <FileName>ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs</FileName>
+      <HashCode>CCEqAA0MACAgISBAAQEAAIAAEgACghAAAAUUmABKIBA=</HashCode>
+      <FileName>DataExport\ExtractionTime\ExtractionPipeline\Sources\ExecuteDatasetExtractionSource.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.Commands.ExtractCommandCollection">
+  <Class Name="Rdmp.Core.DataExport.ExtractionTime.Commands.ExtractCommandCollection">
     <Position X="4" Y="17.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ExtractionTime\Commands\ExtractCommandCollection.cs</FileName>
+      <FileName>DataExport\ExtractionTime\Commands\ExtractCommandCollection.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.Commands.ExtractCommandCollectionFactory">
+  <Class Name="Rdmp.Core.DataExport.ExtractionTime.Commands.ExtractCommandCollectionFactory">
     <Position X="1" Y="17.75" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAEAAAAAAAAAA=</HashCode>
-      <FileName>ExtractionTime\Commands\ExtractCommandCollectionFactory.cs</FileName>
+      <FileName>DataExport\ExtractionTime\Commands\ExtractCommandCollectionFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="DataExportLibrary.ExtractionTime.Commands.ExtractDatasetCommand" Collapsed="true">
+  <Class Name="Rdmp.Core.DataExport.ExtractionTime.Commands.ExtractDatasetCommand" Collapsed="true">
     <Position X="8.75" Y="16.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>ABBAAhAAAAEAAAAEAAACAAAAEAAACCQgAAABAEAwBAg=</HashCode>
-      <FileName>ExtractionTime\Commands\ExtractDatasetCommand.cs</FileName>
+      <HashCode>ABBAChAAAAAAAAAEAAACAAAAEAAACCQgAAABAEAwBAg=</HashCode>
+      <FileName>DataExport\ExtractionTime\Commands\ExtractDatasetCommand.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="DataExportLibrary.Interfaces.ExtractionTime.Commands.IExtractCommand">
+  <Class Name="Rdmp.Core.Reports.ExtractionTime.WordDataWriter">
+    <Position X="0.75" Y="0.75" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAACABAAIAAEQCAAAAAAgIBEAAAGAAAAA=</HashCode>
+      <FileName>Reports\ExtractionTime\WordDataWriter.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Rdmp.Core.DataExport.Interfaces.ExtractionTime.Commands.IExtractCommand">
     <Position X="8.5" Y="10.25" Width="2.25" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="DataExportLibrary.ExtractionTime.ExtractionPipeline.Destinations.IExecuteDatasetExtractionDestination" Collapsed="true">
+  <Interface Name="Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations.IExecuteDatasetExtractionDestination" Collapsed="true">
     <Position X="7.25" Y="14.5" Width="3.5" />
     <TypeIdentifier>
       <HashCode>QBAAAACAAgAAAAAAAAgAAAAAAYAAJAAAgAAAAAAAQAA=</HashCode>
-      <FileName>ExtractionTime\ExtractionPipeline\Destinations\IExecuteDatasetExtractionDestination.cs</FileName>
+      <FileName>DataExport\ExtractionTime\ExtractionPipeline\Destinations\IExecuteDatasetExtractionDestination.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.Pipelines.IPipeline" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipeline" Collapsed="true">
     <Position X="3.5" Y="8.25" Width="2" />
-    <TypeIdentifier />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAgAAAAAAIAAAAAQAQAAAAEAAAAAAAAABA=</HashCode>
+      <FileName>Curation\Data\Pipelines\IPipeline.cs</FileName>
+    </TypeIdentifier>
   </Interface>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

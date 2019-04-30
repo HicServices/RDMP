@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="CatalogueLibrary.QueryBuilding.QueryBuilder">
+  <Class Name="Rdmp.Core.Curation.QueryBuilding.QueryBuilder">
     <Position X="3" Y="1.25" Width="3.25" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -14,7 +14,7 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.QueryBuilding.QueryTimeColumn">
+  <Class Name="Rdmp.Core.Curation.QueryBuilding.QueryTimeColumn">
     <Position X="6.75" Y="4.75" Width="2" />
     <TypeIdentifier>
       <HashCode>CCAAAAAACAAAAAwAiAEAAAAAAABAAIACAAABgAAAAIA=</HashCode>
@@ -26,7 +26,7 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.Lookup" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Lookup" Collapsed="true">
     <Position X="11.25" Y="7.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>ABABAAgAAAggEAAEQQAAggAIBCKQAAAAAAAMYYICgAQ=</HashCode>
@@ -34,7 +34,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ColumnInfo" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ColumnInfo" Collapsed="true">
     <Position X="11.25" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>BUIAIIgEAkykAAQUgCABBFQIIRwAAIOCIABIQQAYEEg=</HashCode>
@@ -42,42 +42,42 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.QueryBuilding.SqlQueryBuilderHelper">
+  <Class Name="Rdmp.Core.Curation.QueryBuilding.SqlQueryBuilderHelper">
     <Position X="6.75" Y="8.5" Width="3.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAQAABFBACwgAKAAAKAAAAQAAAAAAAAAAIA=</HashCode>
       <FileName>QueryBuilding\SqlQueryBuilderHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="CatalogueLibrary.Data.IContainer">
+  <Interface Name="Rdmp.Core.Curation.Data.IContainer">
     <Position X="8" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.IFilter" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.IFilter" Collapsed="true">
     <Position X="9.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAAgACAIAAEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
       <FileName>Data\IFilter.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.ISqlParameter" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.ISqlParameter" Collapsed="true">
     <Position X="11.5" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAgAAAAEAAAAAAAAAAAAAAAAAAAAABAAAAAgEAAAAAA=</HashCode>
       <FileName>Data\ISqlParameter.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.IColumn">
+  <Interface Name="Rdmp.Core.Curation.Data.IColumn">
     <Position X="13" Y="2.25" Width="2" />
     <TypeIdentifier>
       <HashCode>BAEAAAAAAAJAgAAAAAAAAAACABAAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>Data\IColumn.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder">
+  <Interface Name="Rdmp.Core.Curation.QueryBuilding.ISqlQueryBuilder">
     <Position X="0.5" Y="1.25" Width="2" />
     <TypeIdentifier>
       <HashCode>QCAAAAEAAAAiAAAAAIAxAAQEAAQAIAAATBQAEAAAaAA=</HashCode>

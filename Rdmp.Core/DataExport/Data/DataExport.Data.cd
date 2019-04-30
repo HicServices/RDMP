@@ -67,11 +67,11 @@
       <FileName>DataExport\Data\ICumulativeExtractionResults.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.ISupplementalExtractionResults" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.ISupplementalExtractionResults" Collapsed="true">
     <Position X="9" Y="4" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAAAAAAAAAAEAAAgAAAAACAAAAAAAAA=</HashCode>
-      <FileName>CatalogueLibrary\Data\ISupplementalExtractionResults.cs</FileName>
+      <FileName>Rdmp.Core.Curation.Data\ISupplementalExtractionResults.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.DataExport.Data.ISelectedDataSets">
@@ -85,11 +85,11 @@
       <Property Name="ExtractableDataSet" />
     </ShowAsAssociation>
   </Interface>
-  <Interface Name="Rdmp.Core.CatalogueLibrary.Data.IContainer">
+  <Interface Name="Rdmp.Core.Curation.Data.IContainer">
     <Position X="9" Y="8.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
-      <FileName>CatalogueLibrary\Data\IContainer.cs</FileName>
+      <FileName>Rdmp.Core.Curation.Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.DataExport.Data.IExtractableDataSet" Collapsed="true">

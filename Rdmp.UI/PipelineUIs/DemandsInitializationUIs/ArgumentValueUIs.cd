@@ -1,6 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <ClassDiagram MajorVersion="1" MinorVersion="1">
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueArrayUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueArrayUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="4.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAgAACAAAAgAAQCAAAAiIAAIAAAAAAAAAAAAAIA=</HashCode>
@@ -8,7 +8,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueBoolUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueBoolUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="0.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAABAAACCAAAoAAACAAAAiAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -16,7 +16,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueComboBoxUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueComboBoxUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="1.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAABEgECAAAAgAAACAAAImIAAAEBAAAAAAAQIAAgA=</HashCode>
@@ -24,7 +24,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueCustomUIDrivenClassUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueCustomUIDrivenClassUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="2" Width="3" />
     <TypeIdentifier>
       <HashCode>AAEAAAAgACBABAgAAACAAgAmIAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -32,7 +32,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueDictionaryUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueDictionaryUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="9.25" Y="2" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAABAACAAQAgAAACAAgAiIAAAgAAIAAAAAQAAAII=</HashCode>
@@ -40,7 +40,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueLabelUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueLabelUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="5.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAEAgAAACAAAACAAAAAAAAAAAAAAAAAAA=</HashCode>
@@ -48,7 +48,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValuePipelineUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValuePipelineUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAgACAAAAwAAACAAAAmIAAAAAAAAAAAAAAAAJA=</HashCode>
@@ -56,7 +56,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueSqlUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueSqlUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="2.75" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAkACAAAAgAAACAAAAmIAABAAAAAAAAAAAAAAA=</HashCode>
@@ -64,7 +64,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueTextUI" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueTextUI" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="3.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAgBAgACAAAAgAAACCAAAmIAAAAAAACAAAAAAAAAA=</HashCode>
@@ -72,21 +72,21 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueUIFactory" Collapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.ArgumentValueUIFactory" Collapsed="true">
     <Position X="3.25" Y="1.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAgAAAAAAABAAABAAAAAAAAABAAAAEABAAAAAAAIAIA=</HashCode>
       <FileName>PipelineUIs\DemandsInitializationUIs\ArgumentValueControls\ArgumentValueUIFactory.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentCollection" Collapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentCollection" Collapsed="true">
     <Position X="0.5" Y="1.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AABAAAIgCCAAIAAAAACAgBASBAABGgQIAgQAhABAAAA=</HashCode>
       <FileName>PipelineUIs\DemandsInitializationUIs\ArgumentCollection.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="CatalogueManager.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.IArgumentValueUI">
+  <Interface Name="Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls.IArgumentValueUI">
     <Position X="2.25" Y="2.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>

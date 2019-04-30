@@ -12,7 +12,7 @@
   <Comment CommentText="These class definitions are the same as RenderedFisherman but  explicitly label themselves as Exports of type IFishFor&lt;IRenderedFish&gt; - truth teller or IFishFor&lt;IBasicFish&gt; - liar">
     <Position X="10.156" Y="4.885" Height="0.656" Width="4.335" />
   </Comment>
-  <Class Name="CatalogueLibraryTests.Integration.CommitAssemblyTest">
+  <Class Name="Rdmp.Core.Curation.ests.Integration.CommitAssemblyTest">
     <Position X="0.5" Y="2.25" Width="3" />
     <Compartments>
       <Compartment Name="Nested Types" Collapsed="false" />
@@ -22,7 +22,7 @@
       <FileName>Integration\CommitAssemblyTest.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibraryTests.Integration.BasicFisherman" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.Integration.BasicFisherman" BaseTypeListCollapsed="true">
     <Position X="6.25" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
@@ -30,7 +30,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibraryTests.Integration.RenderedFishermanWhoLies" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.Integration.RenderedFishermanWhoLies" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="10.25" Y="7" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
@@ -38,7 +38,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibraryTests.Integration.RenderedFishermanExplicitDuplicateDeclaration" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.Integration.RenderedFishermanExplicitDuplicateDeclaration" BaseTypeListCollapsed="true">
     <Position X="6.25" Y="7" Width="3.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
@@ -46,7 +46,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibraryTests.Integration.RenderedFisherman">
+  <Class Name="Rdmp.Core.Curation.ests.Integration.RenderedFisherman">
     <Position X="6.25" Y="5.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
@@ -54,7 +54,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibraryTests.Integration.RenderedFishermanWhoIsExplicitlyHonest" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.Integration.RenderedFishermanWhoIsExplicitlyHonest" Collapsed="true">
     <Position X="10.25" Y="6" Width="3.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
@@ -62,21 +62,21 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="CatalogueLibraryTests.Integration.IFishFor&lt;T&gt;">
+  <Interface Name="Rdmp.Core.Curation.ests.Integration.IFishFor&lt;T&gt;">
     <Position X="10" Y="3.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
       <FileName>Integration\CommitAssemblyTest.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibraryTests.Integration.IBasicFish">
+  <Interface Name="Rdmp.Core.Curation.ests.Integration.IBasicFish">
     <Position X="3.75" Y="3.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAAAAA=</HashCode>
       <FileName>Integration\CommitAssemblyTest.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibraryTests.Integration.IRenderedFish">
+  <Interface Name="Rdmp.Core.Curation.ests.Integration.IRenderedFish">
     <Position X="3.75" Y="5.5" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAIAABAAAAA=</HashCode>

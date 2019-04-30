@@ -21,7 +21,7 @@
   <Comment CommentText="Or just use the basic cache solution">
     <Position X="0.604" Y="10.448" Height="0.375" Width="3.294" />
   </Comment>
-  <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="4.75" Y="2.25" Width="2" />
     <TypeIdentifier />
     <ShowAsCollectionAssociation>
@@ -29,7 +29,7 @@
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.LoadMetadata" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.LoadMetadata" Collapsed="true">
     <Position X="0.5" Y="1.75" Width="2.75" />
     <TypeIdentifier />
     <ShowAsCollectionAssociation>
@@ -37,7 +37,7 @@
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTaskArgument" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTaskArgument" Collapsed="true">
     <Position X="4.25" Y="5.25" Width="2" />
     <TypeIdentifier />
   </Class>
@@ -46,7 +46,7 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.DemandsInitializationAttribute" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DemandsInitializationAttribute" Collapsed="true">
     <Position X="6.5" Y="5.25" Width="2.5" />
     <TypeIdentifier />
   </Class>
@@ -79,15 +79,15 @@
     <Position X="8.75" Y="9" Width="2.25" />
     <TypeIdentifier />
   </Interface>
-  <Enum Name="CatalogueLibrary.Data.DataLoad.CacheArchiveType">
+  <Enum Name="Rdmp.Core.Curation.Data.DataLoad.CacheArchiveType">
     <Position X="9.75" Y="7" Width="1.75" />
     <TypeIdentifier />
   </Enum>
-  <Enum Name="CatalogueLibrary.Data.DataLoad.ProcessTaskType">
+  <Enum Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTaskType">
     <Position X="7.25" Y="1.75" Width="1.5" />
     <TypeIdentifier />
   </Enum>
-  <Enum Name="CatalogueLibrary.Data.DataLoad.LoadStage">
+  <Enum Name="Rdmp.Core.Curation.Data.DataLoad.LoadStage">
     <Position X="9" Y="1.75" Width="1.5" />
     <TypeIdentifier />
   </Enum>

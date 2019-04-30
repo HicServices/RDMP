@@ -12,7 +12,7 @@
   <Comment CommentText="Main UI Tab">
     <Position X="3.323" Y="10.125" Height="0.291" Width="3.148" />
   </Comment>
-  <Class Name="CatalogueManager.DashboardTabs.DashboardLayoutUI">
+  <Class Name="Rdmp.UI.DashboardTabs.DashboardLayoutUI">
     <Position X="3.25" Y="6.25" Width="3.25" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
@@ -25,11 +25,11 @@
       <Field Name="_layout" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="CatalogueLibrary.Data.Dashboarding.PersistStringHelper" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Dashboarding.PersistStringHelper" Collapsed="true">
     <Position X="14.25" Y="7.25" Width="2" />
     <TypeIdentifier />
   </Class>
-  <Class Name="CatalogueLibrary.Data.Dashboarding.DashboardLayout">
+  <Class Name="Rdmp.Core.Curation.Data.Dashboarding.DashboardLayout">
     <Position X="5.25" Y="1.25" Width="1.5" />
     <TypeIdentifier />
     <ShowAsCollectionAssociation>
@@ -37,7 +37,7 @@
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.Dashboarding.DashboardControl">
+  <Class Name="Rdmp.Core.Curation.Data.Dashboarding.DashboardControl">
     <Position X="7.75" Y="1.25" Width="2.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
@@ -47,49 +47,49 @@
       <Property Name="ObjectsUsed" />
     </ShowAsCollectionAssociation>
   </Class>
-  <Class Name="CatalogueLibrary.Data.Dashboarding.DashboardObjectUse">
+  <Class Name="Rdmp.Core.Curation.Data.Dashboarding.DashboardObjectUse">
     <Position X="12.25" Y="1.25" Width="2.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier />
   </Class>
-  <Class Name="CatalogueManager.DashboardTabs.DashboardLayoutUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.DashboardTabs.DashboardLayoutUI_Design" Collapsed="true">
     <Position X="3.75" Y="5.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DashboardTabs\DashboardLayoutUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
     <Position X="3.75" Y="4.25" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAIAAAAA=</HashCode>
       <FileName>TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="CatalogueManager.DashboardTabs.Construction.IDashboardableControl">
+  <Interface Name="Rdmp.UI.DashboardTabs.Construction.IDashboardableControl">
     <Position X="7.75" Y="9.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DashboardTabs\Construction\IDashboardableControl.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueManager.TestsAndSetup.ServicePropogation.IObjectCollectionControl">
+  <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IObjectCollectionControl">
     <Position X="7.75" Y="7.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAACAAAAAAAAAAAAAAAAAAAAAAAAAEAEAAAAA=</HashCode>
       <FileName>TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueManager.Refreshing.ILifetimeSubscriber" Collapsed="true">
+  <Interface Name="Rdmp.UI.Refreshing.ILifetimeSubscriber" Collapsed="true">
     <Position X="7.75" Y="5.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Refreshing\ILifetimeSubscriber.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.Dashboarding.IPersistableObjectCollection">
+  <Interface Name="Rdmp.Core.Curation.Data.Dashboarding.IPersistableObjectCollection">
     <Position X="10.75" Y="7.25" Width="2.5" />
     <TypeIdentifier />
     <ShowAsAssociation>

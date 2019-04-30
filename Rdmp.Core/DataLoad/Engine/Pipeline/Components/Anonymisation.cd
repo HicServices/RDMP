@@ -43,7 +43,7 @@
       <FileName>DataFlowPipeline\Components\Anonymisation\ANOTableInfoSynchronizer.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.ANOTable">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.ANOTable">
     <Position X="2.25" Y="9.5" Width="3.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />

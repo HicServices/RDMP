@@ -6,7 +6,7 @@
   <Comment CommentText="Testing implementation of API IActivateItems">
     <Position X="3.99" Y="4.802" Height="0.365" Width="6.398" />
   </Comment>
-  <Class Name="CatalogueLibraryTests.UserInterfaceTests.TestActivateItems" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.TestActivateItems" Collapsed="true">
     <Position X="5" Y="5.75" Width="2.25" />
     <Compartments>
       <Compartment Name="Properties" Collapsed="true" />
@@ -20,14 +20,14 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibraryTests.UserInterfaceTests.TestActivateItemsResults">
+  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.TestActivateItemsResults">
     <Position X="8.5" Y="5.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAgAAAAAAAAAAAA=</HashCode>
       <FileName>UserInterfaceTests\TestActivateItems.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibraryTests.UserInterfaceTests.UITests" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.UITests" Collapsed="true">
     <Position X="5.5" Y="6.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAQAAIIACAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
@@ -37,30 +37,30 @@
       <Field Name="ItemActivator" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="CatalogueLibraryTests.UserInterfaceTests.AggregateEditorUITests" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.AggregateEditorUITests" Collapsed="true">
     <Position X="3.75" Y="7.75" Width="2" />
     <TypeIdentifier>
       <HashCode>ACAAAAAAAAAAAAAAAABAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>UserInterfaceTests\AggregateEditorUITests.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibraryTests.UserInterfaceTests.CatalogueItemUITests" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.CatalogueItemUITests" Collapsed="true">
     <Position X="6" Y="7.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>UserInterfaceTests\CatalogueItemUITests.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibraryTests.UserInterfaceTests.CatalogueUITests" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.CatalogueUITests" Collapsed="true">
     <Position X="8.25" Y="7.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
       <FileName>UserInterfaceTests\CatalogueUITests.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPForm" Collapsed="true">
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPForm" Collapsed="true">
     <Position X="6" Y="2.25" Width="1.5" />
-    <AssociationLine Name="Activator" Type="CatalogueManager.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="Activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="6.781" Y="2.25" />
         <Point X="6.781" Y="1.875" />
@@ -73,15 +73,15 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality" Collapsed="true">
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality" Collapsed="true">
     <Position X="7.75" Y="0.5" Width="2.75" />
     <TypeIdentifier />
   </Class>
-  <Class Name="CatalogueManager.Collections.RDMPCollectionUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.RDMPCollectionUI_Design" Collapsed="true">
     <Position X="4.25" Y="4" Width="2.25" />
     <TypeIdentifier />
   </Class>
-  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPUserControl" Collapsed="true">
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPUserControl" Collapsed="true">
     <Position X="4.25" Y="2.25" Width="1.5" />
     <TypeIdentifier />
     <ShowAsAssociation>
@@ -89,7 +89,7 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
     <Position X="7.25" Y="4" Width="2.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
@@ -97,11 +97,11 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="CatalogueManager.ItemActivation.IActivateItems">
+  <Interface Name="Rdmp.UI.ItemActivation.IActivateItems">
     <Position X="0.5" Y="0.5" Width="2.75" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueManager.TestsAndSetup.ServicePropogation.IRDMPControl" Collapsed="true">
+  <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IRDMPControl" Collapsed="true">
     <Position X="4.5" Y="0.5" Width="1.5" />
     <TypeIdentifier />
     <ShowAsAssociation>

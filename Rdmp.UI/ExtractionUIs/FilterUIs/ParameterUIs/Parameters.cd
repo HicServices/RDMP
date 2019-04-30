@@ -15,22 +15,22 @@
   <Comment CommentText="More Global type parameters.  Probably has same problem around DatabaseType depending on what the parent is (e.g. a CIC with no AggregateConfigurations yet)">
     <Position X="5.438" Y="4.271" Height="0.458" Width="5.023" />
   </Comment>
-  <Class Name="CatalogueLibrary.Data.Aggregation.AggregateFilterParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Aggregation.AggregateFilterParameter" Collapsed="true">
     <Position X="0.5" Y="8.5" Width="2.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.Cohort.AnyTableSqlParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Cohort.AnyTableSqlParameter" Collapsed="true">
     <Position X="5.5" Y="3.5" Width="2.25" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionFilterParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilterParameter" Collapsed="true">
     <Position X="0.5" Y="6" Width="2" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionFilterParameterSet" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilterParameterSet" Collapsed="true">
     <Position X="2.75" Y="6" Width="2.5" />
     <TypeIdentifier />
     <ShowAsCollectionAssociation>
@@ -38,36 +38,36 @@
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.QueryBuilding.ConstantParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.QueryBuilding.ConstantParameter" Collapsed="true">
     <Position X="11" Y="1" Width="2.25" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Spontaneous.SpontaneouslyInventedSqlParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Spontaneous.SpontaneouslyInventedSqlParameter" Collapsed="true">
     <Position X="11" Y="2.5" Width="3" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.DeployedExtractionFilterParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.DeployedExtractionFilterParameter" Collapsed="true">
     <Position X="3.25" Y="8.5" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportLibrary.Data.DataTables.GlobalExtractionFilterParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.DataExport.Data.DataTables.GlobalExtractionFilterParameter" Collapsed="true">
     <Position X="5.5" Y="1" Width="3" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionFilterParameterSetValue" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilterParameterSetValue" Collapsed="true">
     <Position X="6.25" Y="6" Width="3" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="CatalogueLibrary.Data.ISqlParameter">
+  <Interface Name="Rdmp.Core.Curation.Data.ISqlParameter">
     <Position X="3" Y="0.5" Width="1.75" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.ICollectSqlParameters" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.ICollectSqlParameters" Collapsed="true">
     <Position X="0.75" Y="0.5" Width="1.75" />
     <TypeIdentifier />
   </Interface>

@@ -18,7 +18,7 @@
   <Comment CommentText="3. You can implement IRefreshBusSubscriber and manually call Subscribe and Unsubscribe yourself (make sure not to double subscribe and do try to cleanup unsubscriptions to enable Garbage Collection to happen properly).">
     <Position X="5.948" Y="3.26" Height="0.792" Width="4.21" />
   </Comment>
-  <Class Name="CatalogueManager.Collections.TableInfoCollectionUI" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.TableInfoCollectionUI" Collapsed="true">
     <Position X="3.5" Y="7.25" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AgAAAAAIACQAAQAYAgCAAAACAAAAEAEAAAAAAAgAUAA=</HashCode>
@@ -26,7 +26,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.Collections.LoadMetadataCollectionUI" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.LoadMetadataCollectionUI" Collapsed="true">
     <Position X="6" Y="7.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AgAAAAQAACQABgAAAgKAACADAAAAAAEAAAgAAAgAAAA=</HashCode>
@@ -34,7 +34,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.Collections.RDMPCollectionUI" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.RDMPCollectionUI" Collapsed="true">
     <Position X="4" Y="5.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAgAAAAAAgAAAA=</HashCode>
@@ -42,7 +42,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.Collections.CatalogueCollectionUI" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.CatalogueCollectionUI" Collapsed="true">
     <Position X="1.25" Y="7.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAADEHAQAGQAAAAwAkCARAASIIAgDoEIBAAgAAgAABA=</HashCode>
@@ -50,14 +50,14 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.Refreshing.RefreshBus">
+  <Class Name="Rdmp.UI.Refreshing.RefreshBus">
     <Position X="0.5" Y="1.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAgEEAEAAQAAAACAAUBQAAAAAAAAEA=</HashCode>
       <FileName>Refreshing\RefreshBus.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
     <Position X="8.75" Y="6" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAgAAAAACQAAAAAAEAAAAgAAAAAAAAAAAAAAIAAAAA=</HashCode>
@@ -65,7 +65,7 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.Refreshing.SelfDestructProtocol&lt;T&gt;" Collapsed="true">
+  <Class Name="Rdmp.UI.Refreshing.SelfDestructProtocol&lt;T&gt;" Collapsed="true">
     <Position X="3.25" Y="1.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAABAAAAAAQAAAAAAAAAAAAAAAAAAgEAAAAAAAAAAAA=</HashCode>
@@ -73,112 +73,112 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.AggregationUIs.Advanced.AggregateEditor_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.AggregationUIs.Advanced.AggregateEditor_Design" Collapsed="true">
     <Position X="0.5" Y="8.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>AggregationUIs\Advanced\AggregateEditor.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.AggregationUIs.AggregateGraph_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.AggregationUIs.AggregateGraph_Design" Collapsed="true">
     <Position X="7.25" Y="8.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>AggregationUIs\AggregateGraph.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.CredentialsUIs.DataAccessCredentialsUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.CredentialsUIs.DataAccessCredentialsUI_Design" Collapsed="true">
     <Position X="11.75" Y="8.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>CredentialsUIs\DataAccessCredentialsUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.DataLoadUIs.ANOUIs.ANOTableManagement.ConvertColumnInfoIntoANOColumnInfo_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement.ConvertColumnInfoIntoANOColumnInfo_Design" Collapsed="true">
     <Position X="0.5" Y="9.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataLoadUIs\ANOUIs\ANOTableManagement\ConvertColumnInfoIntoANOColumnInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadMetadataUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadMetadataUI_Design" Collapsed="true">
     <Position X="2.75" Y="9.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DataLoadUIs\LoadMetadataUIs\LoadMetadataUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.ExtractionUIs.ExtractionInformationUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.ExtractionUIs.ExtractionInformationUI_Design" Collapsed="true">
     <Position X="5" Y="9.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ExtractionUIs\ExtractionInformationUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.ExtractionUIs.FilterUIs.ExtractionFilterUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.ExtractionUIs.FilterUIs.ExtractionFilterUI_Design" Collapsed="true">
     <Position X="7.25" Y="9.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ExtractionUIs\FilterUIs\ExtractionFilterUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.ExtractionUIs.FilterUIs.ParameterUIs.ExtractionFilterParameterSetUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.ExtractionFilterParameterSetUI_Design" Collapsed="true">
     <Position X="9.5" Y="9.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ExtractionUIs\FilterUIs\ParameterUIs\ExtractionFilterParameterSetUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.ExtractionUIs.ViewExtractionSql_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.ExtractionUIs.ViewExtractionSql_Design" Collapsed="true">
     <Position X="11.75" Y="9.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>ExtractionUIs\ViewExtractionSql.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.Issues.IssueUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.Issues.IssueUI_Design" Collapsed="true">
     <Position X="0.5" Y="10.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Issues\IssueUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.MainFormUITabs.CatalogueItemTab_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.MainFormUITabs.CatalogueItemTab_Design" Collapsed="true">
     <Position X="2.75" Y="10.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>MainFormUITabs\CatalogueItemTab.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.MainFormUITabs.CatalogueTab_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.MainFormUITabs.CatalogueTab_Design" Collapsed="true">
     <Position X="5" Y="10.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>MainFormUITabs\CatalogueTab.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.SimpleDialogs.SupportingDocumentUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.SimpleDialogs.SupportingDocumentUI_Design" Collapsed="true">
     <Position X="7.25" Y="10.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SimpleDialogs\SupportingDocumentUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.SimpleDialogs.SupportingSQLTableUI_Design" Collapsed="true">
+  <Class Name="Rdmp.UI.SimpleDialogs.SupportingSQLTableUI_Design" Collapsed="true">
     <Position X="9.5" Y="10.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>SimpleDialogs\SupportingSQLTableUI.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="CatalogueManager.Refreshing.ILifetimeSubscriber" Collapsed="true">
+  <Interface Name="Rdmp.UI.Refreshing.ILifetimeSubscriber" Collapsed="true">
     <Position X="3.25" Y="2" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Refreshing\ILifetimeSubscriber.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueManager.Refreshing.IRefreshBusSubscriber" Collapsed="true">
+  <Interface Name="Rdmp.UI.Refreshing.IRefreshBusSubscriber" Collapsed="true">
     <Position X="3.25" Y="3.25" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAAAAAAA=</HashCode>

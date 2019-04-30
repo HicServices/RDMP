@@ -6,136 +6,140 @@
   <Comment CommentText="All these classes (DatabaseEntity) are stored in the 'Catalogue Repository' (Database).  These classes cannot exist unless there is a matching record in the database">
     <Position X="6.167" Y="15.781" Height="0.615" Width="3.565" />
   </Comment>
-  <Class Name="CatalogueLibrary.Data.Catalogue" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Catalogue" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3.5" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>Pf6DeIk4hEclEewW7hRLS0xYLQTLwpn26Y1cYHzYNGE=</HashCode>
-      <FileName>Data\Catalogue.cs</FileName>
+      <HashCode>PfyDOI0QhEclEeQWrjVIS0xIDATDwolSaYFUYHyYJCA=</HashCode>
+      <FileName>Curation\Data\Catalogue.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.CatalogueItem" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.CatalogueItem" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="3.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>JEYAAoIAAAAgEASECABCKAwIBAAsAAAEEAAaQCAAIAA=</HashCode>
-      <FileName>Data\CatalogueItem.cs</FileName>
+      <HashCode>BEQAgIYAAAAgEiSECBBCKAwIRACsAAAEUAASQGAAJAA=</HashCode>
+      <FileName>Curation\Data\CatalogueItem.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ColumnInfo" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ColumnInfo" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="10.5" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BUIAIIgEAkykAAQUgAABBFQIIRgAAIOCIABIQQAYEEg=</HashCode>
-      <FileName>Data\ColumnInfo.cs</FileName>
+      <HashCode>BUQAIIgEAkykAAQUADBDBEwIIRwBAACCIABAUQAKEEg=</HashCode>
+      <FileName>Curation\Data\ColumnInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.TableInfo" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.TableInfo" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="10.25" Y="7.25" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAcBoAgABEEAAIQEQAKBCQQYhAAAVIWQAKAAxggAEIA=</HashCode>
-      <FileName>Data\TableInfo.cs</FileName>
+      <HashCode>AIcAoChABEAAAIQESDCBCQwMhARAVIWAAKAA1ggCAIA=</HashCode>
+      <FileName>Curation\Data\TableInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.JoinInfo" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.JoinInfo" Collapsed="true">
     <Position X="14" Y="8.25" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>AAAEAAIAAAAAAAAEgAQAgAAIACIQAIAAAAAE4QICgAQ=</HashCode>
-      <FileName>Data\JoinInfo.cs</FileName>
+      <HashCode>AAAEAQAAAAgAEAAkAAAAgAAIACIQAAAAAAAE4QICgAQ=</HashCode>
+      <FileName>Curation\Data\JoinInfo.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.Lookup" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Lookup" Collapsed="true">
     <Position X="14" Y="9.5" Width="1.25" />
     <TypeIdentifier>
-      <HashCode>ABABAAgAAAggEAAEQQAAggAIBCKQAAAAAAAMYYICgAQ=</HashCode>
-      <FileName>Data\Lookup.cs</FileName>
+      <HashCode>ABABAAgAAAggEAAEQAAAggAIBCKQAAAAAAAMYYICgAQ=</HashCode>
+      <FileName>Curation\Data\Lookup.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionInformation" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionInformation" Collapsed="true">
     <Position X="6.25" Y="4.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>BAAAAICACABAAAQUAAEAAAAoAAAgAIAAAAAAQAAABAI=</HashCode>
-      <FileName>Data\ExtractionInformation.cs</FileName>
+      <HashCode>BAAAAICAAABIAAAUADEAAAgoAAAAAIAAAAAEQAAABAA=</HashCode>
+      <FileName>Curation\Data\ExtractionInformation.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionFilterParameter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilterParameter" Collapsed="true">
     <Position X="10.25" Y="4.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>ABgAAAAEEAAAAAAEgAQGAAAIAAAAABAAAAAgUgABAAA=</HashCode>
-      <FileName>Data\ExtractionFilterParameter.cs</FileName>
+      <HashCode>ABgAAAgEEAAAAAAEgCQGAAAIAAAAABAAAAAgUAABAAA=</HashCode>
+      <FileName>Curation\Data\ExtractionFilterParameter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.ExtractionFilter" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.ExtractionFilter" Collapsed="true">
     <Position X="8.25" Y="4.25" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AKIAAAAAAAAAACAMAAEACAAIBIGAAAAAAAAIQQAAAAA=</HashCode>
-      <FileName>Data\ExtractionFilter.cs</FileName>
+      <HashCode>AKAAAAAAAAAAACAMAAEACAAIBIGAAAAAAAAAQQAAAAA=</HashCode>
+      <FileName>Curation\Data\ExtractionFilter.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.LoadMetadata" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.LoadMetadata" Collapsed="true">
     <Position X="0.75" Y="7.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BKAQKAgAAFAhEAAEBAQgAAQIIAAAAAQACAAAQAICgAI=</HashCode>
-      <FileName>Data\DataLoad\LoadMetadata.cs</FileName>
+      <HashCode>BCAQOKAAAEAhAgAEBCQgAAQIAAAAAAQBAAAAQAACgAI=</HashCode>
+      <FileName>Curation\Data\DataLoad\LoadMetadata.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTask" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTask" BaseTypeListCollapsed="true">
     <Position X="0.75" Y="8.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AUGCYAhCACICAAIEADgAgCQAAAAAQAFAQAAAEAAKCAA=</HashCode>
-      <FileName>Data\DataLoad\ProcessTask.cs</FileName>
+      <HashCode>AWGCYAhKACICAAIEADgAgCQAAAAAQAFAQAAAEAAKCAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\ProcessTask.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTaskArgument" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTaskArgument" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="2.75" Y="10.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAACAAIAAEABAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\DataLoad\ProcessTaskArgument.cs</FileName>
+      <HashCode>AAAAAAQAACAAIAAEABAAAAAAAAAAAAAAAAAAAAACAAA=</HashCode>
+      <FileName>Curation\Data\DataLoad\ProcessTaskArgument.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.ANOTable" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.ANOTable" Collapsed="true">
     <Position X="14" Y="4.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>BABAAggAAEAABICMAAQAAAAJAAAAHAACACAoQwAAAIg=</HashCode>
-      <FileName>Data\DataLoad\ANOTable.cs</FileName>
+      <HashCode>BABAAggAAEBABIAMAAQAAAAJAAAAHAACACAoQwAAAIg=</HashCode>
+      <FileName>Curation\Data\DataLoad\ANOTable.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.Repositories.CatalogueRepository" Collapsed="true">
+  <Class Name="Rdmp.Core.Databases.PatcherManager">
+    <Position X="10.25" Y="12.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABAAAAABA=</HashCode>
+      <FileName>Databases\PatcherManager.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="MapsDirectlyToDatabaseTable.Versioning.PluginPatcher" Collapsed="true">
+    <Position X="12.5" Y="13.5" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Rdmp.Core.Repositories.CatalogueRepository" Collapsed="true">
     <Position X="6.5" Y="15" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AABEAAAEgggABSAAAAAAJAQCECEQgACBAIJAACAAABI=</HashCode>
+      <HashCode>AAAAAAAAwgogAZICAAABJAAAABEAQAAAAAYAAAACCAA=</HashCode>
       <FileName>Repositories\CatalogueRepository.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="CatalogueLibrary.Data.IColumn" Collapsed="true">
-    <Position X="9.75" Y="0.75" Width="1.5" />
+  <Interface Name="Rdmp.Core.Curation.Data.IFilter" Collapsed="true">
+    <Position X="10.25" Y="1.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>BAEAAAAAAAJAgAAAAAAAAAACABAAAAAAAAAAQAAAAAA=</HashCode>
-      <FileName>Data\IColumn.cs</FileName>
+      <HashCode>AIAAAAAAAAAgACAIAAEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
+      <FileName>Curation\Data\IFilter.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.IFilter" Collapsed="true">
-    <Position X="11.25" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAgACAIACEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
-      <FileName>Data\IFilter.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
-  <Interface Name="CatalogueLibrary.Data.IContainer" Collapsed="true">
-    <Position X="9.75" Y="1.5" Width="1.5" />
+  <Interface Name="Rdmp.Core.Curation.Data.IContainer" Collapsed="true">
+    <Position X="8.5" Y="1.75" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
-      <FileName>Data\IContainer.cs</FileName>
+      <FileName>Curation\Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="MapsDirectlyToDatabaseTable.IMapsDirectlyToDatabaseTable" Collapsed="true">
@@ -146,29 +150,33 @@
     <Position X="5.5" Y="12.75" Width="4" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Repositories.ICatalogueRepository" Collapsed="true">
-    <Position X="5.5" Y="13.75" Width="4" />
-    <TypeIdentifier>
-      <HashCode>AADEAgCEgAAABSAAAAAAAAQCACAAgAAAAIJAACAAACI=</HashCode>
-      <FileName>Repositories\ICatalogueRepository.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="MapsDirectlyToDatabaseTable.IRepository" Collapsed="true">
     <Position X="6.75" Y="12" Width="1.5" />
     <TypeIdentifier />
   </Interface>
-  <Enum Name="CatalogueLibrary.Data.ExtractionCategory" Collapsed="true">
+  <Interface Name="Rdmp.Core.QueryBuilding.IColumn" Collapsed="true">
+    <Position X="8" Y="0.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAJAAAAAAAAAAAACABAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>QueryBuilding\IColumn.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Repositories.ICatalogueRepository" Collapsed="true">
+    <Position X="5.5" Y="13.75" Width="4" />
+    <TypeIdentifier>
+      <HashCode>AAAAAgCEwAogAZICAAABAAAAABEAQAAAAAYAAAACAAA=</HashCode>
+      <FileName>Repositories\ICatalogueRepository.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.Versioning.IPatcher" Collapsed="true">
+    <Position X="12.5" Y="12.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Enum Name="Rdmp.Core.Curation.Data.ExtractionCategory" Collapsed="true">
     <Position X="6.25" Y="5" Width="2" />
     <TypeIdentifier>
-      <HashCode>IAAgAAAAAAAAAgAAAIAgAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
-      <FileName>Data\ExtractionInformation.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
-  <Enum Name="CatalogueLibrary.Repositories.Tier2DatabaseType" Collapsed="true">
-    <Position X="8.5" Y="11" Width="1.75" />
-    <TypeIdentifier>
-      <HashCode>BAAAAAAAAAAAAAAAAAAAAIgAAAAAAQAAAAAgAAAAAAA=</HashCode>
-      <FileName>Repositories\CatalogueRepository.cs</FileName>
+      <HashCode>IAAgAAAAAIAAAgAAAIAgAAAAAAAAAAAAAAAAAAAAAAg=</HashCode>
+      <FileName>Curation\Data\ExtractionCategory.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

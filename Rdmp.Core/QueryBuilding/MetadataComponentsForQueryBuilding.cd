@@ -18,14 +18,14 @@
   <Comment CommentText="Sql Query Building in RDMP is achieved by combining classes which implement these interfaces.  The main class responsible for calculating/combining the actual final lines of SQL is QueryBuilder and SqlQueryBuilderHelper">
     <Position X="0.5" Y="0.5" Height="0.875" Width="4.356" />
   </Comment>
-  <Class Name="CatalogueLibrary.QueryBuilding.SqlQueryBuilderHelper" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.QueryBuilding.SqlQueryBuilderHelper" Collapsed="true">
     <Position X="7" Y="0.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAQAABFBACwgAKAAAKAAAAQAAAAAAAAAAIA=</HashCode>
       <FileName>QueryBuilding\SqlQueryBuilderHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibrary.QueryBuilding.QueryBuilder" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.QueryBuilding.QueryBuilder" Collapsed="true">
     <Position X="5.25" Y="0.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
@@ -36,42 +36,42 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="CatalogueLibrary.Data.IColumn">
+  <Interface Name="Rdmp.Core.Curation.Data.IColumn">
     <Position X="3.25" Y="2" Width="2" />
     <TypeIdentifier>
       <HashCode>BAEAAAAAAAJAgAAAAAAAAAACABAAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>Data\IColumn.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.IFilter">
+  <Interface Name="Rdmp.Core.Curation.Data.IFilter">
     <Position X="11" Y="2" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAAAAAAgACAIACEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
       <FileName>Data\IFilter.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.IContainer">
+  <Interface Name="Rdmp.Core.Curation.Data.IContainer">
     <Position X="7" Y="2" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
       <FileName>Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.ISqlParameter">
+  <Interface Name="Rdmp.Core.Curation.Data.ISqlParameter">
     <Position X="0.5" Y="2" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAgAAAAEAAAAAAAAAAAAAAAAAAAAABAAAAAgEAAAAAA=</HashCode>
       <FileName>Data\ISqlParameter.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.IJoin">
+  <Interface Name="Rdmp.Core.Curation.Data.IJoin">
     <Position X="1.5" Y="6.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAACIAAAAAAAAAIAACgAA=</HashCode>
       <FileName>Data\IJoin.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="CatalogueLibrary.Data.FilterContainerOperation">
+  <Enum Name="Rdmp.Core.Curation.Data.FilterContainerOperation">
     <Position X="7.75" Y="4.75" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAAAAAAAAAAAAA=</HashCode>

@@ -59,7 +59,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ActivateItems" Collapsed="true">
     <Position X="5.25" Y="2.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAACAAAAECghDQBAAAoCAgIQQggwNhFFQAQEFAAQA=</HashCode>
+      <HashCode>AAQAACAgAAECghDUBAAAoCEgIQQggwNhBFQQQEFAAQA=</HashCode>
       <FileName>WindowManagement\ActivateItems.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -86,20 +86,12 @@
       <FileName>WindowManagement\ContentWindowTracking\Persistence\PersistableSingleDatabaseObjectDockContent.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueManager.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
     <Position X="18.5" Y="6.25" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.MainFormUITabs.CatalogueTab_Design" Collapsed="true">
-    <Position X="17" Y="9" Width="2.75" />
-    <TypeIdentifier />
-  </Class>
-  <Class Name="CatalogueManager.MainFormUITabs.CatalogueItemTab_Design" Collapsed="true">
-    <Position X="20" Y="9" Width="2.75" />
-    <TypeIdentifier />
-  </Class>
-  <Class Name="CatalogueManager.DataViewing.ViewSQLAndResultsWithDataGridUI">
+  <Class Name="Rdmp.UI.DataViewing.ViewSQLAndResultsWithDataGridUI">
     <Position X="10.75" Y="9" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
@@ -117,9 +109,6 @@
       <HashCode>AAAAAAAAAAAAIAAAABABAAQCAAAAAAAAAAAAAEAABAA=</HashCode>
       <FileName>WindowManagement\ContentWindowTracking\Persistence\PersistableToolboxDockContent.cs</FileName>
     </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="CollectionType" />
-    </ShowAsAssociation>
   </Class>
   <Class Name="ResearchDataManagementPlatform.RDMPMainForm">
     <Position X="0.5" Y="7.5" Width="2.75" />
@@ -127,7 +116,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAEgAAABATGACAAAAACAAABCAQAIAgEAAAAQAAAAAQA=</HashCode>
+      <HashCode>AAEgAAABATGAAAAAAACAAABCAQAIAgEAAAAQAAAAAQA=</HashCode>
       <FileName>RDMPMainForm.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -141,24 +130,17 @@
       <Field Name="_persistStringHelper" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="CatalogueLibrary.Data.Dashboarding.PersistStringHelper">
-    <Position X="7.25" Y="7.75" Width="2.75" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier />
-  </Class>
-  <Class Name="CatalogueManager.Collections.RDMPCollectionUI" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.RDMPCollectionUI" Collapsed="true">
     <Position X="22.75" Y="6.25" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.Collections.CatalogueCollectionUI" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.CatalogueCollectionUI" Collapsed="true">
     <Position X="23.5" Y="9" Width="2.25" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="DataExportManager.Collections.DataExportCollectionUI" Collapsed="true">
+  <Class Name="Rdmp.UI.Collections.DataExportCollectionUI" Collapsed="true">
     <Position X="26.25" Y="9" Width="2" />
     <TypeIdentifier />
   </Class>
@@ -169,23 +151,37 @@
       <FileName>WindowManagement\ContentWindowTracking\NavigationTrack.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Interface Name="CatalogueManager.ItemActivation.IActivateItems" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Dashboarding.PersistStringHelper" Collapsed="true">
+    <Position X="7.5" Y="7.5" Width="1.75" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Rdmp.UI.MainFormUITabs.CatalogueUI" Collapsed="true">
+    <Position X="17" Y="9" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.MainFormUITabs.CatalogueItemUI" Collapsed="true">
+    <Position X="20" Y="9" Width="2.75" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Rdmp.UI.ItemActivation.IActivateItems" Collapsed="true">
     <Position X="10.25" Y="5.5" Width="2.75" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueManager.TestsAndSetup.ServicePropogation.IObjectCollectionControl" Collapsed="true">
+  <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IObjectCollectionControl" Collapsed="true">
     <Position X="13.75" Y="5.5" Width="3.25" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.Dashboarding.IPersistableObjectCollection" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Dashboarding.IPersistableObjectCollection" Collapsed="true">
     <Position X="13.75" Y="6.75" Width="2.5" />
     <TypeIdentifier />
   </Interface>
-  <Enum Name="CatalogueManager.Collections.RDMPCollection">
-    <Position X="26.5" Y="3.25" Width="1.5" />
+  <Enum Name="Rdmp.UI.Collections.RDMPCollection">
+    <Position X="26.5" Y="3.25" Width="2.75" />
     <TypeIdentifier />
   </Enum>
   <Font Name="Segoe UI" Size="9" />

@@ -12,12 +12,12 @@
   <Comment CommentText="Execution Time">
     <Position X="6.75" Y="6.354" Height="0.344" Width="5.773" />
   </Comment>
-  <Class Name="CatalogueLibrary.Data.Pipelines.PipelineUser" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Pipelines.PipelineUser" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="0.5" Y="5.5" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" Collapsed="true" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers.PipelineSelectionUIFactory">
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers.PipelineSelectionUIFactory">
     <Position X="5" Y="2.75" Width="3" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAABAAAQAAAAABAAAAAAAAMAAAAAAAAAAAAA=</HashCode>
@@ -29,7 +29,7 @@
       <Field Name="_pipelineSelectionUIInstance" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PluginPipelineUsers.PluginPipelineUser" Collapsed="true">
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers.PluginPipelineUser" Collapsed="true">
     <Position X="3.25" Y="6.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAQAAAAAAAAAAIAABAAAAAAAAAAAAAAACAAAAAA=</HashCode>
@@ -37,12 +37,12 @@
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueLibrary.DataFlowPipeline.DataFlowPipelineEngine&lt;T&gt;" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.DataFlowPipeline.DataFlowPipelineEngine&lt;T&gt;" Collapsed="true">
     <Position X="10" Y="5.75" Width="2.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PipelineWorkArea">
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PipelineWorkArea">
     <Position X="10.75" Y="8" Width="2" />
     <TypeIdentifier>
       <HashCode>QACMCAICBCAAAhCAAACABAACAAIAAQgBEAAABAAADIA=</HashCode>
@@ -53,9 +53,9 @@
       <Field Name="_pipelineDiagram" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.Pipelines.ConfigureAndExecutePipeline">
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.ConfigureAndExecutePipeline">
     <Position X="2" Y="10" Width="2.5" />
-    <AssociationLine Name="_useCase" Type="CatalogueLibrary.Data.Pipelines.PipelineUseCase" FixedFromPoint="true" FixedToPoint="true">
+    <AssociationLine Name="_useCase" Type="Rdmp.Core.Curation.Data.Pipelines.PipelineUseCase" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="3.438" Y="10" />
         <Point X="3.438" Y="8.75" />
@@ -71,7 +71,7 @@
       <Field Name="_useCase" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.Pipelines.ConfigurePipelineUI">
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.ConfigurePipelineUI">
     <Position X="7.5" Y="8.25" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AQgAAIAAACBEBBAEAACABACCAEIYBIAIAIACAQAAAAA=</HashCode>
@@ -81,12 +81,12 @@
       <Field Name="_useCase" />
     </ShowAsAssociation>
   </Class>
-  <Class Name="CatalogueLibrary.Data.Pipelines.PipelineUseCase" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Pipelines.PipelineUseCase" Collapsed="true">
     <Position X="0.5" Y="7.75" Width="1.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="CatalogueManager.PipelineUIs.Pipelines.PipelineDiagram">
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PipelineDiagram">
     <Position X="14.75" Y="8" Width="3" />
     <TypeIdentifier>
       <HashCode>FAAJCQgAACAAAAAgAACQBDADQAICAYAAABQAIABABAA=</HashCode>
@@ -96,42 +96,42 @@
       <Field Name="_useCase" />
     </ShowAsAssociation>
   </Class>
-  <Interface Name="CatalogueLibrary.Data.Pipelines.IPipeline" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipeline" Collapsed="true">
     <Position X="3.75" Y="0.75" Width="2.5" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.Pipelines.IPipelineComponent" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineComponent" Collapsed="true">
     <Position X="6.25" Y="0.75" Width="2.5" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.Pipelines.IPipelineComponentArgument" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineComponentArgument" Collapsed="true">
     <Position X="8.75" Y="0.75" Width="2.5" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.Pipelines.IPipelineUseCase">
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineUseCase">
     <Position X="0.5" Y="2" Width="2.25" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.Data.Pipelines.IPipelineUser" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineUser" Collapsed="true">
     <Position X="0.5" Y="4.5" Width="1.5" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueLibrary.DataFlowPipeline.IDataFlowPipelineEngineFactory" Collapsed="true">
+  <Interface Name="Rdmp.Core.Curation.DataFlowPipeline.IDataFlowPipelineEngineFactory" Collapsed="true">
     <Position X="6.75" Y="5.75" Width="3" />
     <TypeIdentifier />
   </Interface>
-  <Interface Name="CatalogueManager.PipelineUIs.Pipelines.IPipelineSelectionUI" Collapsed="true">
+  <Interface Name="Rdmp.UI.PipelineUIs.Pipelines.IPipelineSelectionUI" Collapsed="true">
     <Position X="10.25" Y="2.75" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AIAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>PipelineUIs\Pipelines\IPipelineSelectionUI.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Delegate Name="CatalogueLibrary.Data.Pipelines.PipelineSetter" Collapsed="true">
+  <Delegate Name="Rdmp.Core.Curation.Data.Pipelines.PipelineSetter" Collapsed="true">
     <Position X="0.5" Y="5.75" Width="1.5" />
     <TypeIdentifier />
   </Delegate>
-  <Delegate Name="CatalogueLibrary.Data.Pipelines.PipelineGetter" Collapsed="true">
+  <Delegate Name="Rdmp.Core.Curation.Data.Pipelines.PipelineGetter" Collapsed="true">
     <Position X="0.5" Y="6" Width="1.5" />
     <TypeIdentifier />
   </Delegate>

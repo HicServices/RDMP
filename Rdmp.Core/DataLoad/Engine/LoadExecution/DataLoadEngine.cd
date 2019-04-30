@@ -174,7 +174,7 @@
       <FileName>LoadExecution\Components\Standard\MigrateStagingToLive.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="CatalogueLibrary.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTask" Collapsed="true" BaseTypeListCollapsed="true">
     <Position X="14.5" Y="0.5" Width="2.5" />
     <TypeIdentifier />
     <Lollipop Position="0.2" Collapsed="true" />
@@ -243,11 +243,11 @@
       <FileName>LoadExecution\IDataLoadExecution.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="CatalogueLibrary.Data.DataLoad.ProcessTaskType">
+  <Enum Name="Rdmp.Core.Curation.Data.DataLoad.ProcessTaskType">
     <Position X="17.25" Y="0.5" Width="1.5" />
     <TypeIdentifier />
   </Enum>
-  <Enum Name="CatalogueLibrary.Data.DataLoad.LoadStage">
+  <Enum Name="Rdmp.Core.Curation.Data.DataLoad.LoadStage">
     <Position X="8" Y="2.5" Width="1.5" />
     <TypeIdentifier />
   </Enum>
