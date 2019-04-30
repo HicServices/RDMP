@@ -46,7 +46,9 @@ namespace Rdmp.Core.Startup
         public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
         public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
 
-        public event PluginPatcherFoundHandler PluginPatcherFound = delegate { }; 
+        public PluginPatcherFoundHandler PluginPatcherFound = delegate { }; 
+
+        PatcherManager _patcherManager = new PatcherManager();
 
         #region Constructors
         public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
@@ -113,7 +115,9 @@ namespace Rdmp.Core.Startup
             {
                 LoadMEF(RepositoryLocator.CatalogueRepository);
 
-                FindTier2Databases();
+                //find tier 2 databases
+                foreach (var patcher in _patcherManager.Tier2Patchers) 
+                    FindWithPatcher(patcher);
 
                 try
                 {
@@ -138,23 +142,8 @@ namespace Rdmp.Core.Startup
 
         private void FindTier3Databases(ICatalogueRepository catalogueRepository)
         {
-            ObjectConstructor constructor = new ObjectConstructor();
-
-            foreach (Type patcherType in catalogueRepository.MEF.GetTypes<IPatcher>().Where(type => type.IsPublic))
-            {
-                try
-                {
-                    var instance = (IPatcher)constructor.Construct(patcherType);
-
-                    PluginPatcherFound(this, new PluginPatcherFoundEventArgs(patcherType, instance, PluginPatcherStatus.Healthy));
-                    FindWithPatcher(instance);
-
-                }
-                catch (Exception e)
-                {
-                    PluginPatcherFound(this, new PluginPatcherFoundEventArgs(patcherType, null, PluginPatcherStatus.CouldNotConstruct, e));
-                }
-            }
+            foreach (PluginPatcher patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
+                FindWithPatcher(patcher);
         }
 
         private bool Find(ITableRepository tableRepository, IPatcher patcher)
@@ -199,23 +188,6 @@ namespace Rdmp.Core.Startup
           
 
             return true;
-        }
-        private void FindTier2Databases()
-        {
-            //DQE
-            FindWithPatcher(new DataQualityEnginePatcher());
-
-            //Logging
-            FindWithPatcher(new LoggingDatabasePatcher());
-
-            //ANO
-            FindWithPatcher(new ANOStorePatcher());
-
-            //Identifier Dump
-            FindWithPatcher(new IdentifierDumpDatabasePatcher());
-            
-            //Query cache
-            FindWithPatcher(new QueryCachingPatcher());
         }
 
         private void FindWithPatcher(IPatcher patcher)

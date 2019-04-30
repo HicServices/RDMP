@@ -370,8 +370,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         {
             switch (typename)
             {
-                case "ColumnInfo": return "CatalogueLibrary.Data.ColumnInfo";
-                case "IFilter": return "CatalogueLibrary.Data.IFilter";
+                case "ColumnInfo": return "Rdmp.Core.Curation.Data.ColumnInfo";
+                case "IFilter": return "Rdmp.Core.Curation.Data.IFilter";
             }
 
             return typename;

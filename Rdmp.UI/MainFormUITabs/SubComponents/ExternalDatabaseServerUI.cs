@@ -9,7 +9,9 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Databases;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
@@ -81,11 +83,13 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
         private void SetupDropdownItems()
         {
             ddSetKnownType.Items.Clear();
-            ddSetKnownType.Items.AddRange(
-                AppDomain.CurrentDomain.GetAssemblies() //get all current assemblies that are loaded
-                .Select(n => n.GetName().Name)//get the name of the assembly
-                .Where(s => s.EndsWith(".Database") && //if it is a .Database assembly advertise it to the user as a known type of database
-                    !(s.EndsWith("CatalogueLibrary.Database") || s.EndsWith("DataExportManager.Database"))).ToArray()); //unless it's one of the core ones (catalogue/data export)
+
+            var manager = new PatcherManager();
+            
+            ddSetKnownType.Items.AddRange(manager
+                .GetAllPatchers(Activator.RepositoryLocator.CatalogueRepository.MEF)
+                .Select(p => p.Name)
+                .ToArray());
         }
         
         private void tbPassword_TextChanged(object sender, EventArgs e)
