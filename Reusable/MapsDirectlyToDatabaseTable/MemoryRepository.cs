@@ -147,7 +147,7 @@ namespace MapsDirectlyToDatabaseTable
                 _propertyChanges.Remove(oTableWrapperObject);
         }
 
-        public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        public virtual void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             Objects.Remove(oTableWrapperObject);
 

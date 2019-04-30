@@ -20,13 +20,13 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class CatalogueObscureDependencyFinder : IObscureDependencyFinder
     {
-        private readonly CatalogueRepository _repository;
+        private readonly ICatalogueRepository _repository;
 
         /// <summary>
         /// Sets the target upon which to apply delete/cascade obscure dependency rules
         /// </summary>
         /// <param name="repository"></param>
-        public CatalogueObscureDependencyFinder(CatalogueRepository repository)
+        public CatalogueObscureDependencyFinder(ICatalogueRepository repository)
         {
             _repository = repository;
         }

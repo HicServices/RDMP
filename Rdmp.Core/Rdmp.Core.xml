@@ -3011,7 +3011,7 @@
             tailoring deleting.
             </summary>
         </member>
-        <member name="M:Rdmp.Core.Curation.Data.CatalogueObscureDependencyFinder.#ctor(Rdmp.Core.Repositories.CatalogueRepository)">
+        <member name="M:Rdmp.Core.Curation.Data.CatalogueObscureDependencyFinder.#ctor(Rdmp.Core.Repositories.ICatalogueRepository)">
             <summary>
             Sets the target upon which to apply delete/cascade obscure dependency rules
             </summary>

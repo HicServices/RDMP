@@ -21,9 +21,12 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Referencing;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.DataExport;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.Core.Sharing.Dependency;
+using Rdmp.Core.Validation.Dependency;
 using ReusableLibraryCode.Comments;
 using ReusableLibraryCode.DataAccess;
 using IContainer = Rdmp.Core.Curation.Data.IContainer;
@@ -46,7 +49,21 @@ namespace Rdmp.Core.Repositories
         public IPluginManager PluginManager { get; private set; }
 
         public IJoinManager JoinManager { get; private set; }
-        public MEF MEF { get; set; }
+
+        public MEF MEF
+        {
+            get => _mef;
+            set
+            {
+                _mef = value;
+                var odf =  ObscureDependencyFinder as CatalogueObscureDependencyFinder;
+                var dxm = this as IDataExportRepository;
+
+                if(odf != null && dxm != null)
+                    odf.AddOtherDependencyFinderIfNotExists<ValidationXMLObscureDependencyFinder>(new RepositoryProvider(dxm));
+            }
+        }
+
         public CommentStore CommentStore { get; set; }
 
         public IObscureDependencyFinder ObscureDependencyFinder { get; set; }
@@ -81,6 +98,19 @@ namespace Rdmp.Core.Repositories
             //start IDs with the maximum id of any default to avoid collisions
             if (Objects.Any())
                 NextObjectId = Objects.Max(o => o.ID);
+
+
+            var dependencyFinder = new CatalogueObscureDependencyFinder(this);
+            
+            var dxm = this as IDataExportRepository;
+
+            if(dxm !=  null)
+            {
+                dependencyFinder.AddOtherDependencyFinderIfNotExists<ObjectSharingObscureDependencyFinder>(new RepositoryProvider(dxm));
+                dependencyFinder.AddOtherDependencyFinderIfNotExists<BetweenCatalogueAndDataExportObscureDependencyFinder>(new RepositoryProvider(dxm));
+            }
+
+            ObscureDependencyFinder = dependencyFinder;
         }
         
 
@@ -112,7 +142,14 @@ namespace Rdmp.Core.Repositories
                 base.SetValue(toCreate,prop,strVal,val);
         }
 
-        
+        public override void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        {
+            ObscureDependencyFinder.ThrowIfDeleteDisallowed(oTableWrapperObject);
+            base.DeleteFromDatabase(oTableWrapperObject);
+            ObscureDependencyFinder.HandleCascadeDeletesForDeletedObject(oTableWrapperObject);
+        }
+
+
         public T[] GetAllObjectsWhere<T>(string whereSQL, Dictionary<string, object> parameters = null) where T : IMapsDirectlyToDatabaseTable
         {
             throw new NotImplementedException();
@@ -451,6 +488,8 @@ namespace Rdmp.Core.Repositories
         #region IGovernanceManager
 
         readonly Dictionary<GovernancePeriod,HashSet<ICatalogue>> _governanceCoverage = new Dictionary<GovernancePeriod, HashSet<ICatalogue>>();
+        private MEF _mef;
+
         public void Unlink(GovernancePeriod governancePeriod, ICatalogue catalogue)
         {
             if(!_governanceCoverage.ContainsKey(governancePeriod))
