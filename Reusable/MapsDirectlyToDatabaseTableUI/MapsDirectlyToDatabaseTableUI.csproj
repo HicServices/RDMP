@@ -3,7 +3,7 @@
     <ProjectGuid>{94797307-05F3-4E72-B60B-DCB51B41CF9C}</ProjectGuid>
     <TargetFramework>net461</TargetFramework>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-                                                                                                                                                                          </PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>                                                                                                      </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
       </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

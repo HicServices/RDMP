@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
@@ -36,10 +37,15 @@ namespace Rdmp.Core.Tests.DataExport
             //relationship from p should resolve to the cic
             Assert.AreEqual(cic, p.GetAssociatedCohortIdentificationConfigurations()[0]);
 
+                        //in order to make it an orphan we have to suppress the system default behaviour of cascading across the deletion
+            var obscure = memory.ObscureDependencyFinder as CatalogueObscureDependencyFinder;
+            if(obscure != null)
+                obscure.OtherDependencyFinders.Clear();
+
             //make the assoc an orphan
             cic.DeleteInDatabase();
             cicAssoc.ClearAllInjections();
-
+            
             //assoc should still exist
             Assert.AreEqual(cicAssoc, p.ProjectCohortIdentificationConfigurationAssociations[0]);
             Assert.IsNull(p.ProjectCohortIdentificationConfigurationAssociations[0].CohortIdentificationConfiguration);

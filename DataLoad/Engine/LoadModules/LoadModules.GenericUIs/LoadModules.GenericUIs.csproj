@@ -2,7 +2,7 @@
   <PropertyGroup>
     <TargetFramework>net461</TargetFramework>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-                                                                                                                                                                                                                                      </PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>                                                                                                                                                                                         </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
       </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

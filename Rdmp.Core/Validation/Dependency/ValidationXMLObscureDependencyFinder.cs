@@ -88,8 +88,12 @@ namespace Rdmp.Core.Validation.Dependency
         
         public void ThrowIfDeleteDisallowed(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
-            if (!initialized)
-                Initialize();
+            //dependency can only be initialized if mef is setup
+            if(!initialized)
+                if(_mef == null)
+                    return;
+                else
+                    Initialize();
 
           ThrowIfDeleteDisallowed(oTableWrapperObject,0);
         }

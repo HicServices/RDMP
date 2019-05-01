@@ -1299,32 +1299,4 @@ namespace Rdmp.Core.Providers
                 toReturn.Add(m, null);
         }
     }
-
-    public class From1ToM<T, T1>:ConcurrentDictionary<int,ConcurrentBag<T1>> where T:IMapsDirectlyToDatabaseTable where T1:IMapsDirectlyToDatabaseTable
-    {
-        public From1ToM(Func<T1,int> idSelector, IEnumerable<T1> collection)
-        {
-            Parallel.ForEach(collection, (o) =>
-                {
-                    int id = idSelector(o);
-
-                    if (!Keys.Contains(id))
-                        AddOrUpdate(id, new ConcurrentBag<T1>(),(i, set) => set);
-
-                    this[id].Add(o);
-                }
-            );
-        }
-
-        public IEnumerable<T1> this[T parent]
-        {
-            get
-            {
-                if(this.ContainsKey(parent.ID))
-                    return this[parent.ID];
-
-                return Enumerable.Empty<T1>();
-            }
-        }
-    }
 }

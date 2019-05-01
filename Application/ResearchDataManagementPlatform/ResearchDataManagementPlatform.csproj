@@ -2,6 +2,7 @@
   <PropertyGroup>
     <ProjectGuid>{550988FD-F1FA-41D8-BE0F-00B4DE47D320}</ProjectGuid>
     <OutputType>WinExe</OutputType>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>net461</TargetFramework>
         <IsWebBootstrapper>true</IsWebBootstrapper>
     <PublishUrl>C:\Development\Deployments\RDMP\ResearchDataManagementPlatform\</PublishUrl>

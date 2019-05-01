@@ -16,18 +16,22 @@ using Rdmp.UI.Raceway;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Comments;
 using ReusableUIComponents.CommandExecution.Proposals;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests
 {
-    public class AllUIsDocumentedTest : DatabaseTests
+    public class AllUIsDocumentedTest : UnitTests
     {
         [Test]
         public void AllUIControlsDocumented()
         {
-            CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
+            CommentStore commentStore = new CommentStore();
+            commentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
             
+            SetupMEF();
+
             List<string> undocumented = new List<string>();
 
             Console.WriteLine("////////////////////Documentation of UI Controls////////////////");
@@ -37,7 +41,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             //Assembly.Load(typeof(ActivateItems).Assembly.FullName);
 
             List<Exception> ex;
-            var types = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)
+            var types = MEF.GetAllTypesFromAllKnownAssemblies(out ex)
                 .Where(
                 t =>
                     (typeof(Form).IsAssignableFrom(t) || typeof(UserControl).IsAssignableFrom(t))
@@ -49,7 +53,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
 
             var controlsDescriptions = new DocumentationReportFormsAndControls();
-            controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier(),CatalogueRepository.CommentStore,types.ToArray());
+            controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier(),commentStore,types.ToArray());
             
             foreach (var key in controlsDescriptions.Summaries.Keys.OrderBy(t=>t.ToString()))
             {
@@ -113,8 +117,11 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
         private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
         {
+
+            
+
             List<Exception> whoCares;
-            foreach (Type type in CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(InterfaceType.IsAssignableFrom))
+            foreach (Type type in MEF.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(InterfaceType.IsAssignableFrom))
             {
                 if (type.Namespace == null) 
                     continue;

@@ -3,7 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\SMI\</SolutionDir>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-                                                                                                                                                                      </PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>                                                                                                                                                        </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
           </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">

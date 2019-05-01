@@ -6,6 +6,7 @@
     <Product>Rdmp.UI</Product>
     <Copyright>Copyright ©  2019</Copyright>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
     <DocumentationFile>E:\RDMP\Rdmp.UI\Rdmp.UI.xml</DocumentationFile>

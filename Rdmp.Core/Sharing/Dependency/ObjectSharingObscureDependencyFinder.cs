@@ -33,6 +33,9 @@ namespace Rdmp.Core.Sharing.Dependency
 
         public void HandleCascadeDeletesForDeletedObject(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
+            if(_shareManager.RepositoryLocator.CatalogueRepository.MEF == null)
+                return;
+
             if (oTableWrapperObject.GetType() != typeof (ObjectImport))
                 _shareManager.DeleteAllOrphanImportDefinitions();
         }

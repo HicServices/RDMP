@@ -17,8 +17,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
     {
         public List<string>  csFilesFound = new List<string>();
 
-        private Dictionary<string, int> _expectedToSee = new Dictionary<string,int>(StringComparer.InvariantCultureIgnoreCase);
-
         public List<string> UntidyMessages { get; set; }
 
         private string _expectedRootNamespace;
@@ -47,54 +45,17 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             XmlDocument doc = new XmlDocument();
             doc.LoadXml(allText);
 
-            var compilables = doc.GetElementsByTagName("Compile");
-            bool foundSharedAssemblyInfo = false;
-
-            foreach (XmlNode compilable in compilables)
-            {
-
-                bool isLinked = false;
-
-                if(compilable.HasChildNodes)
-                    foreach (XmlNode childNode in compilable.ChildNodes)
-                        if (childNode.Name == "Link")
-                        {
-                            if (childNode.InnerText.Contains("SharedAssemblyInfo.cs"))
-                                foundSharedAssemblyInfo = true;
-
-                            isLinked = true;
-                        }
-
-                if(isLinked)
-                    continue;//it is a virtual file specified by a soft link
-                
-                if (compilable.Attributes != null && compilable.Attributes["Include"] != null)
-                    _expectedToSee.Add(Path.Combine(csProjFile.Directory.FullName, compilable.Attributes["Include"].Value), 0);
-            }
-
-            if (!foundSharedAssemblyInfo)
-                UntidyMessages.Add("Did not find a SharedAssemblyInfo.cs reference in project " + csProjFile.Name);
+            //var compilables = doc.GetElementsByTagName("Compile");
+            
 
             RecursivelyProcessSubfolders(csProjFile.Directory);
-
-            foreach (KeyValuePair<string, int> kvp in _expectedToSee.Where(kvp => kvp.Value == 0))
-                UntidyMessages.Add("Did not find .cs file in subdirectories of the .csproj file:" + kvp.Key);
         }
 
         private void RecursivelyProcessSubfolders(DirectoryInfo directory)
         {
             foreach (FileInfo enumerateFile in directory.EnumerateFiles("*.cs"))
-            {
-                if (_expectedToSee.ContainsKey(enumerateFile.FullName))
-                {
-
-                    _expectedToSee[enumerateFile.FullName]++;
-                    ConfirmClassNameAndNamespaces(enumerateFile);
-                }
-                else
-                    UntidyMessages.Add("FAIL: Unexpected .cs file found that is not referenced by project:" + enumerateFile.FullName);
-            }
-
+                ConfirmClassNameAndNamespaces(enumerateFile);
+            
             foreach (var dir in directory.EnumerateDirectories())
             {
                 if(dir.Name.Equals("bin") || dir.Name.Equals("obj"))
