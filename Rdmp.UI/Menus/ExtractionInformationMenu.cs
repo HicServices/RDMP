@@ -7,6 +7,7 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 
 namespace Rdmp.UI.Menus
 {
@@ -15,7 +16,8 @@ namespace Rdmp.UI.Menus
     {
         public ExtractionInformationMenu(RDMPContextMenuStripArgs args, ExtractionInformation extractionInformation): base(args,extractionInformation)
         {
-            Add(new ExecuteCommandCreateNewFilter(args.ItemActivator,new ExtractionFilterFactory(extractionInformation)));
+            Add(new ExecuteCommandCreateNewFilter(_activator,new ExtractionFilterFactory(extractionInformation)));
+            Add(new ExecuteCommandCreateNewCohortFromCatalogue(_activator, extractionInformation));
         }
     }
 }

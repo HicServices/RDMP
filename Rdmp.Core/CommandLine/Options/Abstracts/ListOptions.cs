@@ -8,6 +8,9 @@ using CommandLine;
 
 namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
+    /// <summary>
+    /// Command line parameters for the list command which shows what objects exist in the RDMP databases
+    /// </summary>
     [Verb("list",HelpText = "Lists objects in the Catalogue / DataExport repositories")]
     public class ListOptions : RDMPCommandLineOptions
     {

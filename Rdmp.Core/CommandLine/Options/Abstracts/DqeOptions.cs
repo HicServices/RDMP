@@ -8,6 +8,9 @@ using CommandLine;
 
 namespace Rdmp.Core.CommandLine.Options.Abstracts
 {
+    /// <summary>
+    /// Command line parameters for the Data Quality Engine
+    /// </summary>
     [Verb("dqe", HelpText = "Runs the Data Quality Engine")]
     public class DqeOptions:RDMPCommandLineOptions
     {

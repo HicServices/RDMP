@@ -72,6 +72,8 @@ namespace Rdmp.UI.LoadExecutionUIs
 
             CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
             CommonFunctionality.AddToMenu(miDebugOptions);
+            
+            CommonFunctionality.Add(new ExecuteCommandViewLoadMetadataLogs(activator, (LoadMetadata) databaseObject));
 
             AddPluginCommands();
         }

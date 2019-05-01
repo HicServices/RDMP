@@ -17,6 +17,7 @@ using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -88,7 +89,11 @@ namespace Rdmp.UI.Validation
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-            
+
+            CommonFunctionality.AddToMenu(new ExecuteCommandRunDQEOnCatalogue(activator).SetTarget(databaseObject));
+            CommonFunctionality.AddToMenu(new ExecuteCommandViewDQEResultsForCatalogue(activator)
+                {OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
+
             AddPluginCommandsToMenu();
 
             //if someone renames a Catalogue we don't want to erase all the rule changes they have configured here

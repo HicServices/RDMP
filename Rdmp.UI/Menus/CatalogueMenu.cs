@@ -8,6 +8,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
+using Rdmp.UI.Menus.MenuItems;
 
 namespace Rdmp.UI.Menus
 {
@@ -44,7 +45,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandImportDublinCoreFormat(_activator, catalogue), Keys.None, extract);
             Items.Add(extract);
 
-
+            Items.Add(new DQEMenuItem(_activator,catalogue));
         }
     }
 }

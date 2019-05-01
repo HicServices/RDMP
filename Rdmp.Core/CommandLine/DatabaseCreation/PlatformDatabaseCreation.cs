@@ -8,6 +8,10 @@ using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
+    /// <summary>
+    /// Creates RDMP core databases (logging, DQE, Catalogue, DataExport) in the given database server.  Also creates initial
+    /// pipelines for common activities.
+    /// </summary>
     public class PlatformDatabaseCreation
     {
         public const string DefaultCatalogueDatabaseName = "Catalogue";

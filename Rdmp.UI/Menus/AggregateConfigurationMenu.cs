@@ -9,8 +9,10 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
@@ -52,6 +54,44 @@ namespace Rdmp.UI.Menus
             Items.Add(clearShortcutFilterContainer);
 
             Add(new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(_activator).SetTarget(aggregate));
+            
+            //if it is a cohort aggregate (but not joinables since they don't match patients they match records and select many columns)
+            if ( aggregate.IsCohortIdentificationAggregate && !aggregate.IsJoinablePatientIndexTable())
+            {
+                //with a cic (it really should do!)
+                var cic = aggregate.GetCohortIdentificationConfigurationIfAny();
+
+                if (cic != null)
+                {
+                    //find other non cohort aggregates (graphs) 
+                    var graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
+
+                    //and offer graph generation for the cohort subsets
+                    var matchRecords = new ToolStripMenuItem("Graph Matching Records Only",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
+                    var matchIdentifiers = new ToolStripMenuItem("Graph All Records For Matching Patients",_activator.CoreIconProvider.GetImage(RDMPConcept.AggregateGraph));
+
+                    matchRecords.Enabled = graphsAvailableInCatalogue.Any();
+                    matchIdentifiers.Enabled = graphsAvailableInCatalogue.Any() && cic.QueryCachingServer_ID != null;
+
+                    foreach (AggregateConfiguration graph in graphsAvailableInCatalogue)
+                    {
+                        //records in
+                        Add(new ExecuteCommandViewCohortAggregateGraph(_activator,new CohortSummaryAggregateGraphObjectCollection(aggregate, graph,CohortSummaryAdjustment.WhereRecordsIn)),
+                            Keys.None,
+                            matchRecords);
+
+                        //extraction identifiers in
+                        Add(
+                            new ExecuteCommandViewCohortAggregateGraph(_activator, new CohortSummaryAggregateGraphObjectCollection(aggregate, graph, CohortSummaryAdjustment.WhereExtractionIdentifiersIn)),
+                            Keys.None,
+                            matchIdentifiers
+                            );
+                    }
+
+                    Items.Add(matchRecords);
+                    Items.Add(matchIdentifiers);
+                }
+            }
         }
 
         private void ClearShortcut()

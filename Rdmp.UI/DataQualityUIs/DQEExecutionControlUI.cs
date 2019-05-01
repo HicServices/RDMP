@@ -56,6 +56,8 @@ namespace Rdmp.UI.DataQualityUIs
             checkAndExecuteUI1.SetItemActivator(activator);
 
             CommonFunctionality.Add(new ExecuteCommandConfigureCatalogueValidationRules(Activator).SetTarget(_catalogue), "Validation Rules...");
+            CommonFunctionality.Add(new ExecuteCommandViewDQEResultsForCatalogue(Activator){OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
+
             AddPluginCommands();
         }
         

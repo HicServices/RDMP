@@ -15,7 +15,7 @@ namespace Rdmp.UI.Menus
             : base(args, node)
         {
             Add(new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(_activator).SetTarget(node.Project));
-
+            Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator).SetTarget(node.Project));
         }
     }
 }

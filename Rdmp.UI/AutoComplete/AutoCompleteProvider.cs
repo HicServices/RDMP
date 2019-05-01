@@ -16,7 +16,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.ExtractionTime;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -24,6 +23,9 @@ using ScintillaNET;
 
 namespace Rdmp.UI.AutoComplete
 {
+    /// <summary>
+    /// Creates autocomplete menu items for <see cref="AutocompleteMenuNS"/> library based on RDMP objects (e.g. <see cref="TableInfo"/>)
+    /// </summary>
     public class AutoCompleteProvider
     {
         private readonly IActivateItems _activator;

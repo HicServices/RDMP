@@ -10,10 +10,23 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.UI.ProjectUI.Graphs
 {
+    /// <summary>
+    /// Persistence/instantiation collection for <see cref="ExtractionAggregateGraphUI"/>.  Records which <see cref="Graph"/> is being
+    /// visualized (e.g. healthboards over time) with which extractable dataset in which extraction (<see cref="SelectedDataSets"/>)
+    /// </summary>
     public class ExtractionAggregateGraphObjectCollection : PersistableObjectCollection
     {
+        /// <summary>
+        /// The extraction dataset (in a given <see cref="ExtractionConfiguration"/>) to which the <see cref="Graph"/> results
+        /// should be limited.  The graph should only depict records appearing in this extract.
+        /// </summary>
         public SelectedDataSets SelectedDataSets { get { return (SelectedDataSets) DatabaseObjects[0]; }}
+        
+        /// <summary>
+        /// The graph to be shown
+        /// </summary>
         public AggregateConfiguration Graph { get { return (AggregateConfiguration) DatabaseObjects[1]; }}
+
 
         /// <summary>
         /// Constructor used for persistence

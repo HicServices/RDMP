@@ -8,7 +8,10 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.AutoComplete
-{
+{ 
+    /// <summary>
+    /// Factory for <see cref="AutoCompleteProvider"/>.  Allows setting up SQL keywords based on a specific DBMS (e.g. <see cref="IQuerySyntaxHelper"/>).
+    /// </summary>
     public class AutoCompleteProviderFactory
     {
         private readonly IActivateItems _activator;
