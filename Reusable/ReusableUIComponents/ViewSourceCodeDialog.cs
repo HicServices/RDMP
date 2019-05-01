@@ -154,7 +154,7 @@ namespace ReusableUIComponents
         }
         private static string GetEntryFromZipFile(ZipArchive z,string toFind)
         {
-            var entry = z.Entries.SingleOrDefault(e => e.Name == toFind);
+            var entry = z.Entries.FirstOrDefault(e => e.Name == toFind);
 
             if (entry == null)
                 return null;
