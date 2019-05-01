@@ -157,7 +157,7 @@ namespace Rdmp.Core.QueryBuilding
             CheckSyntax = true;
             SelectColumns = new List<QueryTimeColumn>();
 
-            _hashingAlgorithm = hashingAlgorithm ?? "Work.dbo.HicHash({0},{1})";
+            _hashingAlgorithm = hashingAlgorithm;
 
             TopX = -1;
         }

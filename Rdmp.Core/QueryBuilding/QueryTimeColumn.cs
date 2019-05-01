@@ -233,10 +233,11 @@ namespace Rdmp.Core.QueryBuilding
                 if (string.IsNullOrWhiteSpace(this.IColumn.Alias))
                     throw new ArgumentException("IExtractableColumn " + this.IColumn + " is missing an Alias (required for hashing)");
 
-                if(hashingPattern == null)
-                    throw new Exception("Hashing Pattern is null but column is marked for HashOnDataRelease");
-                    
-                toReturn = String.Format(hashingPattern,toReturn, salt);
+                //if there is no custom hashing pattern
+                if (string.IsNullOrWhiteSpace(hashingPattern))
+                    toReturn = syntaxHelper.HowDoWeAchieveMd5(toReturn); //use the DBMS specific one
+                else
+                    toReturn = string.Format(hashingPattern,toReturn, salt); //otherwise use the custom one
             }
 
             // the SELECT SQL may span multiple lines, so collapse it to a single line cleaning up any whitespace issues, e.g. to avoid double spaces in the collapsed version
