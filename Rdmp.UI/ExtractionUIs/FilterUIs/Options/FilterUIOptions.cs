@@ -9,6 +9,10 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {
+    /// <summary>
+    /// Input object for <see cref="ExtractionFilterUI"/>.  Determines which parameters should be presented and which
+    /// tables are available for autocomplete etc.
+    /// </summary>
     public abstract class FilterUIOptions
     {
         protected IFilter Filter;

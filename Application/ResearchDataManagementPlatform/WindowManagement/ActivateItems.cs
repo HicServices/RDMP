@@ -260,11 +260,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
         
-        public void ViewDataSample(IViewSQLAndResultsCollection collection)
-        {
-            Activate<ViewSQLAndResultsWithDataGridUI>(collection);
-        }
-
         public void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {
             //ensure a relevant Toolbox is available

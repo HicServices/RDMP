@@ -16,7 +16,7 @@ using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.Menus.MenuItems
 {
-    public class DQEMenuItem:RDMPToolStripMenuItem
+    class DQEMenuItem:RDMPToolStripMenuItem
     {
         private readonly Catalogue _catalogue;
         readonly IExternalDatabaseServer _dqeServer;

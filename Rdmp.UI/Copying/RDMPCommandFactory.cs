@@ -25,6 +25,7 @@ using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.Copying
 {
+    /// <inheritdoc/>
     public class RDMPCommandFactory:ICommandFactory
     {
         public ICommand Create(ModelDropEventArgs e)

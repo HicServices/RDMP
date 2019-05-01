@@ -27,12 +27,14 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
         {
             InitializeComponent();
         }
-
+        
+        /// <inheritdoc/>
         public void ClearGraph()
         {
             panel1.Controls.Clear();
         }
 
+        /// <inheritdoc/>
         public void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue)
         {
             GenerateChart(evaluation, pivotCategoryValue);

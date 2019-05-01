@@ -26,8 +26,8 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 namespace Rdmp.UI.Overview
 {
     /// <summary>
-    /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have not configured any data
-    /// loads yet then this control will be blank.
+    /// Displays a graph showing how many of your data loads passed the last time they were run and which data loads are currently failing.  If you have
+    /// not configured any data loads yet then this control will be blank.
     /// </summary>
     public partial class DataLoadsGraph : RDMPUserControl, IDashboardableControl
     {

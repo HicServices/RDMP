@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.DataViewing.Collections;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -52,7 +53,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            Activator.ViewDataSample(_collection);
+            Activator.Activate<ViewSQLAndResultsWithDataGridUI>(_collection);
         }
     }
 }

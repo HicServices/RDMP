@@ -14,6 +14,9 @@ using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Text box for entering Sql Server connection strings, includes autocomplete support for keywords (e.g. Database)
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ConnectionStringTextBox : TextBox
     {

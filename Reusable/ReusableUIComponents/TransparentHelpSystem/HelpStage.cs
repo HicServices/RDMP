@@ -13,6 +13,10 @@ using System.Windows.Forms;
 
 namespace ReusableUIComponents.TransparentHelpSystem
 {
+    /// <summary>
+    /// Overlay message box which appears next to a given <see cref="HighlightControl"/> and describes how the user might interact
+    /// with it.
+    /// </summary>
     public class HelpStage
     {
         private readonly Func<bool> _moveOnWhenConditionMet;

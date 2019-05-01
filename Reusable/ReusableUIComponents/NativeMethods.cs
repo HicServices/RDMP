@@ -9,6 +9,9 @@ using System.Runtime.InteropServices;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Static class for DllImport methods.
+    /// </summary>
     public class NativeMethods
     {
         [DllImport("user32.dll", CharSet = CharSet.Auto)]

@@ -9,6 +9,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.Icons.IconProvision;
@@ -17,7 +18,11 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramColumnNode : ICommandSource, IHasLoadDiagramState, IKnowWhatIAm
+    /// <summary>
+    /// Depicts a column in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
+    /// node may or may not map to an existing column in the database.
+    /// </summary>
+    public class LoadDiagramColumnNode : Node,ICommandSource, IHasLoadDiagramState, IKnowWhatIAm
     {
         private readonly LoadDiagramTableNode _tableNode;
         private readonly IHasStageSpecificRuntimeName _column;

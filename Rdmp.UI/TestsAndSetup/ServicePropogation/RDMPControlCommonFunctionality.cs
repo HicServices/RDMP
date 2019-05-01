@@ -390,5 +390,24 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             if (_ragSmileyToolStrip != null)
                 _ragSmileyToolStrip.Reset();
         }
+
+        /// <summary>
+        /// Performs the given <paramref name="action"/>.  If an Exception is thrown then
+        /// the <paramref name="tb"/> will be turned Red (otherwise it will be set to Black).
+        /// </summary>
+        /// <param name="tb"></param>
+        /// <param name="action"></param>
+        public void DoActionAndRedIfThrows(TextBox tb, Action action)
+        {
+            tb.ForeColor = Color.Black;
+            try
+            {
+                action();
+            }
+            catch (Exception)
+            {
+                tb.ForeColor = Color.Red;
+            }
+        }
     }
 }

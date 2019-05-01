@@ -13,6 +13,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.DataViewing.Collections
 {
+    /// <summary>
+    /// Input collection for upon which an SQL query can be built that results in a single result set.  This class is for
+    /// use with <see cref="ViewSQLAndResultsWithDataGridUI"/>
+    /// </summary>
     public interface IViewSQLAndResultsCollection:IPersistableObjectCollection, IHasQuerySyntaxHelper
     {
         IEnumerable<DatabaseEntity> GetToolStripObjects();

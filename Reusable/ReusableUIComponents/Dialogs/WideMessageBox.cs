@@ -54,7 +54,7 @@ namespace ReusableUIComponents.Dialogs
             btnCopyToClipboard.Visible = Thread.CurrentThread.GetApartmentState() == ApartmentState.STA;
 
             //try to resize form to fit bounds
-            this.Size = FormsHelper.GetPreferredSizeOfTextControl(richTextBox1);
+            this.Size = GetPreferredSizeOfTextControl(richTextBox1);
             this.Size = new Size(this.Size.Width + 10, this.Size.Height + 150);//leave a bit of padding
 
             var theScreen = Screen.FromControl(this);
@@ -336,6 +336,20 @@ namespace ReusableUIComponents.Dialogs
 
             if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape || (e.KeyData == Keys.W && e.Control))
                 e.Handled = true;
+        }
+
+        private Size GetPreferredSizeOfTextControl(Control c)
+        {
+            Graphics graphics = c.CreateGraphics();
+            SizeF measureString = graphics.MeasureString(c.Text, c.Font);
+
+            int minimumWidth = 400;
+            int minimumHeight = 150;
+
+            Rectangle maxSize = Screen.GetBounds(c);
+            return new Size(
+                (int)Math.Min(maxSize.Width, Math.Max(measureString.Width + 50,minimumWidth)),
+                (int)Math.Min(maxSize.Height,Math.Max(measureString.Height + 100,minimumHeight)));
         }
     }
 }

@@ -17,6 +17,10 @@ using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.Collections.Providers.Copying
 {
+    /// <summary>
+    /// Provides UI code for drag and drop in <see cref="TreeListView"/>.  The code for what is/isn't draggable onto what is determined
+    /// by the <see cref="ICommandExecutionFactory"/>.
+    /// </summary>
     public class DragDropProvider:SimpleDragSource
     {
         private readonly ICommandFactory _commandFactory;

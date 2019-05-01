@@ -5,9 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
+    /// <summary>
+    /// Interface for controls that allow the user to edit a single property of a class (Marked with <see cref="DemandsInitializationAttribute"/>).
+    /// Each implementation class should only handle a specific Property Type (e.g. TextBox for string).
+    ///
+    /// <para>When adding a new implementation make sure the system is aware of it in <see cref="ArgumentValueUIFactory"/></para>
+    /// </summary>
     public interface IArgumentValueUI : IContainerControl
     {
         void SetUp(ArgumentValueUIArgs args);

@@ -14,6 +14,9 @@ using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.Collections.Providers
 {
+    /// <summary>
+    /// Determines whether objects are <see cref="INamed"/> and provides UI support for changing the <see cref="INamed.Name"/>.
+    /// </summary>
     public class RenameProvider
     {
         private readonly RefreshBus _refreshBus;

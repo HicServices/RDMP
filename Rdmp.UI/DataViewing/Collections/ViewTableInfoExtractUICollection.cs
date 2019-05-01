@@ -18,6 +18,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.DataViewing.Collections
 {
+    /// <summary>
+    /// Builds a query to fetch data from a <see cref="TableInfo"/>
+    /// </summary>
     public class ViewTableInfoExtractUICollection :PersistableObjectCollection, IViewSQLAndResultsCollection
     {
         public ViewType ViewType { get; private set; }

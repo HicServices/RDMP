@@ -12,6 +12,10 @@ using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
+    /// <summary>
+    /// Models a <see cref="ISqlParameter"/> being edited in a <see cref="ParameterEditorScintillaControlUI"/>.  Includes the location whether it
+    /// should be editable etc.  Also handles reconciling user edits to the SQL into the <see cref="ISqlParameter"/> (if edit is legal).
+    /// </summary>
     public class ParameterEditorScintillaSection
     {
         private readonly ParameterRefactorer _refactorer;

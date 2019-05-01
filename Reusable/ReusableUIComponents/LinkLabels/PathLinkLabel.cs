@@ -14,6 +14,9 @@ using Cursors = System.Windows.Forms.Cursors;
 
 namespace ReusableUIComponents.LinkLabels
 {
+    /// <summary>
+    /// Label showing a file system path which opens the containing directory in explorer when clicked.
+    /// </summary>
     public class PathLinkLabel : Label
     {
         protected override void OnMouseHover(EventArgs e)

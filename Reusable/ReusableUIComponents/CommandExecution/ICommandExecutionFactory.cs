@@ -8,6 +8,9 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace ReusableUIComponents.CommandExecution
 {
+    /// <summary>
+    /// Determines whether drag and drop operations are legal or not.  The legality and action of a given drop is modeled by <see cref="ICommandExecution"/>
+    /// </summary>
     public interface ICommandExecutionFactory
     {
         /// <summary>

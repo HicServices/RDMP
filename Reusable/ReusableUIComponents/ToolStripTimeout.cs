@@ -11,6 +11,9 @@ using System.Windows.Forms;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Factory for generating a consistent representation in a <see cref="ToolStrip"/> of a user configurable timeout period.
+    /// </summary>
     public class ToolStripTimeout
     {
         ToolStripLabel timeoutLabel = new ToolStripLabel("Timeout:");

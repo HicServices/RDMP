@@ -117,11 +117,6 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public void ViewDataSample(IViewSQLAndResultsCollection collection)
-        {
-            throw new NotImplementedException();
-        }
-
         public event EmphasiseItemHandler Emphasise;
         public void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {

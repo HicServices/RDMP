@@ -44,17 +44,55 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         private IPipelineUseCase _useCase;
         private DataFlowPipelineEngineFactory _pipelineFactory;
 
+        private MenuItem _deleteSelectedMenuItem;
+
         public PipelineDiagramUI()
         {
             InitializeComponent();
             AllowSelection = false;
-
 
             this.Controls.Add(pipelineSmiley);
             pipelineSmiley.Anchor = AnchorStyles.Top|AnchorStyles.Right;
             pipelineSmiley.Left = this.Width - pipelineSmiley.Width;
             pipelineSmiley.Top = 0;
             pipelineSmiley.BringToFront();
+
+            _deleteSelectedMenuItem = new MenuItem("Delete selected component", DeleteSelectedComponent)
+            {
+                Shortcut = Shortcut.Del,
+                Enabled = false
+            };
+
+            ContextMenu = new ContextMenu(new []{_deleteSelectedMenuItem});
+        }
+
+        private void DeleteSelectedComponent(object sender, EventArgs e)
+        {
+            if (SelectedComponent != null)
+            {
+                if(MessageBox.Show("Do you want to delete " + SelectedComponent.Class + "?","Confirm Delete",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                {
+                    //if they are deleting the destination
+                    if (SelectedComponent.ID == _pipeline.DestinationPipelineComponent_ID)
+                    {
+                        _pipeline.DestinationPipelineComponent_ID = null;
+                        _pipeline.SaveToDatabase();
+                    }
+
+                    //if they are deleting the source
+                    if (SelectedComponent.ID == _pipeline.SourcePipelineComponent_ID)
+                    {
+                        _pipeline.SourcePipelineComponent_ID = null;
+                        _pipeline.SaveToDatabase();
+                    }
+
+                    SelectedComponent.DeleteInDatabase();
+                    RefreshUIFromDatabase();
+
+                    SelectedComponent = null;
+                    _deleteSelectedMenuItem.Enabled = false;
+                }
+            }
         }
 
 
@@ -235,12 +273,15 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
             SelectedComponent = selected;
             
+            //update the Del menu item
+            _deleteSelectedMenuItem.Enabled = SelectedComponent != null;
+            
             //clear old selections
             foreach (PipelineComponentVisualisation componentVisualisation in flpPipelineDiagram.Controls.OfType<PipelineComponentVisualisation>())
                 componentVisualisation.IsSelected = false;
 
             ((PipelineComponentVisualisation) sender).IsSelected = true;
-            SelectedComponentChanged(this, selected);
+            SelectedComponentChanged?.Invoke(this, selected);
 
             this.Focus();
         }
@@ -441,43 +482,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 return null;
             }
             return null;
-        }
-
-        protected override bool ProcessKeyPreview(ref Message m)
-        {
-            PreviewKey p = new PreviewKey(ref m, ModifierKeys);
-
-            if (p.IsKeyDownMessage && p.e.KeyCode == Keys.Delete)
-            {
-                if (SelectedComponent != null)
-                {
-                    if(MessageBox.Show("Do you want to delete " + SelectedComponent.Class + "?","Confirm Delete",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        //if they are deleting the destination
-                        if (SelectedComponent.ID == _pipeline.DestinationPipelineComponent_ID)
-                        {
-                            _pipeline.DestinationPipelineComponent_ID = null;
-                            _pipeline.SaveToDatabase();
-                        }
-
-                        //if they are deleting the source
-                        if (SelectedComponent.ID == _pipeline.SourcePipelineComponent_ID)
-                        {
-                            _pipeline.SourcePipelineComponent_ID = null;
-                            _pipeline.SaveToDatabase();
-                        }
-
-                        SelectedComponent.DeleteInDatabase();
-                        RefreshUIFromDatabase();
-
-                        SelectedComponent = null;
-                    }
-
-                    p.Trap(this);
-                }
-            }
-
-            return base.ProcessKeyPreview(ref m);
         }
     }
 }

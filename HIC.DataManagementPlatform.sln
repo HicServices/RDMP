@@ -69,9 +69,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rdmp.Core.Tests", "Rdmp.Cor
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rdmp.UI", "Rdmp.UI\Rdmp.UI.csproj", "{60721BCE-E328-45CF-B6D2-B627364FBBFA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Rdmp.UI.Tests", "Rdmp.UI.Tests\Rdmp.UI.Tests.csproj", "{8048FC7B-7F1F-4F7D-A47B-48342B8FF018}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rdmp.UI.Tests", "Rdmp.UI.Tests\Rdmp.UI.Tests.csproj", "{8048FC7B-7F1F-4F7D-A47B-48342B8FF018}"
 EndProject
 Global
+	GlobalSection(Performance) = preSolution
+		HasPerformanceSessions = true
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Debug|Mixed Platforms = Debug|Mixed Platforms

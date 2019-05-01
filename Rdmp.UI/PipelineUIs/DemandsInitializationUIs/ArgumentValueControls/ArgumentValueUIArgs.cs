@@ -10,6 +10,10 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
+    /// <summary>
+    /// Constructor arguments for <see cref="IArgumentValueUI"/> implementations.  Records what property the control
+    /// should allow editing (See <see cref="RequiredPropertyInfo"/>) and on what <see cref="IArgumentHost"/>.
+    /// </summary>
     public class ArgumentValueUIArgs
     {
         public IArgumentHost Parent { get; set; }

@@ -14,6 +14,10 @@ using ReusableUIComponents.ChecksUI;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Small UI control for capturing and displaying Exceptions that should not be directly brought directly to the users attention
+    /// but which should none the less be visible.
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
     {

@@ -16,6 +16,9 @@ using ReusableLibraryCode;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
+    /// <summary>
+    /// Depicts a server in a given DLE <see cref="LoadBubble"/> (e.g. the RAW server or the STAGING/LIVE server).
+    /// </summary>
     public class LoadDiagramServerNode:TableInfoServerNode,IKnowWhatIAm, IOrderable
     {
         private readonly LoadBubble _bubble;

@@ -15,6 +15,10 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.UI.SubComponents.Graphs
 {
+    /// <summary>
+    /// Input/Persistence object for <see cref="CohortSummaryAggregateGraphUI"/> which records which filter (if any) should be shown for patients
+    /// matching the <see cref="CohortContainerIfAny"/> or <see cref="CohortIfAny"/> in the graph.
+    /// </summary>
     public class CohortSummaryAggregateGraphObjectCollection:PersistableObjectCollection
     {
         public CohortSummaryAdjustment Adjustment;

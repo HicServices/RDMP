@@ -12,6 +12,7 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {
+    /// <inheritdoc/>
     public class AggregateFilterUIOptions : FilterUIOptions
     {
         private ISqlParameter[] _globals;

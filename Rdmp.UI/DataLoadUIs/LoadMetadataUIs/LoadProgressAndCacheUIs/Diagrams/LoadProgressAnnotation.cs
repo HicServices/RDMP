@@ -13,7 +13,11 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs.Diagrams
 {
-    public class LoadProgressAnnotation
+    /// <summary>
+    /// Line on a <see cref="Chart"/> indicating how much progress has been made towards various <see cref="LoadProgress"/> / <see cref="CacheProgressUI"/>
+    /// goals.
+    /// </summary>
+    class LoadProgressAnnotation
     {
         private readonly LoadProgress _lp;
         private readonly DataTable _dt;

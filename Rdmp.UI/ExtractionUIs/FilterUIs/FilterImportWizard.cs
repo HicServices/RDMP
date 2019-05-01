@@ -19,6 +19,11 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
+    /// <summary>
+    /// Handles deploying <see cref="ExtractionFilter"/> instances into cohort identification / data extraction <see cref="IContainer"/>s.
+    /// This adds WHERE logic to the query the user is building.  The interactive bits of this class only come into effect when there are
+    /// one or more <see cref="ExtractionFilterParameterSet"/> configured that they can select from.
+    /// </summary>
     public class FilterImportWizard
     {
         public IFilter Import(IContainer containerToImportOneInto, IFilter filterToImport)

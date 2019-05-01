@@ -12,6 +12,9 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Command for double clicking objects.
+    /// </summary>
     public class ExecuteCommandActivate : BasicUICommandExecution,IAtomicCommand
     {
         private readonly object _o;

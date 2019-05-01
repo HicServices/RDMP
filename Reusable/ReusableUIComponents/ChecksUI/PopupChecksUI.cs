@@ -16,7 +16,7 @@ namespace ReusableUIComponents.ChecksUI
     /// </summary>
     public partial class PopupChecksUI : Form,ICheckNotifier
     {
-        public event AllChecksCompleteHandler AllChecksComplete;
+        public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
 
         public PopupChecksUI(string task, bool showOnlyWhenError)
         {

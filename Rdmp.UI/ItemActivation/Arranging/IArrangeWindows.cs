@@ -11,6 +11,10 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.UI.ItemActivation.Arranging
 {
+    /// <summary>
+    /// Facilitates opening/closing lots of windows at once to achieve a specific goal (e.g. running a data load).  Basically sets up the tabs for a user friendly
+    /// consistent experience for the called user task.
+    /// </summary>
     public interface IArrangeWindows
     {
         //Advanced cases where you want to show multiple windows at once

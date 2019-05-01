@@ -9,6 +9,10 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Collections
 {
+    /// <summary>
+    /// Initialization arguments for <see cref="RDMPCollectionCommonFunctionality"/>.  Use this class to control what system default behaviours
+    /// are exhibited by a given <see cref="RDMPCollectionUI"/> (tree view) e.g. whether the user can pin objects.
+    /// </summary>
     public class RDMPCollectionCommonFunctionalitySettings
     {
         /// <summary>

@@ -277,7 +277,7 @@ namespace ReusableUIComponents.Heatmapping
                     double lastAxisStart = -500;
                     double lastAxisLabelWidth = -500;
 
-                    var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : FormsHelper.GetVisibleArea(this);
+                    var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
                     
                     
                     int visibleClipBoundsTop = visibleArea.Top;

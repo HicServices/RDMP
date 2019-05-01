@@ -17,6 +17,10 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {
+    /// <summary>
+    /// Handles creating instances of the correct implementation of <see cref="IArgumentValueUI"/> based on the Type
+    /// of property being edited <see cref="ArgumentValueUIArgs"/>
+    /// </summary>
     public class ArgumentValueUIFactory
     {
         public IArgumentValueUI Create(ArgumentValueUIArgs args)

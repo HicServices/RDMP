@@ -11,6 +11,10 @@ using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents.ChecksUI
 {
+    /// <summary>
+    /// Yes/No dialog for handling <see cref="CheckEventArgs.ProposedFix"/>.  Describes the fix and prompts the user for a response.  Includes
+    /// support for Yes to All.
+    /// </summary>
     public class MakeChangePopup:ICheckNotifier
     {
         private readonly YesNoYesToAllDialog _dialog;

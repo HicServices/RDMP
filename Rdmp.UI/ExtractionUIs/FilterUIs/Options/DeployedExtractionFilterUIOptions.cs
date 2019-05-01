@@ -11,6 +11,7 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {
+    /// <inheritdoc/>
     public class DeployedExtractionFilterUIOptions : FilterUIOptions
     {
         private ISqlParameter[] _globals;

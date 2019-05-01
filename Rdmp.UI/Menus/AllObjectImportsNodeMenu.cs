@@ -11,7 +11,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 
 namespace Rdmp.UI.Menus
 {
-    public class AllObjectImportsNodeMenu:RDMPContextMenuStrip
+    class AllObjectImportsNodeMenu:RDMPContextMenuStrip
     {
         public AllObjectImportsNodeMenu(RDMPContextMenuStripArgs args, AllObjectImportsNode node): base(args, node)
         {

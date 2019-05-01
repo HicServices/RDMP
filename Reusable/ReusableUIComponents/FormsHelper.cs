@@ -7,39 +7,24 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents
 {
-    public class FormsHelper
+    /// <summary>
+    /// Helper Extension Methods for Control
+    /// </summary>
+    public static class FormsHelper
     {
-        public static IEnumerable<Control> GetAllChildControlsRecursively(Control control)
-        {
-            var controls = control.Controls.Cast<Control>().ToArray();
-
-            return controls.SelectMany(GetAllChildControlsRecursively).Concat(controls);
-        }
-
-
-        public static Size GetPreferredSizeOfTextControl(Control c)
-        {
-            Graphics graphics = c.CreateGraphics();
-            SizeF measureString = graphics.MeasureString(c.Text, c.Font);
-
-            int minimumWidth = 400;
-            int minimumHeight = 150;
-
-            Rectangle maxSize = Screen.GetBounds(c);
-            return new Size(
-            (int)Math.Min(maxSize.Width, Math.Max(measureString.Width + 50,minimumWidth)),
-            (int)Math.Min(maxSize.Height,Math.Max(measureString.Height + 100,minimumHeight)));
-
-        }
-
-        public static Rectangle GetVisibleArea(Control c)
+        /// <summary>
+        /// Returns the visible portion of the control in client coordinates of c.  For example if you
+        /// have a control in a scrollable container then this method will return the client rectangle
+        /// that is visible with the current scroll viewport.
+        /// </summary>
+        /// <param name="c"></param>
+        /// <returns></returns>
+        public static Rectangle GetVisibleArea(this Control c)
         {
             Control originalControl = c;
             var rect = c.RectangleToScreen(c.ClientRectangle);
@@ -51,50 +36,7 @@ namespace ReusableUIComponents
             rect = originalControl.RectangleToClient(rect);
             return rect;
         }
-
-        public static List<Exception> SetupAutoCompleteForTypes(ComboBox comboBox, IEnumerable<Type> typeList)
-        {
-            comboBox.Items.Clear();
-
-            List<Exception> problemsDuringLoad = new List<Exception>();
-
-            try
-            {
-                // Find all types anywhere in the entire program which can be assigned to a type the user wants (and aren't abstract or interfaces)
-                var classes = typeList.ToArray();
-
-                foreach (string className in classes.Select(t => t.FullName))
-                    comboBox.Items.Add(className);
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
-
-                //see if it is a missing assembly
-                FileNotFoundException fileNotFoundException = e as FileNotFoundException;
-
-                if (fileNotFoundException != null && !String.IsNullOrWhiteSpace(fileNotFoundException.FusionLog))
-                    MessageBox.Show("FusionLog was:" + fileNotFoundException.FusionLog);
-
-
-                return problemsDuringLoad;
-            }
-
-            comboBox.AutoCompleteSource = AutoCompleteSource.ListItems;
-            return problemsDuringLoad;
-        }
-
-        public static void DoActionAndRedIfThrows(TextBox tb, Action action)
-        {
-            tb.ForeColor = Color.Black;
-            try
-            {
-                action();
-            }
-            catch (Exception)
-            {
-                tb.ForeColor = Color.Red;
-            }
-        }
+        
+        
     }
 }

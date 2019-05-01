@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.DataViewing;
 using Rdmp.UI.DataViewing.Collections;
 
 namespace Rdmp.UI.Menus
@@ -26,7 +28,7 @@ namespace Rdmp.UI.Menus
         
         private void ViewTop100()
         {
-            _activator.ViewDataSample(new ViewCohortExtractionUICollection(_cohort));
+            _activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ViewCohortExtractionUICollection(_cohort));
         }
 
     }

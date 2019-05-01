@@ -14,6 +14,9 @@ using System.Windows.Forms;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// ComboBox with support for autocomplete (based on substring)
+    /// </summary>
     public class SuggestComboBox : ComboBox
     {
         #region fields and properties

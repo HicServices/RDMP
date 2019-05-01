@@ -15,9 +15,12 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
     public delegate ISqlParameter CreateNewSqlParameterHandler(ICollectSqlParameters collector,string parameterName);
 
+    /// <summary>
+    /// Helper object for <see cref="ParameterCollectionUI"/>.  Models a <see cref="Collector"/> who has 0 or more <see cref="ISqlParameter"/> associated
+    /// with it (handled by a <see cref="ParameterManager"/>).
+    /// </summary>
     public class ParameterCollectionUIOptions
-    {
-        
+    {  
         public ICollectSqlParameters Collector { get; set; }
         public ParameterLevel CurrentLevel { get; set; }
         public ParameterManager ParameterManager { get; set; }

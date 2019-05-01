@@ -11,6 +11,9 @@ using System.Windows.Forms;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Text box with support for hyperlinks.
+    /// </summary>
 	public class RichTextBoxEx : RichTextBox
 	{
 		#region Interop-Defines

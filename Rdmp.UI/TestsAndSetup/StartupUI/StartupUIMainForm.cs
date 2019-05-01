@@ -20,7 +20,6 @@ using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
-using Timer = System.Windows.Forms.Timer;
 
 namespace Rdmp.UI.TestsAndSetup.StartupUI
 {

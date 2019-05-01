@@ -11,7 +11,8 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.Refreshing
 {
-    public class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : DatabaseEntity
+    
+    class SelfDestructProtocol<T> : IRefreshBusSubscriber where T : DatabaseEntity
     {
         private readonly IActivateItems _activator;
         public RDMPSingleDatabaseObjectControl<T> User { get; private set; }

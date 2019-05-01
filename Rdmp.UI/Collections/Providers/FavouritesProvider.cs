@@ -15,6 +15,9 @@ using Rdmp.UI.Refreshing;
 
 namespace Rdmp.UI.Collections.Providers
 {
+    /// <summary>
+    /// Determines whether objects are a <see cref="Favourite"/> of the current user and handles creating/deleting them.
+    /// </summary>
     public class FavouritesProvider
     {
         private readonly IActivateItems _activator;

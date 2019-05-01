@@ -13,10 +13,14 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
+using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode;
 
 namespace Rdmp.UI.Collections.Providers.Filtering
 {
+    /// <summary>
+    /// Scores objects as to how relevant they are to a given search string (See <see cref="NavigateToObjectUI"/>).
+    /// </summary>
     public class SearchablesMatchScorer
     {
         private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };

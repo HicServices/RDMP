@@ -44,13 +44,15 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
         }
 
 
-
+        /// <inheritdoc/>
         public void ClearGraph()
         {
             chart1.Series.Clear();
         }
 
         private string _pivotCategoryValue = null;
+
+        /// <inheritdoc/>
         public void SelectEvaluation(Evaluation evaluation, string pivotCategoryValue)
         {
             _pivotCategoryValue = pivotCategoryValue;

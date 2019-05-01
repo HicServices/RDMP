@@ -114,7 +114,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
             //Every CatalogueItem is either mapped to a ColumnInfo (not extractable) or a ExtractionInformation (extractable).  To start out with they are not extractable
             foreach (CatalogueItem ci in _catalogueItems)
-                olvColumnExtractability.AddObject(new Node(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID)));
+                olvColumnExtractability.AddObject(new ColPair(ci, cols.Single(col => ci.ColumnInfo_ID == col.ID)));
 
             _extractionCategories = new object[]
             {
@@ -150,7 +150,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             }
 
             ddIsExtractionIdentifier.Items.Add("<<None>>");
-            ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<Node>().ToArray());
+            ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<ColPair>().ToArray());
 
             CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
         }
@@ -158,7 +158,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void IsExtractionIdentifier_AspectPutter(object rowobject, object newvalue)
         {
-            var n = (Node) rowobject;
+            var n = (ColPair) rowobject;
 
             if (n.ExtractionInformation == null)
                 MakeExtractable(n, true, ExtractionCategory.Core);
@@ -170,14 +170,14 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private object ImageGetter(object rowObject)
         {
-            var n = (Node) rowObject;
+            var n = (ColPair) rowObject;
 
             return Activator.CoreIconProvider.GetImage((object) n.ExtractionInformation ?? n.ColumnInfo);
         }
 
         private object IsExtractionIdentifier_AspectGetter(object rowObject)
         {
-            var n = (Node)rowObject;
+            var n = (ColPair)rowObject;
 
             if (n.ExtractionInformation == null)
                 return false;
@@ -188,7 +188,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void MakeExtractable(object o, bool shouldBeExtractable, ExtractionCategory? category = null)
         {
-            var n = (Node)o;
+            var n = (ColPair)o;
             
             //if it has extraction information
             if(n.ExtractionInformation != null)
@@ -240,7 +240,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private object ExtractionCategoryAspectGetter(object rowobject)
         {
-            var n = (Node)rowobject;
+            var n = (ColPair)rowobject;
 
             if (n.ExtractionInformation == null)
                 return "Not Extractable";
@@ -251,7 +251,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void TlvColumnExtractabilityOnCellEditStarting(object sender, CellEditEventArgs cellEditEventArgs)
         {
-            var n = (Node)cellEditEventArgs.RowObject;
+            var n = (ColPair)cellEditEventArgs.RowObject;
 
             if (cellEditEventArgs.Column == olvColumnInfoName)
                 cellEditEventArgs.Cancel = true;
@@ -272,7 +272,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void TlvColumnExtractabilityOnCellEditFinishing(object sender, CellEditEventArgs cellEditEventArgs)
         {
-            var n = (Node) cellEditEventArgs.RowObject;
+            var n = (ColPair) cellEditEventArgs.RowObject;
 
             if (cellEditEventArgs.Column == olvExtractionCategory)
             {
@@ -296,7 +296,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void ddCategoriseMany_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var filteredObjects = olvColumnExtractability.FilteredObjects.Cast<Node>().ToArray();
+            var filteredObjects = olvColumnExtractability.FilteredObjects.Cast<ColPair>().ToArray();
             object toChangeTo = ddCategoriseMany.SelectedItem;
             
             if (MessageBox.Show("Set " + filteredObjects.Length + " to '" + toChangeTo + "'?",
@@ -402,7 +402,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private ExtractionInformation[] GetExtractionInformations()
         {
-            return olvColumnExtractability.Objects.Cast<Node>()
+            return olvColumnExtractability.Objects.Cast<ColPair>()
                 .Where(n => n.ExtractionInformation != null)
                 .Select(ei => ei.ExtractionInformation)
                 .ToArray();
@@ -450,13 +450,13 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             helpIcon1.SetHelpText("Configure Extractability", "Click for tutorial", _workflow);
         }
 
-        class Node
+        class ColPair
         {
             public CatalogueItem CatalogueItem;
             public ColumnInfo ColumnInfo;
             public ExtractionInformation ExtractionInformation;
             
-            public Node(CatalogueItem ci, ColumnInfo col)
+            public ColPair(CatalogueItem ci, ColumnInfo col)
             {
                 CatalogueItem = ci;
                 ColumnInfo = col;
@@ -502,10 +502,10 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
         private void ddIsExtractionIdentifier_SelectedIndexChanged(object sender, EventArgs e)
         {
-            var n = ddIsExtractionIdentifier.SelectedItem as Node;
+            var n = ddIsExtractionIdentifier.SelectedItem as ColPair;
 
             //turn off all IsExtractionIdentifierness
-            foreach (Node node in ddIsExtractionIdentifier.Items.OfType<Node>())
+            foreach (ColPair node in ddIsExtractionIdentifier.Items.OfType<ColPair>())
             {
                 if (node.ExtractionInformation != null && node.ExtractionInformation.IsExtractionIdentifier)
                 {

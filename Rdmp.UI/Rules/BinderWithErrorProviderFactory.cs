@@ -14,6 +14,10 @@ using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.UI.Rules
 {
+    /// <summary>
+    /// Factory for generating <see cref="Binding"/>s for a <see cref="Control"/> and automatically configuring error providers based on
+    /// whether the bound property has relevant attributes (e.g. <see cref="UniqueAttribute"/>, <see cref="NotNullAttribute"/>).
+    /// </summary>
     public class BinderWithErrorProviderFactory
     {
         private readonly IActivateItems _activator;

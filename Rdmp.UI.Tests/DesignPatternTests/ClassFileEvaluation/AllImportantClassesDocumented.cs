@@ -93,20 +93,14 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                         if (!strict) //are we being strict?
                         {
                             //User interface namespaces/related classes
-
-                            if(nameSpace.Contains("CatalogueManager"))
-                                continue;
                             if (nameSpace.Contains("Nodes"))
                                 continue;
-                            if (nameSpace.Contains("DataExportManager"))
-                                continue;
-                            if (nameSpace.Contains("ReusableUIComponents"))
-                                continue;
-
-                            if (nameSpace.Contains("CohortManager") && !nameSpace.Contains("CohortManagerLibrary"))
+                            if (nameSpace.Contains("CommandExecution"))
                                 continue;
                             
-                            if (nameSpace.Contains("Copying.Commands"))
+                            if (nameSpace.Contains("Copying"))
+                                continue;
+                            if (nameSpace.Contains("Icons"))
                                 continue;
 
                             if (nameSpace.Contains("Diagnostics"))

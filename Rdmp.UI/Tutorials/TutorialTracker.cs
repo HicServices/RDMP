@@ -15,6 +15,9 @@ using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace Rdmp.UI.Tutorials
 {
+    /// <summary>
+    /// Collection of <see cref="Tutorial"/>.  Manages marking them complete, launching them etc.
+    /// </summary>
     public class TutorialTracker : IHelpWorkflowProgressProvider
     {
         private readonly IActivateItems _activator;

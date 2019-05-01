@@ -4,10 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+
 namespace Rdmp.UI.Refreshing
 {
+    /// <summary>
+    /// Interface for any class that wants to subscribe to publish events in the <see cref="RefreshBus"/>. You
+    /// should consider using <see cref="ILifetimeSubscriber"/> if you are a UI or inherit from <see cref="RDMPSingleDatabaseObjectControl{T}"/>
+    /// directly.
+    /// </summary>
     public interface IRefreshBusSubscriber
     {
+        /// <summary>
+        /// Called when 
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e);
     }
 }

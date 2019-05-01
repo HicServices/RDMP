@@ -12,6 +12,9 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 
 namespace Rdmp.UI.Raceway
 {
+    /// <summary>
+    /// Input/Persistence collection for <see cref="DatasetRaceway"/>
+    /// </summary>
     public class DatasetRacewayObjectCollection : PersistableObjectCollection
     {
         public DatasetRaceway.RacewayShowPeriod ShowPeriod { get; set; }

@@ -11,6 +11,9 @@ using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.Menus
 {
+    /// <summary>
+    /// Constructor arguments for <see cref="RDMPContextMenuStrip"/>
+    /// </summary>
     public class RDMPContextMenuStripArgs
     {
         public IActivateItems ItemActivator { get; set; }

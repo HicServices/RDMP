@@ -8,11 +8,16 @@ using System.Drawing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
+    /// <summary>
+    /// Publishes the fact that changes have been made to a <see cref="DatabaseEntity"/> which mean that other user interfaces in the
+    /// application may be now out of date (or no longer valid).  This will trigger the <see cref="RefreshBus"/> to call all listeners
+    /// </summary>
     public class ExecuteCommandRefreshObject:BasicUICommandExecution,IAtomicCommand
     {
         private readonly DatabaseEntity _databaseEntity;

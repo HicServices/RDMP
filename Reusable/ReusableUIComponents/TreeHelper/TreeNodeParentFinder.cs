@@ -8,6 +8,9 @@ using BrightIdeasSoftware;
 
 namespace ReusableUIComponents.TreeHelper
 {
+    /// <summary>
+    /// Helper class for finding parents in a <see cref="TreeListView"/> that match a given Type.
+    /// </summary>
     public class TreeNodeParentFinder
     {
         private TreeListView _tree;

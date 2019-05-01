@@ -11,6 +11,7 @@ using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using ReusableLibraryCode;
@@ -18,7 +19,11 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramTableNode:ICommandSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
+    /// <summary>
+    /// Depicts a table in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
+    /// node may or may not map to an existing table in the database.
+    /// </summary>
+    public class LoadDiagramTableNode:Node,ICommandSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
     {
         private readonly LoadDiagramDatabaseNode _databaseNode;
         public readonly TableInfo TableInfo;

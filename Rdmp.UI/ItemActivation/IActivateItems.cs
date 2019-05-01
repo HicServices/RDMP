@@ -125,8 +125,6 @@ namespace Rdmp.UI.ItemActivation
 
         bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
 
-        void ViewDataSample(IViewSQLAndResultsCollection collection);
-
         event EmphasiseItemHandler Emphasise;
 
         /// <summary>

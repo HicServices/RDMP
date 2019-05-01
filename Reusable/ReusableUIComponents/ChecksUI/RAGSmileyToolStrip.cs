@@ -14,10 +14,7 @@ using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents.ChecksUI
 {
-    /// <summary>
-    /// Reusable component that indicates the success / warning / failure of a task in a nice user friendly way.  Green indicates success, yellow indicates a warning and red indicates 
-    /// failure.  If there is an exception associated with a failure then clicking on the red face will show the Exception.
-    /// </summary>
+    /// <inheritdoc cref="IRAGSmiley" />
     public partial class RAGSmileyToolStrip : ToolStripButton,  IRAGSmiley
     {
         private readonly Control _host;

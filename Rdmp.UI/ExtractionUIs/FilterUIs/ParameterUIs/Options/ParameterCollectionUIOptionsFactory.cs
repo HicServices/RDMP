@@ -18,6 +18,9 @@ using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
+    /// <summary>
+    /// Creates instances of <see cref="ParameterCollectionUIOptions"/> based on the Type of <see cref="ICollectSqlParameters"/> host.
+    /// </summary>
     public class ParameterCollectionUIOptionsFactory
     {
         private const string UseCaseIFilter = 

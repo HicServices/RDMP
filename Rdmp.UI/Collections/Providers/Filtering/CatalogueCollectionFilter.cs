@@ -12,6 +12,10 @@ using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers.Filtering
 {
+    /// <summary>
+    /// Filters objects in a <see cref="CatalogueCollectionUI"/> based on whether the <see cref="Catalogue"/> is marked
+    /// with various flags (e.g. <see cref="Catalogue.IsDeprecated"/>
+    /// </summary>
     public class CatalogueCollectionFilter : IModelFilter
     {
         private readonly ICoreChildProvider _childProvider;

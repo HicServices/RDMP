@@ -145,7 +145,7 @@ namespace Rdmp.UI.DashboardTabs
             }
 
 
-            var layoutUIVisibleArea =  FormsHelper.GetVisibleArea(_layoutUI);
+            var layoutUIVisibleArea =  _layoutUI.GetVisibleArea();
             
 
             if (_actionUnderway != EditModeAction.None)

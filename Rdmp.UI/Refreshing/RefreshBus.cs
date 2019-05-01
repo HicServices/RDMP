@@ -10,11 +10,15 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.Refreshing
 {
+    /// <summary>
+    /// Dispatcher class for publish events (<see cref="ExecuteCommandRefreshObject"/>)
+    /// </summary>
     public class RefreshBus
     {
         /// <summary>

@@ -80,7 +80,7 @@ namespace ReusableUIComponents.ChecksUI
         public bool CheckingInProgress { get; private set; }
         public bool AllowsYesNoToAll { get; set; }
 
-        public event AllChecksCompleteHandler AllChecksComplete;
+        public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
         
         Thread _checkingThread; 
         private YesNoYesToAllDialog yesNoYesToAllDialog = new YesNoYesToAllDialog();

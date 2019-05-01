@@ -17,6 +17,10 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.DataViewing.Collections
 {
+    /// <summary>
+    /// Builds a query based on a <see cref="AggregateConfiguration"/> (either a sample of data in a graph or matching a cohort
+    /// (<see cref="Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration.IsCohortIdentificationAggregate"/>)
+    /// </summary>
     public class ViewAggregateExtractUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {
         public bool UseQueryCache { get; set; }

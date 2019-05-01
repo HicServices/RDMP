@@ -11,6 +11,10 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
 {
+    /// <summary>
+    /// Factory for providing the correct implementation of <see cref="FilterUIOptions"/> based on the Type of the
+    /// provided <see cref="IFilter"/>.
+    /// </summary>
     public class FilterUIOptionsFactory
     {
         public FilterUIOptions Create(IFilter filter)

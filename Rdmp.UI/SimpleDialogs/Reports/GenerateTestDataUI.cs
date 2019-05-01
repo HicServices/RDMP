@@ -36,7 +36,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
     /// <para>Make sure to put a PopulationSize that is lower than the number of records you want to create in each dataset so that there are multiple records per person (will make analysis more
     /// interesting/realistic).</para>
     /// </summary>
-    public partial class GenerateTestDataUI : RDMPForm, IHelpWorkflowUser
+    public partial class GenerateTestDataUI : RDMPForm
     {
         public HelpWorkflow HelpWorkflow { get; private set; }
 

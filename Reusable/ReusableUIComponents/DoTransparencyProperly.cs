@@ -9,8 +9,17 @@ using System.Windows.Forms;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Helper for positioning controls on top of one another (with transparent backgrounds)
+    /// </summary>
     public class DoTransparencyProperly
     {
+        /// <summary>
+        /// Positions <paramref name="controlThatHovers"/> on top of <paramref name="whatItHoversOver"/> and
+        /// sets the background colour of the <see cref="controlThatHovers"/> to Transparent.
+        /// </summary>
+        /// <param name="controlThatHovers"></param>
+        /// <param name="whatItHoversOver"></param>
         public static void ThisHoversOver(Control controlThatHovers, Control whatItHoversOver)
         {
             controlThatHovers.BackColor = Color.Transparent;

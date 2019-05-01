@@ -15,6 +15,9 @@ using Rdmp.UI.Refreshing;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {
+    /// <summary>
+    /// Builds a query to fetch data that matches a given <see cref="IFilter"/>
+    /// </summary>
     public class FilterGraphObjectCollection : PersistableObjectCollection
     {
         public FilterGraphObjectCollection()

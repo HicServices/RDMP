@@ -16,6 +16,9 @@ using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.Menus.MenuItems
 {
+    /// <summary>
+    /// <see cref="ToolStripMenuItem"/> depicting a single <see cref="IAtomicCommand"/>
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class AtomicCommandMenuItem : ToolStripMenuItem
     {

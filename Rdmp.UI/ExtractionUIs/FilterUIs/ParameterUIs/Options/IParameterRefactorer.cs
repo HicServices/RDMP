@@ -8,10 +8,13 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 {
+    /// <summary>
+    /// Handles changing a <see cref="ISqlParameter.ParameterName"/> and enforcing rules about valid names
+    /// </summary>
     public interface IParameterRefactorer
     {
         /// <summary>
-        /// 
+        /// Renames the <paramref name="parameter"/> <see cref="ISqlParameter.ParameterName"/>
         /// </summary>
         /// <param name="parameter"></param>
         /// <param name="oldName"></param>

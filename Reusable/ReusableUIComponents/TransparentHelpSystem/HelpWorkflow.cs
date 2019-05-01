@@ -12,6 +12,9 @@ using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace ReusableUIComponents.TransparentHelpSystem
 {
+    /// <summary>
+    /// Collection of ordered <see cref="HelpStage"/> that guide the user through a sequence of actions.
+    /// </summary>
     public class HelpWorkflow
     {
         public Guid WorkflowGuid { get; private set; }

@@ -10,6 +10,9 @@ using Rdmp.UI.Copying;
 
 namespace Rdmp.UI.Collections.Providers.Copying
 {
+    /// <summary>
+    /// Enables Ctrl+C support in <see cref="TreeListView"/>
+    /// </summary>
     public class CopyPasteProvider
     {
         private TreeListView _tree;

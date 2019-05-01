@@ -20,6 +20,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.DataViewing.Collections
 {
+    /// <summary>
+    /// Builds a query to fetch data in a <see cref="ColumnInfo"/> (Based on the <see cref="ViewType"/>)
+    /// </summary>
     public class ViewColumnInfoExtractUICollection : PersistableObjectCollection,IViewSQLAndResultsCollection
     {
         public ViewType ViewType { get; private set; }

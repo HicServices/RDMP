@@ -7,9 +7,17 @@
 using System;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.Settings;
+using ReusableUIComponents.TransparentHelpSystem;
 
 namespace Rdmp.UI.Tutorials
 {
+    /// <summary>
+    /// Wrapper for a <see cref="ICommandExecution"/> which should launch a user interaction that guides them through some activity
+    /// (e.g. a <see cref="HelpWorkflow"/>).  Each <see cref="Tutorial"/> is associated with a specific <see cref="Guid"/> to ensure
+    /// its completeness can can be tracked.
+    ///
+    /// <para>Instances should only be constructed in <see cref="TutorialTracker"/></para>
+    /// </summary>
     public class Tutorial
     {
         public readonly ICommandExecution CommandExecution;

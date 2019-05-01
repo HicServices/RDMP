@@ -25,6 +25,10 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
 {
+    /// <summary>
+    /// Base class for all right click context menus in <see cref="RDMPCollectionUI"/> controls.  These menus are built by reflection
+    /// when the selected object is changed.
+    /// </summary>
     [InheritedExport(typeof(RDMPContextMenuStrip))]
     [System.ComponentModel.DesignerCategory("")]
     public class RDMPContextMenuStrip:ContextMenuStrip
@@ -33,8 +37,6 @@ namespace Rdmp.UI.Menus
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         protected IActivateItems _activator;
         
-        protected ToolStripMenuItem DependencyViewingMenuItem { get; set; }
-
         private readonly AtomicCommandUIFactory AtomicCommandUIFactory;
 
         protected ToolStripMenuItem ActivateCommandMenuItem;

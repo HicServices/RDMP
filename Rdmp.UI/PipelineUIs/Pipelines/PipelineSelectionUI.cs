@@ -15,17 +15,9 @@ using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.UI.PipelineUIs.Pipelines
 {
-    /// <summary>
-    /// Allows you to pick an IPipeline (or create a new one) to achieve a data flow task (e.g. load a file as a new dataset or attach custom data to a cohort etc).  See ConfigureAndExecutePipeline
-    /// for a description of what a pipeline is.  
-    /// 
-    /// <para>If you cannot see the pipeline you expected to see then it is possible that the pipeline is broken or somehow otherwise incompatible with the current context.  If this is the case
-    /// then you can untick 'Only Show Compatible Pipelines' which will show all Pipelines of the type T (usually DataTable).  You should only use this feature to edit Pipelines as there is zero
-    /// chance they will execute Successfully if they are not compatible with the DataFlowPipelineContext.</para>
-    /// </summary>
+    /// <inheritdoc cref="IPipelineSelectionUI" />
     public partial class PipelineSelectionUI : UserControl, IPipelineSelectionUI
     {
-
         private IPipelineUseCase _useCase;
         private readonly ICatalogueRepository _repository;
         

@@ -5,9 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.ItemActivation.Emphasis
 {
+    /// <summary>
+    /// Models a request to make a given object (<see cref="ObjectToEmphasise"/>) in an RDMP tree view visible to the user.
+    /// See Also <see cref="ExecuteCommandShow"/> and <see cref="ExecuteCommandPin"/>.
+    /// </summary>
     public class EmphasiseRequest
     {
         public IMapsDirectlyToDatabaseTable ObjectToEmphasise { get; set; }

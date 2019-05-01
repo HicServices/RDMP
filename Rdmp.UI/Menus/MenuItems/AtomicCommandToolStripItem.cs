@@ -11,6 +11,9 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Menus.MenuItems
 {
+    /// <summary>
+    /// <see cref="ToolStripButton"/> depicting a single <see cref="IAtomicCommand"/>
+    /// </summary>
     public class AtomicCommandToolStripItem : ToolStripButton
     {
         private readonly IAtomicCommand _command;

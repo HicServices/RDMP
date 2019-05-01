@@ -9,7 +9,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.SubComponents.EmptyLineElements
 {
-    public class CohortIdentificationHeader
+    class CohortIdentificationHeader
     {
         public string GetCatalogueName()
         {

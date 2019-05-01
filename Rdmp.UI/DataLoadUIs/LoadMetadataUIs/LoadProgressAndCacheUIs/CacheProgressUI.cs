@@ -200,8 +200,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
         private void tbCacheProgress_TextChanged(object sender, EventArgs e)
         {
-
-            FormsHelper.DoActionAndRedIfThrows(tbCacheProgress, () =>
+            CommonFunctionality.DoActionAndRedIfThrows(tbCacheProgress, () =>
             {
                 if (string.IsNullOrWhiteSpace(tbCacheProgress.Text))
                     _cacheProgress.CacheFillProgress = null;
@@ -217,7 +216,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 
         private void tbChunkPeriod_TextChanged(object sender, EventArgs e)
         {
-            FormsHelper.DoActionAndRedIfThrows(tbChunkPeriod, () =>
+            CommonFunctionality.DoActionAndRedIfThrows(tbChunkPeriod, () =>
             {
                 _cacheProgress.ChunkPeriod = TimeSpan.Parse(tbChunkPeriod.Text);
             });

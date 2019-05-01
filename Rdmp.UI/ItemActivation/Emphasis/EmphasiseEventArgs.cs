@@ -9,6 +9,9 @@ using System.Windows.Forms;
 
 namespace Rdmp.UI.ItemActivation.Emphasis
 {
+    /// <summary>
+    /// Event args for an <see cref="EmphasiseRequest"/> (when a TreeView object should be brought to the users attention).
+    /// </summary>
     public class EmphasiseEventArgs:EventArgs
     {
         public EmphasiseRequest Request { get; set; }

@@ -41,7 +41,11 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             
             //excused because although singletons they have dynamic names / they are basically a collection
             typeof(OtherPipelinesNode),
-            typeof(StandardPipelineUseCaseNode)
+            typeof(StandardPipelineUseCaseNode),
+            
+            //the base class
+            typeof(Node)
+
         };
 
 
@@ -71,6 +75,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             //All node classes should have equality compare members so that tree expansion works properly
             foreach (Type nodeClass in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => t.Name.EndsWith("Node") && !t.IsAbstract && !t.IsInterface))
             {
+                if(nodeClass.Namespace == null || nodeClass.Namespace.StartsWith("System"))
+                    continue;
+
                 //class is excused
                 if (excusedNodeClasses.Contains(nodeClass))
                     continue;

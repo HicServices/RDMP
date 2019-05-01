@@ -79,6 +79,9 @@
     <Compile Update="UserControl1.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="TestsAndSetup\StartupUI\StartupUIMainForm.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UserControl1.Designer.cs">
       <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>

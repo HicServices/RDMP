@@ -11,6 +11,10 @@ using ReusableLibraryCode.CommandExecution;
 
 namespace ReusableUIComponents.CommandExecution
 {
+    /// <summary>
+    /// Handles the commencement of drag operations.  This involves deciding whether a given object can be dragged and parceling up the object
+    /// into an <see cref="ICommand"/> (which will gather relevant facts about the object).  Dropping is handled by <see cref="ICommandExecutionFactory"/>
+    /// </summary>
     public interface ICommandFactory
     {
         ICommand Create(OLVDataObject o);

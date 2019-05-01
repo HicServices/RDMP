@@ -4,8 +4,15 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+
 namespace Rdmp.UI.SimpleControls
 {
+    /// <summary>
+    /// Indicates that the control hosts a <see cref="ObjectSaverButton"/> and that Ctr+S should result in saving.
+    ///
+    /// <para>This interface is used in reflection to automatically add saving support if you are a <see cref="RDMPSingleDatabaseObjectControl{T}"/>. </para>
+    /// </summary>
     public interface ISaveableUI
     {
         ObjectSaverButton GetObjectSaverButton();

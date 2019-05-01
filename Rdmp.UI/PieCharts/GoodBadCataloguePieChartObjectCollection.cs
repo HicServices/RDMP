@@ -12,6 +12,9 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 
 namespace Rdmp.UI.PieCharts
 {
+    /// <summary>
+    /// Input object for <see cref="GoodBadCataloguePieChart"/> Records whether it is showing all/single <see cref="Catalogue"/> and which is being shown.
+    /// </summary>
     public class GoodBadCataloguePieChartObjectCollection : PersistableObjectCollection
     {
         public bool ShowLabels { get; set; }

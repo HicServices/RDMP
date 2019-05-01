@@ -11,13 +11,18 @@ using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 {
-    public class LoadDiagramDatabaseNode : IHasLoadDiagramState, IKnowWhatIAm
+    /// <summary>
+    /// Depicts a database in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
+    /// database may or may not map to an existing database.
+    /// </summary>
+    public class LoadDiagramDatabaseNode : Node,IHasLoadDiagramState, IKnowWhatIAm
     {
         private readonly LoadBubble _bubble;
         public readonly DiscoveredDatabase Database;

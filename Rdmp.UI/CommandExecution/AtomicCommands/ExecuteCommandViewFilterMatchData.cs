@@ -60,7 +60,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (_columnInfo == null)
                 return;
 
-            Activator.ViewDataSample(new ViewColumnInfoExtractUICollection(_columnInfo, _viewType, _filter));
+            Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ViewColumnInfoExtractUICollection(_columnInfo, _viewType, _filter));
         }
 
         public override string GetCommandName()

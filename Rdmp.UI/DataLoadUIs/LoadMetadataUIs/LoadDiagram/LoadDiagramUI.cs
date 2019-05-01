@@ -95,14 +95,14 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 if (tableNode.Bubble == LoadBubble.Live)
                 {
                     //for live just use the TableInfo!
-                    Activator.ViewDataSample(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
+                    Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ViewTableInfoExtractUICollection(tableNode.TableInfo, ViewType.TOP_100));
                     return;   
                 }
                 else
                     table = tableNode.Table; //otherwise it's a non Live bubble table or an unplanned table somewhere so use Arbitrary table Data Viewing
             
             if(table != null)
-                Activator.ViewDataSample(new ArbitraryTableExtractionUICollection(table));
+                Activator.Activate<ViewSQLAndResultsWithDataGridUI>(new ArbitraryTableExtractionUICollection(table));
         }
 
         void tlvLoadedTables_FormatCell(object sender, FormatCellEventArgs e)

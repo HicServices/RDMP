@@ -14,6 +14,10 @@ using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.Collections.Providers
 {
+    /// <summary>
+    /// Handles creating the 'Favourite' column in <see cref="TreeListView"/>.  This column depicts whether a given RDMP object is a favourite
+    /// of the user (see <see cref="Favourite"/>).
+    /// </summary>
     public class FavouriteColumnProvider
     {
         private readonly IActivateItems _activator;

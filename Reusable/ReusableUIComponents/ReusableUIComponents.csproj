@@ -96,9 +96,6 @@
     <Compile Update="KeyboardReminder.Designer.cs">
       <DependentUpon>KeyboardReminder.cs</DependentUpon>
     </Compile>
-    <Compile Update="LinkLabels\ExceptionLinkLabel.cs">
-      <SubType>Component</SubType>
-    </Compile>
     <Compile Update="ExceptionViewerStackTraceWithHyperlinks.cs">
       <SubType>Form</SubType>
     </Compile>

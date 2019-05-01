@@ -10,6 +10,10 @@ using Rdmp.Core.Providers;
 
 namespace Rdmp.UI.Refreshing
 {
+    /// <summary>
+    /// EventArgs describing a refresh event being broadcast by a <see cref="RefreshBus"/>.  Includes the <see cref="Object"/> that is in a new state,
+    /// whether it still <see cref="Exists"/> etc.
+    /// </summary>
     public class RefreshObjectEventArgs
     {
         public DatabaseEntity Object { get; set; }
