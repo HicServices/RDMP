@@ -12,7 +12,7 @@ using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.ExtractionTime.Commands;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
 

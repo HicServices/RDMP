@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
@@ -24,6 +25,11 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         {
             Tier = tier;
             ResourceSubdirectory = resourceSubdirectory;
+        }
+        
+        public SortedDictionary<string, Patch> GetAllPatchesInAssembly()
+        {
+            return Patch.GetAllPatchesInAssembly(this);
         }
     }
 

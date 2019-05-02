@@ -10,8 +10,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.ExtractionTime.Commands;
-using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 

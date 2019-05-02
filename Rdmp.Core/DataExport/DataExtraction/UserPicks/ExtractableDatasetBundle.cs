@@ -1,0 +1,81 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
+
+namespace Rdmp.Core.DataExport.DataExtraction.UserPicks
+{
+    /// <summary>
+    /// The dataset and all additional content related to that dataset within an ExtractionConfiguration which is about to be extracted.  This includes
+    /// SupportingDocuments, Lookup tables etc).  This is a mutable class and allows you to 'DropContent' if you do not want to extract given parts (e.g. skip
+    /// the lookups).
+    /// </summary>
+    public class ExtractableDatasetBundle : Bundle, IExtractableDatasetBundle
+    {
+        //The main dataset being extracted
+        public IExtractableDataSet DataSet { get; private set; }
+
+        //all the rest of the stuff that goes with the dataset
+        public List<SupportingDocument> Documents { get; private set; }
+        public List<SupportingSQLTable> SupportingSQL { get; private set; }
+        public List<IBundledLookupTable> LookupTables { get; private set; }
+        
+
+        public ExtractableDatasetBundle(IExtractableDataSet dataSet, SupportingDocument[] documents, SupportingSQLTable[] supportingSQL, ITableInfo[] lookupTables) : 
+            base(
+                new [] {(object)dataSet}.Union(documents).Union(supportingSQL).Union(lookupTables).ToArray() //pass all the objects to the base class so it can allocate initial States
+            )
+        {
+            DataSet = dataSet;
+            Documents = documents.ToList();
+            SupportingSQL = supportingSQL.ToList();
+            LookupTables = lookupTables.Select(t => new BundledLookupTable(t)).Cast<IBundledLookupTable>().ToList();
+        }
+
+        public ExtractableDatasetBundle(IExtractableDataSet dataSet)
+            : this(dataSet, new SupportingDocument[0], new SupportingSQLTable[0], new TableInfo[0])
+        {
+        }
+        
+        public override string ToString()
+        {
+            return DataSet + " Bundle";
+        }
+
+        protected override void OnDropContent(object toDrop)
+        {
+            if(toDrop is ExtractableDataSet)
+                throw new NotSupportedException("Cannot drop "+toDrop+" from Bundle "+this+", you cannot perform an extraction without the dataset component (only documents/lookups etc are optional)");
+
+            var drop = toDrop as SupportingDocument;
+            if (drop != null)
+            {
+                Documents.Remove(drop);
+                return;
+            }
+
+            var item = toDrop as SupportingSQLTable;
+            if (item != null)
+            {
+                SupportingSQL.Remove(item);
+                return;
+            }
+
+            var table = toDrop as BundledLookupTable;
+            if (table != null)
+            {
+                LookupTables.Remove(table);
+                return;
+            }
+
+            throw new NotSupportedException("Did not know how to drop object of type " + toDrop);
+        }
+    }
+}

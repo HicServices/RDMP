@@ -10,10 +10,10 @@ using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.ExtractionTime.Commands;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
-using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
+using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.CustomData

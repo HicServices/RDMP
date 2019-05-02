@@ -12,12 +12,12 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.ExtractionTime;
-using Rdmp.Core.DataExport.ExtractionTime.Commands;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
-using Rdmp.Core.DataExport.ExtractionTime.UserPicks;
+using Rdmp.Core.DataExport.DataExtraction;
+using Rdmp.Core.DataExport.DataExtraction.Commands;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
+using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Tests.Common;
 using Tests.Common.Scenarios;
 

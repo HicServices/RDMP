@@ -8,7 +8,7 @@ using System.IO;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 

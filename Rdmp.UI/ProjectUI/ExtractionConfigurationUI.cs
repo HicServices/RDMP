@@ -12,7 +12,7 @@ using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

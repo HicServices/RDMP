@@ -8,7 +8,7 @@ using System;
 using System.Data;
 using Moq;
 using NUnit.Framework;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Sources;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction

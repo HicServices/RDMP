@@ -9,9 +9,9 @@ using System.IO;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataExport.ExtractionTime;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline;
-using Rdmp.Core.DataExport.ExtractionTime.ExtractionPipeline.Destinations;
+using Rdmp.Core.DataExport.DataExtraction;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.QueryBuilding;
 using Tests.Common.Scenarios;
 

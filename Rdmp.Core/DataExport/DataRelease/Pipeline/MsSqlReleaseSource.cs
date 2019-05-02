@@ -11,7 +11,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataExport.ExtractionTime;
+using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;

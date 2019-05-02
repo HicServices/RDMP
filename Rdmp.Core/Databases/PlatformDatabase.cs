@@ -1,4 +1,5 @@
-﻿using MapsDirectlyToDatabaseTable.Versioning;
+﻿using System.Collections.Generic;
+using MapsDirectlyToDatabaseTable.Versioning;
 
 namespace Rdmp.Core.Databases
 {

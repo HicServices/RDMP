@@ -60,7 +60,7 @@
     <ProjectReference Include="..\Tests.Common\Tests.Common.csproj" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Update="CatalogueLibrary\TestResources.Designer.cs">
+    <Compile Update="Curation\TestResources.Designer.cs">
       <DependentUpon>TestResources.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
