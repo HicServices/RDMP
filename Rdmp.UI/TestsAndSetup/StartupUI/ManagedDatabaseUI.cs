@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Startup.Events;
 using ReusableUIComponents;
@@ -20,9 +21,9 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
 {
     /// <summary>
     /// Part of the 'Technical' view of StartupUIMainForm, this control tells you about the healthiness of a platform database (e.g. Data Catalogue database, Logging database, ANO database
-    ///  etc).  In the RDMP every platform database is accompanied by both a HostAssembly and a HostAssembly.Database dll.  The .Database assembly includes all the SQL patches and initial
-    /// creation script for the database type.  The HostAssembly contains the data access logic.  The versions of both dlls AND the database (See [RoundhousE].[Version] table in your 
-    /// database) must match.  If the assemblies are ahead of the database then this control will offer the option to Patch (upgrade) the database to match the new assembly.
+    ///  etc).  In the RDMP every platform database is managed by an <see cref="IPatcher"/>.  In the patcher assembly should be all the SQL patches and initial creation script for the database
+    /// type (as embedded resources).  The versions of the <see cref="IPatcher"/> dll AND the database (See [RoundhousE].[Version] table in your  database) must match.
+    /// If the assembly are ahead of the database then this control will offer the option to <see cref="Patch"/> (upgrade) the database to match the new assembly.
     /// 
     /// <para>A green face indicates that the correct host assemblies are found and the database is the correct version and reachable etc.
     /// A yellow face indicates that a new version of the host assemblies have been found and the database needs upgrading (patching)

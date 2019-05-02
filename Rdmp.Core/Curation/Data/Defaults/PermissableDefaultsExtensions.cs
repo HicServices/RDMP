@@ -13,7 +13,8 @@ namespace Rdmp.Core.Curation.Data.Defaults
     public static class PermissableDefaultsExtensions
     {
         /// <summary>
-        /// Translates the given <see cref="PermissableDefaults"/> (a default that can be set) to a <see cref="Tier2DatabaseType"/> (identifies what type of database it is).
+        /// Translates the given <see cref="PermissableDefaults"/> (a default that can be set) to the <see cref="IPatcher"/> which
+        /// handles the creation/patching of database schema (identifies what type of database it is).
         /// </summary>
         /// <param name="permissableDefault"></param>
         /// <returns></returns>

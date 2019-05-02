@@ -62,9 +62,7 @@ namespace Rdmp.Core.Repositories
         public IPluginManager PluginManager { get; private set; }
 
         /// <summary>
-        /// By default CatalogueRepository will execute DocumentationReportMapsDirectlyToDatabase which will load all the Types and find documentation in the source code for 
-        /// them obviously this affects test performance so set this to true if you want it to skip this process.  Note where this is turned on, it's in the static constructor
-        /// of DatabaseTests which means if you stick a static constructor in your test you can override it if you need access to the help text somehow in your test
+        /// Flag used by Startup processes to determine whether the <see cref="CommentStore"/> should be loaded with documentation from the xmldoc files. 
         /// </summary>
         public static bool SuppressHelpLoading;
 

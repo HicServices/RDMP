@@ -37,6 +37,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                     "CacheOptions.cs",
                     "RDMPCommandLineOptions.cs",
                     "Settings.Designer.cs",
+                    "PlatformDatabaseCreationOptions.cs",
+                    "PackOptions.cs"
+
 
                 }); //allowed because it's default arguments for CLI
 

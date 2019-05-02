@@ -12,10 +12,9 @@ using ReusableLibraryCode;
 namespace Rdmp.Core.Startup.Events
 {
     /// <summary>
-    /// Event Args for when the .Database assembly (e.g. CatalogueLibrary.Database) managed database is located during Startup.cs
+    /// Event Args for when an <see cref="IPatcher"/> is located during <see cref="Startup"/>
     /// 
-    /// <para>Includes the evaluated status of the database (does it need patching etc) and the Assemblies responsible for managing the database
-    /// (The DatabaseAssembly and the HostAssembly - which contains the object definitions).</para>
+    /// <para>Includes the evaluated status of the database (does it need patching etc) and the <see cref="Patcher"/> which contains the schema script definitions).</para>
     /// 
     /// <para>It is important that all platform Databases exactly match the runtime libraries for managing saving/loading objects therefore if the Status is 
     /// RequiresPatching it is imperative that you patch the database and restart the application (happens automatically with StartupUI).</para>

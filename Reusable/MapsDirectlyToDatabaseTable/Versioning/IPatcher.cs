@@ -11,7 +11,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
     /// <summary>
     /// Identifies databases belong to a specific .Database assembly that might need patching at Startup.
 	///
-    /// <para>If you are writing a plugin you should use IPluginPatcher instead which is MEF discoverable</para>
+    /// <para>If you are writing a plugin you should use <see cref="PluginPatcher"/> instead which is MEF discoverable</para>
     /// </summary>
     public interface IPatcher
     {

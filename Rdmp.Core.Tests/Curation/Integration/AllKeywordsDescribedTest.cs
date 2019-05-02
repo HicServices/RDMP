@@ -132,10 +132,5 @@ and so.name <> 'sysdiagrams'", con).ExecuteReader();
                     yield return (string)r["name"];
             }
         }
-        [OneTimeTearDown]
-        public void unsetHelpDispel()
-        {
-            CatalogueRepository.SuppressHelpLoading = true;
-        }
     }
 }

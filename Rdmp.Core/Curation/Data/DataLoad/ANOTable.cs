@@ -88,7 +88,8 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         }
 
         /// <summary>
-        /// The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This should have been created by the ANOStoreDatabasePatcher
+        /// The ID of the ExternalDatabaseServer which stores the anonymous identifier substitutions (e.g. chi=>ANOchi).  This should have been created by the
+        /// <see cref="ANOStorePatcher"/>
         /// </summary>
         [Relationship(typeof(ExternalDatabaseServer),RelationshipType.SharedObject)]
         public int Server_ID

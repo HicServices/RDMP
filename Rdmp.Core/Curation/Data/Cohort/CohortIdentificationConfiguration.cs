@@ -15,6 +15,7 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using Rdmp.Core.Databases;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Ticketing;
@@ -91,9 +92,10 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
         /// <summary>
         /// To assist with complex cohort identification queries over multiple datasets (and between servers / server types) you can configure a QueryCachingServer.  
-        /// This is an <see cref="ExternalDatabaseServer"/> created by <see cref="CatalogueLibrary.ExternalDatabaseServerPatching.QueryCachingDatabasePatcher"/>. 
-        /// Once setup, each <see cref="AggregateConfiguration"/> query in this <see cref="CohortIdentificationConfiguration"/> will be run independently and the resulting 
-        /// patient list commmitted ot the cache server (See QueryCaching.Aggregation.CachedAggregateConfigurationResultsManager).
+        /// This is an <see cref="ExternalDatabaseServer"/> created by <see cref="QueryCachingPatcher"/>.
+        /// 
+        /// <para>Once setup, each <see cref="AggregateConfiguration"/> query in this <see cref="CohortIdentificationConfiguration"/> will be run independently and
+        /// the resulting patient list committed ot the cache server (See QueryCaching.Aggregation.CachedAggregateConfigurationResultsManager).</para>
         /// 
         /// <para>This field holds the ID of the currently configured database (if any) which acts as a result cache</para>
         /// </summary>

@@ -229,8 +229,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "FAnsiSql",
             "ProposeExecutionWhenTargetIsX",
             "InternalsVisibleTo",
-            "AxisDimension"
-
+            "AxisDimension",
+            "MyDataset1",
+             "HicHash"
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

@@ -10,11 +10,11 @@ using MapsDirectlyToDatabaseTable.Versioning;
 namespace Rdmp.Core.Startup.Events
 {
     /// <summary>
-    /// EventArgs for finding Plugin IPatchers during Startup.cs
+    /// EventArgs for finding <see cref="PluginPatcher"/>s during <see cref="Startup"/>.
     /// 
-    /// <para>IPatchers identify databases that are managed by a .Database assembly and as such need to be patched/updated when the host assembly is updated.  For 
-    /// plugins this is done by declaring a IPluginPatcher and listing the host/database assemblies but there can be Type loading errors or other Exceptions 
-    /// around locating databases that must be patched, this event system supports reporting those.</para>
+    /// <para><see cref="IPatcher"/> identify databases that are managed RDMP and are patched/updated when the <see cref="IPatcher"/> host assembly is updated.  For
+    /// plugins this is done by declaring a <see cref="PluginPatcher"/> but there can be Type loading errors or other Exceptions around locating databases that must
+    /// be patched, this event system supports reporting those.</para>
     /// </summary>
     public class PluginPatcherFoundEventArgs
     {
