@@ -138,10 +138,6 @@
       <Project>{27bdabce-8fef-48d9-bad6-8e280b13adf5}</Project>
       <Name>PluginPackager</Name>
     </ProjectReference>
-    <ProjectReference Include="..\..\Tools\Tests\RDMPAutomationServiceTests\RDMPAutomationServiceTests.csproj">
-      <Project>{33cdfc10-6e3a-44c1-b29c-caf77d846421}</Project>
-      <Name>RDMPAutomationServiceTests</Name>
-    </ProjectReference>
     <ProjectReference Include="..\..\Validation\HIC.Common.Validation\HIC.Common.Validation.csproj">
       <Project>{79730f00-359a-496d-84c5-8cf9c62a51ea}</Project>
       <Name>HIC.Common.Validation</Name>

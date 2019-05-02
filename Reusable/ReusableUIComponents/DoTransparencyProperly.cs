@@ -4,18 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Helper for positioning controls on top of one another (with transparent backgrounds)
+    /// </summary>
     public class DoTransparencyProperly
     {
+        /// <summary>
+        /// Positions <paramref name="controlThatHovers"/> on top of <paramref name="whatItHoversOver"/> and
+        /// sets the background colour of the <see cref="controlThatHovers"/> to Transparent.
+        /// </summary>
+        /// <param name="controlThatHovers"></param>
+        /// <param name="whatItHoversOver"></param>
         public static void ThisHoversOver(Control controlThatHovers, Control whatItHoversOver)
         {
             controlThatHovers.BackColor = Color.Transparent;

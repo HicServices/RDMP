@@ -1,0 +1,29 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.QueryBuilding;
+
+namespace Rdmp.UI.ExtractionUIs.FilterUIs.Options
+{
+    /// <summary>
+    /// Input object for <see cref="ExtractionFilterUI"/>.  Determines which parameters should be presented and which
+    /// tables are available for autocomplete etc.
+    /// </summary>
+    public abstract class FilterUIOptions
+    {
+        protected IFilter Filter;
+
+        protected FilterUIOptions(IFilter filter)
+        {
+            Filter = filter;
+        }
+
+        public abstract ITableInfo[] GetTableInfos();
+        public abstract ISqlParameter[] GetGlobalParametersInFilterScope();
+        public abstract IColumn[] GetIColumnsInFilterScope();
+    }
+}

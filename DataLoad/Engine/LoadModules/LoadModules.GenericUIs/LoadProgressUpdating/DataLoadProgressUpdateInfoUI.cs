@@ -5,17 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Data;
 using System.Drawing;
 using System.Windows.Forms;
-using System.Windows.Forms.VisualStyles;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using LoadModules.Generic.LoadProgressUpdating;
-using Microsoft.SqlServer.Server;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
+using Rdmp.Core.Repositories;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

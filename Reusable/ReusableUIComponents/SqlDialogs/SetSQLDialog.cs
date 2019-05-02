@@ -7,7 +7,6 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
-using ReusableLibraryCode;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;

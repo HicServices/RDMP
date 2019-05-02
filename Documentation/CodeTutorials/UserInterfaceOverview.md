@@ -283,7 +283,7 @@ When your UI has an object in an illegal state or causing a crash/error message 
 
 - [ ] Does UI have a `<summary>` tag that makes sense to the user when they hit F1
 - [ ] Do all subcomponents that are not immediately obvious have a Help (See `CommonFunctionality.AddHelp`)
-- [ ] Is there a Unit test under `UserInterfaceTests` namespace
+- [ ] Is there a Unit test in `Rdmp.UI.Tests` namespace
   
 
 

@@ -8,6 +8,9 @@ using System.Windows.Forms;
 
 namespace ReusableUIComponents.Theme
 {
+    /// <summary>
+    /// Interface for classes who can apply a look and feel to tool strips/menus
+    /// </summary>
     public interface ITheme
     {
         void ApplyTo(ToolStrip item);

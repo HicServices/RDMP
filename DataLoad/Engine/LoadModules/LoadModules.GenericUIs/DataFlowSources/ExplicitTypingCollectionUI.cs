@@ -6,18 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.ComponentModel.Composition;
-using System.Data;
-using System.Drawing;
-using System.Runtime.Remoting.Messaging;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Repositories;
-using LoadModules.Generic.DataFlowSources;
-using ReusableUIComponents;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.DataLoad.Modules.DataFlowSources;
+using Rdmp.Core.Repositories;
 using ReusableUIComponents.Dialogs;
 
 

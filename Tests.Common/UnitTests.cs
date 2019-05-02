@@ -9,35 +9,31 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using ANOStore.Database;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cache;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Cohort.Joinables;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Governance;
-using CatalogueLibrary.Data.ImportExport;
-using CatalogueLibrary.Data.Pipelines;
-using CatalogueLibrary.Data.Remoting;
-using CatalogueLibrary.Repositories;
-using DatabaseCreation;
-using DataExportLibrary.Data;
-using DataExportLibrary.Data.DataTables;
-using DataExportLibrary.Data.LinkCreators;
-using DataExportLibrary.DataRelease;
-using DataExportLibrary.DataRelease.Audit;
-using DataExportLibrary.DataRelease.Potential;
-using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
-using LoadModules.Generic.DataFlowOperations;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Governance;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataRelease;
+using Rdmp.Core.DataExport.DataRelease.Audit;
+using Rdmp.Core.DataExport.DataRelease.Potential;
+using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
+using Rdmp.Core.Repositories;
 
 namespace Tests.Common
 {
@@ -115,7 +111,7 @@ namespace Tests.Common
 
             if (typeof(T) == typeof(ExternalDatabaseServer))
             {
-                return (T)(object)Save(new ExternalDatabaseServer(Repository, "My Server"));
+                return (T)(object)Save(new ExternalDatabaseServer(Repository, "My Server",null));
             }
 
             if (typeof(T) == typeof(ANOTable))
@@ -235,15 +231,15 @@ namespace Tests.Common
                 return (T)(object)joinable.AddUser(config);
             }
             
-            if (typeof (T) == typeof(Plugin))
-                return (T)(object)new Plugin(Repository,new FileInfo("bob.zip"));
+            if (typeof (T) == typeof(Rdmp.Core.Curation.Data.Plugin))
+                return (T)(object)new Rdmp.Core.Curation.Data.Plugin(Repository,new FileInfo("bob.zip"));
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
                 var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.dll");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
-                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Plugin>());
+                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>());
             }
             
             if (typeof (T) == typeof(AggregateContinuousDateAxis))
@@ -440,7 +436,16 @@ namespace Tests.Common
                 return (T)(object)new ProjectCohortIdentificationConfigurationAssociation(Repository,WhenIHaveA<Project>(),WhenIHaveA<CohortIdentificationConfiguration>());
             
             if (typeof (T) == typeof(ExternalCohortTable))
-                return (T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer);
+                return Save((T)(object)new ExternalCohortTable(Repository,"My cohorts",DatabaseType.MicrosoftSQLServer)
+                {
+                    Database="MyCohortsDb",
+                    DefinitionTableForeignKeyField = "c_id",
+                    PrivateIdentifierField = "priv",
+                    ReleaseIdentifierField = "rel",
+                    TableName = "Cohorts",
+                    DefinitionTableName = "InventoryTable",
+                    Server = "localhost\\sqlexpress"
+                });
 
             if (typeof (T) == typeof(ExtractableCohort))
                 throw new NotSupportedException("You should inherit from TestsRequiringACohort instead, cohorts have to exist to be constructed");
@@ -481,7 +486,7 @@ namespace Tests.Common
                 return (T)(object)filter.GetFilterFactory().CreateNewParameter(filter, "DECLARE @had as varchar(100)");
             }
             
-            throw new TestCaseNotWrittenYetException();
+            throw new TestCaseNotWrittenYetException(typeof(T));
         }
 
         private void WhenIHaveTwoTables(out ColumnInfo col1, out ColumnInfo col2, out ColumnInfo col3)
@@ -537,7 +542,7 @@ namespace Tests.Common
         /// <inheritdoc cref="WhenIHaveA{T}()"/>
         protected ANOTable WhenIHaveA<T>(out ExternalDatabaseServer server) where T : ANOTable
         {
-            server = new ExternalDatabaseServer(Repository, "ANO Server", typeof(Class1).Assembly);
+            server = new ExternalDatabaseServer(Repository, "ANO Server", new ANOStorePatcher());
             var anoTable = new ANOTable(Repository, server, "ANOFish", "F");
             return anoTable;
         }

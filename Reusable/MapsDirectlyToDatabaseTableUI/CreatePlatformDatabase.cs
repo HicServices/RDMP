@@ -7,15 +7,13 @@
 using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Reflection;
 using System.Threading;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Repositories;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
 using ReusableUIComponents.SqlDialogs;
 
@@ -64,10 +62,9 @@ namespace MapsDirectlyToDatabaseTableUI
         /// <summary>
         /// Calls the main constructor but passing control of what scripts to extract to the Patch class
         /// </summary>
-        /// <param name="databaseAssembly">A database hosting assembly e.g. ANOStore.Database, use typeof(ANOStore.Database.Class1).Assembly to populate this parameter</param>
-        public CreatePlatformDatabase(Assembly databaseAssembly)
-            : this(Patch.GetInitialCreateScriptContents(databaseAssembly),
-            "1.0.0.0", Patch.GetAllPatchesInAssembly(databaseAssembly))
+        public CreatePlatformDatabase(IPatcher patcher)
+            : this(Patch.GetInitialCreateScriptContents(patcher),
+            "1.0.0.0", Patch.GetAllPatchesInAssembly(patcher))
         {
         }
 
@@ -174,16 +171,16 @@ namespace MapsDirectlyToDatabaseTableUI
             
         }
 
-        public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, Assembly databaseAssembly)
+        public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, IPatcher patcher)
         {
 
-            CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(databaseAssembly);
+            CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(patcher);
             createPlatform.ShowDialog();
 
             if (!string.IsNullOrWhiteSpace(createPlatform.DatabaseConnectionString))
             {
                 SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(createPlatform.DatabaseConnectionString);
-                var newServer = new ExternalDatabaseServer(repository, builder.InitialCatalog, databaseAssembly);
+                var newServer = new ExternalDatabaseServer(repository, builder.InitialCatalog, patcher);
 
                 newServer.Server = builder.DataSource;
                 newServer.Database = builder.InitialCatalog;

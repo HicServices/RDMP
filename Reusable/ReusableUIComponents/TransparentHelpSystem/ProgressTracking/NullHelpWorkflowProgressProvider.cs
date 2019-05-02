@@ -6,6 +6,9 @@
 
 namespace ReusableUIComponents.TransparentHelpSystem.ProgressTracking
 {
+    /// <summary>
+    /// Implementation of <see cref="IHelpWorkflowProgressProvider"/> which always returns true (show workflow).
+    /// </summary>
     public class NullHelpWorkflowProgressProvider : IHelpWorkflowProgressProvider
     {
         public bool ShouldShowUserWorkflow(HelpWorkflow workflow)

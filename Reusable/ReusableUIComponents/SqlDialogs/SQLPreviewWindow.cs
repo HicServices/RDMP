@@ -8,7 +8,6 @@ using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using ReusableUIComponents.ScintillaHelper;
-using ScintillaNET;
 
 namespace ReusableUIComponents.SqlDialogs
 {

@@ -6,29 +6,24 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
-using DataExportLibrary.Data.DataTables;
-using DataLoadEngine.Checks;
-using DataLoadEngine.Checks.Checkers;
-using DataLoadEngine.DatabaseManagement.EntityNaming;
-using DataLoadEngine.LoadExecution;
-using DataLoadEngine.LoadProcess;
 using FAnsi;
 using FAnsi.Discovery;
-using LoadModules.Generic.Attachers;
-using LoadModules.Generic.Mutilators;
 using Diagnostics.TestData;
-using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataLoad.Engine.Checks;
+using Rdmp.Core.DataLoad.Engine.Checks.Checkers;
+using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Engine.LoadProcess;
+using Rdmp.Core.DataLoad.Modules.Attachers;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
@@ -177,7 +172,7 @@ namespace Diagnostics
 
                     if(create)
                     {
-                        var raw = new ExternalDatabaseServer(RepositoryLocator.CatalogueRepository, "RAW");
+                        var raw = new ExternalDatabaseServer(RepositoryLocator.CatalogueRepository, "RAW",null);
                         raw.Server = _discoveredServerToCreateRawDataOn.Name;
                         raw.Username = builder.UserID;
                         raw.Password = builder.Password;
@@ -620,7 +615,7 @@ namespace Diagnostics
             try
             {
                 //Create new external server
-                var newServer = new ExternalDatabaseServer(repository, nameForServer)
+                var newServer = new ExternalDatabaseServer(repository, nameForServer,null)
                 {
                     Server = discoveredDatabase.Server.Name,
                     Database = discoveredDatabase.GetRuntimeName()

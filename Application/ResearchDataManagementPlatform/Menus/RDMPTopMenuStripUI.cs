@@ -7,47 +7,35 @@
 using System;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.Reports;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.FindAndReplace;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.LocationsMenu.Ticketing;
-using CatalogueManager.MainFormUITabs;
-using CatalogueManager.PluginManagement;
-using CatalogueManager.PluginManagement.CodeGeneration;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.NavigateTo;
-using CatalogueManager.SimpleDialogs.Reports;
-using CatalogueManager.TestsAndSetup;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Theme;
-using CatalogueManager.Tutorials;
-using CohortManager.CommandExecution.AtomicCommands;
-using DataExportLibrary.Data.DataTables;
-using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
-using DataQualityEngine;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Reports;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
+using Rdmp.UI.FindAndReplace;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.LocationsMenu.Ticketing;
+using Rdmp.UI.MainFormUITabs;
+using Rdmp.UI.PluginManagement;
+using Rdmp.UI.PluginManagement.CodeGeneration;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.NavigateTo;
+using Rdmp.UI.SimpleDialogs.Reports;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Tutorials;
 using ResearchDataManagementPlatform.Menus.MenuItems;
 using ResearchDataManagementPlatform.WindowManagement;
-using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Settings;
@@ -183,12 +171,12 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
+            var report = new DocumentationReportDatabaseEntities();
             report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
                 new PopupChecksUI("Generating class summaries", false),
                 Activator.CoreIconProvider,
-                typeof(Catalogue).Assembly,
-                typeof(ExtractionConfiguration).Assembly);
+                Activator.RepositoryLocator.CatalogueRepository.MEF,
+                true);
         }
 
         private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)

@@ -7,9 +7,8 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.Reports;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using WeifenLuo.WinFormsUI.Docking;

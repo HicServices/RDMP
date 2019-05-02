@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ReusableUIComponents
 {

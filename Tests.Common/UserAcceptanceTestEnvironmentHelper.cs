@@ -6,8 +6,8 @@
 
 using System;
 using System.Data.SqlClient;
-using CatalogueLibrary.Repositories;
 using Diagnostics;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
 namespace Tests.Common

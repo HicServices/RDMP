@@ -4,14 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.ComponentModel;
 using System.Drawing;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs.Reports;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.SimpleControls;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.Menus.MenuItems;
 using ReusableUIComponents;

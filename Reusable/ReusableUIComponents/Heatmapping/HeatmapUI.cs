@@ -5,16 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows;
 using System.Windows.Forms;
-using System.Windows.Media;
 using ReusableUIComponents.Dialogs;
 using Brushes = System.Drawing.Brushes;
 using Color = System.Drawing.Color;
@@ -282,7 +277,7 @@ namespace ReusableUIComponents.Heatmapping
                     double lastAxisStart = -500;
                     double lastAxisLabelWidth = -500;
 
-                    var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : FormsHelper.GetVisibleArea(this);
+                    var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
                     
                     
                     int visibleClipBoundsTop = visibleArea.Top;

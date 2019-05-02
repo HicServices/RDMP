@@ -10,10 +10,19 @@ using System.Drawing;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Creates <see cref="Icon"/> instances based on provided <see cref="Bitmap"/> (with support for caching).
+    /// </summary>
     public class IconFactory
     {
         private readonly Dictionary<Bitmap, Icon> _iconDictionary = new Dictionary<Bitmap, Icon>();
 
+        /// <summary>
+        /// Returns an <see cref="Icon"/> depicting the provided <paramref name="bmp"/>.  Calling this
+        /// method multiple times with the same <see cref="Bitmap"/> will return the same <see cref="Icon"/> instance.
+        /// </summary>
+        /// <param name="bmp"></param>
+        /// <returns></returns>
         public Icon GetIcon(Bitmap bmp)
         {
             if (_iconDictionary.ContainsKey(bmp))

@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using CatalogueLibrary.Repositories.Construction;
-using CatalogueManager.ItemActivation;
+using Rdmp.Core.Repositories.Construction;
+using Rdmp.UI.ItemActivation;
 
 namespace ResearchDataManagementPlatform.WindowManagement
 {

@@ -5,11 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -417,34 +414,20 @@ INSERT INTO [RoundhousE].[ScriptsRun]
         /// <summary>
         /// Creates a new platform database and patches it
         /// </summary>
-        /// <param name="hostAssembly">The HOST assembly (not the databas assembly) e.g. if you want to create and patch CatalogueLibrary.Database then pass in typeof(Catalogue).Assembly instead</param>
+        /// <param name="hostAssembly">The HOST assembly (not the database assembly) e.g. if you want to create and patch CatalogueLibrary.Database then pass in typeof(Catalogue).Assembly instead</param>
+        /// <param name="subdirectory">Subdirectory embedded resources are in (e.g. "CatalogueDatabase") </param>
         /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
-        public void CreateAndPatchDatabase(Assembly hostAssembly, ICheckNotifier notifier)
+        public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
-            var databaseAssembly = GetDatabaseAssemblyForHost(hostAssembly);
-            string sql = Patch.GetInitialCreateScriptContents(databaseAssembly);
+            string sql = Patch.GetInitialCreateScriptContents(patcher);
 
             //get everything in the /up/ folder that are .sql
-            var patches = Patch.GetAllPatchesInAssembly(databaseAssembly);
+            var patches = Patch.GetAllPatchesInAssembly(patcher);
 
             CreateDatabase(sql, "1.0.0.0", notifier);
             PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
         }
-        /// <summary>
-        /// Creates a new platform database and patches it
-        /// </summary>
-        /// <param name="dotDatabaseAssembly"></param>
-        /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
-        public void CreateAndPatchDatabaseWithDotDatabaseAssembly(Assembly dotDatabaseAssembly, ICheckNotifier notifier)
-        {
-            string sql = Patch.GetInitialCreateScriptContents(dotDatabaseAssembly);
 
-            //get everything in the /up/ folder that are .sql
-            var patches = Patch.GetAllPatchesInAssembly(dotDatabaseAssembly);
-
-            CreateDatabase(sql, "1.0.0.0", notifier);
-            PatchDatabase(patches, notifier, (p) => true);//apply all patches without question
-        }
         /// <summary>
         /// Gets the dll called MyAssembly.Database.dll when passed the assembly MyAssembly.dll for this to work MyAssembly.dll must have a reference to MyAssembly.Database.dll and use it
         /// so that it gets compiled and included wherever MyAssembly.dll is used

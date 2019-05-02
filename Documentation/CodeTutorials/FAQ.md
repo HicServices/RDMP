@@ -23,6 +23,7 @@
    1. [What is a Catalogue?](#whatisacatalogue)
    1. [Can I share/export/import my dataset metadata?](#sharing)
    1. [Is there a Data Quality Engine?](#dqe)
+   4. [How do I create a Catalogue from 2+ tables?](#2tablecatalogues)
 1. User Interface Programming
    1. [How are user interfaces implemented in RDMP?](#uioverview)
    1. [Whats with the _Design user interface classes?](#abstractDesignerPattern)
@@ -36,10 +37,10 @@
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface (CLI)
-Yes, the [RDMPAutomationService](../../Tools/RDMPAutomationService/) program allows command line execution of all major engines in RDMP (Caching / Data Load / Cohort Creation / Extraction and Release).  To access the CLI command line help system run:
+Yes, the [rdmp](./../../Tools/rdmp/) program allows command line execution of all major engines in RDMP (Caching / Data Load / Cohort Creation / Extraction and Release).  To access the CLI command line help system run:
 
 ```
-RDMPAutomationService.exe --help
+rdmp.exe --help
 ```
 
 For help on each engine (verb) on the command line enter the verb (listed by the main --help command) followed by --help e.g.:
@@ -326,6 +327,30 @@ An example .dita file is shown below:
 <a name="dqe"></a>
 ### Is there a Data Quality Engine?
 Yes.  You can read more about the DQE in the [technical implementation](./Validation.md) or (from a user perspective) in the [User Manual](../UserManual.docx).
+
+
+<a name="2tablecatalogues"></a>
+## How do I create a Catalogue from 2+ tables?
+
+Start by importing the Tables as normal (but do not create a Catalogue).  Double click the topmost table and check 'Is Primary Extraction Table'.
+
+![How to set IsPrimaryExtractionTable on a TableInfo](Images/FAQ/SetIsPrimaryExtractionTable.png) 
+
+Next right click the topmost table and select 'Configure JoinInfo Where...'.  In this window add the child table to join to and drag the column(s) that should be used to join. 
+
+You can configure a `collation` (if required) and join direction (LEFT / RIGHT / INNER)
+
+![How to add a JoinInfo between two TableInfo](Images/FAQ/AddJoinInfo.png) 
+
+Now we have configured the technical layer we can create our `Catalogue`.  Create a new Catalogue by right clicking in the Catalogues collection
+
+![How to create a new empty Catalogue](Images/FAQ/CreateNewEmptyCatalogue.png) 
+
+Then right click each Table in turn and select `Create New Catalogue...` but instead of closing the dialog with 'Ok' instead click 'Add To Existing Catalogue' (After configuring column extractability).
+
+![How to add to existing Catalogue instead of creating a fresh one](Images/FAQ/ConfigureExtractabilityAddToExistingCatalogue.png) 
+
+You can check that you have configured the join correctly by right clicking the Catalogue and selecting `View Catalogue Extraction Sql`
 
 ## User Interface Programming
 

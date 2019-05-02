@@ -1,0 +1,86 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="SpontaneousObjects are 'memory only' versions of IMapsDirectlyToDatabaseTable classes which throw NotSupportedException on any attempt to persist / delete them etc but which you can initialize and set properties on towards your own nefarious ends.&#xD;&#xA;&#xD;&#xA;E.g. lets say during the course of your programming you want to bolt another container and filter onto an AggregateContainer (in your Catalogue) then you can SpontaneouslyInventedFilterContainer, put the AggregateContainer into it and create a SpontaneouslyInventedFilter along side it.  Then pass the Sponted container to an ISqlQueryBuilder and watch it treat it just like any other normal collection of (database based) filters / containers.&#xD;&#xA;&#xD;&#xA;SpontaneousObjects all have NEGATIVE IDs which are randomly generated, this lets the RDMP software use ID for object equality without getting confused but prevents the system from ever accidentally saving a SpontaneousObject into a data table in the Catalogue&#xD;&#xA;">
+    <Position X="8.885" Y="0.5" Height="2.229" Width="6.533" />
+  </Comment>
+  <Class Name="Rdmp.Core.Curation.Data.Spontaneous.SpontaneouslyInventedFilterContainer" Collapsed="true">
+    <Position X="3.5" Y="3.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Curation\Data\Spontaneous\SpontaneouslyInventedFilterContainer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Spontaneous.SpontaneousObject" Collapsed="true">
+    <Position X="7" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAIAAAAAAA=</HashCode>
+      <FileName>Curation\Data\Spontaneous\SpontaneousObject.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Spontaneous.SpontaneouslyInventedAggregateTopX" Collapsed="true">
+    <Position X="5.5" Y="4.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAgAAAAAg=</HashCode>
+      <FileName>Curation\Data\Spontaneous\SpontaneouslyInventedAggregateTopX.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Spontaneous.SpontaneouslyInventedArgument" Collapsed="true">
+    <Position X="8.75" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>ABQAAAAAAAAgAgAAAgAAAAQAAAAAAAAQASAgAAAAAAA=</HashCode>
+      <FileName>Curation\Data\Spontaneous\SpontaneouslyInventedArgument.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Spontaneous.SpontaneouslyInventedPermissionWindow" Collapsed="true">
+    <Position X="11.5" Y="4.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAACAgAAAAAAAAAAQAAAAAAAACFAAAAAABABA=</HashCode>
+      <FileName>Curation\Data\Spontaneous\SpontaneouslyInventedPermissionWindow.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Spontaneous.SpontaneouslyInventedSqlParameter" Collapsed="true">
+    <Position X="22.25" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAgAAAgEEAAAAAAAACAAAAAAAAAAABAAAAAgEAAAAAA=</HashCode>
+      <FileName>Curation\Data\Spontaneous\SpontaneouslyInventedSqlParameter.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Providers.Nodes.PipelineNodes.PipelineCompatibleWithUseCaseNode" Collapsed="true">
+    <Position X="2.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAACABAAAAAEgAQAAAAAAAAAAIgAAAAAAAACAAA=</HashCode>
+      <FileName>Providers\Nodes\PipelineNodes\PipelineCompatibleWithUseCaseNode.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.AggregateCountColumn" Collapsed="true">
+    <Position X="14.75" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAEAAAgAEBJAAAAAAgAAAAACABQAEACAAAAAQAAAAAA=</HashCode>
+      <FileName>QueryBuilding\AggregateCountColumn.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.ColumnInfoToIColumn" Collapsed="true">
+    <Position X="17.25" Y="4.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>BAEAAAgAAAJAAAAAAAAAAAACABAAAACAAAABQAAAAAA=</HashCode>
+      <FileName>QueryBuilding\ColumnInfoToIColumn.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.ReleaseIdentifierSubstitution" Collapsed="true">
+    <Position X="19.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>BAEAAAgAAAJAAAAAAAAAAAACABAABACAAAAAQAAACAA=</HashCode>
+      <FileName>QueryBuilding\ReleaseIdentifierSubstitution.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

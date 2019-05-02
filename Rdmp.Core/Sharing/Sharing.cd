@@ -1,0 +1,85 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Used to Serialize DatabaseEntity objects as pointers">
+    <Position X="5" Y="1" Height="0.313" Width="3.283" />
+  </Comment>
+  <Comment CommentText="Used to Deserialize objects which have no blank constructors.  Pass array of objects it will pick the most compatible constructor but won't nessesarily use all the objects.  Also supports invoking AfterConstructor callback if you implement IPickAnyConstructorFinishedCallback">
+    <Position X="5.104" Y="2.354" Height="1.229" Width="3.919" />
+  </Comment>
+  <Comment CommentText="Structure Serialization ">
+    <Position X="1" Y="0.5" Height="0.333" Width="10.7" />
+  </Comment>
+  <Comment CommentText="DatabaseEntity Sharing/Transmission/Import">
+    <Position X="1.354" Y="5.781" Height="0.333" Width="10.304" />
+  </Comment>
+  <Comment CommentText="Find Minimum Share Network for object">
+    <Position X="1.375" Y="6.333" Height="0.333" Width="2.783" />
+  </Comment>
+  <Comment CommentText="Generate Export GUIDs">
+    <Position X="4.354" Y="6.729" Height="0.333" Width="2.346" />
+  </Comment>
+  <Comment CommentText="Write Properties to Stream">
+    <Position X="7.021" Y="7.156" Height="0.333" Width="2.346" />
+  </Comment>
+  <Comment CommentText="Remote Import (is Update? is New? is Mixture?)">
+    <Position X="9.542" Y="7.688" Height="0.333" Width="2.96" />
+  </Comment>
+  <Comment CommentText="To refactor:">
+    <Position X="1.333" Y="10.135" Height="0.333" Width="10.304" />
+  </Comment>
+  <Comment CommentText="Remove from all DatabaseEntity objects on the grounds that Gatherer is intended to do a better job">
+    <Position X="2.354" Y="13.667" Height="0.333" Width="5.908" />
+  </Comment>
+  <Class Name="Rdmp.Core.Curation.Data.Serialization.JsonConvertExtensions">
+    <Position X="2.25" Y="1.75" Width="2" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Serialization.DatabaseEntityJsonConverter" Collapsed="true">
+    <Position X="5.5" Y="1.5" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Serialization.PickAnyConstructorJsonConverter" Collapsed="true">
+    <Position X="5.5" Y="3.75" Width="3" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Sharing.Dependency.Gathering.Gatherer" Collapsed="true">
+    <Position X="2" Y="6.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAACAAIAAAABAAAAAAAAAAAAACAAAAEAAAAAQ=</HashCode>
+      <FileName>Dependency\Gathering\Gatherer.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.ImportExport.ShareManager" Collapsed="true">
+    <Position X="4.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Sharing.Dependency.Gathering.GatheredObject" Collapsed="true">
+    <Position X="2" Y="8" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAABAAAACggAAAAEAIQAAAAIAAAAAAQAAAAiA=</HashCode>
+      <FileName>Dependency\Gathering\GatheredObject.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.ImportExport.ObjectExport" Collapsed="true">
+    <Position X="4.75" Y="8" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.ImportExport.ObjectImport" Collapsed="true">
+    <Position X="10.5" Y="8.75" Width="1.5" />
+    <TypeIdentifier />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Serialization.JsonCompatibleDictionary&lt;TK, TV&gt;" Collapsed="true">
+    <Position X="9" Y="1.5" Width="3" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="Rdmp.Core.Curation.Data.Serialization.IPickAnyConstructorFinishedCallback">
+    <Position X="5.5" Y="4.5" Width="3" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="ReusableLibraryCode.IHasDependencies" Collapsed="true">
+    <Position X="2.25" Y="13" Width="2.75" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

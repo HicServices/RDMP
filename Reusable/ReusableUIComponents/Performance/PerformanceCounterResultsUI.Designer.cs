@@ -38,7 +38,6 @@ namespace ReusableUIComponents.Performance
             this.cbVerbose = new System.Windows.Forms.CheckBox();
             this.label1 = new System.Windows.Forms.Label();
             this.tbFilter = new System.Windows.Forms.TextBox();
-            this.btnShowNetwork = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.tlvLocations)).BeginInit();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
@@ -79,7 +78,6 @@ namespace ReusableUIComponents.Performance
             // 
             // groupBox1
             // 
-            this.groupBox1.Controls.Add(this.btnShowNetwork);
             this.groupBox1.Controls.Add(this.cbVerbose);
             this.groupBox1.Controls.Add(this.label1);
             this.groupBox1.Controls.Add(this.tbFilter);
@@ -124,17 +122,6 @@ namespace ReusableUIComponents.Performance
             this.tbFilter.TabIndex = 1;
             this.tbFilter.TextChanged += new System.EventHandler(this.tbFilter_TextChanged);
             // 
-            // btnShowNetwork
-            // 
-            this.btnShowNetwork.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnShowNetwork.Location = new System.Drawing.Point(917, 667);
-            this.btnShowNetwork.Name = "btnShowNetwork";
-            this.btnShowNetwork.Size = new System.Drawing.Size(103, 23);
-            this.btnShowNetwork.TabIndex = 4;
-            this.btnShowNetwork.Text = "Show Network";
-            this.btnShowNetwork.UseVisualStyleBackColor = true;
-            this.btnShowNetwork.Click += new System.EventHandler(this.btnShowNetwork_Click);
-            // 
             // PerformanceCounterResultsUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -158,6 +145,5 @@ namespace ReusableUIComponents.Performance
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.CheckBox cbVerbose;
-        private System.Windows.Forms.Button btnShowNetwork;
     }
 }

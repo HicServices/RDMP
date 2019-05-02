@@ -6,18 +6,18 @@
 #To achieve this, you can run DatabaseCreation.exe with argument 1 being your ServerName
 #You can apply a prefix e.g. TEST_ as an argument to DatabaseCreation.exe and include that prefix below if you like
 
-ServerName:localhost\sqlexpress
-Prefix:TEST_
-MySql:Server=localhost;Uid=root;Pwd=zombie;SSL-Mode=None
-Oracle:Data Source=localhost:1521/orclpdb.dundee.uni;User Id=ora;Password=zombie;
+ServerName:	localhost\sqlexpress
+Prefix:	TEST_
+MySql:	Server=localhost;Uid=root;Pwd=zombie;SSL-Mode=None
+Oracle:	Data Source=localhost:1521/orclpdb.dundee.uni;User Id=ora;Password=zombie;
 
 #User accounts you can create with limited access rights (e.g. connect list databases etc).  These users will be used in low privilege tests
 #The account will be granted limited read/write access to databases on a per test basis (See DatabaseTests.SetupLowPrivilegeUserRightsFor)
 #If you leave these commented out the associated tests will be Inconclusive
 
-SqlServerLowPrivilegeUsername:minion
-SqlServerLowPrivilegePassword:minionPass
-#MySqlLowPrivilegeUsername:minion
-#MySqlLowPrivilegePassword:minionPass
-#OracleLowPrivilegeUsername:minion
-#OracleLowPrivilegePassword:minionPass
+SqlServerLowPrivilegeUsername:	minion
+SqlServerLowPrivilegePassword:	minionPass
+#MySqlLowPrivilegeUsername:	minion
+#MySqlLowPrivilegePassword:	minionPass
+#OracleLowPrivilegeUsername:	minion
+#OracleLowPrivilegePassword:	minionPass
