@@ -18,7 +18,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
     /// semi real and exhibit peculiarities common to medical records.  The slider is exponential so if you drag it all the way to the top expect to wait for a weekend for it to generate
     /// all the data.
     /// </summary>
-    public partial class ExerciseTestDataGeneratorUI : UserControl, IDataLoadEventListener
+    public partial class ExerciseTestDataGeneratorUI : UserControl
     {
 
         public ExerciseTestDataGeneratorUI()
@@ -33,10 +33,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             set
             {
                 _generator = value;
+
+                if(value != null)
+                    value.RowsGenerated += ValueOnRowsGenerated;
+
                 lblName.Text = value != null ? value.GetName():"";
             }
         }
-
+        
         public int GetSize()
         {
             return 10* (int)Math.Pow(10, trackBar1.Value);
@@ -58,28 +62,23 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
             var fi = new FileInfo(Path.Combine(target.FullName, Generator.GetName() + ".csv"));
 
-            Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration, this));
+            Thread = new Thread(() => Generator.GenerateTestDataFile(cohort, fi, sizeAtBeginGeneration));
             Thread.Start();
 
         }
-
-        public void OnNotify(object sender, NotifyEventArgs e)
-        {
-            
-        }
-
-        public void OnProgress(object sender, ProgressEventArgs e)
+        
+        private void ValueOnRowsGenerated(object sender, RowsGeneratedEventArgs e)
         {
             if (InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => OnProgress(sender, e)));
+                Invoke(new MethodInvoker(() => ValueOnRowsGenerated(sender, e)));
                 return;
             }
 
-            double percentProgress = e.Progress.Value/(double)sizeAtBeginGeneration * 100.0;
+            double percentProgress = e.RowsWritten/(double)sizeAtBeginGeneration * 100.0;
             progressBar1.Value = (int)percentProgress;
 
-            if (progressBar1.Value == 100)
+            if (e.IsFinished)
                 if (Completed != null)
                     Completed();
         }

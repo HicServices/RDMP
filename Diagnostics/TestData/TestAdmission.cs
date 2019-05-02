@@ -8,7 +8,7 @@ using System;
 
 namespace Diagnostics.TestData
 {
-    class TestAdmission
+    public class TestAdmission
     {
 
         public const string AdmissionDateDescription = "The time and date that the (fictional) patient attended the hospital";

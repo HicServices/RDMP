@@ -25,14 +25,23 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
 
             var f =new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPeople.csv"));
             
-            var messages = new ToMemoryDataLoadEventListener(true);
-
+            bool finished = false;
+            int finishedWithRecords = -1;
+            
+            
             DemographyExerciseTestData demog = new DemographyExerciseTestData();
-            demog.GenerateTestDataFile(people, f, numberOfRecords, messages);
+            demog.RowsGenerated += (s, e) =>
+            {
+                finished = e.IsFinished;
+                finishedWithRecords = e.RowsWritten;
+            };
+
+            demog.GenerateTestDataFile(people, f, numberOfRecords);
 
             //one progress task only, should have reported craeting 10,000 rows
-            Assert.AreEqual(numberOfRecords
-                ,messages.LastProgressRecieivedByTaskName[messages.LastProgressRecieivedByTaskName.Keys.Single()].Progress.Value);
+            //one progress task only, should have reported creating the correct number of rows
+            Assert.IsTrue(finished);
+            Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
             Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
 

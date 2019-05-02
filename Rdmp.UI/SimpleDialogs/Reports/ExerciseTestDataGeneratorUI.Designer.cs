@@ -2,7 +2,7 @@
 
 namespace Rdmp.UI.SimpleDialogs.Reports
 {
-    partial class ExerciseTestDataGeneratorUI : IDataLoadEventListener
+    partial class ExerciseTestDataGeneratorUI
     {
         /// <summary> 
         /// Required designer variable.

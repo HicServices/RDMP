@@ -11,6 +11,7 @@ using Diagnostics.TestData;
 using NUnit.Framework;
 using ReusableLibraryCode;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace ReusableCodeTests
 {

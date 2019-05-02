@@ -14,6 +14,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
 {

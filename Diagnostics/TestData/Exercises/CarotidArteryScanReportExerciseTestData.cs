@@ -17,7 +17,7 @@ namespace Diagnostics.TestData.Exercises
         private Random r = new Random();
         private int id = 0;
 
-        protected override object[] GenerateTestDataRow(TestPerson p)
+        public override object[] GenerateTestDataRow(TestPerson p)
         {
             object[] results = new object[68];
             

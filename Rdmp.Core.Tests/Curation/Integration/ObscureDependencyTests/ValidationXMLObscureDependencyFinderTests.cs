@@ -17,6 +17,7 @@ using Rdmp.Core.Validation.Dependency;
 using Rdmp.Core.Validation.Dependency.Exceptions;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
 {

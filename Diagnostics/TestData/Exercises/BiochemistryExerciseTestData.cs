@@ -13,14 +13,14 @@ namespace Diagnostics.TestData.Exercises
     {
         private Random r = new Random();
 
-        protected override object[] GenerateTestDataRow(TestPerson p)
+        public override object[] GenerateTestDataRow(TestPerson p)
         {
             object[] results = new object[10];
 
             TestBiochemistrySample randomSample = new TestBiochemistrySample(r);
             
             results[0] = p.CHI;
-            results[1] = BulkTestsData.GetRandomLetter(true, r);
+            results[1] = GetRandomLetter(true, r);
             results[2] = p.GetRandomDateDuringLifetime(r);
             results[3] = randomSample.Sample_type;
             results[4] = randomSample.Test_code;

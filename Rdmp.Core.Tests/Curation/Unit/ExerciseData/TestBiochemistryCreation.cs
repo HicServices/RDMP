@@ -27,14 +27,21 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
 
             var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestBiochemistry.csv"));
 
-            var messages = new ToMemoryDataLoadEventListener(true);
+            bool finished = false;
+            int finishedWithRecords = -1;
 
             BiochemistryExerciseTestData biochem = new BiochemistryExerciseTestData();
-            biochem.GenerateTestDataFile(people, f, numberOfRecords, messages);
+            biochem.RowsGenerated += (s, e) =>
+            {
+                finished = e.IsFinished;
+                finishedWithRecords = e.RowsWritten;
+            };
 
-            //one progress task only, should have reported craeting 10,000 rows
-            Assert.AreEqual(numberOfRecords
-                , messages.LastProgressRecieivedByTaskName[messages.LastProgressRecieivedByTaskName.Keys.Single()].Progress.Value);
+            biochem.GenerateTestDataFile(people, f, numberOfRecords);
+
+            //one progress task only, should have reported creating the correct number of rows
+            Assert.IsTrue(finished);
+            Assert.AreEqual(numberOfRecords, finishedWithRecords);
 
             Assert.GreaterOrEqual(File.ReadAllLines(f.FullName).Length, numberOfRecords);//can be newlines in middle of file
 

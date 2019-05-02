@@ -13,6 +13,7 @@ using Diagnostics;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.DatabaseCreation;
+using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;

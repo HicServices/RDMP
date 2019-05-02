@@ -13,7 +13,7 @@ namespace Diagnostics.TestData.Exercises
     {
         Random r = new Random();
 
-        protected override object[] GenerateTestDataRow(TestPerson p)
+        public override object[] GenerateTestDataRow(TestPerson p)
         {
             object[] values = new object[11];
 

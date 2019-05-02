@@ -19,8 +19,11 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
-namespace Diagnostics
+namespace Rdmp.Core.Curation.Checks
 {
+    /// <summary>
+    /// Checks that the table definitions match the class definitions for all <see cref="DatabaseEntity"/>
+    /// </summary>
     public class MissingFieldsChecker : ICheckable
     {
         private readonly CatalogueRepository _catalogueRepository;

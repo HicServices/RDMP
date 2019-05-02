@@ -13,15 +13,15 @@ using System.Linq;
 using System.Text;
 using CsvHelper;
 using MathNet.Numerics.Distributions;
-using ReusableLibraryCode.Progress;
 
 namespace Diagnostics.TestData.Exercises
 {
     [InheritedExport(typeof(IExerciseTestDataGenerator))]
     public abstract class ExerciseTestDataGenerator : IExerciseTestDataGenerator
     {
-        public void GenerateTestDataFile(IExerciseTestIdentifiers cohort, FileInfo target, int numberOfRecords,
-            IDataLoadEventListener listener)
+        public event EventHandler<RowsGeneratedEventArgs> RowsGenerated;
+
+        public void GenerateTestDataFile(IExerciseTestIdentifiers cohort, FileInfo target, int numberOfRecords)
         {
             Random r = new Random();
             int totalPeople = cohort.People.Length;
@@ -46,13 +46,13 @@ namespace Diagnostics.TestData.Exercises
 
                         if (linesWritten % 1000 == 0)
                         {
-                            listener.OnProgress(this, new ProgressEventArgs(task, new ProgressMeasurement(linesWritten + 1, ProgressType.Records), stopwatch.Elapsed));
+                            RowsGenerated?.Invoke(this,new RowsGeneratedEventArgs(linesWritten + 1, stopwatch.Elapsed,false));
                             sw.Flush();//flush every 1000
                         }
                     }
 
                     //tell them about the last line written
-                    listener.OnProgress(this, new ProgressEventArgs(task, new ProgressMeasurement(linesWritten, ProgressType.Records), stopwatch.Elapsed));
+                    RowsGenerated?.Invoke(this, new RowsGeneratedEventArgs(linesWritten,stopwatch.Elapsed,true));
 
                     writer.Dispose();
                 }
@@ -74,7 +74,7 @@ namespace Diagnostics.TestData.Exercises
             return typeName;
         }
 
-        protected abstract object[] GenerateTestDataRow(TestPerson p);
+        public abstract object[] GenerateTestDataRow(TestPerson p);
         protected abstract void WriteHeaders(StreamWriter sw);
         readonly Normal _normalDist = new Normal(0, 0.3);
 
@@ -142,6 +142,55 @@ namespace Diagnostics.TestData.Exercises
         protected int Swap(int randomInt, IEnumerable<int> swapIfIn, int swapFor)
         {
             return swapIfIn.Contains(randomInt) ? swapFor : randomInt;
+        }
+
+        /// <summary>
+        /// Returns a random double or string value that represents a double e.g. "2.1".  In future this might return
+        /// floats with e specification e.g. "1.7E+3"
+        /// </summary>
+        /// <param name="r"></param>
+        /// <returns></returns>
+        public object GetRandomDouble(Random r)
+        {
+            switch (r.Next(0, 3))
+            {
+                case 0:
+                    return r.Next(100);
+                case 1:
+                    return Math.Round(r.NextDouble(),2);
+                case 2:
+                    return r.Next(10) + "." + r.Next(10);
+                default:
+                    throw new NotImplementedException();
+            }
+        }
+
+        public string GetRandomGPCode(Random r)
+        {
+            return GetRandomLetter(true,r).ToString() + r.Next(0, 999);
+        }
+
+        public char GetRandomLetter(bool upperCase,Random r)
+        {
+            if(upperCase)
+                return (char) ('A' + r.Next(0, 26));
+
+            return (char)('a' + r.Next(0, 26));
+
+        }
+
+        public object GetRandomCHIStatus(Random r)
+        {
+            switch (r.Next(0, 5))
+            {
+                case 0:return 'C';
+                case 1: return 'H';
+                case 2:return null;
+                case 3: return 'L';
+                case 4: return 'R';
+                default:
+                    throw new ArgumentOutOfRangeException();
+            }
         }
 
         /// <summary>
