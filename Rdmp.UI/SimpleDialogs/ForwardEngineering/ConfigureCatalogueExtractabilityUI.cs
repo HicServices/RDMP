@@ -93,7 +93,6 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)
         {
             CommonFunctionality.SetItemActivator(activator);
-
             var cols = _tableInfo.ColumnInfos;
             
             var forwardEngineer = new ForwardEngineerCatalogue(_tableInfo, cols, false);
@@ -103,7 +102,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
-            
+            objectSaverButton1.SetupFor(this,_catalogue,activator.RefreshBus);
+
             if (_binder == null)
             {
                 _binder = new BinderWithErrorProviderFactory(activator);
