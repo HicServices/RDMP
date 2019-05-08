@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Linq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
 namespace Rdmp.UI.Tests
 {
@@ -39,6 +41,41 @@ namespace Rdmp.UI.Tests
             Assert.IsInstanceOf(typeof(PropagateCatalogueItemChangesToSimilarNamedUI),ItemActivator.Results.WindowsShown.Single());
 
             AssertNoErrors(ExpectedErrorType.Any);
+        }
+
+        /// <summary>
+        /// Tests that <see cref="INamedTab.GetTabName"/> works even when half way through a call
+        /// to <see cref="IRDMPSingleDatabaseObjectControl.SetDatabaseObject"/>
+        /// </summary>
+        [Test, UITimeout(20000)]
+        public void Test_CatalogueItemUI_GetTabName()
+        {
+            var ci = WhenIHaveA<CatalogueItem>();
+            var ui = AndLaunch<CatalogueItemUI>(ci);
+            
+            Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
+
+            //introduce database change but don't save
+            ci.Name = "Fish";
+
+            //simulates loading the UI with an out of date object
+            ui = AndLaunch<CatalogueItemUI>(ci,false);
+
+            //now what we want to ensure is that ui.GetTabName works properly even half way through SetDatabaseObject
+            //so register a callback that interrogates GetTabName midway
+            ItemActivator.ShouldReloadFreshCopyDelegate = ()=>
+            {
+                ui.GetTabName();
+                return true;
+            };
+
+            //and finish launching it, this should trigger the 'FreshCopyDelegate' which will exercise GetTabName.
+            ui.SetDatabaseObject(ItemActivator,ci);
+            
+            Assert.AreEqual("MyCataItem (Mycata)",ui.GetTabName());
+
+            //clear the delgate for the next user
+            ItemActivator.ShouldReloadFreshCopyDelegate = null;
         }
     }
 }

@@ -62,6 +62,8 @@ namespace Rdmp.UI.MainFormUITabs
 
         public override void SetDatabaseObject(IActivateItems activator, CatalogueItem databaseObject)
         {
+            _catalogueItem = databaseObject;
+
             if (_scintillaDescription == null)
             {
                 var f = new ScintillaTextEditorFactory();
@@ -71,7 +73,7 @@ namespace Rdmp.UI.MainFormUITabs
             }
 
             base.SetDatabaseObject(activator,databaseObject);
-            _catalogueItem = databaseObject;
+            
 
             if (_catalogueItem.ExtractionInformation != null)
                 CommonFunctionality.AddToMenu(new ExecuteCommandActivate(activator, _catalogueItem.ExtractionInformation), "Go To Extraction Information");

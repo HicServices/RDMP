@@ -481,6 +481,8 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
         public override void SetDatabaseObject(IActivateItems activator, AggregateConfiguration databaseObject)
         {
+            _aggregate = databaseObject;
+
             base.SetDatabaseObject(activator,databaseObject);
 
             try
@@ -493,8 +495,6 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                 return;
             }
             isRefreshing = true;
-
-            _aggregate = databaseObject;
             
             //find out what is legal for the aggregate
             _options = new AggregateBuilderOptionsFactory().Create(_aggregate);
