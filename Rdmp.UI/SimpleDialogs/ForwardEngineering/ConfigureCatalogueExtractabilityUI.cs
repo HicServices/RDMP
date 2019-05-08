@@ -19,6 +19,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
@@ -88,6 +89,9 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private ConfigureCatalogueExtractabilityUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
+
+            ContextMenuStrip = new ContextMenuStrip();
+            ContextMenuStrip.Items.Add(new SaveMenuItem(this));
         }
 
         private void Initialize(IActivateItems activator,  string initialDescription, Project projectSpecificIfAny)

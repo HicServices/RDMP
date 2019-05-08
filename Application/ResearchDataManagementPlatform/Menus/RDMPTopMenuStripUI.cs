@@ -21,6 +21,7 @@ using Rdmp.UI.FindAndReplace;
 using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.LocationsMenu.Ticketing;
 using Rdmp.UI.MainFormUITabs;
+using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.PluginManagement;
 using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;

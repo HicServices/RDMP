@@ -8,7 +8,7 @@ using System;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleControls;
 
-namespace ResearchDataManagementPlatform.Menus.MenuItems
+namespace Rdmp.UI.Menus.MenuItems
 {
     /// <summary>
     /// Provides a shortcut to save the currently selected ISaveableUI.  This class requires that you track and regularly update the Saveable property to match
@@ -32,6 +32,10 @@ namespace ResearchDataManagementPlatform.Menus.MenuItems
         public SaveMenuItem() : base("Save")
         {
             ShortcutKeys = (Keys.Control | Keys.S);
+        }
+        public SaveMenuItem(ISaveableUI saveable) : this()
+        {
+            Saveable = saveable;
         }
 
         protected override void OnClick(EventArgs e)
