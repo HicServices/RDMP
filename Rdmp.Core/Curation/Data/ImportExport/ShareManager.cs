@@ -589,6 +589,8 @@ namespace Rdmp.Core.Curation.Data.ImportExport
                     //will be passed as a string
                     value = value is string ? new CatalogueFolder((Catalogue)onObject, (string)value):(CatalogueFolder) value;
                 }
+                else if (propertyType == typeof(Uri))
+                    value = value is string ? new Uri((string)value):(Uri) value;
                 else
                 if (typeof(Enum).IsAssignableFrom(propertyType))
                     value = Enum.ToObject(propertyType, value);//if the property is an enum
