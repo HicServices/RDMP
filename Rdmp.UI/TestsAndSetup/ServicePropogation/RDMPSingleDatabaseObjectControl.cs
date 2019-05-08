@@ -71,7 +71,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             SetBindings(_binder, databaseObject);
             
             if(this is ISaveableUI)
-                ObjectSaverButton1.SetupFor(this, databaseObject, activator.RefreshBus);
+                ObjectSaverButton1.SetupFor(this, databaseObject, activator);
 
         }
 

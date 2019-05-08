@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
@@ -31,6 +32,10 @@ namespace Rdmp.UI.SimpleControls
 
         private ToolStripButton btnSave  = new ToolStripButton("Save",FamFamFamIcons.disk);
         private ToolStripButton btnUndoRedo = new ToolStripButton("Undo", FamFamFamIcons.Undo);
+        
+        private RevertableObjectReport _undoneChanges;
+        private IRDMPControl _parent;
+        private IActivateItems _activator;
 
         public ObjectSaverButton()
         {
@@ -44,7 +49,6 @@ namespace Rdmp.UI.SimpleControls
         }
 
         private DatabaseEntity _o;
-        private RefreshBus _refreshBus;
         
         public event Action AfterSave;
 
@@ -56,7 +60,7 @@ namespace Rdmp.UI.SimpleControls
         private bool _isEnabled;
         private bool _undo = true;
         
-        public void SetupFor(IRDMPControl control, DatabaseEntity o, RefreshBus refreshBus)
+        public void SetupFor(IRDMPControl control, DatabaseEntity o, IActivateItems activator)
         {
             control.CommonFunctionality.Add(btnSave);
             control.CommonFunctionality.Add(btnUndoRedo);
@@ -81,11 +85,11 @@ namespace Rdmp.UI.SimpleControls
             }
             
             //already set up before
-            if (_refreshBus != null)
+            if (_activator != null)
                 return;
-
-            _refreshBus = refreshBus;
             
+            _activator = activator;
+
             f.Enter += ParentForm_Enter;
             f.Leave += ParentFormOnLeave;
             
@@ -134,7 +138,7 @@ namespace Rdmp.UI.SimpleControls
                     return;
 
             _o.SaveToDatabase();
-            _refreshBus.Publish(this,new RefreshObjectEventArgs(_o));
+            _activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_o));
             Enable(false);
 
             SetReadyToUndo();
@@ -148,8 +152,7 @@ namespace Rdmp.UI.SimpleControls
             Save();
         }
 
-        private RevertableObjectReport _undoneChanges;
-        private IRDMPControl _parent;
+        
 
         private void btnUndoRedo_Click(object sender, EventArgs e)
         {
@@ -182,7 +185,7 @@ namespace Rdmp.UI.SimpleControls
             _o.RevertToDatabaseState();
 
             //publish that the object has changed
-            _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+            _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
 
             //show the redo image
             SetReadyToRedo(changes);
@@ -209,13 +212,13 @@ namespace Rdmp.UI.SimpleControls
         public void CheckForOutOfDateObjectAndOfferToFix()
         {
             if (IsDifferent())
-                if(MessageBox.Show(_o + " is out of date with database, would you like to reload a fresh copy?","Object Changed",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if(_activator.ShouldReloadFreshCopy(_o))
                 {
                     _o.RevertToDatabaseState();
                     
                     //if we are not in the middle of a publish already
-                    if (!_refreshBus.PublishInProgress)
-                        _refreshBus.Publish(this, new RefreshObjectEventArgs(_o));
+                    if (!_activator.RefreshBus.PublishInProgress)
+                        _activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_o));
                 }
         }
 

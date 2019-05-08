@@ -400,6 +400,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
             //no special action required
         }
 
+        /// <summary>
+        /// Asks the user if they want to reload a fresh copy with a Yes/No message box.
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
+        public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
+        {
+            return MessageBox.Show(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
+                           "Object Changed", MessageBoxButtons.YesNo) == DialogResult.Yes;
+        }
+
         public T Activate<T, T2>(T2 databaseObject)
             where T : RDMPSingleDatabaseObjectControl<T2>, new()
             where T2 : DatabaseEntity

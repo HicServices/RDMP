@@ -106,7 +106,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             tbDescription.Text = initialDescription + " (" + Environment.UserName + " - " + DateTime.Now + ")";
             tbTableName.Text = _tableInfo.Name;
             _catalogue.SaveToDatabase();
-            objectSaverButton1.SetupFor(this,_catalogue,activator.RefreshBus);
+            objectSaverButton1.SetupFor(this,_catalogue,activator);
 
             if (_binder == null)
             {

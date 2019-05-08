@@ -48,8 +48,7 @@ namespace Rdmp.UI.Tests
 
         private ToMemoryCheckNotifier _checkResults;
         private Control _userInterfaceLaunched;
-        
-        
+
 
         /// <summary>
         /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
@@ -59,9 +58,11 @@ namespace Rdmp.UI.Tests
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="o"></param>
+        /// <param name="setDatabaseObject">True to call <see cref="IRDMPSingleDatabaseObjectControl.SetDatabaseObject"/> before returning.  If false you
+        /// will have to call it yourself</param>
         /// <returns></returns>
         /// <exception cref="NotSupportedException">Thrown when calling this method multiple times within a single test</exception>
-        public T AndLaunch<T>(DatabaseEntity o) where T : Control, IRDMPSingleDatabaseObjectControl, new()
+        public T AndLaunch<T>(DatabaseEntity o,bool setDatabaseObject=true) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
             Console.WriteLine("Launched " + typeof(T).Name);
 
@@ -75,7 +76,9 @@ namespace Rdmp.UI.Tests
 
             ui.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
             ui.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
-            ui.SetDatabaseObject(ItemActivator, o);
+            
+            if(setDatabaseObject)
+                ui.SetDatabaseObject(ItemActivator, o);
 
             _userInterfaceLaunched = ui;
             return ui;

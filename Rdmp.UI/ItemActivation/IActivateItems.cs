@@ -173,5 +173,13 @@ namespace Rdmp.UI.ItemActivation
         /// </summary>
         /// <param name="rule"></param>
         void OnRuleRegistered(IBinderRule rule);
+
+        /// <summary>
+        /// Determines system behaviour when an object is found to be out of sync with the remote database.  Typically implementing
+        /// class will ask the user if they want to load up the database copy.
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
+        bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
     }
 }

@@ -50,6 +50,8 @@ namespace Rdmp.UI.Tests
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
+        public Func<bool> ShouldReloadFreshCopyDelegate;
+
         /// <summary>
         /// All the activities that you might want to know happened during tests.  (not a member of <see cref="IActivateItems"/>)
         /// </summary>
@@ -189,6 +191,17 @@ namespace Rdmp.UI.Tests
         public void OnRuleRegistered(IBinderRule rule)
         {
             Results.RegisteredRules.Add(rule);
+        }
+
+        public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
+        {
+            if(ShouldReloadFreshCopyDelegate == null)
+            {
+                Assert.Fail("Object " + databaseEntity + " was out of date with the database, normally user would be asked to load a new copy but since this is a test the test will be failed.  Solve this either by calling SaveToDatabase before launching your UI or by setting the ShouldReloadFreshCopyDelegate delegate (if the MessageBox showing is how the live system should respond)");
+                return false;
+            }
+
+            return ShouldReloadFreshCopyDelegate();
         }
 
         public void ApplyTo(ToolStrip item)
