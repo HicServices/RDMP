@@ -27,6 +27,7 @@
     </Compile>
     <Compile Update="AdjustColumnDataTypesUI.Designer.cs">
       <DependentUpon>AdjustColumnDataTypesUI.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="DatabaseColumnRequestUI.cs">
       <SubType>UserControl</SubType>
@@ -39,6 +40,7 @@
     </Compile>
     <Compile Update="LoadProgressUpdating\DataLoadProgressUpdateInfoUI.Designer.cs">
       <DependentUpon>DataLoadProgressUpdateInfoUI.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="DataFlowSources\ExplicitColumnTypeUI.cs">
       <SubType>UserControl</SubType>
@@ -51,6 +53,7 @@
     </Compile>
     <Compile Update="DataFlowSources\ExplicitTypingCollectionUI.Designer.cs">
       <DependentUpon>ExplicitTypingCollectionUI.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="DataProvider\WebServiceConfigurationUI.cs">
       <SubType>Form</SubType>

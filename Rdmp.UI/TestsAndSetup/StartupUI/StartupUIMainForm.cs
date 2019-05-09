@@ -41,9 +41,9 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
     {
         private readonly Startup _startup;
 
-        private Icon _red;
-        private Icon _yellow;
-        private Icon _green;
+        private readonly Icon _red;
+        private readonly Icon _yellow;
+        private readonly Icon _green;
         
         //Constructor
         public StartupUIMainForm(Startup startup)
@@ -58,9 +58,9 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
             if(Screen.PrimaryScreen.WorkingArea.Width < 768 || Screen.PrimaryScreen.WorkingArea.Height < 1024)
                 WindowState = FormWindowState.Maximized;
             
-            _startup.DatabaseFound += _startup_DatabaseFound;
-            _startup.MEFFileDownloaded += _startup_MEFFileDownloaded;
-            _startup.PluginPatcherFound += _startup_PluginPatcherFound;
+            _startup.DatabaseFound += StartupDatabaseFound;
+            _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
+            _startup.PluginPatcherFound += StartupPluginPatcherFound;
 
             var factory = new IconFactory();
             _red = factory.GetIcon(FamFamFamIcons.RedFace);
@@ -74,14 +74,14 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
 
         public bool AppliedPatch { get; set; }
 
-        void _startup_DatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
+        void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
         {
             if(IsDisposed || !IsHandleCreated)
                 return;
 
             if (InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => _startup_DatabaseFound(sender, eventArgs)));
+                Invoke(new MethodInvoker(() => StartupDatabaseFound(sender, eventArgs)));
                 return;
             }
 
@@ -131,11 +131,11 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
             }
         }
 
-        private void _startup_MEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs eventArgs)
+        private void StartupMEFFileDownloaded(object sender, MEFFileDownloadProgressEventArgs eventArgs)
         {
             if (InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => _startup_MEFFileDownloaded(sender, eventArgs)));
+                Invoke(new MethodInvoker(() => StartupMEFFileDownloaded(sender, eventArgs)));
                 return;
             }
 
@@ -152,11 +152,11 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
                 Fatal(eventArgs.Exception);
         }
 
-        private void _startup_PluginPatcherFound(object sender, PluginPatcherFoundEventArgs eventArgs)
+        private void StartupPluginPatcherFound(object sender, PluginPatcherFoundEventArgs eventArgs)
         {
             if (InvokeRequired)
             {
-                Invoke(new MethodInvoker(() => _startup_PluginPatcherFound(sender, eventArgs)));
+                Invoke(new MethodInvoker(() => StartupPluginPatcherFound(sender, eventArgs)));
                 return;
             }
 
@@ -186,16 +186,18 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
 
             if (pbRed.Visible || pbRedDead.Visible)
                 return;
-            
-            Timer t = new Timer();
-            t.Interval = 1000;
-            t.Tick += t_Tick;
+
+            Timer t = new Timer
+            {
+                Interval = 1000
+            };
+            t.Tick += TimerTick;
             t.Start();
 
             pbLoadProgress.Value = 1000;
         }
 
-        void t_Tick(object sender, EventArgs e)
+        void TimerTick(object sender, EventArgs e)
         {
             var t = (Timer) sender;
             
@@ -474,7 +476,7 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
                 }
         }
         
-        private void btnSetupPlatformDatabases_Click(object sender, EventArgs e)
+        private void BtnSetupPlatformDatabases_Click(object sender, EventArgs e)
         {
             var cmd = new ExecuteCommandChoosePlatformDatabase(new UserSettingsRepositoryFinder());
             cmd.Execute();

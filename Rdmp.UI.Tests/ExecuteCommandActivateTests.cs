@@ -12,23 +12,13 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests
 {
     internal class ExecuteCommandActivateTests: UITests
     {
-
-        //These types do not have to be supported by the method WhenIHaveA
-        private HashSet<string> _skipTheseTypes = new HashSet<string>(new string[]
-        {
-            "TestColumn",
-            "ExtractableCohort",
-            "DQEGraphAnnotation",
-            "WindowLayout",
-            "Evaluation"
-        });
-
         /// <summary>
         /// Tests that all DatabaseEntity objects can be constructed with <see cref="UnitTests.WhenIHaveA{T}()"/> and that if <see cref="ExecuteCommandActivate"/>  says
         /// they can be activated then they can be (without blowing up in a major way).
@@ -36,41 +26,7 @@ namespace Rdmp.UI.Tests
         [Test,UITimeout(50000)]
         public void Test_ExecuteCommandActivate_AllObjectsActivateable()
         {
-            SetupMEF();
-            
-            List<Exception> ex;
-            var types = typeof(Catalogue).Assembly.GetTypes()
-                .Where(t => t != null && typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
-            
-            var methods = typeof (UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);
-            var method = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
-
-            foreach (Type t in types)
-            {
-                //ignore these types too
-                if (_skipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
-                    typeof (SpontaneousObject).IsAssignableFrom(t))
-                    continue;
-
-                //ensure that the method supports the Type
-                var generic = method.MakeGenericMethod(t);
-                var instance = (DatabaseEntity) generic.Invoke(this, null);
-
-                var cmd = new ExecuteCommandActivate(ItemActivator, instance);
-                
-                if(!cmd.IsImpossible)
-                {
-                    try
-                    {
-                        cmd.Execute();
-                        AssertNoErrors(ExpectedErrorType.KilledForm);
-                    }
-                    catch (Exception e)
-                    {
-                        throw new Exception("Could not Activate Type:" + t.Name,e);
-                    }
-                }
-            }
+            ForEachUI((ui)=>{AssertNoErrors(ExpectedErrorType.KilledForm);});
         }
     }
 }

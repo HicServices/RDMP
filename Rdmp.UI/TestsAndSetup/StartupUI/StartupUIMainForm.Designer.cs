@@ -338,7 +338,7 @@ namespace Rdmp.UI.TestsAndSetup.StartupUI
             this.btnSetupPlatformDatabases.TabIndex = 6;
             this.btnSetupPlatformDatabases.Text = "Setup Platform Databases";
             this.btnSetupPlatformDatabases.UseVisualStyleBackColor = true;
-            this.btnSetupPlatformDatabases.Click += new System.EventHandler(this.btnSetupPlatformDatabases_Click);
+            this.btnSetupPlatformDatabases.Click += new System.EventHandler(this.BtnSetupPlatformDatabases_Click);
             // 
             // repositoryFinderUI1
             // 

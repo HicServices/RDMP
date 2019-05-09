@@ -44,7 +44,18 @@ namespace Tests.Common
     {
         protected MemoryDataExportRepository Repository = new MemoryDataExportRepository();
         protected IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
-
+        
+        //These types do not have to be supported by the method WhenIHaveA
+        protected HashSet<string> SkipTheseTypes = new HashSet<string>(new string[]
+        {
+            "TestColumn",
+            "ExtractableCohort",
+            "DQEGraphAnnotation",
+            "Evaluation",
+            "WindowLayout",
+        });
+        
+        
         public UnitTests()
         {
             RepositoryLocator = new RepositoryProvider(Repository);

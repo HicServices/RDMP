@@ -10,10 +10,14 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.UI.CommandExecution;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
@@ -25,6 +29,9 @@ namespace Rdmp.UI.Tests
     public class UITests : UnitTests
     {
         private TestActivateItems _itemActivator;
+        private ToMemoryCheckNotifier _checkResults;
+        
+        public Control LastUserInterfaceLaunched { get; set; }
 
         protected TestActivateItems ItemActivator
         {
@@ -45,11 +52,7 @@ namespace Rdmp.UI.Tests
         }
 
         
-
-        private ToMemoryCheckNotifier _checkResults;
-        private Control _userInterfaceLaunched;
-
-
+        
         /// <summary>
         /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
         /// visibly appear but will be mounted on a Form and generally should behave like live ones.
@@ -80,7 +83,7 @@ namespace Rdmp.UI.Tests
             if(setDatabaseObject)
                 ui.SetDatabaseObject(ItemActivator, o);
 
-            _userInterfaceLaunched = ui;
+            LastUserInterfaceLaunched = ui;
             return ui;
         }
 
@@ -95,7 +98,7 @@ namespace Rdmp.UI.Tests
                 _itemActivator.Results.Clear();
 
             _checkResults = null;
-            _userInterfaceLaunched = null;
+            LastUserInterfaceLaunched = null;
         }
         /// <summary>
         /// Asserts that the given command is impossible for the <paramref name="expectedReason"/>
@@ -271,7 +274,7 @@ namespace Rdmp.UI.Tests
         /// <returns></returns>
         protected List<T> GetControl<T>() where T:Control
         {
-            return GetControl<T>(_userInterfaceLaunched, new List<T>());
+            return GetControl<T>(LastUserInterfaceLaunched, new List<T>());
         }
 
         private List<T> GetControl<T>(Control c, List<T> list) where T:Control
@@ -312,6 +315,99 @@ namespace Rdmp.UI.Tests
             method.Invoke(control, new object[] { true });
         }
 
+        /// <summary>
+        /// Iterates through all supported types for <see cref="UnitTests.WhenIHaveA{T}()"/> and generates instances.  Then
+        /// calls all <see cref="IRDMPSingleDatabaseObjectControl"/> user interfaces which match the instance (e.g.
+        /// <see cref="CatalogueUI"/> for <see cref="Catalogue"/>.  Then calls the <paramref name="action"/> on the ui instance
+        /// created.
+        /// </summary>
+        /// <param name="action"></param>
+        protected void ForEachUI(Action<IRDMPSingleDatabaseObjectControl> action)
+        {
+            SetupMEF();
+
+            var types = typeof(Catalogue).Assembly.GetTypes()
+                .Where(t => t != null && typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+
+            var uiTypes = typeof(CatalogueUI).Assembly.GetTypes()
+                .Where(t=>t != null && typeof(IRDMPSingleDatabaseObjectControl).IsAssignableFrom(t) 
+                                    && !t.IsAbstract && !t.IsInterface
+                                    && t.BaseType != null 
+                                    && t.BaseType.BaseType != null
+                                    && t.BaseType.BaseType.GetGenericArguments().Any()).ToArray();
+            
+            var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
+
+            foreach (Type t in types)
+            {
+                //ignore these types too
+                if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
+                    typeof (SpontaneousObject).IsAssignableFrom(t))
+                    continue;
+
+                //ensure that the method supports the Type
+                var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
+                var instance = (DatabaseEntity) genericWhenIHaveA.Invoke(this, null);
+
+                //foreach compatible UI
+                foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == t))
+                {
+                    //todo
+                    var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch"));
+                
+                    //ensure that the method supports the Type
+                    var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
+
+                    IRDMPSingleDatabaseObjectControl ui;
+
+                    try
+                    {
+                        ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{instance,true});
+                    }
+                    catch(Exception ex)
+                    {
+                        throw new Exception("Failed to construct '" + uiType +"'.  Code to reproduce is:" + Environment.NewLine + ShowCode(t,uiType),ex);
+                    }
+                    
+
+                    action(ui);
+                    ClearResults();
+                }
+            }
+        }
+
+        private string ShowCode(Type t, Type uiType)
+        {
+            StringBuilder sb = new StringBuilder();
+            
+            sb.AppendLine("using NUnit.Framework;");
+            sb.AppendLine("using " + t.Namespace +";");
+            sb.AppendLine("using " + uiType.Namespace +";");
+            sb.AppendLine();
+
+            sb.AppendLine("namespace " + uiType.Namespace.Replace("Rdmp.UI","Rdmp.UI.Tests"));
+            sb.AppendLine("{");
+
+            sb.AppendLine("\tpublic class " + uiType.Name +"Tests :UITests");
+            sb.AppendLine("\t{");
+
+            sb.AppendLine("\t\t[Test,UITimeout(20000)]");
+            sb.AppendLine("\t\tpublic void Test_" + uiType.Name + "_Constructor()");
+            sb.AppendLine("\t\t{");
+            sb.AppendLine("\t\t\tvar o = WhenIHaveA<" + t.Name +">();");
+            sb.AppendLine("\t\t\tvar ui = AndLaunch<" + uiType.Name +">(o);");
+
+            sb.AppendLine("\t\t\tAssert.IsNotNull(ui);");
+            sb.AppendLine("\t\t\t//AssertNoErrors(ExpectedErrorType.Fatal);");
+            sb.AppendLine("\t\t\t//AssertNoErrors(ExpectedErrorType.KilledForm);");
+            
+            sb.AppendLine("\t\t}");
+
+            sb.AppendLine("\t}");
+            sb.AppendLine("}");
+            return sb.ToString();
+        }
     }
 
     public enum ExpectedErrorType

@@ -74,7 +74,7 @@ namespace Rdmp.UI.Tests
 
             CommentStore = _commentStore;
 
-            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,Results);
             CoreIconProvider = new DataExportIconProvider(null);
             FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
 
@@ -214,7 +214,7 @@ namespace Rdmp.UI.Tests
         
     }
 
-    public class TestActivateItemsResults
+    public class TestActivateItemsResults:ICheckNotifier
     {
         public List<Control> WindowsShown = new List<Control>();
         public Dictionary<Form, Exception> KilledForms = new Dictionary<Form, Exception>();
@@ -227,6 +227,14 @@ namespace Rdmp.UI.Tests
             KilledForms = new Dictionary<Form, Exception>();
             RegisteredRules = new List<IBinderRule>();
             FatalCalls = new List<CheckEventArgs>();
+        }
+
+        public bool OnCheckPerformed(CheckEventArgs args)
+        {
+            if(args.Result >= CheckResult.Fail)
+                FatalCalls.Add(args);
+
+            return false;
         }
     }
 }

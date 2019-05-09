@@ -19,18 +19,9 @@ namespace Rdmp.Core.Tests.Curation
 {
     class UnitTestsAllObjectsSupported:UnitTests
     {
-        //These types do not have to be supported by the method WhenIHaveA
-        private HashSet<string> _skipTheseTypes = new HashSet<string>(new string[]
-        {
-            "TestColumn",
-            "ExtractableCohort",
-            "DQEGraphAnnotation",
-            "Evaluation"
-        });
-            
         /// <summary>
         /// Who tests the tester? this method does! It makes sure that <see cref="UnitTests.WhenIHaveA{T}()"/> supports all <see cref="DatabaseEntity"/> classes (except
-        /// those listed in <see cref="_skipTheseTypes"/>) and returns a valid value.
+        /// those listed in <see cref="UnitTests.SkipTheseTypes"/>) and returns a valid value.
         /// </summary>
         [Test]
         public void TestAllSupported()
@@ -51,7 +42,7 @@ namespace Rdmp.Core.Tests.Curation
             foreach (Type t in types)
             {
                 //ignore these types too
-                if (_skipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") || typeof(SpontaneousObject).IsAssignableFrom(t))
+                if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") || typeof(SpontaneousObject).IsAssignableFrom(t))
                     continue;
 
                 DatabaseEntity instance = null;
