@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
     <metadata>
-        <id>$id$</id>
+        <id>HIC.RDMP.Plugin</id>
         <version>$version$</version>
-        <title>$title$</title>
-        <authors>$author$</authors>
-        <owners>$author$</owners>
+        <title>HIC.RDMP.Plugin</title>
+        <authors>Health Informatics Centre, University of Dundee</authors>
+        <owners>Health Informatics Centre, University of Dundee</owners>
         <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
         <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
         <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
         <requireLicenseAcceptance>false</requireLicenseAcceptance>
-        <description>$Description$</description>
+        <description>Core package for plugin development</description>
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
             <dependency id="CsvHelper" version="7.1.1" />
@@ -24,4 +24,9 @@
             <dependency id="HIC.FansiSql" version="0.9.0.0" />
         </dependencies>
     </metadata>
+  <files>
+    <file src="bin\$configuration$\netstandard2.0\*.dll" target="lib\netstandard2.0" exclude="Plugin.dll" />
+    <file src="bin\$configuration$\netstandard2.0\*.pdb" target="lib\netstandard2.0" exclude="Plugin.pdb" />
+    <file src="bin\$configuration$\netstandard2.0\*.xml" target="lib\netstandard2.0" exclude="Plugin.xml" />
+  </files>
 </package>

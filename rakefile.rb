@@ -1,10 +1,11 @@
 require 'albacore'
 
 load 'rakeconfig.rb'
+$MSBUILD15CMD = MSBUILD15CMD.gsub(/\\/,"/")
 
-task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :deploy]
+task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :bundlesource, :build, :tests]
 
-task :pluginbuild, [:folder] => [:assemblyinfo, :deployplugins]
+task :plugins, [:config] => [:assemblyinfo, :build, :deployplugins]
 
 task :restorepackages do
     sh "nuget restore HIC.DataManagementPlatform.sln"
@@ -18,21 +19,27 @@ task :setup_connection do
     end
 end
 
+task :bundlesource do
+	sh "powershell ./BundleSourceIntoZipFile.ps1"
+end
+
 msbuild :build, [:config] => :restorepackages do |msb, args|
-	args.with_defaults(:config => :Debug)
+	msb.command = $MSBUILD15CMD
     msb.properties = { :configuration => args.config }
     msb.targets = [ :Clean, :Build ]   
     msb.solution = SOLUTION
 end
 
-msbuild :deploy, [:config] => :restorepackages do |msb, args|
-	args.with_defaults(:config => :Release)
-    msb.targets [ :Clean, :Build ]
-    msb.properties = {
-        :configuration => args.config,
-        :outdir => "#{PUBLISH_DIR}/"
-    }
-    msb.solution = SOLUTION
+task :tests, [:config] => [:createtestdb, :run_tests]
+
+task :createtestdb, [:config] do |t, args|
+	Dir.chdir("Tools/rdmp/bin/#{args.config}/netcoreapp2.2") do
+        sh "dotnet ./rdmp.dll install #{DBSERVER} #{DBPREFIX} -D"
+    end
+end
+
+task :run_tests do 
+	sh 'dotnet test --no-build --logger:"nunit;LogFilePath=test-result.xml" --filter ExternalCohortTableTests'
 end
 
 desc "Sets the version number from GIT"    
@@ -63,20 +70,19 @@ assemblyinfo :assemblyinfo do |asm|
     asm.informational_version = "#{version}#{suffix}"
 end
 
-desc "Pushes the plugin packages into the specified folder"    
-task :deployplugins, [:folder] do |t, args|
-    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
-        
-    major, minor, patch, build = asminfoversion.split(/\./)
-   
-    build = build.to_i + 1
-    suffix = "-alpha"
-    
-    version = "#{major}.#{minor}.#{patch}.#{build}"
-    puts "version: #{version}#{suffix}"
-    
-    Dir.chdir('Plugin/Plugin') do
-        sh "./build-and-deploy-local.bat #{args.folder} '' #{version}#{suffix}"
+desc "Pushes the plugin packages to nuget.org"    
+task :deployplugins, [:config] do |t, args|
+	version = File.open('version') {|f| f.readline}
+    puts "version: #{version}"
+	
+	Dir.chdir('Plugins') do
+        sh "nuget pack Plugin/Plugin.nuspec -Properties Configuration=#{args.config} -IncludeReferencedProjects -Symbols -Version #{version} -OutputFileNamesWithoutVersion"
+        sh "nuget pack Plugin.UI/Plugin.UI.nuspec -Properties Configuration=#{args.config} -IncludeReferencedProjects -Symbols -Version #{version} -OutputFileNamesWithoutVersion"
+        sh "nuget pack Plugin.Test/Plugin.Test.nuspec -Properties Configuration=#{args.config} -IncludeReferencedProjects -Symbols -Version #{version} -OutputFileNamesWithoutVersion"
+		
+        sh "nuget push HIC.RDMP.Plugin.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
+		sh "nuget push HIC.RDMP.Plugin.UI.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
+		sh "nuget push HIC.RDMP.Plugin.Test.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
     end
 end
 
