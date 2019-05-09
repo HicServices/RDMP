@@ -22,7 +22,7 @@ using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace Diagnostics
+namespace Tests.Common.Scenarios
 {
     public class UserAcceptanceTestDataExportFunctionality : UserAcceptanceTest,ICheckable
     {

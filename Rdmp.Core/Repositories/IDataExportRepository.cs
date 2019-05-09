@@ -26,7 +26,7 @@ namespace Rdmp.Core.Repositories
         /// </summary>
         IFilterManager FilterManager { get; }
 
-        IExtractableDataSetPackageManager PackageManager { get; set; }
+        IExtractableDataSetPackageManager PackageManager { get;}
 
         /// <summary>
         /// Handles forbidding deleting stuff / cascading deletes into other objects

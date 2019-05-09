@@ -27,7 +27,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace Diagnostics
+namespace Tests.Common.Scenarios
 {
 
     public class UserAcceptanceTestEnvironment : UserAcceptanceTest, ICheckable

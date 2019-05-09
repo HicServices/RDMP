@@ -9,7 +9,7 @@ using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using Diagnostics;
+using Tests.Common.Scenarios;
 using Diagnostics.TestData.Exercises;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;

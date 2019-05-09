@@ -6,7 +6,7 @@
 
 using System;
 using System.Data.SqlClient;
-using Diagnostics;
+using Tests.Common.Scenarios;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 

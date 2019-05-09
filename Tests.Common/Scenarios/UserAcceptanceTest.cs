@@ -12,7 +12,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
-namespace Diagnostics
+namespace Tests.Common.Scenarios
 {
     public abstract class UserAcceptanceTest
     {

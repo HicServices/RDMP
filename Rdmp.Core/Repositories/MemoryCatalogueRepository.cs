@@ -467,7 +467,7 @@ namespace Rdmp.Core.Repositories
 
         public IFilter[] GetFilters(IContainer container)
         {
-            return GetAllObjects<IFilter>().Where(f => f.FilterContainer_ID == container.ID).ToArray();
+            return GetAllObjects<IFilter>().Where(f =>!(f is ExtractionFilter) && f.FilterContainer_ID == container.ID).ToArray();
         }
 
         public void AddChild(IContainer container, IFilter filter)

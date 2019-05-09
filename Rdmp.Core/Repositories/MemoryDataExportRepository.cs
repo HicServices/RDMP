@@ -20,7 +20,7 @@ namespace Rdmp.Core.Repositories
     {
         public ICatalogueRepository CatalogueRepository { get { return this; } }
         public IDataExportPropertyManager DataExportPropertyManager { get { return this; } }
-        public IExtractableDataSetPackageManager PackageManager { get { return this; } }
+        public IExtractableDataSetPackageManager PackageManager { get { return this; }}
          
 
         public CatalogueExtractabilityStatus GetExtractabilityStatus(ICatalogue c)
@@ -40,7 +40,6 @@ namespace Rdmp.Core.Repositories
             return GetAllObjects<ISelectedDataSets>().Where(sds => col.All(c => c.ExtractableDataSet_ID != sds.ExtractableDataSet_ID)).ToArray();
         }
 
-        IExtractableDataSetPackageManager IDataExportRepository.PackageManager { get; set; }
 
         #region IDataExportPropertyManager
 

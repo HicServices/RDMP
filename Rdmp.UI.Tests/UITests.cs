@@ -37,21 +37,28 @@ namespace Rdmp.UI.Tests
         {
             get
             {
-                if (_itemActivator == null)
-                {
-                    _itemActivator = new TestActivateItems(this,Repository);
-                    _itemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
-                    
-                    //if mef was loaded for this test then this is supported otherwise not
-                    if(MEF != null)
-                        _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
-                }
+                InitializeItemActivator();
 
                 return _itemActivator;
             }
         }
 
-        
+        /// <summary>
+        /// Generates the <see cref="ItemActivator"/> (if it hasn't already been initialized).  This is normally done automatically
+        /// for you (e.g. when calling <see cref="AndLaunch{T}(DatabaseEntity, bool)"/>).
+        /// </summary>
+        protected void InitializeItemActivator()
+        {
+            if (_itemActivator == null)
+            {
+                _itemActivator = new TestActivateItems(this,Repository);
+                _itemActivator.RepositoryLocator.CatalogueRepository.MEF = MEF;
+                    
+                //if mef was loaded for this test then this is supported otherwise not
+                if(MEF != null)
+                    _itemActivator.CommandExecutionFactory = new RDMPCommandExecutionFactory(_itemActivator);
+            }
+        }
         
         /// <summary>
         /// 'Launches' a new instance of the UI defined by Type T which must be compatible with the provided <paramref name="o"/>.  The UI will not
@@ -339,6 +346,8 @@ namespace Rdmp.UI.Tests
             var methods = typeof (UITests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
             var methodWhenIHaveA = methods.Single(m => m.Name.Equals("WhenIHaveA") && !m.GetParameters().Any());
 
+            List<DatabaseEntity> objectsToTest = new List<DatabaseEntity>();
+
             foreach (Type t in types)
             {
                 //ignore these types too
@@ -350,8 +359,16 @@ namespace Rdmp.UI.Tests
                 var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
                 var instance = (DatabaseEntity) genericWhenIHaveA.Invoke(this, null);
 
+                objectsToTest.Add(instance);
+            }
+
+            //sets up all the child providers etc
+            InitializeItemActivator();
+
+            foreach(DatabaseEntity o in objectsToTest)
+            {
                 //foreach compatible UI
-                foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == t))
+                foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
                 {
                     //todo
                     var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch"));
@@ -363,11 +380,11 @@ namespace Rdmp.UI.Tests
 
                     try
                     {
-                        ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{instance,true});
+                        ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{o,true});
                     }
                     catch(Exception ex)
                     {
-                        throw new Exception("Failed to construct '" + uiType +"'.  Code to reproduce is:" + Environment.NewLine + ShowCode(t,uiType),ex);
+                        throw new Exception("Failed to construct '" + uiType +"'.  Code to reproduce is:" + Environment.NewLine + ShowCode(o.GetType(),uiType),ex);
                     }
                     
 

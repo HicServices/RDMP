@@ -8,7 +8,7 @@ using System;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using Diagnostics;
+using Tests.Common.Scenarios;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Options.Abstracts;
