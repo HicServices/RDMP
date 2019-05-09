@@ -17,13 +17,13 @@ using System.Security;
 [assembly: ComVisibleAttribute(false)]
 [assembly: CLSCompliantAttribute(false)]
 [assembly: AssemblyCompanyAttribute("HIC")]
-[assembly: AssemblyVersionAttribute("0.0.0.47")]
-[assembly: AssemblyFileVersionAttribute("0.0.0.47")]
-[assembly: AssemblyInformationalVersionAttribute("0.0.0.4d501a2480acba1b717890996f1491327233d6e5")]
+[assembly: AssemblyVersionAttribute("0.0.0.0")]
+[assembly: AssemblyFileVersionAttribute("0.0.0.0")]
+[assembly: AssemblyInformationalVersionAttribute("0.0.0.0")]
 [assembly: AssemblyTitleAttribute("HIC.DataManagementPlatform")]
 [assembly: AssemblyProductAttribute("HIC.DataManagementPlatform")]
 [assembly: AssemblyDescriptionAttribute("HIC.DataManagementPlatform is a product of HIC - https://github.com/HicServices/R" +
     "DMP.git.")]
 [assembly: AssemblyTrademarkAttribute("HIC.DataManagementPlatform - HIC")]
-[assembly: AssemblyCopyrightAttribute("Copyright ©  2018 HIC, - Original author or authors")]
+[assembly: AssemblyCopyrightAttribute("Copyright ©  2019 HIC, - Original author or authors")]
 
