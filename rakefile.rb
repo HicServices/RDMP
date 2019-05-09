@@ -39,7 +39,7 @@ task :createtestdb, [:config] do |t, args|
 end
 
 task :run_tests do 
-	sh 'dotnet test --no-build --logger:"nunit;LogFilePath=test-result.xml" --filter ExternalCohortTableTests'
+	sh 'dotnet test --no-build --logger:"nunit;LogFilePath=test-result.xml"'
 end
 
 desc "Sets the version number from GIT"    
