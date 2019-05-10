@@ -63,8 +63,6 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
     public partial class ColumnInfoToANOTableConverterUI : ColumnInfoToANOTableConverterUI_Design
     {
         private ColumnInfo _columnInfo;
-        private TableInfo _tableInfo;
-        private int _rowCount;
         private bool _yesToAll = false;
         
         public ColumnInfo ColumnInfo
@@ -76,25 +74,6 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
                 
                 lblName.Text = value.ToString();
                 lblDataType.Text = value.Data_type;
-
-                _tableInfo = value.TableInfo;
-
-                try
-                {
-                    var db = DataAccessPortal.GetInstance()
-                        .ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
-
-                    _rowCount = db.ExpectTable(_tableInfo.GetRuntimeName()).GetRowCount();
-                    lblRowcount.Text = _rowCount.ToString();
-                }
-                catch (Exception e)
-                {
-                    _rowCount = -1;
-                    checksUI1.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "Could not get rowcount of table " + _tableInfo.GetRuntimeName() +
-                            " using data access context DataLoad", CheckResult.Fail, e));
-                }
             }
         }
 
@@ -133,9 +112,37 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
             base.SetDatabaseObject(activator,databaseObject);
             ColumnInfo = databaseObject;
 
-            GeneratePreviews();
+            try
+            {
+                var tbl = ColumnInfo.TableInfo.Discover(DataAccessContext.DataLoad);                    
 
-            RefreshServers();
+                if(!tbl.Database.Server.Exists())
+                    throw new Exception("Could not connect to server hosting " + ColumnInfo.TableInfo);
+
+                if(!tbl.Exists())
+                    throw new Exception("Table " + tbl.GetFullyQualifiedName() + " did not exist");
+
+
+                try
+                {
+                    lblRowcount.Text = tbl.GetRowCount().ToString();
+                }
+                catch (Exception e)
+                {
+                    checksUI1.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Could not get rowcount of table " + ColumnInfo.TableInfo.GetRuntimeName() + " using data access context DataLoad", CheckResult.Fail, e));
+                }
+
+
+                GeneratePreviews();
+                
+                RefreshServers();
+            }
+            catch (Exception e)
+            {
+                activator.KillForm(ParentForm,e);
+            }
         }
         
         private void RefreshServers()
@@ -183,7 +190,7 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
                 preview.Columns.Add(_columnInfo.GetRuntimeName(LoadStage.PostLoad));
                 preview.Columns.Add(ANOTable.ANOPrefix + _columnInfo.GetRuntimeName(LoadStage.PostLoad));
 
-                var server = DataAccessPortal.GetInstance().ExpectServer(_tableInfo, DataAccessContext.DataLoad);
+                var server = DataAccessPortal.GetInstance().ExpectServer(ColumnInfo.TableInfo, DataAccessContext.DataLoad);
 
                 using(var con = server.GetConnection())
                 {
@@ -191,7 +198,7 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
 
                     lblPreviewDataIsFictional.Visible = false;
 
-                    var qb = new QueryBuilder(null, null, new[] {_tableInfo});
+                    var qb = new QueryBuilder(null, null, new[] {ColumnInfo.TableInfo});
                     qb.AddColumn(new ColumnInfoToIColumn(new MemoryRepository(), _columnInfo));
                     qb.TopX = 10;
 
@@ -366,7 +373,7 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
             }
 
             //it worked (or didn't!) so notify changes to the TableInfo
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_tableInfo));
+            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(ColumnInfo.TableInfo));
         }
 
         private bool UserAcceptSql(string sql)
