@@ -23,7 +23,6 @@
 | [Moq 4](https://github.com/moq/moq4) | 3.6.1 |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing | &#9744; |
 | Nunit | 3.11.0 | NUnit License | Unit testing | &#9744; |
 | NUnit3TestAdapter| 3.10.0 | NUnit License | Run unit tests from within Visual Studio | &#9744; |
-| Mono.Reflection | 1.1.0.0 | License | Deconstruct plugins to show code compatibility in PluginAnalyser | &#9744; |
 | Newtonsoft.Json | 11.0.2 | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission | &#9744; |
 | JetBrains ReSharper Annotations | 10.4.0 | [MIT](https://opensource.org/licenses/MIT)  | Required for ReSharper Extension for Visual Studio | &#9744; |
 | [YamlDotNet](https://github.com/aaubry/YamlDotNet) | 6.0.0 | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files| &#9744; |
