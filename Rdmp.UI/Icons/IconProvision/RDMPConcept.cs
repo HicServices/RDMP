@@ -170,6 +170,7 @@ namespace Rdmp.UI.Icons.IconProvision
         GovernanceDocument,
 
         AllProjectCohortIdentificationConfigurationsNode,
-        AllFreeCohortIdentificationConfigurationsNode
+        AllFreeCohortIdentificationConfigurationsNode,
+        CohortAggregateContainer
     }
 }

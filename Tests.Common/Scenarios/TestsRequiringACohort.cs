@@ -19,7 +19,7 @@ using ReusableLibraryCode;
 namespace Tests.Common.Scenarios
 {
     [TestFixture]
-    public class TestsRequiringACohort : DatabaseTests
+    public class TestsRequiringACohort : TestsRequiringA
     {
         protected const int cohortIDInTestData = -599;
         protected const int projectNumberInTestData = 99;

@@ -32,6 +32,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if(Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore) == null)
                 SetImpossible("No Default ANOStore has been configured");
+
+            if(string.IsNullOrWhiteSpace(_columnInfo.TableInfo.Server))
+                SetImpossible("Parent TableInfo is missing a value for Server");
+            
+            if(string.IsNullOrWhiteSpace(_columnInfo.TableInfo.Database))
+                SetImpossible("Parent TableInfo is missing a value for Database");
         }
 
         public override void Execute()

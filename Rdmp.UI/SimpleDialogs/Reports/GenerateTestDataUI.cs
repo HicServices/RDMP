@@ -10,7 +10,8 @@ using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
-using Diagnostics.TestData.Exercises;
+using BadMedicine;
+using BadMedicine.Datasets;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -48,14 +49,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
             int yLoc = 0;
 
-            foreach (Type generator in Activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<IExerciseTestDataGenerator>())
+            foreach (Type generator in Activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<IDataGenerator>())
             {
                 if(generator.IsAbstract || generator.IsInterface)
                     continue;
 
-                var instance = (IExerciseTestDataGenerator)constructor.Construct(generator);
+                var instance = (IDataGenerator)constructor.Construct(generator);
 
-                var ui = new ExerciseTestDataGeneratorUI();
+                var ui = new DataGeneratorUI();
                 ui.Generator = instance;
                 ui.Location = new Point(0,yLoc);
                 yLoc += ui.Height;
@@ -147,7 +148,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
         private bool started = false;
         
-        private List<ExerciseTestDataGeneratorUI> Executing = new List<ExerciseTestDataGeneratorUI>();
+        private List<DataGeneratorUI> Executing = new List<DataGeneratorUI>();
         private DirectoryInfo _extractDirectory;
 
         private void btnGenerate_Click(object sender, EventArgs e)
@@ -163,17 +164,17 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
                 started = true;
 
-                ExerciseTestIdentifiers identifiers = new ExerciseTestIdentifiers();
-                identifiers.GeneratePeople(populationSize);
+                var identifiers = new PersonCollection();
+                identifiers.GeneratePeople(populationSize,new Random());
 
                 if(cbLookups.Checked)
-                    ExerciseTestDataGenerator.WriteLookups(_extractDirectory);
+                    DataGenerator.WriteLookups(_extractDirectory);
 
-                foreach (ExerciseTestDataGeneratorUI ui in pDatasets.Controls)
+                foreach (DataGeneratorUI ui in pDatasets.Controls)
                 {
                     Executing.Add(ui);
                     ui.BeginGeneration(identifiers, _extractDirectory);
-                    ExerciseTestDataGeneratorUI ui1 = ui;
+                    DataGeneratorUI ui1 = ui;
                     ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
                 }
                 
@@ -206,7 +207,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
             if (stillRunning != null)
             {
-                MessageBox.Show(stillRunning.Generator.GetName() + " is still generating data");
+                MessageBox.Show(stillRunning.Generator.GetType().Name + " is still generating data");
                 e.Cancel = true;
             }
         }

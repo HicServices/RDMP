@@ -7,8 +7,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using Diagnostics.TestData;
-using Diagnostics.TestData.Exercises;
+using BadMedicine;
+using BadMedicine.Datasets;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 
@@ -22,15 +22,17 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
         [TestCase(100000)]
         public void CreateCSV(int numberOfRecords)
         {
-            ExerciseTestIdentifiers people = new ExerciseTestIdentifiers();
-            people.GeneratePeople(100);
+            var r = new Random(500);
+
+            var people = new PersonCollection();
+            people.GeneratePeople(100,r);
 
             var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPrescribing.csv"));
 
             bool finished = false;
             int finishedWithRecords = -1;
             
-            PrescribingExerciseTestData prescribing = new PrescribingExerciseTestData();
+            var prescribing = new Prescribing(r);
             prescribing.RowsGenerated += (s, e) =>
             {
                 finished = e.IsFinished;
@@ -50,22 +52,5 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
         }
 
 
-        [Test]
-        public void SampleCodeStaticConstructor()
-        {
-            TestPrescription prescription = new TestPrescription(new Random());
-
-            Console.WriteLine("res_seqno:" + prescription.res_seqno);
-            Console.WriteLine("name:" + prescription.name);
-            Console.WriteLine("Approved_Name:" + prescription.Approved_Name);
-            Console.WriteLine("BNF_Code:" + prescription.BNF_Code);
-            Console.WriteLine("formatted_BNF_Code:" + prescription.formatted_BNF_Code);
-            Console.WriteLine("BNF_Description:" + prescription.BNF_Description);
-            Console.WriteLine("Quantity:" + prescription.Quantity);
-            Console.WriteLine("strength:" + prescription.strength);
-            Console.WriteLine("measure_code:" + prescription.measure_code);
-            Console.WriteLine("formulation_code:" + prescription.formulation_code);
-           
-        }
     }
 }

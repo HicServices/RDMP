@@ -17,10 +17,10 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
     <PackageReference Include="System.Net.Http" Version="4.*" />
+    <PackageReference Include="HIC.BadMedicine" Version="0.0.1.1" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\DataLoad\Engine\LoadModules\LoadModules.GenericUIs\LoadModules.GenericUIs.csproj" />
-    <ProjectReference Include="..\Diagnostics\Diagnostics.csproj" />
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
     <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTableUI\MapsDirectlyToDatabaseTableUI.csproj" />
     <ProjectReference Include="..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
@@ -77,6 +77,9 @@
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
     </Compile>
     <Compile Update="UserControl1.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="TestsAndSetup\StartupUI\StartupUIMainForm.cs">

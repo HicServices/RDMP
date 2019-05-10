@@ -15,10 +15,11 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
 using Tests.Common;
 using Tests.Common.Helpers;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
 {
-    public class EndToEndDLECacheTest:DatabaseTests
+    public class EndToEndDLECacheTest:TestsRequiringADle
     {
         [Test]
         public void RunEndToEndDLECacheTest()
@@ -28,14 +29,7 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
 
             int timeoutInMilliseconds = 120000;
             
-            var setup = new DLEEndToEndTestSetup(
-                DiscoveredServerICanCreateRandomDatabasesAndTablesOn,
-                UnitTestLoggingConnectionString,
-                RepositoryLocator,
-                DiscoveredServerICanCreateRandomDatabasesAndTablesOn);
-
-            LoadMetadata lmd;
-            setup.SetUp(timeoutInMilliseconds,out lmd);
+            var lmd = TestLoadMetadata;
 
             LoadProgress lp = new LoadProgress(CatalogueRepository,lmd);
             lp.DataLoadProgress = new DateTime(2001,1,1);
@@ -61,21 +55,15 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
             patternArgument.SetValue("*.csv");
             patternArgument.SaveToDatabase();
 
-            
-            var LoadDirectory = new LoadDirectory(lmd.LocationOfFlatFiles);
-
             //take the forLoading file
-            var csvFile = LoadDirectory.ForLoading.GetFiles().Single();
+            var csvFile = CreateFileInForLoading("bob.csv",10,new Random(5000));
 
             //and move it to the cache and give it a date in the range we expect for the cached data
             csvFile.MoveTo(Path.Combine(LoadDirectory.Cache.FullName,"2001-01-09.csv"));
                        
-            setup.RecordPreExecutionState();
+            RunDLE(timeoutInMilliseconds);
 
-            int newRows;
-            setup.RunAutomationServiceToCompletion(timeoutInMilliseconds,out newRows);
-
-            Assert.AreEqual(10,newRows);
+            Assert.AreEqual(10,RowsNow - RowsBefore);
 
             Assert.AreEqual(0,LoadDirectory.Cache.GetFiles().Count());
             Assert.AreEqual(0, LoadDirectory.ForLoading.GetFiles().Count());
@@ -92,12 +80,7 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
             cp.DeleteInDatabase();
             lp.DeleteInDatabase();
 
-            assembler.Destroy();
-
-            setup.VerifyNoErrorsAfterExecutionThenCleanup(timeoutInMilliseconds);
-
-
-            
+            assembler.Destroy();            
         }
     }
 }

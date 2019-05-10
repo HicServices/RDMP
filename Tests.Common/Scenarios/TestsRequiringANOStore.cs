@@ -17,7 +17,7 @@ using ReusableLibraryCode.Checks;
 
 namespace Tests.Common.Scenarios
 {
-    public class TestsRequiringANOStore:DatabaseTests
+    public class TestsRequiringANOStore:TestsRequiringA
     {
         protected ExternalDatabaseServer ANOStore_ExternalDatabaseServer { get; set; }
         protected DiscoveredDatabase ANOStore_Database { get; set; }

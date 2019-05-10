@@ -4,9 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.IO;
 using System.Linq;
-using Diagnostics.TestData.Exercises;
+using BadMedicine;
+using BadMedicine.Datasets;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 
@@ -20,8 +22,10 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
         [TestCase(100000)]
         public void CreateCSV(int numberOfRecords)
         {
-            ExerciseTestIdentifiers people = new ExerciseTestIdentifiers();
-            people.GeneratePeople(100);
+            var r = new Random(500);
+
+            PersonCollection people = new PersonCollection();
+            people.GeneratePeople(100,r);
 
             var f =new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestPeople.csv"));
             
@@ -29,7 +33,7 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
             int finishedWithRecords = -1;
             
             
-            DemographyExerciseTestData demog = new DemographyExerciseTestData();
+            Demography demog = new Demography(r);
             demog.RowsGenerated += (s, e) =>
             {
                 finished = e.IsFinished;
