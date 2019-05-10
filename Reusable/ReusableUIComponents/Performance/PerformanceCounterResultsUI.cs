@@ -9,6 +9,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using ReusableLibraryCode.Performance;
@@ -71,7 +72,6 @@ namespace ReusableUIComponents.Performance
 
         List<StackFramesTree> Roots;
 
-        bool ignoreSystemCalls = true;
         bool collapseToMethod = false;
         private ComprehensiveQueryPerformanceCounter _performanceCounter;
         
@@ -90,11 +90,10 @@ namespace ReusableUIComponents.Performance
         {
             _performanceCounter = performanceCounter;
 
-            ignoreSystemCalls = !cbVerbose.Checked;
-
             Roots = new List<StackFramesTree>();
 
             _worstOffenderCount = performanceCounter.DictionaryOfQueries.Seconds.Sum(k => k.TimesSeen);
+            Regex isSystemCall = new Regex(@"^\s*(at)?\s*System.Windows.Forms");
 
             //for each documented query point (which has a stack trace)
             foreach (string stackTrace in performanceCounter.DictionaryOfQueries.Firsts)
@@ -104,10 +103,12 @@ namespace ReusableUIComponents.Performance
 
                 //get the stack trace split by line reversed so the root is at the top
                 var lines = stackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Reverse().ToArray();
-
-                if (ignoreSystemCalls)
-                    lines = lines.Where(StackFramesTree.FindSourceCode).ToArray();
-
+                   
+                lines = lines.Where(l=>!isSystemCall.IsMatch(l)).ToArray();
+                
+                if(lines.Length == 0)
+                    continue;
+                
                 if(collapseToMethod)
                 {
                     
@@ -197,12 +198,5 @@ namespace ReusableUIComponents.Performance
                 tlvLocations.UseFiltering = true;
             }
         }
-
-        private void cbVerbose_CheckedChanged(object sender, EventArgs e)
-        {
-            //reload it
-            LoadState(_performanceCounter);
-        }
-
     }
 }

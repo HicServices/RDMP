@@ -79,6 +79,11 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void btnViewPerformanceResults_Click(object sender, EventArgs e)
         {
+
+            //if there aren't any results don't show
+            if (DatabaseCommandHelper.PerformanceCounter == null || !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Firsts.Any())
+                return;                
+
             Form f = new Form();
             var ui = new PerformanceCounterResultsUI();
             ui.Dock = DockStyle.Fill;
