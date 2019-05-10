@@ -9,7 +9,6 @@ using System.IO;
 using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using Diagnostics;
 using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandLine.DatabaseCreation;

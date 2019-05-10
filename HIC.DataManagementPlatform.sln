@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.572
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.28902.138
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "DataLoad", "DataLoad", "{BBD76125-96B3-41BE-93EE-BB83069FCD61}"
 EndProject
@@ -17,8 +17,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E42F0D
 	ProjectSection(SolutionItems) = preProject
 		.nuget\packages.config = .nuget\packages.config
 	EndProjectSection
-EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Diagnostics", "Diagnostics\Diagnostics.csproj", "{8937888F-BDAC-4B51-A87F-3A83C38447D3}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Tests.Common", "Tests.Common\Tests.Common.csproj", "{CA13A431-7FB6-4BCE-8521-42D130934311}"
 EndProject
@@ -57,11 +55,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Rdmp.UI.Tests", "Rdmp.UI.Te
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Plugins", "Plugins", "{FDA39DF9-32DD-4180-AEDA-28AFF7A863AA}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin", "Plugins\Plugin\Plugin.csproj", "{D09313E9-0368-47BF-9900-D8296C2581BC}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin", "Plugins\Plugin\Plugin.csproj", "{D09313E9-0368-47BF-9900-D8296C2581BC}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.UI", "Plugins\Plugin.UI\Plugin.UI.csproj", "{CE554269-9AFC-45FF-9A5B-2289938250CE}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.UI", "Plugins\Plugin.UI\Plugin.UI.csproj", "{CE554269-9AFC-45FF-9A5B-2289938250CE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Plugin.Test", "Plugins\Plugin.Test\Plugin.Test.csproj", "{3647CB7F-FA3A-487E-B766-6BD0B8B37579}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.Test", "Plugins\Plugin.Test\Plugin.Test.csproj", "{3647CB7F-FA3A-487E-B766-6BD0B8B37579}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -135,32 +133,6 @@ Global
 		{5AD03B2F-232A-4E0B-86FF-DC7F49146962}.Test|x64.Build.0 = Release|Any CPU
 		{5AD03B2F-232A-4E0B-86FF-DC7F49146962}.Test|x86.ActiveCfg = Release|Any CPU
 		{5AD03B2F-232A-4E0B-86FF-DC7F49146962}.Test|x86.Build.0 = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Development|Any CPU.Build.0 = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Development|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Development|Mixed Platforms.Build.0 = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Development|x64.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Development|x86.ActiveCfg = Debug|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Release|Any CPU.Build.0 = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Release|x64.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Release|x86.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|Any CPU.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|Any CPU.Build.0 = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|Mixed Platforms.Build.0 = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|x64.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|x64.Build.0 = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|x86.ActiveCfg = Release|Any CPU
-		{8937888F-BDAC-4B51-A87F-3A83C38447D3}.Test|x86.Build.0 = Release|Any CPU
 		{CA13A431-7FB6-4BCE-8521-42D130934311}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{CA13A431-7FB6-4BCE-8521-42D130934311}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{CA13A431-7FB6-4BCE-8521-42D130934311}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
