@@ -38,7 +38,9 @@ namespace Rdmp.UI.Menus
             setOperation.DropDownItems.Add(GetChangeOperationMenuItem(SetOperation.INTERSECT));
             Items.Add(setOperation);
 
-            Items.Add("Add Sub Container", CohortIdentificationIcons.addCohortAggregateContainer,(s, e) => AddNewCohortAggregateContainer());
+
+            Add(new ExecuteCommandAddCohortSubContainer(_activator,container));
+
 
             Add(new ExecuteCommandDisableOrEnable(_activator, container));
 
@@ -192,13 +194,6 @@ namespace Rdmp.UI.Menus
                     }
                 }
             }
-        }
-
-        private void AddNewCohortAggregateContainer()
-        {
-            var newContainer = new CohortAggregateContainer(RepositoryLocator.CatalogueRepository, SetOperation.UNION);
-            _container.AddChild(newContainer);
-            Publish(_container);
         }
 
         private ToolStripMenuItem GetChangeOperationMenuItem(SetOperation operation)
