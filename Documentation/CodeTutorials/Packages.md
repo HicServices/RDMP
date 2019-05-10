@@ -14,21 +14,19 @@
 | [Command Line Parser](https://github.com/commandlineparser/commandline) | 2.3 | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables | &#9744; |
 | [CsvHelper](https://github.com/JoshClose/CsvHelper) | 7.1.1 | MS-PL / Apache 2.0 | Enables reading/writing CSV files | &#9744; |
 | [NPOI](https://github.com/tonyqus/npoi) | 2.4.1 | Apache 2.0 | Enables reading/writing Microsoft Excel files | &#9744; |
-| [DocX](https://github.com/xceedsoftware/DocX) | 1.1.0 | MS-PL | Enables writing Microsoft Word documents | &#9744; |
 | [FAnsi SQL](https://github.com/HicServices/FAnsiSql) | 0.9.0.5 | [GPL 3.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | DBMS abstraction layer | &#9744; |
+| [Bad Medicine](https://github.com/HicServices/BadMedicine) | 0.0.1.1 | [GPL 3.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Generate Test Datasets for tests/exericses | &#9744; |
 | MySql.Data | 8.0.14 | [GPL 2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Enables interaction with MySql databases | &#9744; |
 | Oracle ODP.NET Managed Driver| 18.3.0 | [OTNLA](https://www.oracle.com/technetwork/licenses/distribution-license-152002.html) | Enables interaction with Oracle databases | &#9744; |
 | [SSH.NET](https://github.com/sshnet/SSH.NET)  | 2013.4.7 | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers | &#9744; |
 | SharpZipLib | 1.0.0 | [MIT](https://opensource.org/licenses/MIT) | Open Zip files | &#9744; |
-| RhinoMocks | 3.6.1 |[BSD](https://opensource.org/licenses/bsd-license.php)  | Mock objects during unit testing | &#9744; |
+| [Moq 4](https://github.com/moq/moq4) | 3.6.1 |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing | &#9744; |
 | Nunit | 3.11.0 | NUnit License | Unit testing | &#9744; |
 | NUnit3TestAdapter| 3.10.0 | NUnit License | Run unit tests from within Visual Studio | &#9744; |
 | Mono.Reflection | 1.1.0.0 | License | Deconstruct plugins to show code compatibility in PluginAnalyser | &#9744; |
 | Newtonsoft.Json | 11.0.2 | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission | &#9744; |
-| JetBrains ReSharper Annotations | 10.4.0 | [MIT](https://opensource.org/licenses/MIT)  | Purpose | &#9744; |
-| QuickGraphPCL | 3.6.61114.2 | MS-PL | Show RDMP objects networks in WPF screen | &#9744; |
-| GraphX  | 2.2.0.2 | Apache 2.0 | Show RDMP objects networks in WPF screen | &#9744; |
-
+| JetBrains ReSharper Annotations | 10.4.0 | [MIT](https://opensource.org/licenses/MIT)  | Required for ReSharper Extension for Visual Studio | &#9744; |
+| [YamlDotNet](https://github.com/aaubry/YamlDotNet) | 6.0.0 | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files| &#9744; |
 
 
 
