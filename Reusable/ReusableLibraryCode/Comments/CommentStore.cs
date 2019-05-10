@@ -41,9 +41,6 @@ namespace ReusableLibraryCode.Comments
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
-                if(assembly.FullName.Contains("LoadModules"))
-                    Console.WriteLine("Here");
-
                 var xmlFile = assembly.GetName().Name + ".xml";
 
                 //we don't need to provide help for system classes
