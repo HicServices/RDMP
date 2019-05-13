@@ -45,6 +45,8 @@ namespace Rdmp.UI.FindAndReplace
         
         public FindAndReplaceUI(IActivateItems activator)
         {
+            SetItemActivator(activator);
+
             GetAllObjects(activator);
 
             _adjustableLocationPropertyFinder = new AttributePropertyFinder<AdjustableLocationAttribute>(_allObjects);
