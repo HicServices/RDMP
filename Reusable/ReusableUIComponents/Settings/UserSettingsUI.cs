@@ -41,6 +41,8 @@ namespace ReusableUIComponents.Settings
             ddWordWrap.DataSource = Enum.GetValues(typeof(WrapMode));
             ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
 
+            tbHeatmapColours.Text = UserSettings.HeatMapColours;
+
             _bLoaded = true;
         }
 
@@ -87,5 +89,9 @@ namespace ReusableUIComponents.Settings
             UserSettings.WrapMode = (int)wrap;
         }
 
+        private void TbHeatmapColours_TextChanged(object sender, EventArgs e)
+        {
+            UserSettings.HeatMapColours = tbHeatmapColours.Text;
+        }
     }
 }
