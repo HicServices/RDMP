@@ -33,13 +33,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
         /// Computes an MD5 Hash of the current License text
         /// </summary>
         /// <returns></returns>
-        public string GetMd5OfLicense()
+        public string GetHashOfLicense()
         {
-            using (var md5 = MD5.Create())
+            using (var hashProvider = SHA512.Create())
             {
                 using (var stream = GetStream())
                 {
-                    return BitConverter.ToString(md5.ComputeHash(stream));
+                    return BitConverter.ToString(hashProvider.ComputeHash(stream));
                 }
             }
         }

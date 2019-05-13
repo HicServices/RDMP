@@ -10,6 +10,10 @@
       </PropertyGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
+    <PackageReference Include="SecurityCodeScan" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <Compile Update="CreatePlatformDatabase.cs">
       <SubType>Form</SubType>
     </Compile>

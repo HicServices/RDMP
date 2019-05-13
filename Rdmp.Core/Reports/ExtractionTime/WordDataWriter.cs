@@ -98,7 +98,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     if (_destination.GeneratesFiles)
                     {
                         SetTableCell(t,rownum,0,"MD5");
-                        SetTableCell(t,rownum,1,UsefulStuff.MD5File(_destination.OutputFile));
+                        SetTableCell(t,rownum,1,UsefulStuff.HashFile(_destination.OutputFile));
                         rownum++;
                     
                         FileInfo f = new FileInfo(_destination.OutputFile);

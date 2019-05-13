@@ -156,15 +156,15 @@ namespace ReusableLibraryCode
 
         }
 
-        public static string MD5File(string filename, int retryCount = 6)
+        public static string HashFile(string filename, int retryCount = 6)
         {
             try
             {
-                using (var md5 = MD5.Create())
+                using (var hashProvider = SHA512.Create())
                 {
                     using (var stream = File.OpenRead(filename))
                     {
-                        return BitConverter.ToString(md5.ComputeHash(stream));
+                        return BitConverter.ToString(hashProvider.ComputeHash(stream));
                     }
                 }
             }
@@ -174,7 +174,7 @@ namespace ReusableLibraryCode
                 Thread.Sleep(1000);
 
                 if (retryCount-- > 0)
-                    return MD5File(filename, retryCount);//try it again (recursively)
+                    return HashFile(filename, retryCount);//try it again (recursively)
                 else
                     throw ex;
             }
@@ -630,7 +630,7 @@ namespace ReusableLibraryCode
                 if (!file1.Name.Equals(file2.Name))
                     throw new Exception("Although there were the same number of files in Globals directories " + first.FullName + " and " + other.FullName + ", there were differing file names (" + file1.Name + " and " + file2.Name + ")");
 
-                if (!UsefulStuff.MD5File(file1.FullName).Equals(UsefulStuff.MD5File(file2.FullName)))
+                if (!UsefulStuff.HashFile(file1.FullName).Equals(UsefulStuff.HashFile(file2.FullName)))
                     throw new Exception("File found in Globals directory which has a different MD5 from another Globals file.  Files were \"" + file1.FullName + "\" and \"" + file2.FullName + "\"");
             }
         }

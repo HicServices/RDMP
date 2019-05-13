@@ -233,6 +233,10 @@
     <PackageReference Include="ExcelNumberFormat" Version="1.0.5" />
     <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.1" />
     <PackageReference Include="NPOI" Version="2.4.1" />
+    <PackageReference Include="SecurityCodeScan" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="SSH.NET" Version="2016.1.0" />
     <PackageReference Include="System.ComponentModel.Composition" Version="4.5.0" />
   </ItemGroup>

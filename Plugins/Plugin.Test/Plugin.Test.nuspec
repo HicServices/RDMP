@@ -33,9 +33,21 @@
         </dependencies>
     </metadata>
     <files>
-		<file src="bin\$configuration$\netstandard2.0\*.dll" target="lib\netstandard2.0" exclude="Plugin.Test.dll" />
-    <file src="bin\$configuration$\netstandard2.0\*.pdb" target="lib\netstandard2.0" exclude="Plugin.Test.pdb" />
-    <file src="bin\$configuration$\netstandard2.0\*.xml" target="lib\netstandard2.0" exclude="Plugin.Test.xml" />
-        <file src="..\..\Tests.Common\TestDatabases.txt" target="content" />
+		<file src="bin\$configuration$\netstandard2.0\Diagnostics.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Diagnostics.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Diagnostics.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Tests.Common.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Tests.Common.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Tests.Common.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\TestDatabases.txt" target="content"/>
     </files>
 </package>

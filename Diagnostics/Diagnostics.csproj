@@ -24,6 +24,10 @@
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.1.2" />
     <PackageReference Include="MathNet.Numerics" Version="4.7.0" />
-    <PackageReference Include="System.ComponentModel.Composition" Version="4.6.0-preview4.19212.13" />
+    <PackageReference Include="SecurityCodeScan" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="System.ComponentModel.Composition" Version="4.5.0" />
   </ItemGroup>
 </Project>

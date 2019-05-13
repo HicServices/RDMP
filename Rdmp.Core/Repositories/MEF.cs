@@ -201,8 +201,8 @@ namespace Rdmp.Core.Repositories
 
                 if (dllInBinFolder != null)
                 {
-                    string md5Bin = UsefulStuff.MD5File(dllInBinFolder.FullName);
-                    string md5Mef = UsefulStuff.MD5File(dllInMEFFolder.FullName);
+                    string md5Bin = UsefulStuff.HashFile(dllInBinFolder.FullName);
+                    string md5Mef = UsefulStuff.HashFile(dllInMEFFolder.FullName);
 
                     if (!md5Bin.Equals(md5Mef))
                     {

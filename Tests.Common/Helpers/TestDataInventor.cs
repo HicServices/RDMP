@@ -49,7 +49,9 @@ namespace Tests.Common.Helpers
 
             string contents = "MyRand,DateOfRandom" + Environment.NewLine;
             for (int i = 0; i < 100; i++)
+#pragma warning disable SCS0005 // Weak random generator - This is not a secure context as it is simply a test helper.
                 contents += r.Next(10000) + "," + currentDay.ToString("yyyy-MM-dd") + Environment.NewLine;
+#pragma warning restore SCS0005 // Weak random generator
 
             File.WriteAllText(filename, contents);
             return new FileInfo(filename);
