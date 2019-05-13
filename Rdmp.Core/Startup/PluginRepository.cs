@@ -36,10 +36,5 @@ namespace Rdmp.Core.Startup
         {
             return _constructor.ConstructIMapsDirectlyToDatabaseObject(t, this, reader);
         }
-
-        protected override bool IsCompatibleType(Type type)
-        {
-            return typeof (DatabaseEntity).IsAssignableFrom(type);
-        }
     }
 }

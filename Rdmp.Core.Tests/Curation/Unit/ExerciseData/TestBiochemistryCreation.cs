@@ -7,8 +7,8 @@
 using System;
 using System.IO;
 using System.Linq;
-using Diagnostics.TestData;
-using Diagnostics.TestData.Exercises;
+using BadMedicine;
+using BadMedicine.Datasets;
 using NUnit.Framework;
 using ReusableLibraryCode.Progress;
 
@@ -22,15 +22,16 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
         [TestCase(100000)]
         public void CreateCSV(int numberOfRecords)
         {
-            ExerciseTestIdentifiers people = new ExerciseTestIdentifiers();
-            people.GeneratePeople(100);
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(100,r);
 
             var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DeleteMeTestBiochemistry.csv"));
 
             bool finished = false;
             int finishedWithRecords = -1;
 
-            BiochemistryExerciseTestData biochem = new BiochemistryExerciseTestData();
+            var biochem = new Biochemistry(new Random(500));
             biochem.RowsGenerated += (s, e) =>
             {
                 finished = e.IsFinished;
@@ -47,19 +48,6 @@ namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
 
             Console.WriteLine("Created file: " + f.FullName);
             f.Delete();
-        }
-
-        [Test]
-        public void SampleCodeStaticConstructor()
-        {
-            TestBiochemistrySample sample = new TestBiochemistrySample(new Random());
-
-            Console.WriteLine("Test_code:" + sample.Test_code);
-            Console.WriteLine("Result:" + sample.Result);
-            Console.WriteLine("Units:" + sample.Units);
-            Console.WriteLine("Sample_type:" + sample.Sample_type);
-            Console.WriteLine("ReadCodeValue:" + sample.ReadCodeValue);
-            Console.WriteLine("ReadCodeDescription:" + sample.ReadCodeDescription);
         }
     }
 }

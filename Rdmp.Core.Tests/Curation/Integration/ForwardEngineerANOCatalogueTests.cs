@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
-using Diagnostics.TestData;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;

@@ -148,7 +148,7 @@ namespace Rdmp.Core.Curation.Data
             get { return _regexPattern; }
             set { SetField(ref  _regexPattern, value); }
         }
-
+        
         /// <summary>
         /// Not used for anything by RDMP.
         /// <para>Use the data quality engine instead (See <see cref="Catalogue.ValidatorXML"/>)</para>

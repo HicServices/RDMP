@@ -14,7 +14,6 @@
     <Compile Include="..\..\..\SharedAssemblyInfo.cs" Link="Properties\SharedAssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\..\Diagnostics\Diagnostics.csproj" />
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj" />
     <ProjectReference Include="..\..\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\ReusableLibraryCode\ReusableLibraryCode.csproj" />

@@ -394,7 +394,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             f.Close();
             ExceptionViewer.Show("Window Closed",reason);
         }
-
+        public void KillForm(Form f, string reason)
+        {
+            f.Close();
+            ExceptionViewer.Show("Window Closed",reason);
+        }
         public void OnRuleRegistered(IBinderRule rule)
         {
             //no special action required

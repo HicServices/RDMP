@@ -186,10 +186,6 @@ namespace Rdmp.Core.Repositories
             return _constructor.ConstructIMapsDirectlyToDatabaseObject<ICatalogueRepository>(t, this, reader);
         }
 
-        protected override bool IsCompatibleType(Type type)
-        {
-            return typeof (DatabaseEntity).IsAssignableFrom(type);
-        }
 
         public ExternalDatabaseServer[] GetAllDatabases<T>() where T:IPatcher,new()
         {

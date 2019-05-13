@@ -175,6 +175,7 @@
     </Compile>
     <Compile Update="ViewSourceCodeDialog.Designer.cs">
       <DependentUpon>ViewSourceCodeDialog.cs</DependentUpon>
+      <SubType>Form</SubType>
     </Compile>
     <Compile Update="YesNoYesToAllDialog.cs">
       <SubType>Form</SubType>

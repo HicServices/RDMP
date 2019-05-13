@@ -48,13 +48,15 @@ namespace MapsDirectlyToDatabaseTable
 
         private readonly Logger _logger = LogManager.GetCurrentClassLogger();
 
+        Lazy<DiscoveredTable[]> _tables;
+
         //If you are calling this constructor then make sure to set the connection strings in your derrived class constructor
         public TableRepository()
         {
-            
+            _tables = new Lazy<DiscoveredTable[]>(()=>this.DiscoveredServer.GetCurrentDatabase().DiscoverTables(false));
         }
 
-        public TableRepository(IObscureDependencyFinder obscureDependencyFinder, DbConnectionStringBuilder connectionStringBuilder)
+        public TableRepository(IObscureDependencyFinder obscureDependencyFinder, DbConnectionStringBuilder connectionStringBuilder):this()
         {
             ObscureDependencyFinder = obscureDependencyFinder;
             _connectionStringBuilder = connectionStringBuilder;
@@ -886,6 +888,8 @@ namespace MapsDirectlyToDatabaseTable
             return toReturn.ToArray();
         }
 
+        
+
         /// <summary>
         /// Gets all the c# class types that come from the database
         /// </summary>
@@ -896,16 +900,32 @@ namespace MapsDirectlyToDatabaseTable
                 this.GetType().Assembly.GetTypes()
                     .Where(
                         t =>
-                            typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface &&
-                            !t.Name.Contains("Spontaneous")&&IsCompatibleType(t)).ToArray();
+                            typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)
+                            && !t.IsAbstract 
+                            && !t.IsInterface 
+                            
+                            //nothing called spontaneous
+                            && !t.Name.Contains("Spontaneous") 
+                            
+                            //or with a spontaneous base class
+                            &&(t.BaseType == null || !t.BaseType.Name.Contains("Spontaneous"))
+                            && IsCompatibleType(t)
+                            
+                            
+                            
+                            ).ToArray();
         }
 
         /// <summary>
         /// Returns True if the type is one for objects that are held in the database.  Types will come from your repository assembly
-        /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces
+        /// and will include only <see cref="IMapsDirectlyToDatabaseTable"/> Types that are not abstract/interfaces.  Types are only 
+        /// compatible if an accompanying <see cref="DiscoveredTable"/> exists in the database to store the objects.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>
-        protected abstract bool IsCompatibleType(Type type);
+        protected virtual bool IsCompatibleType(Type type)
+        {
+            return _tables.Value.Any(t=>t.GetRuntimeName().Equals(type.Name));
+        }
     }
 }

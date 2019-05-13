@@ -167,6 +167,12 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("WrapMode", value); }
         }
 
+        public static string HeatMapColours 
+        {
+            get { return AppSettings.GetValueOrDefault("HeatMapColours", null); }
+            set { AppSettings.AddOrUpdateValue("HeatMapColours", value); }
+        }
+
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Threading;
-using Diagnostics.TestData;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;

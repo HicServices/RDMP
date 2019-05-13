@@ -35,7 +35,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
         [TestCase(DatabaseType.Oracle, 1.5)]
         public void CreateTableAndInsertAValue_ColumnOverload(DatabaseType type, object value)
         {
-            var db = GetCleanedServer(type,true);
+            var db = GetCleanedServer(type);
             var tbl = db.CreateTable("InsertTable",
                 new []
                 {

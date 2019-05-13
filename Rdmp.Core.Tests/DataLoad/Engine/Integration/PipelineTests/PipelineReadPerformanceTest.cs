@@ -8,7 +8,6 @@ using System;
 using System.Data;
 using System.Data.Common;
 using System.Diagnostics;
-using Diagnostics.TestData;
 using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;

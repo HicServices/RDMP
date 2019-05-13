@@ -18,10 +18,11 @@ namespace Rdmp.Core.Repositories.Managers
         public override void ReadComments(params string[] directoriesToLookInForComments)
         {
             base.ReadComments(directoriesToLookInForComments);
+            
+            FileInfo keywords = new FileInfo("./Curation/KeywordHelp.txt");
 
-            //todo if not found?
-                        
-            AddToHelp(File.ReadAllText("./Curation/KeywordHelp.txt"));
+            if(keywords.Exists)
+                AddToHelp(File.ReadAllText(keywords.FullName));
         }
 
         private void AddToHelp(string keywordHelpFileContents)

@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using FAnsi;
+using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Repositories;
@@ -54,6 +56,37 @@ namespace Rdmp.Core.Curation.Data
         public IQuerySyntaxHelper GetQuerySyntaxHelper()
         {
             return new QuerySyntaxHelperFactory().Create(DatabaseType);
+        }
+
+        public bool DiscoverExistence(DataAccessContext context, out string reason)
+        {
+            DiscoveredDatabase db;
+            try
+            {
+                db = Discover(context);
+            }
+            catch (Exception ex)
+            {
+                reason = ex.Message;
+                return false;
+            }
+            
+
+            if(!db.Exists())
+            {
+                reason = "database did not exist";
+                return false;
+            }
+            else
+            {
+                reason = null;
+                return true;
+            }
+        }
+
+        internal DiscoveredDatabase Discover(DataAccessContext context)
+        {
+            return DataAccessPortal.GetInstance().ExpectDatabase(this, context);
         }
     }
 }

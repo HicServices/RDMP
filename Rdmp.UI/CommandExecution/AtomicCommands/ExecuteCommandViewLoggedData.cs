@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Logging;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.LogViewer.Tabs;
+using Rdmp.UI.LogViewer;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 

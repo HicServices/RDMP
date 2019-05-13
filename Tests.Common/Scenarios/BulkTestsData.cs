@@ -9,9 +9,8 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
-using Diagnostics;
-using Diagnostics.TestData;
-using Diagnostics.TestData.Exercises;
+using BadMedicine;
+using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -40,7 +39,7 @@ namespace Tests.Common.Scenarios
         public Catalogue catalogue;
         public CatalogueItem[] catalogueItems;
         public ExtractionInformation[] extractionInformations;
-        private DemographyExerciseTestData _dataGenerator;
+        private Demography _dataGenerator;
 
         private Random r = new Random();
 
@@ -50,7 +49,7 @@ namespace Tests.Common.Scenarios
             BulkDataDatabase = targetDatabase;
             ExpectedNumberOfRowsInTestData = numberOfRows;
 
-            _dataGenerator = new DemographyExerciseTestData();
+            _dataGenerator = new Demography(new Random(500));
 
         }
 
@@ -141,7 +140,7 @@ CREATE VIEW vSlowView As Select * from " + BulkDataTable + " boss where date_of_
 
                     //each 100th of the expected size
                     for (int i = 0; i < ExpectedNumberOfRowsInTestData/10; i++)
-                        dt.Rows.Add(_dataGenerator.GenerateTestDataRow(new TestPerson(r)));
+                        dt.Rows.Add(_dataGenerator.GenerateTestDataRow(new Person(r)));
                     
                     SqlBulkCopy bulkcopy = new SqlBulkCopy((SqlConnection) con);
                     bulkcopy.BulkCopyTimeout = 50000;

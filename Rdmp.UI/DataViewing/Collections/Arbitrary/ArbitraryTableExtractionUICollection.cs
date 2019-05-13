@@ -128,5 +128,18 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
         {
             return _table.GetQuerySyntaxHelper();
         }
+
+        public bool DiscoverExistence(DataAccessContext context, out string reason)
+        {
+            if(_table.Exists())
+            {
+                reason = null;
+                return true;
+            }
+
+            reason = "Table " + _table + " did not exist";
+            return false;
+                
+        }
     }
 }

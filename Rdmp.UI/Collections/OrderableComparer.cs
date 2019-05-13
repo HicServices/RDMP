@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 
@@ -31,27 +32,16 @@ namespace Rdmp.UI.Collections
 
         public int Compare(object x, object y)
         {
-            var xCatalogue = x as Catalogue;
-            var yCatalogue = y as Catalogue;
+            //Use IOrderable.Order
+            if (x is IOrderable xOrderable && y is IOrderable yOrderable)
+                return xOrderable.Order - yOrderable.Order;
 
-            if (xCatalogue != null && yCatalogue != null)
-                return String.Compare(xCatalogue.Name, yCatalogue.Name, StringComparison.CurrentCultureIgnoreCase);
+            //Or use INamed.Name
+             if (x is INamed xNamed && y is INamed yNamed)
+                return String.Compare(xNamed.Name, yNamed.Name, StringComparison.CurrentCultureIgnoreCase);
 
-            var explicitOrderX = GetExplicitOrder(x);
-            var explicitOrderY = GetExplicitOrder(y);
-
-            if (explicitOrderX != explicitOrderY)
-                return explicitOrderX - explicitOrderY;
-
-
+             //or use whatever
             return _modelComparer.Compare(x, y);
-        }
-
-        private int GetExplicitOrder(object o)
-        {
-            var orderable = o as IOrderable;
-
-            return orderable != null ? orderable.Order : -1;
         }
     }
 }
