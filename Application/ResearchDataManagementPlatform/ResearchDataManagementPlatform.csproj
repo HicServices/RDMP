@@ -28,7 +28,7 @@
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-                                                                                                                                                                                <DocumentationFile />
+	<DocumentationFile />
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>true</SignManifests>
@@ -45,6 +45,10 @@
   <ItemGroup>
     <PackageReference Include="DockPanelSuite" Version="3.1.0-beta2" />
     <PackageReference Include="DockPanelSuite.ThemeVS2015" Version="3.1.0-beta2" />
+    <PackageReference Include="SecurityCodeScan" Version="3.2.0">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="HIC.BadMedicine" Version="0.0.1.1" />
   </ItemGroup>
   <ItemGroup>

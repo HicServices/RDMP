@@ -222,7 +222,7 @@ INSERT INTO [RoundhousE].[ScriptsRun]
 
                 db.Server.AddParameterWithValueToCommand("@script_name",cmd2,filename);
                 db.Server.AddParameterWithValueToCommand("@text_of_script",cmd2,sql);
-                db.Server.AddParameterWithValueToCommand("@text_hash",cmd2,CalculateMD5Hash(sql));
+                db.Server.AddParameterWithValueToCommand("@text_hash",cmd2,CalculateHash(sql));
                 db.Server.AddParameterWithValueToCommand("@one_time_script",cmd2,1);
                 db.Server.AddParameterWithValueToCommand("@entry_date",cmd2,dt);
                 db.Server.AddParameterWithValueToCommand("@modified_date",cmd2,dt);
@@ -233,15 +233,15 @@ INSERT INTO [RoundhousE].[ScriptsRun]
 
         }
         
-        public string CalculateMD5Hash(string input)
+        public string CalculateHash(string input)
         {
             // step 1, calculate MD5 hash from input
 
-            MD5 md5 = MD5.Create();
+            var hashProvider = SHA512.Create();
 
             byte[] inputBytes = Encoding.ASCII.GetBytes(input);
 
-            byte[] hash = md5.ComputeHash(inputBytes);
+            byte[] hash = hashProvider.ComputeHash(inputBytes);
 
 
             // step 2, convert byte array to hex string

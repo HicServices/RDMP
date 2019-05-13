@@ -119,7 +119,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Audit
                                            {"CumulativeExtractionResults_ID", dataset.DatasetExtractionResult.ID},
                                            {"Username", Environment.UserName},
                                            {"DateOfRelease", DateTime.Now},
-                                           {"MD5OfDatasetFile", datasetFileBeingReleased == null ? "X" : UsefulStuff.MD5File(datasetFileBeingReleased.FullName)},
+                                           {"MD5OfDatasetFile", datasetFileBeingReleased == null ? "X" : UsefulStuff.HashFile(datasetFileBeingReleased.FullName)},
                                            {"DatasetState", dataset.DatasetExtractionResult.ToString()},
                                            {"EnvironmentState", environment.Assesment.ToString()},
                                            {"IsPatch", isPatch},

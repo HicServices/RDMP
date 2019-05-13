@@ -45,7 +45,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 
         private void btnAccept_Click(object sender, EventArgs e)
         {
-            UserSettings.LicenseAccepted = _thirdParth.GetMd5OfLicense();
+            UserSettings.LicenseAccepted = _thirdParth.GetHashOfLicense();
             allowClose = true;
             this.Close();
         }
@@ -59,7 +59,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.Licenses
 
         private void LicenseUI_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (UserSettings.LicenseAccepted != _thirdParth.GetMd5OfLicense() && !allowClose)
+            if (UserSettings.LicenseAccepted != _thirdParth.GetHashOfLicense() && !allowClose)
             {
                 e.Cancel = true;
                 MessageBox.Show("You have not accepted/declined the license");

@@ -13,26 +13,39 @@
         <description>UI package for plugin development</description>
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
+			<dependency id="HIC.BadMedicine" version="0.0.1.1" />
             <dependency id="HIC.FansiSql" version="0.9.0.0" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
-            <dependency id="DocX" version="1.1.0" />
             <dependency id="JetBrains.Annotations" version="10.4.0" />
-            <dependency id="CsvHelper" version="7.1.1" />
-            <dependency id="Newtonsoft.Json" version="11.0.2"/>
+            <dependency id="CsvHelper" version="12.1.2" />
+			<dependency id="NHunspell" version="1.2" />
+			<dependency id="Newtonsoft.Json" version="11.0.2"/>
             <dependency id="AutoCompleteMenu-ScintillaNET" version="1.5.0" />
             <dependency id="jacobslusser.ScintillaNET" version="3.6.3" />
             <dependency id="ObjectListView.Official" version="2.9.1" />
             <dependency id="SharpZipLib" version="0.86.0" />
-            <dependency id="GraphX" version="2.2.0.2" />
-            <dependency id="QuickGraphPCL" version="3.6.61114.2" />
             <dependency id="CommandLineParser" version="2.3.0" />
             <dependency id="SSH.NET" version="2013.4.7" />
-            <dependency id="Mono.Reflection" version="1.1.0.0" />
         </dependencies>
     </metadata>
   <files>
-    <file src="bin\$configuration$\netstandard2.0\*.dll" target="lib\netstandard2.0" exclude="Plugin.UI.dll"/>
-    <file src="bin\$configuration$\netstandard2.0\*.pdb" target="lib\netstandard2.0" exclude="Plugin.UI.pdb"/>
-    <file src="bin\$configuration$\netstandard2.0\*.xml" target="lib\netstandard2.0" exclude="Plugin.UI.xml"/>
+    <file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.dll" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.xml" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTableUI.dll" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTableUI.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTableUI.xml" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\Rdmp.Core.dll" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\Rdmp.Core.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\Rdmp.Core.xml" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\Rdmp.UI.dll" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\Rdmp.UI.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\Rdmp.UI.xml" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.dll" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.xml" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\ReusableUIComponents.dll" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\ReusableUIComponents.pdb" target="lib\netstandard2.0"/>
+    <file src="bin\$configuration$\netstandard2.0\ReusableUIComponents.xml" target="lib\netstandard2.0"/>
   </files>
 </package>

@@ -73,7 +73,7 @@ namespace ResearchDataManagementPlatform
             WindowState = FormWindowState.Maximized;
             CloseOnEscape = false;
 
-            if (UserSettings.LicenseAccepted != new License("LIBRARYLICENSES").GetMd5OfLicense())
+            if (UserSettings.LicenseAccepted != new License("LIBRARYLICENSES").GetHashOfLicense())
                 new LicenseUI().ShowDialog();
         }
 
