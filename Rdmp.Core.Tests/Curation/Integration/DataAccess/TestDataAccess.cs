@@ -251,6 +251,12 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
             {
                 return new MicrosoftQuerySyntaxHelper();
             }
+
+            public bool DiscoverExistence(DataAccessContext context, out string reason)
+            {
+                reason = "TestDataAccess never finds anything, it's a test";
+                return false;
+            }
         }
 
 

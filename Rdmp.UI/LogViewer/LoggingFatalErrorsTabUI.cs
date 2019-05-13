@@ -6,17 +6,16 @@
 
 using Rdmp.Core.Logging;
 
-namespace Rdmp.UI.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer
 {
     /// <summary>
-    /// Shows all the sources for data moved during a data run.  This includes the location of files that were loaded (they are likely not still there though what with archiving).  In the
-    /// case of Data Extraction the DataSource is the SQL query that was used to perform the data extraction.
+    /// A view of all the exceptions and failure messages captured during a run.  If there are any of these then the run can be assumed to have failed.
     /// </summary>
-    public class LoggingDataSourcesTabUI : LoggingTabUI
+    public class LoggingFatalErrorsTabUI : LoggingTabUI
     {
         protected override LoggingTables GetTableEnum()
         {
-            return LoggingTables.DataSource;
+            return LoggingTables.FatalError;
         }
     }
 }

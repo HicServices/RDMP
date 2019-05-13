@@ -262,6 +262,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="save">true if you want to call SaveToDatabase after setting the properties</param>
         public void SetProperties(DiscoveredDatabase discoveredDatabase, bool save = true)
         {
+
             Server = discoveredDatabase.Server.Name;
             Database = discoveredDatabase.GetRuntimeName();
             Username = discoveredDatabase.Server.ExplicitUsernameIfAny;
@@ -284,7 +285,13 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public DiscoveredDatabase Discover(DataAccessContext context)
         {
-            return DataAccessPortal.GetInstance().ExpectDatabase(this, context);
+            return _selfCertifyingDataAccessPoint.Discover(context);
+        }
+
+        /// <inheritdoc/>
+        public bool DiscoverExistence(DataAccessContext context,out string reason)
+        {
+            return _selfCertifyingDataAccessPoint.DiscoverExistence(context,out reason);
         }
     }
 }

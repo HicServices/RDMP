@@ -17,16 +17,19 @@ using Tests.Common;
 
 namespace Rdmp.UI.Tests
 {
-    internal class ExecuteCommandActivateTests: UITests
+    internal class ForEachUITests: UITests
     {
         /// <summary>
         /// Tests that all DatabaseEntity objects can be constructed with <see cref="UnitTests.WhenIHaveA{T}()"/> and that if <see cref="ExecuteCommandActivate"/>  says
         /// they can be activated then they can be (without blowing up in a major way).
         /// </summary>
         [Test,UITimeout(50000)]
-        public void Test_ExecuteCommandActivate_AllObjectsActivateable()
+        public void ForEachUI_Test_GetTabName()
         {
-            ForEachUI((ui)=>{AssertNoErrors(ExpectedErrorType.KilledForm);});
+            ForEachUI((ui)=>{
+                Assert.NotNull(ui);
+                Assert.IsFalse(string.IsNullOrWhiteSpace(ui.GetTabName()));
+                });
         }
     }
 }

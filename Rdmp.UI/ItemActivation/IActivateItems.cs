@@ -169,6 +169,14 @@ namespace Rdmp.UI.ItemActivation
         void KillForm(Form f, Exception reason);
 
         /// <summary>
+        /// Closes the Form <paramref name="f"/> and reports the <paramref name="reason"/> to the user
+        /// in a highly visible way
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="reason"></param>
+        void KillForm(Form f, string reason);
+
+        /// <summary>
         /// Called when an ErrorProvider validation rule is registered
         /// </summary>
         /// <param name="rule"></param>

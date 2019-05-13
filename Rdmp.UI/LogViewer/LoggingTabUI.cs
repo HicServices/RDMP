@@ -17,10 +17,11 @@ using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace Rdmp.UI.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer
 {
     /// <summary>
     /// TECHNICAL:Base class for all the other logging tabs e.g. <see cref="LoggingDataSourcesTabUI"/>
@@ -74,12 +75,12 @@ namespace Rdmp.UI.LogViewer.Tabs
             try
             {
                 var result = int.Parse(tbTop.Text);
-                if(result <=0)
+                if (result <= 0)
                 {
                     tbTop.ForeColor = Color.Red;
                     return 1000;
                 }
-                
+
                 tbTop.ForeColor = Color.Black;
                 return result;
             }
@@ -98,7 +99,7 @@ namespace Rdmp.UI.LogViewer.Tabs
             if (e.Button == MouseButtons.Right)
             {
                 var menu = new ContextMenuStrip();
-                
+
                 foreach (ExecuteCommandViewLoggedData cmd in GetCommands(e.RowIndex))
                 {
                     ExecuteCommandViewLoggedData cmd1 = cmd;
@@ -114,23 +115,23 @@ namespace Rdmp.UI.LogViewer.Tabs
                     if (c.Visible)
                         sb.AppendLine(c.Name + ":" + row.Cells[c.Name].Value);
 
-                if(menu.Items.Count != 0)
+                if (menu.Items.Count != 0)
                     menu.Items.Add(new ToolStripSeparator());
 
-                menu.Items.Add("View as text", null, (s, ex) => WideMessageBox.Show("Full Text",sb.ToString(),WideMessageBoxTheme.Help));
+                menu.Items.Add("View as text", null, (s, ex) => WideMessageBox.Show("Full Text", sb.ToString(), WideMessageBoxTheme.Help));
 
                 menu.Show(Cursor.Position.X, Cursor.Position.Y);
             }
         }
 
-        void dataGridView1_CellDoubleClick(object sender, System.Windows.Forms.DataGridViewCellEventArgs e)
+        void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
         {
             if (e.RowIndex == -1)
                 return;
-            
+
             var cmd = GetCommands(e.RowIndex).FirstOrDefault();
 
-            if(cmd != null)
+            if (cmd != null)
                 cmd.Execute();
         }
 
@@ -157,151 +158,151 @@ namespace Rdmp.UI.LogViewer.Tabs
         #region InitializeComponent
         protected void InitializeComponent()
         {
-            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoggingTabUI));
-            this.tbContentFilter = new System.Windows.Forms.TextBox();
-            this.label1 = new System.Windows.Forms.Label();
-            this.dataGridView1 = new System.Windows.Forms.DataGridView();
-            this.pbRemoveFilter = new System.Windows.Forms.PictureBox();
-            this.lblFilter = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.tbTop = new System.Windows.Forms.TextBox();
-            this.panel1 = new System.Windows.Forms.Panel();
-            this.cbPreferNewer = new System.Windows.Forms.CheckBox();
-            this.pFilter = new System.Windows.Forms.Panel();
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).BeginInit();
-            this.panel1.SuspendLayout();
-            this.pFilter.SuspendLayout();
-            this.SuspendLayout();
+            ComponentResourceManager resources = new ComponentResourceManager(typeof(LoggingTabUI));
+            tbContentFilter = new TextBox();
+            label1 = new Label();
+            dataGridView1 = new DataGridView();
+            pbRemoveFilter = new PictureBox();
+            lblFilter = new Label();
+            label2 = new Label();
+            tbTop = new TextBox();
+            panel1 = new Panel();
+            cbPreferNewer = new CheckBox();
+            pFilter = new Panel();
+            ((ISupportInitialize)dataGridView1).BeginInit();
+            ((ISupportInitialize)pbRemoveFilter).BeginInit();
+            panel1.SuspendLayout();
+            pFilter.SuspendLayout();
+            SuspendLayout();
             // 
             // tbContentFilter
             // 
-            this.tbContentFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbContentFilter.Location = new System.Drawing.Point(44, 3);
-            this.tbContentFilter.Name = "tbContentFilter";
-            this.tbContentFilter.Size = new System.Drawing.Size(577, 20);
-            this.tbContentFilter.TabIndex = 8;
-            this.tbContentFilter.TextChanged += new System.EventHandler(this.tbContentFilter_TextChanged);
+            tbContentFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left
+            | AnchorStyles.Right;
+            tbContentFilter.Location = new Point(44, 3);
+            tbContentFilter.Name = "tbContentFilter";
+            tbContentFilter.Size = new Size(577, 20);
+            tbContentFilter.TabIndex = 8;
+            tbContentFilter.TextChanged += new EventHandler(tbContentFilter_TextChanged);
             // 
             // label1
             // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(6, 6);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(32, 13);
-            this.label1.TabIndex = 7;
-            this.label1.Text = "Filter:";
+            label1.AutoSize = true;
+            label1.Location = new Point(6, 6);
+            label1.Name = "label1";
+            label1.Size = new Size(32, 13);
+            label1.TabIndex = 7;
+            label1.Text = "Filter:";
             // 
             // dataGridView1
             // 
-            this.dataGridView1.AllowUserToAddRows = false;
-            this.dataGridView1.AllowUserToDeleteRows = false;
-            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
-            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
-            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
-            this.dataGridView1.Name = "dataGridView1";
-            this.dataGridView1.ReadOnly = true;
-            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
-            this.dataGridView1.Size = new System.Drawing.Size(842, 571);
-            this.dataGridView1.TabIndex = 6;
+            dataGridView1.AllowUserToAddRows = false;
+            dataGridView1.AllowUserToDeleteRows = false;
+            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            dataGridView1.Dock = DockStyle.Fill;
+            dataGridView1.EditMode = DataGridViewEditMode.EditProgrammatically;
+            dataGridView1.Location = new Point(0, 0);
+            dataGridView1.Name = "dataGridView1";
+            dataGridView1.ReadOnly = true;
+            dataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect;
+            dataGridView1.Size = new Size(842, 571);
+            dataGridView1.TabIndex = 6;
             // 
             // pbRemoveFilter
             // 
-            this.pbRemoveFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.pbRemoveFilter.BackColor = System.Drawing.Color.Goldenrod;
-            this.pbRemoveFilter.Image = ((System.Drawing.Image)(resources.GetObject("pbRemoveFilter.Image")));
-            this.pbRemoveFilter.Location = new System.Drawing.Point(820, 3);
-            this.pbRemoveFilter.Name = "pbRemoveFilter";
-            this.pbRemoveFilter.Size = new System.Drawing.Size(19, 19);
-            this.pbRemoveFilter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
-            this.pbRemoveFilter.TabIndex = 10;
-            this.pbRemoveFilter.TabStop = false;
-            this.pbRemoveFilter.Click += new System.EventHandler(this.pbRemoveFilter_Click);
+            pbRemoveFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            pbRemoveFilter.BackColor = Color.Goldenrod;
+            pbRemoveFilter.Image = (Image)resources.GetObject("pbRemoveFilter.Image");
+            pbRemoveFilter.Location = new Point(820, 3);
+            pbRemoveFilter.Name = "pbRemoveFilter";
+            pbRemoveFilter.Size = new Size(19, 19);
+            pbRemoveFilter.SizeMode = PictureBoxSizeMode.CenterImage;
+            pbRemoveFilter.TabIndex = 10;
+            pbRemoveFilter.TabStop = false;
+            pbRemoveFilter.Click += new EventHandler(pbRemoveFilter_Click);
             // 
             // lblFilter
             // 
-            this.lblFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.lblFilter.BackColor = System.Drawing.Color.Goldenrod;
-            this.lblFilter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
-            this.lblFilter.Location = new System.Drawing.Point(3, 3);
-            this.lblFilter.Name = "lblFilter";
-            this.lblFilter.Size = new System.Drawing.Size(816, 19);
-            this.lblFilter.TabIndex = 9;
-            this.lblFilter.Text = "Filtered Object";
-            this.lblFilter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
+            lblFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left
+            | AnchorStyles.Right;
+            lblFilter.BackColor = Color.Goldenrod;
+            lblFilter.ForeColor = SystemColors.ControlLightLight;
+            lblFilter.Location = new Point(3, 3);
+            lblFilter.Name = "lblFilter";
+            lblFilter.Size = new Size(816, 19);
+            lblFilter.TabIndex = 9;
+            lblFilter.Text = "Filtered Object";
+            lblFilter.TextAlign = ContentAlignment.MiddleCenter;
             // 
             // label2
             // 
-            this.label2.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(725, 6);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(29, 13);
-            this.label2.TabIndex = 11;
-            this.label2.Text = "Top:";
+            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            label2.AutoSize = true;
+            label2.Location = new Point(725, 6);
+            label2.Name = "label2";
+            label2.Size = new Size(29, 13);
+            label2.TabIndex = 11;
+            label2.Text = "Top:";
             // 
             // tbTop
             // 
-            this.tbTop.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbTop.Location = new System.Drawing.Point(760, 3);
-            this.tbTop.Name = "tbTop";
-            this.tbTop.Size = new System.Drawing.Size(73, 20);
-            this.tbTop.TabIndex = 12;
-            this.tbTop.Text = "10000";
-            this.tbTop.TextChanged += new System.EventHandler(this.tbTop_TextChanged);
+            tbTop.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            tbTop.Location = new Point(760, 3);
+            tbTop.Name = "tbTop";
+            tbTop.Size = new Size(73, 20);
+            tbTop.TabIndex = 12;
+            tbTop.Text = "10000";
+            tbTop.TextChanged += new EventHandler(tbTop_TextChanged);
             // 
             // panel1
             // 
-            this.panel1.Controls.Add(this.cbPreferNewer);
-            this.panel1.Controls.Add(this.tbContentFilter);
-            this.panel1.Controls.Add(this.tbTop);
-            this.panel1.Controls.Add(this.label2);
-            this.panel1.Controls.Add(this.label1);
-            this.panel1.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel1.Location = new System.Drawing.Point(0, 543);
-            this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(842, 28);
-            this.panel1.TabIndex = 13;
+            panel1.Controls.Add(cbPreferNewer);
+            panel1.Controls.Add(tbContentFilter);
+            panel1.Controls.Add(tbTop);
+            panel1.Controls.Add(label2);
+            panel1.Controls.Add(label1);
+            panel1.Dock = DockStyle.Bottom;
+            panel1.Location = new Point(0, 543);
+            panel1.Name = "panel1";
+            panel1.Size = new Size(842, 28);
+            panel1.TabIndex = 13;
             // 
             // cbPreferNewer
             // 
-            this.cbPreferNewer.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.cbPreferNewer.AutoSize = true;
-            this.cbPreferNewer.Location = new System.Drawing.Point(627, 5);
-            this.cbPreferNewer.Name = "cbPreferNewer";
-            this.cbPreferNewer.Size = new System.Drawing.Size(92, 17);
-            this.cbPreferNewer.TabIndex = 13;
-            this.cbPreferNewer.Text = "Fetch Newest";
-            this.cbPreferNewer.UseVisualStyleBackColor = true;
-            this.cbPreferNewer.Checked = true;
-            this.cbPreferNewer.CheckedChanged += new System.EventHandler(this.cbPreferNewer_CheckedChanged);
+            cbPreferNewer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
+            cbPreferNewer.AutoSize = true;
+            cbPreferNewer.Location = new Point(627, 5);
+            cbPreferNewer.Name = "cbPreferNewer";
+            cbPreferNewer.Size = new Size(92, 17);
+            cbPreferNewer.TabIndex = 13;
+            cbPreferNewer.Text = "Fetch Newest";
+            cbPreferNewer.UseVisualStyleBackColor = true;
+            cbPreferNewer.Checked = true;
+            cbPreferNewer.CheckedChanged += new EventHandler(cbPreferNewer_CheckedChanged);
             // 
             // pFilter
             // 
-            this.pFilter.Controls.Add(this.lblFilter);
-            this.pFilter.Controls.Add(this.pbRemoveFilter);
-            this.pFilter.Dock = System.Windows.Forms.DockStyle.Top;
-            this.pFilter.Location = new System.Drawing.Point(0, 0);
-            this.pFilter.Name = "pFilter";
-            this.pFilter.Size = new System.Drawing.Size(842, 26);
-            this.pFilter.TabIndex = 14;
+            pFilter.Controls.Add(lblFilter);
+            pFilter.Controls.Add(pbRemoveFilter);
+            pFilter.Dock = DockStyle.Top;
+            pFilter.Location = new Point(0, 0);
+            pFilter.Name = "pFilter";
+            pFilter.Size = new Size(842, 26);
+            pFilter.TabIndex = 14;
             // 
             // LoggingTab
             // 
-            this.Controls.Add(this.pFilter);
-            this.Controls.Add(this.panel1);
-            this.Controls.Add(this.dataGridView1);
-            this.Name = "LoggingTabUI";
-            this.Size = new System.Drawing.Size(842, 571);
-            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
-            ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).EndInit();
-            this.panel1.ResumeLayout(false);
-            this.panel1.PerformLayout();
-            this.pFilter.ResumeLayout(false);
-            this.ResumeLayout(false);
+            Controls.Add(pFilter);
+            Controls.Add(panel1);
+            Controls.Add(dataGridView1);
+            Name = "LoggingTabUI";
+            Size = new Size(842, 571);
+            ((ISupportInitialize)dataGridView1).EndInit();
+            ((ISupportInitialize)pbRemoveFilter).EndInit();
+            panel1.ResumeLayout(false);
+            panel1.PerformLayout();
+            pFilter.ResumeLayout(false);
+            ResumeLayout(false);
 
         }
         #endregion
@@ -333,7 +334,7 @@ namespace Rdmp.UI.LogViewer.Tabs
                 Controls.Add(pFilter);
                 lblFilter.Text = filter.ToString();
             }
-            
+
             FetchDataTable();
         }
 
@@ -354,14 +355,20 @@ namespace Rdmp.UI.LogViewer.Tabs
         public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-
+            
+            if(!databaseObject.DiscoverExistence(DataAccessContext.Logging, out string reason))
+            {
+                activator.KillForm(ParentForm,"Database " + databaseObject + " did not exist:" + reason);
+                return;
+            }
+                
             LogManager = new LogManager(databaseObject);
             FetchDataTable();
         }
 
         public override string GetTabName()
         {
-            return GetTableEnum() + "(" +base.GetTabName() + ")";
+            return GetTableEnum() + "(" + base.GetTabName() + ")";
         }
 
         protected virtual LoggingTables GetTableEnum()
@@ -371,7 +378,7 @@ namespace Rdmp.UI.LogViewer.Tabs
 
         private void FetchDataTable()
         {
-            LoadDataTable(LogManager.GetTable(GetTableEnum(), IDFilter, TopX,cbPreferNewer.Checked));
+            LoadDataTable(LogManager.GetTable(GetTableEnum(), IDFilter, TopX, cbPreferNewer.Checked));
         }
 
         public void SelectRowWithID(int rowIDToSelect)
@@ -388,7 +395,7 @@ namespace Rdmp.UI.LogViewer.Tabs
                         cell.Selected = true;
 
                     row.Selected = true;
-                    
+
                     break;
                 }
             }

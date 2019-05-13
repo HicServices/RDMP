@@ -187,6 +187,10 @@ namespace Rdmp.UI.Tests
         {
             Results.KilledForms.Add(f,reason);
         }
+        public void KillForm(Form f, string reason)
+        {
+            Results.KilledForms.Add(f,new Exception(reason));
+        }
 
         public void OnRuleRegistered(IBinderRule rule)
         {

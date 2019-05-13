@@ -168,7 +168,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public DiscoveredDatabase Discover()
         {
-            return DataAccessPortal.GetInstance().ExpectDatabase(this, DataAccessContext.DataExport);
+            return SelfCertifyingDataAccessPoint.Discover(DataAccessContext.DataExport);
         }
 
         /// <summary>
@@ -470,6 +470,11 @@ dtCreated as dtCreated
                  string.IsNullOrWhiteSpace(ReleaseIdentifierField) ||
                  string.IsNullOrWhiteSpace(DefinitionTableForeignKeyField) ||
                  string.IsNullOrWhiteSpace(DefinitionTableName));
+        }
+
+        public bool DiscoverExistence(DataAccessContext context, out string reason)
+        {
+            return SelfCertifyingDataAccessPoint.DiscoverExistence(context,out reason);
         }
     }
 }

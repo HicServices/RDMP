@@ -30,5 +30,6 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="context"></param>
         /// <returns></returns>
         DiscoveredDatabase Discover(DataAccessContext context);
+
     }
 }

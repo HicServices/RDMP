@@ -8,28 +8,24 @@ using System.Collections.Generic;
 using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer
 {
     /// <summary>
-    /// Records each separate execution of a given Task for example one Data Extraction for Project 2301 (of datasets Biochemistry, Prescribing and Haematology) including when it started 
-    /// and ended and who ran the extraction.
+    /// During a run all destinations for data will appear in this control, for data loading this includes STAGING load and LIVE load (with 1 record per table being loaded).  It includes 
+    /// counts for the number of INSERTS / UPDATES and DELETES carried out.  In the case of Data Extraction the record will refer to a 'table' as the .csv file given to the researcher
+    /// (unless you are extracting into a researchers database of course).
     /// </summary>
-    public class LoggingRunsTabUI : LoggingTabUI
+    public class LoggingTableLoadsTabUI : LoggingTabUI
     {
         protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
-
-            var taskId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
-            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.ProgressLog, new LogViewerFilter { Run = taskId });
-            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.FatalError, new LogViewerFilter { Run = taskId });
-            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.TableLoadRun, new LogViewerFilter { Run = taskId });
-
-            yield return new ExecuteCommandExportLoggedDataToCsv(Activator, new LogViewerFilter { Run = taskId });
+            var tableId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
+            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.DataSource, new LogViewerFilter { Table = tableId });
         }
 
         protected override LoggingTables GetTableEnum()
         {
-            return LoggingTables.DataLoadRun;
+            return LoggingTables.TableLoadRun;
         }
     }
 }

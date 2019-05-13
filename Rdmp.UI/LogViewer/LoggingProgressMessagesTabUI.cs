@@ -4,26 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.Collections.Generic;
 using Rdmp.Core.Logging;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace Rdmp.UI.LogViewer.Tabs
+namespace Rdmp.UI.LogViewer
 {
     /// <summary>
-    /// High level categories of activities (like folders) e.g. Data Extraction, Loading Biochemistry etc.
+    /// All messages generated during a run appear in this control.  This is the least structured table in logging and is most comparable with other simple logging methods
     /// </summary>
-    public class LoggingTasksTabUI : LoggingTabUI
+    public class LoggingProgressMessagesTabUI : LoggingTabUI
     {
-        protected override IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIndex)
-        {
-            var taskId = (int)dataGridView1.Rows[rowIndex].Cells["ID"].Value;
-            yield return new ExecuteCommandViewLoggedData(Activator, LoggingTables.DataLoadRun, new LogViewerFilter { Task = taskId });
-        }
-
         protected override LoggingTables GetTableEnum()
         {
-            return LoggingTables.DataLoadTask;
+            return LoggingTables.ProgressLog;
         }
+
     }
 }

@@ -112,20 +112,19 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
             base.SetDatabaseObject(activator,databaseObject);
             ColumnInfo = databaseObject;
 
+            //make sure we can connect to the server
+            if(!ColumnInfo.TableInfo.DiscoverExistence(DataAccessContext.DataLoad,out string reason))
+            {
+                activator.KillForm(ParentForm,reason);
+                return;
+            }
+
+
             try
             {
-                var tbl = ColumnInfo.TableInfo.Discover(DataAccessContext.DataLoad);                    
-
-                if(!tbl.Database.Server.Exists())
-                    throw new Exception("Could not connect to server hosting " + ColumnInfo.TableInfo);
-
-                if(!tbl.Exists())
-                    throw new Exception("Table " + tbl.GetFullyQualifiedName() + " did not exist");
-
-
                 try
                 {
-                    lblRowcount.Text = tbl.GetRowCount().ToString();
+                    lblRowcount.Text = ColumnInfo.TableInfo.Discover(DataAccessContext.DataLoad).GetRowCount().ToString();
                 }
                 catch (Exception e)
                 {
