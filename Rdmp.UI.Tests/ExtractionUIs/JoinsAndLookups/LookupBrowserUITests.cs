@@ -6,19 +6,20 @@
 
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.LogViewer;
+using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 
-namespace Rdmp.UI.Tests.LogViewer
+namespace Rdmp.UI.Tests.ExtractionUIs.JoinsAndLookups
 {
-	public class LoggingTabUITests :UITests
+	public class LookupBrowserUITests :UITests
 	{
 		[Test,UITimeout(20000)]
-		public void Test_LoggingTabUI_Constructor()
+		public void Test_LookupBrowserUI_Constructor()
 		{
-			var o = WhenIHaveA<ExternalDatabaseServer>();
-			var ui = AndLaunch<LoggingTabUI>(o);
+			var o = WhenIHaveA<Lookup>();
+			var ui = AndLaunch<LookupBrowserUI>(o);
 			Assert.IsNotNull(ui);
-		    AssertErrorWasShown(ExpectedErrorType.KilledForm,"Database My Server did not exist");
+			//AssertNoErrors(ExpectedErrorType.Fatal);
+			//AssertNoErrors(ExpectedErrorType.KilledForm);
 		}
 	}
 }

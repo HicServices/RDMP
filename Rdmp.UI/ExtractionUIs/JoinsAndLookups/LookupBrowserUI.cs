@@ -48,7 +48,14 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             gbScintilla.Controls.Add(_scintilla);
 
-            SendQuery();
+            try
+            {
+                SendQuery();
+            }
+            catch (System.Exception ex)
+            {
+                CommonFunctionality.Fatal("Could not connect to database",ex);
+            }
         }
 
         public string GetCommand()

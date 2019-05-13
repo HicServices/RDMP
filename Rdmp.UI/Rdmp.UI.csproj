@@ -79,6 +79,21 @@
     <Compile Update="UserControl1.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\JoinConfigurationUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="ExtractionUIs\JoinsAndLookups\LookupConfigurationUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
