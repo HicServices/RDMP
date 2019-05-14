@@ -1,5 +1,3 @@
-using System.Runtime.InteropServices;
-using System.Runtime.CompilerServices;
 using System.Reflection;
 
 [assembly: AssemblyCompany("Health Informatics Centre, University of Dundee")]
@@ -9,8 +7,6 @@ using System.Reflection;
 [assembly: AssemblyCulture("")]
 
 // These should be replaced with correct values by the release process
-[assembly: AssemblyVersion("2.13.0.10")]
-[assembly: AssemblyFileVersion("2.13.0.10")]
-[assembly: AssemblyInformationalVersion("2.13.0.10")]
-
-[assembly:InternalsVisibleTo("CatalogueManager")]
+[assembly: AssemblyVersion("3.0.0.1")]
+[assembly: AssemblyFileVersion("3.0.0.1")]
+[assembly: AssemblyInformationalVersion("3.0.0.1")]
