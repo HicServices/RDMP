@@ -183,22 +183,34 @@ namespace Rdmp.UI.LocationsMenu
 
         private void btnCheckDataExportManager_Click(object sender, EventArgs e)
         {
-            CheckRepository((DataExportRepository)_repositoryLocator.DataExportRepository);
+            CheckRepository(false);
         }
 
         private void btnCheckCatalogue_Click(object sender, EventArgs e)
         {
-            CheckRepository((CatalogueRepository)_repositoryLocator.CatalogueRepository);
+            CheckRepository(true);
         }
 
-        private void CheckRepository(TableRepository repository)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="catalogue">True for catalogue, false for data export</param>
+        private void CheckRepository(bool catalogue)
         {
             try
             {
                 //save the settings
                 SaveConnectionStrings();
 
-                checksUI1.StartChecking(new MissingFieldsChecker(repository));
+                var repo = catalogue?(TableRepository) _repositoryLocator.CatalogueRepository:(TableRepository)_repositoryLocator.DataExportRepository;
+
+                if(repo == null || string.IsNullOrWhiteSpace(repo.ConnectionString))
+                {
+                    checksUI1.OnCheckPerformed(new CheckEventArgs("No connection string has been set",CheckResult.Fail));
+                    return;
+                }
+
+                checksUI1.StartChecking(new MissingFieldsChecker(repo));
                 checksUI1.AllChecksComplete += ShowNextStageOnChecksComplete;
             }
             catch (Exception exception)

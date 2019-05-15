@@ -34,6 +34,8 @@ namespace Rdmp.UI.TestsAndSetup
             this.pbLoadProgress = new System.Windows.Forms.ProgressBar();
             this.btnChoosePlatformDatabases = new System.Windows.Forms.Button();
             this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.pbDisconnected = new System.Windows.Forms.PictureBox();
+            ((System.ComponentModel.ISupportInitialize)(this.pbDisconnected)).BeginInit();
             this.SuspendLayout();
             // 
             // lblProgress
@@ -74,20 +76,31 @@ namespace Rdmp.UI.TestsAndSetup
             this.ragSmiley1.Size = new System.Drawing.Size(25, 25);
             this.ragSmiley1.TabIndex = 3;
             // 
-            // StartupUIMainForm
+            // pbDisconnected
+            // 
+            this.pbDisconnected.Location = new System.Drawing.Point(7, 5);
+            this.pbDisconnected.Name = "pbDisconnected";
+            this.pbDisconnected.Size = new System.Drawing.Size(29, 29);
+            this.pbDisconnected.TabIndex = 5;
+            this.pbDisconnected.TabStop = false;
+            this.pbDisconnected.Visible = false;
+            // 
+            // StartupUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(977, 82);
+            this.Controls.Add(this.pbDisconnected);
             this.Controls.Add(this.btnChoosePlatformDatabases);
             this.Controls.Add(this.ragSmiley1);
             this.Controls.Add(this.lblProgress);
             this.Controls.Add(this.pbLoadProgress);
             this.KeyPreview = true;
-            this.Name = "StartupUIMainForm";
+            this.Name = "StartupUI";
             this.Text = "Startup";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.StartupUIMainForm_FormClosing);
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.StartupUIMainForm_KeyUp);
+            ((System.ComponentModel.ISupportInitialize)(this.pbDisconnected)).EndInit();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -98,5 +111,6 @@ namespace Rdmp.UI.TestsAndSetup
         private System.Windows.Forms.ProgressBar pbLoadProgress;
         private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnChoosePlatformDatabases;
+        private System.Windows.Forms.PictureBox pbDisconnected;
     }
 }

@@ -62,7 +62,7 @@ namespace Rdmp.UI.TestsAndSetup
 
                 typeof (T).GetMethod("SetRepositoryLocator").Invoke(_mainForm,new object[]{startup.RepositoryLocator});
 
-                if (startupUI.AppliedPatch)
+                if (startupUI.DoNotContinue)
                     return;
 
                 Application.Run(_mainForm);
