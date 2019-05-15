@@ -33,12 +33,13 @@ using Rdmp.Core.Startup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using YamlDotNet.RepresentationModel;
 using YamlDotNet.Serialization;
-using YamlDotNet.Serialization.NamingConventions;
 
 namespace Tests.Common
 {
+    /// <summary>
+    /// Base class for all integration tests which need to read/write to a database (sql server, mysql or oracle).
+    /// </summary>
     [TestFixture]
     [Category("Database")]
     public class DatabaseTests
