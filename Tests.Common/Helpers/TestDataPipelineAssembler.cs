@@ -12,9 +12,20 @@ using Rdmp.Core.Repositories;
 
 namespace Tests.Common.Helpers
 {
+    /// <summary>
+    /// Helper for creating a <see cref="Pipeline"/> suitable for testing caching
+    /// </summary>
     public class TestDataPipelineAssembler
     {
+        
+        /// <summary>
+        /// Blueprint for a <see cref="TestDataWriter"/>
+        /// </summary>
         public PipelineComponent Destination { get; set; }
+
+        /// <summary>
+        /// Blueprint for a <see cref="TestDataInventor"/>
+        /// </summary>
         public PipelineComponent Source { get; set; }
         public Pipeline Pipeline { get; set; }
 

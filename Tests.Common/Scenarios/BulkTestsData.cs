@@ -12,6 +12,7 @@ using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
@@ -24,25 +25,66 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Tests.Common.Scenarios
 {
+    /// <summary>
+    /// Class for creating a large table of data in a test Microsoft Sql Server database and importing a reference to it as a <see cref="Catalogue"/>
+    /// </summary>
     public class BulkTestsData
     {
         private readonly ICatalogueRepository _repository;
+
+        /// <summary>
+        /// The database in which to create the test data table
+        /// </summary>
         public readonly DiscoveredDatabase BulkDataDatabase;
         
+        /// <summary>
+        /// The name of the test table that will be created
+        /// </summary>
         public const string BulkDataTable = "BulkData";
-        public const string SlowView = "vSlowView";
+        
+        /// <summary>
+        /// The number of rows that are to be created
+        /// </summary>
+        public readonly int ExpectedNumberOfRowsInTestData;
 
-        public readonly int ExpectedNumberOfRowsInTestData = 100000;
-
+        /// <summary>
+        /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>)
+        /// </summary>
         public TableInfo tableInfo;
+
+        /// <summary>
+        /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>)
+        /// </summary>
         public ColumnInfo[] columnInfos;
+
+        /// <summary>
+        /// Rdmp reference to the test table (<see cref="ImportAsCatalogue"/>).  <see cref="Catalogue"/> is the descriptive element while <see cref="tableInfo"/> is the 
+        /// pointer to the underlying table.
+        /// </summary>
         public Catalogue catalogue;
+
+        /// <summary>
+        /// Rdmp reference to the test table columns (<see cref="ImportAsCatalogue"/>).  <see cref="CatalogueItem"/> is the descriptive element while <see cref="columnInfos"/> is the 
+        /// pointer to the underlying table columns.
+        /// </summary>
         public CatalogueItem[] catalogueItems;
+
+        /// <summary>
+        /// Rdmp reference to which columns of the test table are considered extractable (<see cref="ImportAsCatalogue"/>)
+        /// </summary>
         public ExtractionInformation[] extractionInformations;
+
         private Demography _dataGenerator;
 
         private Random r = new Random();
 
+        /// <summary>
+        /// Prepares to create a new table in the <paramref name="targetDatabase"/> of test data using <see cref="Demography"/>. To actually generate the data
+        /// call <see cref="SetupTestData"/>
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="targetDatabase"></param>
+        /// <param name="numberOfRows"></param>
         public BulkTestsData(ICatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 100000)
         {
             _repository = repository;
@@ -53,174 +95,59 @@ namespace Tests.Common.Scenarios
 
         }
 
+        /// <summary>
+        /// Creates the <see cref="BulkDataTable"/> in the <see cref="BulkDataDatabase"/> and uploads test data.  Use <see cref="ImportAsCatalogue"/> to get
+        /// rdmp metadata objects pointing at the table.
+        /// </summary>
         public void SetupTestData()
         {
             //make sure database exists
             if (!BulkDataDatabase.Exists())
                 BulkDataDatabase.Create();
 
-            var server = BulkDataDatabase.Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-                
-                var createTable = server.GetCommand(
-                    @"
-if exists (select * from sysobjects where name='" + BulkDataTable + @"' and xtype='U')
-begin
-drop table " +BulkDataTable+@";
-end
+            //generate some people
+            var people = new PersonCollection();
+            people.GeneratePeople(5000,r);
 
-CREATE TABLE " + BulkDataTable+ @"(
-       [chi] [varchar](10) NOT NULL,
-       [dtCreated] [date] NULL,
-       [current_record] [bit] NULL,
-       [notes] [varchar](max) NULL,
-       [chi_num_of_curr_record] [varchar](10) NULL,
-       [chi_status] [varchar](2) NULL,
-       [century] [varchar](2) NULL,
-       [surname] [varchar](20) NULL,
-       [forename] [varchar](50) NULL,
-       [sex] [varchar](1) NULL,
-       [current_address_L1] [varchar](255) NULL,
-       [current_address_L2] [varchar](255) NULL,
-       [current_address_L3] [varchar](255) NULL,
-       [current_address_L4] [varchar](255) NULL,
-       [current_postcode] [varchar](10) NULL,
-       [date_of_death] date NULL,
-       [source_death] [varchar](2) NULL,
-       [area_residence] [varchar](1) NULL,
-       [hb_extract] [varchar](1) NULL,
-       [current_gp] [varchar](5) NULL,
-       [birth_surname] [varchar](20) NULL,
-       [previous_surname] [varchar](20) NULL,
-       [midname] [varchar](50) NULL,
-       [alt_forename] [varchar](50) NULL,
-       [other_initials] [varchar](5) NULL,
-       [previous_address_L1] [varchar](255) NULL,
-       [previous_address_L2] [varchar](255) NULL,
-       [previous_address_L3] [varchar](255) NULL,
-       [previous_address_L4] [varchar](255) NULL,
-       [previous_postcode] [varchar](10) NULL,
-       [date_address_changed] date NULL,
-       [adr] [varchar](2) NULL,
-       [current_gp_accept_date] date NULL,
-       [previous_gp] [varchar](5) NULL,
-       [previous_gp_accept_date] date NULL,
-       [date_into_practice] date NULL,
-       [date_of_birth] date NULL,
-       [patient_triage_score] float,
-       [" + SpecialFieldNames.DataLoadRunID+@"] int
- CONSTRAINT [PK_BulkData] PRIMARY KEY CLUSTERED 
-(
-	[chi] ASC
-)
-)", con);
-                createTable.ExecuteNonQuery();
+            //generate the test data
+            var dt = _dataGenerator.GetDataTable(people,ExpectedNumberOfRowsInTestData);
 
-                //a view that joins to itself on a non indexed column
-                UsefulStuff.ExecuteBatchNonQuery(@"
-IF EXISTS(select * FROM sys.views where name = 'vSlowView')
-begin
-drop view vSlowView;
-end
-GO
+            var tbl = BulkDataDatabase.ExpectTable(BulkDataTable);
 
-CREATE VIEW vSlowView As Select * from " + BulkDataTable + " boss where date_of_death is null and 1= (select count(*) from "+BulkDataTable+" inception where inception.chi = boss.chi)"
-                                         , con);
+            if(tbl.Exists())
+                tbl.Drop();
 
-                Stopwatch sw = new Stopwatch();
+            //create the table but make sure the chi is a primary key and the correct data type and that we have a sensible primary key
+            BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{ 
+                new DatabaseColumnRequest("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
+                new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
+                new DatabaseColumnRequest("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}
 
-                //100 batches
-                for (int batch = 0; batch < 10; batch++)
-                {
-                    sw.Start();
-                    DataTable dt = new DataTable();
-                    GenerateColumns(dt);
-
-                    //each 100th of the expected size
-                    for (int i = 0; i < ExpectedNumberOfRowsInTestData/10; i++)
-                        dt.Rows.Add(_dataGenerator.GenerateTestDataRow(new Person(r)));
-                    
-                    SqlBulkCopy bulkcopy = new SqlBulkCopy((SqlConnection) con);
-                    bulkcopy.BulkCopyTimeout = 50000;
-                    bulkcopy.DestinationTableName = BulkDataTable;
-
-                    UsefulStuff.BulkInsertWithBetterErrorMessages(bulkcopy, dt, server);
-                    sw.Stop();
-                    Console.WriteLine("Submitting Batch:" + batch + " ("+sw.Elapsed+")");
-                    sw.Reset();
-                }
-                
-                con.Close();
-            }   
+                });
         }
 
+        /// <summary>
+        /// Drops the <see cref="BulkDataDatabase"/>
+        /// </summary>
         public void Destroy()
         {
             BulkDataDatabase.Drop();
         }
         
+        /// <summary>
+        /// Returns up to <paramref name="numberOfRows"/> rows from the table
+        /// </summary>
+        /// <param name="numberOfRows"></param>
+        /// <returns></returns>
         public DataTable GetDataTable(int numberOfRows)
         {
-            DataTable dt = new DataTable();
-            var server = BulkDataDatabase.Server;
-            using (var con = server.GetConnection())
-            {
-                con.Open();
-
-                var da = server.GetDataAdapter("Select * from " + BulkDataTable,con);
-                da.Fill(0, numberOfRows, dt);
-            }
-
-            return dt;
+            return BulkDataDatabase.ExpectTable(BulkDataTable).GetDataTable(numberOfRows);
         }
 
-        private void GenerateColumns(DataTable dt)
-        {
-dt.Columns.Add("chi");
-dt.Columns.Add("dtCreated");
-dt.Columns.Add("current_record");
-dt.Columns.Add("notes");
-dt.Columns.Add("chi_num_of_curr_record");
-dt.Columns.Add("chi_status");
-dt.Columns.Add("century");
-dt.Columns.Add("surname");
-dt.Columns.Add("forename");
-dt.Columns.Add("sex");
-dt.Columns.Add("current_address_L1");
-dt.Columns.Add("current_address_L2");
-dt.Columns.Add("current_address_L3");
-dt.Columns.Add("current_address_L4");
-dt.Columns.Add("current_postcode");
-dt.Columns.Add("date_of_death");
-dt.Columns.Add("source_death");
-dt.Columns.Add("area_residence");
-dt.Columns.Add("hb_extract");
-dt.Columns.Add("current_gp");
-dt.Columns.Add("birth_surname");
-dt.Columns.Add("previous_surname");
-dt.Columns.Add("midname");
-dt.Columns.Add("alt_forename");
-dt.Columns.Add("other_initials");
-dt.Columns.Add("previous_address_L1");
-dt.Columns.Add("previous_address_L2");
-dt.Columns.Add("previous_address_L3");
-dt.Columns.Add("previous_address_L4");
-dt.Columns.Add("previous_postcode");
-dt.Columns.Add("date_address_changed");
-dt.Columns.Add("adr");
-dt.Columns.Add("current_gp_accept_date");
-dt.Columns.Add("previous_gp");
-dt.Columns.Add("previous_gp_accept_date");
-dt.Columns.Add("date_into_practice");
-dt.Columns.Add("date_of_birth");
-dt.Columns.Add("patient_triage_score",typeof(object));
-dt.Columns.Add(SpecialFieldNames.DataLoadRunID);
-            
-        } 
-
-
+        /// <summary>
+        /// Creates Rdmp metadata objects (<see cref="catalogue"/>, <see cref="tableInfo"/> etc) which point to the <see cref="BulkDataTable"/>
+        /// </summary>
+        /// <returns></returns>
         public Catalogue ImportAsCatalogue()
         {
             TableInfoImporter f = new TableInfoImporter(_repository, BulkDataDatabase.ExpectTable(BulkDataTable));
@@ -236,6 +163,9 @@ dt.Columns.Add(SpecialFieldNames.DataLoadRunID);
             return catalogue;
         }
 
+        /// <summary>
+        /// Deletes the rdmp metadata objects (but not the actual <see cref="BulkDataTable"/>)
+        /// </summary>
         public void DeleteCatalogue()
         {
             var creds = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
@@ -270,6 +200,11 @@ dt.Columns.Add(SpecialFieldNames.DataLoadRunID);
             catalogue.SaveToDatabase();
         }
 
+        /// <summary>
+        /// Returns the <see cref="ColumnInfo"/> in <see cref="columnInfos"/> with the given <paramref name="colName"/>
+        /// </summary>
+        /// <param name="colName"></param>
+        /// <returns></returns>
         public ColumnInfo GetColumnInfo(string colName)
         {
             return columnInfos.Single(c => c.GetRuntimeName().Equals(colName));
