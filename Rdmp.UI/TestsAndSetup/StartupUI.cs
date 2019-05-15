@@ -220,12 +220,9 @@ namespace Rdmp.UI.TestsAndSetup
 
         private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
         {
-
             //if status got worse
             if (eventArgs.Status < lastStatus )
                 lastStatus = eventArgs.Status;
-            else
-                return;//we are broken and found more broken stuff!
 
             //if we are unable to reach a tier 1 database don't report anything else
             if(_couldNotReachTier1Database)
@@ -273,6 +270,7 @@ namespace Rdmp.UI.TestsAndSetup
 
                     break;
                 case RDMPPlatformDatabaseStatus.Healthy:
+                    ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(),CheckResult.Success));
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
