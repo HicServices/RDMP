@@ -5,10 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
+using Squirrel;
 
 namespace ResearchDataManagementPlatform
 {
@@ -38,6 +40,12 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
+            using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
+            {
+                var entry = mgr.UpdateApp().Result;
+                Debug.Print(entry?.PackageName);
+            }
+
             RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(arg.CatalogueConnectionString, arg.DataExportConnectionString);
             bootStrapper.Show(false);
             return 0;
