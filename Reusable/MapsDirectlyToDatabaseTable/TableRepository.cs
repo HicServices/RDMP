@@ -890,11 +890,8 @@ namespace MapsDirectlyToDatabaseTable
 
         
 
-        /// <summary>
-        /// Gets all the c# class types that come from the database
-        /// </summary>
-        /// <returns></returns>
-        private Type[] GetCompatibleTypes()
+        /// <inheritdoc/>
+        public Type[] GetCompatibleTypes()
         {
             return
                 this.GetType().Assembly.GetTypes()

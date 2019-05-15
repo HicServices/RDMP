@@ -12,6 +12,7 @@ using System.Linq;
 using System.Reflection;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.DataExport.Data;
@@ -26,52 +27,32 @@ namespace Rdmp.Core.Curation.Checks
     /// </summary>
     public class MissingFieldsChecker : ICheckable
     {
-        private readonly CatalogueRepository _catalogueRepository;
-        private readonly DataExportRepository _dataExportRepository;
-        private readonly string _assemblyName;
-        private readonly SqlConnectionStringBuilder _connectionStringBuilder;
-        private readonly Type[] _typesToCheck;
-        private readonly DiscoveredDatabase _discoveredDatabase;
+        private readonly TableRepository _repository;
 
-        public enum ThingToCheck
+        public MissingFieldsChecker(TableRepository repository)
         {
-            Catalogue,
-            DataExportManager
-        }
-
-        public MissingFieldsChecker(ThingToCheck toCheck, CatalogueRepository catalogueRepository, DataExportRepository dataExportRepository)
-        {
-            _catalogueRepository = catalogueRepository;
-            _dataExportRepository = dataExportRepository;
-   
-            Assembly assembly;
-            switch (toCheck)
-            {
-                case ThingToCheck.Catalogue:
-                    assembly = Assembly.GetAssembly(typeof(Catalogue));
-                    _connectionStringBuilder = (SqlConnectionStringBuilder) _catalogueRepository.ConnectionStringBuilder;
-                    break;
-                case ThingToCheck.DataExportManager:
-                    assembly = Assembly.GetAssembly(typeof(ExtractableDataSet));
-                    _connectionStringBuilder = (SqlConnectionStringBuilder) _dataExportRepository.ConnectionStringBuilder;
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("toCheck");
-            }
-
-            _assemblyName = assembly.GetName().Name;
-            _typesToCheck = assembly.GetTypes().Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract).ToArray();
-            _discoveredDatabase = new DiscoveredServer(_connectionStringBuilder).ExpectDatabase(_connectionStringBuilder.InitialCatalog);
+            this._repository = repository;
         }
         
         public void Check(ICheckNotifier notifier)
         {
-            CheckDatabaseConnection(notifier);
+            var server = _repository.DiscoveredServer;
+            if(!server.Exists())
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not reach server",CheckResult.Fail));
+                return;
+            }
+                
+            var db = server.GetCurrentDatabase();
+            if(!db.Exists())
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not find database " + db ,CheckResult.Fail));
+                return;
+            }
+                
+            var tables = db.DiscoverTables(false);
 
-
-            var tables = _discoveredDatabase.DiscoverTables(false);
-
-            foreach (Type type in _typesToCheck)
+            foreach (Type type in _repository.GetCompatibleTypes())
                 CheckEntities(notifier, type, tables);
         }
 
@@ -168,29 +149,6 @@ namespace Rdmp.Core.Curation.Checks
 
             if (!problems)
                 notifier.OnCheckPerformed(new CheckEventArgs("All fields present and correct in Type/Table " + table,CheckResult.Success,null));
-        }
-
-        private void CheckDatabaseConnection(ICheckNotifier notifier)
-        {
-
-            DbConnection con = DatabaseCommandHelper.GetConnection(_connectionStringBuilder);
-
-            //connection exists
-            if (string.IsNullOrWhiteSpace(_connectionStringBuilder.ConnectionString))
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not check " + _assemblyName + " because the specified Connection String was empty.  Check for a missing user settings connection strings (e.g. UserSettings.DataExportConnectionString)", CheckResult.Fail, null));
-            
-            try
-            {
-                //user can access it
-                con.Open();
-                con.Close();
-
-                notifier.OnCheckPerformed(new CheckEventArgs("Connection to database behind assembly " + _assemblyName + " was present and we were able to open connection to it at:" + con.ConnectionString, CheckResult.Success, null));
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs("Could not connect to database behind assembly " + _assemblyName + ", Database connection string was listed as:" + con.ConnectionString, CheckResult.Fail, e));
-            }
         }
     }
 }

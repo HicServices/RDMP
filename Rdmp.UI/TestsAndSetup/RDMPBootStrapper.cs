@@ -8,7 +8,6 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.Startup;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using Rdmp.UI.TestsAndSetup.StartupUI;
 using ReusableUIComponents.Dialogs;
 using ScintillaNET;
 
@@ -49,7 +48,7 @@ namespace Rdmp.UI.TestsAndSetup
                     startup.RepositoryLocator.CatalogueRepository.TestConnection();
                     startup.RepositoryLocator.DataExportRepository.TestConnection();
                 }
-                var startupUI = new StartupUIMainForm(startup);
+                var startupUI = new StartupUI(startup);
                 startupUI.ShowDialog();
 
                 if (startup.RepositoryLocator == null)

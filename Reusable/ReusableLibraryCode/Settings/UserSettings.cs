@@ -172,7 +172,12 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("HeatMapColours", null); }
             set { AppSettings.AddOrUpdateValue("HeatMapColours", value); }
         }
-
+        
+        public static bool Wait5SecondsAfterStartupUI
+        {
+            get { return AppSettings.GetValueOrDefault("Wait5SecondsAfterStartupUI", true); }
+            set { AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value); }
+        }
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
@@ -224,7 +229,7 @@ namespace ReusableLibraryCode.Settings
         {
             AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);
         }
-
+        
 
         static ISettings CreateSettings()
         {

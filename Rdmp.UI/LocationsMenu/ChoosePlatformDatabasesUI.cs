@@ -173,11 +173,6 @@ namespace Rdmp.UI.LocationsMenu
             }
         }
         
-        private MissingFieldsChecker CreateMissingFieldsChecker(MissingFieldsChecker.ThingToCheck thingToCheck)
-        {
-            return new MissingFieldsChecker(thingToCheck, (CatalogueRepository)_repositoryLocator.CatalogueRepository, (DataExportRepository) _repositoryLocator.DataExportRepository);
-        }
-
         private void btnSaveAndClose_Click(object sender, EventArgs e)
         {
             //if save is successful
@@ -188,27 +183,27 @@ namespace Rdmp.UI.LocationsMenu
 
         private void btnCheckDataExportManager_Click(object sender, EventArgs e)
         {
-            CheckRepository(MissingFieldsChecker.ThingToCheck.DataExportManager);
+            CheckRepository((DataExportRepository)_repositoryLocator.DataExportRepository);
         }
 
         private void btnCheckCatalogue_Click(object sender, EventArgs e)
         {
-            CheckRepository(MissingFieldsChecker.ThingToCheck.Catalogue);
+            CheckRepository((CatalogueRepository)_repositoryLocator.CatalogueRepository);
         }
 
-        private void CheckRepository(MissingFieldsChecker.ThingToCheck repositoryToCheck)
+        private void CheckRepository(TableRepository repository)
         {
             try
             {
                 //save the settings
                 SaveConnectionStrings();
 
-                checksUI1.StartChecking(CreateMissingFieldsChecker(repositoryToCheck));
+                checksUI1.StartChecking(new MissingFieldsChecker(repository));
                 checksUI1.AllChecksComplete += ShowNextStageOnChecksComplete;
             }
             catch (Exception exception)
             {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Checking of " + repositoryToCheck + " Database failed", CheckResult.Fail,exception));
+                checksUI1.OnCheckPerformed(new CheckEventArgs("Checking of Database failed", CheckResult.Fail,exception));
             }
         }
 

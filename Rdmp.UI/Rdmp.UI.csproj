@@ -101,7 +101,7 @@
     <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="TestsAndSetup\StartupUI\StartupUIMainForm.cs">
+    <Compile Update="TestsAndSetup\StartupUI.cs">
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">

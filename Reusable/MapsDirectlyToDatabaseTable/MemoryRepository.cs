@@ -288,5 +288,10 @@ namespace MapsDirectlyToDatabaseTable
         {
             Objects.Clear();
         }
+
+        public Type[] GetCompatibleTypes()
+        {
+            return GetType().Assembly.GetTypes().Where(t=>typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)).ToArray();
+        }
     }
 }

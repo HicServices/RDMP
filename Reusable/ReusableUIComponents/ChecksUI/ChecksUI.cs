@@ -125,7 +125,16 @@ namespace ReusableUIComponents.ChecksUI
             });
             _checkingThread.Start();
         }
+
+        internal void BeginUpdate()
+        {
+            olvChecks.BeginUpdate();
+        }
         
+        internal void EndUpdate()
+        {
+            olvChecks.EndUpdate();
+        }
         void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
         {
 
@@ -142,6 +151,7 @@ namespace ReusableUIComponents.ChecksUI
             if(AllChecksComplete!= null)
                 AllChecksComplete(this,new AllChecksCompleteHandlerArgs(listener));
         }
+
 
         public bool OnCheckPerformed(CheckEventArgs args)
         {
