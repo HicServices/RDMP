@@ -26,6 +26,14 @@ namespace ResearchDataManagementPlatform
         [STAThread]
         static void Main(string[] args)
         {
+            // First update the APP to the latest version!
+
+            using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/HicServices/RDMP"))
+            {
+                var entry = mgr.Result.UpdateApp().Result;
+                Debug.Print(entry?.PackageName);
+            }
+
             try
             {
                 AttachConsole(-1);
@@ -40,12 +48,6 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
-            using (var mgr = new UpdateManager("C:\\Projects\\MyApp\\Releases"))
-            {
-                var entry = mgr.UpdateApp().Result;
-                Debug.Print(entry?.PackageName);
-            }
-
             RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(arg.CatalogueConnectionString, arg.DataExportConnectionString);
             bootStrapper.Show(false);
             return 0;

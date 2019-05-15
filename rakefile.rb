@@ -7,6 +7,8 @@ task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :bundlesour
 
 task :plugins, [:config] => [:assemblyinfo, :build, :deployplugins]
 
+task :release => [:assemblyinfo, :build_release, :squirrel, :github]
+
 task :restorepackages do
     sh "nuget restore HIC.DataManagementPlatform.sln"
 end
@@ -30,6 +32,13 @@ msbuild :build, [:config] => :restorepackages do |msb, args|
     msb.solution = SOLUTION
 end
 
+msbuild :build_release do |msb|
+	msb.command = $MSBUILD15CMD
+    msb.properties = { :configuration => :Release }
+    msb.targets = [ :Clean, :Build ]   
+    msb.solution = SOLUTION
+end
+
 task :tests, [:config] => [:createtestdb, :run_tests]
 
 task :createtestdb, [:config] do |t, args|
@@ -42,23 +51,23 @@ task :run_tests do
 	sh 'dotnet test --no-build --logger:"nunit;LogFilePath=test-result.xml"'
 end
 
-desc "Sets the version number from GIT"    
+desc "Sets the version number from SharedAssemblyInfo file"    
 assemblyinfo :assemblyinfo do |asm|
 	asm.input_file = "SharedAssemblyInfo.cs"
     asm.output_file = "SharedAssemblyInfo.cs"
-    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+(\.\d+)?/]
+    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+/]
         
-    major, minor, patch, build = asminfoversion.split(/\./)
+    major, minor, patch = asminfoversion.split(/\./)
    
     if PRERELEASE == "true"
-        build = build.to_i + 1
+        patch = patch.to_i + 1
         suffix = "-pre"
     elsif CANDIDATE == "true"
-        build = build.to_i + 1
+        patch = patch.to_i + 1
         suffix = "-rc"
     end
 
-    version = "#{major}.#{minor}.#{patch}.#{build}"
+    version = "#{major}.#{minor}.#{patch}"
     puts "version: #{version}#{suffix}"
     # DO NOT REMOVE! needed by build script!
     f = File.new('version', 'w')
@@ -140,6 +149,18 @@ task :publishall, [:folder, :url] do |t, args|
     end    
 end
 
+task :squirrel do
+	version = File.open('version') {|f| f.readline}
+    puts "version: #{version}"
+	Dir.chdir "Application/ResearchDataManagementPlatform" do
+		sh "nuget pack RDMP.nuspec -Properties Configuration=Release -Version #{version}"
+		sh "#{SQUIRREL} --releasify ResearchDataManagementPlatform.#{version}.nupkg"
+	end
+end
+
+task :github do
+
+end
 
 # task :link do
 # 	if File.exist?("DatabaseCreation.exe") 
