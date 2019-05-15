@@ -16,6 +16,13 @@ namespace Tests.Common
 {
     public class RdmpMockFactory
     {
+        /// <summary>
+        /// Generates an implementation of <see cref="INameDatabasesAndTablesDuringLoads"/> which always returns the provided table regardless of the
+        /// DLE load stage.
+        /// </summary>
+        /// <param name="databaseNameToReturn">Database name to return regardless of what <see cref="LoadBubble"/> is asked for by the DLE</param>
+        /// <param name="tableNameToReturn">Table name to return regardless of what <see cref="LoadBubble"/> is asked for by the DLE</param>
+        /// <returns></returns>
         public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(string databaseNameToReturn,string tableNameToReturn )
         {
             return  Mock.Of<INameDatabasesAndTablesDuringLoads>(x=>
@@ -24,16 +31,27 @@ namespace Tests.Common
 
         }
 
+        /// <inheritdoc cref="Mock_INameDatabasesAndTablesDuringLoads(string, string)"/>
         public static INameDatabasesAndTablesDuringLoads Mock_INameDatabasesAndTablesDuringLoads(DiscoveredDatabase databaseNameToReturn, string tableNameToReturn)
         {
             return Mock_INameDatabasesAndTablesDuringLoads(databaseNameToReturn.GetRuntimeName(), tableNameToReturn);
         }
 
+        /// <summary>
+        /// Creates a mock implementation of <see cref="ILoadMetadata"/> which loads the supplied <paramref name="table"/>
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
         public static ILoadMetadata Mock_LoadMetadataLoadingTable(DiscoveredTable table)
         {
             return Mock_LoadMetadataLoadingTable(Mock_TableInfo(table));
         }
 
+        /// <summary>
+        /// Creates a mock implementation of <see cref="ILoadMetadata"/> which loads the supplied <paramref name="tableInfo"/>
+        /// </summary>
+        /// <param name="tableInfo"></param>
+        /// <returns></returns>
         public static ILoadMetadata Mock_LoadMetadataLoadingTable(ITableInfo tableInfo)
         {
             var lmd = new Mock<ILoadMetadata>();
@@ -47,6 +65,11 @@ namespace Tests.Common
             return lmd.Object;
         }
 
+        /// <summary>
+        /// Creates a mock implementation of <see cref="ITableInfo"/> that points to the live database table <paramref name="table"/>
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
         public static ITableInfo Mock_TableInfo(DiscoveredTable table)
         {
             return Mock.Of<ITableInfo>(p=>

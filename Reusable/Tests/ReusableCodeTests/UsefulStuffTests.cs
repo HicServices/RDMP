@@ -31,23 +31,7 @@ namespace ReusableCodeTests
         {
             _bulkTests.Destroy();
         }
-
-        [Test]
-        public void BulkDataFloatHandling_DoesNotReturnFunnyRounding()
-        {
-            DataTable dataTable = _bulkTests.GetDataTable(1000);
-
-            bool atLeastOneDodgyValue = false;
-            foreach (DataRow dr in dataTable.Rows)
-                if (dr["patient_triage_score"].ToString().Length >= 5)
-                {
-                    Console.WriteLine("Dodgy value spotted:" + dr["patient_triage_score"]);
-                    atLeastOneDodgyValue = true;
-                }
-
-            Assert.IsFalse(atLeastOneDodgyValue);
-        }
-
+        
         [Test]
         public void GetRowCountWhenNoIndexes()
         {

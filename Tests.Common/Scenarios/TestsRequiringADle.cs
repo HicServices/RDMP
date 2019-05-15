@@ -98,6 +98,7 @@ namespace Tests.Common.Scenarios
         /// </summary>
         /// <param name="filename">Filename to generate in ForLoading e.g. "bob.csv" (cannot be relative)</param>
         /// <param name="rows"></param>
+        /// <param name="r">Seed random to ensure tests are reproducible</param>
         protected FileInfo CreateFileInForLoading(string filename,int rows, Random r)
         {
             var fi = new FileInfo(Path.Combine(LoadDirectory.ForLoading.FullName,Path.GetFileName(filename)));

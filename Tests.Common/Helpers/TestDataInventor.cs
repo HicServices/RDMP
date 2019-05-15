@@ -16,10 +16,17 @@ using ReusableLibraryCode.Progress;
 
 namespace Tests.Common.Helpers
 {
+    /// <summary>
+    /// Implementation of <see cref="CacheSource{T}"/> which creates csv files with random data in them.  This class can be used if you need
+    /// to test running a caching pipeline
+    /// </summary>
     public class TestDataInventor : CacheSource<TestDataWriterChunk>
     {
         Random r = new Random();
         
+        /// <summary>
+        /// The path in which to create random files
+        /// </summary>
         [DemandsInitialization("Directory to create files into",Mandatory=true)]
         public string WorkingFolder { get; set; }
 

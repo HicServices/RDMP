@@ -55,13 +55,14 @@ namespace Rdmp.UI.TestsAndSetup
             _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
             _startup.PluginPatcherFound += StartupPluginPatcherFound;
 
+            pbDisconnected.Image = CatalogueIcons.ExternalDatabaseServer;
 
             var icon = new IconFactory();
 
             this.Icon = icon.GetIcon(CatalogueIcons.Main);
         }
 
-        public bool AppliedPatch { get; set; }
+        public bool DoNotContinue { get; set; }
 
         void StartupDatabaseFound(object sender, PlatformDatabaseFoundEventArgs eventArgs)
         {
@@ -183,10 +184,7 @@ namespace Rdmp.UI.TestsAndSetup
                     ragSmiley1.Fatal(ex);
                 }
             }
-            //else
-            //    if(!(_startup.RepositoryLocator is UserSettingsRepositoryFinder))
-            //        throw new NotSupportedException("You created Startup with an existing repository finder so we were going to reuse that one but it wasn't a UserSettingsRepositoryFinder (it was a " + _startup.RepositoryLocator.GetType().Name + "!)");
-            
+
             escapePressed = false;
             countDownToClose = 5;
             lastStatus = RDMPPlatformDatabaseStatus.Healthy;
@@ -218,22 +216,35 @@ namespace Rdmp.UI.TestsAndSetup
         }
 
         RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
-        
+        private bool _couldNotReachTier1Database;
 
         private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
         {
-
             //if status got worse
             if (eventArgs.Status < lastStatus )
                 lastStatus = eventArgs.Status;
-            else
-                return;//we are broken and found more broken stuff!
+
+            //if we are unable to reach a tier 1 database don't report anything else
+            if(_couldNotReachTier1Database)
+                return;
 
             lblProgress.Text = eventArgs.Patcher.Name + " database status was " + eventArgs.Status;
 
             switch (eventArgs.Status)
             {
                 case RDMPPlatformDatabaseStatus.Unreachable:
+
+                    if (eventArgs.Patcher.Tier == 1)
+                    {
+                        pbDisconnected.Visible = true;
+                        lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
+                        _couldNotReachTier1Database = true;
+                        ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name)));
+                    }
+                    else
+                        ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name)));
+                    break;
+
                     case RDMPPlatformDatabaseStatus.Broken:
                     if (eventArgs.Patcher.Tier == 1)
                         ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name)));
@@ -249,7 +260,7 @@ namespace Rdmp.UI.TestsAndSetup
                         PatchingUI.ShowIfRequired(
                             (SqlConnectionStringBuilder) eventArgs.Repository.ConnectionStringBuilder,
                             eventArgs.Repository, eventArgs.Patcher);
-                        AppliedPatch = true;
+                        DoNotContinue = true;
                     }
                     else
                     {
@@ -259,6 +270,7 @@ namespace Rdmp.UI.TestsAndSetup
 
                     break;
                 case RDMPPlatformDatabaseStatus.Healthy:
+                    ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(),CheckResult.Success));
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -321,7 +333,7 @@ namespace Rdmp.UI.TestsAndSetup
                         "Try to load anyway?", MessageBoxButtons.YesNo) == DialogResult.Yes;
 
                     if(!loadAnyway)
-                        Process.GetCurrentProcess().Kill();
+                        DoNotContinue = true;
                 }
         }
         
@@ -336,6 +348,7 @@ namespace Rdmp.UI.TestsAndSetup
         {
             var cmd = new ExecuteCommandChoosePlatformDatabase(_startup.RepositoryLocator);
             cmd.Execute();
+            DoNotContinue = true;
         }
     }
 }

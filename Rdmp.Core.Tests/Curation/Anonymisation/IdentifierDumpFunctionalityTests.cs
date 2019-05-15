@@ -77,7 +77,7 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
 
             IdentifierDumper dumper = new IdentifierDumper(tableInfoCreated);
 
-            Dictionary<string,string> chiToSurnameDictionary = new Dictionary<string, string>();
+            var chiToSurnameDictionary = new Dictionary<string, HashSet<string>>();
             try
             {
                 dumper.Check(new AcceptAllCheckNotifier());
@@ -89,7 +89,14 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
 
                 //for checking the final ID table has the correct values in
                 foreach (DataRow row in dt.Rows)
-                    chiToSurnameDictionary.Add(row["chi"].ToString(), row["surname"] as string);
+                {
+                    var chi = row["chi"].ToString();
+
+                    if(!chiToSurnameDictionary.ContainsKey(chi))
+                        chiToSurnameDictionary.Add(chi,new HashSet<string>());
+
+                    chiToSurnameDictionary[chi].Add(row["surname"] as string);
+                }
 
                 dumper.CreateSTAGINGTable();
                 dumper.DumpAllIdentifiersInTable(dt);
@@ -109,10 +116,10 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
                     
                     //make sure the values in the ID table match the ones we originally had in the pipeline
                     while (r.Read())
-                        if (chiToSurnameDictionary[r["chi"].ToString()] == null )
+                        if (!chiToSurnameDictionary[r["chi"].ToString()].Any())
                             Assert.IsTrue(r["surname"] == DBNull.Value);
                         else
-                            Assert.AreEqual(chiToSurnameDictionary[r["chi"].ToString()], r["surname"]);
+                            Assert.IsTrue(chiToSurnameDictionary[r["chi"].ToString()].Contains(r["surname"] as string),"Dictionary did not contain expected surname:" + r["surname"]);
                     r.Close();
 
                     //leave the identifier dump in the way we found it (empty)

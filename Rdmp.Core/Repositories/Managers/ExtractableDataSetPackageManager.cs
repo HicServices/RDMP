@@ -16,7 +16,7 @@ namespace Rdmp.Core.Repositories.Managers
     public class ExtractableDataSetPackageManager : IExtractableDataSetPackageManager
     {
         private readonly DataExportRepository _repository;
-        Dictionary<int,List<int>> _packageContentsDictionary = new Dictionary<int, List<int>>();
+        Lazy<Dictionary<int, List<int>>> _packageContentsDictionary;
 
         /// <summary>
         /// Creates a new <see cref="ExtractableDataSetPackageManager"/> which can read the contents of <see cref="ExtractableDataSetPackage"/>s i.e.
@@ -28,9 +28,17 @@ namespace Rdmp.Core.Repositories.Managers
         public ExtractableDataSetPackageManager(DataExportRepository repository)
         {
             _repository = repository;
-            using (var con = repository.GetConnection())
+            _packageContentsDictionary = new Lazy<Dictionary<int, List<int>>>(GetPackageContentsDictionary);
+
+        }
+
+        private Dictionary<int, List<int>> GetPackageContentsDictionary()
+        {
+            Dictionary<int, List<int>> toReturn = new Dictionary<int, List<int>>();
+
+            using (var con = _repository.GetConnection())
             {
-                var r = repository.DiscoveredServer.GetCommand("SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con).ExecuteReader();
+                var r = _repository.DiscoveredServer.GetCommand("SELECT * FROM ExtractableDataSetPackage_ExtractableDataSet ORDER BY ExtractableDataSetPackage_ID", con).ExecuteReader();
 
                 var lastPackageId = -1;
                 while (r.Read())
@@ -40,23 +48,26 @@ namespace Rdmp.Core.Repositories.Managers
 
                     if (lastPackageId != packageID)
                     {
-                        _packageContentsDictionary.Add(packageID,new List<int>());
+                        toReturn.Add(packageID,new List<int>());
                         lastPackageId = packageID;
                     }
 
-                    _packageContentsDictionary[packageID].Add(dataSetID);
+                    toReturn[packageID].Add(dataSetID);
                 }
+
+                return toReturn;
             }
         }
+
 
         /// <inheritdoc/>
         public IExtractableDataSet[] GetAllDataSets(IExtractableDataSetPackage package, IExtractableDataSet[] allDataSets)
         {
             //we know of no children
-            if (!_packageContentsDictionary.ContainsKey(package.ID))
+            if (!_packageContentsDictionary.Value.ContainsKey(package.ID))
                 return new ExtractableDataSet[0];
             
-            return _packageContentsDictionary[package.ID].Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
+            return _packageContentsDictionary.Value[package.ID].Select(i => allDataSets.Single(ds => ds.ID == i)).ToArray();
         }
 
         /// <summary>
@@ -71,7 +82,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="dataSet"></param>
         public void AddDataSetToPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
-            if (_packageContentsDictionary.ContainsKey(package.ID) && _packageContentsDictionary[package.ID].Contains(dataSet.ID))
+            if (_packageContentsDictionary.Value.ContainsKey(package.ID) && _packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
                 throw new ArgumentException("dataSet " + dataSet + " is already part of package '" + package + "'", "dataSet");
 
             using (var con = _repository.GetConnection())
@@ -81,10 +92,10 @@ namespace Rdmp.Core.Repositories.Managers
                         con).ExecuteNonQuery();
             }
             
-            if(!_packageContentsDictionary.ContainsKey(package.ID))
-                _packageContentsDictionary.Add(package.ID,new List<int>());
+            if(!_packageContentsDictionary.Value.ContainsKey(package.ID))
+                _packageContentsDictionary.Value.Add(package.ID,new List<int>());
 
-            _packageContentsDictionary[package.ID].Add(dataSet.ID);
+            _packageContentsDictionary.Value[package.ID].Add(dataSet.ID);
         }
 
 
@@ -100,7 +111,7 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="dataSet"></param>
         public void RemoveDataSetFromPackage(IExtractableDataSetPackage package, IExtractableDataSet dataSet)
         {
-            if(!_packageContentsDictionary[package.ID].Contains(dataSet.ID))
+            if(!_packageContentsDictionary.Value[package.ID].Contains(dataSet.ID))
                 throw new ArgumentException("dataSet " + dataSet +" is not part of package " + package + " so cannot be removed","dataSet");
 
             using (var con = _repository.GetConnection())
@@ -110,7 +121,7 @@ namespace Rdmp.Core.Repositories.Managers
                         con).ExecuteNonQuery();
             }
 
-            _packageContentsDictionary[package.ID].Remove(dataSet.ID);
+            _packageContentsDictionary.Value[package.ID].Remove(dataSet.ID);
         }
 
 
