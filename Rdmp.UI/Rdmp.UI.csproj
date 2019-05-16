@@ -107,6 +107,9 @@
     <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControl1.Designer.cs">
       <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>
