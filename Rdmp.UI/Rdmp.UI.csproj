@@ -80,6 +80,9 @@
     <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.Designer.cs">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
     </Compile>
+    <Compile Update="SimpleDialogs\Reports\DocumentationReportFormsAndControlsUI.Designer.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="UserControl1.cs">
       <SubType>UserControl</SubType>
     </Compile>
