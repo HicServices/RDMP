@@ -79,6 +79,32 @@ namespace Rdmp.Core.DataExport.Data
             get { return _cohort_ID; }
             set { SetField(ref _cohort_ID, value); }
         }
+
+        /// <inheritdoc/>
+        public bool IsExtractable(out string reason)
+        {
+            if(IsReleased)
+            {
+                reason = "ExtractionConfiguration is released so cannot be executed";
+                return false;
+            }
+
+            if(Cohort_ID == null)
+            {
+                reason = "No cohort has been configured for ExtractionConfiguration";
+                return false;
+            }
+
+            if (!GetAllExtractableDataSets().Any())
+            {
+                reason = "ExtractionConfiguration does not have an selected datasets";
+                return false;
+            }
+                
+            reason = null;
+            return true;
+        }
+
         /// <inheritdoc/>
         public string RequestTicket
         {
