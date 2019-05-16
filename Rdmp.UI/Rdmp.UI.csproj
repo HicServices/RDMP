@@ -116,6 +116,9 @@
     <Compile Update="UserControl1.Designer.cs">
       <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>
+    <Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">

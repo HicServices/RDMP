@@ -97,6 +97,8 @@ namespace Rdmp.UI.SubComponents
             base.SetDatabaseObject(activator,databaseObject);
             _configuration = databaseObject;
 
+            lblFrozen.Visible = _configuration.Frozen;
+
             tbID.Text = _configuration.ID.ToString();
             tbName.Text = _configuration.Name;
             tbDescription.Text = _configuration.Description;
