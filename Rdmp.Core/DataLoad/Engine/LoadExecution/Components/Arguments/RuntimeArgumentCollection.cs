@@ -64,7 +64,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments
             Arguments.Add(processTaskArgument);
         }
 
-        public object GetCustomArgumentValue(string name, Type type)
+        public object GetCustomArgumentValue(string name)
         {
             IArgument first = Arguments.SingleOrDefault(a => a.Name.Equals(name));
 
