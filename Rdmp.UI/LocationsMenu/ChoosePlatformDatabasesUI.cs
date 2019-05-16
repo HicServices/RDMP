@@ -42,6 +42,8 @@ namespace Rdmp.UI.LocationsMenu
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
 
+        public bool ChangesMade = false;
+
         public ChoosePlatformDatabasesUI(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
@@ -124,6 +126,8 @@ namespace Rdmp.UI.LocationsMenu
 
         private bool SaveConnectionStrings()
         {
+            ChangesMade = true;
+
             try
             {
                 // save all the settings

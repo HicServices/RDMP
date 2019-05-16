@@ -17,6 +17,7 @@ using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.LocationsMenu;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
@@ -217,6 +218,7 @@ namespace Rdmp.UI.TestsAndSetup
 
         RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
         private bool _couldNotReachTier1Database;
+        private ChoosePlatformDatabasesUI _choosePlatformsUI;
 
         private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
         {
@@ -324,31 +326,19 @@ namespace Rdmp.UI.TestsAndSetup
 
         private void StartupUIMainForm_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (e.CloseReason == CloseReason.UserClosing)
-                if (ragSmiley1.IsFatal())
-                {
-                    bool loadAnyway = 
-                    MessageBox.Show(
-                        "Setup failed in a serious way, do you want to try to load the rest of the program anyway?",
-                        "Try to load anyway?", MessageBoxButtons.YesNo) == DialogResult.Yes;
+            if(_choosePlatformsUI != null && _choosePlatformsUI.ChangesMade)
+                DoNotContinue = true;
 
-                    if(!loadAnyway)
-                        DoNotContinue = true;
-                }
+            if (e.CloseReason == CloseReason.UserClosing)
+                if ( ragSmiley1.IsFatal())
+                    DoNotContinue = true;
         }
         
-        private void BtnSetupPlatformDatabases_Click(object sender, EventArgs e)
-        {
-            var cmd = new ExecuteCommandChoosePlatformDatabase(new UserSettingsRepositoryFinder());
-            cmd.Execute();
-            StartOrRestart(true);
-        }
-
         private void BtnChoosePlatformDatabases_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandChoosePlatformDatabase(_startup.RepositoryLocator);
-            cmd.Execute();
-            DoNotContinue = true;
+            _choosePlatformsUI = new ChoosePlatformDatabasesUI(_startup.RepositoryLocator);
+            _choosePlatformsUI.ShowDialog();
+            
         }
     }
 }
