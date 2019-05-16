@@ -119,61 +119,45 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
             //Populate dropdown with the appropriate types
             if (argumentType == typeof(TableInfo))
-                array = GetAllTableInfosAssociatedWithLoadMetadata(args.CatalogueRepository, args.Parent).ToArray(); //explicit cases where selection is constrained somehow
+                array = GetTableInfosInScope(args.CatalogueRepository, args.Parent).ToArray(); //explicit cases where selection is constrained somehow
             else if (argumentType == typeof (ColumnInfo))
-                array = GetAdvertisedColumnInfos(args.CatalogueRepository, args.Parent, true);
+                array = GetColumnInfosInScope(args.CatalogueRepository, args.Parent).ToArray();
             else if (argumentType == typeof (PreLoadDiscardedColumn))
-                array = GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(args.CatalogueRepository, args.Parent).ToArray();
-            else if (argumentType == typeof (LoadProgress))
-                array = GetAllLoadProgressAssociatedWithLoadMetadata(args.Parent).ToArray();
+                array = GetAllPreloadDiscardedColumnsInScope(args.CatalogueRepository, args.Parent).ToArray();
+            else if (argumentType == typeof (LoadProgress) && args.Parent is ProcessTask pt)
+                array = pt.LoadMetadata.LoadProgresses;
             else
                 array = args.CatalogueRepository.GetAllObjects(argumentType).ToArray(); //Default case fetch all the objects of the Type
 
             return new ArgumentValueComboBoxUI(array);
         }
 
-        private IEnumerable<TableInfo> GetTableInfosFromParentOrThrow(ICatalogueRepository repository, IArgumentHost parent)
+        private IEnumerable<TableInfo> GetTableInfosInScope(ICatalogueRepository repository, IArgumentHost parent)
         {
-            var t = parent as ITableInfoCollectionHost;
+            if(parent is ProcessTask pt)
+                return pt.GetTableInfos();
 
-            if (t == null)
-                return repository.GetAllObjects<TableInfo>();
+            if(parent is LoadMetadata lmd)
+                return lmd.GetDistinctTableInfoList(true);
 
-            return t.GetTableInfos();
+            return repository.GetAllObjects<TableInfo>();
         }
 
-        private IEnumerable<TableInfo> GetAllTableInfosAssociatedWithLoadMetadata(ICatalogueRepository  repository,IArgumentHost parent)
+        
+        private IEnumerable<ColumnInfo> GetColumnInfosInScope(ICatalogueRepository repository,IArgumentHost parent)
         {
-            return GetTableInfosFromParentOrThrow(repository,parent);
-        }
-
-
-        private object[] GetAdvertisedColumnInfos(ICatalogueRepository repository,IArgumentHost parent, bool relatedOnlyToLoadMetadata)
-        {
-            return relatedOnlyToLoadMetadata
-                ? GetAllColumnInfosAssociatedWithLoadMetadata(repository, parent).ToArray()
-                : repository.GetAllObjects<ColumnInfo>().ToArray();
-        }
-
-
-        private IEnumerable<ColumnInfo> GetAllColumnInfosAssociatedWithLoadMetadata(ICatalogueRepository repository,IArgumentHost parent)
-        {
-            return GetTableInfosFromParentOrThrow(repository,parent).SelectMany(ti => ti.ColumnInfos);
+            if(parent is ProcessTask || parent is LoadMetadata)
+                return GetTableInfosInScope(repository,parent).SelectMany(ti => ti.ColumnInfos);
+            
+            return repository.GetAllObjects<ColumnInfo>();
         }
         
-        private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsAssociatedWithLoadMetadata(ICatalogueRepository repository, IArgumentHost parent)
+        private IEnumerable<PreLoadDiscardedColumn> GetAllPreloadDiscardedColumnsInScope(ICatalogueRepository repository, IArgumentHost parent)
         {
-            return GetTableInfosFromParentOrThrow(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);
-        }
-        private IEnumerable<ILoadProgress> GetAllLoadProgressAssociatedWithLoadMetadata(IArgumentHost parent)
-        {
-            var h = parent as ILoadProgressHost;
+            if(parent is ProcessTask || parent is LoadMetadata)
+                return GetTableInfosInScope(repository, parent).SelectMany(t => t.PreLoadDiscardedColumns);
 
-            if (h != null)
-                return h.LoadProgresses;
-
-            throw new NotSupportedException("Cannot populate LoadProgress selection list because type " + parent.GetType().Name + " does not support the " + typeof(ILoadProgressHost).Name + " interface");
-
+            return repository.GetAllObjects<PreLoadDiscardedColumn>();
         }
 
         /// <summary>

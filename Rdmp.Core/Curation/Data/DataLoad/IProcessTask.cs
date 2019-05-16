@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Curation.Data.DataLoad
 {
     /// <inheritdoc cref="ProcessTask"/>
-    public interface IProcessTask : IRevertable, IArgumentHost, ILoadProgressHost, IOrderable, IDisableable
+    public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisableable
     {
         /// <inheritdoc cref="IArgumentHost.GetAllArguments"/>
         IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get; }
