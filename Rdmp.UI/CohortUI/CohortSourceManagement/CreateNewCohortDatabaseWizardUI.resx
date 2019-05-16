@@ -117,7 +117,4 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="label1.Text" xml:space="preserve">
-    <value>This form assumes you have some datasets configured correctly in your Data Catalogue and that some of them are configured as extractable and that you have marked all your patient identifier columns with IsExtractionIdentifier.  If you have not done this you will need to configure ExtractionInformation through CatalogueManager.exe</value>
-  </data>
 </root>

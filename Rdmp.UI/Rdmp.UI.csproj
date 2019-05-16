@@ -104,6 +104,9 @@
     <Compile Update="DataLoadUIs\ANOUIs\ANOTableManagement\ColumnInfoToANOTableConverterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="TestsAndSetup\StartupUI.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -124,7 +127,7 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Update="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">
+    <EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="CohortUI\ExtractableCohortUI.resx">
