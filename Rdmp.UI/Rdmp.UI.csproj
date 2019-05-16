@@ -110,11 +110,20 @@
     <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="DataLoadUIs\LoadMetadataUIs\ChooseLoadFolderUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="UserControl1.Designer.cs">
       <DependentUpon>UserControl1.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>
+    <EmbeddedResource Update="CohortUI\CohortSourceManagement\WizardScreens\Screen2.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="CohortUI\ExtractableCohortUI.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
     <EmbeddedResource Update="Collections\CatalogueCollectionUI.resx">
       <DependentUpon>CatalogueCollectionUI.cs</DependentUpon>
     </EmbeddedResource>
@@ -132,9 +141,23 @@
     </EmbeddedResource>
     <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandLinkLabel.resx">
       <DependentUpon>AtomicCommandLinkLabel.cs</DependentUpon>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
     <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.resx">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="ProjectUI\ExecuteExtractionUI.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.resx">
+      <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="SimpleDialogs\Reports\GenerateTestDataUI.resx">
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
 </Project>

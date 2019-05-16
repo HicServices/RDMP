@@ -147,7 +147,6 @@
             // 
             // helpIcon1
             // 
-            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
             this.helpIcon1.Location = new System.Drawing.Point(175, 428);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
