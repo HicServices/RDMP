@@ -342,7 +342,7 @@ namespace Rdmp.UI.Logging
 
                 //set the initial filter
                 _navigationTrack.Append(Filter);
-                _back = new ToolStripButton("Back",null,(s,e)=>_navigationTrack.Back(true));
+                _back = new ToolStripButton("Back",FamFamFamIcons.Back,(s,e)=>_navigationTrack.Back(true)){DisplayStyle = ToolStripItemDisplayStyle.Image };
             }
             
             CommonFunctionality.Add(_back);
@@ -353,6 +353,7 @@ namespace Rdmp.UI.Logging
             CommonFunctionality.Add(label2);
             CommonFunctionality.Add(tbTop);
 
+            CommonFunctionality.Add(cbPreferNewer);
 
             
             if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out string reason))
