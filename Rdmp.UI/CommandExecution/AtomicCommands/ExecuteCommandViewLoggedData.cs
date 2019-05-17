@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.ComponentModel.Composition;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
@@ -20,6 +21,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     {
         protected readonly LogViewerFilter _filter;
         protected ExternalDatabaseServer[] _loggingServers;
+
+        [ImportingConstructor]
+        public ExecuteCommandViewLoggedData(IActivateItems activator) : this(activator,null)
+        {
+
+        }
 
         public ExecuteCommandViewLoggedData(IActivateItems activator, LogViewerFilter filter) : base(activator)
         {

@@ -175,7 +175,10 @@ namespace ReusableUIComponents
                 if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
                     _listDatabasesAsyncResult = new string[0];
                 else
-                    throw;
+                {
+                    ragSmiley1.Fatal(ex);
+                    _listDatabasesAsyncResult = new string[0];
+                }   
             }
         }
 

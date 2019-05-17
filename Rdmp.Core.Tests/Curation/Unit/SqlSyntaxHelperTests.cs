@@ -5,7 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Implementations.MicrosoftSQL;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Tests.Curation.Unit
@@ -16,7 +18,9 @@ namespace Rdmp.Core.Tests.Curation.Unit
         public void GetNullSubstituteTests()
         {
 
-            var pk = new PrimaryKeyCollisionResolver(null);
+            var ti = Mock.Of<ITableInfo>(t=>t.GetQuerySyntaxHelper() == new MicrosoftQuerySyntaxHelper());
+
+            var pk = new PrimaryKeyCollisionResolver(ti);
 
             Assert.AreEqual("-999",pk.GetNullSubstituteForComparisonsWithDataType("decimal(3)", true));
             Assert.AreEqual("-9999999999", pk.GetNullSubstituteForComparisonsWithDataType("decimal(10)", true));

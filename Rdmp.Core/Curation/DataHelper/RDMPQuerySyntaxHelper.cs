@@ -145,26 +145,6 @@ namespace Rdmp.Core.Curation.DataHelper
             }
         }
 
-        public static string EnsureValueIsWrapped(string s, DatabaseType type = DatabaseType.MicrosoftSQLServer)
-        {
-            if (type == DatabaseType.MicrosoftSQLServer)
-            {
-                //remove any that might already be there and then add some on 
-                string stripped = s.Trim(new char[] { '[', ']' });
-                return '[' + stripped + ']';
-            }
-            else if (type == DatabaseType.MySql)
-            {
-
-                string stripped = s.Trim(new char[] { '[', ']' }).Trim('`');
-                return '`' + stripped + '`';
-            }
-            else if (type == DatabaseType.Oracle)
-                return s.Trim();
-            else
-                throw new NotSupportedException("Unknown Type:" + type);
-        }
-
         public static string EnsureValueIsNotWrapped(string s)
         {
             if (s == null)

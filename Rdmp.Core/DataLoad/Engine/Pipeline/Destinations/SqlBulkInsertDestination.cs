@@ -45,7 +45,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             if(string.IsNullOrWhiteSpace(tableName))
                 throw new Exception("Parameter tableName is not specified for SqlBulkInsertDestination");
 
-            Table = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(tableName);
+            Table = _dbInfo.Server.GetQuerySyntaxHelper().EnsureWrapped(tableName);
             _table = _dbInfo.ExpectTable(tableName);
             _columnNamesToIgnore = columnNamesToIgnore.ToList();
             _taskBeingPerformed = "Bulk insert into " + Table + "(server=" + _dbInfo.Server + ",database=" + _dbInfo.GetRuntimeName() + ")";

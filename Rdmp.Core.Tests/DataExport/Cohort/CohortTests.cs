@@ -16,13 +16,6 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
     [Category("Database")]
     public class CohortTests : TestsRequiringACohort
     {
-     
-        [Test]
-        public void GetPrivateIdentifierValue()
-        {
-            Assert.AreEqual(RDMPQuerySyntaxHelper.EnsureValueIsWrapped(CohortDatabaseName)+"..[Cohort].[PrivateID]", _externalCohortTable.PrivateIdentifierField);
-        }
-
         [Test]
         public void TestOverridingReleaseIdentifier()
         {

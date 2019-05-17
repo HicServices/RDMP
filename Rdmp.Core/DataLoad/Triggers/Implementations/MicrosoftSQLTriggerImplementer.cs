@@ -11,6 +11,7 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
+using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
@@ -220,6 +221,8 @@ END
         {
             string columnsInArchive = "";
 
+            var syntaxHelper = new MicrosoftQuerySyntaxHelper();
+
             Match matchStartColumnExtraction = Regex.Match(sqlUsedToCreateArchiveTableSQL, "CREATE TABLE .*\\(");
 
             if (!matchStartColumnExtraction.Success)
@@ -273,7 +276,7 @@ END
             for (int index = 0; index < _primaryKeys.Length; index++)
             {
                 sqlToRun += string.Format("\ta.{0}=c.{0} " + Environment.NewLine, 
-                    RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_primaryKeys[index].GetRuntimeName())); //add the primary key joins
+                    syntaxHelper.EnsureWrapped(_primaryKeys[index].GetRuntimeName())); //add the primary key joins
 
                 if (index + 1 < _primaryKeys.Length)
                     sqlToRun += "\tAND" + Environment.NewLine; //add an AND because there are more coming

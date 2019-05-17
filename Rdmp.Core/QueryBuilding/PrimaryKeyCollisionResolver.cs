@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.DataHelper;
@@ -25,7 +26,7 @@ namespace Rdmp.Core.QueryBuilding
     public class PrimaryKeyCollisionResolver
     {
         private readonly ITableInfo _tableInfo;
-
+        private readonly IQuerySyntaxHelper _querySyntaxHelper;
         private const string WithCTE = "WITH CTE (DuplicateCount)";
         private const string SelectRownum = "\t SELECT ROW_NUMBER()";
         private const string DeleteBit =
@@ -40,6 +41,7 @@ WHERE DuplicateCount > 1";
         public PrimaryKeyCollisionResolver(ITableInfo tableInfo)
         {
             _tableInfo = tableInfo;
+            _querySyntaxHelper = _tableInfo.GetQuerySyntaxHelper();
         }
 
         /// <summary>
@@ -65,7 +67,7 @@ WHERE DuplicateCount > 1";
             if(!pks.Any())
                 throw new Exception("TableInfo " + _tableInfo.GetRuntimeName() + " does not have any primary keys defined so cannot resolve primary key collisions");
 
-            string primaryKeys = pks.Aggregate("", (s, n) => s + RDMPQuerySyntaxHelper.EnsureValueIsWrapped(n.GetRuntimeName(LoadStage.AdjustRaw)) + ",");
+            string primaryKeys = pks.Aggregate("", (s, n) => s + _querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw)) + ",");
             primaryKeys = primaryKeys.TrimEnd(new[] {','});
 
 
@@ -117,7 +119,7 @@ WHERE DuplicateCount > 1";
 
         private string AppendRelevantOrderBySql(string sql, IResolveDuplication col)
         {
-            string colname = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(col.GetRuntimeName(LoadStage.AdjustRaw));
+            string colname = _querySyntaxHelper.EnsureWrapped(col.GetRuntimeName(LoadStage.AdjustRaw));
 
             string direction = col.DuplicateRecordResolutionIsAscending ? " ASC" : " DESC";
 
@@ -153,7 +155,7 @@ WHERE DuplicateCount > 1";
             sql += "select case when exists(" + Environment.NewLine;
             sql += "select 1 FROM" + Environment.NewLine;
             sql += tableNameInRAW + Environment.NewLine;
-            sql += "group by " + pks.Aggregate("", (s, n) => s + RDMPQuerySyntaxHelper.EnsureValueIsWrapped(n.GetRuntimeName(LoadStage.AdjustRaw)) + ",") + Environment.NewLine;
+            sql += "group by " + pks.Aggregate("", (s, n) => s + _querySyntaxHelper.EnsureWrapped(n.GetRuntimeName(LoadStage.AdjustRaw)) + ",") + Environment.NewLine;
             sql = sql.TrimEnd(new[] {',','\r','\n'}) + Environment.NewLine;
             sql += "having count(*) > 1" + Environment.NewLine;
             sql += ") then 1 else 0 end" + Environment.NewLine;
@@ -173,8 +175,8 @@ WHERE DuplicateCount > 1";
             List<IResolveDuplication> resolvers;
             string basicSQL = GenerateSQL(out pks, out resolvers);
 
-            string commaSeparatedPKs = String.Join(",", pks.Select(c => RDMPQuerySyntaxHelper.EnsureValueIsWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
-            string commaSeparatedCols = String.Join(",", resolvers.Select(c => RDMPQuerySyntaxHelper.EnsureValueIsWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+            string commaSeparatedPKs = String.Join(",", pks.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
+            string commaSeparatedCols = String.Join(",", resolvers.Select(c => _querySyntaxHelper.EnsureWrapped(c.GetRuntimeName(LoadStage.AdjustRaw))));
 
             //add all the columns to the WITH CTE bit
             basicSQL = basicSQL.Replace(WithCTE,"WITH CTE (" + commaSeparatedPKs + "," + commaSeparatedCols + ",DuplicateCount)");
@@ -193,16 +195,16 @@ WHERE DuplicateCount > 1";
             basicSQL += "\twhere" + Environment.NewLine;
 
             //add the child.pk1 = CTE.pk1 bit to restrict preview only to rows that are going to get compared for nukage
-            basicSQL += String.Join("\r\n\t\tand",pks.Select(pk =>  ("\t\tchild." + RDMPQuerySyntaxHelper.EnsureValueIsWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + RDMPQuerySyntaxHelper.EnsureValueIsWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)))));
+            basicSQL += String.Join("\r\n\t\tand",pks.Select(pk =>  ("\t\tchild." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)) + "= CTE." + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw)))));
 
             basicSQL += "\tgroup by" + Environment.NewLine;
-            basicSQL += String.Join(",\r\n", pks.Select( pk => "\t\t" + RDMPQuerySyntaxHelper.EnsureValueIsWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+            basicSQL += String.Join(",\r\n", pks.Select( pk => "\t\t" + _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
 
             basicSQL += "\t\t" + Environment.NewLine;
             basicSQL += "\thaving count(*)>1" + Environment.NewLine;
             basicSQL += ")" + Environment.NewLine;
 
-            basicSQL += "order by " + String.Join(",\r\n", pks.Select(pk => RDMPQuerySyntaxHelper.EnsureValueIsWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
+            basicSQL += "order by " + String.Join(",\r\n", pks.Select(pk => _querySyntaxHelper.EnsureWrapped(pk.GetRuntimeName(LoadStage.AdjustRaw))));
             basicSQL += ",DuplicateCount";
 
             return basicSQL;
