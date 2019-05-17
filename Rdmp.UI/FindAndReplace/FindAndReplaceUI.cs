@@ -124,6 +124,9 @@ namespace Rdmp.UI.FindAndReplace
 
         private object ImageGetter(object rowObject)
         {
+            if(rowObject == null)
+                return null;
+
             return Activator.CoreIconProvider.GetImage(((FindAndReplaceNode)rowObject).Instance);
         }
 
