@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Logging;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.LogViewer;
+using Rdmp.UI.Logging;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
@@ -18,14 +18,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandViewLoggedData : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly LoggingTables _target;
         protected readonly LogViewerFilter _filter;
         protected ExternalDatabaseServer[] _loggingServers;
 
-        public ExecuteCommandViewLoggedData(IActivateItems activator,LoggingTables target = LoggingTables.DataLoadTask, LogViewerFilter filter = null) : base(activator)
+        public ExecuteCommandViewLoggedData(IActivateItems activator, LogViewerFilter filter) : base(activator)
         {
-            _target = target;
-            _filter = filter ?? new LogViewerFilter();
+            _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
             _loggingServers = Activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
             if(!_loggingServers.Any())
@@ -43,38 +41,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             var server = SelectOne(_loggingServers);
 
-            LoggingTabUI loggingTabUI = null;
-
-            if(server != null)
-                switch (_target)
-                {
-                    case LoggingTables.DataLoadTask:
-                        loggingTabUI = Activator.Activate<LoggingTasksTabUI, ExternalDatabaseServer>(server);
-                        break;
-                    case LoggingTables.DataLoadRun:
-                        loggingTabUI = Activator.Activate<LoggingRunsTabUI, ExternalDatabaseServer>(server);
-                        break;
-                    case LoggingTables.ProgressLog:
-                        loggingTabUI = Activator.Activate<LoggingProgressMessagesTabUI, ExternalDatabaseServer>(server);
-                        break;
-                    case LoggingTables.FatalError:
-                        loggingTabUI = Activator.Activate<LoggingFatalErrorsTabUI, ExternalDatabaseServer>(server);
-                        break;
-                    case LoggingTables.TableLoadRun:
-                        loggingTabUI = Activator.Activate<LoggingTableLoadsTabUI, ExternalDatabaseServer>(server);
-                        break;
-                    case LoggingTables.DataSource:
-                        loggingTabUI = Activator.Activate<LoggingDataSourcesTabUI, ExternalDatabaseServer>(server);
-                        break;
-                    default:
-                        throw new ArgumentOutOfRangeException();
-                }
+            LoggingTabUI loggingTabUI =  Activator.Activate<LoggingTabUI, ExternalDatabaseServer>(server);
             loggingTabUI.SetFilter(_filter);
         }
 
         public override string GetCommandName()
         {
-            return UsefulStuff.PascalCaseStringToHumanReadable(_target.ToString());
+            return UsefulStuff.PascalCaseStringToHumanReadable(_filter.LoggingTable.ToString());
         }
     }
 }

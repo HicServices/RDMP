@@ -13,7 +13,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.1" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.4" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -111,6 +111,9 @@
       <SubType>Form</SubType>
     </Compile>
     <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="Logging\LoggingTabUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="PipelineUIs\Pipelines\PipelineSelectionUI.cs">

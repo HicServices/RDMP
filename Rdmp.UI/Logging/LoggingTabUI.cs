@@ -15,17 +15,16 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 
-namespace Rdmp.UI.LogViewer
+namespace Rdmp.UI.Logging
 {
     /// <summary>
-    /// TECHNICAL:Base class for all the other logging tabs e.g. <see cref="LoggingDataSourcesTabUI"/>
-    ///
     /// <para>Displays all the activity going on within the RDMP that has been recorded in the logging database.  This includes data extractions, data loads, data quality runs etc.  This 
     /// information is stored in a relational database format including:</para>
     /// 
@@ -39,23 +38,28 @@ namespace Rdmp.UI.LogViewer
     /// </summary>
     public class LoggingTabUI : LoggingTab_Design
     {
-        private TextBox tbContentFilter;
-        private Label label1;
+        private ToolStripTextBox tbContentFilter = new ToolStripTextBox();
+        private ToolStripLabel label1 = new ToolStripLabel("Filter:");
+        private ToolStripLabel label2 = new ToolStripLabel("Top:");
+        private ToolStripTextBox tbTop = new ToolStripTextBox(){Text = "10000" };
+        private ToolStripButton cbPreferNewer = new ToolStripButton("Newest"){CheckOnClick =true,Checked = true};
+
+        private Label lblCurrentFilter;
         private PictureBox pbRemoveFilter;
-        private Label lblFilter;
-        private Label label2;
-        private TextBox tbTop;
         protected DataGridView dataGridView1;
 
-        protected LogViewerFilter IDFilter = new LogViewerFilter();
+        
+        protected LogViewerFilter Filter = new LogViewerFilter(LoggingTables.DataLoadTask);
 
         protected int TopX;
         private string _customFilter;
         private string _freeTextFilter;
-        private Panel panel1;
-        private CheckBox cbPreferNewer;
         private Panel pFilter;
         protected LogManager LogManager;
+        
+        NavigationTrack<LogViewerFilter> _navigationTrack;
+        private Panel panel1;
+        private ToolStripButton _back;
 
         public LoggingTabUI()
         {
@@ -67,7 +71,11 @@ namespace Rdmp.UI.LogViewer
             TopX = UpdateTopX();
 
             //start with no filter
-            Controls.Remove(pFilter);
+            panel1.Controls.Remove(pFilter);
+
+            tbTop.TextChanged += new System.EventHandler(this.tbTop_TextChanged);
+            tbContentFilter.TextChanged += new System.EventHandler(this.tbContentFilter_TextChanged);
+            cbPreferNewer.CheckedChanged += new System.EventHandler(this.cbPreferNewer_CheckedChanged);
         }
 
         private int UpdateTopX()
@@ -136,9 +144,30 @@ namespace Rdmp.UI.LogViewer
         }
 
 
+
         protected virtual IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
-            return new ExecuteCommandViewLoggedData[0];
+            var rowId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
+
+            switch (Filter.LoggingTable)
+            {
+                case LoggingTables.DataLoadRun:
+
+                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
+                    yield return new ExecuteCommandViewLoggedData(Activator,  new LogViewerFilter(LoggingTables.FatalError) { Run = rowId });
+                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.TableLoadRun) { Run = rowId });
+
+                    yield return new ExecuteCommandExportLoggedDataToCsv(Activator, new LogViewerFilter(LoggingTables.ProgressLog) { Run = rowId });
+                    break;
+                case LoggingTables.DataLoadTask:
+                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataLoadRun) { Task = rowId });
+                    break;
+
+                case LoggingTables.TableLoadRun:
+                    yield return new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataSource) { Table = rowId });
+                    break;
+
+            }
         }
 
         private void AddFreeTextSearchColumn(DataTable dt)
@@ -158,151 +187,88 @@ namespace Rdmp.UI.LogViewer
         #region InitializeComponent
         protected void InitializeComponent()
         {
-            ComponentResourceManager resources = new ComponentResourceManager(typeof(LoggingTabUI));
-            tbContentFilter = new TextBox();
-            label1 = new Label();
-            dataGridView1 = new DataGridView();
-            pbRemoveFilter = new PictureBox();
-            lblFilter = new Label();
-            label2 = new Label();
-            tbTop = new TextBox();
-            panel1 = new Panel();
-            cbPreferNewer = new CheckBox();
-            pFilter = new Panel();
-            ((ISupportInitialize)dataGridView1).BeginInit();
-            ((ISupportInitialize)pbRemoveFilter).BeginInit();
-            panel1.SuspendLayout();
-            pFilter.SuspendLayout();
-            SuspendLayout();
-            // 
-            // tbContentFilter
-            // 
-            tbContentFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left
-            | AnchorStyles.Right;
-            tbContentFilter.Location = new Point(44, 3);
-            tbContentFilter.Name = "tbContentFilter";
-            tbContentFilter.Size = new Size(577, 20);
-            tbContentFilter.TabIndex = 8;
-            tbContentFilter.TextChanged += new EventHandler(tbContentFilter_TextChanged);
-            // 
-            // label1
-            // 
-            label1.AutoSize = true;
-            label1.Location = new Point(6, 6);
-            label1.Name = "label1";
-            label1.Size = new Size(32, 13);
-            label1.TabIndex = 7;
-            label1.Text = "Filter:";
+            System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoggingTabUI));
+            this.dataGridView1 = new System.Windows.Forms.DataGridView();
+            this.pbRemoveFilter = new System.Windows.Forms.PictureBox();
+            this.lblCurrentFilter = new System.Windows.Forms.Label();
+            this.pFilter = new System.Windows.Forms.Panel();
+            this.panel1 = new System.Windows.Forms.Panel();
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).BeginInit();
+            this.pFilter.SuspendLayout();
+            this.panel1.SuspendLayout();
+            this.SuspendLayout();
             // 
             // dataGridView1
             // 
-            dataGridView1.AllowUserToAddRows = false;
-            dataGridView1.AllowUserToDeleteRows = false;
-            dataGridView1.ColumnHeadersHeightSizeMode = DataGridViewColumnHeadersHeightSizeMode.AutoSize;
-            dataGridView1.Dock = DockStyle.Fill;
-            dataGridView1.EditMode = DataGridViewEditMode.EditProgrammatically;
-            dataGridView1.Location = new Point(0, 0);
-            dataGridView1.Name = "dataGridView1";
-            dataGridView1.ReadOnly = true;
-            dataGridView1.SelectionMode = DataGridViewSelectionMode.CellSelect;
-            dataGridView1.Size = new Size(842, 571);
-            dataGridView1.TabIndex = 6;
+            this.dataGridView1.AllowUserToAddRows = false;
+            this.dataGridView1.AllowUserToDeleteRows = false;
+            this.dataGridView1.ColumnHeadersHeightSizeMode = System.Windows.Forms.DataGridViewColumnHeadersHeightSizeMode.AutoSize;
+            this.dataGridView1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.dataGridView1.EditMode = System.Windows.Forms.DataGridViewEditMode.EditProgrammatically;
+            this.dataGridView1.Location = new System.Drawing.Point(0, 0);
+            this.dataGridView1.Name = "dataGridView1";
+            this.dataGridView1.ReadOnly = true;
+            this.dataGridView1.SelectionMode = System.Windows.Forms.DataGridViewSelectionMode.CellSelect;
+            this.dataGridView1.Size = new System.Drawing.Size(842, 571);
+            this.dataGridView1.TabIndex = 6;
             // 
             // pbRemoveFilter
             // 
-            pbRemoveFilter.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            pbRemoveFilter.BackColor = Color.Goldenrod;
-            pbRemoveFilter.Image = (Image)resources.GetObject("pbRemoveFilter.Image");
-            pbRemoveFilter.Location = new Point(820, 3);
-            pbRemoveFilter.Name = "pbRemoveFilter";
-            pbRemoveFilter.Size = new Size(19, 19);
-            pbRemoveFilter.SizeMode = PictureBoxSizeMode.CenterImage;
-            pbRemoveFilter.TabIndex = 10;
-            pbRemoveFilter.TabStop = false;
-            pbRemoveFilter.Click += new EventHandler(pbRemoveFilter_Click);
+            this.pbRemoveFilter.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbRemoveFilter.BackColor = System.Drawing.Color.Goldenrod;
+            this.pbRemoveFilter.Image = ((System.Drawing.Image)(resources.GetObject("pbRemoveFilter.Image")));
+            this.pbRemoveFilter.Location = new System.Drawing.Point(820, 3);
+            this.pbRemoveFilter.Name = "pbRemoveFilter";
+            this.pbRemoveFilter.Size = new System.Drawing.Size(19, 19);
+            this.pbRemoveFilter.SizeMode = System.Windows.Forms.PictureBoxSizeMode.CenterImage;
+            this.pbRemoveFilter.TabIndex = 10;
+            this.pbRemoveFilter.TabStop = false;
+            this.pbRemoveFilter.Click += new System.EventHandler(this.pbRemoveFilter_Click);
             // 
-            // lblFilter
+            // lblCurrentFilter
             // 
-            lblFilter.Anchor = AnchorStyles.Top | AnchorStyles.Left
-            | AnchorStyles.Right;
-            lblFilter.BackColor = Color.Goldenrod;
-            lblFilter.ForeColor = SystemColors.ControlLightLight;
-            lblFilter.Location = new Point(3, 3);
-            lblFilter.Name = "lblFilter";
-            lblFilter.Size = new Size(816, 19);
-            lblFilter.TabIndex = 9;
-            lblFilter.Text = "Filtered Object";
-            lblFilter.TextAlign = ContentAlignment.MiddleCenter;
-            // 
-            // label2
-            // 
-            label2.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            label2.AutoSize = true;
-            label2.Location = new Point(725, 6);
-            label2.Name = "label2";
-            label2.Size = new Size(29, 13);
-            label2.TabIndex = 11;
-            label2.Text = "Top:";
-            // 
-            // tbTop
-            // 
-            tbTop.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            tbTop.Location = new Point(760, 3);
-            tbTop.Name = "tbTop";
-            tbTop.Size = new Size(73, 20);
-            tbTop.TabIndex = 12;
-            tbTop.Text = "10000";
-            tbTop.TextChanged += new EventHandler(tbTop_TextChanged);
-            // 
-            // panel1
-            // 
-            panel1.Controls.Add(cbPreferNewer);
-            panel1.Controls.Add(tbContentFilter);
-            panel1.Controls.Add(tbTop);
-            panel1.Controls.Add(label2);
-            panel1.Controls.Add(label1);
-            panel1.Dock = DockStyle.Bottom;
-            panel1.Location = new Point(0, 543);
-            panel1.Name = "panel1";
-            panel1.Size = new Size(842, 28);
-            panel1.TabIndex = 13;
-            // 
-            // cbPreferNewer
-            // 
-            cbPreferNewer.Anchor = AnchorStyles.Top | AnchorStyles.Right;
-            cbPreferNewer.AutoSize = true;
-            cbPreferNewer.Location = new Point(627, 5);
-            cbPreferNewer.Name = "cbPreferNewer";
-            cbPreferNewer.Size = new Size(92, 17);
-            cbPreferNewer.TabIndex = 13;
-            cbPreferNewer.Text = "Fetch Newest";
-            cbPreferNewer.UseVisualStyleBackColor = true;
-            cbPreferNewer.Checked = true;
-            cbPreferNewer.CheckedChanged += new EventHandler(cbPreferNewer_CheckedChanged);
+            this.lblCurrentFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.lblCurrentFilter.BackColor = System.Drawing.Color.Goldenrod;
+            this.lblCurrentFilter.ForeColor = System.Drawing.SystemColors.ControlLightLight;
+            this.lblCurrentFilter.Location = new System.Drawing.Point(3, 3);
+            this.lblCurrentFilter.Name = "lblCurrentFilter";
+            this.lblCurrentFilter.Size = new System.Drawing.Size(816, 19);
+            this.lblCurrentFilter.TabIndex = 9;
+            this.lblCurrentFilter.Text = "Filtered Object";
+            this.lblCurrentFilter.TextAlign = System.Drawing.ContentAlignment.MiddleCenter;
             // 
             // pFilter
             // 
-            pFilter.Controls.Add(lblFilter);
-            pFilter.Controls.Add(pbRemoveFilter);
-            pFilter.Dock = DockStyle.Top;
-            pFilter.Location = new Point(0, 0);
-            pFilter.Name = "pFilter";
-            pFilter.Size = new Size(842, 26);
-            pFilter.TabIndex = 14;
+            this.pFilter.Controls.Add(this.lblCurrentFilter);
+            this.pFilter.Controls.Add(this.pbRemoveFilter);
+            this.pFilter.Dock = System.Windows.Forms.DockStyle.Top;
+            this.pFilter.Location = new System.Drawing.Point(0, 0);
+            this.pFilter.Name = "pFilter";
+            this.pFilter.Size = new System.Drawing.Size(842, 26);
+            this.pFilter.TabIndex = 14;
             // 
-            // LoggingTab
+            // panel1
             // 
-            Controls.Add(pFilter);
-            Controls.Add(panel1);
-            Controls.Add(dataGridView1);
-            Name = "LoggingTabUI";
-            Size = new Size(842, 571);
-            ((ISupportInitialize)dataGridView1).EndInit();
-            ((ISupportInitialize)pbRemoveFilter).EndInit();
-            panel1.ResumeLayout(false);
-            panel1.PerformLayout();
-            pFilter.ResumeLayout(false);
-            ResumeLayout(false);
+            this.panel1.Controls.Add(this.pFilter);
+            this.panel1.Controls.Add(this.dataGridView1);
+            this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
+            this.panel1.Location = new System.Drawing.Point(0, 0);
+            this.panel1.Name = "panel1";
+            this.panel1.Size = new System.Drawing.Size(842, 571);
+            this.panel1.TabIndex = 15;
+            // 
+            // LoggingTabUI
+            // 
+            this.Controls.Add(this.panel1);
+            this.Name = "LoggingTabUI";
+            this.Size = new System.Drawing.Size(842, 571);
+            ((System.ComponentModel.ISupportInitialize)(this.dataGridView1)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbRemoveFilter)).EndInit();
+            this.pFilter.ResumeLayout(false);
+            this.panel1.ResumeLayout(false);
+            this.ResumeLayout(false);
 
         }
         #endregion
@@ -325,14 +291,21 @@ namespace Rdmp.UI.LogViewer
 
         public void SetFilter(LogViewerFilter filter)
         {
-            IDFilter = filter;
+            Filter = filter;
+            
+            //push the old filter
+            if(_navigationTrack != null)
+                _navigationTrack.Append(Filter);
+            if(_back != null)
+                _back.Enabled = _navigationTrack.CanBack();
 
             if (filter.IsEmpty)
-                Controls.Remove(pFilter);
+                panel1.Controls.Remove(pFilter);
             else
             {
-                Controls.Add(pFilter);
-                lblFilter.Text = filter.ToString();
+                panel1.Controls.Add(pFilter);
+
+                lblCurrentFilter.Text = filter.ToString();
             }
 
             FetchDataTable();
@@ -355,30 +328,52 @@ namespace Rdmp.UI.LogViewer
         public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)
         {
             base.SetDatabaseObject(activator, databaseObject);
-            
-            if(!databaseObject.DiscoverExistence(DataAccessContext.Logging, out string reason))
+
+            if(_navigationTrack == null)
             {
-                activator.KillForm(ParentForm,"Database " + databaseObject + " did not exist:" + reason);
+                _navigationTrack = new NavigationTrack<LogViewerFilter>(f=>true,f=>
+                {
+                    if(f.LoggingTable != LoggingTables.None)
+                    {
+                        var cmd = new ExecuteCommandViewLoggedData(activator,f);
+                        cmd.Execute();
+                    }
+                });
+
+                //set the initial filter
+                _navigationTrack.Append(Filter);
+                _back = new ToolStripButton("Back",null,(s,e)=>_navigationTrack.Back(true));
+            }
+            
+            CommonFunctionality.Add(_back);
+
+            CommonFunctionality.Add(label1);
+            CommonFunctionality.Add(tbContentFilter);
+
+            CommonFunctionality.Add(label2);
+            CommonFunctionality.Add(tbTop);
+
+
+            
+            if (!databaseObject.DiscoverExistence(DataAccessContext.Logging, out string reason))
+            {
+                activator.KillForm(ParentForm, "Database " + databaseObject + " did not exist:" + reason);
                 return;
             }
-                
+
             LogManager = new LogManager(databaseObject);
             FetchDataTable();
         }
 
         public override string GetTabName()
         {
-            return GetTableEnum() + "(" + base.GetTabName() + ")";
-        }
-
-        protected virtual LoggingTables GetTableEnum()
-        {
-            return LoggingTables.None;
+            return "Log Viewer";
         }
 
         private void FetchDataTable()
         {
-            LoadDataTable(LogManager.GetTable(GetTableEnum(), IDFilter, TopX, cbPreferNewer.Checked));
+            if (Filter.LoggingTable != LoggingTables.None)
+                LoadDataTable(LogManager.GetTable(Filter, TopX, cbPreferNewer.Checked));
         }
 
         public void SelectRowWithID(int rowIDToSelect)
@@ -403,7 +398,8 @@ namespace Rdmp.UI.LogViewer
 
         private void pbRemoveFilter_Click(object sender, EventArgs e)
         {
-            SetFilter(new LogViewerFilter());
+            //get a fresh clear filter (but targetting the same table)
+            SetFilter(new LogViewerFilter(Filter.LoggingTable));
         }
 
         private void tbTop_TextChanged(object sender, EventArgs e)

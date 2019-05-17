@@ -20,7 +20,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandExportLoggedDataToCsv : ExecuteCommandViewLoggedData
     {
-        public ExecuteCommandExportLoggedDataToCsv(IActivateItems activator, LogViewerFilter filter) : base(activator, LoggingTables.None, filter)
+        public ExecuteCommandExportLoggedDataToCsv(IActivateItems activator, LogViewerFilter filter) : base(activator, filter)
         {
         }
 
@@ -61,7 +61,7 @@ SELECT [dataLoadRunID]
   FROM {1}
   {2}
  ) as x
-order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql(LoggingTables.ProgressLog));
+order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql());
 
                     DbCommand cmd = server.GetCommand(sql, con);
                     DbDataAdapter da = server.GetDataAdapter(cmd);

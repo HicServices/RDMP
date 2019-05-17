@@ -351,7 +351,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
 
             if (category != null)
             {
-                var cmd = new ExecuteCommandViewLoggedData(Activator,category.AssociatedTable,new LogViewerFilter(){Run = category.RunId});
+                var cmd = new ExecuteCommandViewLoggedData(Activator,new LogViewerFilter(category.AssociatedTable){Run = category.RunId});
                 RightClickMenu.Items.Add(new AtomicCommandMenuItem(cmd, Activator));
             }
 
@@ -402,9 +402,9 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
                 return;
             
             if(dli != null)
-                new ExecuteCommandViewLoggedData(Activator,LoggingTables.DataLoadRun,new LogViewerFilter(){Run = dli.ID}).Execute();
+                new ExecuteCommandViewLoggedData(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
             else if (cat != null)
-                new ExecuteCommandViewLoggedData(Activator, cat.AssociatedTable, new LogViewerFilter() { Run = cat.RunId}).Execute();
+                new ExecuteCommandViewLoggedData(Activator,  new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId}).Execute();
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)
