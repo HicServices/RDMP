@@ -24,54 +24,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 {
     public class AllUIsDocumentedTest : UnitTests
     {
-        [Test]
-        public void AllUIControlsDocumented()
-        {
-            CommentStore commentStore = new CommentStore();
-            commentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
-            
-            SetupMEF();
-
-            List<string> undocumented = new List<string>();
-
-            Console.WriteLine("////////////////////Documentation of UI Controls////////////////");
-
-            Assembly.Load(typeof(RacewayRenderAreaUI).Assembly.FullName);
-            Assembly.Load(typeof(ExtractionConfigurationUI).Assembly.FullName);
-            //Assembly.Load(typeof(ActivateItems).Assembly.FullName);
-
-            List<Exception> ex;
-            var types = MEF.GetAllTypesFromAllKnownAssemblies(out ex)
-                .Where(
-                t =>
-                    (typeof(Form).IsAssignableFrom(t) || typeof(UserControl).IsAssignableFrom(t))
-                    &&
-                    !t.FullName.StartsWith("Microsoft")
-                    &&
-                    !t.FullName.StartsWith("System")
-                    ).ToArray();
-
-
-            var controlsDescriptions = new DocumentationReportFormsAndControls();
-            controlsDescriptions.Check(new IgnoreAllErrorsCheckNotifier(),commentStore,types.ToArray());
-            
-            foreach (var key in controlsDescriptions.Summaries.Keys.OrderBy(t=>t.ToString()))
-            {
-                var kvp = new KeyValuePair<Type,string>(key,controlsDescriptions.Summaries[key]);
-
-                if(kvp.Value.Equals("Not documented",StringComparison.CurrentCultureIgnoreCase))
-                {
-                    undocumented.Add(kvp.Key.ToString());
-                    Console.WriteLine(kvp.Key + " - Missing Documentation");
-                }
-                else
-                    Console.WriteLine(kvp.Key);
-    
-            }
-                
-            Assert.AreEqual(0,undocumented.Count);
-        }
-
         private int evaluatedClasses = 0;
 
         [Test]

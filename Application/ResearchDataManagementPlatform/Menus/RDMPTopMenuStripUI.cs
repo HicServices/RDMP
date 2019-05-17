@@ -104,11 +104,6 @@ namespace ResearchDataManagementPlatform.Menus
             cmd.Execute();
         }
         
-        private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WordAccessRightsByUserUI dialog = new WordAccessRightsByUserUI();
-            dialog.Show();
-        }
 
         private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -116,12 +111,6 @@ namespace ResearchDataManagementPlatform.Menus
             cmd.Execute();
         }
 
-
-        private void serverSpecReportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new DatabaseSizeReportUI(Activator);
-            dialog.Show();
-        }
 
         private void dITAExtractionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -180,12 +169,6 @@ namespace ResearchDataManagementPlatform.Menus
                 true);
         }
 
-        private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var generator = new DocumentationReportFormsAndControlsUI(Activator);
-            generator.Show();
-        }
-        
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var current = _windowManager.Navigation.CurrentTab;

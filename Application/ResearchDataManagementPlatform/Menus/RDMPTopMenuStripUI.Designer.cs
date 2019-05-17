@@ -47,10 +47,8 @@
             this.navigateForwardToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.issuesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.databaseAccessComplexToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.metadataReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.governanceReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.serverSpecReportToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.dITAExtractionToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateTestDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -63,7 +61,6 @@
             this.helpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.userManualToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateClassTableSummaryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.generateUserInterfaceDocumentationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.showHelpToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.tutorialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -226,21 +223,12 @@
             // generateReportToolStripMenuItem
             // 
             this.generateReportToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.databaseAccessComplexToolStripMenuItem,
             this.metadataReportToolStripMenuItem,
             this.governanceReportToolStripMenuItem,
-            this.serverSpecReportToolStripMenuItem,
             this.dITAExtractionToolStripMenuItem});
             this.generateReportToolStripMenuItem.Name = "generateReportToolStripMenuItem";
             this.generateReportToolStripMenuItem.Size = new System.Drawing.Size(130, 22);
             this.generateReportToolStripMenuItem.Text = "Generate...";
-            // 
-            // databaseAccessComplexToolStripMenuItem
-            // 
-            this.databaseAccessComplexToolStripMenuItem.Name = "databaseAccessComplexToolStripMenuItem";
-            this.databaseAccessComplexToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.databaseAccessComplexToolStripMenuItem.Text = "Database Access Report...";
-            this.databaseAccessComplexToolStripMenuItem.Click += new System.EventHandler(this.databaseAccessComplexToolStripMenuItem_Click);
             // 
             // metadataReportToolStripMenuItem
             // 
@@ -255,13 +243,6 @@
             this.governanceReportToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
             this.governanceReportToolStripMenuItem.Text = "Governance Report";
             this.governanceReportToolStripMenuItem.Click += new System.EventHandler(this.governanceReportToolStripMenuItem_Click);
-            // 
-            // serverSpecReportToolStripMenuItem
-            // 
-            this.serverSpecReportToolStripMenuItem.Name = "serverSpecReportToolStripMenuItem";
-            this.serverSpecReportToolStripMenuItem.Size = new System.Drawing.Size(208, 22);
-            this.serverSpecReportToolStripMenuItem.Text = "Server Spec Report";
-            this.serverSpecReportToolStripMenuItem.Click += new System.EventHandler(this.serverSpecReportToolStripMenuItem_Click);
             // 
             // dITAExtractionToolStripMenuItem
             // 
@@ -339,7 +320,6 @@
             this.helpToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
             this.userManualToolStripMenuItem,
             this.generateClassTableSummaryToolStripMenuItem,
-            this.generateUserInterfaceDocumentationToolStripMenuItem,
             this.showHelpToolStripMenuItem,
             this.tutorialsToolStripMenuItem,
             this.licenseToolStripMenuItem});
@@ -360,13 +340,6 @@
             this.generateClassTableSummaryToolStripMenuItem.Size = new System.Drawing.Size(291, 22);
             this.generateClassTableSummaryToolStripMenuItem.Text = "Generate Class/Table Summary";
             this.generateClassTableSummaryToolStripMenuItem.Click += new System.EventHandler(this.generateClassTableSummaryToolStripMenuItem_Click);
-            // 
-            // generateUserInterfaceDocumentationToolStripMenuItem
-            // 
-            this.generateUserInterfaceDocumentationToolStripMenuItem.Name = "generateUserInterfaceDocumentationToolStripMenuItem";
-            this.generateUserInterfaceDocumentationToolStripMenuItem.Size = new System.Drawing.Size(291, 22);
-            this.generateUserInterfaceDocumentationToolStripMenuItem.Text = "Generate User Interface Documentation...";
-            this.generateUserInterfaceDocumentationToolStripMenuItem.Click += new System.EventHandler(this.generateUserInterfaceDocumentationToolStripMenuItem_Click);
             // 
             // showHelpToolStripMenuItem
             // 
@@ -422,10 +395,8 @@
         private System.Windows.Forms.ToolStripMenuItem logViewerToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem issuesToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateReportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem databaseAccessComplexToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem metadataReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem governanceReportToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem serverSpecReportToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem dITAExtractionToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem testsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateTestDataToolStripMenuItem;
@@ -435,7 +406,6 @@
         private System.Windows.Forms.ToolStripMenuItem helpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem userManualToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem generateClassTableSummaryToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem generateUserInterfaceDocumentationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
