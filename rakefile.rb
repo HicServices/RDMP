@@ -154,7 +154,7 @@ task :squirrel do
     puts "version: #{version}"
 	Dir.chdir "Application/ResearchDataManagementPlatform" do
 		sh "nuget pack RDMP.nuspec -Properties Configuration=Release -Version #{version}"
-		sh "#{SQUIRREL} --releasify ResearchDataManagementPlatform.#{version}.nupkg"
+		sh "#{SQUIRREL} --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version}"
 	end
 end
 

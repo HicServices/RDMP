@@ -370,6 +370,12 @@ namespace ResearchDataManagementPlatform.Menus
         {
             _windowManager.Navigation.Forward(true);
         }
+
+        private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var updater = new ExecuteCommandCheckForUpdates(Activator);
+            updater.Execute();
+        }
     }
 }
 

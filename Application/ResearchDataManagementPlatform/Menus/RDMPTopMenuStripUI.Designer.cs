@@ -68,6 +68,7 @@
             this.tutorialsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBarUI();
+            this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -281,13 +282,12 @@
             this.testsToolStripMenuItem.Name = "testsToolStripMenuItem";
             this.testsToolStripMenuItem.Size = new System.Drawing.Size(80, 20);
             this.testsToolStripMenuItem.Text = "Diagnostics";
-            
             // 
             // generateTestDataToolStripMenuItem
             // 
             this.generateTestDataToolStripMenuItem.Name = "generateTestDataToolStripMenuItem";
             this.generateTestDataToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.G)));
-            this.generateTestDataToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
+            this.generateTestDataToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.generateTestDataToolStripMenuItem.Text = "Generate Test Data...";
             this.generateTestDataToolStripMenuItem.Click += new System.EventHandler(this.generateTestDataToolStripMenuItem_Click);
             // 
@@ -297,7 +297,7 @@
             this.managePluginsToolStripMenuItem,
             this.codeGenerationToolStripMenuItem});
             this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
-            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
+            this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.pluginsToolStripMenuItem.Text = "Plugins";
             // 
             // managePluginsToolStripMenuItem
@@ -318,19 +318,19 @@
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
-            this.toolStripSeparator1.Size = new System.Drawing.Size(263, 6);
+            this.toolStripSeparator1.Size = new System.Drawing.Size(226, 6);
             // 
             // showPerformanceCounterToolStripMenuItem
             // 
             this.showPerformanceCounterToolStripMenuItem.Name = "showPerformanceCounterToolStripMenuItem";
-            this.showPerformanceCounterToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
+            this.showPerformanceCounterToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.showPerformanceCounterToolStripMenuItem.Text = "Show Performance Counter...";
             this.showPerformanceCounterToolStripMenuItem.Click += new System.EventHandler(this.showPerformanceCounterToolStripMenuItem_Click);
             // 
             // openExeDirectoryToolStripMenuItem
             // 
             this.openExeDirectoryToolStripMenuItem.Name = "openExeDirectoryToolStripMenuItem";
-            this.openExeDirectoryToolStripMenuItem.Size = new System.Drawing.Size(266, 22);
+            this.openExeDirectoryToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.openExeDirectoryToolStripMenuItem.Text = "Open exe Directory";
             this.openExeDirectoryToolStripMenuItem.Click += new System.EventHandler(this.openExeDirectoryToolStripMenuItem_Click);
             // 
@@ -342,7 +342,8 @@
             this.generateUserInterfaceDocumentationToolStripMenuItem,
             this.showHelpToolStripMenuItem,
             this.tutorialsToolStripMenuItem,
-            this.licenseToolStripMenuItem});
+            this.licenseToolStripMenuItem,
+            this.checkForUpdatesToolStripMenuItem});
             this.helpToolStripMenuItem.Name = "helpToolStripMenuItem";
             this.helpToolStripMenuItem.Size = new System.Drawing.Size(44, 20);
             this.helpToolStripMenuItem.Text = "Help";
@@ -397,7 +398,14 @@
             this.rdmpTaskBar1.Size = new System.Drawing.Size(1160, 25);
             this.rdmpTaskBar1.TabIndex = 57;
             // 
-            // RDMPTopMenuStrip
+            // checkForUpdatesToolStripMenuItem
+            // 
+            this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(291, 22);
+            this.checkForUpdatesToolStripMenuItem.Text = "Check for updates";
+            this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
+            // 
+            // RDMPTopMenuStripUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -453,6 +461,6 @@
         private System.Windows.Forms.ToolStripMenuItem findAndReplaceToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem navigateBackwardToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem navigateForwardToolStripMenuItem;
-
+        private System.Windows.Forms.ToolStripMenuItem checkForUpdatesToolStripMenuItem;
     }
 }

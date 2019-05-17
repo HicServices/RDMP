@@ -26,14 +26,6 @@ namespace ResearchDataManagementPlatform
         [STAThread]
         static void Main(string[] args)
         {
-            // First update the APP to the latest version!
-
-            using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/HicServices/RDMP"))
-            {
-                var entry = mgr.Result.UpdateApp().Result;
-                Debug.Print(entry?.PackageName);
-            }
-
             try
             {
                 AttachConsole(-1);
