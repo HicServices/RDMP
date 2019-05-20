@@ -53,9 +53,9 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
 
         /// <summary>
-        /// Obsolete
+        /// The column associated with the filter (most likely null).  This exists for future proofing and
+        /// for compatibility with interface <see cref="IFilter.GetColumnInfoIfExists"/>
         /// </summary>
-        [Obsolete("Not used or ever populated")]
         public int? AssociatedColumnInfo_ID
         {
             get { return _associatedColumnInfoID; }

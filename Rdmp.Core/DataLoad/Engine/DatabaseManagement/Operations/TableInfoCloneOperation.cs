@@ -6,9 +6,11 @@
 
 using System;
 using System.Linq;
+using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
+using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
@@ -52,7 +54,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
 
             var discardedColumns = _tableInfo.PreLoadDiscardedColumns.Where(c => c.Destination == DiscardedColumnDestination.Dilute).ToArray();
 
-            DatabaseOperations.CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble], _tableInfo.Discover(DataAccessContext.DataLoad), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, discardedColumns);
+            CloneTable(liveDb, _hicDatabaseConfiguration.DeployInfo[_copyToBubble], _tableInfo.Discover(DataAccessContext.DataLoad), destTableName, DropHICColumns, DropIdentityColumns, AllowNulls, discardedColumns);
             
             _operationSucceeded = true;
         }
@@ -64,7 +66,67 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
                 throw new Exception("Cannot undo operation because it has not yet been executed");
 
             var tableToRemove = _tableInfo.GetRuntimeName(_copyToBubble, _hicDatabaseConfiguration.DatabaseNamer);
-            DatabaseOperations.RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToBubble]);
+            RemoveTableFromDatabase(tableToRemove, _hicDatabaseConfiguration.DeployInfo[_copyToBubble]);
+        }
+
+        
+        public void RemoveTableFromDatabase(string tableName, DiscoveredDatabase dbInfo)
+        {
+            if (!IsNukable(dbInfo))
+                throw new Exception("This method nukes a table in a database! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
+
+            dbInfo.ExpectTable(tableName).Drop();
+        }
+
+        private bool IsNukable(DiscoveredDatabase dbInfo)
+        {
+            return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
+        }
+
+        public void CloneTable(DiscoveredDatabase srcDatabaseInfo, DiscoveredDatabase destDatabaseInfo, DiscoveredTable sourceTable, string destTableName, bool dropHICColumns, bool dropIdentityColumns, bool allowNulls, PreLoadDiscardedColumn[] dillutionColumns)
+        {
+            if (!sourceTable.Exists())
+                throw new Exception("Table " + sourceTable + " does not exist on " + srcDatabaseInfo);
+
+
+            //new table will start with the same name as the as the old scripted one
+            DiscoveredTable newTable = destDatabaseInfo.ExpectTable(destTableName);
+            
+            var sql = sourceTable.ScriptTableCreation(allowNulls, allowNulls, false /*False because we want to drop these columns entirely not just flip to int*/,newTable); 
+            
+            using (var con = destDatabaseInfo.Server.GetConnection())
+            {
+                con.Open();
+                var cmd = destDatabaseInfo.Server.GetCommand(sql, con);
+                cmd.ExecuteNonQuery();
+            }
+
+            if (!newTable.Exists())
+                throw new Exception("Table '" + newTable + "' not found in " + destDatabaseInfo + " despite running table creation SQL!");
+            
+            foreach (DiscoveredColumn column in newTable.DiscoverColumns())
+            {
+                bool drop = false;
+                var colName = column.GetRuntimeName();
+
+                if (column.IsAutoIncrement)
+                    drop = true;
+
+                if (colName.StartsWith("hic_") && dropHICColumns)
+                    drop = true;
+
+                //drop the data load run ID field and validFrom fields, we don't need them in STAGING or RAW, it will be hard coded in the MERGE migration with a fixed value anyway.
+                if (colName.Equals(SpecialFieldNames.DataLoadRunID) || colName.Equals(SpecialFieldNames.ValidFrom))
+                    drop = true;
+
+                var dillution = dillutionColumns.SingleOrDefault(c => c.GetRuntimeName().Equals(colName));
+
+                if (dillution != null)
+                    column.DataType.AlterTypeTo(dillution.Data_type);
+
+                if(drop)
+                    newTable.DropColumn(column);
+            }
         }
     }
 }

@@ -300,16 +300,6 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
 
             //live must allow nulls in validFrom
             ConfirmNullability(liveTable.DiscoverColumn(SpecialFieldNames.ValidFrom), true, notifier);
-            //because it has a default of today
-            ConfirmDefaultPresent(liveTable, SpecialFieldNames.ValidFrom, true, notifier);
-
-        }
-
-        private void ConfirmDefaultPresent(DiscoveredTable table, string fieldname, bool expectedDefaultability,ICheckNotifier notifier)
-        {
-            bool defaultability = DatabaseOperations.DoesColumnHaveDefault(table, fieldname);
-            notifier.OnCheckPerformed(new CheckEventArgs("Default value of " + table.GetFullyQualifiedName() + "." + fieldname + " is IsPresent=" + defaultability + ", (expected " + expectedDefaultability + ")", defaultability == expectedDefaultability ? CheckResult.Success : CheckResult.Fail, null));
-
         }
 
         private void ConfirmNullability(DiscoveredColumn column, bool expectedNullability, ICheckNotifier notifier)

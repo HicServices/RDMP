@@ -96,8 +96,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                         CheckResult.Fail, null, "Drop the tables"));
 
                 if (nukeTables)
-                    DatabaseOperations.RemoveTablesFromDatabase(alreadyExistingTableInfosThatShouldntBeThere,
-                        stagingDbInfo);
+                    RemoveTablesFromDatabase(alreadyExistingTableInfosThatShouldntBeThere,stagingDbInfo);
             }
             else
                 _notifier.OnCheckPerformed(new CheckEventArgs("Staging table is clear", CheckResult.Success, null));
@@ -236,6 +235,20 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
                         "There are no ProcessTasks defined for '" + _loadMetadata +
                         "'",
                         CheckResult.Fail));
+        }
+                
+        public void RemoveTablesFromDatabase(IEnumerable<string> tableNames, DiscoveredDatabase dbInfo)
+        {
+            if (!IsNukable(dbInfo))
+                throw new Exception("This method loops through every table in a database and nukes it! for obvious reasons this is only allowed on databases with a suffix _STAGING/_RAW");
+
+            foreach (var tableName in tableNames)
+                dbInfo.ExpectTable(tableName).Drop();
+        }
+
+        private bool IsNukable(DiscoveredDatabase dbInfo)
+        {
+            return dbInfo.GetRuntimeName().EndsWith("_STAGING", StringComparison.CurrentCultureIgnoreCase) || dbInfo.GetRuntimeName().EndsWith("_RAW", StringComparison.CurrentCultureIgnoreCase);
         }
     }
       
