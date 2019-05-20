@@ -48,6 +48,13 @@ namespace Rdmp.Core.QueryBuilding
 
             if(request.ExtractableCohort == null)
                 throw new NullReferenceException("No Cohort selected");
+            
+            var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
+
+            if(databaseType == null)
+                throw new NotSupportedException("Catalogue " + request.Catalogue + " did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
+
+            var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType.Value);
 
             substitutions = new List<ReleaseIdentifierSubstitution>();
 
@@ -59,13 +66,13 @@ namespace Rdmp.Core.QueryBuilding
                 case 0: throw new Exception("There are no Columns in this dataset ("+request+") marked as IsExtractionIdentifier"); 
                     
                 //a single extraction identifier e.g. CHI X died on date Y with conditions a,b and c
-                case 1: substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository,request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false));
+                case 1: substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository,request.ColumnsToExtract.FirstOrDefault(c => c.IsExtractionIdentifier), request.ExtractableCohort, false,syntaxHelper));
                     break;
 
                 //multiple extraction identifiers e.g. Mother X had Babies A, B, C where A,B and C are all CHIs that must be subbed for ProCHIs
                 default:
                     foreach (IColumn columnToSubstituteForReleaseIdentifier in request.ColumnsToExtract.Where(c=>c.IsExtractionIdentifier))
-                        substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true));
+                        substitutions.Add(new ReleaseIdentifierSubstitution(memoryRepository, columnToSubstituteForReleaseIdentifier, request.ExtractableCohort, true,syntaxHelper));
                     break;
             }
             
@@ -80,13 +87,6 @@ namespace Rdmp.Core.QueryBuilding
             queryBuilder.TopX = request.TopX;
             
             queryBuilder.SetSalt(request.Salt.GetSalt());
-
-            var databaseType = request.Catalogue.GetDistinctLiveDatabaseServerType();
-
-            if(databaseType == null)
-                throw new NotSupportedException("Catalogue " + request.Catalogue + " did not know what DatabaseType it hosted, how can we extract from it! does it have no TableInfos?");
-
-            var syntaxHelper = new QuerySyntaxHelperFactory().Create(databaseType.Value);
 
             //add the constant parameters
             foreach (ConstantParameter parameter in GetConstantParameters(syntaxHelper,request.Configuration, request.ExtractableCohort))

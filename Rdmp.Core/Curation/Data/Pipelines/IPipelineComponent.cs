@@ -26,9 +26,8 @@ namespace Rdmp.Core.Curation.Data.Pipelines
     public interface IPipelineComponent : IArgumentHost, ISaveable, IMapsDirectlyToDatabaseTable,IHasDependencies,IOrderable
     {
         /// <summary>
-        /// Obsolete
+        /// The human readable name for the pipeline component (currently this is the same as the <see cref="Class"/>).
         /// </summary>
-        [Obsolete("Functionally identical to Class")]
         string Name { get; set; }
 
         /// <summary>

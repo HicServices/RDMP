@@ -62,26 +62,25 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming
         public HICDatabaseConfiguration(DiscoveredServer liveServer, INameDatabasesAndTablesDuringLoads namer = null, IServerDefaults defaults = null, IExternalDatabaseServer overrideRAWServer = null)
         {
             //respects the override of LIVE server
-            string liveDatabase = liveServer.Helper.GetCurrentDatabase(liveServer.Builder);
+            var liveDatabase = liveServer.GetCurrentDatabase();
 
-            if (string.IsNullOrWhiteSpace(liveDatabase))
+            if (liveDatabase == null)
                 throw new Exception("Cannot load live without having a unique live named database");
 
             // Default namer
             if (namer == null)
-                namer = new FixedStagingDatabaseNamer(liveDatabase);
-
-            DiscoveredServer rawServer = null;
+                namer = new FixedStagingDatabaseNamer(liveDatabase.GetRuntimeName());
 
             //if there are defaults
-            if(overrideRAWServer == null && defaults != null)
+            if (overrideRAWServer == null && defaults != null)
                 overrideRAWServer = defaults.GetDefaultFor(PermissableDefaults.RAWDataLoadServer);//get the raw default if there is one
-            
+
+            DiscoveredServer rawServer;
             //if there was defaults and a raw default server
             if (overrideRAWServer != null)
                 rawServer = DataAccessPortal.GetInstance().ExpectServer(overrideRAWServer, DataAccessContext.DataLoad, false); //get the raw server connection
             else
-                rawServer = liveServer; //there is no raw override so we will have to use the live database for RAW too.
+                rawServer = liveServer; //there is no raw override so we will have to use the live server for RAW too.
 
             //populates the servers -- note that an empty rawServer value passed to this method makes it the localhost
             DeployInfo = new StandardDatabaseHelper(liveServer.GetCurrentDatabase(), namer,rawServer);

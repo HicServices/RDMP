@@ -40,34 +40,49 @@ namespace ReusableLibraryCode.DataAccess
 
         public DiscoveredServer ExpectServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase=true)
         {
-            var builder = GetConnectionStringBuilder(dataAccessPoint, context,setInitialDatabase);
-            return new DiscoveredServer(builder);
+            return GetServer(dataAccessPoint, context,setInitialDatabase,out _);
         }
         public DiscoveredDatabase ExpectDatabase(IDataAccessPoint dataAccessPoint, DataAccessContext context)
         {
-            return ExpectServer(dataAccessPoint, context).ExpectDatabase(dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database));
+            GetServer(dataAccessPoint, context,true,out DiscoveredDatabase db);
+            return db;
         }
         public DiscoveredServer ExpectDistinctServer(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
         {
-            var builder = GetDistinctConnectionStringBuilder(collection, context, setInitialDatabase);
-            return new DiscoveredServer(builder);
+            return GetServer(GetDistinct(collection, context, setInitialDatabase),context,setInitialDatabase,out _);
         }
 
-        private DbConnectionStringBuilder GetConnectionStringBuilder(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase=true)
+        private DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase, out DiscoveredDatabase db)
         {
             IDataAccessCredentials credentials = dataAccessPoint.GetCredentialsIfExists(context);
             
             if(string.IsNullOrWhiteSpace(dataAccessPoint.Server))
                 throw new NullReferenceException("Could not get connection string because Server was null on dataAccessPoint '" + dataAccessPoint +"'");
 
-            return DatabaseCommandHelper.For(dataAccessPoint.DatabaseType).GetConnectionStringBuilder(
+            var builder = DatabaseCommandHelper.For(dataAccessPoint.DatabaseType).GetConnectionStringBuilder(
                 dataAccessPoint.Server,
-                setInitialDatabase ? dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database) : "",
+                null,
                 credentials != null?credentials.Username:null,
                 credentials != null ? credentials.GetDecryptedPassword() : null);
+
+            var server = new DiscoveredServer(builder);
+            
+            if(setInitialDatabase)
+                if(!string.IsNullOrWhiteSpace(dataAccessPoint.Database))
+                {
+                    var dbName = dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database);
+                    db = server.ExpectDatabase(dbName);
+
+                    return db.Server;
+                }
+            else
+                throw new Exception("Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint " + dataAccessPoint );
+
+            db = null;
+            return server;
         }
 
-        private DbConnectionStringBuilder GetDistinctConnectionStringBuilder(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
+        private IDataAccessPoint GetDistinct(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
         {
             ///////////////////////Exception handling///////////////////////////////////////////////
             if(!collection.Any())
@@ -120,7 +135,7 @@ namespace ReusableLibraryCode.DataAccess
             ///////////////////////////////////////////////////////////////////////////////
 
             //the bit that actually matters:
-            return GetConnectionStringBuilder(first, context, setInitialDatabase);
+            return first;
             
         }
 

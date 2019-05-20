@@ -68,7 +68,6 @@ namespace ResearchDataManagementPlatform.Menus
     /// <para>Help
     /// - View the user manual
     /// - View a technical description of each of the core objects maintained by RDMP (Catalogues, TableInfos etc) and what they mean (intended for programmers)
-    /// - Generate user interface document (the document you are currently reading).</para>
     /// </summary>
 
     public partial class RDMPTopMenuStripUI : RDMPUserControl
@@ -102,15 +101,10 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandViewLoggedData(Activator, LoggingTables.DataLoadTask);
+            var cmd = new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
             cmd.Execute();
         }
         
-        private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WordAccessRightsByUserUI dialog = new WordAccessRightsByUserUI();
-            dialog.Show();
-        }
 
         private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -118,12 +112,6 @@ namespace ResearchDataManagementPlatform.Menus
             cmd.Execute();
         }
 
-
-        private void serverSpecReportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new DatabaseSizeReportUI(Activator);
-            dialog.Show();
-        }
 
         private void dITAExtractionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -163,8 +151,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                FileInfo f = UsefulStuff.SprayFile(typeof(CatalogueCollectionUI).Assembly, "CatalogueManager.UserManual.docx", "UserManual.docx");
-                Process.Start(f.FullName);
+                System.Diagnostics.Process.Start("https://github.com/HicServices/RDMP#user-manual");
             }
             catch (Exception exception)
             {
@@ -182,12 +169,6 @@ namespace ResearchDataManagementPlatform.Menus
                 true);
         }
 
-        private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var generator = new DocumentationReportFormsAndControlsUI(Activator);
-            generator.Show();
-        }
-        
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var current = _windowManager.Navigation.CurrentTab;

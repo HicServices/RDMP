@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -54,9 +55,22 @@ namespace Rdmp.UI.Menus
             AtomicCommandUIFactory = new AtomicCommandUIFactory(_activator);
             
             RepositoryLocator = _activator.RepositoryLocator;
-
+                    
             if(o != null && !(o is RDMPCollection))
                 ActivateCommandMenuItem = Add(new ExecuteCommandActivate(_activator,args.Masquerader?? o));
+
+            if(o is DatabaseEntity e)
+            {
+                var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(e).FirstOrDefault();
+
+                if(export != null)
+                    Add(new ExecuteCommandShow(_activator,export,0,true){OverrideCommandName = "Show Export Definition"});
+
+                var import = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectImport>(e).FirstOrDefault();
+                if(import != null)
+                    Add(new ExecuteCommandShow(_activator,import,0){OverrideCommandName = "Show Import Definition"});
+            }
+
         }
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)

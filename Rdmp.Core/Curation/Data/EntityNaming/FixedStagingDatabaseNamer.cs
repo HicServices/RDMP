@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.DataHelper;
+using System;
 
 namespace Rdmp.Core.Curation.Data.EntityNaming
 {
@@ -25,8 +26,8 @@ namespace Rdmp.Core.Curation.Data.EntityNaming
         /// </summary>
         public FixedStagingDatabaseNamer(string databaseName, string stagingDatabaseName = "DLE_STAGING")
         {
-            _databaseName = RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(databaseName);
-            _stagingDatabaseName = RDMPQuerySyntaxHelper.EnsureValueIsNotWrapped(stagingDatabaseName);
+            _databaseName = EnsureValueIsNotWrapped(databaseName);
+            _stagingDatabaseName = EnsureValueIsNotWrapped(stagingDatabaseName);
         }
 
         /// <inheritdoc/>
@@ -45,6 +46,27 @@ namespace Rdmp.Core.Curation.Data.EntityNaming
                 return _stagingDatabaseName;
 
             return base.GetDatabaseName(rootDatabaseName, stage);
+        }
+
+        /// <summary>
+        /// Returns the unwrapped value of <paramref name="s"/> by trimming brackets and quotes
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        protected string EnsureValueIsNotWrapped(string s)
+        {
+            if (s == null)
+                return null;
+
+            string toReturn = s.Trim(new char[] { '[', ']', '`' ,'"'});
+
+            if (
+                toReturn.Contains("[") ||
+                toReturn.Contains("]") ||
+                toReturn.Contains("'"))
+                throw new Exception("Attempted to strip wrapping from " + s + " but result was " + toReturn + " which contains invalid characters like [ and ], possibly original string was a multipart identifier? e.g. [MyTable].dbo.[Bob]?");
+
+            return toReturn;
         }
     }
 }

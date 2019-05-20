@@ -103,8 +103,9 @@ namespace Rdmp.Core.Curation
         {
             string tableName;
             string databaseName;
+            var querySyntaxHelper = _server.GetQuerySyntaxHelper();
 
-            tableName = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_importDatabaseName, _type);
+            tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
             if (_type == DatabaseType.MicrosoftSQLServer)
                 if (_importFromSchema == "dbo")
@@ -116,8 +117,8 @@ namespace Rdmp.Core.Curation
             else
                 throw new NotSupportedException("Unknown Type:" + _type);
 
-            tableName += RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_importTableName, _type);
-            databaseName = RDMPQuerySyntaxHelper.EnsureValueIsWrapped(_importDatabaseName, _type);
+            tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
+            databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
             DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName).ExpectTable(_importTableName,_importFromSchema).DiscoverColumns();
             
@@ -150,10 +151,7 @@ namespace Rdmp.Core.Curation
         /// <inheritdoc/>
         public ColumnInfo CreateNewColumnInfo(TableInfo parent,DiscoveredColumn discoveredColumn)
         {
-            var col = new ColumnInfo((ICatalogueRepository) parent.Repository,
-                RDMPQuerySyntaxHelper.EnsureValueIsWrapped(parent.Name, _type) +
-                "." + RDMPQuerySyntaxHelper.EnsureValueIsWrapped(discoveredColumn.GetRuntimeName(), _type),
-                discoveredColumn.DataType.SQLType, parent);
+            var col = new ColumnInfo((ICatalogueRepository) parent.Repository,discoveredColumn.GetFullyQualifiedName(), discoveredColumn.DataType.SQLType, parent);
 
             //if it has an explicitly specified format (Collation)
             col.Format = discoveredColumn.Format;

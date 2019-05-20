@@ -13,7 +13,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 namespace Rdmp.Core.Curation.Data.DataLoad
 {
     /// <inheritdoc cref="ProcessTask"/>
-    public interface IProcessTask : IRevertable, IArgumentHost, ILoadProgressHost, IOrderable, IDisableable
+    public interface IProcessTask : IRevertable, IArgumentHost, IOrderable, IDisableable
     {
         /// <inheritdoc cref="IArgumentHost.GetAllArguments"/>
         IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get; }
@@ -38,8 +38,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
         
         /// <summary>
-        /// Allows you to specify that a task should only be run when loading a specific <see cref="Catalogue"/>.  Since you can't change which <see cref="Catalogue"/> are loaded
-        /// by a <see cref="LoadMetadata"/> at runtime, this property is now obsolete
+        /// Deprecated property
         /// </summary>
         [Obsolete("Since you can't change which Catalogues are loaded by a LoadMetadata at runtime, this property is now obsolete")]
         int? RelatesSolelyToCatalogue_ID { get; }

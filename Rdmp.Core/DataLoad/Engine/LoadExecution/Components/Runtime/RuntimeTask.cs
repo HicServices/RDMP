@@ -54,7 +54,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
             foreach (var propertyInfo in toSetPropertiesOf.GetType().GetProperties())
             {
                 //see if any demand initialization
-                Attribute initialization = System.Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitializationAttribute);
+                DemandsInitializationAttribute initialization = (DemandsInitializationAttribute)System.Attribute.GetCustomAttributes(propertyInfo).FirstOrDefault(a => a is DemandsInitializationAttribute) ;
 
                 //this one does
                 if (initialization != null)
@@ -62,7 +62,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
                     try
                     {
                         //get the approrpriate value from arguments
-                        var value = args.GetCustomArgumentValue(propertyInfo.Name, propertyInfo.PropertyType);
+                        var value = args.GetCustomArgumentValue(propertyInfo.Name);
 
                         //use reflection to set the value
                         propertyInfo.SetValue(toSetPropertiesOf, value, null);
@@ -74,9 +74,10 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
                     }
                     catch (KeyNotFoundException e)
                     {
-                        throw new ArgumentException(
-                          "Class " + toSetPropertiesOf.GetType().Name + " has a property " + propertyInfo.Name +
-                          "marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection", e);
+                        if(initialization.Mandatory)
+                            throw new ArgumentException(
+                              "Class " + toSetPropertiesOf.GetType().Name + " has a Mandatory property " + propertyInfo.Name +
+                              "marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection", e);
                     }
                 }
             }

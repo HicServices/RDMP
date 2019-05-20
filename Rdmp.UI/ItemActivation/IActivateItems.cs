@@ -136,7 +136,6 @@ namespace Rdmp.UI.ItemActivation
 
         void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
 
-        void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic);
         void ActivateViewLog(LoadMetadata loadMetadata);
 
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
@@ -21,11 +22,17 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     {
         private ExtractionConfiguration _extractionConfiguration;
         private SelectedDataSets _selectedDataSet;
+        private Project _project;
 
         [ImportingConstructor]
         public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : this(activator)
         {
             _extractionConfiguration = extractionConfiguration;
+        }
+
+        public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator, Project project) : this(activator)
+        {
+            SetTarget(project);
         }
 
         public ExecuteCommandExecuteExtractionConfiguration(IActivateItems activator) : base(activator)
@@ -52,31 +59,35 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public IAtomicCommandWithTarget SetTarget(DatabaseEntity target)
         {
-            _extractionConfiguration = (ExtractionConfiguration)target;
+            _extractionConfiguration = target as ExtractionConfiguration;
+            _project = target as Project;
 
-            //must have datasets, must not be released and must have a cohort
+            //if target is ExtractionConfiguration
+            if(_extractionConfiguration != null && !_extractionConfiguration.IsExtractable(out string reason))
+                SetImpossible(reason);
 
-            if(_extractionConfiguration.IsReleased)
-            {
-                SetImpossible("ExtractionConfiguration is released so cannot be executed");
-                return this;
-            }
-
-            if(_extractionConfiguration.Cohort_ID == null)
-            {
-                SetImpossible("No cohort has been configured for ExtractionConfiguration");
-                return this;
-            }
-
-            if (!_extractionConfiguration.GetAllExtractableDataSets().Any())
-                SetImpossible("ExtractionConfiguration does not have an selected datasets");
+            if (_project != null && !_project.ExtractionConfigurations.Any(c => c.IsExtractable(out _)))
+                SetImpossible("Project has no ExtractionConfigurations in a ready state for extraction");
 
             return this;
         }
+        
 
         public override void Execute()
         {
             base.Execute();
+
+            if(_project != null && _extractionConfiguration == null)
+            {
+                var available = _project.ExtractionConfigurations.Where(c=>c.IsExtractable(out _)).Cast<ExtractionConfiguration>().ToArray();
+                
+                if(available.Any())
+                    _extractionConfiguration = SelectOne(available);
+
+                if(_extractionConfiguration == null)
+                    return;
+            }
+
             var ui = Activator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(_extractionConfiguration);
 
             if (_selectedDataSet != null)

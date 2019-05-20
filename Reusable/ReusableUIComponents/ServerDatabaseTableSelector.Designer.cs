@@ -244,6 +244,7 @@ namespace ReusableUIComponents
             // 
             // databaseTypeUI1
             // 
+            this.databaseTypeUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.databaseTypeUI1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
             this.databaseTypeUI1.Location = new System.Drawing.Point(470, 50);
             this.databaseTypeUI1.Name = "databaseTypeUI1";

@@ -45,25 +45,19 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         {
             InitializeComponent();
 
-            ObjectConstructor constructor = new ObjectConstructor();
+            var dataGeneratorFactory = new DataGeneratorFactory();
 
             int yLoc = 0;
 
-            foreach (Type generator in Activator.RepositoryLocator.CatalogueRepository.MEF.GetTypes<IDataGenerator>())
+            foreach(Type t in dataGeneratorFactory.GetAvailableGenerators())
             {
-                if(generator.IsAbstract || generator.IsInterface)
-                    continue;
-
-                var instance = (IDataGenerator)constructor.Construct(generator);
-
                 var ui = new DataGeneratorUI();
-                ui.Generator = instance;
+                ui.Generator = dataGeneratorFactory.Create(t,new Random());
                 ui.Location = new Point(0,yLoc);
                 yLoc += ui.Height;
                 pDatasets.Controls.Add(ui);
             }
             
-
             lblDirectory.Visible = false;
 
             EnableOrDisableGoButton();

@@ -116,7 +116,6 @@ namespace Rdmp.UI.CohortUI
             // 
             // helpIcon1
             // 
-            helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
             helpIcon1.Location = new System.Drawing.Point(631, 30);
             helpIcon1.Name = "helpIcon1";
             helpIcon1.Size = new System.Drawing.Size(19, 19);

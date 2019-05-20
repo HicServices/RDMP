@@ -20,6 +20,7 @@ namespace Rdmp.UI.Menus
             _project = project;
 
             Add(new ExecuteCommandRelease(_activator).SetTarget(project));
+            Add(new ExecuteCommandExecuteExtractionConfiguration(_activator).SetTarget(project));
             Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator).SetTarget(_project));
         }
 

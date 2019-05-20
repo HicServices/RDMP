@@ -138,7 +138,7 @@ namespace Rdmp.UI.Collections
                 Tree.ItemActivate += CommonItemActivation;
 
             Tree.CellRightClick += CommonRightClick;
-            Tree.SelectedIndexChanged += (s,e)=>RefreshContextMenuStrip();
+            Tree.SelectionChanged += (s,e)=>RefreshContextMenuStrip();
             
             if(iconColumn != null)
                 iconColumn.ImageGetter += ImageGetter;
@@ -286,13 +286,20 @@ namespace Rdmp.UI.Collections
         
         private void RefreshContextMenuStrip()
         {
-            Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObject);
+            if(Tree.SelectedObjects.Count <= 1)
+                Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObject);
+            else
+                Tree.ContextMenuStrip = GetMenuIfExists(Tree.SelectedObjects);
         }
 
         public void CommonRightClick(object sender, CellRightClickEventArgs e)
         {
-            Tree.SelectedObject = e.Model;
-            RefreshContextMenuStrip();
+            //if we aren't doing a multi select
+            if(Tree.SelectedObjects.Count <= 1)
+            {
+                Tree.SelectedObject = e.Model;
+                RefreshContextMenuStrip();
+            }
         }
 
         void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
@@ -411,11 +418,26 @@ namespace Rdmp.UI.Collections
 
         private ContextMenuStrip GetMenuIfExists(object o)
         {
+            var many = o as ICollection;
+
+            if(many != null)
+            {
+                var menu = new ContextMenuStrip();
+
+                var factory = new AtomicCommandUIFactory(_activator);
+
+                if(many.Cast<object>().All(d=>d is IDeleteable))
+                {
+                    var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator,many.Cast<IDeleteable>().ToList()));
+                    mi.ShortcutKeys = Keys.Delete;
+                    menu.Items.Add(mi);
+                }           
+                
+                return menu;
+            }
+
             if (o != null)
             {
-                //if user mouses down on one object then mouses up over another then the cell right click event is for the mouse up so select the row so the user knows whats happening
-                Tree.SelectedObject = o;
-
                 //is o masquerading as someone else?
                 IMasqueradeAs masquerader = o as IMasqueradeAs;
 

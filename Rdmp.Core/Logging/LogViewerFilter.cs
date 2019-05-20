@@ -15,6 +15,13 @@ namespace Rdmp.Core.Logging
     /// </summary>
     public class LogViewerFilter
     {
+        public LogViewerFilter(LoggingTables loggingTable)
+        {
+            LoggingTable = loggingTable;
+        }
+
+        public LoggingTables LoggingTable {get;set;}
+
         public bool IsEmpty { get { return Run == null && Table == null && Task == null; } }
 
         public int? Task { get; set; }
@@ -42,9 +49,9 @@ namespace Rdmp.Core.Logging
             return sb.ToString();
         }
 
-        public string GetWhereSql(LoggingTables table)
+        public string GetWhereSql()
         {
-            switch (table)
+            switch (LoggingTable)
             {
                 case LoggingTables.None:
                     return "";

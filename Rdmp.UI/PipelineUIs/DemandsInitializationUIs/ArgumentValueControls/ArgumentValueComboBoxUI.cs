@@ -36,7 +36,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             _objectsForComboBox = objectsForComboBox;
             InitializeComponent();
 
-            if(objectsForComboBox == null)
+            if(objectsForComboBox == null || objectsForComboBox.Length == 0)
                 return;
 
             btnPick.Enabled = objectsForComboBox.All(o => o is IMapsDirectlyToDatabaseTable);

@@ -84,21 +84,21 @@ namespace Rdmp.Core.Logging
         /// <param name="topX"></param>
         /// <param name="sortDesc">True to sort descending (highest ID first).  False to sort ascending (lowest ID first)</param>
         /// <returns></returns>
-        public DataTable GetTable(LoggingTables table, LogViewerFilter filter, int? topX, bool sortDesc)
+        public DataTable GetTable(LogViewerFilter filter, int? topX, bool sortDesc)
         {
             string prefix = "";
-            string where = filter == null ? "": filter.GetWhereSql(table);
+            string where = filter == null ? "": filter.GetWhereSql();
 
             if (topX.HasValue)
                 prefix = "TOP " + topX.Value;
             
-            return GetAsTable(string.Format("SELECT {0} * FROM " + table + " {1} ORDER BY ID " + (sortDesc? "Desc":"Asc"), prefix, where));
+            return GetAsTable(string.Format("SELECT {0} * FROM " + filter.LoggingTable + " {1} ORDER BY ID " + (sortDesc? "Desc":"Asc"), prefix, where));
         }
         
         private DataTable GetAsTable(string sql)
         {
             DataTable dt = new DataTable();
-
+            
             using (var con = Server.GetConnection())
             {
                 con.Open();

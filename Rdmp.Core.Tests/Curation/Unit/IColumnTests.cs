@@ -33,7 +33,9 @@ namespace Rdmp.Core.Tests.Curation.Unit
             }
             public string GetRuntimeName()
             {
-                return RDMPQuerySyntaxHelper.GetRuntimeName(this);
+                var helper = new MicrosoftQuerySyntaxHelper();
+
+                return Alias ?? helper.GetRuntimeName(SelectSQL);
             }
 
             public ColumnInfo ColumnInfo { get; private set; }

@@ -194,5 +194,12 @@ namespace Rdmp.Core.DataExport.Data
         /// </summary>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable[] GetGlobals();
+
+        /// <summary>
+        /// Returns true if the configuration looks like it is ready for execution (has a cohort, some datasets and isn't already <see cref="IsReleased"/>)
+        /// </summary>
+        /// <param name="reason"></param>
+        /// <returns></returns>
+        bool IsExtractable(out string reason);
     }
 }

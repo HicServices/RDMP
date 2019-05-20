@@ -7,6 +7,7 @@
 using System;
 using System.Data.SqlClient;
 using System.IO;
+using System.Reflection;
 using CommandLine;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
@@ -23,6 +24,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup.PluginManagement;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using YamlDotNet.RepresentationModel;
 
 namespace rdmp
 {
@@ -30,6 +32,19 @@ namespace rdmp
     {
         static int Main(string[] args)
         {
+            try
+            {    
+                string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+                var nlog = Path.Combine(assemblyFolder ,"NLog.config");
+                    
+                if(File.Exists(nlog))
+                    NLog.LogManager.Configuration = new NLog.Config.XmlLoggingConfiguration(nlog, true);
+            }
+            catch(Exception ex)
+            {
+                Console.WriteLine("Could not load NLog.config");
+            }
+
             PreStartup();
 
             return HandleArguments(args);
@@ -142,6 +157,8 @@ namespace rdmp
                                        typeof(OracleImplementation).Assembly,
                                        typeof(MySqlImplementation).Assembly);
 
+            PopulateConnectionStringsFromYamlIfMissing(opts);
+
             var factory = new RunnerFactory();
 
             opts.LoadFromAppConfig();
@@ -170,6 +187,55 @@ namespace rdmp
                 return 1;
 
             return 0;
+        }
+
+        private static void PopulateConnectionStringsFromYamlIfMissing(RDMPCommandLineOptions opts)
+        {
+            var logger = LogManager.GetCurrentClassLogger();
+
+            string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+            var yaml = Path.Combine(assemblyFolder,"Databases.yaml");
+            
+            if(File.Exists(yaml))
+            {
+                try
+                {
+                        // Setup the input
+			        using(var input = new StreamReader(yaml))
+                    {
+                        // Load the stream
+			            var yamlStream = new YamlStream();
+			            yamlStream.Load(input);
+                    
+                        // Examine the stream
+                        var mapping = (YamlMappingNode)yamlStream.Documents[0].RootNode;
+
+                    
+                        foreach (var entry in mapping.Children)
+                        {
+                            string key = ((YamlScalarNode)entry.Key).Value;
+                            string value = ((YamlScalarNode)entry.Value).Value;
+
+
+                            try
+                            {
+                                var prop = typeof(RDMPCommandLineOptions).GetProperty(key);
+                                prop.SetValue(opts,value);
+                                logger.Info("Setting yaml config value for " + key);
+                            }
+                            catch (Exception)
+                            {
+                                logger.Error("Could not set property called " + key);
+                            }
+                        }
+                    }
+                }
+                catch (Exception ex)
+                {
+                    logger.Error(ex, "Failed to read yaml file '" + yaml +"'");
+                }
+                
+            }
         }
     }
 }

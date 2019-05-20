@@ -46,13 +46,13 @@
             this.serverDatabaseTableSelector1.AllowTableValuedFunctionSelection = false;
             this.serverDatabaseTableSelector1.AutoSize = true;
             this.serverDatabaseTableSelector1.Database = "";
+            this.serverDatabaseTableSelector1.DatabaseType = FAnsi.DatabaseType.MicrosoftSQLServer;
             this.serverDatabaseTableSelector1.Location = new System.Drawing.Point(3, 3);
             this.serverDatabaseTableSelector1.Name = "serverDatabaseTableSelector1";
             this.serverDatabaseTableSelector1.Password = "";
             this.serverDatabaseTableSelector1.Server = "";
             this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(581, 181);
             this.serverDatabaseTableSelector1.TabIndex = 0;
-            this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
             // 
             // btnCreate

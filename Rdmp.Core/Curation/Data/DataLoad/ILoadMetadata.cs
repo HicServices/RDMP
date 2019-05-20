@@ -14,10 +14,15 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data.DataLoad
 {
     /// <inheritdoc cref="LoadMetadata"/>
-    public interface ILoadMetadata : ILoadProgressHost,INamed
+    public interface ILoadMetadata : INamed
     {
         ICatalogueRepository CatalogueRepository { get; }
 
+        /// <summary>
+        /// Data loads can be either one offs (e.g. load all csv files in ForLoading) or iterative (load all data from the cache between 2001-01-01 and 2002-01-01).
+        /// If a data load is iterative then it will have one or more <see cref="ILoadProgress"/> which describe how far through the loading process it is.
+        /// </summary>
+        ILoadProgress[] LoadProgresses { get; }
 
         /// <summary>
         /// The root working directory for a load.  Should have subdirectories like Data, Executables etc

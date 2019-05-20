@@ -25,7 +25,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         public event Action PipelineDeleted = delegate { };
         
         public event EventHandler PipelineChanged;
-        public event EventHandler OnBeforeLaunchEdit;
+        IPipeline _previousSelection = null;
 
         ToolTip tt = new ToolTip();
 
@@ -105,6 +105,8 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         }
 
+        
+
         private void ddPipelines_SelectedIndexChanged(object sender, EventArgs e)
         {
             Pipeline = ddPipelines.SelectedItem as Pipeline;
@@ -118,9 +120,12 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             btnDeletePipeline.Enabled = Pipeline != null;
             btnClonePipeline.Enabled = Pipeline != null;
 
-            var h = PipelineChanged;
-            if(h != null)
-                h(this,new EventArgs());
+            if(!Equals(_previousSelection,Pipeline))
+            {
+                PipelineChanged?.Invoke(this,new EventArgs());
+                _previousSelection = Pipeline;
+            }
+                
         }
 
         private void btnEditPipeline_Click(object sender, EventArgs e)
@@ -139,10 +144,6 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
 
         private void ShowEditPipelineDialog()
         {
-            var h = OnBeforeLaunchEdit;
-            if (h!= null)
-                h(this,new EventArgs());
-
             //create pipeline UI with NO explicit destination/source (both must be configured within the extraction context by the user)
             var dialog = new ConfigurePipelineUI(Pipeline,_useCase, _repository);
             dialog.ShowDialog();

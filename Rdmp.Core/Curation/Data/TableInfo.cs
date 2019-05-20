@@ -419,6 +419,9 @@ namespace Rdmp.Core.Curation.Data
                 if (loadStage <= LoadStage.AdjustRaw && c.GetRuntimeName().StartsWith("hic_"))
                     continue;
                 else
+                if(loadStage <= LoadStage.AdjustStaging && c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING
+                    continue;
+                else
                 if(loadStage == LoadStage.AdjustStaging && 
                     //these two do not appear in staging
                     (c.GetRuntimeName().Equals(SpecialFieldNames.DataLoadRunID)  || c.GetRuntimeName().Equals(SpecialFieldNames.ValidFrom))

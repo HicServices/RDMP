@@ -84,6 +84,15 @@ namespace ReusableUIComponents
         
         public bool OnCheckPerformed(CheckEventArgs args)
         {
+            //handle cross thread invocations
+            var p = GetCurrentParent();
+
+            if(p!= null && p.InvokeRequired)
+            {
+                p.BeginInvoke(new MethodInvoker(()=>{OnCheckPerformed(args);}));
+                return false;
+            }
+
             _events.OnCheckPerformed(args);
 
             try

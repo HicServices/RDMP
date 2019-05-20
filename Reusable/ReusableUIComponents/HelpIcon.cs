@@ -22,6 +22,7 @@ namespace ReusableUIComponents
         private HelpWorkflow _workFlow;
         private string _originalHoverText;
         private ToolTip tt;
+        public bool SuppressClick{get;set;}
 
         public HelpIcon()
         {
@@ -54,10 +55,11 @@ namespace ReusableUIComponents
 
         private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_workFlow != null)
-                _workFlow.Start(true);
-            else
-                WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
+            if(!SuppressClick)
+                if (_workFlow != null)
+                    _workFlow.Start(true);
+                else
+                    WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
         }
     }
 }

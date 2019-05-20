@@ -16,11 +16,11 @@ using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
-using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
+using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
@@ -36,7 +36,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         readonly List<RDMPSingleControlTab>  _trackedWindows = new List<RDMPSingleControlTab>();
         readonly List<DockContent> _trackedAdhocWindows = new List<DockContent>();
         
-        public NavigationTrack Navigation { get; private set; }
+        public NavigationTrack<DockContent> Navigation { get; private set; }
         public event TabChangedHandler TabChanged;
 
         private readonly DockPanel _mainDockPanel;
@@ -66,7 +66,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             MainForm = mainForm;
             RepositoryLocator = repositoryLocator;
 
-            Navigation = new NavigationTrack();
+            Navigation = new NavigationTrack<DockContent>((c)=>c.ParentForm != null,(c)=>c.Activate());
             mainDockPanel.ActiveDocumentChanged += mainDockPanel_ActiveDocumentChanged;
             
         }

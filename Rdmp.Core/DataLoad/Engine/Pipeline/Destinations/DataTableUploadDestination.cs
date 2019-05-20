@@ -141,7 +141,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
                     
                     if (AllowResizingColumnsAtUploadTime)
-                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetDataTypeComputer());
+                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetDataTypeComputer(),StringComparer.CurrentCultureIgnoreCase);
                 }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
@@ -227,7 +227,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
             
             //Get the current estimates from the datatype computer
-            Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => v.Value.GetSqlDBType(typeTranslater));
+            Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => v.Value.GetSqlDBType(typeTranslater),StringComparer.CurrentCultureIgnoreCase);
 
             //adjust the computer to 
             //work out the max sizes - expensive bit
