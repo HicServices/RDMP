@@ -129,11 +129,11 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         /// <inheritdoc cref="ExtractionInformation_ID"/>
         [NoMappingToDatabase]
-        public ExtractionInformation ExtractionInformation {get { return Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID); } }
+        public ExtractionInformation ExtractionInformation {get { return _knownExtractionInformation.Value; } }
 
         /// <inheritdoc cref="AggregateConfiguration_ID"/>
         [NoMappingToDatabase]
-        public AggregateConfiguration AggregateConfiguration { get { return Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID); } }
+        public AggregateConfiguration AggregateConfiguration { get { return _knownAggregateConfiguration.Value;} }
 
         #endregion
 
@@ -177,20 +177,27 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// <inheritdoc/>
         public string GetRuntimeName()
         {
-            return RDMPQuerySyntaxHelper.GetRuntimeName(this);
+            return string.IsNullOrWhiteSpace(Alias) ? AggregateConfiguration.GetQuerySyntaxHelper().GetRuntimeName(SelectSQL):Alias;
         }
 
         
         private Lazy<ExtractionInformation> _knownExtractionInformation;
+        private Lazy<AggregateConfiguration> _knownAggregateConfiguration;
 
         public void InjectKnown(ExtractionInformation instance)
         {
             _knownExtractionInformation = new Lazy<ExtractionInformation>(()=>instance);
         }
+        
+        public void InjectKnown(AggregateConfiguration ac)
+        {
+            _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(()=>ac);
+        }
 
         public void ClearAllInjections()
         {
             _knownExtractionInformation = new Lazy<ExtractionInformation>(() => Repository.GetObjectByID<ExtractionInformation>(ExtractionInformation_ID));
+            _knownAggregateConfiguration = new Lazy<AggregateConfiguration>(()=>Repository.GetObjectByID<AggregateConfiguration>(AggregateConfiguration_ID));
         }
 
         /// <inheritdoc/>

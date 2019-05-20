@@ -6,6 +6,7 @@
 
 using System;
 using System.Text.RegularExpressions;
+using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation.Data;
@@ -30,6 +31,7 @@ namespace Rdmp.Core.QueryBuilding
 
         /// <inheritdoc/>
         public IColumn OriginalDatasetColumn;
+        private readonly IQuerySyntaxHelper _querySyntaxHelper;
 
         [Sql]
         public string SelectSQL { get; set; }
@@ -50,14 +52,14 @@ namespace Rdmp.Core.QueryBuilding
         public bool IsExtractionIdentifier { get { return OriginalDatasetColumn.IsExtractionIdentifier; } }
         public bool IsPrimaryKey { get { return OriginalDatasetColumn.IsPrimaryKey; } }
 
-        public ReleaseIdentifierSubstitution(MemoryRepository repo,IColumn extractionIdentifierToSubFor, IExtractableCohort extractableCohort, bool isPartOfMultiCHISubstitution):base(repo)
+        public ReleaseIdentifierSubstitution(MemoryRepository repo,IColumn extractionIdentifierToSubFor, IExtractableCohort extractableCohort, bool isPartOfMultiCHISubstitution,IQuerySyntaxHelper querySyntaxHelper):base(repo)
         {
             if(!extractionIdentifierToSubFor.IsExtractionIdentifier)
                 throw new Exception("Column " + extractionIdentifierToSubFor + " is not marked IsExtractionIdentifier so cannot be substituted for a ReleaseIdentifier");
             
             OriginalDatasetColumn = extractionIdentifierToSubFor;
-            
-            if(OriginalDatasetColumn.ColumnInfo == null)
+            this._querySyntaxHelper = querySyntaxHelper;
+            if (OriginalDatasetColumn.ColumnInfo == null)
                 throw new Exception("The column " + OriginalDatasetColumn.GetRuntimeName() + " references a ColumnInfo that has been deleted");
 
             var syntaxHelper = extractableCohort.GetQuerySyntaxHelper();
@@ -123,7 +125,7 @@ namespace Rdmp.Core.QueryBuilding
 
         public string GetRuntimeName()
         {
-            return RDMPQuerySyntaxHelper.GetRuntimeName(this);
+            return string.IsNullOrWhiteSpace(Alias)?_querySyntaxHelper.GetRuntimeName(SelectSQL): Alias;
         }
 
         public void Check(ICheckNotifier notifier)

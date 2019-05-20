@@ -62,7 +62,10 @@ namespace Rdmp.Core.QueryBuilding
         /// <inheritdoc/>
         public string GetRuntimeName()
         {
-            return RDMPQuerySyntaxHelper.GetRuntimeName(this);
+            if(_syntaxHelper == null)
+                throw new System.Exception("SyntaxHelper is null, call SetQuerySyntaxHelper first");
+
+            return string.IsNullOrWhiteSpace(Alias)?_syntaxHelper.GetRuntimeName(SelectSQL):Alias;
         }
 
         /// <summary>
