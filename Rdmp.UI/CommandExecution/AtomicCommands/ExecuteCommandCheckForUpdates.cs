@@ -37,7 +37,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             try
             {
-                using (var mgr = GetGitHubUpdateManager("https://github.com/HicServices/RDMP"))
+                using (var mgr = UpdateManager.GitHubUpdateManager("https://github.com/HicServices/RDMP"))
                 {
                     var entry = mgr.CheckForUpdate().Result;
                     if (entry.ReleasesToApply.Any() && MessageBox.Show("Got things for you: " + entry.ReleasesToApply.Count(), "UPDATE & RESTART!", MessageBoxButtons.YesNo) == DialogResult.Yes)
@@ -47,7 +47,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                         var updatePath = mgr.ApplyReleases(entry).Result;
                         if (MessageBox.Show("Got things for you: " + updatePath, "RESTART?", MessageBoxButtons.YesNo) == DialogResult.Yes)
                         {
-                            var task = Task.Run(() => Process.Start(new ProcessStartInfo(Path.Combine(updatePath, "ResearchDataManagementPlatform"))));
+                            var task = Task.Run(() => Process.Start(new ProcessStartInfo(Path.Combine(updatePath, "ResearchDataManagementPlatform.exe"))));
                             Application.Exit();
                         }
                     }
