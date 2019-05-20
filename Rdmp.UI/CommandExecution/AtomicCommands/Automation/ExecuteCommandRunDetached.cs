@@ -7,6 +7,7 @@
 using System;
 using System.Diagnostics;
 using System.Drawing;
+using System.IO;
 using Rdmp.Core.CommandLine.Options.Abstracts;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -19,6 +20,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation
     {
         public ExecuteCommandRunDetached(IActivateItems activator, Func<RDMPCommandLineOptions> commandGetter) : base(activator,commandGetter)
         {
+            if(!File.Exists(AutomationServiceExecutable))
+                SetImpossible(AutomationServiceExecutable + " not found.");
         }
 
         public override void Execute()
