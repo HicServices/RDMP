@@ -12,6 +12,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.SubComponents;
 
 namespace Rdmp.UI.Menus
 {
@@ -27,7 +28,7 @@ namespace Rdmp.UI.Menus
         {
             _cic = cic;
 
-            Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.ActivateViewCohortIdentificationConfigurationSql(this, cic));
+            Items.Add("View SQL", _activator.CoreIconProvider.GetImage(RDMPConcept.SQL), (s, e) => _activator.Activate<ViewCohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic));
                 
             Items.Add(new ToolStripSeparator());
 

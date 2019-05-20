@@ -315,11 +315,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             Activate<FilterGraphUI>(collection);
         }
 
-        public void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<ViewCohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
-        }
-
         public void ActivateViewLog(LoadMetadata loadMetadata)
         {
             new ExecuteCommandViewLoadMetadataLogs(this).SetTarget(loadMetadata).Execute();

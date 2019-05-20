@@ -135,11 +135,6 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic)
-        {
-            throw new NotImplementedException();
-        }
-
         public void ActivateViewLog(LoadMetadata loadMetadata)
         {
             throw new NotImplementedException();

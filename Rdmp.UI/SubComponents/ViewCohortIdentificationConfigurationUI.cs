@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -25,6 +26,8 @@ namespace Rdmp.UI.SubComponents
     {
         private Scintilla QueryEditor;
 
+        ToolStripButton btnUseCache;
+
         public ViewCohortIdentificationConfigurationUI()
         {
             InitializeComponent();
@@ -40,9 +43,30 @@ namespace Rdmp.UI.SubComponents
         {
             base.SetDatabaseObject(activator,databaseObject);
 
+            if(btnUseCache == null)
+            {
+                btnUseCache = new ToolStripButton("Use Cache (if available)");
+                btnUseCache.CheckOnClick = true;
+                btnUseCache.Checked = databaseObject.QueryCachingServer_ID.HasValue;
+                btnUseCache.CheckedChanged += (s,e)=>GenerateQuery();
+            }
+            
+            btnUseCache.Enabled = databaseObject.QueryCachingServer_ID.HasValue;
+            CommonFunctionality.Add(btnUseCache);
+            GenerateQuery();
+        }
+
+        private void GenerateQuery()
+        {
             QueryEditor.ReadOnly = false;
 
-            QueryEditor.Text = new CohortQueryBuilder(databaseObject).SQL;
+            var cic = (CohortIdentificationConfiguration)DatabaseObject;
+            var builder = new CohortQueryBuilder(cic);
+
+            if(!btnUseCache.Checked && cic.QueryCachingServer_ID.HasValue)
+                builder.CacheServer = null;
+
+            QueryEditor.Text = builder.SQL;
             
             QueryEditor.ReadOnly = true;
         }
