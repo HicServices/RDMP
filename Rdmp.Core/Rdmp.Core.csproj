@@ -229,7 +229,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.5" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.5" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.6" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>

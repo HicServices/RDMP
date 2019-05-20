@@ -120,32 +120,9 @@ namespace ReusableLibraryCode
             dbParameter.Value = valueForParameter;
             command.Parameters.Add(dbParameter);
         }
-
-        public static DbConnectionStringBuilder GetConnectionStringBuilder(string targetCatalogueConnectionString, DatabaseType targetDatabaseType)
-        {
-            IDiscoveredServerHelper helper;
-            
-            switch (targetDatabaseType)
-            {
-                case DatabaseType.MicrosoftSQLServer:
-                    helper = new MicrosoftSQLServerHelper();
-                    break;
-                case DatabaseType.MySql:
-                    helper = new MySqlServerHelper();
-                    break;
-                case DatabaseType.Oracle:
-                    helper = new OracleServerHelper();
-                    break;
-                default:
-                    throw new ArgumentOutOfRangeException("targetDatabaseType");
-            }
-
-            return helper.GetConnectionStringBuilder(targetCatalogueConnectionString);
-        }
-
+                
         static TypeDeciderFactory typeDeciderFactory = new TypeDeciderFactory();
-
-        
+                
         public static DbParameter GetParameter(string paramName, IQuerySyntaxHelper syntaxHelper, DiscoveredColumn discoveredColumn, object value)
         {
             var p = GetParameter(paramName, syntaxHelper.DatabaseType);

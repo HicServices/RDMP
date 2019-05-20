@@ -140,11 +140,11 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
             if (pipelineFailureExceptionIfAny != null)
                 return;
 
-            var server = DataAccessPortal.GetInstance().ExpectServer(Request.NewCohortDefinition.LocationOfCohort, DataAccessContext.DataLoad);
+            var db = Request.NewCohortDefinition.LocationOfCohort.Discover();
             
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing upload"));
             
-            using (var connection = server.BeginNewTransactedConnection())
+            using (var connection = db.Server.BeginNewTransactedConnection())
             {
                 try
                 {
@@ -154,7 +154,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations
                     if(Request.NewCohortDefinition.ID == null)
                         throw new Exception("We pushed the new cohort from the request object to the server (within transaction) but it's ID was not populated");
 
-                    var tbl = server.GetCurrentDatabase().ExpectTable(Request.NewCohortDefinition.LocationOfCohort.TableName);
+                    var tbl = db.ExpectTable(Request.NewCohortDefinition.LocationOfCohort.TableName);
 
                     using (var bulkCopy = tbl.BeginBulkInsert(connection.ManagedTransaction))
                     {
