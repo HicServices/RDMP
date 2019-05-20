@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Data;
+using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -90,8 +91,7 @@ namespace Rdmp.Core.Tests.Curation.Unit
             TestColumn tc = new TestColumn();
 
             tc.SelectSQL = "MangleQuery([mydb]..[myExcitingField])";
-            var ex = Assert.Throws<SyntaxErrorException>(()=> tc.GetRuntimeName());
-            Assert.AreEqual(@"The IExtractableColumn.SelectSQL value ""MangleQuery([mydb]..[myExcitingField])"" looks like a ScalarValuedFunction but it is missing an Alias.  Add an Alias so that it has a runtime name.",ex.Message);
+            var ex = Assert.Throws<RuntimeNameException>(()=> tc.GetRuntimeName());
         }
 
 
