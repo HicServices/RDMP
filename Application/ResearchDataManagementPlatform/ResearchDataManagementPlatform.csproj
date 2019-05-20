@@ -63,6 +63,9 @@
     <Compile Update="WindowManagement\HomePane\HomeUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Updates\UpdaterUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="WindowManagement\HomePane\HomeUI.Designer.cs">
       <DependentUpon>HomeUI.cs</DependentUpon>
     </Compile>

@@ -85,8 +85,16 @@ namespace ReusableUIComponents
         public bool OnCheckPerformed(CheckEventArgs args)
         {
             _events.OnCheckPerformed(args);
-            Enabled = true;
-            Invalidate();
+
+            try
+            {
+                Enabled = true;
+                Invalidate();
+            }
+            catch (Exception)
+            {
+                //thrown if cross thread
+            }
             return false;
 
         }

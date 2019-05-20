@@ -31,6 +31,7 @@ using Rdmp.UI.SimpleDialogs.Reports;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
 using ResearchDataManagementPlatform.Menus.MenuItems;
+using ResearchDataManagementPlatform.Updates;
 using ResearchDataManagementPlatform.WindowManagement;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
@@ -40,6 +41,7 @@ using ReusableLibraryCode.Settings;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Settings;
+using ReusableUIComponents.SingleControlForms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.Menus
@@ -373,8 +375,9 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var updater = new ExecuteCommandCheckForUpdates(Activator);
-            updater.Execute();
+            var ui = new UpdaterUI();
+            var f = new SingleControlForm(ui);
+            f.ShowDialog();
         }
     }
 }
