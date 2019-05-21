@@ -31,7 +31,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 case DatabaseType.MySql:
                     return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
                 case DatabaseType.Oracle:
-                    return new MySqlTriggerImplementer(table, createDataLoadRunIDAlso);
+                    return new OracleTriggerImplementer(table, createDataLoadRunIDAlso);
                 default:
                     throw new ArgumentOutOfRangeException("databaseType");
             }
