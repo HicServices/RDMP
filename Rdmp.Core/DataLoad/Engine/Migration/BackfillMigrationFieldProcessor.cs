@@ -30,7 +30,7 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
         public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
             //it is a hic internal field but not one of the overwritten, standard ones
-            if (field.GetRuntimeName().StartsWith("hic_"))
+            if (SpecialFieldNames.IsHicPrefixed(field))
                 fieldsToUpdate.Add(field);
             else
             {

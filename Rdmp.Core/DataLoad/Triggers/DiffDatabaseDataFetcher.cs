@@ -96,7 +96,7 @@ namespace Rdmp.Core.DataLoad.Triggers
                             archiveCol=>c.GetRuntimeName().Equals(archiveCol.GetRuntimeName(), StringComparison.InvariantCultureIgnoreCase)
                            
                                 //but dont care about differences in these columns (e.g. the actual data load run id will obviously be different!)
-                                        && !c.GetRuntimeName().StartsWith("hic_")
+                                        && !SpecialFieldNames.IsHicPrefixed(c)
                             )).ToArray();
 
                 checkNotifier.OnCheckPerformed(new CheckEventArgs("Shared columns between the archive and the live table are " + string.Join(",", _sharedColumns.Select(c=>c.GetRuntimeName())),CheckResult.Success));

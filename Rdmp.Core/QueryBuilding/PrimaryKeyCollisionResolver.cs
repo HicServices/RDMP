@@ -12,6 +12,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.DataHelper;
+using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -124,7 +125,7 @@ WHERE DuplicateCount > 1";
             string direction = col.DuplicateRecordResolutionIsAscending ? " ASC" : " DESC";
 
             //dont bother adding these because they are hic generated
-            if (colname.StartsWith("hic_"))
+            if (SpecialFieldNames.IsHicPrefixed(colname))
                 return sql;
 
             ValueType valueType = GetDataType(col.Data_type);

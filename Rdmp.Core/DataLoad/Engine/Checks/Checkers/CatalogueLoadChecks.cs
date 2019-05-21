@@ -228,7 +228,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
             //in LIVE but not STAGING
             foreach (var missingColumn in liveCols.Select(c=>c.GetRuntimeName()).Except(stagingCols.Select(c=>c.GetRuntimeName())))
                 //column is in live but not in staging, but it is hic_
-                if (missingColumn.StartsWith("hic_")) //this is permitted
+                if (SpecialFieldNames.IsHicPrefixed(missingColumn)) //this is permitted
                     continue;
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs(
@@ -285,7 +285,7 @@ namespace Rdmp.Core.DataLoad.Engine.Checks.Checkers
             
             //live columns 
             foreach (DiscoveredColumn col in liveCols)
-                if (!col.GetRuntimeName().StartsWith("hic_") && col.IsAutoIncrement)    //must start hic_ if they are identities
+                if (!SpecialFieldNames.IsHicPrefixed(col) && col.IsAutoIncrement)    //must start hic_ if they are identities
                     notifier.OnCheckPerformed(new CheckEventArgs("Column " + col + " is an identity column in the LIVE database but does not start with hic_", CheckResult.Fail, null));//this one does not
 
             //staging columns
