@@ -10,6 +10,7 @@ using System.Linq;
 using System.Text;
 using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.QueryBuilding;
@@ -197,8 +198,8 @@ Join
  where
   {1}.{4} = {5}
 
-LIMIT {0}
 ";
+                    sql += sytnaxHelper.HowDoWeAchieveTopX(_batchSize).SQL;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -224,7 +225,7 @@ LIMIT {0}
 
             //add the columns from the combo table to both views
             foreach (DataColumn col in dtComboTable.Columns)
-                if (!col.ColumnName.StartsWith("zzArchivezz"))
+                if (!col.ColumnName.StartsWith("zzArchivezz",StringComparison.InvariantCultureIgnoreCase))
                 {
                     Updates_New.Columns.Add(col.ColumnName, col.DataType);
                     Updates_Replaced.Columns.Add(col.ColumnName, col.DataType);
@@ -237,7 +238,7 @@ LIMIT {0}
 
                 foreach (DataColumn column in dtComboTable.Columns)
                 {
-                    if (column.ColumnName.StartsWith("zzArchivezz"))
+                    if (column.ColumnName.StartsWith("zzArchivezz",StringComparison.InvariantCultureIgnoreCase))
                         replacedRow[column.ColumnName.Substring("zzArchivezz".Length)] = fromRow[column];
                     else
                         newRow[column.ColumnName] = fromRow[column];
