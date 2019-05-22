@@ -11,6 +11,7 @@
                                                                                                                                                                               </PropertyGroup>
   <PropertyGroup>
     <AssemblyOriginatorKeyFile />
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
     <DebugSymbols>true</DebugSymbols>

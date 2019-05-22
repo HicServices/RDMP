@@ -3,6 +3,7 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
     <Compile Remove="Databases\CatalogueDatabase\up\views\**" />
@@ -229,7 +230,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.5" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.7" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.8" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>

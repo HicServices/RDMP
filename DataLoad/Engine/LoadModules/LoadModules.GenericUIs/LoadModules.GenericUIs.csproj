@@ -11,7 +11,8 @@
     <StartupObject />
   </PropertyGroup>
   <PropertyGroup>
-      </PropertyGroup>
+    <LangVersion>7.1</LangVersion>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.ComponentModel.DataAnnotations" />
     <Reference Include="System.Configuration" />
