@@ -90,8 +90,8 @@ task :deployplugins, [:config] do |t, args|
         sh "nuget pack Plugin.Test/Plugin.Test.nuspec -Properties Configuration=#{args.config} -IncludeReferencedProjects -Symbols -Version #{version}"
 		
         sh "nuget push HIC.RDMP.Plugin.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
-		sh "nuget push HIC.RDMP.Plugin.#{version}.UI.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
-		sh "nuget push HIC.RDMP.Plugin.#{version}.Test.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
+		sh "nuget push HIC.RDMP.Plugin.UI.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
+		sh "nuget push HIC.RDMP.Plugin.Test.#{version}.nupkg -Source https://api.nuget.org/v3/index.json -ApiKey #{NUGETKEY}"
     end
 end
 
