@@ -40,45 +40,34 @@ namespace ReusableLibraryCode.DataAccess
 
         public DiscoveredServer ExpectServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase=true)
         {
-            return GetServer(dataAccessPoint, context,setInitialDatabase,out _);
+            return GetServer(dataAccessPoint, context,setInitialDatabase);
         }
         public DiscoveredDatabase ExpectDatabase(IDataAccessPoint dataAccessPoint, DataAccessContext context)
         {
-            GetServer(dataAccessPoint, context,true,out DiscoveredDatabase db);
-            return db;
+            return GetServer(dataAccessPoint, context,true).GetCurrentDatabase();
         }
         public DiscoveredServer ExpectDistinctServer(IDataAccessPoint[] collection, DataAccessContext context, bool setInitialDatabase)
         {
-            return GetServer(GetDistinct(collection, context, setInitialDatabase),context,setInitialDatabase,out _);
+            return GetServer(GetDistinct(collection, context, setInitialDatabase),context,setInitialDatabase);
         }
 
-        private DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase, out DiscoveredDatabase db)
+        private DiscoveredServer GetServer(IDataAccessPoint dataAccessPoint, DataAccessContext context, bool setInitialDatabase)
         {
             IDataAccessCredentials credentials = dataAccessPoint.GetCredentialsIfExists(context);
             
             if(string.IsNullOrWhiteSpace(dataAccessPoint.Server))
                 throw new NullReferenceException("Could not get connection string because Server was null on dataAccessPoint '" + dataAccessPoint +"'");
-
-            var builder = DatabaseCommandHelper.For(dataAccessPoint.DatabaseType).GetConnectionStringBuilder(
-                dataAccessPoint.Server,
-                null,
-                credentials != null?credentials.Username:null,
-                credentials != null ? credentials.GetDecryptedPassword() : null);
-
-            var server = new DiscoveredServer(builder);
-            
+ 
+            string dbName = null;
+                                   
             if(setInitialDatabase)
                 if(!string.IsNullOrWhiteSpace(dataAccessPoint.Database))
-                {
-                    var dbName = dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database);
-                    db = server.ExpectDatabase(dbName);
-
-                    return db.Server;
-                }
-            else
-                throw new Exception("Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint " + dataAccessPoint );
-
-            db = null;
+                    dbName = dataAccessPoint.GetQuerySyntaxHelper().GetRuntimeName(dataAccessPoint.Database);
+                else
+                    throw new Exception("Could not get server with setInitialDatabase=true because no Database was set on IDataAccessPoint " + dataAccessPoint );
+            
+            var server = new DiscoveredServer(dataAccessPoint.Server,dbName,dataAccessPoint.DatabaseType,credentials?.Username, credentials?.GetDecryptedPassword());
+                      
             return server;
         }
 

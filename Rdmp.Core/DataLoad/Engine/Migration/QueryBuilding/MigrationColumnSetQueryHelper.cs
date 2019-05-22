@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using FAnsi.Discovery;
+using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
 {
@@ -26,12 +27,11 @@ namespace Rdmp.Core.DataLoad.Engine.Migration.QueryBuilding
         public string BuildSelectListForAllColumnsExceptStandard(string tableAlias = "")
         {
             string sql = "";
-            const string ignorePrefix = "hic_";
 
             foreach (DiscoveredColumn col in _migrationColumnSet.FieldsToDiff)
             {
                 //if it is hic_ or identity specification
-                if(col.GetRuntimeName().StartsWith(ignorePrefix) || col.IsAutoIncrement)
+                if(SpecialFieldNames.IsHicPrefixed(col) || col.IsAutoIncrement)
                     continue;
 
                 sql += tableAlias + "[" + col.GetRuntimeName() + "],";

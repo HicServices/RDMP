@@ -21,7 +21,6 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
     /// </summary>
     public class StagingToLiveMigrationFieldProcessor : IMigrationFieldProcessor
     {
-        private readonly Regex _updateButDoNotDiffNormal = new Regex("^hic_", RegexOptions.IgnoreCase);
         private readonly Regex _updateButDoNotDiffExtended;
 
         public StagingToLiveMigrationFieldProcessor(Regex updateButDoNotDiff = null)
@@ -41,7 +40,7 @@ namespace Rdmp.Core.DataLoad.Engine.Migration
         public void AssignFieldsForProcessing(DiscoveredColumn field, List<DiscoveredColumn> fieldsToDiff, List<DiscoveredColumn> fieldsToUpdate)
         {
             //it is a hic internal field but not one of the overwritten, standard ones
-            if (_updateButDoNotDiffNormal.IsMatch(field.GetRuntimeName()) 
+            if (SpecialFieldNames.IsHicPrefixed(field)
                 || 
                 IsSupplementalMatch(field))
             

@@ -144,7 +144,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CheckingTests
 
                 var ex = Assert.Throws<ArgumentException>(() => _checker.Check(new ThrowImmediatelyCheckNotifier() { ThrowOnWarning = true }));
 
-                Assert.AreEqual(@"Class AnySeparatorFileAttacher has a property Separatormarked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",ex.Message);
+                Assert.AreEqual(@"Class AnySeparatorFileAttacher has a Mandatory property 'Separator' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection",ex.Message);
                 
 
             }

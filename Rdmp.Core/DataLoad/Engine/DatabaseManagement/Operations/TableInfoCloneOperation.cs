@@ -112,7 +112,7 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
                 if (column.IsAutoIncrement)
                     drop = true;
 
-                if (colName.StartsWith("hic_") && dropHICColumns)
+                if (SpecialFieldNames.IsHicPrefixed(colName) && dropHICColumns)
                     drop = true;
 
                 //drop the data load run ID field and validFrom fields, we don't need them in STAGING or RAW, it will be hard coded in the MERGE migration with a fixed value anyway.

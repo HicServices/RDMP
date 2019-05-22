@@ -35,8 +35,6 @@ namespace Rdmp.Core.Curation
 
         private readonly DatabaseType _type;
         
-        private IDiscoveredServerHelper _helper;
-        private DbConnectionStringBuilder _builder;
         private DiscoveredServer _server;
 
         #region Construction
@@ -65,7 +63,6 @@ namespace Rdmp.Core.Curation
             _usageContext = usageContext;
             _importFromSchema = importFromSchema;
 
-            _helper = DatabaseCommandHelper.For(type);
             
             InitializeBuilder();
         }
@@ -93,8 +90,7 @@ namespace Rdmp.Core.Curation
 
         private void InitializeBuilder()
         {
-            _builder = _helper.GetConnectionStringBuilder(_importFromServer, _importDatabaseName, _username, _password);
-            _server = new DiscoveredServer(_builder);
+            _server = new DiscoveredServer(_importFromServer, _importDatabaseName, _type,_username, _password);
         }
         #endregion
         

@@ -239,7 +239,7 @@ MrMurder,2001-01-01,Yella");
                 Assert.AreEqual(DBNull.Value,bob[SpecialFieldNames.DataLoadRunID]);
 
                 //MySql add default of now() on a table will auto populate all the column values with the the now() date while Sql Server will leave them as nulls
-                if(databaseType != DatabaseType.MySql)
+                if(databaseType == DatabaseType.MicrosoftSQLServer)
                     Assert.AreEqual(DBNull.Value, bob[SpecialFieldNames.ValidFrom]);
             }
             finally

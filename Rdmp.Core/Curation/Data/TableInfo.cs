@@ -416,7 +416,7 @@ namespace Rdmp.Core.Curation.Data
 
             //also add column infos
             foreach (ColumnInfo c in ColumnInfos)
-                if (loadStage <= LoadStage.AdjustRaw && c.GetRuntimeName().StartsWith("hic_"))
+                if (loadStage <= LoadStage.AdjustRaw && SpecialFieldNames.IsHicPrefixed(c))
                     continue;
                 else
                 if(loadStage <= LoadStage.AdjustStaging && c.IsAutoIncrement) //auto increment columns do not get created in RAW/STAGING

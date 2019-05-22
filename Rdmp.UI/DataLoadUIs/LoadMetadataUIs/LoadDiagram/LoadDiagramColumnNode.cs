@@ -14,6 +14,7 @@ using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode;
+using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
@@ -61,7 +62,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
 
                 var colInfo = (ColumnInfo)_column;
 
-                return colInfo.IsPrimaryKey || colInfo.ANOTable_ID != null || colInfo.GetRuntimeName().StartsWith("hic_");
+                return colInfo.IsPrimaryKey || colInfo.ANOTable_ID != null || SpecialFieldNames.IsHicPrefixed(colInfo);
             }
         }
 

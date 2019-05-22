@@ -269,9 +269,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 _remotePassword = RemoteTableAccessCredentials.GetDecryptedPassword();
             }
             
-            var helper = DatabaseCommandHelper.For(DatabaseType);
-            var builder = helper.GetConnectionStringBuilder(RemoteServer, RemoteDatabaseName, _remoteUsername, _remotePassword);
-            _remoteDatabase = new DiscoveredServer(builder).GetCurrentDatabase();
+            _remoteDatabase = new DiscoveredServer(RemoteServer, RemoteDatabaseName,DatabaseType, _remoteUsername, _remotePassword).GetCurrentDatabase();
             
             _setupDone = true;
         }

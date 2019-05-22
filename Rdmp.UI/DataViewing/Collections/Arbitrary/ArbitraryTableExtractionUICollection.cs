@@ -70,9 +70,7 @@ namespace Rdmp.UI.DataViewing.Collections.Arbitrary
 
             DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), _arguments[DatabaseTypeKey]);
 
-            var builder = DatabaseCommandHelper.For(DatabaseType).GetConnectionStringBuilder(Server,Database,null,null);
-
-            var server = new DiscoveredServer(builder);
+            var server = new DiscoveredServer(Server,Database,DatabaseType,null,null);
             _table = server.ExpectDatabase(Database).ExpectTable(_arguments[TableKey]);
         }
         

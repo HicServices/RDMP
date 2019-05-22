@@ -12,6 +12,7 @@ using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.DataLoad.Triggers;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.ANOEngineering
@@ -113,7 +114,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
             //get an extraction category based on it's current extractability
             ExtractionCategoryIfAny = GetMaxExtractionCategoryIfAny();
             
-            if (ColumnInfo.GetRuntimeName().StartsWith("hic_"))
+            if (SpecialFieldNames.IsHicPrefixed(ColumnInfo))
                 Plan = Plan.Drop;//suggest dropping hic_ fields
             else
                 if (ColumnInfo.IsPrimaryKey || IsInvolvedInLookups() || IsInvolvedInJoins())

@@ -90,7 +90,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 else
                     if (!chunk.Columns.Contains(columnInDestination.GetRuntimeName()))//its not fine if there are other columns missing (at the very least we should warn the user.
                     {
-                        bool isBigProblem = !columnInDestination.GetRuntimeName().StartsWith("hic_");
+                        bool isBigProblem = !SpecialFieldNames.IsHicPrefixed(columnInDestination);
 
                         job.OnNotify(this, 
                             new NotifyEventArgs(isBigProblem?ProgressEventType.Error:ProgressEventType.Warning, //hic_ columns could be ok if missing so only warning, otherwise go error

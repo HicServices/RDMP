@@ -76,8 +76,8 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
                     {
                         if(initialization.Mandatory)
                             throw new ArgumentException(
-                              "Class " + toSetPropertiesOf.GetType().Name + " has a Mandatory property " + propertyInfo.Name +
-                              "marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection", e);
+                              "Class " + toSetPropertiesOf.GetType().Name + " has a Mandatory property '" + propertyInfo.Name +
+                              "' marked with DemandsInitialization but no corresponding argument was provided in ArgumentCollection", e);
                     }
                 }
             }

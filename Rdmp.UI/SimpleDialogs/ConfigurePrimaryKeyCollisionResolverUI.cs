@@ -17,6 +17,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
+using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.UI.SimpleDialogs
 {
@@ -106,7 +107,7 @@ namespace Rdmp.UI.SimpleDialogs
             foreach (IResolveDuplication resolver in resolvers.OrderBy(o => o.DuplicateRecordResolutionOrder).ToArray())
             {
                 //if it starts with hic_ 
-                if (resolver.GetRuntimeName().StartsWith("hic_"))
+                if (SpecialFieldNames.IsHicPrefixed(resolver))
                 {
                     //do not use it for duplication resolution
                     resolver.DuplicateRecordResolutionOrder = null;

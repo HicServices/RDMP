@@ -16,6 +16,8 @@ using Rdmp.Core.DataLoad.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
 using Tests.Common;
+using FAnsi.Discovery.TypeTranslation;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
@@ -30,9 +32,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             _database = GetCleanedServer(dbType);
 
-            RunSQL("CREATE TABLE TriggerTests(name varchar(30) not null,bubbles int)");
+            _table =_database.CreateTable("TriggerTests",new DatabaseColumnRequest[]{ 
+                new DatabaseColumnRequest("name",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false },
+                new DatabaseColumnRequest("bubbles",new DatabaseTypeRequest(typeof(int))),
+                });
 
-            _table = _database.ExpectTable("TriggerTests");
             _archiveTable = _database.ExpectTable("TriggerTests_Archive");
         }
 
@@ -42,6 +46,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
         public void NoTriggerExists(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -50,6 +55,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
         public void CreateWithNoPks_Complain(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -60,6 +66,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
         public void CreateWithPks_Valid(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -73,13 +80,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
         public void AlterTest_InvalidThenRecreateItAndItsValidAgain(DatabaseType dbType)
         {
             CreateWithPks_Valid(dbType);
 
-            RunSQL("ALTER TABLE TriggerTests add fish int");
-            RunSQL("ALTER TABLE TriggerTests_Archive add fish int");
-
+            _table.AddColumn("fish",new DatabaseTypeRequest(typeof(int)),true,500);
+            _archiveTable.AddColumn("fish",new DatabaseTypeRequest(typeof(int)),true,500);
+            
             //still not valid because trigger SQL is missing it in the column list
             var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
             Assert.IsNotNull(ex.Message);
@@ -94,18 +102,26 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
         public void NowTestDataInsertion(DatabaseType dbType)
         {
             AlterTest_InvalidThenRecreateItAndItsValidAgain(dbType);
+            
+            _table.Insert(new Dictionary<string, object>
+            { 
+                {"name","Franky" } ,
+                {"bubbles",3 } ,
+                {"hic_validFrom",new DateTime(2001,1,2)} ,
+                {"hic_dataLoadRunID",7 } 
+            });
 
-            RunSQL("INSERT INTO TriggerTests (name,bubbles,fish,hic_validFrom) VALUES ('Franky',3,5,'2001-01-02')");
 
-            RunSQL("UPDATE TriggerTests set bubbles =99");
+            RunSQL("UPDATE {0} set bubbles =99",_table.GetFullyQualifiedName());
 
             //new value is 99
-            Assert.AreEqual(99,ExecuteScalar("Select bubbles FROM TriggerTests where name = 'Franky'"));
+            Assert.AreEqual(99,ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'",_table.GetFullyQualifiedName()));
             //archived value is 3
-            Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM TriggerTests_Archive where name = 'Franky'"));
+            Assert.AreEqual(3, ExecuteScalar("Select bubbles FROM {0} where name = 'Franky'", _archiveTable.GetFullyQualifiedName()));
 
             //Legacy table valued function only works for MicrosoftSQLServer
             if(dbType == DatabaseType.MicrosoftSQLServer)
@@ -124,6 +140,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
         public void DiffDatabaseDataFetcherTest(DatabaseType dbType)
         {
             CreateTable(dbType);
@@ -132,21 +149,28 @@ namespace Rdmp.Core.Tests.Curation.Integration
             
             GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier());
             
-            RunSQL("INSERT INTO TriggerTests (name,bubbles,hic_validFrom,hic_dataLoadRunID) VALUES ('Franky',3,'2001-01-02',7)");
+            _table.Insert(new Dictionary<string, object>
+            { 
+                {"name","Franky" } ,
+                {"bubbles",3 } ,
+                {"hic_validFrom",new DateTime(2001,1,2)} ,
+                {"hic_dataLoadRunID",7 } 
+            });
 
             Thread.Sleep(500);
-            RunSQL("UPDATE TriggerTests SET bubbles=1");
+            RunSQL("UPDATE {0} SET bubbles=1",_table.GetFullyQualifiedName());
 
             Thread.Sleep(500);
-            RunSQL("UPDATE TriggerTests SET bubbles=2");
+            RunSQL("UPDATE {0} SET bubbles=2",_table.GetFullyQualifiedName());
 
             Thread.Sleep(500);
-            RunSQL("UPDATE TriggerTests SET bubbles=3");
+            RunSQL("UPDATE {0} SET bubbles=3",_table.GetFullyQualifiedName());
 
             Thread.Sleep(500);
-            RunSQL("UPDATE TriggerTests SET bubbles=4");
+            RunSQL("UPDATE {0} SET bubbles=4",_table.GetFullyQualifiedName());
 
             Assert.AreEqual(1,_table.GetRowCount());
+            Assert.AreEqual(4,_archiveTable.GetRowCount());
 
             TableInfo ti;
             ColumnInfo[] cols;
@@ -175,8 +199,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
             implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
         }
 
-        private object ExecuteScalar(string sql)
+        private object ExecuteScalar(string sql, params string[] args)
         {
+            if(args.Length != 0)
+                sql = string.Format(sql,args);
+
             var svr = _database.Server;
             using (var con = svr.GetConnection())
             {
@@ -185,8 +212,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
         }
 
-        private void RunSQL(string sql)
+        private void RunSQL(string sql, params string[] args)
         {
+            if(args.Length != 0)
+                sql = string.Format(sql,args);
             if (_database == null)
                 throw new Exception("You must call CreateTable first");
 

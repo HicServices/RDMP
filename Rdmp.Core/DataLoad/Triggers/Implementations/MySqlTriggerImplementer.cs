@@ -63,20 +63,20 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             return creationSql;
         }
 
-        private string CreateTriggerBody()
+        protected virtual string CreateTriggerBody()
         {
             return string.Format(@"BEGIN
     INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
   END", _archiveTable.GetFullyQualifiedName(),
                 string.Join(",", _columns.Select(c => c.GetRuntimeName() + "=OLD." + c.GetRuntimeName())));
         }
-
+        
         public override TriggerStatus GetTriggerStatus()
         {
             return string.IsNullOrWhiteSpace(GetTriggerBody())? TriggerStatus.Missing : TriggerStatus.Enabled;
         }
 
-        private string GetTriggerBody()
+        protected virtual string GetTriggerBody()
         {
             using (var con = _server.GetConnection())
             {
@@ -95,7 +95,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             return null;
         }
 
-        private object GetTriggerName()
+        protected virtual object GetTriggerName()
         {
             return _table.GetRuntimeName() + "_onupdate";
         }
@@ -108,10 +108,15 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             var sqlThen = GetTriggerBody();
             var sqlNow = CreateTriggerBody();
 
-            if(!sqlNow.Equals(sqlThen))
-                throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlNow,sqlThen);
+            AssertTriggerBodiesAreEqual(sqlThen,sqlNow);
             
             return true;
+        }
+
+        protected virtual void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)
+        {
+            if(!sqlNow.Equals(sqlThen))
+                throw new ExpectedIdenticalStringsException("Sql body for trigger doesn't match expcted sql",sqlNow,sqlThen);
         }
     }
 }
