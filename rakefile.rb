@@ -84,67 +84,13 @@ task :deployplugins, [:config] do |t, args|
     end
 end
 
-desc "Get the deploy and min-version for the app"    
-task :publishall, [:folder, :url] do |t, args|
-    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+\.\d+(\-\w+)+/]
-    
-    if (asminfoversion.nil?) then
-        asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+\.\d+/]
-    end
-    
-    major, minor, patch, build, suffix = asminfoversion.split(/[\.\-]/)
-        
-    basefolder = args.folder.chomp("/").chomp("\\")
-    baseurl = args.url.chomp("/").chomp("\\")
-    version = "#{major}.#{minor}.#{patch}.#{build}"
-    
-    if (suffix)
-        deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}-#{suffix}"
-        deployurl = "#{baseurl}/#{major}.#{minor}.#{patch}.#{build}-#{suffix}/"
-    else
-        deployfolder = "#{basefolder}/#{major}.#{minor}.#{patch}.#{build}"
-        deployurl = "#{baseurl}/Stable/"
-    end
-    
-    minversion = "#{major}.#{minor}.#{patch}.0"
-    
-    Dir.chdir('Application/ResearchDataManagementPlatform') do
-        sh "./publish.bat #{version} #{minversion} #{deployfolder}/ #{deployurl}"
-    end
-    
-    # reset symlinks, only if STABLE:
-    if (!suffix)
-        # delete old files
-        File.delete "#{basefolder}/Stable/ResearchDataManagementPlatform.application" if File.exists?("#{basefolder}/Stable/ResearchDataManagementPlatform.application")
-        File.delete "#{basefolder}/Stable/ResearchDataManagementPlatform.exe" if File.exists?("#{basefolder}/Stable/ResearchDataManagementPlatform.exe")
-        File.delete "#{basefolder}/Stable/setup.exe" if File.exists?("#{basefolder}/Stable/setup.exe")
-        sh "rd \"#{basefolder}/Stable/Application Files\"" if Dir.exists?("#{basefolder}/Stable/Application Files")
-        # recreate symlinks
-        sh "call mklink \"#{basefolder}/Stable/ResearchDataManagementPlatform.application\" \"#{deployfolder}/ResearchDataManagementPlatform.application\""
-        sh "call mklink \"#{basefolder}/Stable/ResearchDataManagementPlatform.exe\" \"#{deployfolder}/ResearchDataManagementPlatform.exe\""
-        sh "call mklink \"#{basefolder}/Stable/setup.exe\" \"#{deployfolder}/setup.exe\""        
-        sh "call mklink /J \"#{basefolder}/Stable/Application Files\" \"#{deployfolder}/Application Files\""
-
-        # zip up the standalone too
-        File.delete "#{basefolder}/Stable/Standalone.zip" if File.exists?("#{basefolder}/Stable/Standalone.zip")
-        sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('#{deployfolder}/standalone', '#{basefolder}/Stable/standalone.zip'); }\""
-        
-        # now we build the Automation Service
-        Dir.chdir('Tools/RDMPAutomationService') do
-            sh "./build.cmd #{deployfolder}/RDMPAutomationService/"
-            File.delete "#{basefolder}/Stable/RDMPAutomationService.zip" if File.exists?("#{basefolder}/Stable/RDMPAutomationService.zip")
-            sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('#{deployfolder}/RDMPAutomationService', '#{basefolder}/Stable/RDMPAutomationService.zip'); }\""
-        end
-    end    
-end
-
 task :squirrel do
 	version = File.open('version') {|f| f.readline}
     puts "version: #{version}"
 	
 	Dir.chdir "Application/ResearchDataManagementPlatform" do
 		sh "nuget pack RDMP.nuspec -Properties Configuration=Release -Version #{version}"
-		sh "#{SQUIRREL} --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version}"
+		sh "#{SQUIRREL} --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version} -n \"/a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v\""
 	end
 end
 
@@ -156,7 +102,7 @@ task :github do
 	prerelease = branch.match(/master/) ? false : true	
 	
 	uri = URI.parse('https://api.github.com/repos/HicServices/RDMP/releases')
-	body = { tag_name: "v#{version}", name: "RDMP v#{version}", target_commitish: branch, prerelease: prerelease }
+	body = { tag_name: "v#{version}", name: "RDMP v#{version}", body: ENV['MESSAGE'] || "Release version #{version}", target_commitish: branch, prerelease: prerelease }
     header = {'Content-Type' => 'application/json',
               'Authorization' => "token #{GITHUB}"}
 	
@@ -204,9 +150,3 @@ def upload_to_github(upload_url, file_path)
     file.close
 end
 
-# task :link do
-# 	if File.exist?("DatabaseCreation.exe") 
-# 		File.delete("DatabaseCreation.exe")
-# 	end
-# 	sh "call mklink DatabaseCreation.exe DatabaseCreation\\Release\\DatabaseCreation.exe"
-# end
