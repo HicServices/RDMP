@@ -6,8 +6,8 @@
 
 using System;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.Data;
+using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.Copying.Commands
 {

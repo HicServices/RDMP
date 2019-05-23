@@ -12,7 +12,6 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI.AutoComplete;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.UI.DataViewing.Collections.Arbitrary

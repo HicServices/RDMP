@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.FilterImporting;
@@ -16,6 +15,7 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs
 {

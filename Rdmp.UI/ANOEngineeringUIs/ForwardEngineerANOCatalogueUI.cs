@@ -13,7 +13,6 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi;
-using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.ANOEngineering;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -28,6 +27,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
+using Rdmp.UI.SimpleDialogs;
 
 namespace Rdmp.UI.ANOEngineeringUIs
 {

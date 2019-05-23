@@ -7,17 +7,17 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus
 {
-     class CatalogueItemsNodeMenu : RDMPContextMenuStrip
+    class CatalogueItemsNodeMenu : RDMPContextMenuStrip
     {
         public CatalogueItemsNodeMenu(RDMPContextMenuStripArgs args, CatalogueItemsNode node): base(args, node)
         {

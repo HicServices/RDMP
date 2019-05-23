@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
@@ -42,7 +43,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             this.olvLookupNameColumn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnImportNewTableInfo = new System.Windows.Forms.Button();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.cbxLookup = new MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox();
+            this.cbxLookup = new SelectIMapsDirectlyToDatabaseTableComboBox();
             this.label3 = new System.Windows.Forms.Label();
             this.label6 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
@@ -466,6 +467,6 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;
-        private MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox cbxLookup;
+        private SelectIMapsDirectlyToDatabaseTableComboBox cbxLookup;
     }
 }

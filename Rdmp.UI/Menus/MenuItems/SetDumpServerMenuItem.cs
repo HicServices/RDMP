@@ -7,7 +7,6 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
@@ -16,6 +15,7 @@ using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Menus.MenuItems

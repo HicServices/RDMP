@@ -9,7 +9,6 @@ using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CatalogueSummary;
 using Rdmp.UI.Icons.IconProvision;

@@ -10,7 +10,6 @@ using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
-using Squirrel;
 
 namespace ResearchDataManagementPlatform
 {

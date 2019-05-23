@@ -7,14 +7,13 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;

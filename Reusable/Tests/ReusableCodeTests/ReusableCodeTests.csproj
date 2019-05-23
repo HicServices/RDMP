@@ -18,7 +18,6 @@
     <ProjectReference Include="..\..\..\Tests.Common\Tests.Common.csproj" />
     <ProjectReference Include="..\..\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\..\ReusableUIComponents\ReusableUIComponents.csproj" />
   </ItemGroup>
   <ItemGroup>
     <Service Include="{82A7F48D-3B50-4B1E-B82E-3ADA8210C358}" />

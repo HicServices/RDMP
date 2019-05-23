@@ -1,6 +1,4 @@
-﻿using System.Reflection;
-using System.Runtime.CompilerServices;
-using System.Runtime.InteropServices;
+﻿using System.Runtime.CompilerServices;
 
 // Version information for an assembly consists of the following four values:
 //
@@ -10,4 +8,4 @@ using System.Runtime.InteropServices;
 //      Revision
 //
 
-[assembly:InternalsVisibleTo("Rdmp.UI.Tests")]
+[assembly: InternalsVisibleTo("Rdmp.UI.Tests")]

@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
 {
     partial class AtomicCommandWithTargetUI<T>
     {
@@ -34,7 +36,7 @@
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblGo = new System.Windows.Forms.Label();
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
-            this.selectIMapsDirectlyToDatabaseTableComboBox1 = new MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox();
+            this.selectIMapsDirectlyToDatabaseTableComboBox1 = new SelectIMapsDirectlyToDatabaseTableComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbCommandIcon)).BeginInit();
             this.SuspendLayout();
             // 
@@ -115,6 +117,6 @@
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label lblGo;
         private ReusableUIComponents.HelpIcon helpIcon1;
-        private MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox selectIMapsDirectlyToDatabaseTableComboBox1;
+        private SelectIMapsDirectlyToDatabaseTableComboBox selectIMapsDirectlyToDatabaseTableComboBox1;
     }
 }

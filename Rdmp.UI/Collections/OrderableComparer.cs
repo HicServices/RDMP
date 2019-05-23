@@ -9,7 +9,6 @@ using System.Collections;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.UI.Collections

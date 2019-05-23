@@ -8,7 +8,7 @@ using System;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
-using MapsDirectlyToDatabaseTableUI;
+using Rdmp.UI.SimpleDialogs;
 using ReusableUIComponents;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls

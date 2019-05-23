@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.Wizard
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.Wizard
 {
     partial class SimpleCohortSetUI
     {
@@ -43,7 +45,7 @@
             this.pbCatalogue = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
             this.pbExtractionIdentifier = new System.Windows.Forms.PictureBox();
-            this.cbxCatalogues = new MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox();
+            this.cbxCatalogues = new SelectIMapsDirectlyToDatabaseTableComboBox();
             this.gbFilters.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.pbFilters)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbCatalogue)).BeginInit();
@@ -254,6 +256,6 @@
         private System.Windows.Forms.PictureBox pbExtractionIdentifier;
         private System.Windows.Forms.PictureBox pbFilters;
         private System.Windows.Forms.ComboBox ddAndOr;
-        private MapsDirectlyToDatabaseTableUI.SelectIMapsDirectlyToDatabaseTableComboBox cbxCatalogues;
+        private SelectIMapsDirectlyToDatabaseTableComboBox cbxCatalogues;
     }
 }

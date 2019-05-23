@@ -12,7 +12,6 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTableUI;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
