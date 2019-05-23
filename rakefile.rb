@@ -1,4 +1,6 @@
-require 'albacore'
+require "net/http"
+require 'uri'
+require 'json'
 
 load 'rakeconfig.rb'
 $MSBUILD15CMD = MSBUILD15CMD.gsub(/\\/,"/")
@@ -25,18 +27,12 @@ task :bundlesource do
 	sh "powershell ./BundleSourceIntoZipFile.ps1"
 end
 
-msbuild :build, [:config] => :restorepackages do |msb, args|
-	msb.command = $MSBUILD15CMD
-    msb.properties = { :configuration => args.config }
-    msb.targets = [ :Clean, :Build ]   
-    msb.solution = SOLUTION
+task :build, [:config] => :restorepackages do |msb, args|
+	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=#{args.config}"
 end
 
-msbuild :build_release do |msb|
-	msb.command = $MSBUILD15CMD
-    msb.properties = { :configuration => :Release }
-    msb.targets = [ :Clean, :Build ]   
-    msb.solution = SOLUTION
+task :build_release do
+	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=Release"
 end
 
 task :tests, [:config] => [:createtestdb, :run_tests]
@@ -52,31 +48,24 @@ task :run_tests do
 end
 
 desc "Sets the version number from SharedAssemblyInfo file"    
-assemblyinfo :assemblyinfo do |asm|
-	asm.input_file = "SharedAssemblyInfo.cs"
-    asm.output_file = "SharedAssemblyInfo.cs"
-    asminfoversion = File.read("SharedAssemblyInfo.cs")[/\d+\.\d+\.\d+/]
-        
-    major, minor, patch = asminfoversion.split(/\./)
-   
-    if PRERELEASE == "true"
-        patch = patch.to_i + 1
-        suffix = "-pre"
-    elsif CANDIDATE == "true"
-        patch = patch.to_i + 1
-        suffix = "-rc"
-    end
-
-    version = "#{major}.#{minor}.#{patch}"
+task :assemblyinfo do 
+	asminfoversion = File.read("SharedAssemblyInfo.cs").match(/AssemblyInformationalVersion\("(\d+)\.(\d+)\.(\d+)(-.*)?"/)
+    
+	puts asminfoversion.inspect
+	
+    major = asminfoversion[1]
+	minor = asminfoversion[2]
+	patch = asminfoversion[3]
+    suffix = asminfoversion[4]
+	
+	version = "#{major}.#{minor}.#{patch}"
     puts "version: #{version}#{suffix}"
-    # DO NOT REMOVE! needed by build script!
+    
+	# DO NOT REMOVE! needed by build script!
     f = File.new('version', 'w')
     f.write "#{version}#{suffix}"
     f.close
     # ----
-    asm.version = version
-    asm.file_version = version
-    asm.informational_version = "#{version}#{suffix}"
 end
 
 desc "Pushes the plugin packages to nuget.org"    
@@ -152,6 +141,7 @@ end
 task :squirrel do
 	version = File.open('version') {|f| f.readline}
     puts "version: #{version}"
+	
 	Dir.chdir "Application/ResearchDataManagementPlatform" do
 		sh "nuget pack RDMP.nuspec -Properties Configuration=Release -Version #{version}"
 		sh "#{SQUIRREL} --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version}"
@@ -159,7 +149,60 @@ task :squirrel do
 end
 
 task :github do
+	version = File.open('version') {|f| f.readline}
+    puts "version: #{version}"
+	branch = ENV['BRANCH_SELECTOR'] || "origin/release/3.0.0.X"
+	branch.gsub!(/origin\//, "")
+	puts branch
+	prerelease = branch.match(/master/) ? false : true	
+	
+	uri = URI.parse('https://api.github.com/repos/HicServices/RDMP/releases')
+	body = { tag_name: "v#{version}", name: "RDMP v#{version}", target_commitish: branch, prerelease: prerelease }
+    header = {'Content-Type' => 'application/json',
+              'Authorization' => "token #{GITHUB}"}
+	
+	http = Net::HTTP.new(uri.host, uri.port)
+	http.use_ssl = (uri.scheme == "https")
+	request = Net::HTTP::Post.new(uri.request_uri, header)
+	request.body = body.to_json
 
+	# Send the request
+	response = http.request(request)
+    puts response.to_hash.inspect
+    githubresponse = JSON.parse(response.body)
+    puts githubresponse.inspect
+    upload_url = githubresponse["upload_url"].gsub(/\{.*\}/, "")
+    puts upload_url
+    	
+    Dir.chdir "Application/ResearchDataManagementPlatform/Release_#{version}" do
+        upload_to_github(upload_url, "RELEASES")
+        upload_to_github(upload_url, "ResearchDataManagementPlatform-#{version}-full.nupkg")
+        upload_to_github(upload_url, "Setup.exe")
+    end
+end
+
+
+def upload_to_github(upload_url, file_path)
+    boundary = "AaB03x"
+    uri = URI.parse(upload_url + "?name=" + file_path)
+    
+    header = {'Content-Type' => 'application/octet-stream',
+              'Content-Length' => File.size(file_path).to_s,
+              'Authorization' => "token #{GITHUB}"}
+
+    http = Net::HTTP.new(uri.host, uri.port)
+    http.use_ssl = (uri.scheme == "https")
+    request = Net::HTTP::Post.new(uri.request_uri, header)
+
+    file = File.open(file_path, "rb")
+    request.body = file.read
+    
+    response = http.request(request)
+    
+    puts response.to_hash.inspect
+    puts response.body
+
+    file.close
 end
 
 # task :link do
