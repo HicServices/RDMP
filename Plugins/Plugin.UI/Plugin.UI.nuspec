@@ -14,7 +14,7 @@
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
 			<dependency id="HIC.BadMedicine" version="0.0.1.1" />
-            <dependency id="HIC.FansiSql" version="0.9.0.0" />
+            <dependency id="HIC.FansiSql" version="0.9.1" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
             <dependency id="JetBrains.Annotations" version="10.4.0" />
             <dependency id="CsvHelper" version="12.1.2" />

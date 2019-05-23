@@ -7,15 +7,13 @@
 using System;
 using System.Data.SqlClient;
 using System.Diagnostics;
-using System.Drawing;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTableUI;
-using Rdmp.Core.Databases;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.LocationsMenu;
 using ReusableLibraryCode.Checks;
@@ -51,6 +49,8 @@ namespace Rdmp.UI.TestsAndSetup
             
             if(_startup == null)
                 return;
+
+            Text = "RDMP - v" + FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             
             _startup.DatabaseFound += StartupDatabaseFound;
             _startup.MEFFileDownloaded += StartupMEFFileDownloaded;
@@ -340,5 +340,6 @@ namespace Rdmp.UI.TestsAndSetup
             _choosePlatformsUI.ShowDialog();
             
         }
+
     }
 }
