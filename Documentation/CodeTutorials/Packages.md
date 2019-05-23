@@ -19,12 +19,10 @@
 | MySql.Data | 8.0.14 | [GPL 2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Enables interaction with MySql databases | &#9744; |
 | Oracle ODP.NET Managed Driver| 18.3.0 | [OTNLA](https://www.oracle.com/technetwork/licenses/distribution-license-152002.html) | Enables interaction with Oracle databases | &#9744; |
 | [SSH.NET](https://github.com/sshnet/SSH.NET)  | 2013.4.7 | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers | &#9744; |
-| SharpZipLib | 1.0.0 | [MIT](https://opensource.org/licenses/MIT) | Open Zip files | &#9744; |
 | [Moq 4](https://github.com/moq/moq4) | 3.6.1 |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing | &#9744; |
 | Nunit | 3.11.0 | NUnit License | Unit testing | &#9744; |
 | NUnit3TestAdapter| 3.10.0 | NUnit License | Run unit tests from within Visual Studio | &#9744; |
 | Newtonsoft.Json | 11.0.2 | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission | &#9744; |
-| JetBrains ReSharper Annotations | 10.4.0 | [MIT](https://opensource.org/licenses/MIT)  | Required for ReSharper Extension for Visual Studio | &#9744; |
 | [YamlDotNet](https://github.com/aaubry/YamlDotNet) | 6.0.0 | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files| &#9744; |
 
 
