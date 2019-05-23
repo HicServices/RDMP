@@ -151,8 +151,7 @@ end
 task :github do
 	version = File.open('version') {|f| f.readline}
     puts "version: #{version}"
-	branch = ENV['BRANCH_SELECTOR'] || "origin/release/3.0.0.X"
-	branch.gsub!(/origin\//, "")
+	branch = (ENV['BRANCH_SELECTOR'] || "origin/release/3.0.0.X").gsub(/origin\//, "")
 	puts branch
 	prerelease = branch.match(/master/) ? false : true	
 	
