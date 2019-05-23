@@ -31,7 +31,7 @@ task :build, [:config] => :restorepackages do |msb, args|
 	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=#{args.config}"
 end
 
-task :build_release do
+task :build_release => :restorepackages do
 	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=Release"
 end
 
