@@ -6,9 +6,11 @@
 
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
+using System.Reflection;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Repositories;
@@ -58,9 +60,12 @@ namespace Rdmp.Core.Startup.PluginManagement
                 throw new NotSupportedException("Could not find a valid version inside the PluginManifest.txt in the zip package");
             }
 
+            
+            var runningSoftwareVersion = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
+
             // reject if it's not compatible with running version
-            if (!pluginVersion.IsCompatibleWith(_repository.GetVersion(), 3))
-                throw new NotSupportedException(String.Format("Plugin version {0} is incompatible with current running version of RDMP.", pluginVersion));
+            if (!pluginVersion.IsCompatibleWith(runningSoftwareVersion, 3))
+                throw new NotSupportedException(String.Format("Plugin version {0} is incompatible with current running version of RDMP ({1}).", pluginVersion,runningSoftwareVersion));
             
             // delete EXACT old versions of the Plugin
             var oldVersion = _repository.GetAllObjects<Curation.Data.Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);

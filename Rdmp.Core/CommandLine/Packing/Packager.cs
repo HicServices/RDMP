@@ -57,14 +57,14 @@ namespace Rdmp.Core.CommandLine.Packing
 
                 GenerateExclusionList();
 
-                FileInfo pluginsCopyOfCatalogueLibrary = _dllPackage.FirstOrDefault(c => c.Name.Equals("CatalogueLibrary.dll"));
+                FileInfo pluginsCopyOfCatalogueLibrary = _dllPackage.FirstOrDefault(c => c.Name.Equals("Rdmp.Core.dll"));
 
                 if (pluginsCopyOfCatalogueLibrary == null)
                     throw new Exception(
-                        "Package target does not have a copy of CatalogueLibrary.dll in it's output directory");
+                        "Package target does not have a copy of Rdmp.Core.dll in it's output directory");
 
                 _pluginVersionOfCatalogueLibrary = new Version(FileVersionInfo.GetVersionInfo(pluginsCopyOfCatalogueLibrary.FullName).FileVersion);
-                notifier.OnCheckPerformed(new CheckEventArgs("Your plugin targets CatalogueLibrary version " + _pluginVersionOfCatalogueLibrary, CheckResult.Success));
+                notifier.OnCheckPerformed(new CheckEventArgs("Your plugin targets Rdmp.Core version " + _pluginVersionOfCatalogueLibrary, CheckResult.Success));
                 
                 var memStream = new MemoryStream();
                 var archive = new ZipArchive(memStream, ZipArchiveMode.Update, true);

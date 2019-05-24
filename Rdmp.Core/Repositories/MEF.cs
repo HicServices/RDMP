@@ -409,7 +409,13 @@ namespace Rdmp.Core.Repositories
 
                     if (fullMatches.Any())
                         if(fullMatches.Count>1)
-                            throw new Exception("Found " + fullMatches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, fullMatches.Select(m => m.AssemblyQualifiedName + " (Located:" + m.Assembly.CodeBase +")")));
+                        {
+                            //we have 2 copies but they are the same assembly file!
+                            if(fullMatches.Select(m=>m.Assembly.CodeBase).Distinct().Count() == 1)
+                                return toReturn = fullMatches.First();
+                            else
+                                throw new Exception("Found " + fullMatches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, fullMatches.Select(m => m.AssemblyQualifiedName + " (Located:" + m.Assembly.CodeBase +")")));
+                        }
                         else
                             toReturn = fullMatches.Single();
 
