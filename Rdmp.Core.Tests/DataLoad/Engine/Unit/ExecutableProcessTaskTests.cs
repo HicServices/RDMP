@@ -15,6 +15,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
+    [Category("Unit")]
     class ExecutableProcessTaskTests
     {
         [Test]

@@ -18,7 +18,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
-    [Category("Integration")]
+    [Category("Unit")]
     public class ExcelConversionTest
     {
         private readonly Stack<DirectoryInfo> _dirsToCleanUp = new Stack<DirectoryInfo>();

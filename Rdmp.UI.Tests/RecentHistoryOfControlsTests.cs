@@ -10,6 +10,7 @@ using ReusableUIComponents;
 
 namespace Rdmp.UI.Tests
 {
+    [Category("Unit")]
     public class RecentHistoryOfControlsTests
     {
         [Test]

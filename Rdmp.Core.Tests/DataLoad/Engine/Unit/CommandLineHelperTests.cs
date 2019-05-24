@@ -13,6 +13,7 @@ using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
+    [Category("Unit")]
     class CommandLineHelperTests
     {
         [Test]

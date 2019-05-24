@@ -16,8 +16,7 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 
 namespace Rdmp.Core.Tests.Validation
 {
-
-    
+    [Category("Unit")]
     public class ValidatorTest
     {
         readonly ChiDomainObject _domainObjectWithValidChi = new ChiDomainObject(TestConstants._VALID_CHI);

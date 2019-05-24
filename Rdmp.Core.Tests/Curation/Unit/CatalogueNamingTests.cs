@@ -9,6 +9,7 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.Tests.Curation.Unit
 {
+    [Category("Unit")]
     public class CatalogueNamingTests
     {
 

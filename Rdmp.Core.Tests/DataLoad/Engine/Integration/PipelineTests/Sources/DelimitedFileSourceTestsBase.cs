@@ -15,6 +15,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 {
+    [Category("Unit")]
     public abstract class DelimitedFileSourceTestsBase
     {
         protected FlatFileToLoad CreateTestFile(params string[] contents)

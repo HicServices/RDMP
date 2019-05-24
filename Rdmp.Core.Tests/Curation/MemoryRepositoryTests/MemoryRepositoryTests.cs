@@ -15,6 +15,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
 {
+    [Category("Unit")]
     class MemoryRepositoryTests
     {
         readonly MemoryCatalogueRepository _repo = new MemoryCatalogueRepository();

@@ -8,6 +8,7 @@ using NUnit.Framework;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
+    [Category("Unit")]
     public class IAttacherCompositionTests
     {
         [Test]

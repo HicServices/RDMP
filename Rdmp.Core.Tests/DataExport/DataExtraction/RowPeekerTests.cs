@@ -13,6 +13,7 @@ using Rdmp.Core.DataLoad.Engine.Pipeline.Sources;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
+    [Category("Unit")]
     class RowPeekerTests
     {
         [Test]
