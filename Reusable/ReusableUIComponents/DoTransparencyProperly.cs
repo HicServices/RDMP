@@ -16,7 +16,7 @@ namespace ReusableUIComponents
     {
         /// <summary>
         /// Positions <paramref name="controlThatHovers"/> on top of <paramref name="whatItHoversOver"/> and
-        /// sets the background colour of the <see cref="controlThatHovers"/> to Transparent.
+        /// sets the background colour of the controlThatHovers to Transparent.
         /// </summary>
         /// <param name="controlThatHovers"></param>
         /// <param name="whatItHoversOver"></param>

@@ -5,7 +5,7 @@ require 'json'
 load 'rakeconfig.rb'
 $MSBUILD15CMD = MSBUILD15CMD.gsub(/\\/,"/")
 
-task :ci_low_warnings, [:config] => [:assemblyinfo, :build_low_warning]
+task :ci_low_warnings, [:config,:level] => [:assemblyinfo, :build_low_warning]
 
 task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :build, :tests]
 
@@ -43,9 +43,9 @@ task :build_release => :restorepackages do
 	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=Release"
 end
 
-task :build_low_warning, [:config] => :restorepackages do |msb, args|
-	warnlevel = ENV['WARN_LEVEL'] || 2
-	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=#{args.config} \/p:WarningLevel=#{warnlevel} \/p:TreatWarningsAsErrors=true"
+task :build_low_warning, [:config,:level] => :restorepackages do |msb, args|
+	args.with_defaults(:level => 1)
+	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=#{args.config} \/p:WarningLevel=#{args.level} \/p:TreatWarningsAsErrors=false"
 end
 
 task :createtestdb, [:config] do |t, args|
