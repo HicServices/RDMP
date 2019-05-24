@@ -95,6 +95,7 @@ namespace rdmp
             }
             catch (Exception e)
             {
+                NLog.LogManager.GetCurrentClassLogger().Info(e.Message);
                 NLog.LogManager.GetCurrentClassLogger().Info(e, "Fatal error occurred so returning -1");
                 return -1;
             }
@@ -158,16 +159,16 @@ namespace rdmp
                                        typeof(MySqlImplementation).Assembly);
 
             PopulateConnectionStringsFromYamlIfMissing(opts);
+            
+            var listener = new NLogIDataLoadEventListener(false);
+            var checker = new NLogICheckNotifier(true, false);
 
             var factory = new RunnerFactory();
 
             opts.LoadFromAppConfig();
-            opts.DoStartup();
+            opts.DoStartup(opts.LogStartup ? (ICheckNotifier)checker: new IgnoreAllErrorsCheckNotifier());
 
             var runner = factory.CreateRunner(opts);
-
-            var listener = new NLogIDataLoadEventListener(false);
-            var checker = new NLogICheckNotifier(true, false);
 
             int runExitCode = runner.Run(opts.GetRepositoryLocator(), listener, checker, new GracefulCancellationToken());
 

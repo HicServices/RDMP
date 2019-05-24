@@ -33,6 +33,9 @@ namespace Rdmp.Core.CommandLine.Options.Abstracts
 
         [Option(Required = false, HelpText = "Full connection string to the DataExport database, this overrides DataExportDatabaseName and allows custom ports, username/password etc")]
         public string DataExportConnectionString { get; set; }
+                
+        [Option(Required =false, HelpText = @"Log StartUp output")]
+        public bool LogStartup{get;set;}
         
         [Option(Required = true, HelpText = @"Command to run on the engine: 'run' or 'check' ")]
         public CommandLineActivity Command { get; set; }
@@ -54,10 +57,10 @@ namespace Rdmp.Core.CommandLine.Options.Abstracts
             if(DataExportDatabaseName == null)
                 DataExportDatabaseName = Settings.Default.DataExportDB;*/
         }
-        public IRDMPPlatformRepositoryServiceLocator DoStartup()
+        public IRDMPPlatformRepositoryServiceLocator DoStartup(ICheckNotifier checkNotifier)
         {
             Startup.Startup startup = new Startup.Startup(GetRepositoryLocator());
-            startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
+            startup.DoStartup(checkNotifier);
             return startup.RepositoryLocator;
         }
 
