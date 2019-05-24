@@ -5,11 +5,13 @@ require 'json'
 load 'rakeconfig.rb'
 $MSBUILD15CMD = MSBUILD15CMD.gsub(/\\/,"/")
 
-task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :bundlesource, :build, :tests]
+task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :build, :tests]
+
+task :ci_integration, [:config] => [:setup_connection, :assemblyinfo, :build, :all_tests]
 
 task :plugins, [:config] => [:assemblyinfo, :build, :deployplugins]
 
-task :release => [:assemblyinfo, :build_release, :squirrel, :github]
+task :release => [:assemblyinfo, :bundlesource, :build_release, :squirrel, :github]
 
 task :restorepackages do
     sh "nuget restore HIC.DataManagementPlatform.sln"
@@ -35,7 +37,13 @@ task :build_release => :restorepackages do
 	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=Release"
 end
 
-task :tests, [:config] => [:createtestdb, :run_tests]
+task :tests, [:config] => [:run_unit_tests]
+
+task :all_tests, [:config] => [:createtestdb, :run_all_tests]
+
+task :run_unit_tests do 
+	sh 'dotnet test --no-build --filter TestCategory=Unit --logger:"nunit;LogFilePath=test-result.xml"'
+end
 
 task :createtestdb, [:config] do |t, args|
 	Dir.chdir("Tools/rdmp/bin/#{args.config}/netcoreapp2.2") do
@@ -43,7 +51,7 @@ task :createtestdb, [:config] do |t, args|
     end
 end
 
-task :run_tests do 
+task :run_all_tests do 
 	sh 'dotnet test --no-build --logger:"nunit;LogFilePath=test-result.xml"'
 end
 
