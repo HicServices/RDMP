@@ -13,6 +13,7 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation
 {
+    [Category("Unit")]
     class DublinCoreTests
     {
         [Test]

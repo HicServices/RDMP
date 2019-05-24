@@ -13,7 +13,8 @@ using Rdmp.Core.Validation.Constraints.Secondary;
 
 namespace Rdmp.Core.Tests.Validation.Constraints.Secondary
 {
-    
+
+    [Category("Unit")]
     class BoundDateTest
     {
         [Test]

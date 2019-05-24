@@ -21,6 +21,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 {
+    [Category("Unit")]
     public class DelimitedFileSourceTests
     {
         private string filename;

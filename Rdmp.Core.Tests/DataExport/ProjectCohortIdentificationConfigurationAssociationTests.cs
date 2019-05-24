@@ -17,6 +17,7 @@ using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.DataExport
 {
+    [Category("Unit")]
     public class ProjectCohortIdentificationConfigurationAssociationTests
     {
     

@@ -10,6 +10,7 @@ using Rdmp.Core.Validation.Constraints.Primary;
 
 namespace Rdmp.Core.Tests.Validation.ValidationPluginTests
 {
+    [Category("Unit")]
     public class PluginValidationSerializationTest
     {
         [Test]

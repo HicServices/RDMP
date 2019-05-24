@@ -16,6 +16,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Caching.Unit
 {
+    [Category("Unit")]
     public class PipelineExecutionTests
     {
         [Test]

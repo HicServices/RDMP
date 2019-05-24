@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.FilterImporting.Construction;
 
 namespace Rdmp.Core.Tests.Curation.Integration.FilterImportingTests
 {
+    [Category("Unit")]
     public class FilterImporterTests
     {
         

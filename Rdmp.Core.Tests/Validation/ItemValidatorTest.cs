@@ -21,7 +21,8 @@ namespace Rdmp.Core.Tests.Validation
      * 
      */
 
-    
+
+    [Category("Unit")]
     public class ItemValidatorTest
     {
         private ItemValidator _v;

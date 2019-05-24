@@ -28,7 +28,6 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Caching.Integration
 {
-    [Category("Integration")]
     public class CustomDateCachingTests : DatabaseTests
     {
         [TestCase(false)]

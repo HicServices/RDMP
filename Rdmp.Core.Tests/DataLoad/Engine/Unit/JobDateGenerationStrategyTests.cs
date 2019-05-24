@@ -12,6 +12,7 @@ using Rdmp.Core.DataLoad.Engine.Job.Scheduling;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
+    [Category("Unit")]
     public class JobDateGenerationStrategyTests
     {
         [Test]

@@ -12,6 +12,7 @@ using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.Tests.Curation.Unit
 {
+    [Category("Unit")]
     public class SqlSyntaxHelperTests
     {
         [Test]

@@ -80,6 +80,7 @@ namespace Rdmp.Core.Tests.Curation.Unit
         }
     }
 
+    [Category("Unit")]
     public class MefTest
     {
         [Test]

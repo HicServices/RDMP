@@ -11,6 +11,7 @@ using ReusableLibraryCode.Extensions;
 
 namespace ReusableCodeTests
 {
+    [Category("Unit")]
     class DataTableExtensionsTests
     {
         [Test]

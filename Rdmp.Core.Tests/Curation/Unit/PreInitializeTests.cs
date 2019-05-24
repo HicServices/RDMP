@@ -13,6 +13,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Curation.Unit
 {
+    [Category("Unit")]
     public class PreInitializeTests
     {
 
