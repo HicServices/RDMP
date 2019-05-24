@@ -50,7 +50,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// Prepares the object for decrypting/encrypting passwords based on the <see cref="PasswordEncryptionKeyLocation"/>
+        /// Prepares the object for decrypting/encrypting passwords based on the <see cref="Repositories.Managers.PasswordEncryptionKeyLocation"/>
         /// </summary>
         /// <param name="repository"></param>
         public EncryptedPasswordHost(ICatalogueRepository repository)

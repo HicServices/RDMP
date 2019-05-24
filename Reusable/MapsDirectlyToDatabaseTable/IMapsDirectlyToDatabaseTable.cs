@@ -29,9 +29,9 @@ namespace MapsDirectlyToDatabaseTable
         /// </summary>
         [NoMappingToDatabase]
         IRepository Repository { get; set; }
-        
+
         /// <summary>
-        /// Makes any persistent Proporty change attempts throw an Exception.  (See also <see cref="PropertyChanged"/>)
+        /// Makes any persistent Property change attempts throw an Exception. (See also <see cref="INotifyPropertyChanged.PropertyChanged"/>)
         /// </summary>
         void SetReadOnly();
 

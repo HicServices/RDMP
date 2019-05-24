@@ -60,9 +60,9 @@ namespace Rdmp.Core.Repositories.Managers
             return GetValue(property.ToString());
         }
 
-      
+
         /// <summary>
-        /// Stores a new <paramref name="value"/> for the given <see cref="property"/> (and saves to the database)
+        /// Stores a new <paramref name="value"/> for the given <paramref name="property"/> (and saves to the database)
         /// </summary>
         /// <param name="property"></param>
         /// <param name="value"></param>

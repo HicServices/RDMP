@@ -25,7 +25,7 @@ namespace Rdmp.Core.Curation.Data.Spontaneous
 
 
         /// <summary>
-        /// Creates a ne memory only TopX constraint for use with <see cref="CatalogueLibrary.QueryBuilding.AggregateBuilder"/>.
+        /// Creates a ne memory only TopX constraint for use with <see cref="QueryBuilding.AggregateBuilder"/>.
         /// </summary>
         /// <param name="topX"></param>
         /// <param name="orderByDirection"></param>

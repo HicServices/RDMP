@@ -216,7 +216,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         }
 
         /// <summary>
-        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="SetImpossible"/> if there are any failures
+        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible"/> if there are any failures
         /// </summary>
         /// <param name="checkable"></param>
         protected void SetImpossibleIfFailsChecks(ICheckable checkable)

@@ -127,7 +127,7 @@ namespace Rdmp.Core.DataExport.Data
         #endregion
 
         /// <summary>
-        /// Alias field, returns <see cref="IExternalCohortTable.Name"/>
+        /// Alias field, returns <see cref="INamed.Name"/>
         /// </summary>
         [NoMappingToDatabase]
         [UsefulProperty(DisplayName = "Source")]

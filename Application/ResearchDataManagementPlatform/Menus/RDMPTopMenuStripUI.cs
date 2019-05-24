@@ -67,7 +67,7 @@ namespace ResearchDataManagementPlatform.Menus
     /// 
     /// <para>Help
     /// - View the user manual
-    /// - View a technical description of each of the core objects maintained by RDMP (Catalogues, TableInfos etc) and what they mean (intended for programmers)
+    /// - View a technical description of each of the core objects maintained by RDMP (Catalogues, TableInfos etc) and what they mean (intended for programmers)</para>
     /// </summary>
 
     public partial class RDMPTopMenuStripUI : RDMPUserControl
