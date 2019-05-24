@@ -5,6 +5,8 @@ require 'json'
 load 'rakeconfig.rb'
 $MSBUILD15CMD = MSBUILD15CMD.gsub(/\\/,"/")
 
+task :ci_low_warnings, [:config] => [:assemblyinfo, :build_low_warning]
+
 task :ci_continuous, [:config] => [:setup_connection, :assemblyinfo, :build, :tests]
 
 task :ci_integration, [:config] => [:setup_connection, :assemblyinfo, :build, :all_tests]
@@ -12,6 +14,10 @@ task :ci_integration, [:config] => [:setup_connection, :assemblyinfo, :build, :a
 task :plugins, [:config] => [:assemblyinfo, :build, :deployplugins]
 
 task :release => [:assemblyinfo, :bundlesource, :build_release, :squirrel, :github]
+
+task :tests, [:config] => [:run_unit_tests]
+
+task :all_tests, [:config] => [:createtestdb, :run_all_tests]
 
 task :restorepackages do
     sh "nuget restore HIC.DataManagementPlatform.sln"
@@ -37,18 +43,19 @@ task :build_release => :restorepackages do
 	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=Release"
 end
 
-task :tests, [:config] => [:run_unit_tests]
-
-task :all_tests, [:config] => [:createtestdb, :run_all_tests]
-
-task :run_unit_tests do 
-	sh 'dotnet test --no-build --filter TestCategory=Unit --logger:"nunit;LogFilePath=test-result.xml"'
+task :build_low_warning, [:config] => :restorepackages do |msb, args|
+	warnlevel = ENV['WARN_LEVEL'] || 2
+	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=#{args.config} \/p:WarningLevel=#{warnlevel} \/p:TreatWarningsAsErrors=true"
 end
 
 task :createtestdb, [:config] do |t, args|
 	Dir.chdir("Tools/rdmp/bin/#{args.config}/netcoreapp2.2") do
         sh "dotnet ./rdmp.dll install #{DBSERVER} #{DBPREFIX} -D"
     end
+end
+
+task :run_unit_tests do 
+	sh 'dotnet test --no-build --filter TestCategory=Unit --logger:"nunit;LogFilePath=test-result.xml"'
 end
 
 task :run_all_tests do 
@@ -133,7 +140,6 @@ task :github do
         upload_to_github(upload_url, "Setup.exe")
     end
 end
-
 
 def upload_to_github(upload_url, file_path)
     boundary = "AaB03x"
