@@ -9,6 +9,7 @@ using ReusableLibraryCode.Exceptions;
 
 namespace ReusableCodeTests
 {
+    [Category("Unit")]
     public class ExpectedIdenticalStringsExceptionTests
     {
 

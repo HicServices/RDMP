@@ -14,6 +14,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
 {
+    [Category("Unit")]
     public class TestPrescribingCreation
     {
         [Test]

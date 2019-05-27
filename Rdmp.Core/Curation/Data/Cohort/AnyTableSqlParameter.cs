@@ -68,7 +68,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
         /// <summary>
         /// Declares that a new <see cref="ISqlParameter"/> (e.g. 'DECLARE @bob as varchar(10)') exists for the parent database object.  The object
-        /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder"/>
+        /// should be of a type which passes <see cref="IsSupportedType"/>.  When the object is used for query generation by an <see cref="QueryBuilding.ISqlQueryBuilder"/>
         /// then the parameter will be used 
         /// </summary>
         /// <param name="repository"></param>
@@ -118,7 +118,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
         /// <summary>
         /// Returns true if the Type (which should implement <see cref="IMapsDirectlyToDatabaseTable"/>) is one which is designed to store it's <see cref="ISqlParameter"/>
-        /// in this table.  Only supported objects will have parameters sought here by <see cref="CatalogueLibrary.QueryBuilding.ISqlQueryBuilder"/>s.
+        /// in this table.  Only supported objects will have parameters sought here by <see cref="QueryBuilding.ISqlQueryBuilder"/>s.
         /// </summary>
         /// <param name="type"></param>
         /// <returns></returns>

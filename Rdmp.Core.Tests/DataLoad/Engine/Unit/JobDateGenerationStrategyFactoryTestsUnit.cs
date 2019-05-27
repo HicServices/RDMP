@@ -15,6 +15,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
+    [Category("Unit")]
     public class JobDateGenerationStrategyFactoryTestsUnit
     {
         [Test]

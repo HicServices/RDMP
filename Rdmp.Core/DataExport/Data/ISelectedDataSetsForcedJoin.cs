@@ -15,7 +15,7 @@ namespace Rdmp.Core.DataExport.Data
     /// table e.g. 'Questionnaire answer x > 5'.  In that scenario the <see cref="TableInfo"/> would be the 'Project Specific Catalogue' dataset 'Questionnaire'
     /// and the <see cref="ISelectedDataSets"/> would be the dataset you were extracting in your study e.g. 'biochemistry'.
     /// 
-    /// <para>A <see cref="JoinInfo"/> must still exist to tell <see cref="CatalogueLibrary.QueryBuilding.QueryBuilder"/> how to write the Join section of the query.</para>
+    /// <para>A <see cref="JoinInfo"/> must still exist to tell <see cref="QueryBuilding.QueryBuilder"/> how to write the Join section of the query.</para>
     /// </summary>
     public interface ISelectedDataSetsForcedJoin:IMapsDirectlyToDatabaseTable
     {

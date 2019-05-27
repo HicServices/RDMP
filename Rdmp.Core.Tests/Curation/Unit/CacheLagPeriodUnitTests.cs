@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.Cache;
 
 namespace Rdmp.Core.Tests.Curation.Unit
 {
+    [Category("Unit")]
     public class CacheLagPeriodUnitTests
     {
         [Test]

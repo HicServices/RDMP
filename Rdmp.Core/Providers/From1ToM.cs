@@ -15,7 +15,8 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.Providers
 {
     /// <summary>
-    /// Thread safe (ish) Collection which models the relationship between a parents.ID (e.g. <see cref="Catalogue.ID"/> and a childs child.parent_ID (e.g. <see cref="CatalogueItem.Catalogue_ID"/>.
+    /// Thread safe (ish) Collection which models the relationship between a parents.ID (e.g. <see cref="DatabaseEntity.ID"/> 
+    /// and a childs child.parent_ID (e.g. <see cref="CatalogueItem.Catalogue_ID"/>.
     /// Class exists to provide rapid repeated lookups of this relationship in memory e.g. in <see cref="ICoreChildProvider"/>.
     /// 
     /// </summary>

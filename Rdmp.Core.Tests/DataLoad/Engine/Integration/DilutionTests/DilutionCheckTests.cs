@@ -14,6 +14,7 @@ using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests
 {
+    [Category("Unit")]
     public class DilutionCheckTests
     {
         [Test]

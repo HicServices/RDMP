@@ -15,6 +15,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
+    [Category("Unit")]
     class DataFlowComponentTests
     {
         [Test]
@@ -54,6 +55,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
         }
     }
 
+    [Category("Unit")]
     class ColumnBlacklistTests
     {
         [Test]

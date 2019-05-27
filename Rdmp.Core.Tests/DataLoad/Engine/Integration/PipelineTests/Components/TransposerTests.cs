@@ -14,6 +14,7 @@ using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 {
     [TestFixture]
+    [Category("Unit")]
     public class TransposerTests
     {
         DataTable dt = new DataTable();

@@ -190,7 +190,7 @@ namespace Rdmp.Core.Curation.Data
             return Convert.ToBoolean(o);
         }
 
-        /// <inheritdoc cref="IMapsDirectlyToDatabaseTable.PropertyChanged"/>
+        /// <inheritdoc cref="INotifyPropertyChanged.PropertyChanged"/>
         public event PropertyChangedEventHandler PropertyChanged;
 
         /// <summary>

@@ -12,6 +12,7 @@ using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 {
+    [Category("Unit")]
     public class RemoveDuplicatesTests
     {
         [Test]

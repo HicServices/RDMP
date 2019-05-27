@@ -12,6 +12,7 @@ using Rdmp.Core.Validation.Constraints.Primary;
 
 namespace Rdmp.Core.Tests.Validation
 {
+    [Category("Unit")]
     public class ValidationDeserializationMemoryTest
     {
         [Test]

@@ -25,6 +25,7 @@ using ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
     [TestFixture]
+    [Category("Unit")]
     public class ExcelTests
     {
         public const string TestFile = "Book1.xlsx";

@@ -13,6 +13,7 @@ using NUnit.Framework;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
+    [Category("Unit")]
     public class WebFileDownloaderTests
     {
         [Test, Ignore("Let's not put usernames and password in here eh.")]

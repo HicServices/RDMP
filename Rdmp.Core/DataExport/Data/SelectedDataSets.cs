@@ -93,7 +93,7 @@ namespace Rdmp.Core.DataExport.Data
         }
 
         /// <summary>
-        /// Declares in the <paramref name="repository"/> database that the given <paramref name="dataSet"/> should be extracted as part of the given <see cref="configuration"/>.
+        /// Declares in the <paramref name="repository"/> database that the given <paramref name="dataSet"/> should be extracted as part of the given <paramref name="configuration"/>.
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="configuration"></param>

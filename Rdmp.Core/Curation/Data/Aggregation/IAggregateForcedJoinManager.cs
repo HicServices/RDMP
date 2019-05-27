@@ -15,7 +15,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
     {
         /// <summary>
         /// Returns all the TableInfos that the provided <see cref="AggregateConfiguration"/> has been explicitly requested (by the user) to join to in it's FROM section (See 
-        /// <see cref="CatalogueLibrary.QueryBuilding.AggregateBuilder"/>. 
+        /// <see cref="QueryBuilding.AggregateBuilder"/>. 
         /// 
         /// <para>This set will be combined with those that would already be joined against because of the <see cref="AggregateDimension"/> configured.  Note that your query results
         /// in multiple TableInfos being needed then you will still need to have defined a way for the TableInfos to be joined (See <see cref="JoinInfo"/>.</para>
@@ -34,7 +34,7 @@ namespace Rdmp.Core.Curation.Data.Aggregation
 
         /// <summary>
         /// Creates the mandate that the provided AggregateConfiguration should always join with the specified TableInfo regardless of what <see cref="AggregateDimension"/> are
-        /// configured (See <see cref="CatalogueLibrary.QueryBuilding.AggregateBuilder"/>. 
+        /// configured (See <see cref="QueryBuilding.AggregateBuilder"/>. 
         /// 
         /// <para>Note that your query results in multiple TableInfos being needed then you will still need to have defined a way for the TableInfos to be joined (See <see cref="JoinInfo"/>.</para>
         /// </summary>

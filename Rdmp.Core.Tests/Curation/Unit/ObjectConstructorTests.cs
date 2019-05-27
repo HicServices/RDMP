@@ -9,6 +9,7 @@ using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.Tests.Curation.Unit
 {
+    [Category("Unit")]
     public class ObjectConstructorTests
     {
         [Test]

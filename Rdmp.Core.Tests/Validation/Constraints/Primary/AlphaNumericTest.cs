@@ -11,7 +11,8 @@ using Rdmp.Core.Validation.Constraints.Primary;
 
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary
 {
-    
+
+    [Category("Unit")]
     class AlphaNumericTest
     {
         private IPrimaryConstraint _alphanum;

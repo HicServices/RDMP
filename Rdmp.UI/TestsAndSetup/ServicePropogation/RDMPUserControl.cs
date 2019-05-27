@@ -42,7 +42,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
 
         /// <summary>
-        /// Called immediately before checking the object set up by the last call to <see cref="AddChecks"/>
+        /// Called immediately before checking the object set up by the last call to <see cref="RDMPControlCommonFunctionality.AddChecks"/>
         /// </summary>
         protected virtual void OnBeforeChecking()
         {

@@ -24,7 +24,6 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
 {
-    [Category("Integration")]
     public class MDFAttacherTests : DatabaseTests
     {
         [Test]

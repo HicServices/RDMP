@@ -403,7 +403,7 @@ namespace Rdmp.Core.Curation.Data
 
         /// <summary>
         /// Identifier for a ticket in your <see cref="ITicketingSystem"/> for documenting / auditing work on the Catalogue and for 
-        /// recording issues (if you are not using the RDMP issue system (See <see cref="CatalogueItemIssue"/>))
+        /// recording issues (if you are not using the RDMP issue system (see CatalogueItemIssue))
         /// </summary>
         public string Ticket
         {

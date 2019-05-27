@@ -9,6 +9,7 @@ using NUnit.Framework;
 
 namespace Rdmp.Core.Tests.Curation
 {
+    [Category("Unit")]
     public class LazyTest
     {
         [Test]
