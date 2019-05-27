@@ -81,6 +81,7 @@ namespace ResearchDataManagementPlatform
         readonly RefreshBus _refreshBus = new RefreshBus();
         private FileInfo _persistenceFile;
         private ICheckNotifier _globalErrorCheckNotifier;
+        private string _version;
 
         public void SetRepositoryLocator(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
@@ -97,9 +98,9 @@ namespace ResearchDataManagementPlatform
             _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
-            var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
-            this.Text = "Research Data Management Platform - v" + version;
-
+            _version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion;
+            Text = "Research Data Management Platform";
+            
             var rdmpDir = new DirectoryInfo(Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), "RDMP"));
             if(!rdmpDir.Exists)
                 rdmpDir.Create();
@@ -137,6 +138,10 @@ namespace ResearchDataManagementPlatform
          
             FormClosing += CloseForm;
         }
+
+        public override string Text { 
+            get => base.Text; 
+            set => base.Text = value + " v" + _version; }
 
         public void LoadFromXml(Stream stream)
         {
