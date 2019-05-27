@@ -15,8 +15,7 @@ using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using NLog;
 using Rdmp.Core.CommandLine.DatabaseCreation;
-using Rdmp.Core.CommandLine.Options.Abstracts;
-using Rdmp.Core.CommandLine.Packing;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
@@ -129,36 +128,6 @@ namespace rdmp
             return 0;
         }
 
-        private static int Run(PackOptions opts)
-        {
-            FileInfo f = new FileInfo(opts.SolutionFile);
-            if (!f.Exists)
-            {
-                Console.WriteLine("Could not find Solution File");
-                return -58;
-            }
-
-            if (f.Extension != ".sln")
-            {
-                Console.WriteLine("SolutionFile must be a .sln file");
-                return -57;
-            }
-
-            Packager p = new Packager(f, opts.ZipFileName, opts.SkipSourceCodeCollection,opts.Release);
-            p.PackageUpFile(new ThrowImmediatelyCheckNotifier());
-
-            if (!string.IsNullOrWhiteSpace(opts.Server))
-            {
-                ImplementationManager.Load(typeof(MicrosoftSQLImplementation).Assembly);
-                var builder = new SqlConnectionStringBuilder() { DataSource = opts.Server, InitialCatalog = opts.Database, IntegratedSecurity = true };
-
-                CatalogueRepository.SuppressHelpLoading = true;
-                var processor = new PluginProcessor(new ThrowImmediatelyCheckNotifier(), new CatalogueRepository(builder));
-                processor.ProcessFileReturningTrueIfIsUpgrade(new FileInfo(opts.ZipFileName));
-            }
-
-            return 0;
-        }
 
         private static int Run(RDMPCommandLineOptions opts)
         {

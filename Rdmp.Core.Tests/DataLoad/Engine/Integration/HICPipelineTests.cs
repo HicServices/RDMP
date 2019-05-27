@@ -10,7 +10,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using NUnit.Framework;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

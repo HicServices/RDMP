@@ -8,6 +8,8 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Extensions;
 
 namespace Rdmp.Core.Repositories.Managers
@@ -16,6 +18,7 @@ namespace Rdmp.Core.Repositories.Managers
     public class PluginManager : IPluginManager
     {
         private readonly ICatalogueRepository _repository;
+
 
         public PluginManager(ICatalogueRepository repository)
         {
@@ -29,12 +32,17 @@ namespace Rdmp.Core.Repositories.Managers
                 throw new Exception("Assembly had no listed Location");
 
             var fileVersion = FileVersionInfo.GetVersionInfo(location).FileVersion;
-            var version = new Version(fileVersion);
+            var runningSoftwareVersion = new Version(fileVersion);
 
-            var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(p => p.PluginVersion.IsCompatibleWith(version, 3));
-            var uniquePlugins = plugins.GroupBy(p => new { name = p.Name, ver = new Version(p.PluginVersion.Major, p.PluginVersion.Minor, p.PluginVersion.Build) })
-                .ToDictionary(g => g.Key, p => p.OrderByDescending(pv => pv.PluginVersion).First());
-            return uniquePlugins.Values.ToArray();
+            //nupkg that are compatible with the running software
+            var lma = _repository.GetAllObjects<LoadModuleAssembly>().Where(a=>new Version(a.DllFileVersion).IsCompatibleWith(runningSoftwareVersion,2));
+            
+            //latest versions
+            var latestVersionsOfPlugins = from p in lma.Select(l=>l.Plugin)
+                      group p by p.GetShortName() into grp
+                      select grp.OrderByDescending(p => p.PluginVersion).FirstOrDefault();
+                        
+            return latestVersionsOfPlugins.ToArray();
         }
     }
 }

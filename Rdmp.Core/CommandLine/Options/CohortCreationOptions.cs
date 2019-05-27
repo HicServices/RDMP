@@ -6,15 +6,33 @@
 
 using CommandLine;
 
-namespace Rdmp.Core.CommandLine.Options.Abstracts
+namespace Rdmp.Core.CommandLine.Options
 {
     /// <summary>
-    /// Command line parameters for the Data Quality Engine
+    /// Command line options for the Cohort Creation Pipelines
     /// </summary>
-    [Verb("dqe", HelpText = "Runs the Data Quality Engine")]
-    public class DqeOptions:RDMPCommandLineOptions
+    [Verb("cohort", HelpText = "Runs the Cohort Creation")]
+    public class CohortCreationOptions : RDMPCommandLineOptions
     {
-        [Option('c',"Catalogue",HelpText = "ID of the Catalogue to run the DQE on",Required = true)]
-        public int Catalogue{ get; set; }
+        // Used for refreshes:
+        [Option('e', "ExtractionConfiguration", HelpText = "The ExtractionConfiguration ID to extract", Required = true)]
+        public int ExtractionConfiguration { get; set; }
+
+        // Other Options:
+        /*
+         * External Cohort Table
+         * 
+         * Project (only existing?)
+         * 
+         * New Cohort / Revision?
+         * 
+         * Name (or existing cohort name/id?)
+         * 
+         * Pipeline
+         * 
+         * Description
+         * 
+         */
+
     }
 }

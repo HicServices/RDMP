@@ -6,7 +6,7 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;

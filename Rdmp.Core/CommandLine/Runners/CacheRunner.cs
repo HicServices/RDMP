@@ -7,7 +7,7 @@
 using System;
 using System.Linq;
 using Rdmp.Core.Caching;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataFlowPipeline;

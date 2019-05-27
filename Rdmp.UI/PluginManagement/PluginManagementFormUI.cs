@@ -16,8 +16,9 @@ using System.Reflection;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandLine.Packing;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Sharing.Transmission;
 using Rdmp.Core.Startup.PluginManagement;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
@@ -195,7 +196,7 @@ namespace Rdmp.UI.PluginManagement
                 
                 if(files.Count >= 0)
                 {
-                    string[] zipFiles = files.Cast<string>().Where(s => s.EndsWith(".zip")).ToArray();
+                    string[] zipFiles = files.Cast<string>().Where(s => s.EndsWith(PackPluginRunner.PluginPackageSuffix)).ToArray();
 
                     if(zipFiles.Any())
                         e.Effect = DragDropEffects.Copy;
@@ -204,7 +205,7 @@ namespace Rdmp.UI.PluginManagement
         }
         void sink_Dropped(object sender, OlvDropEventArgs e)
         {
-            var zipFiles = ((DataObject)e.DataObject).GetFileDropList().Cast<string>().Where(s => s.EndsWith(".zip")).ToArray();
+            var zipFiles = ((DataObject)e.DataObject).GetFileDropList().Cast<string>().Where(s => s.EndsWith(PackPluginRunner.PluginPackageSuffix)).ToArray();
 
             if (!zipFiles.Any())
                 return;
@@ -219,26 +220,15 @@ namespace Rdmp.UI.PluginManagement
         {
             var checks = new PopupChecksUI("Uploading Plugin", false);
             var f = new FileInfo(file);
-            if (f.Extension == ".sln")
-            {
-                bool release = MessageBox.Show("Do you want to look for 'Release' directories instead of 'Debug'?" + Environment.NewLine + "Yes - Release" + Environment.NewLine + "No - Debug","Look for Release directories instead?",MessageBoxButtons.YesNo) == DialogResult.Yes;
-
-                var zip = Path.Combine(f.Directory.FullName, Path.GetFileNameWithoutExtension(f.Name) +".zip");
-                Packager packager = new Packager(f, zip, false,release);
-
-                packager.PackageUpFile(checks);
-                f = new FileInfo(zip);
-            }
-             
+            
+            
             if(f.Exists)
             {
-                var pluginProcessor = new PluginProcessor(checks, Activator.RepositoryLocator.CatalogueRepository);
+                var pluginProcessor = new PackPluginRunner(new PackOptions(){File = file});
             
-                if (pluginProcessor.ProcessFileReturningTrueIfIsUpgrade(f))
-                {
-                    MessageBox.Show("Replaced old version of Plugin '" + f.Name + "'");
-                    RefreshObjects();
-                }
+                pluginProcessor.Run(Activator.RepositoryLocator,null,new PopupChecksUI(file,false),new GracefulCancellationToken());
+
+                RefreshObjects();
             }
         }
 
@@ -398,7 +388,7 @@ namespace Rdmp.UI.PluginManagement
         private void btnBrowse_Click(object sender, EventArgs e)
         {
             OpenFileDialog fd = new OpenFileDialog();
-            fd.Filter = "Plugins|*.zip|Solution Files|*.sln";
+            fd.Filter = "Plugins|*"+PackPluginRunner.PluginPackageSuffix+"|;";
             fd.CheckFileExists = true;
 
             if (fd.ShowDialog() == DialogResult.OK)

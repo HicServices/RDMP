@@ -13,8 +13,8 @@ namespace ReusableLibraryCode.Extensions
         /// <summary>
         /// Returns true if the two versions are idential up to the significant parts specified
         /// </summary>
-        /// <param name="version"></param>
-        /// <param name="other"></param>
+        /// <param name="version">The version which depends on <paramref name="other"/> (can include short version e.g. "3.0" will have -1 for Build) </param>
+        /// <param name="other">The full version</param>
         /// <param name="significantParts"></param>
         /// <returns></returns>
         public static bool IsCompatibleWith(this Version version, Version other, int significantParts)
@@ -25,8 +25,8 @@ namespace ReusableLibraryCode.Extensions
         /// <summary>
         /// Compares two versions but only up to the significant parts specified.
         /// </summary>
-        /// <param name="version"></param>
-        /// <param name="otherVersion"></param>
+        /// <param name="version">The version which depends on <paramref name="otherVersion"/> (can include short version e.g. "3.0" will have -1 for Build) </param>
+        /// <param name="otherVersion">The full version</param>
         /// <param name="significantParts"></param>
         /// <returns></returns>
         public static int CompareTo(this Version version, Version otherVersion, int significantParts)
@@ -46,19 +46,19 @@ namespace ReusableLibraryCode.Extensions
                 else
                     return -1;
 
-            if (version.Minor != otherVersion.Minor && significantParts >= 2)
+            if (version.Minor != otherVersion.Minor && version.Minor != -1 && significantParts >= 2)
                 if (version.Minor > otherVersion.Minor)
                     return 1;
                 else
                     return -1;
 
-            if (version.Build != otherVersion.Build && significantParts >= 3)
+            if (version.Build != otherVersion.Build && version.Build != -1 && significantParts >= 3)
                 if (version.Build > otherVersion.Build)
                     return 1;
                 else
                     return -1;
 
-            if (version.Revision != otherVersion.Revision && significantParts >= 4)
+            if (version.Revision != otherVersion.Revision && version.Revision != -1 && significantParts >= 4)
                 if (version.Revision > otherVersion.Revision)
                     return 1;
                 else

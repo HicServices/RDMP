@@ -7,7 +7,7 @@
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;

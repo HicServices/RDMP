@@ -10,7 +10,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using NUnit.Framework;
 using Rdmp.Core.Caching;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;

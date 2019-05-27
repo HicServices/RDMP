@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.IO;
+using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
@@ -43,6 +44,28 @@ namespace Rdmp.Core.Curation.Data
         {
             get { return _uploadedFromDirectory; }
             set { SetField(ref  _uploadedFromDirectory, value); }
+        }
+
+        
+        
+        /// <summary>
+        /// Returns <see cref="Name"/> without the verison e.g. "Rdmp.Dicom" from an ambigious name:
+        ///  Rdmp.Dicom.0.0.1.nupkg 
+        ///  Rdmp.Dicom.nupkg 
+        ///  Rdmp.Dicom
+        /// </summary>
+        /// <returns></returns>
+        public string GetShortName()
+        {
+            Regex regexPluginNameWithoutVersion = new Regex(@"(.+)(\d*\.)*(\.nupkg)?$");
+
+            var match = regexPluginNameWithoutVersion.Match(Name);
+
+            //name did not match expected pattern, how!?
+            if(!match.Success)
+                throw new Exception("Name did not match expected pattern");
+
+            return match.Groups[1].Value;
         }
 
         /// <summary>

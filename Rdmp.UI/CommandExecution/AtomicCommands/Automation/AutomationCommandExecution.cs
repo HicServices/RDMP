@@ -7,7 +7,7 @@
 using System;
 using CommandLine;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Automation

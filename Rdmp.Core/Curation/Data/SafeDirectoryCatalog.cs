@@ -44,6 +44,30 @@ namespace Rdmp.Core.Curation.Data
         {
         }
 
+        
+        private Assembly LoadAssembly(FileInfo f)
+        {
+            try
+            {
+                return F1(f);
+
+            }catch(FileLoadException ex)
+            {
+                //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
+                return F2(f);
+            }
+        }
+
+        private Assembly F2(FileInfo f)
+        {
+            return Assembly.LoadFile(f.FullName);
+        }
+
+        private Assembly F1(FileInfo f)
+        {
+            return AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
+        }
+
         /// <inheritdoc cref="SafeDirectoryCatalog(string[])"/>
         public SafeDirectoryCatalog(ICheckNotifier listener, params string[] directories)
         {
@@ -51,7 +75,6 @@ namespace Rdmp.Core.Curation.Data
 
             var files = new HashSet<FileInfo>();
                        
-
             foreach (string directory in directories)
             {
                 if (!Directory.Exists(directory))
@@ -76,7 +99,7 @@ namespace Rdmp.Core.Curation.Data
 
                 try
                 {
-                    ass = AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
+                    ass = LoadAssembly(f);
                     AddTypes(f,ass,ass.GetTypes(),listener);
                 }
                 catch(ReflectionTypeLoadException ex)

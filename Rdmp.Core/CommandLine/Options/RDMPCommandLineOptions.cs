@@ -10,7 +10,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandLine.Options.Abstracts
+namespace Rdmp.Core.CommandLine.Options
 {
     /// <summary>
     /// Abstract base class for all command line options that can be supplied to the rdmp cli (includes overriding app.config to get connection strings to platform metadata databases)

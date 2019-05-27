@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
+using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using FAnsi.Discovery;
@@ -23,6 +24,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup.Events;
+using Rdmp.Core.Startup.PluginManagement;
 using Rdmp.Core.Validation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
@@ -224,55 +226,45 @@ namespace Rdmp.Core.Startup
             if(!downloadDirectory.Exists)
                 downloadDirectory.Create();
 
-            var recordsInDatabase = catalogueRepository.PluginManager.GetCompatiblePlugins();
+            var compatiblePlugins = catalogueRepository.PluginManager.GetCompatiblePlugins();
 
             List<DirectoryInfo> dirs = new List<DirectoryInfo>();
+            List<DirectoryInfo> toLoad = new List<DirectoryInfo>();
+            
+            //always load the current application directory
+            toLoad.Add(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory));
 
-            for (int i = 0; i < recordsInDatabase.Length; i++)
+            for (int i = 0; i < compatiblePlugins.Length; i++)
             {
-                var subDirName = recordsInDatabase[i].GetPluginDirectoryName(downloadDirectory);
+                var subDirName = compatiblePlugins[i].GetPluginDirectoryName(downloadDirectory);
                 var subdir = Directory.CreateDirectory(subDirName);
 
                 dirs.Add(subdir);
+                                                             
+                var existingFiles = subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList();
 
-                var files = subdir.GetFiles("*.dll").ToList();
+                foreach(var lma in compatiblePlugins[i].LoadModuleAssemblies.Where(l=>!existingFiles.Any(f=>f.Name.Equals(l.Name))))
+                    lma.DownloadAssembly(subdir);
+                
+                foreach(var archive in  subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList())
+                {                    
+                    //get rid of any old out dirs
+                    var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
+                    
+                    if(outDir != null && outDir.Exists)
+                        outDir.Delete(true);
 
-                var srcFile = subdir.GetFiles().SingleOrDefault(f => f.Name.Equals("src.zip"));
-                if(srcFile != null)
-                    files.Add(srcFile);
+                    outDir = subdir.CreateSubdirectory("out");
 
-                foreach (var lma in recordsInDatabase[i].LoadModuleAssemblies.Where(lma => !LoadModuleAssembly.IgnoredDlls.Contains(lma.Name)))
-                {   
-                    try
-                    {
-                        lma.DownloadAssembly(subdir);
-                        MEFFileDownloaded(this,
-                                new MEFFileDownloadProgressEventArgs(subdir, recordsInDatabase.Length, i + 1,
-                                    lma.Name, lma.Pdb != null, MEFFileDownloadEventStatus.Success));
-                    }
-                    catch (Exception e)
-                    {
-                        MEFFileDownloaded(this,
-                            new MEFFileDownloadProgressEventArgs(subdir, recordsInDatabase.Length, i + 1,
-                                lma.Name, lma.Pdb != null, MEFFileDownloadEventStatus.OtherError, e));
-                    }
+                    using(var zf = ZipFile.OpenRead(archive.FullName))
+                        zf.ExtractToDirectory(outDir.FullName);
+                    
+                    toLoad.Add(_environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib")));
 
-                    //file is supposed to be there
-                    files.Remove(files.SingleOrDefault(f => f.Name.Equals(lma.Name)));
-                }
-
-                //After processing all the load module assemblies lets get rid of the unreferenced dlls that are kicking about 
-                foreach (FileInfo f in files)
-                {
-                    try
-                    {
-                        f.Delete();
-                        _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Deleted unreferenced dll " + f.FullName, CheckResult.Success));
-                    }
-                    catch (Exception e)
-                    {
-                        _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Found unreferenced dll " + f.FullName + " but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)", CheckResult.Fail,e));
-                    }
+                    //tell them we downloaded it
+                    MEFFileDownloaded(this,
+                            new MEFFileDownloadProgressEventArgs(subdir, compatiblePlugins.Length, i + 1,
+                                archive.Name, false, MEFFileDownloadEventStatus.Success));
                 }
             }
 
@@ -295,12 +287,8 @@ namespace Rdmp.Core.Startup
 
                 }
             }
-
-            List<DirectoryInfo> toProcess = new List<DirectoryInfo>();
-            toProcess.Add(new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory));
-            toProcess.AddRange(dirs);
-
-            MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toProcess.Select(d=>d.FullName).ToArray());
+            
+            MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toLoad.Select(d=>d.FullName).ToArray());
             catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
 
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));

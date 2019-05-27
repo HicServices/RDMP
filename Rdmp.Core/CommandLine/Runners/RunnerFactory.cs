@@ -5,7 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.Startup.PluginManagement;
 
 namespace Rdmp.Core.CommandLine.Runners
 {
@@ -26,6 +27,7 @@ namespace Rdmp.Core.CommandLine.Runners
             var extractionOpts = command as ExtractionOptions;
             var releaseOpts = command as ReleaseOptions;
             var cohortOpts = command as CohortCreationOptions;
+            var packOpts = command as PackOptions;
 
             if (dleOpts != null)
                 return new DleRunner(dleOpts);
@@ -47,6 +49,9 @@ namespace Rdmp.Core.CommandLine.Runners
 
             if (cohortOpts != null)
                 return new CohortCreationRunner(cohortOpts);
+
+            if(packOpts != null)
+                return new PackPluginRunner(packOpts);
             
             throw new Exception("RDMPCommandLineOptions Type '" + command.GetType() + "'");
         }

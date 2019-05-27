@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Checks;

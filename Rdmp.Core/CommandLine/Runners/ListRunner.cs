@@ -7,7 +7,7 @@
 using System;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandLine.Options.Abstracts;
+using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;

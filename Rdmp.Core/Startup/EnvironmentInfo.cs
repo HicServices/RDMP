@@ -6,6 +6,8 @@
 
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Linq;
 
 namespace Rdmp.Core.Startup
 {
@@ -68,6 +70,28 @@ namespace Rdmp.Core.Startup
                 int p = (int)Environment.OSVersion.Platform;
                 return p == 4 || p == 6 || p == 128;
             }
+        }
+
+        /// <summary>
+        /// Returns the nupkg archive subdirectory that should be loaded with the current environment 
+        /// e.g. /lib/net461
+        /// </summary>
+        internal DirectoryInfo GetPluginSubDirectory(DirectoryInfo root)
+        {
+            if(!root.Name.Equals("lib"))
+                throw new ArgumentException("Expected " + root.FullName + " to be the 'lib' directory");
+            
+            var frameworkDir = root.EnumerateDirectories(TargetFramework).Cast<DirectoryInfo>().SingleOrDefault();
+            
+            if(frameworkDir == null)
+                throw new DirectoryNotFoundException("Could not find a matching framework directory for " + TargetFramework );
+            
+            //if we know the OS
+            if(!string.IsNullOrWhiteSpace(RuntimeIdentifier))
+                //return the OS subdir (or the root if there is no RID dir)
+                return frameworkDir.EnumerateDirectories(RuntimeIdentifier).Cast<DirectoryInfo>().SingleOrDefault() ?? frameworkDir;
+
+            return frameworkDir;
         }
     }
 }
