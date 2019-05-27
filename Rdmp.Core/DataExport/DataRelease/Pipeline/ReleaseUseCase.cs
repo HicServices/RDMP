@@ -50,7 +50,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline
             else
             {
                 var destinationType = catalogueRepository.MEF
-                    .GetTypeByNameFromAnyLoadedAssembly(
+                    .GetType(
                         releasePotentialWithKnownDestination.DatasetExtractionResult.DestinationType,
                         typeof (IExecuteDatasetExtractionDestination));
                 var constructor = new ObjectConstructor();

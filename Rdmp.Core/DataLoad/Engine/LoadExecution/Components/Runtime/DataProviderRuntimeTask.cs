@@ -33,7 +33,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
             if (string.IsNullOrWhiteSpace(task.Path))
                 throw new ArgumentException("Path is blank for ProcessTask '" + task + "' - it should be a class name of type " + typeof(IDataProvider).Name);
 
-            Provider = mef.FactoryCreateA<IDataProvider>(classNameToInstantiate);
+            Provider = mef.CreateA<IDataProvider>(classNameToInstantiate);
 
             try
             {

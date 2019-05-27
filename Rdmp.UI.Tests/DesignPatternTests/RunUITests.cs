@@ -79,15 +79,13 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
         [Test]
         public void AllCommandsCompatible()
         {
-            List<Exception> ex;
-            
             Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandUnpin).Assembly);
             
             allowedToBeIncompatible.AddRange(RunUI.GetIgnoredCommands());
 
-            var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex)
+            var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
                 .Where(t=>typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface) //must be something we would normally expect to be a supported Type
                 .Where(t => !RunUI.IsSupported(t)) //but for some reason isn't
                 .Except(allowedToBeIncompatible) //and isn't a permissable one
@@ -95,7 +93,7 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
             
             Assert.AreEqual(0,notSupported.Length,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
 
-            var supported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex).Where(RunUI.IsSupported).ToArray();
+            var supported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(RunUI.IsSupported).ToArray();
 
             Console.WriteLine("The following commands are supported:" + Environment.NewLine + string.Join(Environment.NewLine,supported.Select(cmd=>cmd.Name)));
 

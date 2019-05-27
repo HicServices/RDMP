@@ -48,7 +48,8 @@ namespace Rdmp.Core.Caching.Layouts
                 if (!task.ProcessTaskType.Equals(ProcessTaskType.DataProvider))
                     continue;
 
-                var type = task.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(task.Path);
+                
+                var type = task.CatalogueRepository.MEF.GetType(task.Path);
 
                 if (typeof(ICachedDataProvider).IsAssignableFrom(type))
                     compatibleProviders.Add(task);

@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using FAnsi;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -18,7 +18,7 @@ namespace Rdmp.UI.Menus
     [System.ComponentModel.DesignerCategory("")]
     class AllCohortsNodeMenu:RDMPContextMenuStrip
     {
-        [ImportingConstructor]
+        [UseWithObjectConstructor]
         public AllCohortsNodeMenu(RDMPContextMenuStripArgs args, AllCohortsNode node)
             : base(args, node)
         {

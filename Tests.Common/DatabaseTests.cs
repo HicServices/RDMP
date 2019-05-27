@@ -201,7 +201,7 @@ namespace Tests.Common
             //if it is the first time
             if (_startup == null)
             {
-                _startup = new Startup(RepositoryLocator);
+                _startup = new Startup(new EnvironmentInfo(),RepositoryLocator);
 
                 _startup.DatabaseFound += StartupOnDatabaseFound;
                 _startup.MEFFileDownloaded += StartupOnMEFFileDownloaded;

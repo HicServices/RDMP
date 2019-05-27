@@ -6,14 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 
 namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs
 {
-    [Export(typeof(IDatabaseColumnRequestAdjuster))]
+    
     public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjuster
     {
         private List<DatabaseColumnRequest> _columns;

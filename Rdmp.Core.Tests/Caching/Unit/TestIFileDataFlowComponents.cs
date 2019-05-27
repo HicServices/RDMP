@@ -6,13 +6,9 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
 using System.IO;
 using System.Linq;
-using NUnit.Framework;
 using Rdmp.Core.Caching.Layouts;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Progress;
@@ -60,20 +56,6 @@ namespace Rdmp.Core.Tests.Caching.Unit
     {
         public CacheProgress CacheProgress { get; set; }
         public DirectoryInfo CacheDirectory { get; set; }
-
-        public void UseContainer()
-        {
-            var catalog = new DirectoryCatalog(".");
-            var container = new CompositionContainer(catalog);
-            
-            var cacheProgress = new CacheProgress(null, (ILoadProgress) null);
-            container.ComposeExportedValue(cacheProgress);
-
-            var directoryInfo = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
-            container.ComposeExportedValue(directoryInfo);
-
-            var component = container.GetExportedValue<FilesystemCacheDestination>();
-        }
 
         public IList<FileInfo> ProcessPipelineData(IList<FileInfo> toProcess, IDataLoadEventListener listener)
         {

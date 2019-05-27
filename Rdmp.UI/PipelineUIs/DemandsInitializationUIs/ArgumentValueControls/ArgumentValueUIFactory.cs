@@ -112,7 +112,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             //if it is an interface e.g. IExternalDatabaseServer look for ExternalDatabaseServer
             if (argumentType.IsInterface)
             {
-                var implmenetationType = args.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(args.Type.Name.Substring(1));
+                var implmenetationType = args.CatalogueRepository.MEF.GetType(args.Type.Name.Substring(1));
                 if (implmenetationType != null)
                     argumentType = implmenetationType;
             }

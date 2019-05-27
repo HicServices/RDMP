@@ -21,6 +21,7 @@ using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging.Listeners.NLogListeners;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.PluginManagement;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -30,8 +31,15 @@ namespace rdmp
 {
     class Program
     {
+        private static EnvironmentInfo GetEnvironmentInfo()
+        {
+            return new EnvironmentInfo("netcoreapp2.2");
+        }
+        
         static int Main(string[] args)
         {
+            Console.WriteLine("Environment:"+ Environment.Version);
+
             try
             {    
                 string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
@@ -164,9 +172,7 @@ namespace rdmp
             var checker = new NLogICheckNotifier(true, false);
 
             var factory = new RunnerFactory();
-
-            opts.LoadFromAppConfig();
-            opts.DoStartup(opts.LogStartup ? (ICheckNotifier)checker: new IgnoreAllErrorsCheckNotifier());
+            opts.DoStartup(GetEnvironmentInfo(),opts.LogStartup ? (ICheckNotifier)checker: new IgnoreAllErrorsCheckNotifier());
 
             var runner = factory.CreateRunner(opts);
 

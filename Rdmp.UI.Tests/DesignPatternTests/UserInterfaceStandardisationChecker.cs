@@ -70,10 +70,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         public void FindProblems(List<string> csFilesList,MEF mef)
         {
             _csFilesList = csFilesList;
-            List<Exception> whoCares;
 
             //All node classes should have equality compare members so that tree expansion works properly
-            foreach (Type nodeClass in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => t.Name.EndsWith("Node") && !t.IsAbstract && !t.IsInterface))
+            foreach (Type nodeClass in mef.GetAllTypes().Where(t => t.Name.EndsWith("Node") && !t.IsAbstract && !t.IsInterface))
             {
                 if(nodeClass.Namespace == null || nodeClass.Namespace.StartsWith("System"))
                     continue;
@@ -104,7 +103,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             }
 
             //All Menus should correspond to a data class
-            foreach (Type menuClass in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+            foreach (Type menuClass in mef.GetAllTypes().Where(t => typeof (RDMPContextMenuStrip).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
             {
                 if(menuClass == typeof(RDMPContextMenuStrip)) //the basic class from which all are inherited
                     continue;
@@ -150,7 +149,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             }
             
             //Drag and drop / Activation - Execution Proposal system
-            foreach (Type proposalClass in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
+            foreach (Type proposalClass in mef.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
             {
                 //We are looking at something like AutomationServerSlotsMenu
                 if (!proposalClass.Name.StartsWith("ProposeExecutionWhenTargetIs"))
@@ -167,7 +166,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             }
             
             //Make sure all user interface classes have the suffix UI
-            foreach(Type uiType in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => 
+            foreach(Type uiType in mef.GetAllTypes().Where(t => 
                  (typeof(RDMPUserControl).IsAssignableFrom(t)||(typeof(RDMPForm).IsAssignableFrom(t))
                  && !t.IsAbstract && !t.IsInterface)))
             {

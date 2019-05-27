@@ -110,7 +110,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CheckingTests
             _task.Path = typeof(object).ToString();
             _task.SaveToDatabase();
             var ex = Assert.Throws<KeyNotFoundException>(() => _checker.Check(new ThrowImmediatelyCheckNotifier()));
-            Assert.AreEqual("Could not find [Export] of type System.Object using MEF  possibly because it is not declared as [Export(typeof(IMutilateDataTables))].", ex.Message);
+            Assert.AreEqual("Could not find [Export] of type System.Object using MEF  possibly because it is not declared as .", ex.Message);
         }
         [Test]
         public void MEFCompatibleType_NoProjectDirectory()

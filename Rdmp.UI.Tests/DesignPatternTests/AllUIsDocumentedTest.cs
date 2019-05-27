@@ -73,7 +73,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             
 
             List<Exception> whoCares;
-            foreach (Type type in MEF.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(InterfaceType.IsAssignableFrom))
+            foreach (Type type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
             {
                 if (type.Namespace == null) 
                     continue;

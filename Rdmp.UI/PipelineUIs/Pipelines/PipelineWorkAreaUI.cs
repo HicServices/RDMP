@@ -63,7 +63,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
                 //middle and destination components
                 var allComponentTypes = _catalogueRepository.MEF.GetGenericTypes(typeof (IDataFlowComponent<>),context.GetFlowType());
                 
-                //source components (list of all types with MEF exports of [Export(typeof(IDataFlowSource<DataTable>))])
+                //source components (list of all types with MEF exports of )
                 var allSourceTypes = _catalogueRepository.MEF.GetGenericTypes(typeof(IDataFlowSource<>), context.GetFlowType());
 
                 olvComponents.AddObjects(allComponentTypes.Select(t => new AdvertisedPipelineComponentTypeUnderContext(t, _useCase)).ToArray());

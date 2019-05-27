@@ -83,7 +83,7 @@ namespace Rdmp.Core.Repositories
                 if (_cachedTypesByNameDictionary.ContainsKey(s))
                     return _cachedTypesByNameDictionary[s];
 
-                toReturn = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s, expectedBaseClassType);
+                toReturn = CatalogueRepository.MEF.GetType(s, expectedBaseClassType);
 
                 if (toReturn == null)
                     throw new TypeLoadException("Could not find Type called '" + s + "'");

@@ -44,14 +44,14 @@ namespace Rdmp.Core.Tests.Databases
 
             foreach (var oldClass in ExpectedClasses)
             {
-                Type foundBefore = MEF.GetTypeByNameFromAnyLoadedAssembly(oldClass);
+                Type foundBefore = MEF.GetType(oldClass);
 
                 string newClass = oldClass;
 
                 foreach (KeyValuePair<string, string> kvp in substitutions)
                     newClass = newClass.Replace(kvp.Key, kvp.Value);
 
-                Type foundNow = MEF.GetTypeByNameFromAnyLoadedAssembly(newClass);
+                Type foundNow = MEF.GetType(newClass);
 
                 Assert.IsNotNull(foundNow,"Patch did not work correctly for Type '" + oldClass +"' which after renaming became '" + newClass +"'");
 

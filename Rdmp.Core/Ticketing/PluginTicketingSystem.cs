@@ -5,21 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Ticketing
 {
 
-    [InheritedExport(typeof(ICheckable))]
-    [InheritedExport(typeof(ITicketingSystem))]
+    
+    
     public abstract class PluginTicketingSystem : ICheckable, ITicketingSystem
     {
         protected IDataAccessCredentials Credentials { get; set; }
         protected string Url { get; set; }
         
-        [ImportingConstructor]
         protected PluginTicketingSystem(TicketingSystemConstructorParameters parameters)
         {
             Credentials = parameters.Credentials;

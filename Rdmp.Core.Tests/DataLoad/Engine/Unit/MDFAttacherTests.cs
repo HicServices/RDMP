@@ -263,7 +263,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             try
             {
                 
-                var attacher = CatalogueRepository.MEF.FactoryCreateA<IAttacher>(typeof(MDFAttacher).FullName);
+                var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
                 attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
 
                 Assert.IsNotNull(attacher);

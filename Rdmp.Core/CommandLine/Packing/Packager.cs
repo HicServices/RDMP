@@ -213,7 +213,7 @@ namespace Rdmp.Core.CommandLine.Packing
                 if(_blacklist.Contains(name.Name))
                     continue;
 
-                if (LoadModuleAssembly.ProhibitedDllNames.Any(prohibitedName => prohibitedName.Equals(name.Name + ".dll")))
+                if (LoadModuleAssembly.IgnoredDlls.Any(prohibitedName => prohibitedName.Equals(name.Name + ".dll")))
                     continue;
                 
                 var dependentDll = _dllPackage.FirstOrDefault(f => f.Name.EndsWith(name.Name + ".dll"));

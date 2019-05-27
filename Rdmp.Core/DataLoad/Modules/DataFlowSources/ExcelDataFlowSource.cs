@@ -63,9 +63,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
             
             return dataReadFromFile;
         }
-
-        private int sketchyDoublesEvaluated = 0;
-
+        
         private DataTable GetAllData(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             Stopwatch sw = new Stopwatch();

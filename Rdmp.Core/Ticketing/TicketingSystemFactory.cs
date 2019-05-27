@@ -36,7 +36,7 @@ namespace Rdmp.Core.Ticketing
             if(string.IsNullOrWhiteSpace(typeName))
                 throw new NullReferenceException("Type name was blank, cannot create ITicketingSystem");
 
-            return _repository.MEF.FactoryCreateA<ITicketingSystem, TicketingSystemConstructorParameters>(typeName, new TicketingSystemConstructorParameters(url, credentials));
+            return _repository.MEF.CreateA<ITicketingSystem>(typeName, new TicketingSystemConstructorParameters(url, credentials));
         }
 
         public ITicketingSystem CreateIfExists(TicketingSystemConfiguration ticketingSystemConfiguration)

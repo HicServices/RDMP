@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Text;
@@ -21,7 +20,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
     /// 
     /// <para>This class can be used by [DemandsInitialization] properties and it will launch it's custom UI: ExplicitTypingCollectionUI</para>
     /// </summary>
-    [Export(typeof(ICustomUIDrivenClass))]
+    
     public class ExplicitTypingCollection:ICustomUIDrivenClass
     {
         /// <summary>

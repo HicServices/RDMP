@@ -15,13 +15,15 @@ namespace Rdmp.UI.TestsAndSetup
 {
     public class RDMPBootStrapper<T> where T : RDMPForm, new()
     {
+        private readonly EnvironmentInfo _environmentInfo;
         private readonly string catalogueConnection;
         private readonly string dataExportConnection;
         private T _mainForm;
 
         
-        public RDMPBootStrapper(string catalogueConnection, string dataExportConnection)
+        public RDMPBootStrapper(EnvironmentInfo environmentInfo,string catalogueConnection, string dataExportConnection)
         {
+            this._environmentInfo = environmentInfo;
             this.catalogueConnection = catalogueConnection;
             this.dataExportConnection = dataExportConnection;
         }
@@ -41,7 +43,7 @@ namespace Rdmp.UI.TestsAndSetup
             try
             {
                 //show the startup dialog
-                Startup startup = new Startup();
+                Startup startup = new Startup(_environmentInfo);
                 if (!String.IsNullOrWhiteSpace(catalogueConnection) && !String.IsNullOrWhiteSpace(dataExportConnection))
                 {
                     startup.RepositoryLocator = new LinkedRepositoryProvider(catalogueConnection, dataExportConnection);

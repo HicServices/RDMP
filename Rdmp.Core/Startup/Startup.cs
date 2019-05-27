@@ -41,6 +41,7 @@ namespace Rdmp.Core.Startup
     {
         public SafeDirectoryCatalog MEFSafeDirectoryCatalog { get; private set; }
 
+        private readonly EnvironmentInfo _environmentInfo;
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         private ICheckNotifier _mefCheckNotifier;
         public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
@@ -51,14 +52,14 @@ namespace Rdmp.Core.Startup
         PatcherManager _patcherManager = new PatcherManager();
 
         #region Constructors
-        public Startup(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public Startup(EnvironmentInfo environmentInfo,IRDMPPlatformRepositoryServiceLocator repositoryLocator):this(environmentInfo)
         {
             RepositoryLocator = repositoryLocator;
         }
 
-        public Startup()
+        public Startup(EnvironmentInfo environmentInfo)
         {
-            
+            _environmentInfo = environmentInfo;
         }
         #endregion
 
@@ -240,7 +241,7 @@ namespace Rdmp.Core.Startup
                 if(srcFile != null)
                     files.Add(srcFile);
 
-                foreach (var lma in recordsInDatabase[i].LoadModuleAssemblies.Where(lma => !LoadModuleAssembly.ProhibitedDllNames.Contains(lma.Name)))
+                foreach (var lma in recordsInDatabase[i].LoadModuleAssemblies.Where(lma => !LoadModuleAssembly.IgnoredDlls.Contains(lma.Name)))
                 {   
                     try
                     {

@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Runtime.InteropServices;
 using CommandLine;
+using Rdmp.Core.Startup;
 using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
 
@@ -39,7 +40,8 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
-            RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(arg.CatalogueConnectionString, arg.DataExportConnectionString);
+
+            RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(new EnvironmentInfo("net461"),arg.CatalogueConnectionString, arg.DataExportConnectionString);
             bootStrapper.Show(false);
             return 0;
         }

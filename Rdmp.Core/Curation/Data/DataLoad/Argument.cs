@@ -142,7 +142,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 if (string.IsNullOrWhiteSpace(value))
                     return null;
                 else
-                    return CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(value);
+                    return CatalogueRepository.MEF.GetType(value);
 
             if (type.Equals(typeof(CatalogueRepository).ToString()) || type.Equals(typeof(ICatalogueRepository).ToString()))
                 return Repository;
@@ -265,7 +265,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
                 try
                 {
-                    Type t = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(concreteType.FullName);
+                    Type t = CatalogueRepository.MEF.GetType(concreteType.FullName);
 
                     ObjectConstructor constructor = new ObjectConstructor();
 
@@ -274,7 +274,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 }
                 catch (Exception e)
                 {
-                    throw new Exception("Failed to create an ICustomUIDrivenClass of type " + concreteType.FullName + " make sure that you mark your class as public, commit it to the catalogue and mark it with the export '[Export(typeof(ICustomUIDrivenClass))]'", e);
+                    throw new Exception("Failed to create an ICustomUIDrivenClass of type " + concreteType.FullName + " make sure that you mark your class as public, commit it to the catalogue and mark it with the export ''", e);
                 }
 
                 try
@@ -318,7 +318,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
                 string elementTypeAsString = arrayMatch.Groups[1].Value;
 
                 //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-                var elementType = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(elementTypeAsString);
+                var elementType = CatalogueRepository.MEF.GetType(elementTypeAsString);
 
                 if (elementType == null)
                     throw new Exception("Could not figure out what SystemType to use for elementType = '" + elementTypeAsString + "' of Type '" + type + "'");
@@ -336,7 +336,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             }
 
             //it is an unknown Type e.g. Bob where Bob is an ICustomUIDrivenClass or something
-            var anyType = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(type);
+            var anyType = CatalogueRepository.MEF.GetType(type);
 
             if (anyType == null)
                 throw new Exception("Could not figure out what SystemType to use for Type = '" + type + "'");
@@ -358,7 +358,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             //if it is interface e.g. ITableInfo fetch instead the TableInfo object
             if (type.IsInterface && type.Name.StartsWith("I"))
             {
-                var candidate = CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(type.Name.Substring(1)); // chop the 'I' off
+                var candidate = CatalogueRepository.MEF.GetType(type.Name.Substring(1)); // chop the 'I' off
 
                 if (!candidate.IsAbstract)
                     return candidate;

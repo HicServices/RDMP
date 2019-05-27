@@ -29,9 +29,7 @@ namespace Rdmp.UI.DashboardTabs.Construction
 
         public Type[] GetAvailableControlTypes()
         {
-            List<Exception> whoCares;
-            return _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out whoCares)
-                .Where(IsCompatibleType).ToArray();
+            return _activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(IsCompatibleType).ToArray();
         }
 
         private bool IsCompatibleType(Type arg)
@@ -50,7 +48,7 @@ namespace Rdmp.UI.DashboardTabs.Construction
         /// <returns></returns>
         public DashboardableControlHostPanel Create(DashboardControl toCreate)
         {
-            var controlType = _activator.RepositoryLocator.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(toCreate.ControlType);
+            var controlType = _activator.RepositoryLocator.CatalogueRepository.MEF.GetType(toCreate.ControlType);
 
             var instance = CreateControl(controlType);
             

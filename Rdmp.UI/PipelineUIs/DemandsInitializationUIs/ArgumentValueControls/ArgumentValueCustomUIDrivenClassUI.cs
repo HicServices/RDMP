@@ -40,7 +40,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 
                 string expectedUIClassName = t.FullName + "UI";
 
-                _uiType = _args.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(expectedUIClassName);
+                _uiType = _args.CatalogueRepository.MEF.GetType(expectedUIClassName);
 
                 //if we did not find one with the exact name (including namespace), try getting it just by the end of it's name (omit namespace)
                 if (_uiType == null)
@@ -52,7 +52,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                         throw new Exception("Found " + candidates.Length + " classes called '" + shortUIClassName + "' : (" + string.Join(",", candidates.Select(c => c.Name)) + ")");
 
                     if (candidates.Length == 0)
-                        throw new Exception("Could not find UI class called " + shortUIClassName + " make sure that it exists, is public and is marked with class attribute [Export(typeof(ICustomUI<>))]");
+                        throw new Exception("Could not find UI class called " + shortUIClassName + " make sure that it exists, is public and is marked with class attribute ");
 
                     _uiType = candidates[0];
                 }

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -14,6 +13,7 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -34,9 +34,8 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         public RunUI(IActivateItems activator):base(activator)
         {
             InitializeComponent();
-            List<Exception> ex;
 
-            var commands = activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypesFromAllKnownAssemblies(out ex).Where(IsSupported);
+            var commands = activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(IsSupported);
 
             _commandsDictionary = new Dictionary<string, Type>(StringComparer.CurrentCultureIgnoreCase);
             
@@ -160,7 +159,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             if (constructors.Length == 0)
                 return null;
 
-            var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(ImportingConstructorAttribute))).ToArray();
+            var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof(UseWithObjectConstructorAttribute))).ToArray();
 
             if (importDecorated.Any())
                 return importDecorated[0];

@@ -74,9 +74,7 @@ namespace Rdmp.Core.Reports
 
         public void Check(ICheckNotifier notifier)
         {
-            List<Exception> ex;
-            ;
-            foreach (Type t in _mef.GetAllTypesFromAllKnownAssemblies(out ex).Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
+            foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
                 if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
                 {
                     if (t.IsInterface || t.IsAbstract)

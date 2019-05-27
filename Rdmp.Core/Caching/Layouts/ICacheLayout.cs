@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.IO;
 using Rdmp.Core.Caching.Pipeline.Destinations;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -18,7 +17,6 @@ namespace Rdmp.Core.Caching.Layouts
     ///'static' information about the cache layout, as opposed to the resolver which will give information for specific cache configurations
     /// Cache layout is effectively based on date with load schedule-specific sub directories with dataset-specific layout information provided through the Resolver
     /// </summary>
-    [InheritedExport(typeof(ICacheLayout))]
     public interface ICacheLayout
     {
         //Readonly fields you should set in your constructor

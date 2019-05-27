@@ -54,10 +54,8 @@ namespace Rdmp.Core.Validation.Dependency
         {
             initialized = true;
 
-            List<Exception> ex;
-
             //get all the SecondaryConstraints
-            foreach (Type constraintType in _mef.GetAllTypesFromAllKnownAssemblies(out ex).Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
+            foreach (Type constraintType in _mef.GetAllTypes().Where(c => typeof(ISecondaryConstraint).IsAssignableFrom(c)))
             {
                 //get all properties and fields which map to a database object
                 var props = constraintType.GetProperties().Where(p => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.PropertyType)).ToList();

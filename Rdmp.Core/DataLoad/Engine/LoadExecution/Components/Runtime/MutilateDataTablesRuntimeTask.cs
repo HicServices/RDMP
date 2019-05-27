@@ -40,7 +40,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
             if(string.IsNullOrWhiteSpace(task.Path))
                 throw new ArgumentException("Path is blank for ProcessTask '"+task+"' - it should be a class name of type " + typeof(IMutilateDataTables).Name);
 
-            MutilateDataTables = mef.FactoryCreateA<IMutilateDataTables>(ProcessTask.Path);
+            MutilateDataTables = mef.CreateA<IMutilateDataTables>(ProcessTask.Path);
             SetPropertiesForClass(RuntimeArguments, MutilateDataTables);
             MutilateDataTables.Initialize(stageArgs.DbInfo, ProcessTask.LoadStage);
         }

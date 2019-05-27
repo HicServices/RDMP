@@ -6,13 +6,13 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -26,7 +26,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private readonly FileCollectionCommand _fileCollectionCommand;
         private readonly Catalogue _targetCatalogue;
 
-        [ImportingConstructor]
+        [UseWithObjectConstructor]
         public ExecuteCommandAddNewSupportingDocument(IActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _targetCatalogue = catalogue;

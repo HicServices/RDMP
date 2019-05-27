@@ -174,7 +174,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public Type GetDestinationType()
         {
-            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(DestinationType);
+            return ((DataExportRepository)Repository).CatalogueRepository.MEF.GetType(DestinationType);
         }
 
         /// <inheritdoc/>

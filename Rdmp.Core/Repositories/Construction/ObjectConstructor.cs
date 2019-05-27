@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Data.Common;
 using System.Linq;
 using System.Reflection;
@@ -264,7 +263,7 @@ namespace Rdmp.Core.Repositories.Construction
             if (constructors.Count == 1)
                 return constructors[0].Invoke(parameters);
 
-            var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof (ImportingConstructorAttribute))).ToArray();
+            var importDecorated = constructors.Where(c => Attribute.IsDefined(c, typeof (UseWithObjectConstructorAttribute))).ToArray();
             if(importDecorated.Length == 1)
                 return importDecorated[0].Invoke( parameters);
 
@@ -332,6 +331,11 @@ namespace Rdmp.Core.Repositories.Construction
 
             return null;
         }
+
+    }
+
+    public class UseWithObjectConstructorAttribute : Attribute
+    {
 
     }
 }

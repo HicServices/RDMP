@@ -30,8 +30,7 @@ namespace Rdmp.Core.Tests.Curation
             MEF mef = new MEF();
             mef.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
 
-            List<Exception> ex;
-            var types = mef.GetAllTypesFromAllKnownAssemblies(out ex)
+            var types = mef.GetAllTypes()
                 .Where(t => typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
 
             var methods = typeof(UnitTests).GetMethods(BindingFlags.NonPublic | BindingFlags.Instance);

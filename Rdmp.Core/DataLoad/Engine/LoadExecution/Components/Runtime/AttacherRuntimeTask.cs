@@ -37,7 +37,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
             if (string.IsNullOrWhiteSpace(task.Path))
                 throw new ArgumentException("Path is blank for ProcessTask '" + task + "' - it should be a class name of type " + typeof(IAttacher).Name);
 
-            Attacher = mef.FactoryCreateA<IAttacher>(ProcessTask.Path);
+            Attacher = mef.CreateA<IAttacher>(ProcessTask.Path);
             SetPropertiesForClass(RuntimeArguments, Attacher);
             Attacher.Initialize(args.StageSpecificArguments.RootDir, RuntimeArguments.StageSpecificArguments.DbInfo);
         }

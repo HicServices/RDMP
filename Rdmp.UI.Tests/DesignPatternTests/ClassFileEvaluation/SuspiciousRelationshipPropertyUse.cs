@@ -207,8 +207,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 
         private void AnalyseRelationshipPropertyUsages()
         {
-            List<Exception> whoCares;
-            foreach (var t in mef.GetAllTypesFromAllKnownAssemblies(out whoCares))
+            foreach (var t in mef.GetAllTypes())
             {
                 if (!t.IsClass)
                     continue;

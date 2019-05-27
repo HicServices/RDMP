@@ -19,6 +19,7 @@ using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
@@ -44,7 +45,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
         private void DoStartup()
         {
-            var startup = new Startup.Startup(_repositoryLocator);
+            var startup = new Startup.Startup(new EnvironmentInfo(),_repositoryLocator);
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
         }
         private void CreateServers()

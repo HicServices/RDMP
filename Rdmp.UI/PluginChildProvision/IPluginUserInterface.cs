@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
@@ -19,8 +18,8 @@ namespace Rdmp.UI.PluginChildProvision
     /// Interface for declaring plugins which interact with the RDMP user interface.  Supports injecting custom objects into RDMPCollectionUI trees and inject new
     /// menu items under existing objects e.g. add a new option to the Catalogue right click menu.  See the abstract base for how to do this easily.
     /// </summary>
-    [InheritedExport(typeof(IChildProvider))]
-    [InheritedExport(typeof(IPluginUserInterface))]
+    
+    
     public interface IPluginUserInterface:IChildProvider,IIconProvider
     {
         /// <summary>

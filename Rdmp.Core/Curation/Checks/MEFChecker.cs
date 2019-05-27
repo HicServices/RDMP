@@ -13,7 +13,7 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Checks
 {
     /// <summary>
-    /// This class checks for the existence of a given MEF export e.g. [Export(typeof(IDataFlowSource))].  The class to find should be a fully expressed path to the class
+    /// This class checks for the existence of a given MEF export e.g. .  The class to find should be a fully expressed path to the class
     /// e.g. "DataExportLibrary.ExtractionTime.ExtractionPipeline.Sources.ExecuteDatasetExtractionSource" The class will not only check at runtime that the class
     /// exists but it will (via the ICheckNotifier) interface look for namespace changes that is classes with the same name as the missing MEF but in a different namespace
     /// 

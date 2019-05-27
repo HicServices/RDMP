@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using Rdmp.Core.Caching.Requests;
 using Rdmp.Core.Caching.Requests.FetchRequestProvider;
 using Rdmp.Core.Curation.Data;
@@ -22,7 +21,6 @@ namespace Rdmp.Core.Caching.Pipeline.Sources
     /// and stored further down the caching pipeline.  Use the Request property to determine which dates/times you are supposed to handle within DoGetChunk.
     /// </summary>
     /// <typeparam name="T"></typeparam>
-    [InheritedExport(typeof(IDataFlowSource<ICacheChunk>))]
     public abstract class CacheSource<T> : ICacheSource, IPluginDataFlowSource<T>,IPipelineRequirement<ICatalogueRepository> where T : class,ICacheChunk
     {
         public ICacheFetchRequestProvider RequestProvider { get; set; }

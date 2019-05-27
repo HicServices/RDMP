@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -30,7 +29,7 @@ namespace Rdmp.UI.Menus
     /// Base class for all right click context menus in <see cref="RDMPCollectionUI"/> controls.  These menus are built by reflection
     /// when the selected object is changed.
     /// </summary>
-    [InheritedExport(typeof(RDMPContextMenuStrip))]
+    
     [System.ComponentModel.DesignerCategory("")]
     public class RDMPContextMenuStrip:ContextMenuStrip
     {

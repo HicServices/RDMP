@@ -6,15 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
-using System.ComponentModel.Composition.Hosting;
-using System.ComponentModel.Composition.Primitives;
-using System.ComponentModel.Composition.ReflectionModel;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -36,8 +33,8 @@ namespace Rdmp.Core.Repositories
         public bool HaveDownloadedAllAssemblies = false;
         public SafeDirectoryCatalog SafeDirectoryCatalog;
 
-        private readonly object ExportLocatorLock = new object();
-        
+        ObjectConstructor o = new ObjectConstructor();
+                
         private readonly string _localPath = null;
 
         public MEF()
@@ -61,8 +58,25 @@ namespace Rdmp.Core.Repositories
             DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
         }
 
+        
+
+        public Type GetType(string type)
+        {            
+            if(!SafeDirectoryCatalog.TypesByName.ContainsKey(type))
+                throw new KeyNotFoundException("Could not find a type called "+ type);
+            
+            return SafeDirectoryCatalog.TypesByName[type];
+        }
+        public Type GetType(string type, Type expectedBaseClass)
+        {
+            var t = GetType(type);
+
+            if(!expectedBaseClass.IsAssignableFrom(t))
+                throw new Exception("Found Type '" + type + "' did not implement expected base class/interface '" + expectedBaseClass +"'" );
 
 
+            return t;
+        }
         public void Setup(SafeDirectoryCatalog result)
         {
             SafeDirectoryCatalog = result;
@@ -92,43 +106,6 @@ namespace Rdmp.Core.Repositories
             SetupMEFIfRequired();
 
             return SafeDirectoryCatalog.BadAssembliesDictionary;
-        }
-
-        private Type ComposablePartExportType<T>(ComposablePartDefinition part)
-        {
-            string whatIAmLookingFor = GetMEFNameForType(typeof(T));
-            try
-            {
-                if (part.ExportDefinitions.Any(
-                    def => def.Metadata.ContainsKey("ExportTypeIdentity") &&
-                           def.Metadata["ExportTypeIdentity"].Equals(whatIAmLookingFor)))
-                {
-                    return ReflectionModelServices.GetPartType(part).Value;
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed to get ComposablePartExportType<T> where T was " + typeof(T).Name + " and part was " + part + " and we decided MEF would probably be calling T a " + whatIAmLookingFor, e);
-            }
-        }
-        private Type ComposablePartExportType(Type t, ComposablePartDefinition part)
-        {
-            string whatIAmLookingFor = GetMEFNameForType(t);
-            try
-            {
-                if (part.ExportDefinitions.Any(
-                    def => def.Metadata.ContainsKey("ExportTypeIdentity") &&
-                           def.Metadata["ExportTypeIdentity"].Equals(whatIAmLookingFor)))
-                {
-                    return ReflectionModelServices.GetPartType(part).Value;
-                }
-                return null;
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed to get ComposablePartExportType<T> where T was " + t.Name + " and part was " + part + " and we decided MEF would probably be calling T a " + whatIAmLookingFor, e);
-            }
         }
 
         /// <summary>
@@ -222,24 +199,35 @@ namespace Rdmp.Core.Repositories
         {
             SetupMEFIfRequired();
 
-            return SafeDirectoryCatalog.Parts
-                    .Select(part =>
-                        ComposablePartExportType<T>(part))
-                    .Where(t => t != null);
+            return GetTypes(typeof(T));
         }
 
+        object _cachedImplementationsLock = new object();
+        Dictionary<Type,Type[]> _cachedImplementations = new Dictionary<Type, Type[]>();
+
+        /// <summary>
+        /// Returns MEF exported Types which inherit or implement <paramref name="type"/>.  E.g. pass IAttacher to see
+        /// all exported implementers
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public IEnumerable<Type> GetTypes(Type type)
         {
             SetupMEFIfRequired();
 
-            return SafeDirectoryCatalog.Parts
-                    .Select(part =>
-                        ComposablePartExportType(type, part))
-                    .Where(t => t != null);
+            lock(_cachedImplementationsLock)
+            {
+                if(_cachedImplementations.ContainsKey(type))
+                return _cachedImplementations[type];
+
+                Type[] results = SafeDirectoryCatalog.GetAllTypes().Where(t=>type.IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+                _cachedImplementations.Add(type,results);
+                return results;
+            }
         }
 
         /// <summary>
-        /// Returns all MEF exported classes decorated with the specified generic export e.g. [Export(typeof(IDataFlowComponent&lt;DataTable&gt;))]
+        /// Returns all MEF exported classes decorated with the specified generic export e.g. 
         /// </summary>
         /// <param name="genericType"></param>
         /// <param name="typeOfT"></param>
@@ -255,228 +243,25 @@ namespace Rdmp.Core.Repositories
 
             return SafeDirectoryCatalog.GetAllTypes();
         }
-
+                
         /// <summary>
-        /// Creates an instance of the named class whcih must have a blank constructor
+        /// Creates an instance of the named class with the provided constructor args
         /// 
         /// <para>IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly</para>
         /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="toCreate"></param>
+        /// <typeparam name="T">The base/interface of the Type you want to create e.g. IAttacher</typeparam>
         /// <returns></returns>
-        public T FactoryCreateA<T>(string toCreate)
+        public T CreateA<T>(string typeToCreate, params object[] args)
         {
-            using (var container = CreateCompositionContainer())
-            {
-                return LocateExportInContainerByTypeName<T>(container, toCreate);
-            }
-        }
-        
-        /// <summary>
-        /// Creates an instance of the named class with a single constructor parameter
-        /// 
-        /// <para>IMPORTANT: this will create classes from the MEF Exports ONLY i.e. not any loaded type but has to be an explicitly labled Export of a LoadModuleAssembly</para>
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <typeparam name="T1"></typeparam>
-        /// <param name="subTypeToCreate"></param>
-        /// <param name="ctorParam1"></param>
-        /// <returns></returns>
-        public T FactoryCreateA<T, T1>(string subTypeToCreate, T1 ctorParam1)
-        {
-            using (var container = CreateCompositionContainer())
-            {
-                container.ComposeExportedValue(ctorParam1);
-                return LocateExportInContainerByTypeName<T>(container, subTypeToCreate);
-            }
+            Type typeToCreateAsType = GetType(typeToCreate);
+            
+            T instance = (T)o.ConstructIfPossible(typeToCreateAsType,args);
+
+            if(instance == null)
+                throw new ObjectLacksCompatibleConstructorException("Could not construct a " + typeof(T) + " using the " + args.Length + " constructor arguments" );
+
+            return instance;
         }
 
-
-        public CompositionContainer CreateCompositionContainer()
-        {
-            SetupMEFIfRequired();
-            return new CompositionContainer(SafeDirectoryCatalog, true);
-        }
-
-
-        private T LocateExportInContainerByTypeName<T>(CompositionContainer container, string typeToCreate)
-        {
-            List<Exception> compositonExceptions = new List<Exception>();
-            lock (ExportLocatorLock)
-            {
-                foreach (Lazy<T> export in container.GetExports<T>())
-                {
-                    T canidiate;
-                    
-                    try
-                    {
-                        canidiate = export.Value;
-                    }
-                    catch (CompositionContractMismatchException ex)
-                    {
-                        //these only matter if we are unable to find what we are looking for
-                        compositonExceptions.Add(ex);
-                        
-                        continue;
-                    }
-
-                    if (canidiate.GetType().FullName.Equals(typeToCreate))
-                        return canidiate;
-                }
-
-                string compositionErrors = "";
-                if (compositonExceptions.Any())
-                    compositionErrors = "The following Composition errors were encountered:" + Environment.NewLine +
-                                        string.Join(Environment.NewLine + Environment.NewLine,
-                                            compositonExceptions.Select(ex => ex.Message));
-
-                throw new KeyNotFoundException("Could not find [Export] of type " + typeToCreate + " using MEF " + " possibly because it is not declared as [Export(typeof(" + GetCSharpNameForType(typeof(T)) + "))]." + compositionErrors);
-            }
-        }
-        
-        public void ManufactureFactory(object importingFactory, object param1, object param2)
-        {
-            SetupMEFIfRequired();
-
-            var container = new CompositionContainer(SafeDirectoryCatalog);
-            container.ComposeExportedValue("CreateDatabase", param1);
-            container.ComposeExportedValue("Version", param2);
-
-
-            container.ComposeParts(importingFactory);
-        }
-
-        readonly Dictionary<string,Type> _cachedTypes = new Dictionary<string, Type>();
-        public object _oLockcachedTypes = new object();
-
-        public Type GetTypeByNameFromAnyLoadedAssembly(string name, Type expectedBaseClassType = null, StringComparison comparisonType = StringComparison.CurrentCulture)
-        {
-            lock (_oLockcachedTypes)
-            {
-                if (_cachedTypes.ContainsKey(name))
-                    return _cachedTypes[name];
-
-                Type toReturn = null;
-
-                SetupMEFIfRequired();
-
-                if (string.IsNullOrWhiteSpace(name))
-                    return null;
-
-                //could be custom imported type
-                foreach (Type type in GetAllTypes())
-                {
-                    if (type == null)
-                        throw new InvalidOperationException("The type array produced by GetAllTypes should not contain any nulls");
-
-                    if (type.FullName.Equals(name,comparisonType))
-                        toReturn =  type;
-                }
-
-                if(toReturn == null)
-                {
-                    List<Type> matches = new List<Type>();
-                    List<Type> fullMatches = new List<Type>();
-
-                    //could be basic type
-                    foreach (Assembly asm in AppDomain.CurrentDomain.GetAssemblies())
-                    {
-                        if(asm.FullName.Contains("nunit.engine"))
-                            continue;
-                        if (asm.FullName.Contains("NPOI"))
-                            continue;
-                        try
-                        {
-                            foreach (Type type in asm.GetTypes())
-                            {
-                                //type doesn't match base type
-                                if (expectedBaseClassType != null)
-                                    if (!expectedBaseClassType.IsAssignableFrom(type))
-                                        continue;
-
-                                if (type.FullName.Equals(name, comparisonType))
-                                    fullMatches.Add(type);
-                                else
-                                    if (type.Name.Equals(name, comparisonType))
-                                        matches.Add(type);
-                            }
-                        }
-                        catch (Exception)
-                        {
-                            continue;
-                        }
-                    }
-
-                    if (fullMatches.Any())
-                        if(fullMatches.Count>1)
-                        {
-                            //we have 2 copies but they are the same assembly file!
-                            if(fullMatches.Select(m=>m.Assembly.CodeBase).Distinct().Count() == 1)
-                                return toReturn = fullMatches.First();
-                            else
-                                throw new Exception("Found " + fullMatches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, fullMatches.Select(m => m.AssemblyQualifiedName + " (Located:" + m.Assembly.CodeBase +")")));
-                        }
-                        else
-                            toReturn = fullMatches.Single();
-
-                    if (matches.Any())
-                        if (matches.Count > 1)
-                            throw new Exception("Found " + matches.Count + " classes called '" + name + "':" + string.Join("," + Environment.NewLine, matches.Select(m => m.FullName)));
-                        else
-                            toReturn = matches.Single();
-                }
-
-                //cache the answer even if it is null (could not resolve Type name)
-                _cachedTypes.Add(name,toReturn);
-
-                return toReturn;
-            }
-        }
-
-
-        /// <summary>
-        /// Lists every single Type in the current AppDomain (every assembly that is currently loaded) regardless of whether it is a MEF Export or not.
-        /// </summary>
-        /// <param name="ex"></param>
-        /// <returns></returns>
-        public IEnumerable<Type> GetAllTypesFromAllKnownAssemblies(out List<Exception> ex)
-        {
-            List<Type> toReturn = new List<Type>();
-            ex = new List<Exception>();
-
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                try
-                {
-                    toReturn.AddRange(assembly.GetTypes());
-                }
-                catch (FileNotFoundException e)
-                {
-                    ex.Add(new Exception("Error loading module " + assembly.FullName, e));
-                }
-                catch (ReflectionTypeLoadException e)
-                {
-                    toReturn.AddRange(e.Types.Where(t => t != null)); // because the exception contains null types!
-                    ex.Add(new Exception("Error loading module " + assembly.FullName, e));
-                }
-
-
-            //could be custom imported type
-            toReturn.AddRange(GetAllTypes());
-
-            return toReturn;
-        }
-
-        public string DescribeBadAssembliesIfAny(string separator = " ")
-        {
-            var baddies = ListBadAssemblies().ToArray();
-            if (!baddies.Any())
-                return null;
-
-            return ListBadAssemblies()
-                .Aggregate("Bad Assemblies:",
-                    (prev, next) =>
-                        prev + "Dll:" + next.Key + separator + " Exception:" +
-                        ExceptionHelper.ExceptionToListOfInnerMessages(next.Value) + separator);
-        }
     }
 }

@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -22,7 +22,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private Catalogue _catalogue;
         private Project _project;
 
-        [ImportingConstructor]
+        [UseWithObjectConstructor]
         public ExecuteCommandMakeCatalogueProjectSpecific(IActivateItems itemActivator,Catalogue catalogue, Project project):this(itemActivator)
         {
             SetCatalogue(catalogue);

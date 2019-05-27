@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Startup;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints.Secondary;
 using Rdmp.Core.Validation.Dependency;
@@ -111,9 +112,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
         }
         
         [Test]
-        public void TheIronTest_DeleteAColumnInfoThatIsReferenced()
+        public void Test_DeleteAColumnInfoThatIsReferenced()
         {
-            var startup = new Startup.Startup(RepositoryLocator);
+            var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
             ColumnInfo l2ColumnInfo;
@@ -137,7 +138,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
         public void TestRunningSetupMultipleTimes()
         {
 
-            var startup = new Startup.Startup(RepositoryLocator);
+            var startup = new Startup.Startup(new EnvironmentInfo(),RepositoryLocator);
             try
             {
                 startup.DoStartup(new IgnoreAllErrorsCheckNotifier());

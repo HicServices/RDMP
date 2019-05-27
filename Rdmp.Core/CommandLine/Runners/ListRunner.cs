@@ -26,7 +26,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            var dbType = repositoryLocator.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(_options.Type);
+            var dbType = repositoryLocator.CatalogueRepository.MEF.GetType(_options.Type);
 
             if(!typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(dbType))
                 throw new NotSupportedException("Only Types derrived from IMapsDirectlyToDatabaseTable can be listed");

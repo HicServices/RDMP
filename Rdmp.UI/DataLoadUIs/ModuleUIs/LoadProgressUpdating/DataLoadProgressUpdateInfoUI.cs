@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -28,7 +27,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.LoadProgressUpdating
     ///  ExecuteScalarSQLInLIVE - same as above except the SQL query is executed against the LIVE dataset post load (this is the super set of all existing dataset records + the records loaded in the data load)
     ///  DoNothing - The load progress is not updated, use this only if you have multiple components that share the same LoadProgress and you only want the last one to register for the progress update</para>
     /// </summary>
-    [Export(typeof(ICustomUI<>))]
+    
     public partial class DataLoadProgressUpdateInfoUI : Form, ICustomUI<DataLoadProgressUpdateInfo>
     {
 

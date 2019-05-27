@@ -6,7 +6,7 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition.Primitives;
+
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -81,11 +81,6 @@ namespace Rdmp.Core.Startup.PluginManagement
                 {
                     report.Assembly = Catalog.GoodAssemblies[file.FullName];
 
-                    //if it has parts
-                    if (Catalog.PartsByFileDictionary.ContainsKey(file.FullName))
-                        foreach (ComposablePartDefinition part in Catalog.PartsByFileDictionary[file.FullName].Parts)
-                            report.Parts.Add(new PluginPart(part));
-
                     //its a good assembly lets record that -although FigureOutDependencies might change that if it is resolvable Instructions in the MISL
                     report.Status = PluginAssemblyStatus.Healthy;
 
@@ -104,7 +99,7 @@ namespace Rdmp.Core.Startup.PluginManagement
             foreach (TypeInfo type in report.Assembly.DefinedTypes)
             {
                 //Primarily we are interested in the Exports
-                PluginPart pluginPart = report.Parts.SingleOrDefault(p => p.ExportPart != null && p.ExportPart.ToString().Equals(type.FullName));
+                PluginPart pluginPart = report.Parts.SingleOrDefault(p =>  p.PartType==type);
 
                 if (pluginPart == null)
                     pluginPart = new PluginPart(type); //it's not an Export but it could still be dodgy we are also interested in the Type if its unloadable e.g. a utility class they have written that uses our API

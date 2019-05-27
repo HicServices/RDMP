@@ -77,7 +77,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 
                 try
                 {
-                    _underlyingType = repo.MEF.GetTypeByNameFromAnyLoadedAssembly(className);
+                    _underlyingType = repo.MEF.GetType(className);
 
                     if(_underlyingType == null)
                         activator.KillForm(ParentForm,new Exception("Could not find Type '" +className +"' for ProcessTask '" + databaseObject + "'"));

@@ -44,7 +44,7 @@ namespace Rdmp.Core.Curation.Checks
                 if (typeof(ICheckable).IsAssignableFrom(t))
                     try
                     {
-                        _mefPlugins.FactoryCreateA<ICheckable>(t.FullName);
+                        _mefPlugins.CreateA<ICheckable>(t.FullName);
                     }
                     catch (Exception ex)
                     {

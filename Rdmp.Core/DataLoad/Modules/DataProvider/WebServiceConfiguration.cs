@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -20,7 +19,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider
     /// Describes a website / webservice endpoint which can be accessed with an optional username / password.  Use this Type when you need a [DemandsInitialization]
     /// property on a component (e.g. IAttacher) which is a remote website/webservice.
     /// </summary>
-    [Export(typeof(ICustomUIDrivenClass))]
+    
     public class WebServiceConfiguration : EncryptedPasswordHost, ICustomUIDrivenClass
     {
         /// <summary>

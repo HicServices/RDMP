@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
@@ -18,7 +17,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.DataProvider
     /// MaxReceivedMessageSize are up to the specific use case of the dialog.  The dialog allows [DemandsInitialization] arguments of plugin classes to securely store the location of 
     /// a web service in the Catalogue database.
     ///</summary>
-    [Export(typeof(ICustomUI<>))]
+    
     public partial class WebServiceConfigurationUI : Form, ICustomUI<WebServiceConfiguration>
     {
         public ICatalogueRepository CatalogueRepository { get; set; }

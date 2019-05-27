@@ -5,11 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using System.Drawing;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;
@@ -31,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExternalDatabaseServer ServerCreatedIfAny { get; private set; }
 
 
-        [ImportingConstructor]
+        [UseWithObjectConstructor]
         public ExecuteCommandCreateNewExternalDatabaseServer(IActivateItems activator) : this(activator,null,PermissableDefaults.None)
         {
             

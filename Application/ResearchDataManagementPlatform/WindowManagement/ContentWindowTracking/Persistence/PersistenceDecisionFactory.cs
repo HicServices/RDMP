@@ -93,7 +93,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         private Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            var toReturn = repositoryLocator.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s);
+            var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s);
 
             if (toReturn == null)
                 throw new TypeLoadException("Could not find Type called '" + s + "'");

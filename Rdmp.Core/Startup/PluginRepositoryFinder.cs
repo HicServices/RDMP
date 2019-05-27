@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.ComponentModel.Composition;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.Startup
@@ -13,7 +12,7 @@ namespace Rdmp.Core.Startup
     /// <summary>
     /// MEF discoverable version of IPluginRepositoryFinder
     /// </summary>
-    [InheritedExport(typeof(IPluginRepositoryFinder))]
+    
     public abstract class PluginRepositoryFinder :IPluginRepositoryFinder
     {
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;

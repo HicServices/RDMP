@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System.ComponentModel.Composition;
 using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
@@ -13,7 +12,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation
     /// Class responsible for allocating Release Identifiers for a Cohort that is being committed (see <see cref="BasicCohortDestination"/>) when the user has not supplied any in 
     /// the file/cohort he is uploading.
     /// </summary>
-    [InheritedExport(typeof(IAllocateReleaseIdentifiers))]
+    
     public interface IAllocateReleaseIdentifiers
     {
         /// <summary>

@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
@@ -24,7 +23,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.DataFlowSources
     /// 
     /// <para>For a use case of when this is useful see ExplicitColumnTypeUI (this form hosts a collection of these controls).</para>
     /// </summary>
-    [Export(typeof(ICustomUI))]
+    
     public partial class ExplicitTypingCollectionUI : Form, ICustomUI<ExplicitTypingCollection>
     {
         public ICatalogueRepository CatalogueRepository { get; set; }

@@ -6,12 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.ComponentModel.Composition;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
+using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -31,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
             UseTripleDotSuffix = true;
         }
 
-        [ImportingConstructor]
+        [UseWithObjectConstructor]
         public ExecuteCommandImportCatalogueDescriptionsFromShare(IActivateItems activator, Catalogue targetCatalogue): base(activator,null)
         {
             _targetCatalogue = targetCatalogue;

@@ -129,7 +129,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         /// <inheritdoc/>
         public Type GetClassAsSystemType()
         {
-            return CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(Class);
+            return CatalogueRepository.MEF.GetType(Class);
         }
 
         /// <inheritdoc/>

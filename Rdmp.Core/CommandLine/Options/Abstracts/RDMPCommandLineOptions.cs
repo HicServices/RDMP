@@ -46,20 +46,9 @@ namespace Rdmp.Core.CommandLine.Options.Abstracts
         protected const string ExampleCatalogueConnectionString = "Server=myServer;Database=RDMP_Catalogue;User Id=myUsername;Password=myPassword;";
         protected const string ExampleDataExportConnectionString = "Server=myServer;Database=RDMP_DataExport;User Id=myUsername;Password=myPassword;";
 
-        public void LoadFromAppConfig()
+        public IRDMPPlatformRepositoryServiceLocator DoStartup(EnvironmentInfo env,ICheckNotifier checkNotifier)
         {
-            /*if (ServerName == null)
-                ServerName = Settings.Default.ServerName;
-
-            if(CatalogueDatabaseName == null)
-                CatalogueDatabaseName = Settings.Default.CatalogueDB;
-
-            if(DataExportDatabaseName == null)
-                DataExportDatabaseName = Settings.Default.DataExportDB;*/
-        }
-        public IRDMPPlatformRepositoryServiceLocator DoStartup(ICheckNotifier checkNotifier)
-        {
-            Startup.Startup startup = new Startup.Startup(GetRepositoryLocator());
+            Startup.Startup startup = new Startup.Startup(env,GetRepositoryLocator());
             startup.DoStartup(checkNotifier);
             return startup.RepositoryLocator;
         }

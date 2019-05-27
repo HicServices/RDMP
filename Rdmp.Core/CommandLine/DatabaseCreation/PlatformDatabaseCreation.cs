@@ -10,6 +10,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
@@ -27,7 +28,6 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
         public void CreatePlatformDatabases(PlatformDatabaseCreationOptions options)
         {
-            
             Create(DefaultCatalogueDatabaseName, new CataloguePatcher(), options);
             Create(DefaultDataExportDatabaseName, new DataExportPatcher(), options);
 

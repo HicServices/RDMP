@@ -26,10 +26,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             };
             List<string> problems = new List<string>();
 
-            List<Exception> whoCares;
-            foreach (var dbEntities in mef.GetAllTypesFromAllKnownAssemblies(out whoCares).Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
+            foreach (var dbEntities in mef.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
             {
-                var matchingInterface = mef.GetTypeByNameFromAnyLoadedAssembly("I" + dbEntities.Name);
+                var matchingInterface = mef.GetType("I" + dbEntities.Name);
 
                 if (matchingInterface != null)
                 {

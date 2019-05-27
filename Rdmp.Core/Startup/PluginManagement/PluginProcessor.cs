@@ -32,6 +32,9 @@ namespace Rdmp.Core.Startup.PluginManagement
         private readonly ICheckNotifier _notifier;
         private readonly ICatalogueRepository _repository;
 
+        public const string PluginPackageSuffix = ".nupkg";
+        public const string PluginPackageManifest = ".nuspec";
+
         public PluginProcessor(ICheckNotifier notifier,ICatalogueRepository repository)
         {
             _notifier = notifier;
@@ -42,8 +45,8 @@ namespace Rdmp.Core.Startup.PluginManagement
         {
             bool toReturn = false;
 
-            if (toCommit.Extension.ToLowerInvariant() != ".zip")
-                throw new NotSupportedException("Files must be zip files");
+            if (toCommit.Extension.ToLowerInvariant() != PluginPackageSuffix)
+                throw new NotSupportedException("Plugins must be packaged as " + PluginPackageSuffix);
             
             var workingDirectory = Path.Combine(Path.GetTempPath(), Path.GetRandomFileName());
             Directory.CreateDirectory(Path.Combine(Path.GetTempPath(), Path.GetRandomFileName()));
