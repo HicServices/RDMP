@@ -114,8 +114,8 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
             File.WriteAllBytes(f2.FullName, new byte[] { 0x3, 0x3 });
 
             var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
-            var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
-            var lma2 = new LoadModuleAssembly(CatalogueRepository, f2, plugin);
+            var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin,null);
+            var lma2 = new LoadModuleAssembly(CatalogueRepository, f2, plugin,null);
 
             Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
             Assert.AreEqual(lma2.Plugin_ID, plugin.ID);
