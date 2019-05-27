@@ -26,6 +26,7 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup.Events;
 using Rdmp.Core.Startup.PluginManagement;
 using Rdmp.Core.Validation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
@@ -284,12 +285,13 @@ namespace Rdmp.Core.Startup
                             "Found unreferenced (no Plugin) folder " + unexpectedDirectory.FullName +
                             " but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
                             CheckResult.Fail, ex));
-
                 }
             }
             
             MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toLoad.Select(d=>d.FullName).ToArray());
             catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
+
+            AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
 
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
             var sw = Stopwatch.StartNew();
@@ -299,7 +301,6 @@ namespace Rdmp.Core.Startup
 
             sw.Stop();
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
-
         }
         #endregion
     }
