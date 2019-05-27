@@ -251,7 +251,7 @@ namespace Tests.Common
                 var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.dll");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
-                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>());
+                return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(),null);
             }
             
             if (typeof (T) == typeof(AggregateContinuousDateAxis))

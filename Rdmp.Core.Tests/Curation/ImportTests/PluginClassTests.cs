@@ -65,7 +65,7 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
 
             Core.Curation.Data.Plugin p = new Core.Curation.Data.Plugin(Repository,fi);
-            var lma = new LoadModuleAssembly(Repository, fi2, p);
+            var lma = new LoadModuleAssembly(Repository, fi2, p,null);
             
             //Give it some pdb bytes
             lma.Pdb = new byte[]{0x1};
@@ -124,8 +124,8 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
             File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
             Core.Curation.Data.Plugin p = new Core.Curation.Data.Plugin(Repository, fi);
-            var lma = new LoadModuleAssembly(Repository, fi2, p);
-            var lma2 = new LoadModuleAssembly(Repository, fi3, p);
+            var lma = new LoadModuleAssembly(Repository, fi2, p,null);
+            var lma2 = new LoadModuleAssembly(Repository, fi3, p,null);
             
             //gather dependencies of the plugin (plugin[0] + lma[1])
             Gatherer g = new Gatherer(RepositoryLocator);
