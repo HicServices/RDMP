@@ -13,7 +13,7 @@ using Rdmp.Core.Repositories;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
-namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.LoadProgressUpdating
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating
 {
     /// <summary>
     /// A LoadProgress object can be used as part of a LoadMetadata to record how far through a longitudinal loading task a load is (See LoadProgressUI).  This dialog lets you specify 

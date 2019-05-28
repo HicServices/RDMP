@@ -6,6 +6,7 @@
 
 using System;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
@@ -119,6 +120,9 @@ This will not help you avoid bad data as the full file structure must still be r
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
         public string IgnoreColumns { get; set; }
 
+        [DemandsInitialization("The culture to use for dates")]
+        public CultureInfo Culture{get;set;}
+
 
         /// <summary>
         /// The database table we are trying to load
@@ -153,7 +157,7 @@ This will not help you avoid bad data as the full file structure must still be r
         private void InitializeComponents()
         {
             Headers = new FlatFileColumnCollection(_fileToLoad, MakeHeaderNamesSane, ExplicitlyTypedColumns, ForceHeaders, ForceHeadersReplacesFirstLineInFile, IgnoreColumns);
-            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords);
+            DataPusher = new FlatFileToDataTablePusher(_fileToLoad, Headers, HackValueReadFromFile, AttemptToResolveNewLinesInRecords,Culture);
             EventHandlers = new FlatFileEventHandlers(_fileToLoad, DataPusher, ThrowOnEmptyFiles, BadDataHandlingStrategy, _listener, MaximumErrorsToReport <= 0 ? int.MaxValue:MaximumErrorsToReport,IgnoreBadReads);
         }
 

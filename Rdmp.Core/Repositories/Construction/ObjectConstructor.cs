@@ -331,11 +331,5 @@ namespace Rdmp.Core.Repositories.Construction
 
             return null;
         }
-
-    }
-
-    public class UseWithObjectConstructorAttribute : Attribute
-    {
-
     }
 }

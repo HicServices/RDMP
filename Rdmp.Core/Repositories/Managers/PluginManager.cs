@@ -35,7 +35,7 @@ namespace Rdmp.Core.Repositories.Managers
             var runningSoftwareVersion = new Version(fileVersion);
 
             //nupkg that are compatible with the running software
-            var lma = _repository.GetAllObjects<LoadModuleAssembly>().Where(a=>new Version(a.DllFileVersion).IsCompatibleWith(runningSoftwareVersion,2));
+            var lma = _repository.GetAllObjects<LoadModuleAssembly>().Where(a=>a.DllFileVersion != null && new Version(a.DllFileVersion).IsCompatibleWith(runningSoftwareVersion,2));
             
             //latest versions
             var latestVersionsOfPlugins = from p in lma.Select(l=>l.Plugin)

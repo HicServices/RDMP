@@ -28,10 +28,8 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
     /// </summary>
     public abstract class FlatFileAttacher : Attacher, IPluginAttacher
     {
-
         [DemandsInitialization("The file to attach, e.g. \"*hic*.csv\" - this is NOT a Regex", Mandatory = true)]
         public string FilePattern { get; set; }
-
 
         [DemandsInitialization("The table name to load with data from the file (this will be the RAW version of the table)")]
         public TableInfo TableToLoad { get; set; }
@@ -103,6 +101,9 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
                 using (var insert = tableToLoad.BeginBulkInsert())
                 {
+                    if(Culture != null)
+                        insert.DateTimeDecider.Culture = Culture;
+
                     // setup bulk insert it into destination
                     insert.Timeout = 500000;
 

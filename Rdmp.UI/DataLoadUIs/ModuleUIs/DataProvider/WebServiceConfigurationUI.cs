@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataProvider;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.DataProvider
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataProvider
 {
     /// <summary>
     /// Allows you to specify and store an encrypted set of credentials in the Catalogue database for a web service endpoint.  The exact interpretation of Endpoint, MaxBufferSize and 

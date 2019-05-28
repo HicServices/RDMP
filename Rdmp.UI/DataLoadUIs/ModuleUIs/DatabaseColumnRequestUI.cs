@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 
-namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs
 {
     public partial class DatabaseColumnRequestUI : UserControl
     {

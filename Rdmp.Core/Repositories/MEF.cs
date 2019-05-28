@@ -57,13 +57,64 @@ namespace Rdmp.Core.Repositories
             }
             DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
         }
-
-        
+           
 
         public Type GetType(string type)
         {            
+            if(string.IsNullOrWhiteSpace(type))
+                throw new ArgumentNullException("type");
+
             if(!SafeDirectoryCatalog.TypesByName.ContainsKey(type))
-                throw new KeyNotFoundException("Could not find a type called "+ type);
+            {
+                var toReturn = Type.GetType(type);
+                
+                //If they are looking for the Type name without the namespace that's bad
+                if(toReturn == null)
+                    if(!type.Contains('.'))
+                    {
+                        //can we find one in Core with that name e.g. "Plugin"
+                        toReturn = typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(type));
+
+                        //no, anyone else got one?
+                        if(toReturn == null)
+                        {
+                            var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(type)).ToArray();
+                            
+                            //great theres only one
+                            if(matches.Length == 1)
+                                toReturn = matches[0];
+                            else if(matches.Length > 1) //nope looks like everyone has a class called MyClass
+                                throw new Exception("Found " + matches.Length  +" Types called '" + type + "'");
+                        }
+                    }
+                    else
+                    {
+                        //ok they are lying about the Type.  It's not MyLib.Myclass but maybe we still have a Myclass in Rdmp.Core?
+                        string name = type.Substring(type.LastIndexOf('.')+1);
+                        toReturn = typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name));
+
+                        //no, anyone else got one?
+                        if(toReturn == null)
+                        {
+                            var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(name)).ToArray();
+                            
+                            //great theres only one
+                            if(matches.Length == 1)
+                                toReturn = matches[0];
+                            else if(matches.Length > 1) //nope looks like everyone has a class called MyClass
+                                throw new Exception("Found " + matches.Length  +" Types called '" + type + "'");
+                        }
+                    }
+
+                if(toReturn == null)
+                    throw new KeyNotFoundException("Could not find a type called "+ type);
+                
+                //we know about it now!
+                SafeDirectoryCatalog.AddType(type,toReturn);
+
+                return toReturn;
+            }
+                
             
             return SafeDirectoryCatalog.TypesByName[type];
         }
@@ -255,6 +306,10 @@ namespace Rdmp.Core.Repositories
         {
             Type typeToCreateAsType = GetType(typeToCreate);
             
+            //can we cast to T?
+            if(typeToCreateAsType.IsAssignableFrom(typeof(T)))
+                throw new Exception("Requested typeToCreate '" + typeToCreate + "' was not assignable to the required Type '" + typeof(T).Name +"'");
+
             T instance = (T)o.ConstructIfPossible(typeToCreateAsType,args);
 
             if(instance == null)

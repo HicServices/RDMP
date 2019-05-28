@@ -13,7 +13,7 @@ using Rdmp.Core.Repositories;
 using ReusableUIComponents.Dialogs;
 
 
-namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.DataFlowSources
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources
 {
     /// <summary>
     /// ExplicitlyTypedColumns are an expectation that a column of a given name will appear in the data flow pipeline DataTable and a notification to the RDMP that it must be given the

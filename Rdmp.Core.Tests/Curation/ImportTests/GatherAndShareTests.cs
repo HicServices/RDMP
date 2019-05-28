@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Sharing.Dependency.Gathering;
+using Rdmp.Core.Startup.PluginManagement;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.ImportTests
@@ -107,13 +108,13 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
         [Test]
         public void GatherAndShare_Plugin_Test()
         {
-            var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1.dll"));
+            var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1"+ PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
 
-            var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1.dll"));
+            var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1"+ PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(f2.FullName, new byte[] { 0x3, 0x3 });
 
-            var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary.zip"));
+            var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary"+ PackPluginRunner.PluginPackageSuffix));
             var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin,null);
             var lma2 = new LoadModuleAssembly(CatalogueRepository, f2, plugin,null);
 

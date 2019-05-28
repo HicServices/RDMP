@@ -109,6 +109,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             _source.Separator = separator.ToString();
             _source.StronglyTypeInput = false;
             _source.StronglyTypeInputBatchSize = 0;
+            _source.Culture = Culture;
         }
 
         private IDataLoadEventListener _listener;

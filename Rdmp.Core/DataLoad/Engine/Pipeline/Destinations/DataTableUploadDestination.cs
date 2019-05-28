@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
+using System.Globalization;
 using System.Linq;
 using FAnsi.Connections;
 using FAnsi.Discovery;
@@ -57,6 +58,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
         [DemandsInitialization("Optional - Change system behaviour when a new table is being created by the component", TypeOf = typeof(IDatabaseColumnRequestAdjuster))]
         public Type Adjuster { get; set; }
+
+        [DemandsInitialization("The culture to use for uploading (determines date format etc)")]
+        public CultureInfo Culture{get;set;}
 
         public string TargetTableName { get; private set; }
         
@@ -161,6 +165,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
                 _managedConnection = _server.BeginNewTransactedConnection();
                 _bulkcopy = discoveredTable.BeginBulkInsert(_managedConnection.ManagedTransaction);
+                
+                if(Culture != null)
+                    _bulkcopy.DateTimeDecider.Culture = Culture;
 
                 _firstTime = false;
             }

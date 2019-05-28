@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi.Implementation;
 using NUnit.Framework;
 using Rdmp.Core.Databases;
 using Tests.Common;
@@ -42,10 +43,10 @@ namespace Rdmp.Core.Tests.Databases
             
             SetupMEF();
 
+            MEF.SafeDirectoryCatalog.AddType(typeof(FAnsi.DatabaseType));
+
             foreach (var oldClass in ExpectedClasses)
             {
-                Type foundBefore = MEF.GetType(oldClass);
-
                 string newClass = oldClass;
 
                 foreach (KeyValuePair<string, string> kvp in substitutions)

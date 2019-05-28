@@ -11,6 +11,10 @@ using System.Linq;
 
 namespace Rdmp.Core.Startup
 {
+    /// <summary>
+    /// Class for describing the runtime environment in which <see cref="Startup"/> is executing e.g. under
+    /// Windows / Linux in net461 or netcoreapp2.2.  This determines which plugin binary files are loaded
+    /// </summary>
     public class EnvironmentInfo
     {
         /// <summary>

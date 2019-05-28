@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
 
-namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs
 {
     
     public partial class AdjustColumnDataTypesUI : Form, IDatabaseColumnRequestAdjuster

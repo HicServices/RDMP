@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using ReusableUIComponents;
@@ -40,6 +42,17 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             {
                 tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
                 tbText.AutoCompleteSource = AutoCompleteSource.FileSystemDirectories;
+            }
+
+            if(args.Type == typeof(CultureInfo))
+            {
+                tbText.AutoCompleteMode = AutoCompleteMode.SuggestAppend;
+                tbText.AutoCompleteSource = AutoCompleteSource.CustomSource;
+                
+                var collection = new AutoCompleteStringCollection();
+                collection.AddRange(CultureInfo.GetCultures(CultureTypes.AllCultures).Select(c=>c.Name).ToArray());
+
+                tbText.AutoCompleteCustomSource = collection;
             }
 
             if (args.Type == typeof(FileInfo))

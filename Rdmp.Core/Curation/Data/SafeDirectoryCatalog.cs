@@ -30,8 +30,11 @@ namespace Rdmp.Core.Curation.Data
         /// Assemblies succesfully loaded
         /// </summary>
         public Dictionary<string, Assembly> GoodAssemblies = new Dictionary<string, Assembly>();
-        public Dictionary<Assembly,Type[]> Types = new Dictionary<Assembly, Type[]>();
+        public Dictionary<Assembly,Type[]> TypesByAssembly = new Dictionary<Assembly, Type[]>();
+        public HashSet<Type> Types = new HashSet<Type>();
         public Dictionary<string,Type> TypesByName = new Dictionary<string, Type>();
+        private object typesByNameLock = new object();
+
         /// <summary>
         /// Assemblies which could not be loaded
         /// </summary>
@@ -108,11 +111,11 @@ namespace Rdmp.Core.Curation.Data
 
         private void AddTypes(FileInfo f, Assembly ass, Type[] types, ICheckNotifier listener)
         {
-            Types.Add(ass,types.Where(t=>t != null).ToArray());
+            TypesByAssembly.Add(ass,types.Where(t=>t != null).ToArray());
             
             foreach(Type t in types.Where(t=>t != null))
                 if(!TypesByName.ContainsKey(t.FullName))
-                    TypesByName.Add(t.FullName,t);
+                    AddType(t.FullName,t);
 
             GoodAssemblies.Add(f.FullName, ass);
 
@@ -121,21 +124,27 @@ namespace Rdmp.Core.Curation.Data
                 listener.OnCheckPerformed(new CheckEventArgs("Successfully loaded Assembly " + f.FullName + " into memory", CheckResult.Success));
         }
 
-        HashSet<Type> _injectedTypes = new HashSet<Type>();
-
         internal void AddType(Type type)
         {
-            //Only add novel types
-            if(_injectedTypes.Contains(type))
-                return;
+            AddType(type.FullName,type);
+        }
 
-            //and record the explicit injection
-            _injectedTypes.Add(type);
+        internal void AddType(string typeNameOrAlias, Type type)
+        {
+            lock(typesByNameLock)
+            {
+                //only add it if it is novel
+                if(!TypesByName.ContainsKey(typeNameOrAlias))
+                    TypesByName.Add(typeNameOrAlias,type);
+
+                Types.Add(type);
+            }
         }
 
         public IEnumerable<Type> GetAllTypes()
         {
-            return Types.SelectMany(a=>a.Value).Union(_injectedTypes);
+            lock(typesByNameLock)
+                return Types;
         }
     }
 }

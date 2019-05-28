@@ -4,11 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
+using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -354,6 +357,52 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
         }
         
+        [TestCase(DatabaseType.MySql,"27/01/2001","en-GB")]
+        [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB")]
+        [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB")]
+        [TestCase(DatabaseType.MySql,"01/27/2001","en-us")]
+        [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us")]
+        [TestCase(DatabaseType.Oracle,"01/27/2001","en-us")]        
+        public void Test_FlatFileAttcher_AmbiguousDates(DatabaseType type,string val,string culture)
+        { 
+            string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
+            var sw = new StreamWriter(filename);
+
+            sw.WriteLine("dob");
+            sw.WriteLine(val);
+
+            sw.Flush();
+            sw.Close();
+            sw.Dispose();
+
+            var db = GetCleanedServer(type);
+
+            var tbl = 
+                db.CreateTable("AmbiguousDatesTestTable",
+                new []{new DatabaseColumnRequest("dob",new DatabaseTypeRequest(typeof(DateTime)))}
+                );
+
+
+            Import(tbl,out TableInfo ti,out _);
+            var attacher = new AnySeparatorFileAttacher();
+            attacher.Initialize(LoadDirectory, db);
+            attacher.Separator = ",";
+            attacher.FilePattern = "bob*";
+            attacher.TableName = tbl.GetRuntimeName();
+            attacher.Culture = new CultureInfo(culture);
+            
+            var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
+
+            var exitCode = attacher.Attach(job, new GracefulCancellationToken());
+            Assert.AreEqual(ExitCodeType.Success, exitCode);
+            
+            attacher.LoadCompletedSoDispose(ExitCodeType.Success, new ThrowImmediatelyDataLoadEventListener());
+
+            Assert.AreEqual(new DateTime(2001,1,27),tbl.GetDataTable().Rows[0][0]);
+
+            File.Delete(filename);
+            tbl.Drop();
+        }
         [TearDown]
         public void TearDown()
         {

@@ -1,4 +1,4 @@
-﻿namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.LoadProgressUpdating
+﻿namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating
 {
     partial class DataLoadProgressUpdateInfoUI
     {

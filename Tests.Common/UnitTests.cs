@@ -244,11 +244,11 @@ namespace Tests.Common
             }
             
             if (typeof (T) == typeof(Rdmp.Core.Curation.Data.Plugin))
-                return (T)(object)new Rdmp.Core.Curation.Data.Plugin(Repository,new FileInfo("bob.zip"));
+                return (T)(object)new Rdmp.Core.Curation.Data.Plugin(Repository,new FileInfo("bob.nupkg"));
             
             if (typeof (T) == typeof(LoadModuleAssembly))
             {
-                var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.dll");
+                var dll = Path.Combine(TestContext.CurrentContext.TestDirectory,"a.nupkg");
                 File.WriteAllBytes(dll,new byte[] {0x11});
 
                 return (T)(object)new LoadModuleAssembly(Repository,new FileInfo(dll),WhenIHaveA<Rdmp.Core.Curation.Data.Plugin>(),null);

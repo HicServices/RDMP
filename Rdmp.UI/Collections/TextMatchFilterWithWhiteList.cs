@@ -10,6 +10,10 @@ using BrightIdeasSoftware;
 
 namespace Rdmp.UI.Collections
 {
+    /// <summary>
+    /// <see cref="TextMatchFilter"/> which always shows a given list of objects (the whitelist).  This class is an <see cref="IModelFilter"/>
+    /// for use with ObjectListView
+    /// </summary>
     public class TextMatchFilterWithWhiteList : TextMatchFilter
     {
         HashSet<object>  _whiteList = new HashSet<object>();

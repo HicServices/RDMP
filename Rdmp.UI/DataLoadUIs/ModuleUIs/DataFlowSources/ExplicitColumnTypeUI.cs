@@ -7,7 +7,7 @@
 using System;
 using System.Windows.Forms;
 
-namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.DataFlowSources
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources
 {
     /// <summary>
     /// Allows you to specify an explicit C# datatype for an RDMP data flow component to use for a given named column.  For example if you are trying to load a CSV file with values 

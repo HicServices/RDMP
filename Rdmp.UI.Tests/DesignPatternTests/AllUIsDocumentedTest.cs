@@ -70,7 +70,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)
         {
 
-            
+            SetupMEF();
 
             List<Exception> whoCares;
             foreach (Type type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))

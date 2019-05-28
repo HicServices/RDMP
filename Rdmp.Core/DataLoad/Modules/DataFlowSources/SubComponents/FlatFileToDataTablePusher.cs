@@ -7,9 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
@@ -26,7 +28,9 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         private readonly FlatFileColumnCollection _headers;
         private readonly Func<string, object> _hackValuesFunc;
         private readonly bool _attemptToResolveNewlinesInRecords;
-        
+        private readonly CultureInfo _culture;
+        private readonly DateTimeTypeDecider _dateTimeParser;
+
         /// <summary>
         /// Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if they
         /// make up a coherent row e.g. if a free text field is splitting up the document with newlines.  If the peeked lines do not
@@ -40,7 +44,6 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         /// </summary>
         public HashSet<int> BadLines = new HashSet<int>();
 
-
         /// <summary>
         /// This is incremented when too many values are read from the file to match the header count BUT the values read were null/empty
         /// </summary>
@@ -51,12 +54,17 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         /// </summary>
         private bool _haveComplainedAboutColumnMismatch;
 
-        public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad, FlatFileColumnCollection headers, Func<string, object> hackValuesFunc, bool attemptToResolveNewlinesInRecords)
+        public FlatFileToDataTablePusher(FlatFileToLoad fileToLoad, FlatFileColumnCollection headers, Func<string, object> hackValuesFunc, bool attemptToResolveNewlinesInRecords,CultureInfo culture)
         {
             _fileToLoad = fileToLoad;
             _headers = headers;
             _hackValuesFunc = hackValuesFunc;
             _attemptToResolveNewlinesInRecords = attemptToResolveNewlinesInRecords;
+            _culture = culture;
+            _dateTimeParser = new DateTimeTypeDecider();
+
+            if(culture != null)
+                _dateTimeParser.Culture = culture;
         }
 
         public int PushCurrentLine(CsvReader reader,FlatFileLine lineToPush, DataTable dt,IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
@@ -157,6 +165,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                                 hackedValue = integer;
 
                         }
+
+                        //if it is a datetime
+                        if(dt.Columns[_headers[i]].DataType == typeof(DateTime) && hackedValue is string)
+                            hackedValue = _dateTimeParser.Parse((string)hackedValue);
+
                         //make it an int because apparently C# is too stupid to convert "1" into a bool but is smart enough to turn 1 into a bool.... seriously?!!?
 
                         rowValues.Add(_headers[i], Convert.ChangeType(hackedValue, dt.Columns[_headers[i]].DataType));

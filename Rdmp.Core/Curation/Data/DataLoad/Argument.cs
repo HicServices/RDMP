@@ -8,6 +8,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -249,6 +250,9 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
             if (type.Equals(typeof(EncryptedString).ToString()))
                 return new EncryptedString(CatalogueRepository) { Value = value };
+
+            if(type.Equals(typeof(CultureInfo).ToString()))
+                return new CultureInfo(value);
 
             throw new NotSupportedException("Custom arguments cannot be of type " + type);
         }

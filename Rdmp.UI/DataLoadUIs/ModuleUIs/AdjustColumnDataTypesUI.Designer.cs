@@ -1,4 +1,4 @@
-﻿namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs
+﻿namespace Rdmp.UI.DataLoadUIs.ModuleUIs
 {
     partial class AdjustColumnDataTypesUI
     {

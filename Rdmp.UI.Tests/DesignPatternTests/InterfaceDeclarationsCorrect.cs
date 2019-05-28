@@ -28,7 +28,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
             foreach (var dbEntities in mef.GetAllTypes().Where(t => typeof(DatabaseEntity).IsAssignableFrom(t)))
             {
-                var matchingInterface = mef.GetType("I" + dbEntities.Name);
+                var matchingInterface = typeof(Catalogue).Assembly.GetTypes().SingleOrDefault(t=>t.Name.Equals("I" + dbEntities.Name));
 
                 if (matchingInterface != null)
                 {

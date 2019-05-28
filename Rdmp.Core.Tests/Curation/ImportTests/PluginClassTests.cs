@@ -13,6 +13,7 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Sharing.Dependency.Gathering;
+using Rdmp.Core.Startup.PluginManagement;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.ImportTests
@@ -41,27 +42,33 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
             var version = FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion;
             var tripart = new Version(version);
 
-            Core.Curation.Data.Plugin p = new Core.Curation.Data.Plugin(Repository, fi);
-            p.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 1);
-            p.SaveToDatabase();
+            var lma1 = WhenIHaveA<LoadModuleAssembly>();
+            var lma2 = WhenIHaveA<LoadModuleAssembly>();
 
-            Core.Curation.Data.Plugin p2 = new Core.Curation.Data.Plugin(Repository, fi);
-            p2.PluginVersion = new Version(tripart.Major, tripart.Minor, tripart.Build, 5);
-            p2.SaveToDatabase();
+
+            lma1.Plugin.Name = "MyPlugin";
+            lma1.DllFileVersion = version; //the version of Rdmp.Core targetted
+            lma1.Plugin.PluginVersion = new Version(1, 1, 1, 1); //the version of the plugin
+            lma1.Plugin.SaveToDatabase();
+                       
+            lma2.Plugin.Name = "MyPlugin";
+            lma2.DllFileVersion = version;//the version of Rdmp.Core targetted (same as above)
+            lma2.Plugin.PluginVersion =  new Version(1, 1, 1, 2);//the version of the plugin (higher)
+            lma2.SaveToDatabase();
 
             var plugins = Repository.PluginManager.GetCompatiblePlugins();
             Assert.That(plugins, Has.Length.EqualTo(1));
-            Assert.That(plugins[0], Is.EqualTo(p2));
+            Assert.That(plugins[0], Is.EqualTo(lma2.Plugin));
         }
 
         [Test]
         public void TestPlugin_PdbNull_Sharing()
         {
             //Setup the load module we want to test (with plugin parent)
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.zip"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah"+ PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(fi.FullName,new byte[]{0x1,0x2});
 
-            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah.dll"));
+            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah"+ PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
 
             Core.Curation.Data.Plugin p = new Core.Curation.Data.Plugin(Repository,fi);
@@ -114,13 +121,13 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
         public void TestPlugin_OrphanImport_Sharing()
         {
             //Setup the load module we want to test (with plugin parent)
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah2.zip"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah2." + PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(fi.FullName, new byte[] { 0x1, 0x2 });
 
-            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah2.dll"));
+            var fi2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah2."+ PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(fi2.FullName, new byte[] { 0x1, 0x2 });
             
-            var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah3.dll"));
+            var fi3 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Blah3."+ PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(fi3.FullName, new byte[] { 0x3, 0x4 });
 
             Core.Curation.Data.Plugin p = new Core.Curation.Data.Plugin(Repository, fi);

@@ -1,4 +1,4 @@
-﻿namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.DataProvider
+﻿namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataProvider
 {
     partial class WebServiceConfigurationUI
     {

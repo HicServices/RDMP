@@ -1,4 +1,4 @@
-﻿namespace Rdmp.UI.DataLoadUIs.LoadModuleUIs.DataFlowSources
+﻿namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources
 {
     partial class ExplicitTypingCollectionUI
     {
