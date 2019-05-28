@@ -21,6 +21,7 @@
             <dependency id="SSH.NET" version="2013.4.7" />
             <dependency id="NUnit" version="3.11.0" />
             <dependency id="Moq" version="4.10.1" />
+			<dependency id="YamlDotNet" version="6.0.0.0" />
         </dependencies>
     </metadata>
     <files>
