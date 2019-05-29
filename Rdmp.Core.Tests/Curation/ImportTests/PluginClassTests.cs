@@ -52,7 +52,7 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
             lma1.Plugin.SaveToDatabase();
                        
             lma2.Plugin.Name = "MyPlugin";
-            lma1.Plugin.RdmpVersion = new Version(version);//the version of Rdmp.Core targetted (same as above)
+            lma2.Plugin.RdmpVersion = new Version(version);//the version of Rdmp.Core targetted (same as above)
             lma2.Plugin.PluginVersion =  new Version(1, 1, 1, 2);//the version of the plugin (higher)
             lma2.SaveToDatabase();
 
