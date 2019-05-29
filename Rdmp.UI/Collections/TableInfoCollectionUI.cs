@@ -122,6 +122,8 @@ namespace Rdmp.UI.Collections
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllServersNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllConnectionStringKeywordsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllStandardRegexesNode);
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllPluginsNode);
+
 
         }
 

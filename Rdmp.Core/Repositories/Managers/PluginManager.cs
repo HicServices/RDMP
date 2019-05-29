@@ -25,6 +25,11 @@ namespace Rdmp.Core.Repositories.Managers
             _repository = repository;
         }
 
+        /// <summary>
+        /// Returns the latest version of each plugin which is compatible with the running RDMP software version (as determined
+        /// by the listed <see cref="Curation.Data.Plugin.RdmpVersion"/>)
+        /// </summary>
+        /// <returns></returns>
         public Curation.Data.Plugin[] GetCompatiblePlugins()
         {
             var location = Assembly.GetExecutingAssembly().Location;
@@ -35,10 +40,10 @@ namespace Rdmp.Core.Repositories.Managers
             var runningSoftwareVersion = new Version(fileVersion);
 
             //nupkg that are compatible with the running software
-            var lma = _repository.GetAllObjects<LoadModuleAssembly>().Where(a=>a.DllFileVersion != null && new Version(a.DllFileVersion).IsCompatibleWith(runningSoftwareVersion,2));
+            var plugins = _repository.GetAllObjects<Curation.Data.Plugin>().Where(a=>a.RdmpVersion.IsCompatibleWith(runningSoftwareVersion,2));
             
             //latest versions
-            var latestVersionsOfPlugins = from p in lma.Select(l=>l.Plugin)
+            var latestVersionsOfPlugins = from p in plugins
                       group p by p.GetShortName() into grp
                       select grp.OrderByDescending(p => p.PluginVersion).FirstOrDefault();
                         

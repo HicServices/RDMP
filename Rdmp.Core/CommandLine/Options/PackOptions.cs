@@ -7,7 +7,7 @@
 using System.Collections.Generic;
 using CommandLine;
 using CommandLine.Text;
-using Rdmp.Core.Startup.PluginManagement;
+using Rdmp.Core.CommandLine.Runners;
 
 namespace Rdmp.Core.CommandLine.Options
 {

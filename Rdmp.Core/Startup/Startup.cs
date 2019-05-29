@@ -16,6 +16,7 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
@@ -24,7 +25,6 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup.Events;
-using Rdmp.Core.Startup.PluginManagement;
 using Rdmp.Core.Validation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -244,7 +244,7 @@ namespace Rdmp.Core.Startup
                                                              
                 var existingFiles = subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList();
 
-                foreach(var lma in compatiblePlugins[i].LoadModuleAssemblies.Where(l=>!existingFiles.Any(f=>f.Name.Equals(l.Name))))
+                foreach(var lma in compatiblePlugins[i].LoadModuleAssemblies.Where(l=>!existingFiles.Any(f=>f.Name.Equals(l.Plugin.Name))))
                     lma.DownloadAssembly(subdir);
                 
                 foreach(var archive in  subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList())
@@ -253,12 +253,26 @@ namespace Rdmp.Core.Startup
                     var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
                     
                     if(outDir != null && outDir.Exists)
-                        outDir.Delete(true);
+                        try
+                        {
+                            outDir.Delete(true);
+                        }
+                        catch(Exception ex)
+                        {
+                            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not delete directory '" + outDir.FullName+"'",CheckResult.Warning,ex));
+                        }
 
                     outDir = subdir.CreateSubdirectory("out");
 
                     using(var zf = ZipFile.OpenRead(archive.FullName))
-                        zf.ExtractToDirectory(outDir.FullName);
+                        try
+                        {
+                            zf.ExtractToDirectory(outDir.FullName);
+                        }
+                        catch(Exception ex)
+                        {
+                            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
+                        }
                     
                     toLoad.Add(_environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib")));
 

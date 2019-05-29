@@ -57,6 +57,8 @@ namespace Rdmp.Core.Providers
         ObjectImport[] AllImports { get; }
         ObjectExport[] AllExports { get; }
 
+        AllPluginsNode AllPluginsNode {get;}
+
         Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables();
         IEnumerable<object> GetAllChildrenRecursively(object o);
         IEnumerable<ExtractionInformation> AllExtractionInformations { get; }

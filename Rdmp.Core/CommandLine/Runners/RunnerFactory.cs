@@ -6,7 +6,6 @@
 
 using System;
 using Rdmp.Core.CommandLine.Options;
-using Rdmp.Core.Startup.PluginManagement;
 
 namespace Rdmp.Core.CommandLine.Runners
 {

@@ -661,10 +661,19 @@
   <data name="CohortAggregateContainer" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\CohortAggregateContainer.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="main" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Resources\main.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="WhatIsACohort" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\WhatIsACohort.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AllExpiredPluginsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllExpiredPluginsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AllPluginsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllPluginsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Graph" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Graph.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Main" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Main.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

@@ -248,4 +248,7 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Startup\PluginManagement\" />
+  </ItemGroup>
 </Project>

@@ -57,7 +57,8 @@ namespace Rdmp.Core.Repositories
             }
             DownloadDirectory = new DirectoryInfo(_MEFPathAsString);
         }
-           
+          
+        private HashSet<string> TypeNotKnown = new HashSet<string>();
 
         public Type GetType(string type)
         {            

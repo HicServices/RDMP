@@ -10,13 +10,13 @@ using System.Linq;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Sharing.Dependency.Gathering;
-using Rdmp.Core.Startup.PluginManagement;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.ImportTests
@@ -110,16 +110,11 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
         {
             var f1 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1"+ PackPluginRunner.PluginPackageSuffix));
             File.WriteAllBytes(f1.FullName,new byte[]{0x1,0x2});
-
-            var f2 = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"Imaginary1"+ PackPluginRunner.PluginPackageSuffix));
-            File.WriteAllBytes(f2.FullName, new byte[] { 0x3, 0x3 });
-
-            var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary"+ PackPluginRunner.PluginPackageSuffix));
-            var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin,null);
-            var lma2 = new LoadModuleAssembly(CatalogueRepository, f2, plugin,null);
+            
+            var plugin = new Core.Curation.Data.Plugin(CatalogueRepository,new FileInfo("Imaginary"+ PackPluginRunner.PluginPackageSuffix),new System.Version(1,1,1),new System.Version(1,1,1));
+            var lma1 = new LoadModuleAssembly(CatalogueRepository,f1,plugin);
 
             Assert.AreEqual(lma1.Plugin_ID, plugin.ID);
-            Assert.AreEqual(lma2.Plugin_ID, plugin.ID);
 
             Gatherer g = new Gatherer(RepositoryLocator);
             Assert.IsTrue(g.CanGatherDependencies(plugin));
@@ -129,7 +124,6 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
             //root should be the server
             Assert.AreEqual(gObj.Object, plugin);
             Assert.IsTrue(gObj.Children.Any(d=>d.Object.Equals(lma1)));
-            Assert.IsTrue(gObj.Children.Any(d => d.Object.Equals(lma2)));
         }
 
 

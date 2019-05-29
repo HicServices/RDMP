@@ -5,15 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Windows.Forms;
-using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Reports;
-using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
@@ -22,12 +18,10 @@ using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.LocationsMenu.Ticketing;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Menus.MenuItems;
-using Rdmp.UI.PluginManagement;
 using Rdmp.UI.PluginManagement.CodeGeneration;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
-using Rdmp.UI.SimpleDialogs.Reports;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
 using ResearchDataManagementPlatform.Menus.MenuItems;
@@ -285,11 +279,6 @@ namespace ResearchDataManagementPlatform.Menus
             navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
         }
         
-        private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PluginManagementFormUI dialogue = new PluginManagementFormUI(Activator);
-            dialogue.Show();
-        }
 
         private void codeGenerationToolStripMenuItem_Click(object sender, EventArgs e)
         {

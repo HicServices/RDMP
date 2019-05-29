@@ -79,6 +79,11 @@
     <Compile Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.Designer.cs">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
     </Compile>
+    <Compile Update="Icons\IconProvision\CatalogueIcons.Designer.cs">
+      <DesignTime>True</DesignTime>
+      <AutoGen>True</AutoGen>
+      <DependentUpon>CatalogueIcons.resx</DependentUpon>
+    </Compile>
     <Compile Update="UserControl1.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -157,6 +162,10 @@
     <EmbeddedResource Update="CommandExecution\AtomicCommands\UIFactory\AtomicCommandWithTargetUI.resx">
       <DependentUpon>AtomicCommandWithTargetUI.cs</DependentUpon>
       <SubType>Designer</SubType>
+    </EmbeddedResource>
+    <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
     </EmbeddedResource>
     <EmbeddedResource Update="PipelineUIs\DemandsInitializationUIs\ArgumentCollectionUI.resx">
       <SubType>Designer</SubType>

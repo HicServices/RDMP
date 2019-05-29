@@ -14,10 +14,10 @@ using System.Threading;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup.PluginManagement;
 
 namespace Rdmp.Core.Curation.Data
 {
@@ -34,53 +34,22 @@ namespace Rdmp.Core.Curation.Data
     public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     {
        #region Database Properties
-        private string _name;
-        private string _description;
-        private Byte[] _dll;
-        private Byte[] _pdb;
+        private Byte[] _bin;
         private string _committer;
         private DateTime _uploadDate;
-        private string _dllFileVersion;
         private int _plugin_ID;
         private Lazy<Plugin> _knownPlugin;
 
-        /// <summary>
-        /// The name of the dll or src file within the <see cref="Plugin"/>
-        /// </summary>
-        public string Name
-        {
-	        get { return _name;}
-	        set { SetField(ref _name,value);}
-        }
-
-        /// <summary>
-        /// Not currently used
-        /// </summary>
-        public string Description
-        {
-	        get { return _description;}
-	        set { SetField(ref _description,value);}
-        }
 
         /// <summary>
         /// The assembly (dll) file as a Byte[], use File.WriteAllBytes to write it to disk
         /// </summary>
-        public Byte[] Dll
+        public Byte[] Bin
         {
-	        get { return _dll;}
-	        set { SetField(ref _dll,value);}
+	        get { return _bin;}
+	        set { SetField(ref _bin,value);}
         }
-
-        /// <summary>
-        /// The assembly (pdb) file if any for the <see cref="Dll"/> which contains debugging symbols
-        /// as a Byte[], use File.WriteAllBytes to write it to disk
-        /// </summary>
-        public Byte[] Pdb
-        {
-	        get { return _pdb;}
-	        set { SetField(ref _pdb,value);}
-        }
-
+        
         /// <summary>
         /// The user who uploaded the dll
         /// </summary>
@@ -98,16 +67,7 @@ namespace Rdmp.Core.Curation.Data
 	        get { return _uploadDate;}
 	        set { SetField(ref _uploadDate,value);}
         }
-
-        /// <summary>
-        /// The version number of the dll
-        /// </summary>
-        public string DllFileVersion
-        {
-	        get { return _dllFileVersion;}
-	        set { SetField(ref _dllFileVersion,value);}
-        }
-
+        
         /// <summary>
         /// The plugin this file forms a part of (each <see cref="Plugin"/> will usually have multiple dlls as part of it's dependencies)
         /// </summary>
@@ -133,9 +93,9 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="f"></param>
-        public LoadModuleAssembly(ICatalogueRepository repository, FileInfo f, Plugin plugin, Version rdmpTargetVersion)
+        public LoadModuleAssembly(ICatalogueRepository repository, FileInfo f, Plugin plugin)
         {
-            var dictionaryParameters = GetDictionaryParameters(f, plugin,rdmpTargetVersion);
+            var dictionaryParameters = GetDictionaryParameters(f, plugin);
 
             //so we can reference it in fetch requests to check for duplication (normaly Repository is set during hydration by the repo)
             Repository = repository;
@@ -147,13 +107,9 @@ namespace Rdmp.Core.Curation.Data
         internal LoadModuleAssembly(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
-            Dll = r["Dll"] as byte[];
-            Pdb = r["Pdb"] as byte[];
-            Name = (string) r["Name"];
-            Description = r["Description"] as string;
+            Bin = r["Bin"] as byte[];
             Committer = r["Committer"] as string;
             UploadDate = Convert.ToDateTime(r["UploadDate"]);
-            DllFileVersion = r["DllFileVersion"] as string;
             Plugin_ID = Convert.ToInt32(r["Plugin_ID"]);
             ClearAllInjections();
         }
@@ -179,11 +135,11 @@ namespace Rdmp.Core.Curation.Data
             if (!downloadDirectory.Exists)
                 downloadDirectory.Create();
 
-            string targetFile = Path.Combine(targetDirectory, Name);
+            string targetFile = Path.Combine(targetDirectory, Plugin.Name);
             
             //file already exists
             if (File.Exists(targetFile))
-                if(AreEqual(File.ReadAllBytes(targetFile), Dll))
+                if(AreEqual(File.ReadAllBytes(targetFile), Bin))
                     return targetFile;
 
             int timeout = 5000;
@@ -192,14 +148,7 @@ namespace Rdmp.Core.Curation.Data
             try
             {
                 //if it has changed length or does not exist, write it out to the hardisk
-                File.WriteAllBytes(targetFile, Dll);
-                
-                if (Pdb != null)
-                {
-                    string pdbFilename = Path.Combine(targetDirectory,
-                        Name.Substring(0, Name.Length - ".dll".Length) + ".pdb");
-                    File.WriteAllBytes(pdbFilename, Pdb);
-                }
+                File.WriteAllBytes(targetFile, Bin);
             }
             catch (Exception)
             {
@@ -215,19 +164,16 @@ namespace Rdmp.Core.Curation.Data
             return targetFile;
         }
 
-        private Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin,Version rdmpTargetVersion)
+        private Dictionary<string, object> GetDictionaryParameters(FileInfo f, Plugin plugin)
         {
             if(f.Extension != PackPluginRunner.PluginPackageSuffix)
                 throw new Exception("Expected LoadModuleAssembly file to be a " + PackPluginRunner.PluginPackageSuffix);
 
-            string name = f.Name;
             byte[] allBytes = File.ReadAllBytes(f.FullName);
 
             var dictionaryParameters = new Dictionary<string, object>()
                 {
-                    {"Name",name},
-                    {"Dll",allBytes},
-                    {"DllFileVersion",rdmpTargetVersion},
+                    {"Bin",allBytes},
                     {"Committer",Environment.UserName},
                     {"Plugin_ID",plugin.ID}
                 };
@@ -235,20 +181,6 @@ namespace Rdmp.Core.Curation.Data
             return dictionaryParameters;
         }
 
-        /// <summary>
-        /// Updates the current state to match the dll file on disk
-        /// </summary>
-        /// <param name="toCommit"></param>
-        public void UpdateTo(FileInfo toCommit)
-        {
-            var dict = GetDictionaryParameters(toCommit, Plugin,new Version(DllFileVersion));
-            Dll = (byte[])dict["Dll"];
-            DllFileVersion = (string) dict["DllFileVersion"];
-            Committer = (string) dict["Committer"];
-            Pdb = dict.ContainsKey("Pdb") ? (byte[]) dict["Pdb"] : null;
-
-            SaveToDatabase();
-        }
         private bool AreEqual(byte[] readAllBytes, byte[] dll)
         {
             if (readAllBytes.Length != dll.Length)
@@ -269,7 +201,7 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public override string ToString()
         {
-            return Name;
+            return "LoadModuleAssembly_" + ID;
         }
 
         public void ClearAllInjections()

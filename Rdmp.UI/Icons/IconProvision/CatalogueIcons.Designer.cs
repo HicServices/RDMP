@@ -9,6 +9,9 @@
 //------------------------------------------------------------------------------
 
 namespace Rdmp.UI.Icons.IconProvision {
+    using System;
+    
+    
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -16,7 +19,7 @@ namespace Rdmp.UI.Icons.IconProvision {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class CatalogueIcons {
@@ -170,6 +173,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap AllExpiredPluginsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllExpiredPluginsNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap AllExternalServersNode {
             get {
                 object obj = ResourceManager.GetObject("AllExternalServersNode", resourceCulture);
@@ -253,6 +266,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static System.Drawing.Bitmap AllPipelinesNode {
             get {
                 object obj = ResourceManager.GetObject("AllPipelinesNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap AllPluginsNode {
+            get {
+                object obj = ResourceManager.GetObject("AllPluginsNode", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -493,6 +516,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static System.Drawing.Bitmap CohortAggregate {
             get {
                 object obj = ResourceManager.GetObject("CohortAggregate", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap CohortAggregateContainer {
+            get {
+                object obj = ResourceManager.GetObject("CohortAggregateContainer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1270,6 +1303,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap Main {
+            get {
+                object obj = ResourceManager.GetObject("Main", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap MakeProjectSpecificCatalogueNormalAgain {
             get {
                 object obj = ResourceManager.GetObject("MakeProjectSpecificCatalogueNormalAgain", resourceCulture);
@@ -1860,29 +1903,19 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        public static System.Drawing.Bitmap Writing {
-            get {
-                object obj = ResourceManager.GetObject("Writing", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
-        public static System.Drawing.Bitmap Main {
-            get {
-                object obj = ResourceManager.GetObject("main", resourceCulture);
-                return ((System.Drawing.Bitmap)(obj));
-            }
-        }
-
-        /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
-        /// </summary>
         public static System.Drawing.Bitmap WhatIsACohort {
             get {
                 object obj = ResourceManager.GetObject("WhatIsACohort", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Writing {
+            get {
+                object obj = ResourceManager.GetObject("Writing", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

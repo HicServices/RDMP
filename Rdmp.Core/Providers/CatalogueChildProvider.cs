@@ -175,6 +175,9 @@ namespace Rdmp.Core.Providers
         private CommentStore _commentStore;
 
         public JoinableCohortAggregateConfigurationUse[] AllJoinableCohortAggregateConfigurationUse { get; private set; }
+        public AllPluginsNode AllPluginsNode { get; private set;}
+        public Curation.Data.Plugin[] AllPlugins { get; }
+        public Curation.Data.Plugin[] AllCompatiblePlugins { get; }
 
         public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
@@ -360,6 +363,11 @@ namespace Rdmp.Core.Providers
 
             AddChildren(AllGovernanceNode);
 
+            AllPluginsNode = new AllPluginsNode();
+            AllPlugins = GetAllObjects<Curation.Data.Plugin>(repository);
+            AllCompatiblePlugins = _catalogueRepository.PluginManager.GetCompatiblePlugins();
+
+            AddChildren(AllPluginsNode);
 
             var searchables = new Dictionary<int, HashSet<IMapsDirectlyToDatabaseTable>>();
 
@@ -384,7 +392,30 @@ namespace Rdmp.Core.Providers
             
         }
 
+        private void AddChildren(AllPluginsNode allPluginsNode)
+        {
+            HashSet<object> children = new HashSet<object>();
+            var descendancy = new DescendancyList(allPluginsNode);
+
+            foreach (var p in AllCompatiblePlugins)
+                children.Add(p);
         
+            var expiredPluginsNode = new AllExpiredPluginsNode(); 
+            children.Add(expiredPluginsNode);
+            AddChildren(expiredPluginsNode,descendancy.Add(expiredPluginsNode));
+
+            AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(AllExpiredPluginsNode expiredPluginsNode, DescendancyList descendancy)
+        {
+            HashSet<object> children = new HashSet<object>();
+
+            foreach (var p in AllPlugins.Except(AllCompatiblePlugins))
+                children.Add(p);
+
+            AddToDictionaries(children, descendancy);
+        }
 
         private void AddChildren(AllGovernanceNode allGovernanceNode)
         {

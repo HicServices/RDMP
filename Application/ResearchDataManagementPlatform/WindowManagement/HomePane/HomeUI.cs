@@ -126,10 +126,6 @@ tlpCohortCreation);
             FixSizingOfTableLayoutPanel(tlpCohortCreation);
             FixSizingOfTableLayoutPanel(tlpDataExport);
             FixSizingOfTableLayoutPanel(tlpDataLoad);
-
-
-            //////////////////////////////////Advanced////////////////////////////////////
-            AddCommand(new ExecuteCommandManagePlugins(_activator),tlpAdvanced);
         }
 
         private void AddLabel(string text,TableLayoutPanel tableLayoutPanel)

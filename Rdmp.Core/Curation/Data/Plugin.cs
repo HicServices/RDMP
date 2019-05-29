@@ -28,6 +28,7 @@ namespace Rdmp.Core.Curation.Data
         private string _name;
         private string _uploadedFromDirectory;
         private Version _pluginVersion;
+        private Version _rdmpVersion;
 
         /// <inheritdoc/>
         [NotNull]
@@ -57,15 +58,8 @@ namespace Rdmp.Core.Curation.Data
         /// <returns></returns>
         public string GetShortName()
         {
-            Regex regexPluginNameWithoutVersion = new Regex(@"(.+)(\d*\.)*(\.nupkg)?$");
-
-            var match = regexPluginNameWithoutVersion.Match(Name);
-
-            //name did not match expected pattern, how!?
-            if(!match.Success)
-                throw new Exception("Name did not match expected pattern");
-
-            return match.Groups[1].Value;
+            Regex regexSuffix = new Regex(@"(\.\d*)*(\.nupkg)?$");
+            return regexSuffix.Replace(Name,"");
         }
 
         /// <summary>
@@ -78,6 +72,16 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref  _pluginVersion, value); }
         }
 
+        /// <summary>
+        /// The version of RDMP which the plugin is compatible with.  This is determined by looking at the dependencies tag in
+        /// the nuspec file of the nupkg being uploaded.
+        /// </summary>
+        public Version RdmpVersion
+        {
+            get { return _rdmpVersion; }
+            set { SetField(ref  _rdmpVersion, value); }
+        }
+
         #endregion
 
         /// <summary>
@@ -85,13 +89,14 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="pluginZipFile"></param>
-        public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile, Version version = null)
+        public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile, Version pluginVersion, Version rdmpVersion)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
                 {"Name", pluginZipFile.Name},
                 {"UploadedFromDirectory", pluginZipFile.DirectoryName},
-                {"PluginVersion", (version ?? new Version(0,0,0,0))}
+                {"PluginVersion", (pluginVersion ?? new Version(0,0,0,0))},
+                {"RdmpVersion", (rdmpVersion ?? new Version(0,0,0,0))}
             });
             
         }
@@ -101,20 +106,21 @@ namespace Rdmp.Core.Curation.Data
             Name = r["Name"].ToString();
             UploadedFromDirectory = r["UploadedFromDirectory"].ToString();
 
-            object o = r["PluginVersion"];
-
-            if (o == DBNull.Value || o == null)
-                PluginVersion = null;
-            else
+            try
             {
-                try
-                {
-                    PluginVersion = new Version(o.ToString());
-                }
-                catch (ArgumentException)
-                {
-                    PluginVersion = new Version("0.0.0.0");//user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
-                }
+                PluginVersion = new Version((string)r["PluginVersion"]);
+            }
+            catch (ArgumentException)
+            {
+                PluginVersion = new Version("0.0.0.0");//user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
+            }
+             try
+            {
+                RdmpVersion = new Version((string)r["RdmpVersion"]);
+            }
+            catch (ArgumentException)
+            {
+                RdmpVersion = new Version("0.0.0.0");//user hacked database and typed in 'I've got a lovely bunch of coconuts' into the version field?
             }
         }
 
