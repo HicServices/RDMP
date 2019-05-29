@@ -25,9 +25,19 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExecuteCommandAddPlugins(IActivateItems itemActivator, FileCollectionCommand fileCommand):base(itemActivator)
         {
             if(!fileCommand.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
-                SetImpossible("Plugins must " + PackPluginRunner.PluginPackageSuffix);
+            {
+                SetImpossible("Plugins must " + PackPluginRunner.PluginPackageSuffix); 
+                return;
+            }
+
+            var existing = Activator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
 
             _files = fileCommand.Files;
+
+            var collision = existing.FirstOrDefault(p=>_files.Any(f=>f.Name.Equals(p.Name)));
+            if(collision != null)
+                SetImpossible("There is already a plugin called '" + collision + "'");
+
         }
 
         public override void Execute()

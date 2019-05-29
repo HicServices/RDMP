@@ -20,7 +20,7 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
         {
             _exe = CatalogueIcons.Exe;
             _sql = CatalogueIcons.SQL;
-            _plugin = CatalogueIcons.Plugin;
+            _plugin = CatalogueIcons.ProcessTask;
 
         }
 

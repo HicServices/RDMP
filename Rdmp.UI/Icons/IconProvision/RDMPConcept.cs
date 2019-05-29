@@ -174,6 +174,7 @@ namespace Rdmp.UI.Icons.IconProvision
         CohortAggregateContainer,
 
         AllPluginsNode,
-        AllExpiredPluginsNode
+        AllExpiredPluginsNode,
+        ProcessTask
     }
 }

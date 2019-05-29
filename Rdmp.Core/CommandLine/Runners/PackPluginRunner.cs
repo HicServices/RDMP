@@ -94,34 +94,13 @@ namespace Rdmp.Core.CommandLine.Runners
 
             // delete EXACT old versions of the Plugin
             var oldVersion = repositoryLocator.CatalogueRepository.GetAllObjects<Curation.Data.Plugin>().SingleOrDefault(p => p.Name.Equals(toCommit.Name) && p.PluginVersion == pluginVersion);
-
-            List<LoadModuleAssembly> legacyDlls = new List<LoadModuleAssembly>();
-            Curation.Data.Plugin plugin = null;
-
+            
             if (oldVersion != null)
-            {
-                legacyDlls.AddRange(oldVersion.LoadModuleAssemblies);
-                toReturn = true;
-                plugin = oldVersion;
-                plugin.RdmpVersion = rdmpDependencyVersion;
-                plugin.UploadedFromDirectory = toCommit.DirectoryName;
-                plugin.SaveToDatabase();
-            }
-            else
-                plugin = new Curation.Data.Plugin(repositoryLocator.CatalogueRepository, toCommit, pluginVersion, rdmpDependencyVersion);
+                throw new Exception("There is already a plugin called " + oldVersion.Name);
 
             try
             {
-                //delete the old binary (if any)
-                foreach (LoadModuleAssembly unused in legacyDlls)
-                {
-                    var export = repositoryLocator.CatalogueRepository.GetAllObjects<ObjectExport>().SingleOrDefault(e => e.IsReferenceTo(unused));
-                    if (export != null)
-                        export.DeleteInDatabase();
-
-                    unused.DeleteInDatabase();
-                }
-
+                var plugin = new Curation.Data.Plugin(repositoryLocator.CatalogueRepository, toCommit, pluginVersion, rdmpDependencyVersion);
                 //add the new binary
                 new LoadModuleAssembly(repositoryLocator.CatalogueRepository, toCommit, plugin);
             }

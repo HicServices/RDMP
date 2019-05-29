@@ -313,7 +313,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             Navigation.Append(newTab);
 
-            if(newTab.ParentForm != null)
+            if(newTab != null && newTab.ParentForm != null)
                 newTab.ParentForm.Text = newTab.TabText + " - RDMP";
 
             if (TabChanged != null)
