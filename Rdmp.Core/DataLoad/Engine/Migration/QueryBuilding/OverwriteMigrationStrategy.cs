@@ -58,10 +58,12 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
  */
 
             StringBuilder sbInsert = new StringBuilder();
+            var syntax = server.GetQuerySyntaxHelper();
             
+
             sbInsert.AppendLine(string.Format("INSERT INTO {0} ({1},{2})",
                 columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
-                string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => c.GetRuntimeName())),
+                string.Join(",", columnsToMigrate.FieldsToUpdate.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
                 SpecialFieldNames.DataLoadRunID));
 
             sbInsert.AppendLine("SELECT");
@@ -82,12 +84,12 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                     columnsToMigrate.PrimaryKeys.Select(
                         pk =>
                             string.Format("{0}.{1}={2}.{1}", columnsToMigrate.SourceTable.GetFullyQualifiedName(),
-                                pk.GetRuntimeName(), columnsToMigrate.DestinationTable.GetFullyQualifiedName()))));
+                                syntax.EnsureWrapped(pk.GetRuntimeName()), columnsToMigrate.DestinationTable.GetFullyQualifiedName()))));
 
             sbInsert.AppendLine("WHERE");
             sbInsert.AppendLine(string.Format("{0}.{1} IS NULL",
                 columnsToMigrate.DestinationTable.GetFullyQualifiedName(),
-                columnsToMigrate.PrimaryKeys.First().GetRuntimeName()));
+                syntax.EnsureWrapped(columnsToMigrate.PrimaryKeys.First().GetRuntimeName())));
             
             string insertSql = sbInsert.ToString();
             
@@ -105,7 +107,7 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
 
                 List<CustomLine> sqlLines = new List<CustomLine>();
 
-                var toSet = columnsToMigrate.FieldsToUpdate.Where(c => !c.IsPrimaryKey).Select(c => string.Format("t1.{0} = t2.{0}", c.GetRuntimeName())).ToArray();
+                var toSet = columnsToMigrate.FieldsToUpdate.Where(c => !c.IsPrimaryKey).Select(c => string.Format("t1.{0} = t2.{0}", syntax.EnsureWrapped(c.GetRuntimeName()))).ToArray();
 
                 if(!toSet.Any())
                 {
@@ -128,10 +130,10 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
                 sqlLines.Add(new CustomLine(string.Format("t1.{0}={1}", SpecialFieldNames.DataLoadRunID,dataLoadInfoID),QueryComponent.SET));
 
                 //t1.Name <> t2.Name AND t1.Age <> t2.Age etc
-                sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(GetORLine)), QueryComponent.WHERE));
+                sqlLines.Add(new CustomLine(string.Join(" OR ", toDiff.Select(c=>GetORLine(c,syntax))), QueryComponent.WHERE));
                 
                 //the join
-                sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p => new CustomLine(string.Format("t1.{0} = t2.{0}", p.GetRuntimeName()), QueryComponent.JoinInfoJoin)));
+                sqlLines.AddRange(columnsToMigrate.PrimaryKeys.Select(p => new CustomLine(string.Format("t1.{0} = t2.{0}", syntax.EnsureWrapped(p.GetRuntimeName())), QueryComponent.JoinInfoJoin)));
 
                 var updateHelper = columnsToMigrate.DestinationTable.Database.Server.GetQuerySyntaxHelper().UpdateHelper;
 
@@ -167,9 +169,9 @@ INSERT INTO CrossDatabaseMergeCommandTo..ToTable (Name,Age,Postcode,hic_dataLoad
             }
         }
 
-        private string GetORLine(DiscoveredColumn c)
+        private string GetORLine(DiscoveredColumn c, IQuerySyntaxHelper syntax)
         {
-            return string.Format("(t1.{0} <> t2.{0} OR (t1.{0} is null AND t2.{0} is not null) OR (t2.{0} is null AND t1.{0} is not null))", c.GetRuntimeName());
+            return string.Format("(t1.{0} <> t2.{0} OR (t1.{0} is null AND t2.{0} is not null) OR (t2.{0} is null AND t1.{0} is not null))", syntax.EnsureWrapped(c.GetRuntimeName()));
         }
     }
 }
