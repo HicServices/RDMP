@@ -4,10 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.IO;
 using System.Linq;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
+using ReusableLibraryCode;
 
 namespace Rdmp.Core.Providers
 {
@@ -33,6 +36,9 @@ namespace Rdmp.Core.Providers
         /// <inheritdoc/>
         public string DescribeProblem(object o)
         {
+            if(o is INamed n && UsefulStuff.IsBadName(n.Name))
+                return "Name contains illegal characters";
+
             if (o is Project)
                 return DescribeProblem((Project) o);
 
@@ -98,6 +104,7 @@ namespace Rdmp.Core.Providers
 
             return null;
         }
+
 
         private string DescribeProblem(Project project)
         {

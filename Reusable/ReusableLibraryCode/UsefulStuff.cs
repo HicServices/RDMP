@@ -41,7 +41,12 @@ namespace ReusableLibraryCode
 
             return _instance;
         }
-        
+
+        public static bool IsBadName(string name)
+        {
+            return name != null && name.Any(c=>Path.GetInvalidFileNameChars().Contains(c));
+        }
+
         internal DateTime LooseConvertToDate(object iO)
         {
             DateTime sDate;

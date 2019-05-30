@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using ReusableLibraryCode;
 
 namespace Rdmp.Core.Providers
 {
@@ -58,6 +59,9 @@ namespace Rdmp.Core.Providers
 
             if (disableable != null && disableable.IsDisabled)
                 return "Object is disabled";
+
+            if(o is INamed n && UsefulStuff.IsBadName(n.Name))
+                return "Name contains illegal characters";
 
             if (o is AllGovernanceNode)
                 return DescribeProblem((AllGovernanceNode) o);
@@ -211,5 +215,6 @@ namespace Rdmp.Core.Providers
 
             return null;
         }
+
     }
 }
