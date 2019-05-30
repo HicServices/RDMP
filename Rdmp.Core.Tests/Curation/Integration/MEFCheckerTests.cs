@@ -73,9 +73,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var tomem = new ToMemoryCheckNotifier();
 
             new SafeDirectoryCatalog(tomem, TestContext.CurrentContext.TestDirectory);
-            var warnings  = tomem.Messages.Where(m => m.Result == CheckResult.Warning).ToArray();
+            var warnings  = tomem.Messages.Where(m => m.Result == CheckResult.Success).ToArray();
 
-            Assert.GreaterOrEqual(warnings.Count(m => m.Message.StartsWith("Found 2 copies of")), 1);
+            Assert.GreaterOrEqual(warnings.Count(m => m.Message.StartsWith("Found 2 copies of Rdmp.Core.dll")), 1);
             
 
             badDir.Delete(true);
