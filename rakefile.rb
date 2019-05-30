@@ -88,6 +88,12 @@ task :deployplugins, [:config] do |t, args|
 	version = File.open('version') {|f| f.readline}
     puts "version: #{version}"
 	
+	# Publish the CLI
+	Dir.chdir('Tools/rdmp') do
+		sh "dotnet publish"
+	end
+	
+	#Package all the plugins
 	Dir.chdir('Plugins') do
         sh "nuget pack Plugin/Plugin.nuspec -Properties Configuration=#{args.config} -IncludeReferencedProjects -Symbols -Version #{version}"
         sh "nuget pack Plugin.UI/Plugin.UI.nuspec -Properties Configuration=#{args.config} -IncludeReferencedProjects -Symbols -Version #{version}"
