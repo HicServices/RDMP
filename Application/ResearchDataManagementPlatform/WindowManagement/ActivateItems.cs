@@ -12,10 +12,10 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
@@ -25,8 +25,6 @@ using Rdmp.UI.CommandExecution;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
-using Rdmp.UI.DataViewing;
-using Rdmp.UI.DataViewing.Collections;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.Icons.IconProvision;
@@ -37,7 +35,6 @@ using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
-using Rdmp.UI.SubComponents;
 using Rdmp.UI.SubComponents.Graphs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -211,7 +208,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
-
+            
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
             var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
             
@@ -228,6 +225,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if (databaseObject != null)
                 idText = " ID=" + databaseObject.ID;
+
+            if (databaseObject != null)
+            {
+                var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
+                if(exports.Any(e=>e.Exists()))
+                    if(MessageBox.Show("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        foreach(ObjectExport e in exports)
+                            e.DeleteInDatabase(); 
+                    }
+                    else
+                        return false;
+            }
 
             DialogResult result = MessageBox.Show(
                 (overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")) +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
