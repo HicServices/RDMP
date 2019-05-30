@@ -17,7 +17,7 @@
             <dependency id="Newtonsoft.Json" version="11.0.2"/>
             <dependency id="CommandLineParser" version="2.3.0" />
             <dependency id="SSH.NET" version="2013.4.7" />
-            <dependency id="HIC.FansiSql" version="0.9.1" />
+            <dependency id="HIC.FansiSql" version="0.9.1.10" />
         </dependencies>
     </metadata>
   <files>
