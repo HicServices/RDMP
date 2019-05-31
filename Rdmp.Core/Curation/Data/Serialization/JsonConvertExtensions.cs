@@ -28,7 +28,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
             
             var settings = new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Objects,
+                TypeNameHandling = TypeNameHandling.None,
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
                 Converters = new JsonConverter[] {databaseEntityJsonConverter}
             };
@@ -56,7 +56,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
 
             var settings = new JsonSerializerSettings
             {
-                TypeNameHandling = TypeNameHandling.Objects,
+                TypeNameHandling = TypeNameHandling.None,
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
                 Converters = new JsonConverter[] {databaseEntityJsonConverter, lazyJsonConverter}
             };
