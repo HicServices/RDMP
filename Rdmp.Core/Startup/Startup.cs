@@ -244,36 +244,42 @@ namespace Rdmp.Core.Startup
                                                              
                 var existingFiles = subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList();
 
-                foreach(var lma in compatiblePlugins[i].LoadModuleAssemblies.Where(l=>!existingFiles.Any(f=>f.Name.Equals(l.Plugin.Name))))
-                    lma.DownloadAssembly(subdir);
-                
+                //if we have not downloaded this yet
+                if(!existingFiles.Any(f=>f.Name.Equals(compatiblePlugins[i].Name)))
+                    compatiblePlugins[i].LoadModuleAssemblies.SingleOrDefault()?.DownloadAssembly(subdir); 
+                else
+                    _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Found existing file '" + compatiblePlugins[i].Name +"' so didn't bother downloading it.",CheckResult.Success));
+                                
                 foreach(var archive in  subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList())
                 {                    
                     //get rid of any old out dirs
                     var outDir = subdir.EnumerateDirectories("out").SingleOrDefault();
                     
+                    bool mustUnzip = true;
+
+                    //if theres already an unpacked version
                     if(outDir != null && outDir.Exists)
-                        try
-                        {
-                            outDir.Delete(true);
-                        }
-                        catch(Exception ex)
-                        {
-                            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not delete directory '" + outDir.FullName+"'",CheckResult.Warning,ex));
-                        }
+                    {
+                        //if the directory has no files we have to unzip - otherwise it has an unzipped version already yay
+                        mustUnzip = !outDir.GetFiles("*.dll",SearchOption.AllDirectories).Any();
+                    }
+                    else
+                        outDir = subdir.CreateSubdirectory("out");
 
-                    outDir = subdir.CreateSubdirectory("out");
+                    if(mustUnzip)
+                        using(var zf = ZipFile.OpenRead(archive.FullName))
+                            try
+                            {
+                                zf.ExtractToDirectory(outDir.FullName);
+                            }
+                            catch(Exception ex)
+                            {
+                                _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
+                            }
+                    else
+                        _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
 
-                    using(var zf = ZipFile.OpenRead(archive.FullName))
-                        try
-                        {
-                            zf.ExtractToDirectory(outDir.FullName);
-                        }
-                        catch(Exception ex)
-                        {
-                            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
-                        }
-                    
+
                     toLoad.Add(_environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib")));
 
                     //tell them we downloaded it
