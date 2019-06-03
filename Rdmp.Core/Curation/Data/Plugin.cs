@@ -63,7 +63,7 @@ namespace Rdmp.Core.Curation.Data
         }
 
         /// <summary>
-        /// The master version of the <see cref="Plugin"/> (not the dlls inside - See <see cref="LoadModuleAssembly.DllFileVersion"/>).
+        /// The master version of the <see cref="Plugin"/>
         /// <para>Not currently used</para>
         /// </summary>
         public Version PluginVersion

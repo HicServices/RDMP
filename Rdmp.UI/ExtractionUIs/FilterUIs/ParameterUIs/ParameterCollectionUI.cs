@@ -214,7 +214,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
         {
             Random r = new Random();
 
+#pragma warning disable SCS0005 // Weak random generator: This is only used to create an initial value for a parameter.
             var dialog  = new TypeTextOrCancelDialog("Parameter Name", "Name", 100, "@MyParam" + r.Next());
+#pragma warning restore SCS0005 // Weak random generator
             if (dialog.ShowDialog() == DialogResult.OK)
             {
                 var newParameter = Options.CreateNewParameter(dialog.ResultText.Trim());
