@@ -141,7 +141,7 @@ namespace Rdmp.Core.Startup
                 FindTier3Databases( RepositoryLocator.CatalogueRepository);
             }
 
-            Validator.RefreshExtraTypes(mefCheckNotifier);
+            Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,mefCheckNotifier);
         }
 
         private void FindTier3Databases(ICatalogueRepository catalogueRepository)

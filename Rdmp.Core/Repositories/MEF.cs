@@ -60,10 +60,23 @@ namespace Rdmp.Core.Repositories
           
         private HashSet<string> TypeNotKnown = new HashSet<string>();
 
+
+        /// <summary>
+        /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
+        /// if the Type is not found.
+        /// 
+        /// <para>This method supports both fully qualified Type names and Name only (although this is slower).  Answers
+        /// are cached.</para>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Type GetType(string type)
         {            
             if(string.IsNullOrWhiteSpace(type))
                 throw new ArgumentNullException("type");
+
+            if(TypeNotKnown.Contains(type))
+                return null;
 
             if(!SafeDirectoryCatalog.TypesByName.ContainsKey(type))
             {
@@ -108,7 +121,10 @@ namespace Rdmp.Core.Repositories
                     }
 
                 if(toReturn == null)
-                    throw new KeyNotFoundException("Could not find a type called "+ type);
+                {
+                    TypeNotKnown.Add(type);
+                    return null; 
+                }
                 
                 //we know about it now!
                 SafeDirectoryCatalog.AddType(type,toReturn);

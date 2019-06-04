@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -26,6 +25,19 @@ namespace Rdmp.Core.Curation.Data
     /// </summary>
     public class SafeDirectoryCatalog
     {
+        /// <summary>
+        /// These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
+        /// </summary>
+        public static string[] Ignore = new string[]
+        {
+            "mscorelib.dll",
+"Hunspellx64.dll",
+"Hunspellx86.dll",
+"NuGet.Squirrel.dll",
+
+
+        };
+
         /// <summary>
         /// Assemblies succesfully loaded
         /// </summary>
@@ -78,6 +90,8 @@ namespace Rdmp.Core.Curation.Data
             foreach(FileInfo f in files)
             {
                 Assembly ass = null;
+                if(Ignore.Contains(f.Name))
+                    continue;
 
                 try
                 {
@@ -88,9 +102,12 @@ namespace Rdmp.Core.Curation.Data
                 {
                     //if we loaded thea ssembly and some types
                     if(ex.Types.Any() && ass != null)
-                        AddTypes(f,ass,ex.Types,listener);
+                    {
+                        listener.OnCheckPerformed(new CheckEventArgs("Loaded " + ex.Types.Count(t=>t!= null) + "/" + ex.Types.Length + " Types from " + f.Name  ,CheckResult.Warning,ex));
+                        AddTypes(f,ass,ex.Types,listener); //the assembly is bad but at least some of the Types were legit
+                    }
                     else
-                        AddBadAssembly(f,ex,listener);
+                        AddBadAssembly(f,ex,listener); //the assembly could not be loaded properly
                 }
                 catch(Exception ex)
                 { 
