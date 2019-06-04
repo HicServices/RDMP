@@ -15,13 +15,11 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// Managed Extensibility Framework (MEF) Catalog of Class Types that are exposed via .  Constructing this class will process the directories
-    /// provided (usually the current directory and the %appdata%\MEF directory).  Each dll (Assembly) is classed as either a 'Bad Assembly' (could not be loaded) or a
-    /// 'Good Assembly' (was loaded).  GoodAssemblies are exposed as AssemblyCatalogs (MEF) which area  collection of ComposablePartDefinition (Parts).
+    /// Type manager which supports loading assemblies from both the bin directory and plugin directories.  Types discovered are indexed
+    /// according to name so they can be built on demand later on.  
     /// 
-    /// <para>These can then be constructed/queried like you normally do with MEF (See MEF.LocateExportInContainerByTypeName).</para>
-    /// 
-    /// <para>This class deliberately tries to filter interfaces and abstract class exports since the goal is to construct instances of plugin classes</para>
+    /// <para>Handles assembly resolution problems, binding redirection and partial assembly loading (e.g. if only some of the Types in the 
+    /// assembly could be resolved).</para>
     /// </summary>
     public class SafeDirectoryCatalog
     {

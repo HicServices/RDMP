@@ -47,9 +47,9 @@ namespace Rdmp.UI.Collections
     /// 
     /// <para>Mutilator tasks operate in the Adjust stages (usually AdjustRaw or AdjustStaging - mutilating LIVE would be a very bad idea).  These can do any task on a table(s) e.g. resolve duplication</para>
     ///  
-    /// <para>The above guidelines are deliberately vague because plugins (especially third party plugins - see PluginManagementForm) can do almost anything.  For example you could have 
-    /// a DataProvider which emailed you every time the data load began or a Mutilator which read data and sent it to a remote web service (or anything!).  Always read the descriptions of plugins 
-    /// to make sure they do what you want. </para>
+    /// <para>The above guidelines are deliberately vague because plugins can do almost anything.  For example you could have 
+    /// a DataProvider which emailed you every time the data load began or a Mutilator which read data and sent it to a remote web service 
+    /// (or anything!).  Always read the descriptions of plugins to make sure they do what you want. </para>
     /// 
     /// <para>In addition to the plugins you can define SQL or EXE tasks that run during the load (See SqlProcessTaskUI and ExeProcessTaskUI). </para>
     /// </summary>

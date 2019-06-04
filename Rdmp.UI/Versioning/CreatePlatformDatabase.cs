@@ -25,7 +25,7 @@ namespace Rdmp.UI.Versioning
     /// 
     /// <para>Enter a server and a database (and optionally a username and password).  If you specify a username / password these will be stored either in a user settings file 
     /// for tier 1 databases (Catalogue Manager / Data Export Manager) or as encrypted strings in the catalogue database for Tier 2-3 databases (See 
-    /// PasswordEncryptionKeyLocationUI).  For a description of each tier of databases See PluginPatcherUI.</para>
+    /// PasswordEncryptionKeyLocationUI).</para>
     /// 
     /// <para>You will be shown the initial creation script for the database so you can see what is being created and make sure it matches your expectations.  The database
     /// will then be patched up to date with the current version of the RDMP.</para>

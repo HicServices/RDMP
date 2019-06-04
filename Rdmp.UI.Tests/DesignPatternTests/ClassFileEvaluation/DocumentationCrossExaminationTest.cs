@@ -231,7 +231,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "InternalsVisibleTo",
             "AxisDimension",
             "MyDataset1",
-             "HicHash"
+             "HicHash",
+            "UserManual",
+            "ObjectType",
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

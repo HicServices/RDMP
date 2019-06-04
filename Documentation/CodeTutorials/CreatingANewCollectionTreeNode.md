@@ -51,7 +51,7 @@ In the previous section we created a class `FrozenExtractionConfigurationsNode` 
 Start out by overriding the ToString method to return the text you want to appear in the tree view.
 
 ```csharp
-namespace DataExportManager.Collections.Nodes
+namespace Rdmp.Core.Providers.Nodes
 {
     class FrozenExtractionConfigurationsNode
     {
