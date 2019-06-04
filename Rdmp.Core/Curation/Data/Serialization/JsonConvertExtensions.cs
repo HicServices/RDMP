@@ -30,7 +30,8 @@ namespace Rdmp.Core.Curation.Data.Serialization
             {
                 TypeNameHandling = TypeNameHandling.None,
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-                Converters = new JsonConverter[] {databaseEntityJsonConverter}
+                Converters = new JsonConverter[] {databaseEntityJsonConverter},
+                ContractResolver = new DictionaryAsArrayResolver()
             };
             
             return JsonConvert.SerializeObject(value, settings);
@@ -58,7 +59,8 @@ namespace Rdmp.Core.Curation.Data.Serialization
             {
                 TypeNameHandling = TypeNameHandling.None,
                 TypeNameAssemblyFormatHandling = TypeNameAssemblyFormatHandling.Simple,
-                Converters = new JsonConverter[] {databaseEntityJsonConverter, lazyJsonConverter}
+                Converters = new JsonConverter[] {databaseEntityJsonConverter, lazyJsonConverter},
+                ContractResolver = new DictionaryAsArrayResolver()
             };
             
             return JsonConvert.DeserializeObject(value, type, settings);

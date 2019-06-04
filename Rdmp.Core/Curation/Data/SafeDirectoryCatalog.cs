@@ -103,7 +103,8 @@ namespace Rdmp.Core.Curation.Data
                     //if we loaded thea ssembly and some types
                     if(ex.Types.Any() && ass != null)
                     {
-                        listener.OnCheckPerformed(new CheckEventArgs("Loaded " + ex.Types.Count(t=>t!= null) + "/" + ex.Types.Length + " Types from " + f.Name  ,CheckResult.Warning,ex));
+                        if(listener != null)
+                            listener.OnCheckPerformed(new CheckEventArgs("Loaded " + ex.Types.Count(t=>t!= null) + "/" + ex.Types.Length + " Types from " + f.Name  ,CheckResult.Warning,ex));
                         AddTypes(f,ass,ex.Types,listener); //the assembly is bad but at least some of the Types were legit
                     }
                     else
