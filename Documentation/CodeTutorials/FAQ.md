@@ -4,6 +4,7 @@
    1. [Does RDMP have a Command Line Interface?](#cli)
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
+   4. [How is RDMP versioned?](#how-is-rdmp-versioned)
 1. Database Compatibility
    1. [What databases does RDMP support?](#databases)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
@@ -46,7 +47,7 @@ rdmp.exe --help
 For help on each engine (verb) on the command line enter the verb (listed by the main --help command) followed by --help e.g.:
 
 ```
-RDMPAutomationService.exe dle --help
+rdmp.exe dle --help
 ```
 
 When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract Project X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
@@ -65,6 +66,20 @@ Yes, RDMP can be controlled programmatically through it's API which is available
 Yes, RDMP supports both functional plugins (e.g. new anonymisation components, new load plugins etc) as well as UI plugins (e.g. new operations when you right click a `Catalogue`).
 
 https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/PluginWriting.md
+
+### How is RDMP versioned?
+
+RDMP software has a build Major, Minor and Patch number (Semantic Versioning).  Updates are provided through [Squirrel](https://github.com/Squirrel/Squirrel.Windows).  When an API update is issued that requires a change in the platform databases, accompanying sql scripts will be included to perform the update (which will run during startup).
+
+Platform databases are divided into three tiers:
+
+|Tier| Description|
+|------|-----|
+|   1  | The Catalogue and Data Export databases, stores all metadata (projects, datasets etc) as well as the locations of other databases|
+|   2  | Ancillary databases managed by RDMP e.g. Logging, DQE Results, Query Caches.  You can have multiple or none of each of these configured.|
+|   3  | This tier is reserved for [Plugins](#plugins) which wish to persist objects/meta data in a database using the same versioning model (update scripts, data model) as the core RDMP databases.|
+
+During application startup (following installing an update) you will be prompted to apply patches on any platform databases that are not up to date.
 
 ## Database Compatibility
 
