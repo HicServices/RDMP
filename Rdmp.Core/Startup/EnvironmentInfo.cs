@@ -88,7 +88,7 @@ namespace Rdmp.Core.Startup
             var frameworkDir = root.EnumerateDirectories(TargetFramework).Cast<DirectoryInfo>().SingleOrDefault();
             
             if(frameworkDir == null)
-                throw new DirectoryNotFoundException("Could not find a matching framework directory for " + TargetFramework );
+                throw new DirectoryNotFoundException("Could not find a matching framework directory for " + TargetFramework  + " in folder:" + root );
             
             //if we know the OS
             if(!string.IsNullOrWhiteSpace(RuntimeIdentifier))

@@ -307,12 +307,12 @@ namespace Rdmp.Core.Startup
                             CheckResult.Fail, ex));
                 }
             }
+
+            AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
             
             MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toLoad.Select(d=>d.FullName).ToArray());
             catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
-
-            AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
-
+            
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
             var sw = Stopwatch.StartNew();
 
