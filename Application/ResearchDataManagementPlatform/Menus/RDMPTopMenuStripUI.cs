@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.DataQualityEngine;
 using Rdmp.Core.Logging;
@@ -348,6 +349,13 @@ namespace ResearchDataManagementPlatform.Menus
             var ui = new UpdaterUI();
             var f = new SingleControlForm(ui);
             f.ShowDialog();
+        }
+
+        private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var file = new FileInfo(Path.GetTempFileName());
+            File.WriteAllText(file.FullName,string.Join(Environment.NewLine,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName)));
+            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(file);
         }
     }
 }
