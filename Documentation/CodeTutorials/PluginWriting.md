@@ -21,55 +21,106 @@
 
 <a name="binary"></a>
 # RDMP Binary and Documentation
-The Research Data Management Platform Binaries are available via Click Once installer at https://hic.dundee.ac.uk/Installers/RDMP/ .  In order to use RDMP you will also need access to a Microsoft Sql Server (Sql Express is fine for testing/development).  After completing the setup process the main UI will launch.
+The Research Data Management Platform Binaries are available on [Releases section of Github](https://github.com/HicServices/RDMP/releases).  In order to use RDMP you will also need access to a Microsoft Sql Server (or Sql Express).  After completing the setup process the main UI will launch.
 
 From here you can access several resources that help understand RDMP classes / patterns etc.  
 
 ![Main application Help](Images/Help.png)
 
-Firstly there is the 'Help=>Show User Manual' (also available at https://github.com/HicServices/RDMP/blob/master/Documentation/UserManual.docx).
+Firstly there is the `Help=>Show User Manual` (also available at https://github.com/HicServices/RDMP/blob/master/Documentation/UserManual.docx).
 
-Secondly there is the 'Help=>Generate Class/Table Summary' which describes the DatabaseEntity objects that appear in RDMPCollectionUIs and are core concepts for RDMP.
+Secondly there is the `Help=>Generate Class/Table Summary` which describes the DatabaseEntity objects that appear in RDMPCollectionUIs and are core concepts for RDMP.
 
 ![Class Documentation](Images/ClassDocumentation.png)
 
-Thirdly 'Help=>Show Help' will show a dialog telling you what User Interface control you are in (class name) and any comments the class has (works for content tabs only - not collection trees).
+Thirdly `Help=>Show Help` will show a dialog telling you what User Interface control you are in (class name) and any comments the class has (works for content tabs only - not collection trees).
 
-Fourthly there is the Tutorial system 'Help=>Tutorials' which cover the basics for setting up RDMP test data, importing files etc.
-
-Finally for the ambitious the 'Help=>Generate User Interface Documentation' will screencap and summarise all user interfaces in RDMP (takes a while).
-
-![Class Documentation](Images/UIDocumentation.png)
+Fourthly there is the Tutorial system `Help=>Tutorials` which cover the basics for setting up RDMP test data, importing files etc.
 
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin
- Create a new Visual Studio Class Library Project targetting .Net Framework 4.5
 
- Add a reference to the nuget packages `HIC.RDMP.Plugin` and `HIC.RDMP.Plugin.UI`.  For the purposes of this demo we are adding all classes to the same csproj but it is good practice to separate UI from engine code (i.e. An Engine Project containing implementation logic and A UI Project containing user interfaces).
+Rdmp plugins must be packaged as [NuGet packages](https://en.wikipedia.org/wiki/NuGet) (e.g. MyPlugin.0.0.1.nupkg).  The package must contain compiled runtime binaries for both net461 and netcoreapp2.2 (for plugins that should also run in the CLI).  
+
+It is recommended to write all your plugin code in a single csproj targetting [Dot Net Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) and produce the runtime binaries by writting two empty projects that reference it.  You can see an example of this in the [Rdmp.Dicom plugin](https://github.com/HicServices/RdmpDicom)
+
+To begin with we can create a UI only plugin (net461).  Create the following in Visual Studio Solution:
+
+```
+\MyPlugin\MyPlugin.csproj (Targetting net461)
+\MyPlugin.nuspec
+\MyPlugin.sln
+```
+
+In `MyPlugin.csproj` add a reference to the nuget packages `HIC.RDMP.Plugin` and `HIC.RDMP.Plugin.UI`.  
+
  ![Class Documentation](Images/NugetPackages.png)
  
   Make sure that the major and minor version number (first two numbers) of the Nuget Package match your installed version of RDMP (Visible in the task bar of the main RDMP application)
 
  ![Versions must match](Images/NugetVersionMustMatchLive.png)
 
- Add a class called `MyPluginUserInterface` and inherit from `CatalogueManager.PluginChildProvision.PluginUserInterface` (Make sure you inherit from the abstract base and not the interface) override `GetAdditionalRightClickMenuItems`
+ Add the following class:
 
 ```csharp
- public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+using Rdmp.Core.Curation.Data;
+using Rdmp.UI.ItemActivation;
+using System.Windows.Forms;
+
+namespace MyPlugin
+{
+    public class MyPluginUserInterface:Rdmp.UI.PluginChildProvision.PluginUserInterface
+    {
+        public MyPluginUserInterface(IActivateItems activator):base(activator)
+        {
+
+        }
+
+        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
             if (o is Catalogue)
                 return new[] { new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")) };
 
             return null;
         }
+    }
+}
+
 ```
 
- Launch Research Data Management Platform main application either by building it from source or installing via ClickOnce (https://hic.dundee.ac.uk/Installers/RDMP/Stable/).
-Then launch Manage Plugins from the Home screen (under Advanced).  Select Add Plugin...
+In `MyPlugin.nuspec` write the following:
 
-  ![Adding a plugin via the RDMP user interface](Images/ManagePluginsAddingAPlugin.png)
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>MyPlugin</id>
+        <version>0.0.1</version>
+        <authors>Me</authors>
+        <description>My RDMP Plugin</description>
+        <dependencies>
+            <dependency id="HIC.RDMP.Plugin" version="3.0" />
+        </dependencies>
+    </metadata>
+    <files>
+    <file src="MyPlugin\bin\Debug\net461\*" target="lib\net461" />	
+    </files>
+</package>
+```
 
- Next add a new empty Catalogue
+Build the solution and then run:
+`nuget pack MyPlugin.nuspec`
+
+This should produce a file called `MyPlugin.0.0.1.nupkg`.  Open RDMP and click the `Tables(Advanced)` collection and right click `Plugins`.  Navigate to your plugin package.
+
+ ![Adding a plugin via the RDMP user interface](Images/AddPluginContextMenu.png)
+
+You can remove plugins at any time directly from your platform database by running
+```sql
+delete from Plugin where ID = 20 --Example ID
+```
+
+Restart RDMP and create a empty Catalogue
 
  ![Add empty Catalogue](Images/AddEmptyCatalogue.png)
 
@@ -81,40 +132,7 @@ Then launch Manage Plugins from the Home screen (under Advanced).  Select Add Pl
  # Attaching the Debugger
  Sometimes you want to debug your plugin as it is running hosted by RDMP.  To do this simply launch `ResearchDataManagementPlatform.exe` manually (if you need to see where the exe is you can select Diagnostics=>Open exe directory at any time).  Next go into visual studio and select Debug=>Attach to Process
 
- <a name="betterBuilding"></a>
- # Streamlining Build
- There are a couple of things you can do to streamline your plugin development process (avoid having to manually commit the plugin every time).  Firstly You can remove the requirement to launch 'Manage Plugins' by setting up a post build step which runs PluginPackager.exe.  This will commit the plugin into the RMDP database.  Secondly you can add the ResearchDataManagementPlatform.exe as a startup project in your plugin solution.
-
-## Adding a post build script to commit the plugin 
-
- (See https://docs.microsoft.com/en-gb/visualstudio/ide/how-to-specify-build-events-csharp)
-
- The executable responsible for commiting plugins is PluginPackager.exe, it should appear in your bin directory when you build your plugin.  
-
- Right click your Project and select Properties
-
- Enter a Post-build script to run PluginPackager.exe.  Make sure that you substitute your test server / database below: e.g.
-
-```
-$(TargetDir)PluginPackager.exe $(SolutionPath) $(SolutionName).zip -s localhost\sqlexpress -d RDMP_Catalogue
-
-```
-
-Now when you build your project (you may need to Clean and Rebuild) you should see the following:
-```
-  MyExamplePlugin -> E:\RDMP\Documentation\CodeTutorials\CodeExamples\MyExamplePlugin\bin\Debug\MyExamplePlugin.dll
-  Found .csproj file reference at path: MyExamplePlugin\MyExamplePlugin.csproj
-  SUCCESS: Found it at:E:\RDMP\Documentation\CodeTutorials\CodeExamples\MyExamplePlugin
-  Your plugin targets CatalogueLibrary version 2.5.1.6
-  Could not find dependent dll System.Drawing.dll
-  Could not find dependent dll System.Windows.Forms.dll
-  File MyExamplePlugin.dll uploaded as a new LoadModuleAssembly under plugin CodeExamples.zip
-  File src.zip uploaded as a new LoadModuleAssembly under plugin CodeExamples.zip
-```
-
-(Do not worry about dependent dll messages)
-
-## Adding a debug target
+## Adding a debug target of RDMP (To your plugin project)
 Right click your Solution and select 'Add Existing Project...' and navigate to the ResearchDataManagementPlatform.exe file.
 
 This should add a new root level item in your Solution called 'ResearchDataManagementPlatform'

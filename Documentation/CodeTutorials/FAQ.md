@@ -20,6 +20,8 @@
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
    1. [When loading data can I skip some columns?](#skipColumns)
    1. [Can I run SQL Scripts during a load?](#sqlScripts)
+1. Anonymisation
+   1. [Does RDMP support data anonymisation?](#does-rdmp-support-data-anonymisation)
 1. Curation
    1. [What is a Catalogue?](#whatisacatalogue)
    1. [Can I share/export/import my dataset metadata?](#sharing)
@@ -65,7 +67,7 @@ Yes, RDMP can be controlled programmatically through it's API which is available
 ### Does RDMP Support Plugins?
 Yes, RDMP supports both functional plugins (e.g. new anonymisation components, new load plugins etc) as well as UI plugins (e.g. new operations when you right click a `Catalogue`).
 
-https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/PluginWriting.md
+See [PluginWriting](./PluginWriting.md)
 
 ### How is RDMP versioned?
 
@@ -133,7 +135,7 @@ When importing a table from a Microsoft Sql Server database to create a `Catalog
 
 ### How does RDMP differ from classic tools e.g. SSIS?
 
-RDMP is primarily a data management tool and does not seek to replace existing ETL tools (e.g. SSIS) that you might use for complex data transforms / data migrations etc.  That said, routine loading of clinical/research datasets differ from these traditional ETL jobs in key ways which make a bespoke tool (RDMP) useful:
+RDMP is primarily a data management tool and does not seek to replace existing ETL tools (e.g. SSIS) that you might use for complex data transforms / data migrations etc.  The RDMP DLE is designed to facilitate routine loading of clinical/research datasets, this differs from traditional ETL jobs the following ways:
 
 - Data sources are error prone 
   - Duplication
@@ -142,7 +144,7 @@ RDMP is primarily a data management tool and does not seek to replace existing E
 - Scale in dimensions other than row count
   - By number of dataset
   - By number of columns (e.g. researcher adds some new columns to his dataset)
-- Require specific narrow set of transformations (e.g. anonymisation)
+- Require specific narrow set of transformations (e.g. [anonymisation](#does-rdmp-support-data-anonymisation))
 - Benefits from traceability
   - When each row appeared
   - When row values change (when and what old values were)
@@ -229,6 +231,26 @@ If you want to share one script between lots of different loads you can drag the
 ![How to drop sql files onto load nodes](Images/FAQ/DragAndDropSqlScript.png)
 
 In order to allow other people to run the data load it is advised to store all SQL Script files on a shared network drive.
+
+## Anonymisation
+
+### Does RDMP Support Data Anonymisation?
+
+Yes, data can be annonymised in the following ways
+
+1. When loading data 
+   1. [Columns can be can be ignored by the DLE](#skipColumns) (do not load an identifiable column)
+   2. Columns can be split off and stored in a seperate table (e.g. split identifers like name/address from data like prescribed drug)
+   2. Column values can be allocated an anonymous substitution mapping (mapping tables are persisted in an ano database)
+   3. Column values can be diluted (e.g. store only the left 4 digits of a postcode)
+2. When extracting data
+   1. Columns can be marked as 'not extractable'
+   2. Columns can be marked as requiring 'Special Approval' to be extracted
+   3. Columns can be marked for hashing on extraction
+   4. The linkage identifier (e.g. CHI) is substituted for an anonymous mapping (e.g. a guid)
+   5. Sql transforms can be applied to the column being extracted
+3. Pipelines / ProcessTasks
+   1. The [plugin API](#plugins) makes writting plugins to perform arbitrary anonymisations easy.
 
 ## Curation
 
@@ -400,7 +422,7 @@ If you are unsure what Type a given node is you can right click it and select 'W
 ### How do I add new nodes to RDMPCollectionUIs?
 This requires a tutorial all of it's own 
 
-https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/CreatingANewCollectionTreeNode.md
+[CreatingANewCollectionTreeNode](./CreatingANewCollectionTreeNode.md)
 
 
 <a name="databaseDdos"></a>
@@ -416,9 +438,9 @@ var catalogues = repository.GetAllObjects<Catalogue>();
 var catalogueItems = repository.GetAllObjects<CatalogueItem>();
 ```
 
-If you think the problem is more widespread then you can also use the `IInjectKnown<T>` system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
+If you think the problem is more widespread then you can also use the [`IInjectKnown<T>`](./../../Reusable/MapsDirectlyToDatabaseTable/Injection/README.md) system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
 
-https://github.com/HicServices/RDMP/blob/develop/Reusable/MapsDirectlyToDatabaseTable/Injection/README.md
+
 
 ## Other Programming
 

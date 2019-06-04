@@ -262,6 +262,9 @@ namespace Rdmp.Core.Startup
                     {
                         //if the directory has no files we have to unzip - otherwise it has an unzipped version already yay
                         mustUnzip = !outDir.GetFiles("*.dll",SearchOption.AllDirectories).Any();
+
+                        if(mustUnzip)
+                            outDir.Delete(true);
                     }
                     else
                         outDir = subdir.CreateSubdirectory("out");
