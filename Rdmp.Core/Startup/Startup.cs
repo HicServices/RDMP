@@ -282,8 +282,13 @@ namespace Rdmp.Core.Startup
                     else
                         _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
 
+                    var dir = _environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib"),_mefCheckNotifier);
+                    
+                    //it is a UI only plugin? or plugin doesn't support the current runtime/platform
+                    if(dir == null)
+                        continue;
 
-                    toLoad.Add(_environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib")));
+                    toLoad.Add(dir);
 
                     //tell them we downloaded it
                     MEFFileDownloaded(this,
