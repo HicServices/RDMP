@@ -24,5 +24,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly:InternalsVisibleTo("CatalogueLibraryTests")]
+
 [assembly:InternalsVisibleTo("Rdmp.Core.Tests")]

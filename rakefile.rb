@@ -90,7 +90,7 @@ task :deployplugins, [:config] do |t, args|
 	
 	# Publish the CLI
 	Dir.chdir('Tools/rdmp') do
-		sh "dotnet publish"
+		sh "dotnet publish -c #{args.config}"
 	end
 	
 	#Package all the plugins

@@ -274,7 +274,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                     {
                         var currentClassName = GetUniqueTypeName(Path.GetFileNameWithoutExtension(f));
 
-                        Type t = mef.GetType(currentClassName,null);
+                        Type t = mef.GetType(currentClassName);
 
                         //if the previous line isn't a summary comment
                         if (!text[i - 1].Trim().StartsWith("///"))

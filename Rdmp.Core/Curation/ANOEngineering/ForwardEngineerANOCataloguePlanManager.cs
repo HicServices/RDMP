@@ -45,7 +45,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
         private ExtractionInformation[] _allExtractionInformations;
         private CatalogueItem[] _allCatalogueItems;
 
-        public JsonCompatibleDictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new JsonCompatibleDictionary<ColumnInfo, ColumnInfoANOPlan>();
+        public Dictionary<ColumnInfo, ColumnInfoANOPlan> Plans = new Dictionary<ColumnInfo, ColumnInfoANOPlan>();
         
         [JsonIgnore]
         public List<IDilutionOperation>  DilutionOperations { get; private set; }

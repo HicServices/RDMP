@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using ReusableLibraryCode.Checks;
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
@@ -80,7 +81,7 @@ namespace Rdmp.Core.Startup
         /// Returns the nupkg archive subdirectory that should be loaded with the current environment 
         /// e.g. /lib/net461
         /// </summary>
-        internal DirectoryInfo GetPluginSubDirectory(DirectoryInfo root)
+        internal DirectoryInfo GetPluginSubDirectory(DirectoryInfo root, ICheckNotifier notifier)
         {
             if(!root.Name.Equals("lib"))
                 throw new ArgumentException("Expected " + root.FullName + " to be the 'lib' directory");
@@ -88,7 +89,11 @@ namespace Rdmp.Core.Startup
             var frameworkDir = root.EnumerateDirectories(TargetFramework).Cast<DirectoryInfo>().SingleOrDefault();
             
             if(frameworkDir == null)
-                throw new DirectoryNotFoundException("Could not find a matching framework directory for " + TargetFramework );
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not find a matching framework directory for " + TargetFramework  + " in folder:" + root ,CheckResult.Warning));
+                return null;
+            }
+                
             
             //if we know the OS
             if(!string.IsNullOrWhiteSpace(RuntimeIdentifier))

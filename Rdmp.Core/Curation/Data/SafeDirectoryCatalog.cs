@@ -9,23 +9,33 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
-using System.Runtime.Loader;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// Managed Extensibility Framework (MEF) Catalog of Class Types that are exposed via .  Constructing this class will process the directories
-    /// provided (usually the current directory and the %appdata%\MEF directory).  Each dll (Assembly) is classed as either a 'Bad Assembly' (could not be loaded) or a
-    /// 'Good Assembly' (was loaded).  GoodAssemblies are exposed as AssemblyCatalogs (MEF) which area  collection of ComposablePartDefinition (Parts).
+    /// Type manager which supports loading assemblies from both the bin directory and plugin directories.  Types discovered are indexed
+    /// according to name so they can be built on demand later on.  
     /// 
-    /// <para>These can then be constructed/queried like you normally do with MEF (See MEF.LocateExportInContainerByTypeName).</para>
-    /// 
-    /// <para>This class deliberately tries to filter interfaces and abstract class exports since the goal is to construct instances of plugin classes</para>
+    /// <para>Handles assembly resolution problems, binding redirection and partial assembly loading (e.g. if only some of the Types in the 
+    /// assembly could be resolved).</para>
     /// </summary>
     public class SafeDirectoryCatalog
     {
+        /// <summary>
+        /// These assemblies do not load correctly and should be ignored (they produce warnings on Startup)
+        /// </summary>
+        public static string[] Ignore = new string[]
+        {
+            "mscorelib.dll",
+"Hunspellx64.dll",
+"Hunspellx86.dll",
+"NuGet.Squirrel.dll",
+
+
+        };
+
         /// <summary>
         /// Assemblies succesfully loaded
         /// </summary>
@@ -78,6 +88,8 @@ namespace Rdmp.Core.Curation.Data
             foreach(FileInfo f in files)
             {
                 Assembly ass = null;
+                if(Ignore.Contains(f.Name))
+                    continue;
 
                 try
                 {
@@ -88,9 +100,13 @@ namespace Rdmp.Core.Curation.Data
                 {
                     //if we loaded thea ssembly and some types
                     if(ex.Types.Any() && ass != null)
-                        AddTypes(f,ass,ex.Types,listener);
+                    {
+                        if(listener != null)
+                            listener.OnCheckPerformed(new CheckEventArgs("Loaded " + ex.Types.Count(t=>t!= null) + "/" + ex.Types.Length + " Types from " + f.Name  ,CheckResult.Warning,ex));
+                        AddTypes(f,ass,ex.Types,listener); //the assembly is bad but at least some of the Types were legit
+                    }
                     else
-                        AddBadAssembly(f,ex,listener);
+                        AddBadAssembly(f,ex,listener); //the assembly could not be loaded properly
                 }
                 catch(Exception ex)
                 { 

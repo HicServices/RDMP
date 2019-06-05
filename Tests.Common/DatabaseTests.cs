@@ -112,12 +112,13 @@ namespace Tests.Common
             
             RepositoryLocator = new PlatformDatabaseCreationRepositoryFinder(opts);
 
+            
             Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + CatalogueRepository.DiscoveredServer.Name + " Database=" + CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
+            Assert.IsTrue(CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
             Console.WriteLine("Found Catalogue");
 
             Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + DataExportRepository.DiscoveredServer.Name + " Database= " + DataExportRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
+            Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
             Console.WriteLine("Found DataExport");
             
             Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);

@@ -7,6 +7,7 @@
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.Core.Databases;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data
@@ -17,14 +18,14 @@ namespace Rdmp.Core.Curation.Data
     public interface IExternalDatabaseServer : IDataAccessPoint, INamed
     {
         /// <summary>
-        /// Determines whether the given database server was created by the specified patcher assembly e.g. (CatalogueLibrary.Database.dll).  If it is then the 
-        /// schema will match, database objects will be retrievable through the host assembly (e.g. DataQualityEngine.dll) etc.
+        /// Determines whether the given database was created by the specified patcher e.g. <see cref="CataloguePatcher"/>.  If it is then the 
+        /// schema will be under version control (by the patchers assembly) and <see cref="DatabaseEntity"/> objects may be retrievable from it.
         /// </summary>
         /// <returns></returns>
         bool WasCreatedBy(IPatcher patcher);
 
         /// <summary>
-        /// Provides a live object for interacting directly with the server referenced by this <see cref="IExternalDatabaseServer"/>.  This will wokr
+        /// Provides a live object for interacting directly with the server referenced by this <see cref="IExternalDatabaseServer"/>.  This will work
         /// even if the server is unreachable (See <see cref="IMightNotExist"/>)
         /// </summary>
         /// <param name="context"></param>

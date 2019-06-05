@@ -38,7 +38,7 @@ namespace Rdmp.UI.Tests
             pt.SaveToDatabase();
 
             AndLaunch<PluginProcessTaskUI>(pt);
-            AssertErrorWasShown(ExpectedErrorType.KilledForm,"MEF crashed while trying to look up Type 'ArmageddonAttacher' for ProcessTask");
+            AssertErrorWasShown(ExpectedErrorType.KilledForm,"Could not find Type 'ArmageddonAttacher' for ProcessTask ");
         }
 
         [Test,UITimeout(20000)]

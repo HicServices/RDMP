@@ -16,13 +16,14 @@ namespace MapsDirectlyToDatabaseTable.Versioning
     public interface IPatcher
     {
         /// <summary>
-        /// Returns the dot database assembly containing all the Sql scripts to run to bring the database up to the current version e.g. CatalogueLibrary.Database.dll
+        /// Returns the assembly containing all the Sql scripts to run to bring the database up to the current version.  These scripts 
+        /// must be Embedded Resources and are usually in the same assembly as the <see cref="IPatcher"/>.
         /// </summary>
         /// <returns></returns>
         Assembly GetDbAssembly();
 
         /// <summary>
-        /// The subdirectory of the .Database assembly which contains the embedded resources (sql files to create/patch the database).
+        /// The subdirectory of the assembly which contains the embedded resources (sql files to create/patch the database).
         /// </summary>
         string ResourceSubdirectory { get; }
 

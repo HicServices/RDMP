@@ -24,18 +24,8 @@ using ReusableUIComponents.Dialogs;
 namespace Rdmp.UI.TestsAndSetup
 {
     /// <summary>
-    /// Shows every time an RDMP application is launched.  The 'User Friendly' view tells you whether there are any problems with your current platform databases / plugins by way of a large
-    /// smiley face.  If you get an error (Red face) then there may be a hyperlink to resolve the problem (e.g. if a platform database needs patching or you have not yet configured your 
-    /// platform databases (See ChoosePlatformDatabases).
-    /// 
-    /// <para>Green means that everything is working just fine.</para>
-    /// 
-    /// <para>Yellow means that something non-critical is not working e.g. a specific plugin is not working correctly</para>
-    /// 
-    /// <para>Red means that something critical is not working (Check for a fix hyperlink or look at the 'Technical' view to see the exact nature of the problem).</para>
-    /// 
-    /// <para>The 'Technical' view shows the progress of the discovery / version checking of all tiers of platform databases.  This includes checking that the software version matches the database
-    /// schema version  (See ManagedDatabaseUI) and that plugins have loaded correctly (See MEFStartupUI).</para>
+    /// Shows every when RDMP application is first launched.  Tells you whether there are any problems with your current platform databases.
+    /// If you get an error (Red face) then clicking it will show a log of the startup process.
     /// </summary>
     public partial class StartupUI : Form, ICheckNotifier
     {

@@ -39,7 +39,7 @@ Data is loaded into tables in batches using an appropriate `IBulkCopy` for the D
 The table created will have an appropriate primary key if the `DataTable` batches supplied have a PrimaryKey set or if any `ExplicitTypes` columns have `IsPrimaryKey` set.  This key will only be created when the `DataTableUploadDestination` is disposed since primary keys can affect the ability to issue ALTER statements.
 
 ## Tests
-See `DataLoadEngineTests.Integration.DataTableUploadDestinationTests` and `DataExportLibrary.Tests.DatatypeComputerTests`.
+See `Rdmp.Core.Tests.DataLoad.Engine.Integration.DataTableUploadDestinationTests`.
 
 ## Class Diagram
 ![DataTableUploadDiagram](Images/DataTableUpload/ClassDiagram.png)

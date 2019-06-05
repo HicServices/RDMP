@@ -22,14 +22,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// This entity is a DLL (Dynamic Link Library - AKA Assembly) of compiled C# code that is either a MEF (Managed Extensibility Framework) plugin or a dependency of a MEF
-    /// plugin.  Plugins add third party extension functionality (not part of the core RDMP functionality).  You can commit your compiled dlls by packaging them with 
-    /// package.bat (or by zipping up your bin directory files) and committing the .zip via PluginManagementForm (Accessible via Ctrl+R).  PluginManagementForm will upload
-    /// the DLL as a binary and pushed into the LoadModuleAssembly table.  This allows everyone using your Catalogue database access to the [Exports] defined in the compiled dll.
-    /// 
-    /// <para>A typical use case for this is when you are required to load a particularly freaky data format (e.g. even records are in UTF8 binary and odd records are in ASCII) which
-    /// requires specific code to execute.  You would make a class for dealing with the file format and make it implement IPluginAttacher.  Upload your dll along with any
-    /// dependency dlls and the next time a DataAnalyst is building a load configuration your attacher will be displayed along with all the 'out of the box' attachers (CSV, Excel etc)</para>
+    /// This entity stores the large binary blob for the <see cref="Plugin"/> class.  The <see cref="Bin"/> can be written to disk
+    /// as a nuget file which can be loaded at runtime to add plugin functionality for rdmp.
     /// </summary>
     public class LoadModuleAssembly : DatabaseEntity, IInjectKnown<Plugin>
     {

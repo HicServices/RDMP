@@ -69,7 +69,7 @@
     <Position X="10.5" Y="8.75" Width="1.5" />
     <TypeIdentifier />
   </Class>
-  <Class Name="Rdmp.Core.Curation.Data.Serialization.JsonCompatibleDictionary&lt;TK, TV&gt;" Collapsed="true">
+  <Class Name="Rdmp.Core.Curation.Data.Serialization.Dictionary&lt;TK, TV&gt;" Collapsed="true">
     <Position X="9" Y="1.5" Width="3" />
     <TypeIdentifier />
   </Class>

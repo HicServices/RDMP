@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
@@ -210,60 +211,42 @@ namespace Rdmp.Core.Validation
         private static object oLockExtraTypes = new object();
         private static Type[] _extraTypes = null;
 
-        public static void RefreshExtraTypes(ICheckNotifier mefCheckNotifier)
+        public static void RefreshExtraTypes(SafeDirectoryCatalog mef, ICheckNotifier notifier)
         {
             lock (oLockExtraTypes)
             {
                 _extraTypes = null;
-                GetExtraTypes(mefCheckNotifier);
-            }
-        }
 
-        public static Type[] GetExtraTypes(ICheckNotifier notifier = null)
-        {
-            if (_extraTypes != null)
-                return _extraTypes;
-
-            lock (oLockExtraTypes)
-            {
                 List<Type> extraTypes = new List<Type>();
 
-                foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
-                    try
-                    {
-                        //Get all the Types in the assembly that are compatible with Constraint (primary or secondary)
-                        extraTypes.AddRange(assembly.GetTypes().Where(
+                //Get all the Types in the assembly that are compatible with Constraint (primary or secondary)
+                extraTypes.AddRange(mef.GetAllTypes().Where(
 
-                            //type is
-                            type =>
-                                type != null &&
-                                //of the correct Type
-                                 (typeof(IConstraint).IsAssignableFrom(type) || typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
-                                 &&
-                                 !type.IsAbstract
-                                 &&
-                                 !type.IsInterface
-                                 &&
-                                 type.IsClass
-                            )
+                    //type is
+                    type =>
+                        type != null &&
+                        //of the correct Type
+                            (typeof(IConstraint).IsAssignableFrom(type) || typeof(PredictionRule).IsAssignableFrom(type)) //Constraint or prediction
+                            &&
+                            !type.IsAbstract
+                            &&
+                            !type.IsInterface
+                            &&
+                            type.IsClass
+                    )
 
-                            );
-                    }
-                    catch (Exception ex)
-                    {
-                        string msg = "Could not load '"+assembly+"' (while looking for IConstraints)";
-
-                        if (notifier != null)
-                            notifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Warning, ex));
-                        else
-                            Console.WriteLine(msg);
-                    }
+                    );
 
                 _extraTypes = extraTypes.ToArray();
             }
-            
+        }
 
-            return _extraTypes;
+        public static Type[] GetExtraTypes()
+        {
+            lock (oLockExtraTypes)
+            {
+                return _extraTypes??new Type[0];
+            }
         }
 
 

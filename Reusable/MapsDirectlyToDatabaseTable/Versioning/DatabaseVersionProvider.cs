@@ -11,10 +11,9 @@ using ReusableLibraryCode;
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
     /// <summary>
-    /// Fetches the version number of a platform database.  Platform databases are defined in an .Database assembly (e.g. CatalogueLibrary.Database) and are
-    /// synced to a host assembly (e.g. CatalogueLibrary) which contains the object definitions (IMapsDirectlyToDatabaseTable).  It is important that the 
-    /// version numbers of the host assembly and database assembly match.  To this end when the database is deployed or patched (updated) the .Database assembly
-    /// version is written into the database.  
+    /// Fetches the version number of a platform database.  Platform databases managed by an IPatcher whose assembly contains both the object definitions (IMapsDirectlyToDatabaseTable)
+	/// and the SQL schema / patches for the database.  It is important that the version numbers of the host assembly and database match.  To this end when the database is deployed or 
+	/// patched (updated) the IPatcher assembly version is written into the database.  
     /// 
     /// <para>This prevents running mismatched versions of the RDMP software with out dated object definitions.</para>
     /// </summary>

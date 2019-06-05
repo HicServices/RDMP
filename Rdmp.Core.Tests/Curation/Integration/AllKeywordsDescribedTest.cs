@@ -75,7 +75,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             foreach (string problem in problems)
                 Console.WriteLine("Fatal Problem:" + problem);
 
-            Assert.AreEqual(0, problems.Count, @"Add a description for each of these to \CatalogueManager\CatalogueLibrary\KeywordHelp.txt");
+            Assert.AreEqual(0, problems.Count, @"Add a description for each of these to KeywordHelp.txt");
         }
 
         [Test]
@@ -100,7 +100,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             foreach (string problem in problems)
                 Console.WriteLine("Fatal Problem:" + problem);
 
-            Assert.AreEqual(0,problems.Count,@"Add a description for each of these to \CatalogueManager\CatalogueLibrary\KeywordHelp.txt");
+            Assert.AreEqual(0,problems.Count,@"Add a description for each of these to KeywordHelp.txt");
             
         }
 

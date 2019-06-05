@@ -20,12 +20,12 @@ using ReusableUIComponents.SqlDialogs;
 namespace Rdmp.UI.Versioning
 {
     /// <summary>
-    /// This window appears whenever the RDMP has detected that there is a version mismatch between your database and the RDMP software (or a plugin you have written - See PluginPatcherUI).
+    /// This window appears whenever the RDMP has detected that there is a version mismatch between your database and the RDMP software (or a plugin you have written - See <see cref="PluginPatcher"/>).
     /// The RDMP enforces a strict version policy in which the version of the codebase (the software running) must always match that of the databases it is running on.  Each new version of
     /// the RDMP software will include SQL patches designed to bring your databases up-to-date with the new feature set.
     /// 
     /// <para>This dialog shows you the version number of the database and the version number of the patching assembly (separate version numbers are maintained for the Catalogue Manager Database,
-    /// Data Export Database, Logging databases etc).  For a description of the Host/Database assembly model the RDMP uses, See ManagedDatabaseUI.</para>
+    /// Data Export Database, Logging databases etc).</para>
     /// </summary>
     public partial class PatchingUI : Form
     {

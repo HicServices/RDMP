@@ -50,7 +50,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
         /// The values of all foreign key properties on the <see cref="DatabaseEntity"/> (e.g. <see cref="CatalogueItem.Catalogue_ID"/>).  This is the SharingGuid of the referenced object.
         /// An object cannot be shared unless it is also shared with all such dependencies.
         /// </summary>
-        public JsonCompatibleDictionary<RelationshipAttribute, Guid> RelationshipProperties = new JsonCompatibleDictionary<RelationshipAttribute, Guid>();
+        public Dictionary<RelationshipAttribute, Guid> RelationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
 
         /// <inheritdoc cref="ShareDefinition"/>
         public ShareDefinition(Guid sharingGuid, int id, Type type, Dictionary<string, object> properties, Dictionary<RelationshipAttribute, Guid> relationshipProperties)
@@ -63,7 +63,7 @@ namespace Rdmp.Core.Curation.Data.Serialization
             Type = type;
             Properties = properties;
             
-            RelationshipProperties = new JsonCompatibleDictionary<RelationshipAttribute, Guid>();
+            RelationshipProperties = new Dictionary<RelationshipAttribute, Guid>();
             
             foreach (var kvp in relationshipProperties)
                 RelationshipProperties.Add(kvp.Key, kvp.Value);

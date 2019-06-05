@@ -141,7 +141,7 @@ namespace Rdmp.Core.Startup
                 FindTier3Databases( RepositoryLocator.CatalogueRepository);
             }
 
-            Validator.RefreshExtraTypes(mefCheckNotifier);
+            Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,mefCheckNotifier);
         }
 
         private void FindTier3Databases(ICatalogueRepository catalogueRepository)
@@ -262,6 +262,9 @@ namespace Rdmp.Core.Startup
                     {
                         //if the directory has no files we have to unzip - otherwise it has an unzipped version already yay
                         mustUnzip = !outDir.GetFiles("*.dll",SearchOption.AllDirectories).Any();
+
+                        if(mustUnzip)
+                            outDir.Delete(true);
                     }
                     else
                         outDir = subdir.CreateSubdirectory("out");
@@ -279,8 +282,13 @@ namespace Rdmp.Core.Startup
                     else
                         _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
 
+                    var dir = _environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib"),_mefCheckNotifier);
+                    
+                    //it is a UI only plugin? or plugin doesn't support the current runtime/platform
+                    if(dir == null)
+                        continue;
 
-                    toLoad.Add(_environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib")));
+                    toLoad.Add(dir);
 
                     //tell them we downloaded it
                     MEFFileDownloaded(this,
@@ -307,12 +315,12 @@ namespace Rdmp.Core.Startup
                             CheckResult.Fail, ex));
                 }
             }
+
+            AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
             
             MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toLoad.Select(d=>d.FullName).ToArray());
             catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
-
-            AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
-
+            
             _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
             var sw = Stopwatch.StartNew();
 

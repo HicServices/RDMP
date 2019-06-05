@@ -18,13 +18,11 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Repositories
 {
     /// <summary>
-    /// MEF stands for Managed Extensibility Framework which is a Microsoft library for building Extensions (Plugins) into programs.  It involves decoarting classes as
-    /// [Export] or [InheritedExport] and defining contracts, importing constructors, paramters etc.  RDMP makes use of MEF in a limited fashion, it processes all 
-    /// Exported classes into a SafeDirectoryCatalog (a collection of MEF AssemblyCatalogs/AggregateCatalog).
+    /// Provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the 
+    /// <see cref="SafeDirectoryCatalog"/>.  It also includes methods for creating instances of the exported Types.
     /// 
-    /// <para>This class provides support for downloading Plugins out of the Catalogue Database, identifying Exports and building the SafeDirectoryCatalog.  It also includes
-    /// methods for creating instances of the exported Types.  Because MEF only gets you so far it also has some generally helpful reflection based methods such as 
-    /// GetAllTypesFromAllKnownAssemblies.</para>
+    /// <para>The class name MEF is a misnomer because historically we used the Managed Extensibility Framework (but now we 
+    /// just grab everything with reflection)</para>
     /// </summary>
     public class MEF
     {
@@ -60,10 +58,23 @@ namespace Rdmp.Core.Repositories
           
         private HashSet<string> TypeNotKnown = new HashSet<string>();
 
+
+        /// <summary>
+        /// Looks up the given Type in all loaded assemblies (during <see cref="Startup.Startup"/>).  Returns null
+        /// if the Type is not found.
+        /// 
+        /// <para>This method supports both fully qualified Type names and Name only (although this is slower).  Answers
+        /// are cached.</para>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
         public Type GetType(string type)
         {            
             if(string.IsNullOrWhiteSpace(type))
                 throw new ArgumentNullException("type");
+
+            if(TypeNotKnown.Contains(type))
+                return null;
 
             if(!SafeDirectoryCatalog.TypesByName.ContainsKey(type))
             {
@@ -108,7 +119,10 @@ namespace Rdmp.Core.Repositories
                     }
 
                 if(toReturn == null)
-                    throw new KeyNotFoundException("Could not find a type called "+ type);
+                {
+                    TypeNotKnown.Add(type);
+                    return null; 
+                }
                 
                 //we know about it now!
                 SafeDirectoryCatalog.AddType(type,toReturn);

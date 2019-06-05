@@ -4,10 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery.TypeTranslation;
+using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Runners;
@@ -23,6 +25,25 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
 {
     public class GatherAndShareTests:DatabaseTests
     {
+        [Test]
+        public void Test_SerializeObject_ShareAttribute()
+        {
+            Dictionary<RelationshipAttribute, Guid> d = new Dictionary<RelationshipAttribute,Guid>();
+            
+            var json = JsonConvertExtensions.SerializeObject(d,RepositoryLocator);
+            var obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json, typeof(Dictionary<RelationshipAttribute, Guid>),RepositoryLocator);
+
+            Assert.AreEqual(0,obj.Count);
+
+            //now add a key
+            d.Add(new RelationshipAttribute(typeof(string),RelationshipType.SharedObject,"fff"),Guid.Empty);
+                 
+            json = JsonConvertExtensions.SerializeObject(d,RepositoryLocator);
+            obj = (Dictionary<RelationshipAttribute, Guid>)JsonConvertExtensions.DeserializeObject(json, typeof(Dictionary<RelationshipAttribute, Guid>),RepositoryLocator);
+
+            Assert.AreEqual(1,obj.Count);
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void GatherAndShare_ANOTable_Test(bool goViaJson)
