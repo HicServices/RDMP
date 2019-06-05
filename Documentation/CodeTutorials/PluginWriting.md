@@ -229,7 +229,7 @@ Your command will also be available under the `File=>Run...` dialog.
 <a name="basicAnoPlugin"></a>
 # A (very) basic Anonymisation Plugin
 
-We have seen how UI plugins work, now we will write a plugin which functions both through the UI and from the CLI running under the cross platform `dotnetcore2.2` runtime.
+We have seen how UI plugins work, now we will write a plugin which functions both through the UI and from the CLI running under the cross platform `netcoreapp2.2` runtime.
 
 Create a new solution with the following projects.
 
