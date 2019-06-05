@@ -16,7 +16,7 @@ This menu is built by `RDMPCollectionCommonFunctionality` using reflection.  The
 
 1. If an object called `MyObject` has a menu it must be called `MyObjectMenu` and must inherit from `RDMPContextMenuStrip`
 2. It must have a constructor signature `public MyObjectMenu(RDMPContextMenuStripArgs args, MyObject instance)`
-3. It must be in namespace Menus e.g. `CatalogueManager.Menus` / `DataExportManager.Menus` etc
+3. It must be in namespace `Rdmp.UI.Menus`
 
 If no corresponding menu exists for the object then the default menu will be shown.
 
@@ -27,23 +27,14 @@ Sometimes we want 2 objects to have the same menu without having to create two m
 1. If you implement `IDeletable` then your method will be called (not the object you are masquerading as)
 2. If a menu directly compatible with your wrapper class does exists then it will be used (i.e. the masqueraded object menu is only used if there isn't one for the wrapper)
 	
-# Menu Constructor Overloading
-The decision on which menu to use is actually done based on the menu constructor arguments (See `GetMenuWithCompatibleConstructorIfExists`).  This means that you can avoid code duplication by providing an overloaded constructor for multiple classes that have a similar menu.  For example `CatalogueMenu` contains constructors for both `CatalogueFolder` and `Catalogue`.
-
-1. The menu class name must still match one constructor e.g. `CatalogueMenu`. This is a convention but is checked by unit tests (See `UserInterfaceStandardisationChecker`)
-2. You should NOT use this as an opportunity to shove all the menus into the same class e.g. `AllObjectImportsNodeMenu`
-
-# Reasoning
-The conventions presented above allow you to rapidly create new menus by creating one new class and not modifying any existing code.  It also lets you rapidly find an objects menu by using `What is this?` to get the object `Type` name and searching for `<TypeName>Menu`.
-
 # Example
 Right click the "Data Repository Servers" folder and click "What is this?" (See [picture in Background](#background)).  A MessageBox should pop up saying `AllServersNode`
 
-Create a new class in `CatalogueManager.Menus` called `AllServersNodeMenu` 
+Create a new class in `Rdmp.UI.Menus` called `AllServersNodeMenu` 
 
 ```csharp
-using System.Windows.Forms;
-using CatalogueLibrary.Nodes;
+using Rdmp.Core.Providers.Nodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Menus
 {
@@ -66,8 +57,8 @@ Run RDMP and right click the `AllServersNode` again, you should see your new men
 The preferred way of adding menu items is to use abstract base class `RDMPContextMenuStrip` method `Add(IAtomicCommand cmd)`.  For example 
 
 ```csharp
-using CatalogueLibrary.Nodes;
-using CatalogueManager.CommandExecution.AtomicCommands;
+using Rdmp.Core.Providers.Nodes;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace CatalogueManager.Menus
 {
@@ -91,7 +82,7 @@ All commands must be declared in an appropriate namespace e.g. `CommandExecution
 If you want to create a new command then you should 
 1. Create a new class called `ExecuteCommand<Something>` inherit from `BasicUICommandExecution` and implement `IAtomicCommand`
 2. Declare a constructor taking whatever arguments are required to do the command and an `IActivateItems` (for calling the base constructor)
-3. Implement `GetImage` returning null for no image or using the `IIconProvider` to provide a suitable `RDMPConcept` / `OverlayKind`
+3. Override `GetImage` returning null for no image or using the `IIconProvider` to provide a suitable `RDMPConcept` / `OverlayKind`
 4. Override `Execute` to perform the command logic (make sure to still call `base.Execute` so that `IsImpossible` is respected)
 
 In your constructor you can decide that the arguments are not compatible with the command.  In this case you should call `SetImpossible` to indicate that the command cannot be run with it's current arguments / environment state.  This will result in the command being greyed out in menus (and the user will be able to hover over to see why).  This is the preferred approach rather than not adding the command in the first place.

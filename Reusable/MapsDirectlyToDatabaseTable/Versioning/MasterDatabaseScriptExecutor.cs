@@ -19,9 +19,7 @@ using Version = System.Version;
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
     /// <summary>
-    /// Deploys a .Database assembly (e.g. CatalogueLibrary.Database) into a database server (e.g. localhost\sqlexpress).  .Database assemblies are just lists
-    /// of SQL scripts for creating and patching a specific schema.  This class wraps roundhouse for the executing of the scripts and the creation of the 
-    /// ScriptsRun and Version tables which are used to ensure that the host assembly (e.g. CatalogueLibrary) version matches the current database version. 
+    /// Creates new databases with a fixed (versioned) schema (determined by an <see cref="IPatcher"/>) into a database server (e.g. localhost\sqlexpress).
     /// </summary>
     public class MasterDatabaseScriptExecutor
     {
@@ -414,8 +412,7 @@ INSERT INTO [RoundhousE].[ScriptsRun]
         /// <summary>
         /// Creates a new platform database and patches it
         /// </summary>
-        /// <param name="hostAssembly">The HOST assembly (not the database assembly) e.g. if you want to create and patch CatalogueLibrary.Database then pass in typeof(Catalogue).Assembly instead</param>
-        /// <param name="subdirectory">Subdirectory embedded resources are in (e.g. "CatalogueDatabase") </param>
+        /// <param name="patcher">Determines the SQL schema created</param>
         /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
         public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
@@ -427,25 +424,5 @@ INSERT INTO [RoundhousE].[ScriptsRun]
             CreateDatabase(sql, "1.0.0.0", notifier);
             PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
         }
-
-        /// <summary>
-        /// Gets the dll called MyAssembly.Database.dll when passed the assembly MyAssembly.dll for this to work MyAssembly.dll must have a reference to MyAssembly.Database.dll and use it
-        /// so that it gets compiled and included wherever MyAssembly.dll is used
-        /// </summary>
-        /// <param name="hostAssembly"></param>
-        /// <returns></returns>
-        private Assembly GetDatabaseAssemblyForHost(Assembly hostAssembly)
-        {
-            string expectedDatabaseDllName = hostAssembly.GetName().Name + ".Database";
-            var databaseAssembly = Assembly.Load(expectedDatabaseDllName);
-
-            if (databaseAssembly == null)
-                throw new Exception("Expected the passed host assembly " + hostAssembly.FullName + " to have refernced assembly " + expectedDatabaseDllName + " containing embedded database scripts but Assembly.Load returned null indicating it is not in scope");
-
-            return databaseAssembly;
-        }
     }
-
-
-    
 }

@@ -123,7 +123,7 @@ class FrozenExtractionConfigurationsNode
 
 <a name="addToTree"></a>
 # Adding the node to the tree
-Finally we can add instances of the node class to the tree.  This is done through the `CatalogueLibrary.Providers.IChildProvider`.  Open  `DataExportManager.Collections.Providers.DataExportChildProvider` and `CatalogueLibrary.Providers.CatalogueChildProvider` and identify the method which adds children for your parent object.  It will be called `AddChildren` and take a first parameter of the Type you want to add children to.  In this example we want to add the child node to the class `ExtractionConfigurationsNode` (![Pr](Icons/ExtractionConfigurationsNode.png)).  So we search for '`AddChildren(ExtractionConfigurationsNode`'
+Finally we can add instances of the node class to the tree.  This is done through the `IChildProvider`.  Open  `DataExportChildProvider` and `CatalogueChildProvider` and identify the method which adds children for your parent object.  It will be called `AddChildren` and take a first parameter of the Type you want to add children to.  In this example we want to add the child node to the class `ExtractionConfigurationsNode` (![Pr](Icons/ExtractionConfigurationsNode.png)).  So we search for '`AddChildren(ExtractionConfigurationsNode`'
 
 ![FindAddChildren](Images/CreatingANewCollectionTreeNode/FindAddChildren.png) 
 

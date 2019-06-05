@@ -21,10 +21,9 @@ using ReusableLibraryCode.Comments;
 namespace Rdmp.Core.Repositories
 {
     /// <summary>
-    /// Pointer to the Catalogue Repository database in which all DatabaseEntities declared in CatalogueLibrary.dll are stored.  Ever DatabaseEntity class must exist in a
+    /// Pointer to the main RDMP Catalogue Repository database in which all DatabaseEntities relating to data curation, governance, load etc are stored.  Every DatabaseEntity class must exist in a
     /// Microsoft Sql Server Database (See DatabaseEntity) and each object is compatible only with a specific type of TableRepository (i.e. the database that contains the
-    /// table matching their name).  CatalogueLibrary.dll objects in CatalogueRepository, DataExportLibrary.dll objects in DataExportRepository, DataQualityEngine.dll objects
-    /// in DQERepository etc.
+    /// table matching their name).
     /// 
     /// <para>This class allows you to fetch objects and should be passed into constructors of classes you want to construct in the Catalogue database.  </para>
     /// 
