@@ -709,78 +709,124 @@ ServerName: localhost\sqlexpress
 Prefix: TEST_
 ```
 
+```
+Message: OneTimeSetUp:   Catalogue database does not exist, run 'rdmp.exe install' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to 'rdmp.exe install' e.g. 'rdmp.exe install localhost\sqlexpress TEST_')
+```
 
-Open a command console in the bin directory of the plugin (e.g. `E:\RDMP\Documentation\CodeTutorials\CodeExamples\MyExamplePluginTests\bin\Debug`)
+To create these databases you can use the main RDMP UI:
 
-Run `DatabaseCreation.exe localhost\sqlexpress TEST_ -D` (make sure the servername is correct for your Sql Server)
+![Create platform database in rdmp main ui](Images/CreatePlatformDatabases.png)
 
-This will create a suite of test databases all prefixed `TEST_` in your database.  
+Or you can compile the RMDP CLI yourself and run it from the bin directory.
+
+Or you can use rdmp.dll with the dotnet command from the packages directory (helpful for continuous integration builds) e.g.
+
+```
+cd C:\Users\tznind\.nuget\packages\hic.rdmp.plugin\3.0.13-rc\tools\netcoreapp2.2\publish\
+dotnet rdmp.dll install localhost\sqlexpress TEST_
+```
 
 If you had to change the location of your server or specified a custom prefix (i.e. not `TEST_`) then you will need to change `TestDatabases.txt` (this file should be in the root of your Tests project).  Also ensure that `TestDatabases.txt` is marked `Copy always` under `Copy to Output Directory` in the file Properties (F4).
 
-Clean and Rebuild your project and run the unit test again. It should pass this time (if it doesn't, check that the `TEST_` databases exist and then double check the `TestDatabases.txt` file is being correctly copied to the test bin directory.
+Clean and Rebuild your project and run the unit test again. It should pass this time.
 
 <a name="databaseTestsWritting"></a>
 ## Writting a Database Test
 Add a new test 
 
 ```csharp
-[Test]
-public void TestBasicDataTableAnonymiser3()
+using FAnsi;
+using FAnsi.Discovery;
+using MyPipelinePlugin;
+using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Progress;
+using System.Data;
+using Tests.Common;
+
+namespace MyPipelinePluginTests
 {
-    //Create a names table that will go into the database
-    var dt = new DataTable();
-    dt.Columns.Add("Name");
-    dt.Rows.Add(new[] {"Thomas"});
-    dt.Rows.Add(new[] {"Wallace"});
-    dt.Rows.Add(new[] {"Frank"});
+    class TestAnonymisationPluginsDatabaseTests: DatabaseTests
+    {
+        [Test]
+        public void Test()
+        {
+            Assert.Pass();
+        }
 
-    //upload the DataTable from memory into the database
-    var discoveredTable = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("ForbiddenNames", dt);
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestBasicDataTableAnonymiser3(DatabaseType type)
+        {
+            DiscoveredDatabase database = GetCleanedServer(type);
 
-    //import the persistent TableInfo reference
-    var importer = new TableInfoImporter(CatalogueRepository, discoveredTable);
+            //Create a names table that will go into the database
+            var dt = new DataTable();
+            dt.Columns.Add("Name");
+            dt.Rows.Add(new[] {"Thomas"});
+            dt.Rows.Add(new[] {"Wallace"});
+            dt.Rows.Add(new[] {"Frank"});
+
+            DiscoveredTable table = database.CreateTable("ForbiddenNames",dt);
             
-    TableInfo tableInfo;
-    ColumnInfo[] columnInfos;
-    importer.DoImport(out tableInfo,out columnInfos);
+            TableInfo tableInfo;
+            Import(table,out tableInfo,out _);
 
-    //Create the test dataset chunk that will be anonymised
-    var dtStories = new DataTable();
-    dtStories.Columns.Add("Story");
-    dtStories.Rows.Add(new[] { "Thomas went to school regularly" });
-    dtStories.Rows.Add(new[] { "It seems like Wallace went less regularly" });
-    dtStories.Rows.Add(new[] { "Mr Smitty was the teacher" });
+            //Create the test dataset chunk that will be anonymised
+            var dtStories = new DataTable();
+            dtStories.Columns.Add("Story");
+            dtStories.Rows.Add(new[] { "Thomas went to school regularly" });
+            dtStories.Rows.Add(new[] { "It seems like Wallace went less regularly" });
+            dtStories.Rows.Add(new[] { "Mr Smitty was the teacher" });
 
-    //Create the anonymiser
-    var a = new BasicDataTableAnonymiser3();
+            //Create the anonymiser
+            var a = new BasicDataTableAnonymiser3();
 
-    //Tell it about the database table
-    a.NamesTable = tableInfo;
+            //Tell it about the database table
+            a.NamesTable = tableInfo;
 
-    //run the anonymisation
-    var resultTable = a.ProcessPipelineData(dtStories, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+            //run the anonymisation
+            var resultTable = a.ProcessPipelineData(dtStories, new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
 
-    //check the results
-    Assert.AreEqual(resultTable.Rows.Count, 3);
-    Assert.AreEqual("REDACTED went to school regularly", resultTable.Rows[0][0]);
-    Assert.AreEqual("It seems like REDACTED went less regularly", resultTable.Rows[1][0]);
-    Assert.AreEqual("Mr Smitty was the teacher", resultTable.Rows[2][0]);
+            //check the results
+            Assert.AreEqual(resultTable.Rows.Count, 3);
+            Assert.AreEqual("REDACTED went to school regularly", resultTable.Rows[0][0]);
+            Assert.AreEqual("It seems like REDACTED went less regularly", resultTable.Rows[1][0]);
+            Assert.AreEqual("Mr Smitty was the teacher", resultTable.Rows[2][0]);
 
-    //finally drop the database table
-    discoveredTable.Drop();
+            //finally drop the database table
+            table.Drop();
+        }
+    }
 }
 ```
 
-This has a few intersting lines in it.  Firstly we create a DataTable containing a Names column with some values then we use the base class property `DiscoveredDatabaseICanCreateRandomTablesIn` this is a database for creating test tables in.  The database is nuked before each test set is run (but not between Tests).  `DiscoveredDatabase.CreateTable` will upload the `DataTable` to the destination and return a `ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTable`.
+This has a few intersting lines in it.  Firstly we create a DataTable containing a Names column with some values then we use the base class property `GetCleanedServer` this is a database for creating test tables in.  The database is nuked before each test set is run.  `DiscoveredDatabase.CreateTable` will upload the `DataTable` to the destination and return a `DiscoveredTable`.
 
-As you might have guessed `Discovered[...]` is how we reference Servers / Databases / Tables / Columns as we find them at runtime.  These classes exist to provide simplified access to common tasks in a cross platform way (See `ReusableCodeTests.CrossPlatformTests`).
+`Discovered[...]` is how we reference Servers / Databases / Tables / Columns as we find them at runtime.  These classes exist to provide simplified access to common tasks in a cross platform way.
 
-Once we have a `DiscoveredTable` we can create a persistent reference to it in the TEST_Catalogue database (`CatalogueLibrary.Data.TableInfo`) via `TableInfoImporter`.  The `TableInfo` pointer is given to the `BasicDataTableAnonymiser3` and used to anonymise the 'pipeline chunk' `dtStories` (like in the first unit test).
+Once we have a `DiscoveredTable` we can create a persistent reference to it in the TEST_Catalogue database (`TableInfo`) via base method `Import` (this is a helper method that wraps `TableInfoImporter`).  The `TableInfo` pointer is given to the `BasicDataTableAnonymiser3` and used to anonymise the 'pipeline chunk' `dtStories` (like in the first unit test).
+
+If you have access to an oracle / mysql testing database you can add the other test cases by adding the connection strings to TestDatabases.txt:
+
+```
+ServerName: localhost\sqlexpress
+Prefix: TEST_
+MySql: Server=localhost;Uid=root;Pwd=zombie;SSL-Mode=None
+Oracle: Data Source=localhost:1521/orclpdb.dundee.uni;User Id=ora;Password=zombie;
+``` 
+
+Add the following 2 test cases to the test
+```
+[TestCase(DatabaseType.Oracle)]
+[TestCase(DatabaseType.MySql)]
+```
+
+This will result in the names table being created/read on the other DMBS provider databases.
 
 <a name="checks"></a>
 # Checks
-This is getting complex and could do with having some events, and a way for the user to check that it is working before running it.  Fortunately RDMP supports this with the `ReusableLibraryCode.Checks.ICheckNotifier` system.
+RDMP tries to make sure all components are configured correctly before executing, this is done through the `ICheckNotifier` / `ICheckable` system.
 
 <a name="anoPluginVersion4"></a>
 ## Version 4
@@ -789,17 +835,29 @@ Create an exact copy of `BasicDataTableAnonymiser3` called `BasicDataTableAnonym
 Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`) and call the new method `GetCommonNamesTable`
 
 ```csharp
- public class BasicDataTableAnonymiser4 : IPluginDataFlowComponent<DataTable>
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using System.Linq;
+
+namespace MyPipelinePlugin
+{
+    public class BasicDataTableAnonymiser4: IPluginDataFlowComponent<DataTable>
     {
-        [DemandsInitialization("Table containing a single column which must have a list of names to redact from columns", mandatory: true)]
+        [DemandsInitialization("Table containing a single column which must have a list of names to redact from columns", mandatory:true)]
         public TableInfo NamesTable { get; set; }
 
         [DemandsInitialization("Columns matching this regex pattern will be skipped")]
         public Regex ColumnsNotToEvaluate { get; set; }
 
         private string[] _commonNames;
-
-        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
             GetCommonNamesTable();
 
@@ -810,17 +868,17 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
                 foreach (DataColumn col in toProcess.Columns)
                 {
                     //if it's not a column we are skipping
-                    if (ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
+                    if(ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
                         continue;
-
+                    
                     //if it is a string
                     var stringValue = row[col] as string;
 
-                    if (stringValue != null)
+                    if(stringValue != null)
                     {
                         //replace any common names with REDACTED
                         foreach (var name in _commonNames)
-                            stringValue = Regex.Replace(stringValue, name, "REDACTED", RegexOptions.IgnoreCase);
+                            stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
 
                         row[col] = stringValue;
                     }
@@ -829,7 +887,6 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
 
             return toProcess;
         }
-
         private void GetCommonNamesTable()
         {
             if (_commonNames == null)
@@ -852,18 +909,18 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
                     throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
 
                 //turn it into an array
-                _commonNames = dataTable.AsEnumerable().Select(r => r.Field<string>(0)).ToArray();
+                _commonNames = dataTable.Rows.Cast<DataRow>().Select(r => r[0] as string).Where(s=>!string.IsNullOrWhiteSpace(s)).ToArray();
             }
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-
+            
         }
 
         public void Abort(IDataLoadEventListener listener)
         {
-
+            
         }
 
         public void Check(ICheckNotifier notifier)
@@ -871,9 +928,10 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
             GetCommonNamesTable();
         }
     }
+}
 ```
 
-Go to your unit tests and write a test for it passing it a `ReusableLibraryCode.Checks.ThrowImmediatelyCheckNotifier` (this is just like `ThrowImmediatelyDataLoadEventListener` in that it will treat all Fail messages - and optionally Warnings too as Exceptions and throw them).
+Go to your unit tests and write a test for it passing it a `ThrowImmediatelyCheckNotifier` (this is just like `ThrowImmediatelyDataLoadEventListener` in that it will treat all Fail messages - and optionally Warnings too as Exceptions and throw them).
 
 ```csharp
 [Test]
@@ -887,7 +945,7 @@ public void TestBasicDataTableAnonymiser4_FailConditions()
 Running this test should give an error like 
 
 ```
-System.NullReferenceException : Object reference not set to an instance of an object.
+Message: System.NullReferenceException : Object reference not set to an instance of an object.
 ```
 
 This is not very helpful.  We can use the `ReusableLibraryCode.Checks.ICheckNotifier` argument of `Check` to record the checking process.  This will look something like:
@@ -899,10 +957,62 @@ The two null arguments are for Exception (if any) and the 'proposed fix' which i
   
 For now we can ignore ProposedFix because nothing that goes wrong with our component can be easily fixed.
 
-Start by passing the `notifier` argument into `GetCommonNamesTable` and use it to document the setup process (and any failures): 
+Start by passing the `notifier` argument into `GetCommonNamesTable` and use it to document the setup process (and any failures).  You can pass a `ThrowImmediatelyCheckNotifier` when calling it from `ProcessPipelineData`
 
 ```csharp
-private void GetCommonNamesTable(ICheckNotifier notifier)
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using System.Linq;
+
+namespace MyPipelinePlugin
+{
+    public class BasicDataTableAnonymiser4: IPluginDataFlowComponent<DataTable>
+    {
+        [DemandsInitialization("Table containing a single column which must have a list of names to redact from columns", mandatory:true)]
+        public TableInfo NamesTable { get; set; }
+
+        [DemandsInitialization("Columns matching this regex pattern will be skipped")]
+        public Regex ColumnsNotToEvaluate { get; set; }
+
+        private string[] _commonNames;
+        
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+        {
+            GetCommonNamesTable(new ThrowImmediatelyCheckNotifier());
+
+            //Go through each row in the table
+            foreach (DataRow row in toProcess.Rows)
+            {
+                //for each cell in current row
+                foreach (DataColumn col in toProcess.Columns)
+                {
+                    //if it's not a column we are skipping
+                    if(ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
+                        continue;
+                    
+                    //if it is a string
+                    var stringValue = row[col] as string;
+
+                    if(stringValue != null)
+                    {
+                        //replace any common names with REDACTED
+                        foreach (var name in _commonNames)
+                            stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
+
+                        row[col] = stringValue;
+                    }
+                }
+            }
+
+            return toProcess;
+        }
+        private void GetCommonNamesTable(ICheckNotifier notifier)
         {
             if (_commonNames == null)
             {
@@ -936,12 +1046,29 @@ private void GetCommonNamesTable(ICheckNotifier notifier)
                     throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
 
                 //turn it into an array
-                _commonNames = dataTable.AsEnumerable().Select(r => r.Field<string>(0)).ToArray();
+                _commonNames = dataTable.Rows.Cast<DataRow>().Select(r => r[0] as string).Where(s=>!string.IsNullOrWhiteSpace(s)).ToArray();
             }
         }
-```
 
-In order to compile we will need to update the call to `GetCommonNamesTable` in `ProcessPipelineData` too.  Fortunately we can use a `ThrowImmediatelyCheckNotifier`.
+        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        {
+            
+        }
+
+        public void Abort(IDataLoadEventListener listener)
+        {
+            
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Ready to start checking", CheckResult.Success, null, null));
+
+            GetCommonNamesTable(notifier);
+        }
+    }
+}
+```
 
 Now we can run our test and see an error that makes sense
 
@@ -963,63 +1090,61 @@ Finally we can add in some other sensible checks
 
 ```csharp
 private void GetCommonNamesTable(ICheckNotifier notifier)
+{
+    if (_commonNames == null)
+    {
+        if (NamesTable == null)
         {
-            if (_commonNames == null)
-            {
-                if (NamesTable == null)
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "No NamesTable has been set, this must be a Table containing a list of names to REDACT from the pipeline data being processed",
-                            CheckResult.Fail));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "No NamesTable has been set, this must be a Table containing a list of names to REDACT from the pipeline data being processed",
+                    CheckResult.Fail));
 
-                    return;
-                }
-
-                //get access to the database under DataLoad context
-                var databaseDiscovered = DataAccessPortal.GetInstance().ExpectDatabase(NamesTable, DataAccessContext.DataLoad);
-
-                if (databaseDiscovered.Exists())
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found Database '" + databaseDiscovered + "' ",CheckResult.Success));
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Database '" + databaseDiscovered + "' does not exist ", CheckResult.Fail));
-
-                //expect a table matching the TableInfo
-                var tableDiscovered = databaseDiscovered.ExpectTable(NamesTable.GetRuntimeName());
-
-                if (tableDiscovered.Exists())
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found table '" + tableDiscovered + "' ", CheckResult.Success));
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' does not exist ", CheckResult.Fail));
-
-                //make sure it exists
-                if (!tableDiscovered.Exists())
-                    throw new NotSupportedException("TableInfo '" + tableDiscovered + "' does not exist!");
-
-                //Download all the data
-                var dataTable = tableDiscovered.GetDataTable();
-
-                //Make sure it has the correct expected schema (i.e. 1 column)
-                if (dataTable.Columns.Count != 1)
-                    throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
-
-                //turn it into an array
-                _commonNames = dataTable.AsEnumerable().Select(r => r.Field<string>(0)).ToArray();
-
-                if (_commonNames.Length == 0)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' did not have any rows in it!", CheckResult.Fail));
-                    
-                    //reset it just in case
-                    _commonNames = null;
-                }
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Read " + _commonNames.Length + " names from name table", CheckResult.Success));
-            }
+            return;
         }
-```
 
-Just to confirm you have done it right you can copy and paste `TestBasicDataTableAnonymiser3` and adjust it to run it on `BasicDataTableAnonymiser4`
+        //get access to the database under DataLoad context
+        var databaseDiscovered = DataAccessPortal.GetInstance().ExpectDatabase(NamesTable, DataAccessContext.DataLoad);
+
+        if (databaseDiscovered.Exists())
+            notifier.OnCheckPerformed(new CheckEventArgs("Found Database '" + databaseDiscovered + "' ",CheckResult.Success));
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs("Database '" + databaseDiscovered + "' does not exist ", CheckResult.Fail));
+
+        //expect a table matching the TableInfo
+        var tableDiscovered = databaseDiscovered.ExpectTable(NamesTable.GetRuntimeName());
+
+        if (tableDiscovered.Exists())
+            notifier.OnCheckPerformed(new CheckEventArgs("Found table '" + tableDiscovered + "' ", CheckResult.Success));
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' does not exist ", CheckResult.Fail));
+
+        //make sure it exists
+        if (!tableDiscovered.Exists())
+            throw new NotSupportedException("TableInfo '" + tableDiscovered + "' does not exist!");
+
+        //Download all the data
+        var dataTable = tableDiscovered.GetDataTable();
+
+        //Make sure it has the correct expected schema (i.e. 1 column)
+        if (dataTable.Columns.Count != 1)
+            throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
+
+        //turn it into an array
+        _commonNames = dataTable.Rows.Cast<DataRow>().Select(r => r[0] as string).Where(s=>!string.IsNullOrWhiteSpace(s)).ToArray();
+
+        if (_commonNames.Length == 0)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' did not have any rows in it!", CheckResult.Fail));
+                    
+            //reset it just in case
+            _commonNames = null;
+        }
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs("Read " + _commonNames.Length + " names from name table", CheckResult.Success));
+    }
+}
+```
 
 <a name="progress"></a>
 # Progress Logging
@@ -1093,7 +1218,7 @@ public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener
 
 Notice that we are only counting the number of redactions since that is the most interesting bit.  Now it is time to test it and see the power of the `IDataLoadEventListener` system.  We are going to write a test which explores three different `IDataLoadEventListener` implementations.
 
-Add the following to `TestAnonymisationPlugins`
+Add the following to `TestAnonymisationPluginsDatabaseTests`
 
 ```csharp
 public enum LoggerTestCase
@@ -1117,16 +1242,14 @@ public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
 	dt.Rows.Add(new[] { "Frank" });
 
 	//upload the DataTable from memory into the database
-	var discoveredTable = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("ForbiddenNames", dt);
+	var discoveredTable = GetCleanedServer(DatabaseType.MicrosoftSQLServer).CreateTable("ForbiddenNames", dt);
 	try
 	{
+        TableInfo tableInfo;
+
 		//import the persistent TableInfo reference
-		var importer = new TableInfoImporter(CatalogueRepository, discoveredTable);
-
-		TableInfo tableInfo;
-		ColumnInfo[] columnInfos;
-		importer.DoImport(out tableInfo, out columnInfos);
-
+		var importer = Import(discoveredTable,out tableInfo ,out _);
+                
 		//Create the test dataset chunks that will be anonymised
 		var dtStories1 = new DataTable();
 		dtStories1.Columns.Add("Story");
@@ -1165,10 +1288,7 @@ public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
 			case LoggerTestCase.ToDatabase:
 			
 				//get the default logging server
-				var loggingServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
-
-				//create a log manager for the server
-				var logManager = new LogManager(loggingServer);
+				var logManager = CatalogueRepository.GetDefaultLogManager();
 
 				//create a new super task Anonymising Data Tables
 				logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
@@ -1207,7 +1327,7 @@ public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
 
 This test has the same setup of the ForbiddenNames table, this time we create 3 batches which will go through our pipeline component in sequence (as would happen in normal execution where you could be processing millions of records in sub batches).  It then creates one of three `IDataLoadEventListener` and passes the 3 batches in.
 
-The first test case `LoggerTestCase.ToConsole` creates a `ReusableLibraryCode.Progress.ThrowImmediatelyDataLoadEventListener`.  `ThrowImmediatelyCheckNotifier` ignores `OnProgress` messages, writes out `OnNotify` to the console and throws an Exception if there are any Error messages received.
+The first test case `LoggerTestCase.ToConsole` creates a `ThrowImmediatelyDataLoadEventListener`.  This ignores `OnProgress` messages, writes out `OnNotify` to the console and throws an Exception if there are any Error messages received.
 
 ![To Console Output](Images/Version5ToConsoleOutput.png)
 
@@ -1220,7 +1340,7 @@ Assert.AreEqual(4,
  ((ToMemoryDataLoadEventListener)listener).LastProgressRecieivedByTaskName["REDACTING Names"].Progress.Value);
 ```
 
-Finally we have the test case `LoggerTestCase.ToDatabase` which creates a `HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`.  This is a translational class that allows access to the `HIC.Logging` hierarchical database logging system which RDMP uses to record all the ongoing activities executed by users.  A test instance of this database is automatically setup by `DatabaseCreation.exe` and is therefore available any class inheriting from `DatabaseTests`.  If you look at your test server in Sql Management Studio you should see a database called `TEST_Logging`.  This database has a hierarchy 
+Finally we have the test case `LoggerTestCase.ToDatabase` which creates a `ToLoggingDatabaseDataLoadEventListener`.  This is class writes to the RDMP relational logging database which RDMP uses to record all the ongoing activities executed by users.  A test instance of this database is automatically setup by `rdmp.exe install` and is therefore available any class inheriting from `DatabaseTests`.  If you look at your test server in Sql Management Studio you should see a database called `TEST_Logging`.  This database has a hierarchy 
 
 TableName|Purpose
 --------|---------
@@ -1230,34 +1350,8 @@ ProgressLog | All the messages generated during a given `DataLoadRun`
 FatalError | All Error messages generated during a given `DataLoadRun` with a flag for whether they have been resolved or not
 TableLoadRun | A count of the number of records that ended up at a given destination (this might be a database table but could equally be a flat file etc)
 DataSource | A description of all the contributors of data to the `TableLoadRun` (this could be flat files or a block of SQL run on a server or even just a class name!)
- 
-This isn't a perfect fit to the `IDataLoadEventListener` interface but it is close enough that we are able to provide an implementation (`HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`).  
 
-First we needed to get the default logging server declared in the test Catalogue database:
-
-```csharp
-//get the default logging server
-var loggingServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
-```
-
-Secondly we needed to setup the overarching task ("Anonymising Data Tables"):
-
-```csharp
-//create a log manager for the server
-var logManager = new LogManager(loggingServer);
-
-//create a new super task Anonymising Data Tables
-logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
-```
-
-Thirdly we needed to create the `HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener` with a specific run name (remember `DataLoadRun` describes a single execution of the overarching task).  In this case we have provided the string `"Run on " + DateTime.Now`.
-
-```csharp
-//setup a listener that goes to this logging database 
-listener = new ToLoggingDatabaseDataLoadEventListener(this,logManager ,"Anonymising Data Tables","Run on " + DateTime.Now);
-```
-
-Run the ToDatabase test case and then open the TEST_Logging database in Sql Management Studio.  Unlike TEST_Catalogue, The TEST_Logging database is not automatically cleared cleared after each test so you might have some additional runs (if you ran the test multiple times or had some bugs implementing it) but it should look something like:
+After running this test case you can open the TEST_Logging database in Sql Management Studio.  Unlike TEST_Catalogue, The TEST_Logging database is not automatically cleared cleared after each test so you might have some additional runs (if you ran the test multiple times or had some bugs implementing it) but it should look something like:
 
 ![Logging database should look like this](Images/Version5LoggingDatabase.png)
 
