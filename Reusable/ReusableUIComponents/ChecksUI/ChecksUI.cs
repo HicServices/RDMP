@@ -5,17 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
-using System.Windows.Markup;
 using BrightIdeasSoftware;
-using QuickGraph;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Progress;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Icons;
 
@@ -86,7 +80,7 @@ namespace ReusableUIComponents.ChecksUI
         public bool CheckingInProgress { get; private set; }
         public bool AllowsYesNoToAll { get; set; }
 
-        public event AllChecksCompleteHandler AllChecksComplete;
+        public event EventHandler<AllChecksCompleteHandlerArgs> AllChecksComplete;
         
         Thread _checkingThread; 
         private YesNoYesToAllDialog yesNoYesToAllDialog = new YesNoYesToAllDialog();
@@ -131,7 +125,16 @@ namespace ReusableUIComponents.ChecksUI
             });
             _checkingThread.Start();
         }
+
+        internal void BeginUpdate()
+        {
+            olvChecks.BeginUpdate();
+        }
         
+        internal void EndUpdate()
+        {
+            olvChecks.EndUpdate();
+        }
         void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
         {
 
@@ -148,6 +151,7 @@ namespace ReusableUIComponents.ChecksUI
             if(AllChecksComplete!= null)
                 AllChecksComplete(this,new AllChecksCompleteHandlerArgs(listener));
         }
+
 
         public bool OnCheckPerformed(CheckEventArgs args)
         {

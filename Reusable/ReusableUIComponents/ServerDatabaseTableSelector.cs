@@ -14,7 +14,6 @@ using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode;
-using ReusableLibraryCode.Icons.IconProvision;
 
 namespace ReusableUIComponents
 {
@@ -176,7 +175,10 @@ namespace ReusableUIComponents
                 if (ex.GetExceptionIfExists<OperationCanceledException>() != null)
                     _listDatabasesAsyncResult = new string[0];
                 else
-                    throw;
+                {
+                    ragSmiley1.Fatal(ex);
+                    _listDatabasesAsyncResult = new string[0];
+                }   
             }
         }
 

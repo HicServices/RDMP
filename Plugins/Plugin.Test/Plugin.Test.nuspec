@@ -1,0 +1,43 @@
+<?xml version="1.0"?>
+<package >
+    <metadata>
+		<id>HIC.RDMP.Plugin.Test</id>
+        <version>$version$</version>
+        <title>HIC.RDMP.Plugin.Test</title>
+        <authors>Health Informatics Centre, University of Dundee</authors>
+        <owners>Health Informatics Centre, University of Dundee</owners>
+        <licenseUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/LICENSE</licenseUrl>
+        <projectUrl>https://github.com/HicServices/RDMP</projectUrl>
+        <iconUrl>https://raw.githubusercontent.com/HicServices/RDMP/master/Application/ResearchDataManagementPlatform/Icon/main.png</iconUrl>
+        <requireLicenseAcceptance>false</requireLicenseAcceptance>
+        <description>Package for writing plugin tests</description>
+        <copyright>Copyright 2018-2019</copyright>
+        <dependencies>
+			<dependency id="HIC.BadMedicine" version="0.0.1.1" />
+            <dependency id="HIC.FansiSql" version="0.9.1.10" />
+            <dependency id="CsvHelper" version="12.1.2" />
+            <dependency id="Newtonsoft.Json" version="11.0.2"/>
+            <dependency id="CommandLineParser" version="2.3.0" />
+            <dependency id="SSH.NET" version="2013.4.7" />
+            <dependency id="NUnit" version="3.11.0" />
+            <dependency id="Moq" version="4.10.1" />
+            <dependency id="NLog" version="4.6.2" />
+            <dependency id="YamlDotNet" version="6.0.0.0" />
+        </dependencies>
+    </metadata>
+    <files>
+		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\MapsDirectlyToDatabaseTable.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Rdmp.Core.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\ReusableLibraryCode.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Tests.Common.dll" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Tests.Common.pdb" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\Tests.Common.xml" target="lib\netstandard2.0"/>
+		<file src="bin\$configuration$\netstandard2.0\TestDatabases.txt" target="content"/>
+    </files>
+</package>

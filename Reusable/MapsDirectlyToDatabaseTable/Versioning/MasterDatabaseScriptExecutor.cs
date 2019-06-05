@@ -5,11 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using System.Data.SqlClient;
-using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Security.Cryptography;
@@ -22,9 +19,7 @@ using Version = System.Version;
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
     /// <summary>
-    /// Deploys a .Database assembly (e.g. CatalogueLibrary.Database) into a database server (e.g. localhost\sqlexpress).  .Database assemblies are just lists
-    /// of SQL scripts for creating and patching a specific schema.  This class wraps roundhouse for the executing of the scripts and the creation of the 
-    /// ScriptsRun and Version tables which are used to ensure that the host assembly (e.g. CatalogueLibrary) version matches the current database version. 
+    /// Creates new databases with a fixed (versioned) schema (determined by an <see cref="IPatcher"/>) into a database server (e.g. localhost\sqlexpress).
     /// </summary>
     public class MasterDatabaseScriptExecutor
     {
@@ -225,7 +220,7 @@ INSERT INTO [RoundhousE].[ScriptsRun]
 
                 db.Server.AddParameterWithValueToCommand("@script_name",cmd2,filename);
                 db.Server.AddParameterWithValueToCommand("@text_of_script",cmd2,sql);
-                db.Server.AddParameterWithValueToCommand("@text_hash",cmd2,CalculateMD5Hash(sql));
+                db.Server.AddParameterWithValueToCommand("@text_hash",cmd2,CalculateHash(sql));
                 db.Server.AddParameterWithValueToCommand("@one_time_script",cmd2,1);
                 db.Server.AddParameterWithValueToCommand("@entry_date",cmd2,dt);
                 db.Server.AddParameterWithValueToCommand("@modified_date",cmd2,dt);
@@ -236,15 +231,15 @@ INSERT INTO [RoundhousE].[ScriptsRun]
 
         }
         
-        public string CalculateMD5Hash(string input)
+        public string CalculateHash(string input)
         {
             // step 1, calculate MD5 hash from input
 
-            MD5 md5 = MD5.Create();
+            var hashProvider = SHA512.Create();
 
             byte[] inputBytes = Encoding.ASCII.GetBytes(input);
 
-            byte[] hash = md5.ComputeHash(inputBytes);
+            byte[] hash = hashProvider.ComputeHash(inputBytes);
 
 
             // step 2, convert byte array to hex string
@@ -417,52 +412,17 @@ INSERT INTO [RoundhousE].[ScriptsRun]
         /// <summary>
         /// Creates a new platform database and patches it
         /// </summary>
-        /// <param name="hostAssembly">The HOST assembly (not the databas assembly) e.g. if you want to create and patch CatalogueLibrary.Database then pass in typeof(Catalogue).Assembly instead</param>
+        /// <param name="patcher">Determines the SQL schema created</param>
         /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
-        public void CreateAndPatchDatabase(Assembly hostAssembly, ICheckNotifier notifier)
+        public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
-            var databaseAssembly = GetDatabaseAssemblyForHost(hostAssembly);
-            string sql = Patch.GetInitialCreateScriptContents(databaseAssembly);
+            string sql = Patch.GetInitialCreateScriptContents(patcher);
 
             //get everything in the /up/ folder that are .sql
-            var patches = Patch.GetAllPatchesInAssembly(databaseAssembly);
+            var patches = Patch.GetAllPatchesInAssembly(patcher);
 
             CreateDatabase(sql, "1.0.0.0", notifier);
             PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
         }
-        /// <summary>
-        /// Creates a new platform database and patches it
-        /// </summary>
-        /// <param name="dotDatabaseAssembly"></param>
-        /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
-        public void CreateAndPatchDatabaseWithDotDatabaseAssembly(Assembly dotDatabaseAssembly, ICheckNotifier notifier)
-        {
-            string sql = Patch.GetInitialCreateScriptContents(dotDatabaseAssembly);
-
-            //get everything in the /up/ folder that are .sql
-            var patches = Patch.GetAllPatchesInAssembly(dotDatabaseAssembly);
-
-            CreateDatabase(sql, "1.0.0.0", notifier);
-            PatchDatabase(patches, notifier, (p) => true);//apply all patches without question
-        }
-        /// <summary>
-        /// Gets the dll called MyAssembly.Database.dll when passed the assembly MyAssembly.dll for this to work MyAssembly.dll must have a reference to MyAssembly.Database.dll and use it
-        /// so that it gets compiled and included wherever MyAssembly.dll is used
-        /// </summary>
-        /// <param name="hostAssembly"></param>
-        /// <returns></returns>
-        private Assembly GetDatabaseAssemblyForHost(Assembly hostAssembly)
-        {
-            string expectedDatabaseDllName = hostAssembly.GetName().Name + ".Database";
-            var databaseAssembly = Assembly.Load(expectedDatabaseDllName);
-
-            if (databaseAssembly == null)
-                throw new Exception("Expected the passed host assembly " + hostAssembly.FullName + " to have refernced assembly " + expectedDatabaseDllName + " containing embedded database scripts but Assembly.Load returned null indicating it is not in scope");
-
-            return databaseAssembly;
-        }
     }
-
-
-    
 }

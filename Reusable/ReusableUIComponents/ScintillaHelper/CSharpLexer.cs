@@ -12,6 +12,9 @@ using ScintillaNET;
 
 namespace ReusableUIComponents.ScintillaHelper
 {
+    /// <summary>
+    /// Syntax highlighter for <see cref="Scintilla"/>
+    /// </summary>
     public class CSharpLexer
     {
         public const int StyleDefault = 0;

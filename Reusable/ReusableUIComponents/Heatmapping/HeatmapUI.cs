@@ -5,22 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Diagnostics;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
-using System.Windows;
+using System.Text.RegularExpressions;
 using System.Windows.Forms;
-using System.Windows.Media;
+using ReusableLibraryCode.Settings;
 using ReusableUIComponents.Dialogs;
-using Brushes = System.Drawing.Brushes;
-using Color = System.Drawing.Color;
-using FontFamily = System.Drawing.FontFamily;
-using FontStyle = System.Drawing.FontStyle;
-using Point = System.Drawing.Point;
 
 namespace ReusableUIComponents.Heatmapping
 {
@@ -83,14 +75,42 @@ namespace ReusableUIComponents.Heatmapping
         public HeatmapUI()
         {
             InitializeComponent();
-
         }
 
         public void SetDataTable(DataTable dataTable)
         {
+            if(!string.IsNullOrWhiteSpace(UserSettings.HeatMapColours))
+            {
+                Regex colorRegex = new Regex("#([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])([0-9A-F][0-9A-F])");
+
+                var tokens = UserSettings.HeatMapColours.Split(new string[]{"->" },StringSplitOptions.None);
+
+                if(tokens.Length == 2)
+                {
+                    var m1 = colorRegex.Match(tokens[0]);
+                    var m2 = colorRegex.Match(tokens[1]);
+                    
+                    if(m1.Success && m2.Success)
+                    {
+                        var fromColor = Color.FromArgb(
+                            (int)Convert.ToByte(m1.Groups[1].Value,16),
+                            (int)Convert.ToByte(m1.Groups[2].Value,16),
+                            (int)Convert.ToByte(m1.Groups[3].Value,16)
+                            );
+
+                        var toColor = Color.FromArgb(
+                            (int)Convert.ToByte(m2.Groups[1].Value,16),
+                            (int)Convert.ToByte(m2.Groups[2].Value,16),
+                            (int)Convert.ToByte(m2.Groups[3].Value,16)
+                            );
+
+                        _rainbow = new RainbowColorPicker(fromColor,toColor,NumberOfColors);
+                    }
+                }
+            }
+
             lock (oDataTableLock)
             {
-
                 _dataTable = dataTable;
 
                 //skip the first column (which will be the X axis values)  then compute the maximum value in any cell in the data table, this is the brightest pixel in heatmap
@@ -282,7 +302,7 @@ namespace ReusableUIComponents.Heatmapping
                     double lastAxisStart = -500;
                     double lastAxisLabelWidth = -500;
 
-                    var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : FormsHelper.GetVisibleArea(this);
+                    var visibleArea = _useEntireControlAsVisibleArea ? new Rectangle(0,0,Width,Height) : this.GetVisibleArea();
                     
                     
                     int visibleClipBoundsTop = visibleArea.Top;

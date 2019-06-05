@@ -6,10 +6,14 @@
 
 using System;
 using System.ComponentModel;
-using System.Windows.Controls;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Allows visual studio designer to work with controls which have abstract base classes in the inheritance hierarchy
+    /// </summary>
+    /// <typeparam name="TAbstract"></typeparam>
+    /// <typeparam name="TBase"></typeparam>
     public class AbstractControlDescriptionProvider<TAbstract, TBase> : TypeDescriptionProvider
     {
         public AbstractControlDescriptionProvider() : base(TypeDescriptor.GetProvider(typeof(TAbstract)))

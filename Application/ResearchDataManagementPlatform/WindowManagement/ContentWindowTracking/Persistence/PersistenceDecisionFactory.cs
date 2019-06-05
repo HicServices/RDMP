@@ -7,14 +7,14 @@
 using System;
 using System.Reflection;
 using System.Windows.Forms;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Repositories;
-using CatalogueLibrary.Repositories.Construction;
-using CatalogueManager.Collections;
-using CatalogueManager.LoadExecutionUIs;
-using Dashboard.Raceway;
-using DataExportManager.ProjectUI;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Repositories.Construction;
+using Rdmp.UI.Collections;
+using Rdmp.UI.LoadExecutionUIs;
+using Rdmp.UI.ProjectUI;
+using Rdmp.UI.Raceway;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence
 {
@@ -93,7 +93,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.
 
         private Type GetTypeByName(string s, Type expectedBaseClassType,IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            var toReturn = repositoryLocator.CatalogueRepository.MEF.GetTypeByNameFromAnyLoadedAssembly(s);
+            var toReturn = repositoryLocator.CatalogueRepository.MEF.GetType(s);
 
             if (toReturn == null)
                 throw new TypeLoadException("Could not find Type called '" + s + "'");

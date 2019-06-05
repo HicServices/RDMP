@@ -171,5 +171,11 @@ namespace MapsDirectlyToDatabaseTable
         /// Throw an Exception if the repository persists to a location that is currently innaccessible (e.g. a database)
         /// </summary>
         void TestConnection();
+
+        /// <summary>
+        /// Gets all the c# class types that come from the database
+        /// </summary>
+        /// <returns></returns>
+        Type[] GetCompatibleTypes();
     }
 }

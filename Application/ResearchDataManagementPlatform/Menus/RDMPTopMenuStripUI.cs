@@ -5,52 +5,38 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.Reports;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.FindAndReplace;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.LocationsMenu.Ticketing;
-using CatalogueManager.MainFormUITabs;
-using CatalogueManager.PluginManagement;
-using CatalogueManager.PluginManagement.CodeGeneration;
-using CatalogueManager.SimpleControls;
-using CatalogueManager.SimpleDialogs;
-using CatalogueManager.SimpleDialogs.NavigateTo;
-using CatalogueManager.SimpleDialogs.Reports;
-using CatalogueManager.TestsAndSetup;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CatalogueManager.Theme;
-using CatalogueManager.Tutorials;
-using CohortManager.CommandExecution.AtomicCommands;
-using DataExportLibrary.Data.DataTables;
-using DataExportManager.CommandExecution.AtomicCommands;
-using DataExportManager.CommandExecution.AtomicCommands.CohortCreationCommands;
-using DataQualityEngine;
-using HIC.Logging;
-using MapsDirectlyToDatabaseTableUI;
+using Rdmp.Core.DataQualityEngine;
+using Rdmp.Core.Logging;
+using Rdmp.Core.Reports;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
+using Rdmp.UI.FindAndReplace;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.LocationsMenu.Ticketing;
+using Rdmp.UI.MainFormUITabs;
+using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.PluginManagement.CodeGeneration;
+using Rdmp.UI.SimpleControls;
+using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.NavigateTo;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Tutorials;
 using ResearchDataManagementPlatform.Menus.MenuItems;
+using ResearchDataManagementPlatform.Updates;
 using ResearchDataManagementPlatform.WindowManagement;
-using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Settings;
+using ReusableUIComponents.SingleControlForms;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.Menus
@@ -76,8 +62,7 @@ namespace ResearchDataManagementPlatform.Menus
     /// 
     /// <para>Help
     /// - View the user manual
-    /// - View a technical description of each of the core objects maintained by RDMP (Catalogues, TableInfos etc) and what they mean (intended for programmers)
-    /// - Generate user interface document (the document you are currently reading).</para>
+    /// - View a technical description of each of the core objects maintained by RDMP (Catalogues, TableInfos etc) and what they mean (intended for programmers)</para>
     /// </summary>
 
     public partial class RDMPTopMenuStripUI : RDMPUserControl
@@ -111,15 +96,10 @@ namespace ResearchDataManagementPlatform.Menus
         }
         private void logViewerToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandViewLoggedData(Activator, LoggingTables.DataLoadTask);
+            var cmd = new ExecuteCommandViewLoggedData(Activator, new LogViewerFilter(LoggingTables.DataLoadTask));
             cmd.Execute();
         }
         
-        private void databaseAccessComplexToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            WordAccessRightsByUserUI dialog = new WordAccessRightsByUserUI();
-            dialog.Show();
-        }
 
         private void metadataReportToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -127,12 +107,6 @@ namespace ResearchDataManagementPlatform.Menus
             cmd.Execute();
         }
 
-
-        private void serverSpecReportToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var dialog = new DatabaseSizeReportUI(Activator);
-            dialog.Show();
-        }
 
         private void dITAExtractionToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -172,8 +146,7 @@ namespace ResearchDataManagementPlatform.Menus
         {
             try
             {
-                FileInfo f = UsefulStuff.SprayFile(typeof(CatalogueCollectionUI).Assembly, "CatalogueManager.UserManual.docx", "UserManual.docx");
-                Process.Start(f.FullName);
+                System.Diagnostics.Process.Start("https://github.com/HicServices/RDMP#user-manual");
             }
             catch (Exception exception)
             {
@@ -183,20 +156,14 @@ namespace ResearchDataManagementPlatform.Menus
 
         private void generateClassTableSummaryToolStripMenuItem_Click(object sender, EventArgs e)
         {
-            var report = new DocumentationReportMapsDirectlyToDatabaseOfficeBit();
+            var report = new DocumentationReportDatabaseEntities();
             report.GenerateReport(Activator.RepositoryLocator.CatalogueRepository.CommentStore,
                 new PopupChecksUI("Generating class summaries", false),
                 Activator.CoreIconProvider,
-                typeof(Catalogue).Assembly,
-                typeof(ExtractionConfiguration).Assembly);
+                Activator.RepositoryLocator.CatalogueRepository.MEF,
+                true);
         }
 
-        private void generateUserInterfaceDocumentationToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            var generator = new DocumentationReportFormsAndControlsUI(Activator);
-            generator.Show();
-        }
-        
         private void showHelpToolStripMenuItem_Click(object sender, EventArgs e)
         {
             var current = _windowManager.Navigation.CurrentTab;
@@ -313,11 +280,6 @@ namespace ResearchDataManagementPlatform.Menus
             navigateForwardToolStripMenuItem.Enabled = _windowManager.Navigation.CanForward();
         }
         
-        private void managePluginsToolStripMenuItem_Click(object sender, EventArgs e)
-        {
-            PluginManagementFormUI dialogue = new PluginManagementFormUI(Activator);
-            dialogue.Show();
-        }
 
         private void codeGenerationToolStripMenuItem_Click(object sender, EventArgs e)
         {
@@ -380,6 +342,20 @@ namespace ResearchDataManagementPlatform.Menus
         private void navigateForwardToolStripMenuItem_Click(object sender, EventArgs e)
         {
             _windowManager.Navigation.Forward(true);
+        }
+
+        private void checkForUpdatesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var ui = new UpdaterUI();
+            var f = new SingleControlForm(ui);
+            f.ShowDialog();
+        }
+
+        private void ListAllTypesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var file = new FileInfo(Path.GetTempFileName());
+            File.WriteAllText(file.FullName,string.Join(Environment.NewLine,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName)));
+            UsefulStuff.GetInstance().ShowFileInWindowsExplorer(file);
         }
     }
 }

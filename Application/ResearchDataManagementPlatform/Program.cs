@@ -5,9 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
-using CatalogueManager.TestsAndSetup;
 using CommandLine;
+using Rdmp.Core.Startup;
+using Rdmp.UI.TestsAndSetup;
 using ReusableLibraryCode;
 
 namespace ResearchDataManagementPlatform
@@ -38,7 +40,8 @@ namespace ResearchDataManagementPlatform
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
-            RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(arg.CatalogueConnectionString, arg.DataExportConnectionString);
+
+            RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(new EnvironmentInfo("net461"),arg.CatalogueConnectionString, arg.DataExportConnectionString);
             bootStrapper.Show(false);
             return 0;
         }

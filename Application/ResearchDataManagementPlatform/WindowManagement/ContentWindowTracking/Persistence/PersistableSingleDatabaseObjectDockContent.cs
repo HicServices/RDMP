@@ -5,16 +5,14 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.CommandExecution.AtomicCommands.UIFactory;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.Refreshing;
-using CatalogueManager.SimpleDialogs.Reports;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ReusableUIComponents;
 

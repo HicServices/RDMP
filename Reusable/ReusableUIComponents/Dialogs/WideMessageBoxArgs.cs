@@ -6,6 +6,9 @@
 
 namespace ReusableUIComponents.Dialogs
 {
+    /// <summary>
+    /// Initialization object for <see cref="WideMessageBox"/> (controls look and feel, content etc)
+    /// </summary>
     public class WideMessageBoxArgs
     {
         public string Title { get; set; }

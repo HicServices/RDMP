@@ -8,7 +8,6 @@ using System;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
-using ReusableLibraryCode;
 
 namespace ReusableUIComponents
 {

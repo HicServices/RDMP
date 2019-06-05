@@ -7,17 +7,12 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Drawing;
-using System.Data;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using ReusableLibraryCode.Performance;
-using ReusableUIComponents.Performance.PerformanceStackPath;
 using ReusableUIComponents.Performance.StackTraceProcessing;
 
 namespace ReusableUIComponents.Performance
@@ -77,7 +72,6 @@ namespace ReusableUIComponents.Performance
 
         List<StackFramesTree> Roots;
 
-        bool ignoreSystemCalls = true;
         bool collapseToMethod = false;
         private ComprehensiveQueryPerformanceCounter _performanceCounter;
         
@@ -96,11 +90,10 @@ namespace ReusableUIComponents.Performance
         {
             _performanceCounter = performanceCounter;
 
-            ignoreSystemCalls = !cbVerbose.Checked;
-
             Roots = new List<StackFramesTree>();
 
             _worstOffenderCount = performanceCounter.DictionaryOfQueries.Seconds.Sum(k => k.TimesSeen);
+            Regex isSystemCall = new Regex(@"^\s*(at)?\s*System.Windows.Forms");
 
             //for each documented query point (which has a stack trace)
             foreach (string stackTrace in performanceCounter.DictionaryOfQueries.Firsts)
@@ -110,10 +103,12 @@ namespace ReusableUIComponents.Performance
 
                 //get the stack trace split by line reversed so the root is at the top
                 var lines = stackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Reverse().ToArray();
-
-                if (ignoreSystemCalls)
-                    lines = lines.Where(StackFramesTree.FindSourceCode).ToArray();
-
+                   
+                lines = lines.Where(l=>!isSystemCall.IsMatch(l)).ToArray();
+                
+                if(lines.Length == 0)
+                    continue;
+                
                 if(collapseToMethod)
                 {
                     
@@ -202,28 +197,6 @@ namespace ReusableUIComponents.Performance
                 tlvLocations.ModelFilter = new TextMatchFilter(tlvLocations,tbFilter.Text);
                 tlvLocations.UseFiltering = true;
             }
-        }
-
-        private void cbVerbose_CheckedChanged(object sender, EventArgs e)
-        {
-            //reload it
-            LoadState(_performanceCounter);
-        }
-
-        private void btnShowNetwork_Click(object sender, EventArgs e)
-        {
-
-            Form f = new Form();
-            
-            var stackPathViewer = new PerformanceStackPathViewerUI(_performanceCounter, _worstOffenderCount, ignoreSystemCalls);
-            stackPathViewer.Dock = DockStyle.Fill;
-            f.Controls.Add(stackPathViewer);
-
-            f.Width = 500;
-            f.Height = 500;
-            f.Show();
-
-
         }
     }
 }

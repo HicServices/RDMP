@@ -1,0 +1,53 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Class Name="Tests.Common.Scenarios.BulkTestsData" Collapsed="true">
+    <Position X="0.75" Y="1.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AACAAACAACBAJAIABAAIAEAAAAREQEAAAAABAIAgEAA=</HashCode>
+      <FileName>Scenarios\BulkTestsData.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tests.Common.Scenarios.TestsRequiringACohort" Collapsed="true">
+    <Position X="8.25" Y="3.25" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>CAAABACICAAIRAgIEQAkQAAAAAACAAACAIACgCAIAAA=</HashCode>
+      <FileName>Scenarios\TestsRequiringACohort.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tests.Common.Scenarios.TestsRequiringAnExtractionConfiguration" Collapsed="true">
+    <Position X="8.25" Y="4.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AEAAAAAEAAAAAkwAQCABBAAAAAAAEAAAAAEAAAgAAJI=</HashCode>
+      <FileName>Scenarios\TestsRequiringAnExtractionConfiguration.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tests.Common.Scenarios.TestsRequiringANOStore" Collapsed="true">
+    <Position X="3" Y="3.5" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAASAIQAAAAAAAAgAAAAAAAAAAAhAAAAAAAKgA=</HashCode>
+      <FileName>Scenarios\TestsRequiringANOStore.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tests.Common.Scenarios.TestsRequiringFullAnonymisationSuite" Collapsed="true">
+    <Position X="3" Y="4.75" Width="3.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAQQAAAAAAAAAAAAAAAAAAIAAAAAAAADAA=</HashCode>
+      <FileName>Scenarios\TestsRequiringFullAnonymisationSuite.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tests.Common.Scenarios.TestsRequiringA" Collapsed="true">
+    <Position X="6.5" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Scenarios\TestsRequiringA.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Tests.Common.DatabaseTests" Collapsed="true">
+    <Position X="7" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAIACIAAEAEAQAgUMACAAYAAAiAAAUADAAAAACQABAY=</HashCode>
+      <FileName>DatabaseTests.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

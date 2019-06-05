@@ -21,55 +21,110 @@
 
 <a name="binary"></a>
 # RDMP Binary and Documentation
-The Research Data Management Platform Binaries are available via Click Once installer at https://hic.dundee.ac.uk/Installers/RDMP/ .  In order to use RDMP you will also need access to a Microsoft Sql Server (Sql Express is fine for testing/development).  After completing the setup process the main UI will launch.
+The Research Data Management Platform Binaries are available on [Releases section of Github](https://github.com/HicServices/RDMP/releases).  In order to use RDMP you will also need access to a Microsoft Sql Server (or Sql Express).  After completing the setup process the main UI will launch.
 
 From here you can access several resources that help understand RDMP classes / patterns etc.  
 
 ![Main application Help](Images/Help.png)
 
-Firstly there is the 'Help=>Show User Manual' (also available at https://github.com/HicServices/RDMP/blob/master/Documentation/UserManual.docx).
+Firstly there is the `Help=>Show User Manual` (also available at https://github.com/HicServices/RDMP/blob/master/Documentation/UserManual.docx).
 
-Secondly there is the 'Help=>Generate Class/Table Summary' which describes the DatabaseEntity objects that appear in RDMPCollectionUIs and are core concepts for RDMP.
+Secondly there is the `Help=>Generate Class/Table Summary` which describes the DatabaseEntity objects that appear in RDMPCollectionUIs and are core concepts for RDMP.
 
 ![Class Documentation](Images/ClassDocumentation.png)
 
-Thirdly 'Help=>Show Help' will show a dialog telling you what User Interface control you are in (class name) and any comments the class has (works for content tabs only - not collection trees).
+Thirdly `Help=>Show Help` will show a dialog telling you what User Interface control you are in (class name) and any comments the class has (works for content tabs only - not collection trees).
 
-Fourthly there is the Tutorial system 'Help=>Tutorials' which cover the basics for setting up RDMP test data, importing files etc.
+Fourthly there is the Tutorial system `Help=>Tutorials` which cover the basics for setting up RDMP test data, importing files etc.
 
-Finally for the ambitious the 'Help=>Generate User Interface Documentation' will screencap and summarise all user interfaces in RDMP (takes a while).
+Finally if you get stuck you can compare your codebase with the fully worked example (of this documentation):
+https://github.com/HicServices/RDMPExamplePlugins
 
-![Class Documentation](Images/UIDocumentation.png)
 
  <a name="helloWorldPlugin"></a>
  # Hello World Plugin
- Create a new Visual Studio Class Library Project targetting .Net Framework 4.5
 
- Add a reference to the nuget packages `HIC.RDMP.Plugin` and `HIC.RDMP.Plugin.UI`.  For the purposes of this demo we are adding all classes to the same csproj but it is good practice to separate UI from engine code (i.e. An Engine Project containing implementation logic and A UI Project containing user interfaces).
+Rdmp plugins must be packaged as [NuGet packages](https://en.wikipedia.org/wiki/NuGet) (e.g. MyPlugin.0.0.1.nupkg).  The package must contain compiled runtime binaries for both net461 and netcoreapp2.2 (for plugins that should also run in the CLI).  
+
+It is recommended to write all your plugin code in a single csproj targetting [Dot Net Standard](https://docs.microsoft.com/en-us/dotnet/standard/net-standard) and produce the runtime binaries by writting two empty projects that reference it.  You can see an example of this in the [Rdmp.Dicom plugin](https://github.com/HicServices/RdmpDicom)
+
+To begin with we can create a UI only plugin (net461).  Create the following in Visual Studio Solution:
+
+```
+\MyPlugin\MyPlugin.csproj (Targetting net461)
+\MyPlugin.nuspec
+\MyPlugin.sln
+```
+
+In `MyPlugin.csproj` add a reference to the nuget packages `HIC.RDMP.Plugin` and `HIC.RDMP.Plugin.UI`.  
+
  ![Class Documentation](Images/NugetPackages.png)
  
   Make sure that the major and minor version number (first two numbers) of the Nuget Package match your installed version of RDMP (Visible in the task bar of the main RDMP application)
 
  ![Versions must match](Images/NugetVersionMustMatchLive.png)
 
- Add a class called `MyPluginUserInterface` and inherit from `CatalogueManager.PluginChildProvision.PluginUserInterface` (Make sure you inherit from the abstract base and not the interface) override `GetAdditionalRightClickMenuItems`
+ Add the following class:
 
 ```csharp
- public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+using Rdmp.Core.Curation.Data;
+using Rdmp.UI.ItemActivation;
+using System.Windows.Forms;
+
+namespace MyPlugin
+{
+    public class MyPluginUserInterface:Rdmp.UI.PluginChildProvision.PluginUserInterface
+    {
+        public MyPluginUserInterface(IActivateItems activator):base(activator)
+        {
+
+        }
+
+        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
         {
             if (o is Catalogue)
                 return new[] { new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")) };
 
             return null;
         }
+    }
+}
+
 ```
 
- Launch Research Data Management Platform main application either by building it from source or installing via ClickOnce (https://hic.dundee.ac.uk/Installers/RDMP/Stable/).
-Then launch Manage Plugins from the Home screen (under Advanced).  Select Add Plugin...
+In `MyPlugin.nuspec` write the following:
 
-  ![Adding a plugin via the RDMP user interface](Images/ManagePluginsAddingAPlugin.png)
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>MyPlugin</id>
+        <version>0.0.1</version>
+        <authors>Me</authors>
+        <description>My RDMP Plugin</description>
+        <dependencies>
+            <dependency id="HIC.RDMP.Plugin" version="3.0" />
+        </dependencies>
+    </metadata>
+    <files>
+    <file src="MyPlugin\bin\Debug\net461\*" target="lib\net461" />	
+    </files>
+</package>
+```
 
- Next add a new empty Catalogue
+Build the solution and then run:
+`nuget pack MyPlugin.nuspec`
+
+This should produce a file called `MyPlugin.0.0.1.nupkg`.  Open RDMP and click the `Tables(Advanced)` collection and right click `Plugins`.  Navigate to your plugin package.
+
+ ![Adding a plugin via the RDMP user interface](Images/AddPluginContextMenu.png)
+
+You can remove plugins at any time directly from your platform database by running
+```sql
+delete from Plugin where ID = 20 --Example ID
+```
+
+Restart RDMP and create a empty Catalogue
 
  ![Add empty Catalogue](Images/AddEmptyCatalogue.png)
 
@@ -81,40 +136,7 @@ Then launch Manage Plugins from the Home screen (under Advanced).  Select Add Pl
  # Attaching the Debugger
  Sometimes you want to debug your plugin as it is running hosted by RDMP.  To do this simply launch `ResearchDataManagementPlatform.exe` manually (if you need to see where the exe is you can select Diagnostics=>Open exe directory at any time).  Next go into visual studio and select Debug=>Attach to Process
 
- <a name="betterBuilding"></a>
- # Streamlining Build
- There are a couple of things you can do to streamline your plugin development process (avoid having to manually commit the plugin every time).  Firstly You can remove the requirement to launch 'Manage Plugins' by setting up a post build step which runs PluginPackager.exe.  This will commit the plugin into the RMDP database.  Secondly you can add the ResearchDataManagementPlatform.exe as a startup project in your plugin solution.
-
-## Adding a post build script to commit the plugin 
-
- (See https://docs.microsoft.com/en-gb/visualstudio/ide/how-to-specify-build-events-csharp)
-
- The executable responsible for commiting plugins is PluginPackager.exe, it should appear in your bin directory when you build your plugin.  
-
- Right click your Project and select Properties
-
- Enter a Post-build script to run PluginPackager.exe.  Make sure that you substitute your test server / database below: e.g.
-
-```
-$(TargetDir)PluginPackager.exe $(SolutionPath) $(SolutionName).zip -s localhost\sqlexpress -d RDMP_Catalogue
-
-```
-
-Now when you build your project (you may need to Clean and Rebuild) you should see the following:
-```
-  MyExamplePlugin -> E:\RDMP\Documentation\CodeTutorials\CodeExamples\MyExamplePlugin\bin\Debug\MyExamplePlugin.dll
-  Found .csproj file reference at path: MyExamplePlugin\MyExamplePlugin.csproj
-  SUCCESS: Found it at:E:\RDMP\Documentation\CodeTutorials\CodeExamples\MyExamplePlugin
-  Your plugin targets CatalogueLibrary version 2.5.1.6
-  Could not find dependent dll System.Drawing.dll
-  Could not find dependent dll System.Windows.Forms.dll
-  File MyExamplePlugin.dll uploaded as a new LoadModuleAssembly under plugin CodeExamples.zip
-  File src.zip uploaded as a new LoadModuleAssembly under plugin CodeExamples.zip
-```
-
-(Do not worry about dependent dll messages)
-
-## Adding a debug target
+## Adding a debug target of RDMP (To your plugin project)
 Right click your Solution and select 'Add Existing Project...' and navigate to the ResearchDataManagementPlatform.exe file.
 
 This should add a new root level item in your Solution called 'ResearchDataManagementPlatform'
@@ -125,12 +147,25 @@ Now when you start your plugin project the RDMP application will launch with the
 
 <a name="commandExecution"></a>
 # Hello World UI Command Execution
-Rather than throwing around `ToolStripMenuItem` you can make use of the `ReusableLibraryCode.CommandExecution.ICommandExecution` system.
+In RDMP commands are usually parcelled into [`IAtomicCommand`](./UserInterfaceOverview.md#commands) objects rather using `ToolStripMenuItem` directly.  You can implement this system as follows:
 
-Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base class `CatalogueManager.CommandExecution.AtomicCommands.BasicUICommandExecution` and implement `ReusableUIComponents.CommandExecution.AtomicCommands.IAtomicCommand`.
+Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base class `BasicUICommandExecution` and implement `IAtomicCommand`.
+
+Create a new Resources file called `Resources.resx` and add a 19x19 pixel image of a bunny e.g. this one: ![an icon of a bunny](Images/Bunny.png)
+
+(You might need to add a reference to `System.Drawing.Common` nuget package)
 
 ```csharp
-   public class ExecuteCommandRenameCatalogueToBunnies:BasicUICommandExecution, IAtomicCommand
+using Rdmp.Core.Curation.Data;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using ReusableLibraryCode.Icons.IconProvision;
+using System.Drawing;
+
+namespace MyPlugin
+{
+    public class ExecuteCommandRenameCatalogueToBunnies:BasicUICommandExecution, IAtomicCommand
     {
         private readonly Catalogue _catalogue;
 
@@ -138,13 +173,13 @@ Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base cl
         {
             _catalogue = catalogue;
 
-			if(catalogue.Name == "Bunny")
+            if(catalogue.Name == "Bunny")
                 SetImpossible("Catalogue is already called Bunny");
         }
 
         public Image GetImage(IIconProvider iconProvider)
         {
-			//icon to use for the right click menu (return null if you don't want one)
+		    //icon to use for the right click menu (return null if you don't want one)
             return Resources.Bunny;
         }
 
@@ -152,110 +187,204 @@ Create a new class `ExecuteCommandRenameCatalogueToBunnies` inherit from base cl
         {
             base.Execute();
 
-			//change the name
+		    //change the name
             _catalogue.Name = "Bunny";
 			
-			//save the change
+		    //save the change
             _catalogue.SaveToDatabase();
 
-			//Lets the rest of the application know that a change has happened
+		    //Lets the rest of the application know that a change has happened
             Publish(_catalogue);
         }
+    }
+}
 ```
 
-Adjust the plugin user interface class to return an instance of this new command:
+Adjust the plugin user interface class `GetAdditionalRightClickMenuItems` method to return an instance of this new command:
 
 ```csharp
-public class MyPluginUserInterface:PluginUserInterface
-    {
-        public MyPluginUserInterface(IActivateItems itemActivator) : base(itemActivator)
+
+public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
+{
+    if (o is Catalogue)
+        return new[]
         {
-        }
-        
-        public override ToolStripMenuItem[] GetAdditionalRightClickMenuItems(object o)
-        {
-            if (o is Catalogue)
-                return new[]
-                {
-                    new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")),
+            new ToolStripMenuItem("Hello World", null, (s, e) => MessageBox.Show("Hello World")),
 
-                    GetMenuItem(new ExecuteCommandRenameCatalogueToBunnies(ItemActivator,(Catalogue)o))
-                };
+            GetMenuItem(new ExecuteCommandRenameCatalogueToBunnies(ItemActivator,(Catalogue)o))
+        };
 
-            return null;
-        }
-
-    }
+    return null;
+}
 ```
+
+Increase the version number of your plugin to 0.1.2 in the nuspec file and commit the new nupkg to rdmp.
 
 Now when you right click a Catalogue you should see your command offered to the user:
 
 ![What it should look like](Images/RightClickBunnyMenuItem.png)
 
+Your command will also be available under the `File=>Run...` dialog.
+
 <a name="basicAnoPlugin"></a>
 # A (very) basic Anonymisation Plugin
 
+We have seen how UI plugins work, now we will write a plugin which functions both through the UI and from the CLI running under the cross platform `dotnetcore2.2` runtime.
+
+Create a new solution with the following projects.
+
+```
+\MyPipelinePlugin\MyPipelinePlugin.csproj (TargetFramework netstandard2.0)
+\Plugin\net461\net461.csproj                (TargetFramework net461)
+\Plugin\netcoreapp2.2\netcoreapp2.2.csproj  (TargetFramework netcoreapp2.2)
+\MyPipelinePlugin.nuspec
+\MyPipelinePlugin.sln
+```
+
+In MyPipelinePlugin.nuspec add the following:
+
+```xml
+<?xml version="1.0" encoding="utf-8"?>
+<package xmlns="http://schemas.microsoft.com/packaging/2013/05/nuspec.xsd">
+    <metadata>
+        <id>MyPipelinePlugin</id>
+        <version>0.0.1</version>
+		<authors>Health Informatics Service, University of Dundee</authors>
+		<description>Example Pipeline Plugin Component </description>
+		<dependencies>
+            <dependency id="HIC.RDMP.Plugin" version="3.0" />
+		</dependencies>
+    </metadata>
+  <files>
+    <file src="Plugin\net461\bin\Debug\net461\*" exclude="**/net461.dll" target="lib\net461" />
+	<file src="Plugin\netcoreapp2.2\bin\Debug\netcoreapp2.2\win-x64\publish\*" exclude="**/netcoreapp2.2.dll" target="lib\netcoreapp2.2\win\" />
+  </files>
+</package>
+```
+
+Add a Project reference to `MyPipelinePlugin.csproj` from both net461.csproj and netcoreapp2.2.csproj:
+
+![What it should look like](Images/PipelinePluginSolution.png)
+
+To build the plugin run the following in the netcoreapp2.2 project directory:
+
+```
+cd \ExamplePipelinePlugin\MyPipelinePlugin\Plugin\netcoreapp2.2\
+dotnet publish -r win-x64
+```
+
+Next run the nuspec file:
+
+```
+nuget pack .\MyPipelinePlugin.nuspec
+```
+
+This should produce a file `MyPipelinePlugin.0.0.1.nupkg` containing the following directories:
+
+```
+lib\net461\
+lib\netcoreapp2.2\win\
+```
+
+When uploaded into RDMP as a plugin, the appropriate platform/runtime will be selected.  
+
+Since the CLI runs as a cross platform netcoreapp you can publish your plugin for linux and include that in the plugin too if you want (This will enable your plugin to be consumed by the CLI when published for linux).
+
+You can test that the plugin is loaded correctly by compiling and running the cli:
+
+```
+cd Tools\rdmp
+dotnet publish -r win-x64
+
+cd .\bin\Debug\netcoreapp2.2\win-x64\publish\
+
+.\rdmp.exe list -t Catalogue --servername localhost\sqlexpress --cataloguedatabasename RDMP_Catalogue --logstartup --command run
+```
+
+Now lets write some components for our plugin!
+
 <a name="anoPluginVersion1"></a>
 ## Version 1
-Most of the processes in RDMP use the `CatalogueLibrary.Data.Pipelines.Pipeline` system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a Catalogue from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
+
+Most of the processes in RDMP use the `Pipeline` system.  This involves a series of components performing operations on a flow of objects of type T (often a `System.Data.DataTable`).  The pipeline is setup/tailored by RDMP users and then reused every time the task needs to be executed.  For example importing a csv file into the database and generating a Catalogue from the resulting table (the first thing you do when playing with the RDMP test data) happens through a pipeline called 'BULK INSERT:CSV Import File'.
 
 ![What it should look like](Images/ImportCatalogue.png)
 
-In this tutorial we will write a reusable component which lets the user identify problem strings (names) in data they are importing.
+We will write a reusable component which lets the user identify problem strings (names) in data they are importing.
 
-Declare a new class `BasicDataTableAnonymiser1` and implement IPluginDataFlowComponent<DataTable>
+Declare a new class `BasicDataTableAnonymiser1` in `MyPipelinePlugin.csproj` and implement IPluginDataFlowComponent<DataTable>:
 
 
 ```csharp
-public class BasicDataTableAnonymiser1: IPluginDataFlowComponent<DataTable>
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
+
+namespace MyPipelinePlugin
 {
-	private static readonly string[] CommonNames = { "Thomas", "Wallace", "Young" };
+    public class BasicDataTableAnonymiser1 : IPluginDataFlowComponent<DataTable>
+    {
+        public void Abort(IDataLoadEventListener listener)
+        {
+            
+        }
 
-	public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
-	{
-		//Go through each row in the table
-		foreach (DataRow row in toProcess.Rows)
-		{
-			//for each cell in current row
-			for (int i = 0; i < row.ItemArray.Length; i++)
-			{
-				//if it is a string
-				var stringValue = row[i] as string;
+        public void Check(ICheckNotifier notifier)
+        {
+            
+        }
 
-				if(stringValue != null)
-				{
-					//replace any common names with REDACTED
-					foreach (var name in CommonNames)
-						stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
+        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        {
+            
+        }
 
-					row[i] = stringValue;
-				}
-			}
-		}
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        {
+            //Go through each row in the table
+		    foreach (DataRow row in toProcess.Rows)
+		    {
+			    //for each cell in current row
+			    for (int i = 0; i < row.ItemArray.Length; i++)
+			    {
+				    //if it is a string
+				    var stringValue = row[i] as string;
 
-		return toProcess;
-	}
+				    if(stringValue != null)
+				    {
+					    //replace any common names with REDACTED
+					    foreach (var name in CommonNames)
+						    stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
 
-	public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
-	{
-		
-	}
+					    row[i] = stringValue;
+				    }
+			    }
+            }
 
-	public void Abort(IDataLoadEventListener listener)
-	{
-		
-	}
+		    return toProcess;
+        }
 
-	public void Check(ICheckNotifier notifier)
-	{
-		
-	}
+        string[] CommonNames = new string[]
+        { 
+            "Dave","Frank","Bob","Pete","Daisy","Marley","Lucy","Tabitha","Thomas","Wallace"
+        };
+
+    }
 }
 ```
+
+Increase the plugin version number to 0.0.2 in `MyPipelinePlugin.nuspec` and compile the project (don't forget to publish netcoreapp2.2 if running the CLI).  Run `nuget pack MyPipelinePlugin.nuspec` and upload the new version of the plugin: `MyPipelinePlugin.0.0.2.nupkg`
+
+Restart RDMP client and select `New Catalogue From File` from the home screen.
 
 Select 'demography.csv' for import (See UserManual.docx for generating test data - Help=>Show User Manual).  Choose a database as the destination and select 'Advanced'.  Select the `BULK INSERT:CSV Import File` pipeline and click Edit.
 
 Drag and drop BasicDataTableAnonymiser1 into the middle of the pipeline.
+
+If your plugin doesn't appear you can select `Diagnostics->Plugins->List All Types` to view all the loaded Types.  You can also click the smiley face during startup to see messages about plugin loading.
 
 ![Editting a pipeline - Version 1](Images/EditPipelineComponentVersion1.png)
 
@@ -267,12 +396,23 @@ select * from test..demography where forename like '%REDACTED%'
 
 <a name="anoPluginVersion2"></a>
 ## Version 2 - Adding arguments
-You can add user configured properties by declaring public auto properties decorated with `[DemandsInitialization]` (`CatalogueLibrary.Data.DemandsInitializationAttribute`).  This attribute is supported on a wide range of common Types (see `CatalogueLibrary.Data.DataLoad.Argument`.`PermissableTypes` for a complete list) and some RDMP object Types (e.g. `CatalogueLibrary.Data.Catalogue`).  Let's add a file list of common names and a regular expression that lets you skip columns you know won't have any names in.
+You can add user configured properties by declaring public properties decorated with `[DemandsInitialization]`.  This attribute is supported on a wide range of common Types (see `Rdmp.Core.Curation.Data.DataLoad.Argument`.`PermissableTypes` for a complete list) and some RDMP object Types (e.g. `Catalogue`).  Let's add a file list of common names and a regular expression that lets you skip columns you know won't have any names in.
 
 Add a new component BasicDataTableAnonymiser2 (or adjust your previous component).  Add two public properties as shown below.
 
 ```csharp
-public class BasicDataTableAnonymiser2: IPluginDataFlowComponent<DataTable>
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.IO;
+using System.Text.RegularExpressions;
+
+namespace MyPipelinePlugin
+{
+    public class BasicDataTableAnonymiser2: IPluginDataFlowComponent<DataTable>
     {
         [DemandsInitialization("List of names to redact from columns", mandatory:true)]
         public FileInfo NameList { get; set; }
@@ -328,10 +468,25 @@ public class BasicDataTableAnonymiser2: IPluginDataFlowComponent<DataTable>
         {
             
         }
-	}
+    }
+}
+
 ```
 
+Recompile and upload the plugin (making sure to update the nuspec to 0.0.3).  If you want to skip this version change you can delete the Plugin from RDMP and from the plugin directory on disk (double click the Plugin folder to open this directory - it should be %appdata%/MEF).
+
 Drop the demography table from your database (and delete any associated Catalogues / TableInfos in RDMP).  Import demography.csv again but edit the pipeline to include the new component BasicDataTableAnonymiser2.  Now when you select it you should be able to type in some values.
+
+For NameList create a file with a few basic names (don't put any blank lines in the file or your likely to end up redacting spaces!)
+
+```
+Dave
+Frank
+Peter
+Angela
+Laura
+Emma
+```
 
 ![Editting a pipeline - Version 2](Images/EditPipelineComponentVersion2.png)
 
@@ -342,7 +497,19 @@ Having a text file isn't that great, it would be much better to power it with a 
 Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing one).  Get rid of the property NameList and add a TableInfo one instead:
 
 ```csharp
- public class BasicDataTableAnonymiser3: IPluginDataFlowComponent<DataTable>
+ using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using System.Linq;
+
+namespace MyPipelinePlugin
+{
+    public class BasicDataTableAnonymiser3: IPluginDataFlowComponent<DataTable>
     {
         [DemandsInitialization("Table containing a single column which must have a list of names to redact from columns", mandatory:true)]
         public TableInfo NamesTable { get; set; }
@@ -356,11 +523,8 @@ Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing
         {
             if (_commonNames == null)
             {
-                //get access to the database under DataLoad context
-                var databaseDiscovered = DataAccessPortal.GetInstance().ExpectDatabase(NamesTable, DataAccessContext.DataLoad);
-
-                //expect a table matching the TableInfo
-                var tableDiscovered = databaseDiscovered.ExpectTable(NamesTable.GetRuntimeName());
+                //discover the table
+                var tableDiscovered = NamesTable.Discover(DataAccessContext.DataLoad);
 
                 //make sure it exists
                 if(!tableDiscovered.Exists())
@@ -373,8 +537,8 @@ Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing
                 if(dataTable.Columns.Count != 1)
                     throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered +"'");
 
-                //turn it into an array
-                _commonNames = dataTable.AsEnumerable().Select(r => r.Field<string>(0)).ToArray();
+                //turn it into an array (throwing out any nulls)
+                _commonNames = dataTable.Rows.Cast<DataRow>().Select(r => r[0] as string).Where(s=>!string.IsNullOrWhiteSpace(s)).ToArray();
             }
 
             //Go through each row in the table
@@ -419,6 +583,8 @@ Create a new plugin component BasicDataTableAnonymiser3 (or modify your existing
             
         }
     }
+}
+
 ```
 
 You will need to create the names table:
@@ -452,12 +618,32 @@ Test the plugin by importing demography.csv again through the pipeline with the 
 
 <a name="unitTests"></a>
 ## Unit Tests 
-We definetly want to write some unit/integration tests for this component.  Create a new project called MyExamplePluginTests.  Add a reference to the NuGet package NUnit and a reference to `HIC.RDMP.Plugin.Test`.
+We definetly want to write some unit/integration tests for this component.  Create a new project called MyPipelinePluginTests.  
+
+Set the TargetFramework to `netcoreapp2.2`
+
+Add a reference MyPipelinePlugin.csproj and reference the following NuGet packages:
+
+```
+HIC.RDMP.Plugin.Test
+Microsoft.NET.Test.Sdk
+NUnit (version 3)
+NUnit3TestAdapter
+NunitXml.TestLogger (optional)
+```
 
 Add the following test:
 
 ```csharp
-public class TestAnonymisationPlugins
+using MyPipelinePlugin;
+using NUnit.Framework;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Progress;
+using System.Data;
+
+namespace MyPipelinePluginTests
+{
+    public class TestAnonymisationPlugins
     {
         [Test]
         public void TestBasicDataTableAnonymiser1()
@@ -477,13 +663,15 @@ public class TestAnonymisationPlugins
             Assert.AreEqual("Mr Smitty was the teacher",resultTable.Rows[2][0]);
         }
     }
+}
+
 ```
 
 This is a very basic test.  We create a data table that would be flowing through our pipeline (e.g. as it was read from a csv file) and look for the REDACTED names appearing.  The only new bits we need to worry about are `ThrowImmediatelyDataLoadEventListener` and `GracefulCancellationToken`.  
 
-`CatalogueLibrary.DataFlowPipeline.GracefulCancellationToken` is a wrapper for two `System.Threading.CancellationToken` (Abort and Cancel).  Since our component doesn't support aborting/cancelling anyway we don't need to worry about it.
+`GracefulCancellationToken` is a wrapper for two `CancellationToken` (Abort and Cancel).  Since our component doesn't support aborting/cancelling anyway we don't need to worry about it.
 
-`ReusableLibraryCode.Progress.IDataLoadEventListener` is the interface that handles messages generated by data flow components, this includes progress messages (done 1000 of x records) and notifications (Information, Warning, Error).  There are many implementations of `IDataLoadEventListener` including user interface components (e.g. `ReusableUIComponents.Progress.ProgressUI`) but we will use `ReusableLibraryCode.Progress.ThrowImmediatelyDataLoadEventListener` this is a data class that treats Error messages as Exceptions (hence the throw) but otherwise writes progress messages to the Console.
+`IDataLoadEventListener` is the interface that handles messages generated by data flow components, this includes progress messages (done 1000 of x records) and notifications (Information, Warning, Error).  There are many implementations of `IDataLoadEventListener` including user interface components (e.g. `ProgressUI`) but we will use `ThrowImmediatelyDataLoadEventListener` this is a data class that treats Error messages as Exceptions (hence the throw) but otherwise writes progress messages to the Console.
 
 <a name="databaseTestsSetup"></a>
 
@@ -491,33 +679,91 @@ This is a very basic test.  We create a data table that would be flowing through
 
 Lets look at testing `BasicDataTableAnonymiser3`, this is harder since it involves having a user specified TableInfo that references a table of names.  We can do this though.
 
-Start by making TestAnonymisationPlugins inherit from `Tests.Common.DatabaseTests`
+Start by making a new class `TestAnonymisationPluginsDatabaseTests` and inherit from `Tests.Common.DatabaseTests`:
+
+```
+using NUnit.Framework;
+using Tests.Common;
+
+namespace MyPipelinePluginTests
+{
+    class TestAnonymisationPluginsDatabaseTests: DatabaseTests
+    {
+        [Test]
+        public void Test()
+        {
+            Assert.Pass();
+        }
+    }
+}
+```
 
 Run the unit test again.  It should fail at test fixture setup with something like
 
 ```
-SetUp : System.Data.SqlClient.SqlException : Cannot open database "TEST_Catalogue" requested by the login. The login failed.
-Login failed for user 'YOURDOMAIN\YourName'.
+Message: OneTimeSetUp: System.TypeInitializationException : The type initializer for 'Tests.Common.DatabaseTests' threw an exception.
+  ----> System.IO.FileNotFoundException : Could not find file 'E:\RDMPExamplePlugins\ExamplePipelinePlugin\MyPipelinePlugin\MyPipelinePluginTests\bin\Debug\netcoreapp2.2\TestDatabases.txt'
+
 ```
 
-Open a command console in the bin directory of the plugin (e.g. `E:\RDMP\Documentation\CodeTutorials\CodeExamples\MyExamplePluginTests\bin\Debug`)
+Add a new file to your project called TestDatabases.txt and set it to `Copy if newer`
 
-Run `DatabaseCreation.exe localhost\sqlexpress TEST_ -D` (make sure the servername is correct for your Sql Server)
+```
+ServerName: localhost\sqlexpress
+Prefix: TEST_
+```
 
-This will create a suite of test databases all prefixed `TEST_` in your database.  
+```
+Message: OneTimeSetUp:   Catalogue database does not exist, run 'rdmp.exe install' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to 'rdmp.exe install' e.g. 'rdmp.exe install localhost\sqlexpress TEST_')
+```
+
+To create these databases you can use the main RDMP UI:
+
+![Create platform database in rdmp main ui](Images/CreatePlatformDatabases.png)
+
+Or you can compile the RMDP CLI yourself and run it from the bin directory.
+
+Or you can use rdmp.dll with the dotnet command from the packages directory (helpful for continuous integration builds) e.g.
+
+```
+cd C:\Users\tznind\.nuget\packages\hic.rdmp.plugin\3.0.13-rc\tools\netcoreapp2.2\publish\
+dotnet rdmp.dll install localhost\sqlexpress TEST_
+```
 
 If you had to change the location of your server or specified a custom prefix (i.e. not `TEST_`) then you will need to change `TestDatabases.txt` (this file should be in the root of your Tests project).  Also ensure that `TestDatabases.txt` is marked `Copy always` under `Copy to Output Directory` in the file Properties (F4).
 
-Clean and Rebuild your project and run the unit test again. It should pass this time (if it doesn't, check that the `TEST_` databases exist and then double check the `TestDatabases.txt` file is being correctly copied to the test bin directory.
+Clean and Rebuild your project and run the unit test again. It should pass this time.
 
 <a name="databaseTestsWritting"></a>
 ## Writting a Database Test
 Add a new test 
 
 ```csharp
-[Test]
-        public void TestBasicDataTableAnonymiser3()
+using FAnsi;
+using FAnsi.Discovery;
+using MyPipelinePlugin;
+using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Progress;
+using System.Data;
+using Tests.Common;
+
+namespace MyPipelinePluginTests
+{
+    class TestAnonymisationPluginsDatabaseTests: DatabaseTests
+    {
+        [Test]
+        public void Test()
         {
+            Assert.Pass();
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void TestBasicDataTableAnonymiser3(DatabaseType type)
+        {
+            DiscoveredDatabase database = GetCleanedServer(type);
+
             //Create a names table that will go into the database
             var dt = new DataTable();
             dt.Columns.Add("Name");
@@ -525,15 +771,10 @@ Add a new test
             dt.Rows.Add(new[] {"Wallace"});
             dt.Rows.Add(new[] {"Frank"});
 
-            //upload the DataTable from memory into the database
-            var discoveredTable = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("ForbiddenNames", dt);
-
-            //import the persistent TableInfo reference
-            var importer = new TableInfoImporter(CatalogueRepository, discoveredTable);
+            DiscoveredTable table = database.CreateTable("ForbiddenNames",dt);
             
             TableInfo tableInfo;
-            ColumnInfo[] columnInfos;
-            importer.DoImport(out tableInfo,out columnInfos);
+            Import(table,out tableInfo,out _);
 
             //Create the test dataset chunk that will be anonymised
             var dtStories = new DataTable();
@@ -558,19 +799,38 @@ Add a new test
             Assert.AreEqual("Mr Smitty was the teacher", resultTable.Rows[2][0]);
 
             //finally drop the database table
-            discoveredTable.Drop();
+            table.Drop();
         }
+    }
+}
 ```
 
-This has a few intersting lines in it.  Firstly we create a DataTable containing a Names column with some values then we use the base class property `DiscoveredDatabaseICanCreateRandomTablesIn` this is a database for creating test tables in.  The database is nuked before each test set is run (but not between Tests).  `DiscoveredDatabase.CreateTable` will upload the `DataTable` to the destination and return a `ReusableLibraryCode.DatabaseHelpers.Discovery.DiscoveredTable`.
+This has a few intersting lines in it.  Firstly we create a DataTable containing a Names column with some values then we use the base class property `GetCleanedServer` this is a database for creating test tables in.  The database is nuked before each test set is run.  `DiscoveredDatabase.CreateTable` will upload the `DataTable` to the destination and return a `DiscoveredTable`.
 
-As you might have guessed `Discovered[...]` is how we reference Servers / Databases / Tables / Columns as we find them at runtime.  These classes exist to provide simplified access to common tasks in a cross platform way (See `ReusableCodeTests.CrossPlatformTests`).
+`Discovered[...]` is how we reference Servers / Databases / Tables / Columns as we find them at runtime.  These classes exist to provide simplified access to common tasks in a cross platform way.
 
-Once we have a `DiscoveredTable` we can create a persistent reference to it in the TEST_Catalogue database (`CatalogueLibrary.Data.TableInfo`) via `TableInfoImporter`.  The `TableInfo` pointer is given to the `BasicDataTableAnonymiser3` and used to anonymise the 'pipeline chunk' `dtStories` (like in the first unit test).
+Once we have a `DiscoveredTable` we can create a persistent reference to it in the TEST_Catalogue database (`TableInfo`) via base method `Import` (this is a helper method that wraps `TableInfoImporter`).  The `TableInfo` pointer is given to the `BasicDataTableAnonymiser3` and used to anonymise the 'pipeline chunk' `dtStories` (like in the first unit test).
+
+If you have access to an oracle / mysql testing database you can add the other test cases by adding the connection strings to TestDatabases.txt:
+
+```
+ServerName: localhost\sqlexpress
+Prefix: TEST_
+MySql: Server=localhost;Uid=root;Pwd=zombie;SSL-Mode=None
+Oracle: Data Source=localhost:1521/orclpdb.dundee.uni;User Id=ora;Password=zombie;
+``` 
+
+Add the following 2 test cases to the test
+```
+[TestCase(DatabaseType.Oracle)]
+[TestCase(DatabaseType.MySql)]
+```
+
+This will result in the names table being created/read on the other DMBS provider databases.
 
 <a name="checks"></a>
 # Checks
-This is getting complex and could do with having some events, and a way for the user to check that it is working before running it.  Fortunately RDMP supports this with the `ReusableLibraryCode.Checks.ICheckNotifier` system.
+RDMP tries to make sure all components are configured correctly before executing, this is done through the `ICheckNotifier` / `ICheckable` system.
 
 <a name="anoPluginVersion4"></a>
 ## Version 4
@@ -579,17 +839,29 @@ Create an exact copy of `BasicDataTableAnonymiser3` called `BasicDataTableAnonym
 Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`) and call the new method `GetCommonNamesTable`
 
 ```csharp
- public class BasicDataTableAnonymiser4 : IPluginDataFlowComponent<DataTable>
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using System.Linq;
+
+namespace MyPipelinePlugin
+{
+    public class BasicDataTableAnonymiser4: IPluginDataFlowComponent<DataTable>
     {
-        [DemandsInitialization("Table containing a single column which must have a list of names to redact from columns", mandatory: true)]
+        [DemandsInitialization("Table containing a single column which must have a list of names to redact from columns", mandatory:true)]
         public TableInfo NamesTable { get; set; }
 
         [DemandsInitialization("Columns matching this regex pattern will be skipped")]
         public Regex ColumnsNotToEvaluate { get; set; }
 
         private string[] _commonNames;
-
-        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
         {
             GetCommonNamesTable();
 
@@ -600,17 +872,17 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
                 foreach (DataColumn col in toProcess.Columns)
                 {
                     //if it's not a column we are skipping
-                    if (ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
+                    if(ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
                         continue;
-
+                    
                     //if it is a string
                     var stringValue = row[col] as string;
 
-                    if (stringValue != null)
+                    if(stringValue != null)
                     {
                         //replace any common names with REDACTED
                         foreach (var name in _commonNames)
-                            stringValue = Regex.Replace(stringValue, name, "REDACTED", RegexOptions.IgnoreCase);
+                            stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
 
                         row[col] = stringValue;
                     }
@@ -619,7 +891,6 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
 
             return toProcess;
         }
-
         private void GetCommonNamesTable()
         {
             if (_commonNames == null)
@@ -642,18 +913,18 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
                     throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
 
                 //turn it into an array
-                _commonNames = dataTable.AsEnumerable().Select(r => r.Field<string>(0)).ToArray();
+                _commonNames = dataTable.Rows.Cast<DataRow>().Select(r => r[0] as string).Where(s=>!string.IsNullOrWhiteSpace(s)).ToArray();
             }
         }
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
-
+            
         }
 
         public void Abort(IDataLoadEventListener listener)
         {
-
+            
         }
 
         public void Check(ICheckNotifier notifier)
@@ -661,9 +932,10 @@ Next go into the empty `Check` method in your class (`BasicDataTableAnonymiser4`
             GetCommonNamesTable();
         }
     }
+}
 ```
 
-Go to your unit tests and write a test for it passing it a `ReusableLibraryCode.Checks.ThrowImmediatelyCheckNotifier` (this is just like `ThrowImmediatelyDataLoadEventListener` in that it will treat all Fail messages - and optionally Warnings too as Exceptions and throw them).
+Go to your unit tests and write a test for it passing it a `ThrowImmediatelyCheckNotifier` (this is just like `ThrowImmediatelyDataLoadEventListener` in that it will treat all Fail messages - and optionally Warnings too as Exceptions and throw them).
 
 ```csharp
 [Test]
@@ -677,7 +949,7 @@ public void TestBasicDataTableAnonymiser4_FailConditions()
 Running this test should give an error like 
 
 ```
-System.NullReferenceException : Object reference not set to an instance of an object.
+Message: System.NullReferenceException : Object reference not set to an instance of an object.
 ```
 
 This is not very helpful.  We can use the `ReusableLibraryCode.Checks.ICheckNotifier` argument of `Check` to record the checking process.  This will look something like:
@@ -689,10 +961,62 @@ The two null arguments are for Exception (if any) and the 'proposed fix' which i
   
 For now we can ignore ProposedFix because nothing that goes wrong with our component can be easily fixed.
 
-Start by passing the `notifier` argument into `GetCommonNamesTable` and use it to document the setup process (and any failures): 
+Start by passing the `notifier` argument into `GetCommonNamesTable` and use it to document the setup process (and any failures).  You can pass a `ThrowImmediatelyCheckNotifier` when calling it from `ProcessPipelineData`
 
 ```csharp
-private void GetCommonNamesTable(ICheckNotifier notifier)
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.DataFlowPipeline;
+using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
+using System;
+using System.Data;
+using System.Text.RegularExpressions;
+using System.Linq;
+
+namespace MyPipelinePlugin
+{
+    public class BasicDataTableAnonymiser4: IPluginDataFlowComponent<DataTable>
+    {
+        [DemandsInitialization("Table containing a single column which must have a list of names to redact from columns", mandatory:true)]
+        public TableInfo NamesTable { get; set; }
+
+        [DemandsInitialization("Columns matching this regex pattern will be skipped")]
+        public Regex ColumnsNotToEvaluate { get; set; }
+
+        private string[] _commonNames;
+        
+        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener,GracefulCancellationToken cancellationToken)
+        {
+            GetCommonNamesTable(new ThrowImmediatelyCheckNotifier());
+
+            //Go through each row in the table
+            foreach (DataRow row in toProcess.Rows)
+            {
+                //for each cell in current row
+                foreach (DataColumn col in toProcess.Columns)
+                {
+                    //if it's not a column we are skipping
+                    if(ColumnsNotToEvaluate != null && ColumnsNotToEvaluate.IsMatch(col.ColumnName))
+                        continue;
+                    
+                    //if it is a string
+                    var stringValue = row[col] as string;
+
+                    if(stringValue != null)
+                    {
+                        //replace any common names with REDACTED
+                        foreach (var name in _commonNames)
+                            stringValue =  Regex.Replace(stringValue, name, "REDACTED",RegexOptions.IgnoreCase);
+
+                        row[col] = stringValue;
+                    }
+                }
+            }
+
+            return toProcess;
+        }
+        private void GetCommonNamesTable(ICheckNotifier notifier)
         {
             if (_commonNames == null)
             {
@@ -726,12 +1050,29 @@ private void GetCommonNamesTable(ICheckNotifier notifier)
                     throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
 
                 //turn it into an array
-                _commonNames = dataTable.AsEnumerable().Select(r => r.Field<string>(0)).ToArray();
+                _commonNames = dataTable.Rows.Cast<DataRow>().Select(r => r[0] as string).Where(s=>!string.IsNullOrWhiteSpace(s)).ToArray();
             }
         }
-```
 
-In order to compile we will need to update the call to `GetCommonNamesTable` in `ProcessPipelineData` too.  Fortunately we can use a `ThrowImmediatelyCheckNotifier`.
+        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        {
+            
+        }
+
+        public void Abort(IDataLoadEventListener listener)
+        {
+            
+        }
+
+        public void Check(ICheckNotifier notifier)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Ready to start checking", CheckResult.Success, null, null));
+
+            GetCommonNamesTable(notifier);
+        }
+    }
+}
+```
 
 Now we can run our test and see an error that makes sense
 
@@ -753,63 +1094,61 @@ Finally we can add in some other sensible checks
 
 ```csharp
 private void GetCommonNamesTable(ICheckNotifier notifier)
+{
+    if (_commonNames == null)
+    {
+        if (NamesTable == null)
         {
-            if (_commonNames == null)
-            {
-                if (NamesTable == null)
-                {
-                    notifier.OnCheckPerformed(
-                        new CheckEventArgs(
-                            "No NamesTable has been set, this must be a Table containing a list of names to REDACT from the pipeline data being processed",
-                            CheckResult.Fail));
+            notifier.OnCheckPerformed(
+                new CheckEventArgs(
+                    "No NamesTable has been set, this must be a Table containing a list of names to REDACT from the pipeline data being processed",
+                    CheckResult.Fail));
 
-                    return;
-                }
-
-                //get access to the database under DataLoad context
-                var databaseDiscovered = DataAccessPortal.GetInstance().ExpectDatabase(NamesTable, DataAccessContext.DataLoad);
-
-                if (databaseDiscovered.Exists())
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found Database '" + databaseDiscovered + "' ",CheckResult.Success));
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Database '" + databaseDiscovered + "' does not exist ", CheckResult.Fail));
-
-                //expect a table matching the TableInfo
-                var tableDiscovered = databaseDiscovered.ExpectTable(NamesTable.GetRuntimeName());
-
-                if (tableDiscovered.Exists())
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found table '" + tableDiscovered + "' ", CheckResult.Success));
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' does not exist ", CheckResult.Fail));
-
-                //make sure it exists
-                if (!tableDiscovered.Exists())
-                    throw new NotSupportedException("TableInfo '" + tableDiscovered + "' does not exist!");
-
-                //Download all the data
-                var dataTable = tableDiscovered.GetDataTable();
-
-                //Make sure it has the correct expected schema (i.e. 1 column)
-                if (dataTable.Columns.Count != 1)
-                    throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
-
-                //turn it into an array
-                _commonNames = dataTable.AsEnumerable().Select(r => r.Field<string>(0)).ToArray();
-
-                if (_commonNames.Length == 0)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' did not have any rows in it!", CheckResult.Fail));
-                    
-                    //reset it just in case
-                    _commonNames = null;
-                }
-                else
-                    notifier.OnCheckPerformed(new CheckEventArgs("Read " + _commonNames.Length + " names from name table", CheckResult.Success));
-            }
+            return;
         }
-```
 
-Just to confirm you have done it right you can copy and paste `TestBasicDataTableAnonymiser3` and adjust it to run it on `BasicDataTableAnonymiser4`
+        //get access to the database under DataLoad context
+        var databaseDiscovered = DataAccessPortal.GetInstance().ExpectDatabase(NamesTable, DataAccessContext.DataLoad);
+
+        if (databaseDiscovered.Exists())
+            notifier.OnCheckPerformed(new CheckEventArgs("Found Database '" + databaseDiscovered + "' ",CheckResult.Success));
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs("Database '" + databaseDiscovered + "' does not exist ", CheckResult.Fail));
+
+        //expect a table matching the TableInfo
+        var tableDiscovered = databaseDiscovered.ExpectTable(NamesTable.GetRuntimeName());
+
+        if (tableDiscovered.Exists())
+            notifier.OnCheckPerformed(new CheckEventArgs("Found table '" + tableDiscovered + "' ", CheckResult.Success));
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' does not exist ", CheckResult.Fail));
+
+        //make sure it exists
+        if (!tableDiscovered.Exists())
+            throw new NotSupportedException("TableInfo '" + tableDiscovered + "' does not exist!");
+
+        //Download all the data
+        var dataTable = tableDiscovered.GetDataTable();
+
+        //Make sure it has the correct expected schema (i.e. 1 column)
+        if (dataTable.Columns.Count != 1)
+            throw new NotSupportedException("Expected a single column in DataTable '" + tableDiscovered + "'");
+
+        //turn it into an array
+        _commonNames = dataTable.Rows.Cast<DataRow>().Select(r => r[0] as string).Where(s=>!string.IsNullOrWhiteSpace(s)).ToArray();
+
+        if (_commonNames.Length == 0)
+        {
+            notifier.OnCheckPerformed(new CheckEventArgs("Table '" + tableDiscovered + "' did not have any rows in it!", CheckResult.Fail));
+                    
+            //reset it just in case
+            _commonNames = null;
+        }
+        else
+            notifier.OnCheckPerformed(new CheckEventArgs("Read " + _commonNames.Length + " names from name table", CheckResult.Success));
+    }
+}
+```
 
 <a name="progress"></a>
 # Progress Logging
@@ -883,7 +1222,7 @@ public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener
 
 Notice that we are only counting the number of redactions since that is the most interesting bit.  Now it is time to test it and see the power of the `IDataLoadEventListener` system.  We are going to write a test which explores three different `IDataLoadEventListener` implementations.
 
-Add the following to `TestAnonymisationPlugins`
+Add the following to `TestAnonymisationPluginsDatabaseTests`
 
 ```csharp
 public enum LoggerTestCase
@@ -907,16 +1246,14 @@ public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
 	dt.Rows.Add(new[] { "Frank" });
 
 	//upload the DataTable from memory into the database
-	var discoveredTable = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("ForbiddenNames", dt);
+	var discoveredTable = GetCleanedServer(DatabaseType.MicrosoftSQLServer).CreateTable("ForbiddenNames", dt);
 	try
 	{
+        TableInfo tableInfo;
+
 		//import the persistent TableInfo reference
-		var importer = new TableInfoImporter(CatalogueRepository, discoveredTable);
-
-		TableInfo tableInfo;
-		ColumnInfo[] columnInfos;
-		importer.DoImport(out tableInfo, out columnInfos);
-
+		var importer = Import(discoveredTable,out tableInfo ,out _);
+                
 		//Create the test dataset chunks that will be anonymised
 		var dtStories1 = new DataTable();
 		dtStories1.Columns.Add("Story");
@@ -955,10 +1292,7 @@ public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
 			case LoggerTestCase.ToDatabase:
 			
 				//get the default logging server
-				var loggingServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
-
-				//create a log manager for the server
-				var logManager = new LogManager(loggingServer);
+				var logManager = CatalogueRepository.GetDefaultLogManager();
 
 				//create a new super task Anonymising Data Tables
 				logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
@@ -997,7 +1331,7 @@ public void TestBasicDataTableAnonymiser5(LoggerTestCase testCase)
 
 This test has the same setup of the ForbiddenNames table, this time we create 3 batches which will go through our pipeline component in sequence (as would happen in normal execution where you could be processing millions of records in sub batches).  It then creates one of three `IDataLoadEventListener` and passes the 3 batches in.
 
-The first test case `LoggerTestCase.ToConsole` creates a `ReusableLibraryCode.Progress.ThrowImmediatelyDataLoadEventListener`.  `ThrowImmediatelyCheckNotifier` ignores `OnProgress` messages, writes out `OnNotify` to the console and throws an Exception if there are any Error messages received.
+The first test case `LoggerTestCase.ToConsole` creates a `ThrowImmediatelyDataLoadEventListener`.  This ignores `OnProgress` messages, writes out `OnNotify` to the console and throws an Exception if there are any Error messages received.
 
 ![To Console Output](Images/Version5ToConsoleOutput.png)
 
@@ -1010,7 +1344,7 @@ Assert.AreEqual(4,
  ((ToMemoryDataLoadEventListener)listener).LastProgressRecieivedByTaskName["REDACTING Names"].Progress.Value);
 ```
 
-Finally we have the test case `LoggerTestCase.ToDatabase` which creates a `HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`.  This is a translational class that allows access to the `HIC.Logging` hierarchical database logging system which RDMP uses to record all the ongoing activities executed by users.  A test instance of this database is automatically setup by `DatabaseCreation.exe` and is therefore available any class inheriting from `DatabaseTests`.  If you look at your test server in Sql Management Studio you should see a database called `TEST_Logging`.  This database has a hierarchy 
+Finally we have the test case `LoggerTestCase.ToDatabase` which creates a `ToLoggingDatabaseDataLoadEventListener`.  This is class writes to the RDMP relational logging database which RDMP uses to record all the ongoing activities executed by users.  A test instance of this database is automatically setup by `rdmp.exe install` and is therefore available any class inheriting from `DatabaseTests`.  If you look at your test server in Sql Management Studio you should see a database called `TEST_Logging`.  This database has a hierarchy 
 
 TableName|Purpose
 --------|---------
@@ -1020,34 +1354,8 @@ ProgressLog | All the messages generated during a given `DataLoadRun`
 FatalError | All Error messages generated during a given `DataLoadRun` with a flag for whether they have been resolved or not
 TableLoadRun | A count of the number of records that ended up at a given destination (this might be a database table but could equally be a flat file etc)
 DataSource | A description of all the contributors of data to the `TableLoadRun` (this could be flat files or a block of SQL run on a server or even just a class name!)
- 
-This isn't a perfect fit to the `IDataLoadEventListener` interface but it is close enough that we are able to provide an implementation (`HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener`).  
 
-First we needed to get the default logging server declared in the test Catalogue database:
-
-```csharp
-//get the default logging server
-var loggingServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(ServerDefaults.PermissableDefaults.LiveLoggingServer_ID);
-```
-
-Secondly we needed to setup the overarching task ("Anonymising Data Tables"):
-
-```csharp
-//create a log manager for the server
-var logManager = new LogManager(loggingServer);
-
-//create a new super task Anonymising Data Tables
-logManager.CreateNewLoggingTaskIfNotExists("Anonymising Data Tables");
-```
-
-Thirdly we needed to create the `HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener` with a specific run name (remember `DataLoadRun` describes a single execution of the overarching task).  In this case we have provided the string `"Run on " + DateTime.Now`.
-
-```csharp
-//setup a listener that goes to this logging database 
-listener = new ToLoggingDatabaseDataLoadEventListener(this,logManager ,"Anonymising Data Tables","Run on " + DateTime.Now);
-```
-
-Run the ToDatabase test case and then open the TEST_Logging database in Sql Management Studio.  Unlike TEST_Catalogue, The TEST_Logging database is not automatically cleared cleared after each test so you might have some additional runs (if you ran the test multiple times or had some bugs implementing it) but it should look something like:
+After running this test case you can open the TEST_Logging database in Sql Management Studio.  Unlike TEST_Catalogue, The TEST_Logging database is not automatically cleared cleared after each test so you might have some additional runs (if you ran the test multiple times or had some bugs implementing it) but it should look something like:
 
 ![Logging database should look like this](Images/Version5LoggingDatabase.png)
 

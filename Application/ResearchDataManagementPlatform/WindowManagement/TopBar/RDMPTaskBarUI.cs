@@ -6,15 +6,13 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueManager.Collections;
-using CatalogueManager.CommandExecution.AtomicCommands;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.Theme;
-using CohortManager.Collections;
-using DataExportManager.Collections;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.UI.Collections;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;

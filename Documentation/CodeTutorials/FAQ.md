@@ -4,6 +4,7 @@
    1. [Does RDMP have a Command Line Interface?](#cli)
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
+   4. [How is RDMP versioned?](#how-is-rdmp-versioned)
 1. Database Compatibility
    1. [What databases does RDMP support?](#databases)
    1. [How do I set a custom port / SSL certificate / connection string option?](#connectionStringKeywords)
@@ -19,10 +20,13 @@
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
    1. [When loading data can I skip some columns?](#skipColumns)
    1. [Can I run SQL Scripts during a load?](#sqlScripts)
+1. Anonymisation
+   1. [Does RDMP support data anonymisation?](#does-rdmp-support-data-anonymisation)
 1. Curation
    1. [What is a Catalogue?](#whatisacatalogue)
    1. [Can I share/export/import my dataset metadata?](#sharing)
    1. [Is there a Data Quality Engine?](#dqe)
+   4. [How do I create a Catalogue from 2+ tables?](#2tablecatalogues)
 1. User Interface Programming
    1. [How are user interfaces implemented in RDMP?](#uioverview)
    1. [Whats with the _Design user interface classes?](#abstractDesignerPattern)
@@ -36,16 +40,16 @@
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface (CLI)
-Yes, the [RDMPAutomationService](../../Tools/RDMPAutomationService/) program allows command line execution of all major engines in RDMP (Caching / Data Load / Cohort Creation / Extraction and Release).  To access the CLI command line help system run:
+Yes, the [rdmp](./../../Tools/rdmp/) program allows command line execution of all major engines in RDMP (Caching / Data Load / Cohort Creation / Extraction and Release).  To access the CLI command line help system run:
 
 ```
-RDMPAutomationService.exe --help
+rdmp.exe --help
 ```
 
 For help on each engine (verb) on the command line enter the verb (listed by the main --help command) followed by --help e.g.:
 
 ```
-RDMPAutomationService.exe dle --help
+rdmp.exe dle --help
 ```
 
 When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract Project X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
@@ -63,7 +67,21 @@ Yes, RDMP can be controlled programmatically through it's API which is available
 ### Does RDMP Support Plugins?
 Yes, RDMP supports both functional plugins (e.g. new anonymisation components, new load plugins etc) as well as UI plugins (e.g. new operations when you right click a `Catalogue`).
 
-https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/PluginWriting.md
+See [PluginWriting](./PluginWriting.md)
+
+### How is RDMP versioned?
+
+RDMP software has a build Major, Minor and Patch number (Semantic Versioning).  Updates are provided through [Squirrel](https://github.com/Squirrel/Squirrel.Windows).  When an API update is issued that requires a change in the platform databases, accompanying sql scripts will be included to perform the update (which will run during startup).
+
+Platform databases are divided into three tiers:
+
+|Tier| Description|
+|------|-----|
+|   1  | The Catalogue and Data Export databases, stores all metadata (projects, datasets etc) as well as the locations of other databases|
+|   2  | Ancillary databases managed by RDMP e.g. Logging, DQE Results, Query Caches.  You can have multiple or none of each of these configured.|
+|   3  | This tier is reserved for [Plugins](#plugins) which wish to persist objects/meta data in a database using the same versioning model (update scripts, data model) as the core RDMP databases.|
+
+During application startup (following installing an update) you will be prompted to apply patches on any platform databases that are not up to date.
 
 ## Database Compatibility
 
@@ -117,7 +135,7 @@ When importing a table from a Microsoft Sql Server database to create a `Catalog
 
 ### How does RDMP differ from classic tools e.g. SSIS?
 
-RDMP is primarily a data management tool and does not seek to replace existing ETL tools (e.g. SSIS) that you might use for complex data transforms / data migrations etc.  That said, routine loading of clinical/research datasets differ from these traditional ETL jobs in key ways which make a bespoke tool (RDMP) useful:
+RDMP is primarily a data management tool and does not seek to replace existing ETL tools (e.g. SSIS) that you might use for complex data transforms / data migrations etc.  The RDMP DLE is designed to facilitate routine loading of clinical/research datasets, this differs from traditional ETL jobs the following ways:
 
 - Data sources are error prone 
   - Duplication
@@ -126,7 +144,7 @@ RDMP is primarily a data management tool and does not seek to replace existing E
 - Scale in dimensions other than row count
   - By number of dataset
   - By number of columns (e.g. researcher adds some new columns to his dataset)
-- Require specific narrow set of transformations (e.g. anonymisation)
+- Require specific narrow set of transformations (e.g. [anonymisation](#does-rdmp-support-data-anonymisation))
 - Benefits from traceability
   - When each row appeared
   - When row values change (when and what old values were)
@@ -213,6 +231,26 @@ If you want to share one script between lots of different loads you can drag the
 ![How to drop sql files onto load nodes](Images/FAQ/DragAndDropSqlScript.png)
 
 In order to allow other people to run the data load it is advised to store all SQL Script files on a shared network drive.
+
+## Anonymisation
+
+### Does RDMP Support Data Anonymisation?
+
+Yes, data can be annonymised in the following ways
+
+1. When loading data 
+   1. [Columns can be can be ignored by the DLE](#skipColumns) (do not load an identifiable column)
+   2. Columns can be split off and stored in a seperate table (e.g. split identifers like name/address from data like prescribed drug)
+   2. Column values can be allocated an anonymous substitution mapping (mapping tables are persisted in an ano database)
+   3. Column values can be diluted (e.g. store only the left 4 digits of a postcode)
+2. When extracting data
+   1. Columns can be marked as 'not extractable'
+   2. Columns can be marked as requiring 'Special Approval' to be extracted
+   3. Columns can be marked for hashing on extraction
+   4. The linkage identifier (e.g. CHI) is substituted for an anonymous mapping (e.g. a guid)
+   5. Sql transforms can be applied to the column being extracted
+3. Pipelines / ProcessTasks
+   1. The [plugin API](#plugins) makes writting plugins to perform arbitrary anonymisations easy.
 
 ## Curation
 
@@ -327,6 +365,30 @@ An example .dita file is shown below:
 ### Is there a Data Quality Engine?
 Yes.  You can read more about the DQE in the [technical implementation](./Validation.md) or (from a user perspective) in the [User Manual](../UserManual.docx).
 
+
+<a name="2tablecatalogues"></a>
+## How do I create a Catalogue from 2+ tables?
+
+Start by importing the Tables as normal (but do not create a Catalogue).  Double click the topmost table and check 'Is Primary Extraction Table'.
+
+![How to set IsPrimaryExtractionTable on a TableInfo](Images/FAQ/SetIsPrimaryExtractionTable.png) 
+
+Next right click the topmost table and select 'Configure JoinInfo Where...'.  In this window add the child table to join to and drag the column(s) that should be used to join. 
+
+You can configure a `collation` (if required) and join direction (LEFT / RIGHT / INNER)
+
+![How to add a JoinInfo between two TableInfo](Images/FAQ/AddJoinInfo.png) 
+
+Now we have configured the technical layer we can create our `Catalogue`.  Create a new Catalogue by right clicking in the Catalogues collection
+
+![How to create a new empty Catalogue](Images/FAQ/CreateNewEmptyCatalogue.png) 
+
+Then right click each Table in turn and select `Create New Catalogue...` but instead of closing the dialog with 'Ok' instead click 'Add To Existing Catalogue' (After configuring column extractability).
+
+![How to add to existing Catalogue instead of creating a fresh one](Images/FAQ/ConfigureExtractabilityAddToExistingCatalogue.png) 
+
+You can check that you have configured the join correctly by right clicking the Catalogue and selecting `View Catalogue Extraction Sql`
+
 ## User Interface Programming
 
 <a name="uioverview"></a>
@@ -360,7 +422,7 @@ If you are unsure what Type a given node is you can right click it and select 'W
 ### How do I add new nodes to RDMPCollectionUIs?
 This requires a tutorial all of it's own 
 
-https://github.com/HicServices/RDMP/blob/develop/Documentation/CodeTutorials/CreatingANewCollectionTreeNode.md
+[CreatingANewCollectionTreeNode](./CreatingANewCollectionTreeNode.md)
 
 
 <a name="databaseDdos"></a>
@@ -376,9 +438,9 @@ var catalogues = repository.GetAllObjects<Catalogue>();
 var catalogueItems = repository.GetAllObjects<CatalogueItem>();
 ```
 
-If you think the problem is more widespread then you can also use the `IInjectKnown<T>` system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
+If you think the problem is more widespread then you can also use the [`IInjectKnown<T>`](./../../Reusable/MapsDirectlyToDatabaseTable/Injection/README.md) system to perform `Lazy` loads which prevents repeated calls to the same property going back to the database every time.
 
-https://github.com/HicServices/RDMP/blob/develop/Reusable/MapsDirectlyToDatabaseTable/Injection/README.md
+
 
 ## Other Programming
 

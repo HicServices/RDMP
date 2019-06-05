@@ -1,0 +1,134 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Database Persistence Layer">
+    <Position X="0.5" Y="0.5" Height="0.331" Width="15.771" />
+  </Comment>
+  <Comment CommentText="Execution Layer">
+    <Position X="0.5" Y="3.743" Height="0.331" Width="15.723" />
+  </Comment>
+  <Comment CommentText="Subqueries that can be run in the CohortCompiler">
+    <Position X="0.501" Y="4.228" Height="0.291" Width="6.12" />
+  </Comment>
+  <Comment CommentText="Executes Multiple Subqueries.  Stores queries and results in memory.">
+    <Position X="7.728" Y="4.228" Height="0.291" Width="5.33" />
+  </Comment>
+  <Comment CommentText="Builds and executes SQL for subqueries">
+    <Position X="13.5" Y="4.25" Height="0.291" Width="2.742" />
+  </Comment>
+  <Class Name="Rdmp.Core.CohortCreation.Execution.CohortCompiler">
+    <Position X="7.75" Y="4.75" Width="5.25" />
+    <TypeIdentifier>
+      <HashCode>gAAAACAAIAAKAAAAgEAAAAAAAAAAAAAEgEEIBCAEABA=</HashCode>
+      <FileName>CohortCreation\Execution\CohortCompiler.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CohortCreation.Execution.AggregationTask">
+    <Position X="0.75" Y="12.25" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAGEAAAAgKAEAAEQAAAQAAgAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>CohortCreation\Execution\AggregationTask.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Aggregation.AggregateConfiguration" Collapsed="true">
+    <Position X="0.75" Y="2.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AFGApEwAAoChECAkADQCYgwIDEIIACEKGIQC0hABiEA=</HashCode>
+      <FileName>Curation\Data\Aggregation\AggregateConfiguration.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CohortCreation.Execution.AggregationContainerTask" Collapsed="true">
+    <Position X="4.5" Y="10" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAQAAAQAAABAAIAgAAEQAAAAIAAAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>CohortCreation\Execution\AggregationContainerTask.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CohortCreation.Execution.CohortIdentificationTaskExecution">
+    <Position X="10.25" Y="10.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>EAAAAIAAQCEAwAAAAAAAQAAAiAAAIBAABAABAAIAIAA=</HashCode>
+      <FileName>CohortCreation\Execution\CohortIdentificationTaskExecution.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Cohort.CohortAggregateContainer" Collapsed="true">
+    <Position X="3.5" Y="2.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AoGSIBACAQAAEAAEAEQAVQQAAAIAAAEIAAUAAYAAAAA=</HashCode>
+      <FileName>Curation\Data\Cohort\CohortAggregateContainer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CohortCreation.Compileable">
+    <Position X="3.5" Y="5" Width="2" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAEBAAAAAAAAAIAEAAE0CAEAAAQAAIIEAEAAFAAGACQ=</HashCode>
+      <FileName>CohortCreation\Compileable.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CohortCreation.Execution.CacheableTask" Collapsed="true">
+    <Position X="1" Y="10" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAABAAAAgCAAAAAAAAIAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CohortCreation\Execution\CachableTask.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.CohortQueryBuilder">
+    <Position X="13.75" Y="5.75" Width="4.25" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAgASFIAAAAAgAMBAAAAAIDAAAAAQCQAAAQBLAg=</HashCode>
+      <FileName>QueryBuilding\CohortQueryBuilder.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.CohortQueryBuilderHelper" Collapsed="true">
+    <Position X="13.5" Y="4.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAQAAAAAAAAAABAAgEAACAAAAAACAAAAABCAA=</HashCode>
+      <FileName>QueryBuilding\CohortQueryBuilderHelper.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CohortCreation.Execution.Joinables.JoinableTask">
+    <Position X="3.5" Y="12.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAEAAAGAAAAAgKwEAAFwAACAAAgAAIAAAAAAAAAAAAA=</HashCode>
+      <FileName>CohortCreation\Execution\Joinables\JoinableTask.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Rdmp.Core.CohortCreation.ICompileable">
+    <Position X="0.5" Y="4.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAIAAAAE0AAEAAAAAAAIEAAAABAAGACA=</HashCode>
+      <FileName>CohortCreation\ICompileable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Enum Name="Rdmp.Core.CohortCreation.Execution.CompilationState">
+    <Position X="8" Y="10.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAAAAAEAAAAAAAQAAAAAAEAAAAAAAAAAAAAAEAA=</HashCode>
+      <FileName>CohortCreation\Execution\ExecutingAggregateState.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Rdmp.Core.Curation.Data.Cohort.SetOperation">
+    <Position X="6" Y="2" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAABAAAAAAAAAAAAABAAAAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Curation\Data\Cohort\SetOperation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

@@ -167,6 +167,17 @@ namespace ReusableLibraryCode.Settings
             set { AppSettings.AddOrUpdateValue("WrapMode", value); }
         }
 
+        public static string HeatMapColours 
+        {
+            get { return AppSettings.GetValueOrDefault("HeatMapColours", null); }
+            set { AppSettings.AddOrUpdateValue("HeatMapColours", value); }
+        }
+        
+        public static bool Wait5SecondsAfterStartupUI
+        {
+            get { return AppSettings.GetValueOrDefault("Wait5SecondsAfterStartupUI", true); }
+            set { AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value); }
+        }
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)
@@ -218,15 +229,11 @@ namespace ReusableLibraryCode.Settings
         {
             AppSettings.AddOrUpdateValue("LastColumnSort_" + controlGuid.ToString("N"), columnName +"#!#" + ascending);
         }
-
+        
 
         static ISettings CreateSettings()
         {
-#if NETSTANDARD1_0 || NETSTANDARD2_0
-            return null;
-#else
             return new RDMPApplicationSettings();
-#endif
         }
 
     }

@@ -5,17 +5,16 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace ReusableUIComponents.TransparentHelpSystem
 {
+    /// <summary>
+    /// Collection of ordered <see cref="HelpStage"/> that guide the user through a sequence of actions.
+    /// </summary>
     public class HelpWorkflow
     {
         public Guid WorkflowGuid { get; private set; }

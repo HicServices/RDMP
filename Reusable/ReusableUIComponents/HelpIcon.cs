@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Drawing;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ReusableUIComponents.Dialogs;
@@ -23,6 +22,7 @@ namespace ReusableUIComponents
         private HelpWorkflow _workFlow;
         private string _originalHoverText;
         private ToolTip tt;
+        public bool SuppressClick{get;set;}
 
         public HelpIcon()
         {
@@ -55,10 +55,11 @@ namespace ReusableUIComponents
 
         private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
         {
-            if (_workFlow != null)
-                _workFlow.Start(true);
-            else
-                WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
+            if(!SuppressClick)
+                if (_workFlow != null)
+                    _workFlow.Start(true);
+                else
+                    WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
         }
     }
 }

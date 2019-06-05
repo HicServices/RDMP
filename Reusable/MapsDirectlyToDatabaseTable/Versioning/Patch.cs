@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Data.SqlClient;
-using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
@@ -17,14 +16,11 @@ using System.Text.RegularExpressions;
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
     /// <summary>
-    /// Represents a single file in the up directory of a .Database assembly (e.g. CatalogueLibrary.Database).  Used during patching to ensure that the live 
-    /// database that is about to be patched is in the expected state and ready for new patches to be applied.
+    /// Represents a Embedded Resource file in the up directory of a assembly found using an <see cref="IPatcher"/>.  Used during patching 
+    /// to ensure that the live database that is about to be patched is in the expected state and ready for new patches to be applied.
     /// </summary>
     public class Patch : IComparable
     {
-        public const string InitialCreateScriptRegexPattern = @".*\.runAfterCreateDatabase\..*\.sql";
-        public const string UpgradePatchesRegexPattern = @".*\.up\.(.*\.sql)";
-
         public const string VersionKey = "--Version:";
         public const string DescriptionKey = "--Description:";
         
@@ -82,9 +78,18 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         }
 
 
-        public static string GetInitialCreateScriptContents(Assembly assembly)
+        public static string GetInitialCreateScriptContents(IPatcher patcher)
         {
-            var candidates = assembly.GetManifestResourceNames().Where(r => Regex.IsMatch(r, InitialCreateScriptRegexPattern)).ToArray();
+            var assembly = patcher.GetDbAssembly();
+            var subdirectory = patcher.ResourceSubdirectory;
+            Regex initialCreationRegex;
+
+            if(string.IsNullOrWhiteSpace(subdirectory))
+                initialCreationRegex = new Regex(@".*\.runAfterCreateDatabase\..*\.sql");
+            else
+                initialCreationRegex = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.runAfterCreateDatabase\..*\.sql");
+            
+            var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
 
             if (candidates.Length == 1)
             {
@@ -93,25 +98,32 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             }
 
             if(candidates.Length == 0)
-                throw new FileNotFoundException("Could not find an initial create database script in dll "+assembly.FullName + ".  Make sure it is marked as an Embedded Resource and that it is in a folder called 'runAfterCreateDatabase' (and matches regex "+InitialCreateScriptRegexPattern +"). And make sure that it is marked as 'Embedded Resource' in the .csproj build action");
+                throw new FileNotFoundException("Could not find an initial create database script in dll "+assembly.FullName + ".  Make sure it is marked as an Embedded Resource and that it is in a folder called 'runAfterCreateDatabase' (and matches regex "+initialCreationRegex +"). And make sure that it is marked as 'Embedded Resource' in the .csproj build action");
 
             throw new Exception("There are too many create scripts in the assembly " + assembly.FullName + " only 1 create database script is allowed, all other scripts must go into the up folder");
 
         }
 
-        public static SortedDictionary<string, Patch> GetAllPatchesInAssembly(Assembly assembly)
+        public static SortedDictionary<string, Patch> GetAllPatchesInAssembly(IPatcher patcher)
         {
-            
+            var assembly = patcher.GetDbAssembly();
+            var subdirectory = patcher.ResourceSubdirectory;
+            Regex upgradePatchesRegexPattern;
+
+            if(string.IsNullOrWhiteSpace(subdirectory))
+                upgradePatchesRegexPattern =  new Regex(@".*\.up\.(.*\.sql)");
+            else
+                upgradePatchesRegexPattern = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.up\.(.*\.sql)");
+
             var files = new SortedDictionary<string, Patch>();
             
             //get all resources out of 
             foreach (string manifestResourceName in assembly.GetManifestResourceNames())
             {
-                var match = Regex.Match(manifestResourceName, UpgradePatchesRegexPattern);
+                var match = upgradePatchesRegexPattern.Match(manifestResourceName);
                 if (match.Success)
                 {
                     string fileContents = new StreamReader(assembly.GetManifestResourceStream(manifestResourceName)).ReadToEnd();
-
                     files.Add(match.Groups[1].Value, new Patch(match.Groups[1].Value, fileContents));
                 }
             }
@@ -154,16 +166,16 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
         }
 
-        public static bool IsPatchingRequired(SqlConnectionStringBuilder builder, Assembly databaseAssembly, Assembly hostAssembly, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
+        public static bool IsPatchingRequired(SqlConnectionStringBuilder builder, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
         {
             databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(builder);
 
             MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(builder.DataSource, builder.InitialCatalog, builder.UserID, builder.Password);
             patchesInDatabase = scriptExecutor.GetPatchesRun();
 
-            allPatchesInAssembly = GetAllPatchesInAssembly(databaseAssembly);
+            allPatchesInAssembly = GetAllPatchesInAssembly(patcher);
 
-            AssemblyName databaseAssemblyName = databaseAssembly.GetName();
+            AssemblyName databaseAssemblyName = patcher.GetDbAssembly().GetName();
             
             if (databaseAssemblyName.Version < databaseVersion)
                 throw new VersionNotFoundException("The software library " + databaseAssemblyName.Name + " is version " + databaseAssemblyName.Version + " but the database is version " + databaseVersion + " which means your software is out of date and behind the current version of the database.  Most likely you have a new version of one software app in the suite e.g. CatalogueManager which has updated the database with a new patch and you are now trying to run an old version of DataExportManager or Dashboard or an older version of CatalogueManager or something? Your software is likely to be VERY unstable and it is strongly advised that you update the correct version of the software for interacting with this database");

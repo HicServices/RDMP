@@ -1,0 +1,88 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="CachingHost creates a set of PermissionWindowCacheDownloader objects based on which CacheProgress objects are to be cached. PermissionWindows effectively group together CacheProgress objects while also specifying what time of day/night they can be run during.">
+    <Position X="0.573" Y="5.75" Height="1.199" Width="3.252" />
+  </Comment>
+  <Comment CommentText="Input objects for the pipeline">
+    <Position X="11.792" Y="5.469" Height="0.344" Width="2.19" />
+  </Comment>
+  <Class Name="Rdmp.Core.Caching.CachingHost">
+    <Position X="1.5" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAWBAAAQAAAAAQAAAAAAAAAAIAAAIAgAASAA=</HashCode>
+      <FileName>Caching\CachingHost.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.Caching.CachingPreExecutionChecker">
+    <Position X="1.25" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAgAAAAAAAAAAAAEAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Caching\CachingPreExecutionChecker.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_cacheProgress" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Caching.Pipeline.CachingPipelineUseCase">
+    <Position X="7.5" Y="4.25" Width="2.25" />
+    <AssociationLine Name="_cacheProgress" Type="Rdmp.Core.Curation.Data.Cache.ICacheProgress">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.255" Y="1.383" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAACAACABAAAAAEAAAAAAIAAAAABAEEAAAAAAA=</HashCode>
+      <FileName>Caching\Pipeline\CachingPipelineUseCase.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_cacheProgress" />
+      <Field Name="_providerIfAny" />
+      <Field Name="_pipeline" />
+      <Field Name="_permissionWindow" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.Core.Caching.PermissionWindowCacheDownloader" Collapsed="true">
+    <Position X="2.5" Y="7.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAIABAAABCABAEAAAAEAAQAAAkAAQABAEAEAAACBI=</HashCode>
+      <FileName>Caching\PermissionWindowCacheDownloader.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Rdmp.Core.Curation.Data.Cache.ICacheProgress" Collapsed="true">
+    <Position X="6.25" Y="0.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAQgAACAQAAAAgAgAAgACAAABQAACUAAAAAACBQAAA=</HashCode>
+      <FileName>Curation\Data\Cache\ICacheProgress.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.IPermissionWindow" Collapsed="true">
+    <Position X="11.75" Y="4" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAACAAACAgAAAAAAAAAAAAAAAAAAACFAAAAAAAAAA=</HashCode>
+      <FileName>Curation\Data\IPermissionWindow.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipeline" Collapsed="true">
+    <Position X="11.75" Y="7" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAgAgAAAAAAIAAAAAQAQAAAAEAAAAAAAAABA=</HashCode>
+      <FileName>Curation\Data\Pipelines\IPipeline.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Caching.Requests.FetchRequestProvider.ICacheFetchRequestProvider" Collapsed="true">
+    <Position X="11.75" Y="4.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAACAAAAAAAAAAAIAAAAAAAAAAAA=</HashCode>
+      <FileName>Caching\Requests\FetchRequestProvider\ICacheFetchRequestProvider.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Caching.Pipeline.IMultiPipelineEngineExecutionStrategy" Collapsed="true">
+    <Position X="8" Y="9" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Caching\Pipeline\IMultiPipelineEngineExecutionStrategy.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

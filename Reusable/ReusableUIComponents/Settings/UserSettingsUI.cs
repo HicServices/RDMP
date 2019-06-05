@@ -28,6 +28,7 @@ namespace ReusableUIComponents.Settings
             cbConfirmExit.Checked = UserSettings.ConfirmApplicationExiting;
             cbFindShouldPin.Checked = UserSettings.FindShouldPin;
             cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
+            cbWait5Seconds.Checked = UserSettings.Wait5SecondsAfterStartupUI;
 
             ddTheme.DataSource = new []
             {
@@ -40,6 +41,8 @@ namespace ReusableUIComponents.Settings
 
             ddWordWrap.DataSource = Enum.GetValues(typeof(WrapMode));
             ddWordWrap.SelectedItem = (WrapMode)UserSettings.WrapMode;
+
+            tbHeatmapColours.Text = UserSettings.HeatMapColours;
 
             _bLoaded = true;
         }
@@ -64,7 +67,10 @@ namespace ReusableUIComponents.Settings
                 UserSettings.ApplyThemeToMenus = cb.Checked;
 
             if(cb == cbFindShouldPin)
-                UserSettings.FindShouldPin = cbFindShouldPin.Checked;
+                UserSettings.FindShouldPin = cb.Checked;
+
+            if(cb == cbWait5Seconds)
+                UserSettings.Wait5SecondsAfterStartupUI = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
@@ -87,5 +93,9 @@ namespace ReusableUIComponents.Settings
             UserSettings.WrapMode = (int)wrap;
         }
 
+        private void TbHeatmapColours_TextChanged(object sender, EventArgs e)
+        {
+            UserSettings.HeatMapColours = tbHeatmapColours.Text;
+        }
     }
 }

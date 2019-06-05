@@ -14,10 +14,7 @@ using ReusableUIComponents.Dialogs;
 
 namespace ReusableUIComponents.ChecksUI
 {
-    /// <summary>
-    /// Reusable component that indicates the success / warning / failure of a task in a nice user friendly way.  Green indicates success, yellow indicates a warning and red indicates 
-    /// failure.  If there is an exception associated with a failure then clicking on the red face will show the Exception.
-    /// </summary>
+    /// <inheritdoc cref="IRAGSmiley"/>
     public partial class RAGSmiley : UserControl, IRAGSmiley
     {
         private bool _alwaysShowHandCursor;
@@ -184,11 +181,12 @@ namespace ReusableUIComponents.ChecksUI
             if (memoryCheckNotifier.Messages.Any())
             {
                 var popup = new PopupChecksUI("Record of events", false);
+                popup.checksUI1.BeginUpdate();
                 new ReplayCheckable(memoryCheckNotifier).Check(popup);
 
                 if(tag != null)
                     popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
-
+                popup.checksUI1.EndUpdate();
                 return true;
             }
 

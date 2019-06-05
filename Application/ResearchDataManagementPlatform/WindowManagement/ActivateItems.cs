@@ -9,48 +9,39 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Aggregation;
-using CatalogueLibrary.Data.Cohort;
-using CatalogueLibrary.Data.Dashboarding;
-using CatalogueLibrary.Data.DataLoad;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.Providers;
-using CatalogueLibrary.Repositories;
-using CatalogueManager.Collections;
-using CatalogueManager.Collections.Providers;
-using CatalogueManager.CommandExecution;
-using CatalogueManager.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
-using CatalogueManager.DataViewing;
-using CatalogueManager.DataViewing.Collections;
-using CatalogueManager.ExtractionUIs.FilterUIs;
-using CatalogueManager.ExtractionUIs.JoinsAndLookups;
-using CatalogueManager.Icons.IconProvision;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.ItemActivation.Arranging;
-using CatalogueManager.ItemActivation.Emphasis;
-using CatalogueManager.ObjectVisualisation;
-using CatalogueManager.PluginChildProvision;
-using CatalogueManager.Refreshing;
-using CatalogueManager.Rules;
-using CatalogueManager.TestsAndSetup.ServicePropogation;
-using CohortManager.CommandExecution.AtomicCommands;
-using CohortManager.SubComponents;
-using CohortManager.SubComponents.Graphs;
-using CohortManagerLibrary.QueryBuilding;
-using Dashboard.CommandExecution.AtomicCommands;
-using DataExportLibrary.Providers;
-using DataExportManager.Icons.IconProvision;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTableUI;
-using CatalogueManager.Copying;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Providers;
+using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.Repositories;
+using Rdmp.UI.Collections;
+using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.CommandExecution;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Copying;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
+using Rdmp.UI.ExtractionUIs.FilterUIs;
+using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
+using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Arranging;
+using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.PluginChildProvision;
+using Rdmp.UI.Refreshing;
+using Rdmp.UI.Rules;
+using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SubComponents.Graphs;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-using ReusableLibraryCode.Settings;
 using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dependencies.Models;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
@@ -217,7 +208,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
-
+            
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
             var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
             
@@ -234,6 +225,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             if (databaseObject != null)
                 idText = " ID=" + databaseObject.ID;
+
+            if (databaseObject != null)
+            {
+                var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
+                if(exports.Any(e=>e.Exists()))
+                    if(MessageBox.Show("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        foreach(ObjectExport e in exports)
+                            e.DeleteInDatabase(); 
+                    }
+                    else
+                        return false;
+            }
 
             DialogResult result = MessageBox.Show(
                 (overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")) +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
@@ -266,11 +270,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
         
-        public void ViewDataSample(IViewSQLAndResultsCollection collection)
-        {
-            Activate<ViewSQLAndResultsWithDataGridUI>(collection);
-        }
-
         public void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {
             //ensure a relevant Toolbox is available
@@ -324,11 +323,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
 
             Activate<FilterGraphUI>(collection);
-        }
-
-        public void ActivateViewCohortIdentificationConfigurationSql(object sender, CohortIdentificationConfiguration cic)
-        {
-            Activate<ViewCohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
         }
 
         public void ActivateViewLog(LoadMetadata loadMetadata)
@@ -405,16 +399,25 @@ namespace ResearchDataManagementPlatform.WindowManagement
             f.Close();
             ExceptionViewer.Show("Window Closed",reason);
         }
-
+        public void KillForm(Form f, string reason)
+        {
+            f.Close();
+            ExceptionViewer.Show("Window Closed",reason);
+        }
         public void OnRuleRegistered(IBinderRule rule)
         {
             //no special action required
         }
 
-        ///<inheritdoc/>
-        public Lazy<IObjectVisualisation> GetLazyCatalogueObjectVisualisation()
+        /// <summary>
+        /// Asks the user if they want to reload a fresh copy with a Yes/No message box.
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        /// <returns></returns>
+        public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
         {
-            return new Lazy<IObjectVisualisation>(() => new CatalogueObjectVisualisation(RepositoryLocator.CatalogueRepository.CommentStore,CoreIconProvider));
+            return MessageBox.Show(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
+                           "Object Changed", MessageBoxButtons.YesNo) == DialogResult.Yes;
         }
 
         public T Activate<T, T2>(T2 databaseObject)

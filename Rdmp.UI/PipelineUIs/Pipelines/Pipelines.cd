@@ -1,0 +1,139 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Persistence Layer">
+    <Position X="3.802" Y="1.677" Height="0.344" Width="7.429" />
+  </Comment>
+  <Comment CommentText="UI Layer (Design Time)">
+    <Position X="9.094" Y="3.354" Height="0.344" Width="5.783" />
+  </Comment>
+  <Comment CommentText="Pipeline use cases (Contexts)">
+    <Position X="3.396" Y="6.896" Height="0.344" Width="4.627" />
+  </Comment>
+  <Comment CommentText="Execution Time">
+    <Position X="6.75" Y="6.354" Height="0.344" Width="5.773" />
+  </Comment>
+  <Class Name="Rdmp.Core.Curation.Data.Pipelines.PipelineUser" Collapsed="true" BaseTypeListCollapsed="true">
+    <Position X="0.5" Y="5.5" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" Collapsed="true" />
+  </Class>
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers.PipelineSelectionUIFactory">
+    <Position X="5" Y="2.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAABAAAQAAAAABAAAAAAAAMAAAAAAAAAAAAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PluginPipelineUsers\PipelineSelectionUIFactory.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_user" />
+      <Field Name="_useCase" />
+      <Field Name="_pipelineSelectionUIInstance" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers.PluginPipelineUser" Collapsed="true">
+    <Position X="3.25" Y="6.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAIAABAAAAAAAAAAAAAAACAAAAAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PluginPipelineUsers\PluginPipelineUser.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.DataFlowPipeline.DataFlowPipelineEngine&lt;T&gt;" Collapsed="true">
+    <Position X="10" Y="5.75" Width="2.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PipelineWorkArea">
+    <Position X="10.75" Y="8" Width="2" />
+    <TypeIdentifier>
+      <HashCode>QACMCAICBCAAAhCAAACABAACAAIAAQgBEAAABAAADIA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PipelineWorkArea.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_useCase" />
+      <Field Name="_pipelineDiagram" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.ConfigureAndExecutePipeline">
+    <Position X="2" Y="10" Width="2.5" />
+    <AssociationLine Name="_useCase" Type="Rdmp.Core.Curation.Data.Pipelines.PipelineUseCase" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="3.438" Y="10" />
+        <Point X="3.438" Y="8.75" />
+        <Point X="1.438" Y="8.75" />
+        <Point X="1.438" Y="8.312" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAACAAKIAaBABBDAAgCgFABCIBAMcBmAAAACACgAkCQ=</HashCode>
+      <FileName>PipelineUIs\Pipelines\ConfigureAndExecutePipeline.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_useCase" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.ConfigurePipelineUI">
+    <Position X="7.5" Y="8.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AQgAAIAAACBEBBAEAACABACCAEIYBIAIAIACAQAAAAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\ConfigurePipelineUI.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_useCase" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Pipelines.PipelineUseCase" Collapsed="true">
+    <Position X="0.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.PipelineUIs.Pipelines.PipelineDiagram">
+    <Position X="14.75" Y="8" Width="3" />
+    <TypeIdentifier>
+      <HashCode>FAAJCQgAACAAAAAgAACQBDADQAICAYAAABQAIABABAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\PipelineDiagram.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_useCase" />
+    </ShowAsAssociation>
+  </Class>
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipeline" Collapsed="true">
+    <Position X="3.75" Y="0.75" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineComponent" Collapsed="true">
+    <Position X="6.25" Y="0.75" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineComponentArgument" Collapsed="true">
+    <Position X="8.75" Y="0.75" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineUseCase">
+    <Position X="0.5" Y="2" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineUser" Collapsed="true">
+    <Position X="0.5" Y="4.5" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.DataFlowPipeline.IDataFlowPipelineEngineFactory" Collapsed="true">
+    <Position X="6.75" Y="5.75" Width="3" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.UI.PipelineUIs.Pipelines.IPipelineSelectionUI" Collapsed="true">
+    <Position X="10.25" Y="2.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AIAAAAAGAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>PipelineUIs\Pipelines\IPipelineSelectionUI.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Delegate Name="Rdmp.Core.Curation.Data.Pipelines.PipelineSetter" Collapsed="true">
+    <Position X="0.5" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Delegate>
+  <Delegate Name="Rdmp.Core.Curation.Data.Pipelines.PipelineGetter" Collapsed="true">
+    <Position X="0.5" Y="6" Width="1.5" />
+    <TypeIdentifier />
+  </Delegate>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

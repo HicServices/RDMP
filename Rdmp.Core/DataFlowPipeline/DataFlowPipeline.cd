@@ -1,0 +1,97 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Used to model Runtime initialization.  IDataFlowComponents which implement this interface (you can implement for multiple T) will be Initialized with a compatible InitializationObject available in the IPipelineUseCase.">
+    <Position X="8.552" Y="4.892" Height="0.85" Width="4.321" />
+  </Comment>
+  <Comment CommentText="The above 3 classes reflect a reusable saved Pipeline configuration that is in the Catalogue Database (A list of classes that are IDataFlowComponent, some arguments to set at runtime ([DemandsInitialization]) when instantiating the components and optionally a destination component).  This pipeline can be instantiated into a DataFlowPipelineEngine and run.">
+    <Position X="4.54" Y="1.563" Height="0.624" Width="8.862" />
+  </Comment>
+  <Comment CommentText="Calling GetEngine on IPipelineUseCase will translate an IPipeline (above) into an Initialized 'ready to go' DataFlowPipelineEngine.">
+    <Position X="4.708" Y="5.219" Height="0.85" Width="2.591" />
+  </Comment>
+  <Comment CommentText="Defines a use case in which a Pipeline is required (e.g.  Cohort Creation).  This includes constraints on what a compatible Pipeline would look like i.e. the flow type T, what objects are available for PreInitialization and whether there is a fixed source/destination component.">
+    <Position X="0.5" Y="4.938" Height="1.385" Width="2.846" />
+  </Comment>
+  <Comment CommentText="Used to model Design Time initialization.  Decorate public properties of IDataFlowComponents with this attribute to allow the user to define values for the Pipeline when they build it.  Each Demand will be serialised as a PipelineComponentArgument (above).">
+    <Position X="8.532" Y="3.298" Height="0.808" Width="4.321" />
+  </Comment>
+  <Class Name="Rdmp.Core.Curation.Data.Pipelines.Pipeline" Collapsed="true">
+    <Position X="4.5" Y="0.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAIAAAAgAgAAAMAAIAAAQIQAQAAAAEAAAAQAAIABA=</HashCode>
+      <FileName>Data\Pipelines\Pipeline.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Pipelines.PipelineComponent" Collapsed="true">
+    <Position X="6.25" Y="0.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAEAIAACACAAAAAEABpAAAQYABAAAAAAAAAQUAAAABA=</HashCode>
+      <FileName>Data\Pipelines\PipelineComponent.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Pipelines.PipelineComponentArgument" Collapsed="true">
+    <Position X="8.5" Y="0.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAABAAAEAAAAAAAIQAAAAAAAgAAAQAAAAAA=</HashCode>
+      <FileName>Data\Pipelines\PipelineComponentArgument.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.DataFlowPipeline.DataFlowPipelineEngine&lt;T&gt;">
+    <Position X="4.75" Y="2.5" Width="2.5" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Methods" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AAAAAAgEAhACBYAAAAAAEAAAAAAAAAAEhAAACAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\DataFlowPipelineEngine.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.DemandsInitializationAttribute" Collapsed="true">
+    <Position X="8.5" Y="2.5" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAgAAAAAAQAAAAAAABAAAAAAAAAAAAACAA=</HashCode>
+      <FileName>Data\DemandsInitializationAttribute.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Rdmp.Core.Curation.DataFlowPipeline.IDataFlowComponent&lt;T&gt;" Collapsed="true">
+    <Position X="6.75" Y="6.5" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAACAAACAAAAAAAAAAAAAAAAAAAgAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\IDataFlowComponent.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.DataFlowPipeline.IDataFlowSource&lt;T&gt;" Collapsed="true">
+    <Position X="3.75" Y="6.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAACAAACAAAAAAAAAAEAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\IDataFlowSource.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.DataFlowPipeline.Requirements.IPipelineRequirement&lt;T&gt;" Collapsed="true">
+    <Position X="8.5" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\Requirements\IPipelineRequirement.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipelineUseCase">
+    <Position X="0.5" Y="2.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAACAAIAAACAEAAABAAA=</HashCode>
+      <FileName>Data\Pipelines\IPipelineUseCase.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.DataFlowPipeline.IDataFlowDestination&lt;T&gt;" Collapsed="true">
+    <Position X="9.25" Y="6.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DataFlowPipeline\IDataFlowDestination.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

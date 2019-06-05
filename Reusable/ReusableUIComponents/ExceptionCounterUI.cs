@@ -5,18 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.ChecksUI;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Small UI control for capturing and displaying Exceptions that should not be directly brought directly to the users attention
+    /// but which should none the less be visible.
+    /// </summary>
     [System.ComponentModel.DesignerCategory("")]
     public class ExceptionCounterUI : ToolStripButton,ICheckNotifier
     {
@@ -83,9 +84,26 @@ namespace ReusableUIComponents
         
         public bool OnCheckPerformed(CheckEventArgs args)
         {
+            //handle cross thread invocations
+            var p = GetCurrentParent();
+
+            if(p!= null && p.InvokeRequired)
+            {
+                p.BeginInvoke(new MethodInvoker(()=>{OnCheckPerformed(args);}));
+                return false;
+            }
+
             _events.OnCheckPerformed(args);
-            Enabled = true;
-            Invalidate();
+
+            try
+            {
+                Enabled = true;
+                Invalidate();
+            }
+            catch (Exception)
+            {
+                //thrown if cross thread
+            }
             return false;
 
         }

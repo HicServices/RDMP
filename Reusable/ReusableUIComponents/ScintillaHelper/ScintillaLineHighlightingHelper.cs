@@ -9,6 +9,9 @@ using ScintillaNET;
 
 namespace ReusableUIComponents.ScintillaHelper
 {
+    /// <summary>
+    /// Helper for highlighting specific lines of a <see cref="Scintilla"/> text editor.
+    /// </summary>
     public class ScintillaLineHighlightingHelper
     {
         public void HighlightLine(Scintilla editor, int i, Color color)

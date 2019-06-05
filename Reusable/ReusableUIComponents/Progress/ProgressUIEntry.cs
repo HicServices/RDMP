@@ -9,6 +9,10 @@ using ReusableLibraryCode.Progress;
 
 namespace ReusableUIComponents.Progress
 {
+    /// <summary>
+    /// Represents a single <see cref="NotifyEventArgs"/> with supplemental data such as the date and sender.  This is the object
+    /// shown in <see cref="ProgressUI"/>.
+    /// </summary>
     public class ProgressUIEntry
     {
         public string Sender { get; private set; }

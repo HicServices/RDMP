@@ -147,7 +147,7 @@ namespace MapsDirectlyToDatabaseTable
                 _propertyChanges.Remove(oTableWrapperObject);
         }
 
-        public void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
+        public virtual void DeleteFromDatabase(IMapsDirectlyToDatabaseTable oTableWrapperObject)
         {
             Objects.Remove(oTableWrapperObject);
 
@@ -287,6 +287,11 @@ namespace MapsDirectlyToDatabaseTable
         public virtual void Clear()
         {
             Objects.Clear();
+        }
+
+        public Type[] GetCompatibleTypes()
+        {
+            return GetType().Assembly.GetTypes().Where(t=>typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t)).ToArray();
         }
     }
 }

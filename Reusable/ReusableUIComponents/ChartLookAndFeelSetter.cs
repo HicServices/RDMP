@@ -14,6 +14,9 @@ using System.Windows.Forms.DataVisualization.Charting;
 
 namespace ReusableUIComponents
 {
+    /// <summary>
+    /// Formats X and Y axis of <see cref="Chart"/> objects in a consistent way (including axis increments etc).
+    /// </summary>
     public class ChartLookAndFeelSetter
     {
         /// <summary>

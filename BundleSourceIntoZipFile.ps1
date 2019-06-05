@@ -1,0 +1,1 @@
+Get-ChildItem -Path ./ -recurse | where {$_.name -match '.*\.cs$'} | Compress-Archive -DestinationPath "./Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip" -Force

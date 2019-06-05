@@ -12,13 +12,6 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using CatalogueLibrary;
-using CatalogueLibrary.Data;
-using CatalogueLibrary.Data.Defaults;
-using CatalogueLibrary.DataHelper;
-using CatalogueLibrary.Repositories;
-using DatabaseCreation;
-using DataExportLibrary.Repositories;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Implementation;
@@ -26,16 +19,27 @@ using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Versioning;
 using MySql.Data.MySqlClient;
 using NUnit.Framework;
-using RDMPStartup;
-using RDMPStartup.Events;
+using Rdmp.Core.CommandLine.DatabaseCreation;
+using Rdmp.Core.Curation;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
+using Rdmp.Core.Databases;
+using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
+using Rdmp.Core.Startup.Events;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using YamlDotNet.Serialization;
 
 namespace Tests.Common
 {
+    /// <summary>
+    /// Base class for all integration tests which need to read/write to a database (sql server, mysql or oracle).
+    /// </summary>
     [TestFixture]
     [Category("Database")]
     public class DatabaseTests
@@ -66,7 +70,7 @@ namespace Tests.Common
 
         static DatabaseTests()
         {
-            CatalogueLibrary.Repositories.CatalogueRepository.SuppressHelpLoading = true;
+            CatalogueRepository.SuppressHelpLoading = true;
             
             ImplementationManager.Load(
                 typeof(MicrosoftSQLImplementation).Assembly,
@@ -79,44 +83,42 @@ namespace Tests.Common
 
         private static void ReadSettingsFile()
         {
-            var assembly = Assembly.GetExecutingAssembly();
-            var resourceName = "Tests.Common.TestDatabases.txt";
+            const string settingsFile = "TestDatabases.txt";
 
             //see if there is a local text file first
-            var dir = new DirectoryInfo(AppDomain.CurrentDomain.BaseDirectory);
-            var f = dir.GetFiles("TestDatabases.txt").SingleOrDefault();
+            var f = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,settingsFile));
+
+            if (!f.Exists) 
+                throw new FileNotFoundException("Could not find file '" + f.FullName + "'");
+
+            using(StreamReader s = new StreamReader(f.OpenRead()))
+            {
+                var deserializer = new DeserializerBuilder()
+                    .Build();
             
-            //there is a local text file so favour that one
-            if (f != null)
-            {
-                TestDatabaseSettings = ReadSettingsFileFromStream(f.OpenRead());
-            }
-            else
-            {
-                //otherwise use the embedded resource file
-                using (Stream stream = assembly.GetManifestResourceStream(resourceName))
-                    TestDatabaseSettings = ReadSettingsFileFromStream(stream);
+                TestDatabaseSettings = (TestDatabasesSettings) deserializer.Deserialize(s, typeof(TestDatabasesSettings));
             }
         }
 
         public DatabaseTests()
         {
 
-            var opts = new DatabaseCreationProgramOptions()
+            var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
                 Prefix = TestDatabaseNames.Prefix
             };
 
             
-            RepositoryLocator = new DatabaseCreationRepositoryFinder(opts);
+            RepositoryLocator = new PlatformDatabaseCreationRepositoryFinder(opts);
 
+            
             Console.WriteLine("Expecting Unit Test Catalogue To Be At Server=" + CatalogueRepository.DiscoveredServer.Name + " Database=" + CatalogueRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
+            Assert.IsTrue(CatalogueRepository.DiscoveredServer.Exists(), "Catalogue database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
             Console.WriteLine("Found Catalogue");
 
             Console.WriteLine("Expecting Unit Test Data Export To Be At Server=" + DataExportRepository.DiscoveredServer.Name + " Database= " + DataExportRepository.DiscoveredServer.GetCurrentDatabase());
-            Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run DatabaseCreation.exe to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'DatabaseCreation.exe localhost\\sqlexpress TEST_')");
+            Assert.IsTrue(DataExportRepository.DiscoveredServer.Exists(), "Data Export database does not exist, run 'rdmp.exe install ...' to create it (Ensure that servername and prefix in TestDatabases.txt match those you provide to CreateDatabases.exe e.g. 'rdmp.exe install localhost\\sqlexpress TEST_')");
             Console.WriteLine("Found DataExport");
             
             Console.Write(Environment.NewLine + Environment.NewLine + Environment.NewLine);
@@ -125,8 +127,8 @@ namespace Tests.Common
 
             var defaults = CatalogueRepository.GetServerDefaults();
 
-            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultDQEDatabaseName, PermissableDefaults.DQE,typeof(DataQualityEngine.Database.Class1).Assembly);
-            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, DatabaseCreationProgram.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, typeof(HIC.Logging.Database.Class1).Assembly);
+            DataQualityEngineConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultDQEDatabaseName, PermissableDefaults.DQE,new DataQualityEnginePatcher());
+            UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
             CreateScratchArea();
@@ -149,32 +151,9 @@ namespace Tests.Common
                 _discoveredOracleServer = new DiscoveredServer(TestDatabaseSettings.Oracle, DatabaseType.Oracle);
         }
 
-        
-
-        private static TestDatabasesSettings ReadSettingsFileFromStream(Stream stream)
+        private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
         {
-            var settings = new TestDatabasesSettings();
-
-            using (StreamReader reader = new StreamReader(stream))
-            {
-                string result = reader.ReadToEnd();
-
-
-                foreach (PropertyInfo p in typeof(TestDatabasesSettings).GetProperties())
-                {
-                    var match = Regex.Match(result, "^" + p.Name + ":(.*)$", RegexOptions.Multiline | RegexOptions.IgnoreCase);
-                    
-                    if(match.Success)
-                        p.SetValue(settings, match.Groups[1].Value.Trim());
-
-                }
-            }
-            return settings;
-        }
-
-        private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,Assembly creator)
-        {
-            var opts = new DatabaseCreationProgramOptions()
+            var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
                 Prefix = prefix
@@ -186,7 +165,7 @@ namespace Tests.Common
                 builder.InitialCatalog = "";
 
             //create a new pointer
-            var externalServerPointer = new ExternalDatabaseServer(CatalogueRepository, databaseName??"RAW",creator)
+            var externalServerPointer = new ExternalDatabaseServer(CatalogueRepository, databaseName??"RAW",patcher)
             {
                 Server = builder.DataSource,
                 Database = builder.InitialCatalog,
@@ -223,7 +202,7 @@ namespace Tests.Common
             //if it is the first time
             if (_startup == null)
             {
-                _startup = new Startup(RepositoryLocator);
+                _startup = new Startup(new EnvironmentInfo(),RepositoryLocator);
 
                 _startup.DatabaseFound += StartupOnDatabaseFound;
                 _startup.MEFFileDownloaded += StartupOnMEFFileDownloaded;

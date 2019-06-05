@@ -1,0 +1,157 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Obscure Dependencies are mostly about preventing the user from deleting stuff that is being used by other parts of the system that cannot be enforced with database logic (e.g. prevent deleting a Catalogue when it has been used for extraction configurations in Data Export database).  Also it handles cross database CASCADES e.g. when you delete a catalogue, delete all DQE evaluations of that Catalogue.">
+    <Position X="5.001" Y="8.934" Height="1.273" Width="4.111" />
+  </Comment>
+  <Class Name="RDMPStartup.Startup">
+    <Position X="2.5" Y="0.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAEAEAAEABAAAAAAAQAICgQAAAAABAAAAAA=</HashCode>
+      <FileName>Startup.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="RDMPStartup.LinkedRepositoryProvider">
+    <Position X="11.75" Y="2.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>MAACCAAAAABAAAAAEAAQAAAAAAgABAAAAAAAAAABAgA=</HashCode>
+      <FileName>LinkedRepositoryProvider.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Repositories.CatalogueRepository" Collapsed="true">
+    <Position X="0.5" Y="6.5" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MapsDirectlyToDatabaseTable.TableRepository" Collapsed="true">
+    <Position X="2" Y="5.25" Width="3" />
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="ObscureDependencyFinder" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.DataExport.Repositories.DataExportRepository">
+    <Position X="5" Y="6.25" Width="1.75" />
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="CatalogueRepository" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.CatalogueObscureDependencyFinder">
+    <Position X="0.5" Y="8" Width="3" />
+    <TypeIdentifier />
+    <ShowAsCollectionAssociation>
+      <Field Name="OtherDependencyFinders" />
+    </ShowAsCollectionAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="HIC.Common.Validation.Dependency.ValidationXMLObscureDependencyFinder" Collapsed="true">
+    <Position X="1.5" Y="10" Width="3.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.DataExport.BetweenCatalogueAndDataExportObscureDependencyFinder" Collapsed="true">
+    <Position X="2.5" Y="11" Width="4.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="RDMPStartup.UserSettingsRepositoryFinder">
+    <Position X="7.5" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAACAAAAAAAAAAAEKAAAAAAAAAABAAAAAAAAAABAAA=</HashCode>
+      <FileName>UserSettingsRepositoryFinder.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_linkedRepositoryProvider" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Repositories.MemoryCatalogueRepository" Collapsed="true">
+    <Position X="10" Y="12.75" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableLibraryCode.Comments.CommentStore" Collapsed="true">
+    <Position X="15.5" Y="11" Width="2.25" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="MapsDirectlyToDatabaseTable.MemoryRepository" Collapsed="true">
+    <Position X="6.75" Y="12.75" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Repositories.MEF" Collapsed="true">
+    <Position X="15.5" Y="12" Width="2.25" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="MapsDirectlyToDatabaseTable.IObscureDependencyFinder" Collapsed="true">
+    <Position X="7.5" Y="5" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Repositories.IRDMPPlatformRepositoryServiceLocator" Collapsed="true">
+    <Position X="6.25" Y="0.75" Width="3.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Repositories.ICatalogueRepository">
+    <Position X="10" Y="7" Width="2.25" />
+    <AssociationLine Name="CommentStore" Type="ReusableLibraryCode.Comments.CommentStore" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="12.25" Y="9.56" />
+        <Point X="12.625" Y="9.56" />
+        <Point X="12.625" Y="11.281" />
+        <Point X="15.5" Y="11.281" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="MEF" />
+      <Property Name="CommentStore" />
+      <Property Name="AggregateForcedJoinManager" />
+      <Property Name="CohortContainerManager" />
+      <Property Name="JoinManager" />
+      <Property Name="TableInfoCredentialsManager" />
+      <Property Name="FilterManager" />
+      <Property Name="GovernanceManager" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.ITableRepository" Collapsed="true">
+    <Position X="9" Y="5.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="MapsDirectlyToDatabaseTable.IRepository" Collapsed="true">
+    <Position X="10" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Data.Aggregation.IAggregateForcedJoinManager" Collapsed="true">
+    <Position X="14.75" Y="8.5" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Repositories.Managers.ICohortContainerManager" Collapsed="true">
+    <Position X="14.75" Y="6" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Repositories.Managers.IJoinManager" Collapsed="true">
+    <Position X="14.75" Y="10" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Repositories.Managers.ITableInfoCredentialsManager" Collapsed="true">
+    <Position X="14.75" Y="9.25" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Repositories.Managers.IFilterManager" Collapsed="true">
+    <Position X="14.75" Y="7.5" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.Curation.Repositories.Managers.IGovernanceManager" Collapsed="true">
+    <Position X="14.75" Y="6.75" Width="2.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Enum Name="Rdmp.Core.Curation.Repositories.Tier2DatabaseType" Collapsed="true">
+    <Position X="15.5" Y="12.75" Width="2" />
+    <TypeIdentifier />
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

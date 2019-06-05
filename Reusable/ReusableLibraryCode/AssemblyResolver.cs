@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Loader;
 
 namespace ReusableLibraryCode
 {
@@ -20,7 +21,7 @@ namespace ReusableLibraryCode
     {
         private static HashSet<string> assemblyResolveAttempts = new HashSet<string>(); 
 
-        public static void SetupAssemblyResolver()
+        public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
         {
             AppDomain.CurrentDomain.AssemblyResolve += (sender, resolveArgs) =>
             {
@@ -32,6 +33,13 @@ namespace ReusableLibraryCode
                     return null;
 
                 assemblyResolveAttempts.Add(assemblyInfo);
+
+                foreach(DirectoryInfo dir in dirs)
+                {
+                    var dll = dir.EnumerateFiles(name + ".dll").SingleOrDefault();
+                    if(dll != null)
+                        return LoadFile(dll);
+                }
 
                 var assembly = Assembly.GetExecutingAssembly().Location;
                 if (String.IsNullOrWhiteSpace(assembly))
@@ -48,5 +56,29 @@ namespace ReusableLibraryCode
                 return Assembly.LoadFile(file.FullName);
             };
         } 
+ 
+        public static Assembly LoadFile(FileInfo f)
+        {
+            try
+            {
+                return F1(f);
+
+            }catch(FileLoadException ex)
+            {
+                //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
+                return F2(f);
+            }
+        }
+
+        private static Assembly F2(FileInfo f)
+        {
+            return Assembly.LoadFile(f.FullName);
+        }
+
+        private static Assembly F1(FileInfo f)
+        {
+            return AssemblyLoadContext.Default.LoadFromAssemblyPath(f.FullName);
+        }
+
     }
 }

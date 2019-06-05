@@ -10,7 +10,8 @@ using ReusableLibraryCode.Icons.IconProvision;
 namespace ReusableLibraryCode.CommandExecution.AtomicCommands
 {
     /// <summary>
-    /// ICommandExecution with an Image designed for use with MenuItems and HomeUI  
+    /// <see cref="ICommandExecution"/> with an Image designed for use with MenuItems and HomeUI.  Represents a single atomic
+    /// action which the user can undertake.  The command may be <see cref="ICommandExecution.IsImpossible"/>.
     /// </summary>
     public interface IAtomicCommand : ICommandExecution
     {

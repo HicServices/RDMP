@@ -9,7 +9,7 @@ using System;
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
     /// <summary>
-    /// Thrown when an SQL update patch in a .Database assembly (e.g. CatalogueLibrary.Database) is not formed correctly
+    /// Thrown when an SQL update patch supplied by an IPatcher is not formed correctly
     /// </summary>
     public class InvalidPatchException : Exception
     {

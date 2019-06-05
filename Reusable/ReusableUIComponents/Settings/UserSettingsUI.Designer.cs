@@ -39,6 +39,10 @@
             this.label4 = new System.Windows.Forms.Label();
             this.ddWordWrap = new System.Windows.Forms.ComboBox();
             this.cbFindShouldPin = new System.Windows.Forms.CheckBox();
+            this.label5 = new System.Windows.Forms.Label();
+            this.tbHeatmapColours = new System.Windows.Forms.TextBox();
+            this.label6 = new System.Windows.Forms.Label();
+            this.cbWait5Seconds = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -153,17 +157,58 @@
             this.cbFindShouldPin.UseVisualStyleBackColor = true;
             this.cbFindShouldPin.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // label5
+            // 
+            this.label5.AutoSize = true;
+            this.label5.Location = new System.Drawing.Point(10, 296);
+            this.label5.Name = "label5";
+            this.label5.Size = new System.Drawing.Size(88, 13);
+            this.label5.TabIndex = 8;
+            this.label5.Text = "HeatmapColours:";
+            // 
+            // tbHeatmapColours
+            // 
+            this.tbHeatmapColours.Location = new System.Drawing.Point(104, 293);
+            this.tbHeatmapColours.Name = "tbHeatmapColours";
+            this.tbHeatmapColours.Size = new System.Drawing.Size(238, 20);
+            this.tbHeatmapColours.TabIndex = 9;
+            this.tbHeatmapColours.TextChanged += new System.EventHandler(this.TbHeatmapColours_TextChanged);
+            // 
+            // label6
+            // 
+            this.label6.AutoSize = true;
+            this.label6.Location = new System.Drawing.Point(153, 316);
+            this.label6.Name = "label6";
+            this.label6.Size = new System.Drawing.Size(146, 13);
+            this.label6.TabIndex = 8;
+            this.label6.Text = "(Format: #000000->#FFFFFF)";
+            // 
+            // cbWait5Seconds
+            // 
+            this.cbWait5Seconds.AutoSize = true;
+            this.cbWait5Seconds.Location = new System.Drawing.Point(39, 141);
+            this.cbWait5Seconds.Name = "cbWait5Seconds";
+            this.cbWait5Seconds.Size = new System.Drawing.Size(161, 17);
+            this.cbWait5Seconds.TabIndex = 2;
+            this.cbWait5Seconds.Text = "Wait 5 seconds after Startup";
+            this.cbWait5Seconds.UseVisualStyleBackColor = true;
+            this.cbWait5Seconds.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(742, 565);
+            this.Controls.Add(this.tbHeatmapColours);
+            this.Controls.Add(this.label6);
+            this.Controls.Add(this.label5);
             this.Controls.Add(this.ddWordWrap);
             this.Controls.Add(this.label4);
             this.Controls.Add(this.ddTheme);
             this.Controls.Add(this.cbThemeMenus);
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
+            this.Controls.Add(this.cbWait5Seconds);
             this.Controls.Add(this.cbFindShouldPin);
             this.Controls.Add(this.cbConfirmExit);
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
@@ -189,5 +234,9 @@
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.ComboBox ddWordWrap;
         private System.Windows.Forms.CheckBox cbFindShouldPin;
+        private System.Windows.Forms.Label label5;
+        private System.Windows.Forms.TextBox tbHeatmapColours;
+        private System.Windows.Forms.Label label6;
+        private System.Windows.Forms.CheckBox cbWait5Seconds;
     }
 }

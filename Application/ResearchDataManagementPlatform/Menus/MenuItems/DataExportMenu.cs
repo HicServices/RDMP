@@ -6,9 +6,9 @@
 
 using System;
 using System.Windows.Forms;
-using CatalogueManager.ItemActivation;
-using CatalogueManager.Menus.MenuItems;
-using DataExportManager.SimpleDialogs;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.SimpleDialogs;
 
 namespace ResearchDataManagementPlatform.Menus.MenuItems
 {
