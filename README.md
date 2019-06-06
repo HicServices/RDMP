@@ -3,6 +3,8 @@ RDMP is a free, open source software application for the loading,linking,anonymi
 
 RDMP does not require your data be moved or transformed prior to processing and is integrates into existing SQL based extraction practices.
 
+![image](./Application/ResearchDataManagementPlatform/Icon/SummaryDiagram.png)
+
 ## Install
 
 Signed release binaries for the RDMP client and Command Line Interface (CLI) are in the available in the releases section (https://github.com/HicServices/RDMP/releases).
