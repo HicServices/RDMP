@@ -2,26 +2,26 @@
 ## Background
 Code testing is vital for ensuring the long term stability of a codebase.  Proper testing of RDMP requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc) as well as creating test tables/databases.  RDMP tests are therefore divided into those that test basic assumptions (unit tests) and those that test system functionality in place (`DatabaseTests`).  
 
-RDMP is designed to manage research datasets stored in several formats (Sql Server, MySql, Oracle).  Cross platform tests or test cases can be run when suitable testing server instances are available.
+RDMP is designed to manage research datasets stored in several formats (Sql Server, MySql, Oracle).  Cross platform tests can be run when suitable testing server instances are available.
 
 *IMPORTANT:* Many tests create objects in the test databases or create files in the test working directory therefore [parallel test execution](https://github.com/nunit/docs/wiki/Parallelizable-Attribute) is not supported.
 
 ![ReOrdering](Images/Tests/TestCategories.png) 
 
 ## Running Tests
-Before running DatabaseTests you should run DatabaseCreation.exe with appropriate parameters
+Before running DatabaseTests you must create a set of RDMP platform databases for testing.  This can be done through the [RDMP Command Line tool](https://github.com/HicServices/RDMP/releases):
 
-For example if you have a local sql server express instance on your development PC you can run 
-```
-cd .\Tools\DatabaseCreation\bin\Debug\
-DatabaseCreation.exe localhost\sqlexpress TEST_ -D
-```
+`rdmp.exe install localhost\sqlexpress TEST_ -D`
 
-If you need to change the server name or database prefix from the above example then before running the integration tests you will have to update ".\Tests.Common\DatabaseTests.txt" to have a matching servername and prefix.
+Or you can use the client application at startup:
+
+![ReOrdering](Images/CreatePlatformDatabases.png) 
+
+If you need to change the server name or database prefix from the above example then update ".\Tests.Common\DatabaseTests.txt" to match.
 
 __WARNING__:DatabaseTests will delete the contents of the TEST_ databases before each test is run and some will create temporary databases/tables during runtime, therefore it is important that you do not use a production server for integration testing
 
-If you have an testing environment with an Oracle and\or MySql server instance then you can enable running these tests too by entering the connection strings into `DatabaseTests.txt`.  If you do not define a connection string then these tests will be marked `Inconclusive` when run.
+If you have a testing environment with an Oracle and\or MySql server instance then you can enable running these tests too by entering the connection strings into `DatabaseTests.txt`.  If you do not define a connection string then these tests will be marked `Inconclusive` when run.
 
 ## Writing New DatabaseTests
 If you require to scratch tables or platform objects then you should inherit from `DatabaseTests`
