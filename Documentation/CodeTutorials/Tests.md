@@ -1,15 +1,80 @@
 # RDMP Code Tests
 ## Background
-Code testing is vital for ensuring the long term stability of a codebase.  Proper testing of RDMP requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc) as well as creating test tables/databases.  RDMP tests are therefore divided into those that test basic assumptions (unit tests) and those that test system functionality in place (`DatabaseTests`).  
+Tests in RDMP are split between [Unit](#unit-tests), [User Interface](#user-interface-tests) and [Database](#database-tests) tests.
 
-RDMP is designed to manage research datasets stored in several formats (Sql Server, MySql, Oracle).  Cross platform tests can be run when suitable testing server instances are available.
-
-*IMPORTANT:* Many tests create objects in the test databases or create files in the test working directory therefore [parallel test execution](https://github.com/nunit/docs/wiki/Parallelizable-Attribute) is not supported.
+Many create tables/records in the test database or files on disk therefore [parallel test execution](https://github.com/nunit/docs/wiki/Parallelizable-Attribute) is not recommended.
 
 ![ReOrdering](Images/Tests/TestCategories.png) 
 
-## Running Tests
-Before running DatabaseTests you must create a set of RDMP platform databases for testing.  This can be done through the [RDMP Command Line tool](https://github.com/HicServices/RDMP/releases):
+## Unit Tests
+
+Unit tests are tests which do not require a database or for any UI code to run.  These either have no base class or inherit from `UnitTests` (allows you to create RDMP platform objects e.g. `Catalogue`).
+
+```csharp
+
+public class CatalogueTests : UnitTests
+{
+    [Test]
+    public void Test_GetObjects_Catalogue()
+    {
+        Catalogue catalogueWithId = new Catalogue(Repository, "bob");
+        Catalogue[] catas = Repository.GetAllObjects<Catalogue>();
+
+        Assert.IsTrue(catas.Length > 0);
+
+        catalogueWithId.DeleteInDatabase();
+    }
+}
+
+```
+_Example Unit Test_
+
+## User Interface Tests
+
+User interface tests which confirm behaviours of RDMP client user interfaces e.g. `CatalogueUI`.  These tests create instances of Forms/Controls but do not actually show them (we do not use UI automation).
+
+You can write new user interface tests by inheriting `UITests` and specifying a `UITimeoutAttribute` on the Test (this prevents messageboxes blocking the test indefinetly in failure conditions and ensures that an STA thread is used.)
+
+```csharp
+public class CatalogueUITests : UITests
+{
+    [Test, UITimeout(20000)]
+    public void Test_CatalogueUI_NormalState()
+    {
+        //Get a new platform object
+        var cata = WhenIHaveA<Catalogue>();
+
+        //Get an instance of the UI
+        var ui = AndLaunch<CatalogueUI>(cata);
+
+        //when I type text
+        ui._scintillaDescription.Text = "amagad zombies";
+
+        //my class should get the typed text but it shouldn't be saved into the database yet
+        Assert.AreEqual("amagad zombies", cata.Description);
+        Assert.AreEqual(ChangeDescription.DatabaseCopyDifferent, cata.HasLocalChanges().Evaluation);
+
+        //get the save button
+        var saver = ui.GetObjectSaverButton();
+                    
+        //when I save
+        saver.Save();
+
+        //my class should have no changes (vs the database) and should have the proper description
+        Assert.AreEqual(ChangeDescription.NoChanges, cata.HasLocalChanges().Evaluation);
+        Assert.AreEqual("amagad zombies", cata.Description);
+
+        //No errors of any type should have been displayed
+        AssertNoErrors(ExpectedErrorType.Any);
+    }
+```
+_Example User Interface Test_
+
+## Database Tests
+
+The RDMP client requires an Sql Server instance for storing platform metadata objects (`Catalogue`, `Project` etc).  It's primary purpose is to query / manage SQL datasets (for linkage, extraction etc).  Database tests exist to test this functionality.
+
+Before running DatabaseTests you must create a set of RDMP platform databases for testing.  This can be done through the [RDMP command line tool](https://github.com/HicServices/RDMP/releases):
 
 `rdmp.exe install localhost\sqlexpress TEST_ -D`
 
@@ -19,12 +84,12 @@ Or you can use the client application at startup:
 
 If you need to change the server name or database prefix from the above example then update ".\Tests.Common\DatabaseTests.txt" to match.
 
-__WARNING__:DatabaseTests will delete the contents of the TEST_ databases before each test is run and some will create temporary databases/tables during runtime, therefore it is important that you do not use a production server for integration testing
-
 If you have a testing environment with an Oracle and\or MySql server instance then you can enable running these tests too by entering the connection strings into `DatabaseTests.txt`.  If you do not define a connection string then these tests will be marked `Inconclusive` when run.
 
-## Writing New DatabaseTests
-If you require to scratch tables or platform objects then you should inherit from `DatabaseTests`
+__WARNING__: DatabaseTests will delete the contents of the TEST_ databases before each test is run and some will create temporary databases/tables during runtime, therefore it is important that you do not use a production server for integration testing
+
+## Writing Database Tests
+You can write new database tests by inheriting from `DatabaseTests` or one of the Scenarios (e.g. `TestsRequiringAnExtractionConfiguration`).
 
 ```csharp
 public class MyTests : DatabaseTests
@@ -37,8 +102,9 @@ public class MyTests : DatabaseTests
 	}
 }
 ```
+_Example Database Test_
 
-If you want to run your test against multiple database types (Oracle / MySql etc) then the preferred method is to use a `TestCase` and call `GetCleanedServer` to obtain a cross platform object that represents the scratch database.
+If you want to run your test against multiple database types (Oracle / MySql etc) then you should use `TestCase` and call `GetCleanedServer` to obtain a cross platform object that represents the scratch database.
 
 ```csharp
 public class MyTests : DatabaseTests

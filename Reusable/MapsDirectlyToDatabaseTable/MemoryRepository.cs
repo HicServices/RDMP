@@ -85,7 +85,14 @@ namespace MapsDirectlyToDatabaseTable
 
         public T GetObjectByID<T>(int id) where T : IMapsDirectlyToDatabaseTable
         {
-            return Objects.OfType<T>().Single(o => o.ID == id);
+            try
+            {
+                return Objects.OfType<T>().Single(o => o.ID == id);
+            }
+            catch(InvalidOperationException e)
+            {
+                throw new KeyNotFoundException("Could not find " + typeof(T).Name + " with ID " + id,e);
+            }
         }
 
         public T[] GetAllObjects<T>() where T : IMapsDirectlyToDatabaseTable
