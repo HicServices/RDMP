@@ -89,6 +89,8 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="pluginZipFile"></param>
+        /// <param name="pluginVersion"></param>
+        /// <param name="rdmpVersion"></param>
         public Plugin(ICatalogueRepository repository, FileInfo pluginZipFile, Version pluginVersion, Version rdmpVersion)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()

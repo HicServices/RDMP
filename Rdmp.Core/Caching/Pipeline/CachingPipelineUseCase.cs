@@ -40,6 +40,7 @@ namespace Rdmp.Core.Caching.Pipeline
         /// <param name="cacheProgress">The cache that will be run</param>
         /// <param name="ignorePermissionWindow">Set to true to ignore the CacheProgress.PermissionWindow (if any)</param>
         /// <param name="providerIfAny">The strategy for figuring out what dates to load the cache with e.g. failed cache fetches or new jobs from head of que?</param>
+        /// <param name="throwIfNoPipeline"></param>
         public CachingPipelineUseCase(ICacheProgress cacheProgress,bool ignorePermissionWindow=false,ICacheFetchRequestProvider providerIfAny = null,bool throwIfNoPipeline = true)
         {
             _cacheProgress = cacheProgress;

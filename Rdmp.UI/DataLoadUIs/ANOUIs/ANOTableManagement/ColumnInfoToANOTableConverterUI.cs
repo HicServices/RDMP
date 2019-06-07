@@ -349,7 +349,7 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
             }
 
 
-            ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(_columnInfo, ANOTable, DataAccessPortal.GetInstance());
+            ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(_columnInfo, ANOTable);
 
             try
             {

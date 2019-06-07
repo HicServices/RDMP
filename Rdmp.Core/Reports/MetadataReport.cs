@@ -73,8 +73,6 @@ namespace Rdmp.Core.Reports
 
                 using (var document = GetNewDocFile(filename))
                 {
-                    const int marginSize = 20;
-                    
                     PageWidthInPixels = GetPageWidth(document);
                     
                     var sw = Stopwatch.StartNew();

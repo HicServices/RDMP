@@ -158,14 +158,14 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         internal class DatabaseHelper : IDisposable
         {
             private DiscoveredServer _server;
-            private string _testDatabaseSuffix;
+            
 
             public DiscoveredDatabase DatabaseToLoad { get; private set; }
             public void SetUp(DiscoveredServer server)
             {
                 _server = server;
 
-                var databaseToLoadName = "HICPipelineTests" + _testDatabaseSuffix;
+                var databaseToLoadName = "HICPipelineTests";
                 
                 // Create the databases
                 server.ExpectDatabase(databaseToLoadName).Create(true);

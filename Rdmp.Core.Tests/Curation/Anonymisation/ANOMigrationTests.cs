@@ -146,7 +146,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
         {
             //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
             ColumnInfo condition = _columnInfos.Single(c => c.GetRuntimeName().Equals("Condition1"));
-            ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable,DataAccessPortal.GetInstance());
+            ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
             var ex = Assert.Throws<Exception>(()=>converter.ConvertFullColumnInfo((s) => true, new ThrowImmediatelyCheckNotifier())); //say  yes to everything it proposes 
 
             StringAssert.IsMatch(@"Could not perform transformation because column \[(.*)\]\.\.\[.*\]\.\[Condition1\] is not droppable",ex.Message);
@@ -180,7 +180,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
             
             //The table we created above should have a column called Condition2 in it, we will migrate this data to ANO land
             ColumnInfo condition = _columnInfos.Single(c => c.GetRuntimeName().Equals(conditionColumn));
-            ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable, DataAccessPortal.GetInstance());
+            ColumnInfoToANOTableConverter converter = new ColumnInfoToANOTableConverter(condition, _anoConditionTable);
             converter.ConvertFullColumnInfo((s) => true,new AcceptAllCheckNotifier()); //say  yes to everything it proposes 
 
             //refresh the column infos

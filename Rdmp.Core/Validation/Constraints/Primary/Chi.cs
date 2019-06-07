@@ -124,6 +124,7 @@ namespace Rdmp.Core.Validation.Constraints.Primary
         /// Check the validity of the supplied CHI
         /// </summary>
         /// <param name="strChi"></param>
+        /// <param name="errorReport"></param>
         /// <returns>true if the CHI is valid, false otherwise</returns>
         public static bool IsValidChiNumber(string strChi, out string errorReport)
         {

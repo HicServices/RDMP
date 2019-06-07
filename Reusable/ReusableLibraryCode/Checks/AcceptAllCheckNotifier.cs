@@ -13,9 +13,13 @@ namespace ReusableLibraryCode.Checks
     /// </summary>
     public class AcceptAllCheckNotifier : ICheckNotifier
     {
+        /// <summary>
+        /// Check handler that throws <see cref="Exception"/> on Failures but otherwise returns true
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         public virtual bool OnCheckPerformed(CheckEventArgs args)
         {
-
             //if there is a proposed fix then accept it regardless of whether it was a Fail.
             if (!string.IsNullOrWhiteSpace(args.ProposedFix))
                 return true;

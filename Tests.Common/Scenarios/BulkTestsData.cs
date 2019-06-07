@@ -6,8 +6,6 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
-using System.Diagnostics;
 using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
@@ -15,12 +13,10 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
 namespace Tests.Common.Scenarios

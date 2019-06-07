@@ -722,10 +722,11 @@ namespace Rdmp.Core.Curation.Data
 
             ClearAllInjections();
         }
-        
+
         /// <summary>
         /// Creates a single runtime instance of the Catalogue based on the current state of the row read from the DbDataReader (does not advance the reader)
         /// </summary>
+        /// <param name="repository"></param>
         /// <param name="r"></param>
         internal Catalogue(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)

@@ -9,6 +9,7 @@ using System.Data;
 using System.Data.Common;
 using System.Data.SqlClient;
 using System.Linq;
+using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
@@ -30,34 +31,32 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
         private readonly ANOTable _toConformTo;
         private readonly TableInfo _tableInfo;
         private ColumnInfo _newANOColumnInfo;
-        private readonly DataAccessPortal _dataAccessPortal;
 
-        public ColumnInfoToANOTableConverter(ColumnInfo colToNuke, ANOTable toConformTo, DataAccessPortal dataAccessPortal)
+        public ColumnInfoToANOTableConverter(ColumnInfo colToNuke, ANOTable toConformTo)
         {
             _tableInfo = colToNuke.TableInfo;
             _colToNuke = colToNuke;
             _toConformTo = toConformTo;
-            _dataAccessPortal = dataAccessPortal;
         }
 
         public bool ConvertEmptyColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
         {
-            int rowcount = _dataAccessPortal
-                .ExpectDatabase(_tableInfo, DataAccessContext.DataLoad)
-                .ExpectTable(_tableInfo.GetRuntimeName(LoadStage.PostLoad))
-                .GetRowCount();
+
+            var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
+
+            int rowcount = tbl.GetRowCount();
             
             if(rowcount>0)
                 throw new NotSupportedException("Table " + _tableInfo + " contains " + rowcount + " rows of data, you cannot use ColumnInfoToANOTableConverter.ConvertEmptyColumnInfo on this table");
 
-            using (var con = _dataAccessPortal.ExpectServer(_tableInfo, DataAccessContext.DataLoad).GetConnection())
+            using (var con = tbl.Database.Server.GetConnection())
             {
                 con.Open();
                 
                 if (!IsOldColumnDroppable(con, notifier))
                     return false;
 
-                EnsureNoTriggerOnTable();
+                EnsureNoTriggerOnTable(tbl);
 
                 AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
@@ -72,18 +71,20 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
         }
         public bool ConvertFullColumnInfo(Func<string, bool> shouldApplySql, ICheckNotifier notifier)
         {
-            using (var con = _dataAccessPortal.ExpectServer(_tableInfo, DataAccessContext.DataLoad).GetConnection())
+            var tbl = _tableInfo.Discover(DataAccessContext.DataLoad);
+
+            using (var con = tbl.Database.Server.GetConnection())
             {
                 con.Open();
 
                 if (!IsOldColumnDroppable(con, notifier))
                     return false;
 
-                EnsureNoTriggerOnTable();
+                EnsureNoTriggerOnTable(tbl);
                 
                 AddNewANOColumnInfo(shouldApplySql, con, notifier);
 
-                MigrateExistingData(shouldApplySql,con, notifier);
+                MigrateExistingData(shouldApplySql,con, notifier,tbl);
 
                 DropOldColumn(shouldApplySql, con,null);
 
@@ -94,27 +95,24 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
             return true;
         }
 
-        private void EnsureNoTriggerOnTable()
+        private void EnsureNoTriggerOnTable(DiscoveredTable tbl)
         {
-            var database = _dataAccessPortal.ExpectDatabase(_tableInfo, DataAccessContext.DataLoad);
-
-            var triggerFactory = new TriggerImplementerFactory(database.Server.DatabaseType);
+            var triggerFactory = new TriggerImplementerFactory(tbl.Database.Server.DatabaseType);
             
-
-            var triggerImplementer = triggerFactory.Create(database.ExpectTable(_tableInfo.GetRuntimeName()));
+            var triggerImplementer = triggerFactory.Create(tbl);
 
             if (triggerImplementer.GetTriggerStatus() != TriggerStatus.Missing)
                 throw new NotSupportedException("Table " + _tableInfo + " has a backup trigger on it, this will destroy performance and break when we add the ANOColumn, dropping the trigger is not an option because of the _Archive table still containing identifiable data (and other reasons)");
         }
 
-        private void MigrateExistingData(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier)
+        private void MigrateExistingData(Func<string, bool> shouldApplySql, DbConnection con, ICheckNotifier notifier,DiscoveredTable tbl)
         {
             string from = _colToNuke.GetRuntimeName(LoadStage.PostLoad);
             string to = _newANOColumnInfo.GetRuntimeName(LoadStage.PostLoad);
-            string tableName = _tableInfo.GetRuntimeName();
+            
 
             //create an empty table for the anonymised data
-            DbCommand cmdCreateTempMap = DatabaseCommandHelper.GetCommand(string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tableName),con);
+            DbCommand cmdCreateTempMap = DatabaseCommandHelper.GetCommand(string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tbl.GetFullyQualifiedName()),con);
 
             if(!shouldApplySql(cmdCreateTempMap.CommandText))
                 throw new Exception("User decided not to create the TempANOMap table");
@@ -123,7 +121,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
             try
             {
                 //get the existing data
-                DbCommand cmdGetExistingData = DatabaseCommandHelper.GetCommand(string.Format("SELECT {0},{1} from {2}",from,to,tableName),con);
+                DbCommand cmdGetExistingData = DatabaseCommandHelper.GetCommand(string.Format("SELECT {0},{1} from {2}",from,to,tbl.GetFullyQualifiedName()),con);
             
                 DbDataAdapter da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData);
 
@@ -134,17 +132,15 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
                 ANOTransformer transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
                 transformer.Transform(dt,dt.Columns[0],dt.Columns[1]);
 
-                //move it into the TempANOMap
-                SqlBulkCopy bulkCopy = new SqlBulkCopy((SqlConnection) con);
-                bulkCopy.DestinationTableName = "TempANOMap";
-                bulkCopy.ColumnMappings.Add(dt.Columns[0].ColumnName, dt.Columns[0].ColumnName);
-                bulkCopy.ColumnMappings.Add(dt.Columns[1].ColumnName, dt.Columns[1].ColumnName);
+                var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
 
-                UsefulStuff.BulkInsertWithBetterErrorMessages(bulkCopy, dt,DataAccessPortal.GetInstance().ExpectServer(_tableInfo, DataAccessContext.DataLoad));
-
+                using(var insert = tempAnoMapTbl.BeginBulkInsert())
+                {
+                    insert.Upload(dt);
+                }
 
                 //create an empty table for the anonymised data
-                DbCommand cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(string.Format("UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}", from, to, tableName), con);
+                DbCommand cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(string.Format("UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}", from, to, tbl.GetFullyQualifiedName()), con);
 
                 if (!shouldApplySql(cmdUpdateMainTable.CommandText))
                     throw new Exception("User decided not to perform update on table");

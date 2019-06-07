@@ -96,7 +96,7 @@ namespace Rdmp.Core.Curation.DataHelper
             return SQL;
         }
 
- 
+
 
         /// <summary>
         /// Gets the JOIN Sql for the JoinInfo as foreign key JOIN primary key on fk.col1 = pk.col2.  Pass in a number
@@ -105,6 +105,7 @@ namespace Rdmp.Core.Curation.DataHelper
         /// <para>Because join type refers to FK join PK and you are requesting "X" + " JOIN PK table on x" then the join is inverted e.g. LEFT => RIGHT and RIGHT => LEFT
         /// unless it is a lookup join which is always LEFT</para>
         /// </summary>
+        /// <param name="join"></param>
         /// <param name="aliasNumber"></param>
         /// <returns></returns>
         public static string GetJoinSQLPrimaryKeySideOnly(IJoin join, int aliasNumber = -1)

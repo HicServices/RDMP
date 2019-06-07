@@ -163,7 +163,7 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="name"></param>
-        /// <param name="databaseAssemblyIfCreatedByOne"></param>
+        /// <param name="creatorIfAny">If the database referenced was created according to a specific SQL schema, this is the schema provider</param>
         public ExternalDatabaseServer(ICatalogueRepository repository, string name, IPatcher creatorIfAny)
         {
             var parameters = new Dictionary<string, object>

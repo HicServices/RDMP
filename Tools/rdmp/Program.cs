@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using CommandLine;
@@ -47,7 +46,7 @@ namespace rdmp
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Could not load NLog.config");
+                Console.WriteLine("Could not load NLog.config:" + ex.Message);
             }
 
             PreStartup();

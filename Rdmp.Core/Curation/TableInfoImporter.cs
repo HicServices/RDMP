@@ -6,13 +6,11 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
 using FAnsi;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation
@@ -50,6 +48,7 @@ namespace Rdmp.Core.Curation
         /// <param name="username"></param>
         /// <param name="password"></param>
         /// <param name="usageContext"></param>
+        /// <param name="importFromSchema"></param>
         public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any, string importFromSchema = null)
         {
             _repository = repository;

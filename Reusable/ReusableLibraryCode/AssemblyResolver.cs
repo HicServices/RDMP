@@ -63,7 +63,7 @@ namespace ReusableLibraryCode
             {
                 return F1(f);
 
-            }catch(FileLoadException ex)
+            }catch(FileLoadException)
             {
                 //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
                 return F2(f);

@@ -16,7 +16,6 @@ namespace Rdmp.UI.Menus
     class ExternalCohortTableMenu : RDMPContextMenuStrip
     {
         private readonly ExternalCohortTable _externalCohortTable;
-        private Project _project;
         
         public ExternalCohortTableMenu(RDMPContextMenuStripArgs args, ExternalCohortTable externalCohortTable): base(args, externalCohortTable)
         {

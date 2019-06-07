@@ -23,7 +23,6 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Repositories.Construction;
 using Rdmp.Core.Startup.Events;
 using Rdmp.Core.Validation;
 using ReusableLibraryCode;

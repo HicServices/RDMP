@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.DataProvider.FromCache;
-using Tests.Common;
 using Tests.Common.Helpers;
 using Tests.Common.Scenarios;
 

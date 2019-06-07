@@ -215,6 +215,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         /// Takes an existing DataTable with a fixed schema and validates the columns read during <see cref="GetHeadersFromFile"/> against it making minor changes
         /// where appropriate to match the schema
         /// </summary>
+        /// <param name="dt"></param>
         /// <param name="listener"></param>
         /// <returns></returns>
         public void MakeDataTableFitHeaders(DataTable dt, IDataLoadEventListener listener)

@@ -6,18 +6,12 @@
 
 using System;
 using System.Collections.Generic;
-using System.Data.Common;
-using System.Data.SqlClient;
 using System.Linq;
 using System.Reflection;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
-using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.DataExport.Data;
-using Rdmp.Core.Repositories;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Curation.Checks

@@ -123,7 +123,5 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands
             if (MessageBox.Show("Pipeline reports it has successfully loaded the cohort, would you like to close the Form?", "Successfully Created Cohort", MessageBoxButtons.YesNo) == DialogResult.Yes)
                 responsibleControl.ParentForm.Close();
         }
-
-        public abstract Image GetImage(IIconProvider iconProvider);
     }
 }

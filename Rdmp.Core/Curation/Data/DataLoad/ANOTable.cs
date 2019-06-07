@@ -266,6 +266,9 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// Connects to the remote ANO Server and creates a swap table of Identifier to ANOIdentifier
         /// </summary>
         /// <param name="identifiableDatatype">The datatype of the identifiable data table</param>
+        /// <param name="notifier"></param>
+        /// <param name="forceConnection"></param>
+        /// <param name="forceTransaction"></param>
         public void PushToANOServerAsNewTable(string identifiableDatatype, ICheckNotifier notifier, DbConnection forceConnection=null,DbTransaction forceTransaction = null)
         {
             var server = DataAccessPortal.GetInstance().ExpectServer(Server, DataAccessContext.DataLoad);

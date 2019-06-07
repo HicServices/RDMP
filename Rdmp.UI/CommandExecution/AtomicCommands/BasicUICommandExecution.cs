@@ -75,6 +75,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="availableObjects"></param>
+        /// <param name="initialSearchText"></param>
         /// <returns></returns>
         protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null) where T : DatabaseEntity
         {
@@ -96,6 +97,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="availableObjects"></param>
         /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null) where T : DatabaseEntity
         {
@@ -142,6 +144,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="repository"></param>
         /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null) where T : DatabaseEntity
         {

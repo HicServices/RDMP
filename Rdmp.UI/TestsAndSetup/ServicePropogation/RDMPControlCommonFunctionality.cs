@@ -88,6 +88,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// visible at the top of the form
         /// </summary>
         /// <param name="cmd"></param>
+        /// <param name="overrideCommandName"></param>
+        /// <param name="overrideImage"></param>
         public void Add(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
@@ -170,8 +172,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         }
 
         /// <summary>
-        /// Runs checks on the last variable passed in <see cref="AddChecks"/>.  Do not call this method unless you have first
-        /// called <see cref="AddChecks"/>.
+        /// Runs checks on the last variable passed in <see cref="AddChecks(ICheckable)"/>.  Do not call this method unless you have first
+        /// called <see cref="AddChecks(ICheckable)"/>.
         /// </summary>
         public void StartChecking()
         {
@@ -228,13 +230,14 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             help.SetHelpText(title, body);
             Add(new ToolStripControlHost(help));
         }
-        
+
 
         /// <summary>
         /// Adds a <see cref="HelpIcon"/> on the right of the control with documentation for the listed property
         /// </summary>
         /// <param name="c">The control you want the help to appear beside</param>
         /// <param name="propertyName">The xml-doc property you want e.g. "ICatalogue.Name"</param>
+        /// <param name="title"></param>
         /// <param name="anchor">Explicit anchor style to apply to help icon.  If you pass None (default) then anchor will
         ///  be chosen based on the control <paramref name="c"/></param>
         public void AddHelp(Control c, string propertyName, string title = null, AnchorStyles anchor = AnchorStyles.None)
@@ -314,6 +317,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// will be visible only when you click on the menu button.
         /// </summary>
         /// <param name="cmd"></param>
+        /// <param name="overrideCommandName"></param>
+        /// <param name="overrideImage"></param>
         public void AddToMenu(IAtomicCommand cmd, string overrideCommandName = null, Image overrideImage = null)
         {
             var p = _hostControl.GetTopmostRDMPUserControl();
@@ -369,6 +374,9 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// Adds the given <paramref name="cmd"/> to the menu bar at the top of the control
         /// </summary>
         /// <param name="cmd"></param>
+        /// <param name="overrideCommandName"></param>
+        /// <param name="overrideImage"></param>
+        /// <param name="overlayKind"></param>
         protected void Add(IAtomicCommand cmd, string overrideCommandName, RDMPConcept overrideImage, OverlayKind overlayKind = OverlayKind.None)
         {
             Add(cmd, overrideCommandName, _activator.CoreIconProvider.GetImage(overrideImage, overlayKind));

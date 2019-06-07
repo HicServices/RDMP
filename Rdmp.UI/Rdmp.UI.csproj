@@ -96,6 +96,9 @@
     <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

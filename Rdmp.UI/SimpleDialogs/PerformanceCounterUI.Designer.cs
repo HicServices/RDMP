@@ -33,8 +33,6 @@
             this.btnToggleCommandAuditing = new System.Windows.Forms.Button();
             this.btnViewPerformanceResults = new System.Windows.Forms.Button();
             this.lblCommandsAudited = new System.Windows.Forms.Label();
-            this.progressBar1 = new System.Windows.Forms.ProgressBar();
-            this.lblCacheUtilization = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // timer1
@@ -43,7 +41,7 @@
             // 
             // btnToggleCommandAuditing
             // 
-            this.btnToggleCommandAuditing.Location = new System.Drawing.Point(12, 45);
+            this.btnToggleCommandAuditing.Location = new System.Drawing.Point(12, 12);
             this.btnToggleCommandAuditing.Name = "btnToggleCommandAuditing";
             this.btnToggleCommandAuditing.Size = new System.Drawing.Size(148, 23);
             this.btnToggleCommandAuditing.TabIndex = 1;
@@ -54,7 +52,7 @@
             // btnViewPerformanceResults
             // 
             this.btnViewPerformanceResults.Enabled = false;
-            this.btnViewPerformanceResults.Location = new System.Drawing.Point(166, 45);
+            this.btnViewPerformanceResults.Location = new System.Drawing.Point(166, 12);
             this.btnViewPerformanceResults.Name = "btnViewPerformanceResults";
             this.btnViewPerformanceResults.Size = new System.Drawing.Size(148, 23);
             this.btnViewPerformanceResults.TabIndex = 1;
@@ -65,37 +63,17 @@
             // lblCommandsAudited
             // 
             this.lblCommandsAudited.AutoSize = true;
-            this.lblCommandsAudited.Location = new System.Drawing.Point(320, 53);
+            this.lblCommandsAudited.Location = new System.Drawing.Point(320, 17);
             this.lblCommandsAudited.Name = "lblCommandsAudited";
             this.lblCommandsAudited.Size = new System.Drawing.Size(101, 13);
             this.lblCommandsAudited.TabIndex = 2;
             this.lblCommandsAudited.Text = "Commands Audited:";
             // 
-            // progressBar1
-            // 
-            this.progressBar1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.progressBar1.Location = new System.Drawing.Point(12, 104);
-            this.progressBar1.Name = "progressBar1";
-            this.progressBar1.Size = new System.Drawing.Size(672, 10);
-            this.progressBar1.TabIndex = 3;
-            // 
-            // lblCacheUtilization
-            // 
-            this.lblCacheUtilization.AutoSize = true;
-            this.lblCacheUtilization.Location = new System.Drawing.Point(12, 88);
-            this.lblCacheUtilization.Name = "lblCacheUtilization";
-            this.lblCacheUtilization.Size = new System.Drawing.Size(89, 13);
-            this.lblCacheUtilization.TabIndex = 4;
-            this.lblCacheUtilization.Text = "Cache Utilisation:";
-            // 
             // PerformanceCounterUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(696, 116);
-            this.Controls.Add(this.lblCacheUtilization);
-            this.Controls.Add(this.progressBar1);
+            this.ClientSize = new System.Drawing.Size(696, 41);
             this.Controls.Add(this.lblCommandsAudited);
             this.Controls.Add(this.btnViewPerformanceResults);
             this.Controls.Add(this.btnToggleCommandAuditing);
@@ -114,7 +92,5 @@
         private System.Windows.Forms.Button btnToggleCommandAuditing;
         private System.Windows.Forms.Button btnViewPerformanceResults;
         private System.Windows.Forms.Label lblCommandsAudited;
-        private System.Windows.Forms.ProgressBar progressBar1;
-        private System.Windows.Forms.Label lblCacheUtilization;
     }
 }

@@ -96,6 +96,8 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <param name="propertyName"></param>
         /// <param name="dataMember"></param>
         /// <param name="getter"></param>
+        /// <param name="formattingEnabled"></param>
+        /// <param name="updateMode"></param>
         protected void Bind(Control c, string propertyName, string dataMember, Func<T, object> getter, bool formattingEnabled = true,DataSourceUpdateMode updateMode = DataSourceUpdateMode.OnPropertyChanged)
         {
             var box = c as ComboBox;

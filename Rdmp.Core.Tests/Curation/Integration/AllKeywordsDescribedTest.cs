@@ -34,11 +34,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             List<string> problems = new List<string>();
 
-            
-            List<Exception> ex;
             var databaseTypes = typeof(Catalogue).Assembly.GetTypes().Where(t => typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t) && !t.IsInterface && !t.IsAbstract && !t.Name.StartsWith("Spontaneous") && !t.Name.Contains("Proxy")).ToArray();
-
-
+            
             foreach (var type in databaseTypes)
             {
                 var docs = CatalogueRepository.CommentStore[type.Name]??CatalogueRepository.CommentStore["I"+type.Name];

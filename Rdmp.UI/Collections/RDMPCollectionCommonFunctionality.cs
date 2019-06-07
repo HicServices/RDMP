@@ -94,6 +94,7 @@ namespace Rdmp.UI.Collections
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI with the default settings
         /// </summary>
+        /// <param name="collection"></param>
         /// <param name="tree">The main tree in the collection UI</param>
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
@@ -106,6 +107,7 @@ namespace Rdmp.UI.Collections
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
         /// </summary>
+        /// <param name="collection"></param>
         /// <param name="tree">The main tree in the collection UI</param>
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>

@@ -653,6 +653,10 @@ namespace Tests.Common
                     else
                         return;
 
+                //treat empty strings as the same as 
+                memValue = memValue as string == string.Empty ? null : memValue;
+                dbValue = dbValue as string == string.Empty ? null : dbValue;
+
                 //all other properties should be legit
                 Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,property.Name, memValue, dbValue);
             }

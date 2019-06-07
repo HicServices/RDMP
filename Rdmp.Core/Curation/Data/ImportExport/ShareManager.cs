@@ -301,6 +301,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         /// Reads and deserializes the .so file into objects in the database
         /// </summary>
         /// <param name="sharedObjectsFile"></param>
+        /// <param name="deleteExisting"></param>
         /// <returns></returns>
         public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(Stream sharedObjectsFile, bool deleteExisting = false)
         {
@@ -314,6 +315,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         /// Creates imported objects from a serialized list of <see cref="ShareDefinition"/> - usually loaded from a .so file (See Sharing.Dependency.Gathering.Gatherer)
         /// </summary>
         /// <param name="sharedObjectsFileText"></param>
+        /// <param name="deleteExisting"></param>
         /// <returns></returns>
         public IEnumerable<IMapsDirectlyToDatabaseTable> ImportSharedObject(string sharedObjectsFileText, bool deleteExisting = false)
         {

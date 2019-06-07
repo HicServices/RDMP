@@ -163,6 +163,9 @@ namespace Rdmp.Core.QueryBuilding
         private readonly List<IColumn> _skipGroupByForThese = new List<IColumn>();
 
         /// <inheritdoc cref="AggregateBuilder(string,string,AggregateConfiguration)" />
+        /// <param name="limitationSQL"></param>
+        /// <param name="countSQL"></param>
+        /// <param name="aggregateConfigurationIfAny"></param>
         /// <param name="forceJoinsToTheseTables">Tables you definetly want the query to join against in the FROM section (compatible <see cref="JoinInfo"/> must exist if there are multiple)</param>
         public AggregateBuilder(string limitationSQL, string countSQL,AggregateConfiguration aggregateConfigurationIfAny,TableInfo[] forceJoinsToTheseTables)
             : this(limitationSQL, countSQL, aggregateConfigurationIfAny)
@@ -241,6 +244,7 @@ namespace Rdmp.Core.QueryBuilding
         }
 
         /// <inheritdoc/>
+        /// <param name="columnsToAdd"></param>
         /// <param name="includeAsGroupBy">false to add the columns only to the SELECT section of the query (and not GROUP BY)</param>
         public void AddColumnRange(IColumn[] columnsToAdd, bool includeAsGroupBy)
         {

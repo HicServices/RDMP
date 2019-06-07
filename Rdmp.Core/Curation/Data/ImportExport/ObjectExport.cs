@@ -46,6 +46,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="objectForSharing"></param>
+        /// <param name="guid"></param>
         internal ObjectExport(ICatalogueRepository repository, IMapsDirectlyToDatabaseTable objectForSharing, Guid guid)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()

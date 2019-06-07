@@ -106,7 +106,7 @@ namespace Rdmp.Core.DataQualityEngine.Data
             
         }
 
-        public void DeleteInDatabase()
+        public override void DeleteInDatabase()
         {
             int affectedRows = DQERepository.Delete("DELETE FROM Evaluation where ID = " + ID);
 

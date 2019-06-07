@@ -12,7 +12,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.QueryBuilding.Parameters;
-using Rdmp.Core.QueryBuilding;
 
 namespace Rdmp.Core.QueryBuilding.Options
 {

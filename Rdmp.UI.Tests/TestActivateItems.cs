@@ -11,7 +11,6 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -19,7 +18,6 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
-using Rdmp.UI.DataViewing.Collections;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -122,7 +120,7 @@ namespace Rdmp.UI.Tests
         public event EmphasiseItemHandler Emphasise;
         public void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {
-            throw new NotImplementedException();
+            Emphasise?.Invoke(sender, new EmphasiseEventArgs(request));
         }
 
         public void ActivateLookupConfiguration(object sender, Catalogue catalogue, TableInfo optionalLookupTableInfo = null)

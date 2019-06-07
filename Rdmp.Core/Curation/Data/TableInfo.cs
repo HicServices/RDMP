@@ -205,9 +205,9 @@ namespace Rdmp.Core.Curation.Data
             DatabaseType = (DatabaseType)Enum.Parse(typeof(DatabaseType), r["DatabaseType"].ToString());
             Server = r["Server"].ToString();
             Database = r["Database"].ToString();
-            State = r["State"].ToString();
+            _state = r["State"].ToString();
             Schema = r["Schema"].ToString();
-            ValidationXml = r["ValidationXml"].ToString();
+            _validationXml = r["ValidationXml"].ToString();
             
             IsTableValuedFunction = r["IsTableValuedFunction"] != DBNull.Value && Convert.ToBoolean(r["IsTableValuedFunction"]);
             
@@ -510,6 +510,7 @@ namespace Rdmp.Core.Curation.Data
         /// <para>By default servername is not checked since you can have server aliases e.g. localhost\sqlexpress could be the same as 127.0.0.1\sqlexpress</para>
         /// </summary>
         /// <param name="discoveredTable">Pass true to also check the servername is EXACTLY the same (dangerous due to the fact that servers can be accessed by hostname or IP etc)</param>
+        /// <param name="alsoCheckServer"></param>
         /// <returns></returns>
         public bool Is(DiscoveredTable discoveredTable,bool alsoCheckServer = false)
         {

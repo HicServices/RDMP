@@ -196,6 +196,8 @@ namespace Rdmp.Core.Curation.Data
         /// <summary>
         /// Fired when any database tied property is changed in memory.
         /// </summary>
+        /// <param name="oldValue"></param>
+        /// <param name="newValue"></param>
         /// <param name="propertyName"></param>
         [NotifyPropertyChangedInvocator]
         protected virtual void OnPropertyChanged(object oldValue, object newValue, [CallerMemberName] string propertyName = null)
@@ -242,6 +244,8 @@ namespace Rdmp.Core.Curation.Data
         /// Also skips 'Name' and 'ID'
         /// </summary>
         /// <param name="to"></param>
+        /// <param name="copyName"></param>
+        /// <param name="save"></param>
         protected void CopyShallowValuesTo(DatabaseEntity to,bool copyName = false,bool save = true)
         {
             if (GetType() != to.GetType())

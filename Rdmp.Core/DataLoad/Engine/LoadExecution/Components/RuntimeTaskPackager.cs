@@ -40,22 +40,14 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components
         {
             var runtimeTasks = new List<IRuntimeTask>();
             var tasksForThisLoadStage = ProcessTasks.Where(task => task.LoadStage == loadStage).ToList();
-            var IDsOfCataloguesToLoad = _cataloguesToLoad.Select(cat => cat.ID).ToArray();
 
             if (!tasksForThisLoadStage.Any())
                 return runtimeTasks;
 
             var factory = new Runtime.RuntimeTaskFactory(_repository);
             foreach (var processTask in tasksForThisLoadStage)
-            {
-                // Only return runtime tasks that relate to the catalogues to be loaded
-                if (!(processTask.RelatesSolelyToCatalogue_ID == null || IDsOfCataloguesToLoad.Contains(processTask.RelatesSolelyToCatalogue_ID.Value)))
-                    continue;
-
-                var runtimeTask = factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]);
-                
-                runtimeTasks.Add(runtimeTask);
-            }
+                runtimeTasks.Add(factory.Create(processTask, _loadArgsDictionary[processTask.LoadStage]));
+            
 
             runtimeTasks = runtimeTasks.OrderBy(task => task.ProcessTask.Order).ToList();
             return runtimeTasks;

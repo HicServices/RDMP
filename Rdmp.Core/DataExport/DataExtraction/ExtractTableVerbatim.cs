@@ -45,6 +45,7 @@ namespace Rdmp.Core.DataExport.DataExtraction
         /// <param name="outputName">The name of the csv file you would like to create in the outputDirectory.  Do not include.csv in your string it will be put on automatically</param>
         /// <param name="outputDirectory"></param>
         /// <param name="separator"></param>
+        /// <param name="dateTimeFormat"></param>
         public ExtractTableVerbatim(DiscoveredServer server, string sql,string outputName, DirectoryInfo outputDirectory, string separator,string dateTimeFormat)
         {
             _specificSQL = sql;

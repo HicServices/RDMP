@@ -10,7 +10,6 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation

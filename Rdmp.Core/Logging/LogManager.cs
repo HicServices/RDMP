@@ -77,9 +77,8 @@ namespace Rdmp.Core.Logging
         }
 
         /// <summary>
-        /// 
+        /// Returns logging data for the given <paramref name="filter"/>
         /// </summary>
-        /// <param name="table"></param>
         /// <param name="filter"></param>
         /// <param name="topX"></param>
         /// <param name="sortDesc">True to sort descending (highest ID first).  False to sort ascending (lowest ID first)</param>
@@ -130,13 +129,14 @@ namespace Rdmp.Core.Logging
                 return tasks.ToArray();
             }
         }
-        
+
         /// <summary>
         /// Returns data load audit objects which describe runs of over arching task <paramref name="dataTask"/>
         /// </summary>
         /// <param name="dataTask"></param>
         /// <param name="token"></param>
         /// <param name="specificDataLoadRunIDOnly"></param>
+        /// <param name="topX"></param>
         /// <returns></returns>
         public IEnumerable<ArchivalDataLoadInfo> GetArchivalDataLoadInfos(string dataTask, CancellationToken? token = null, int? specificDataLoadRunIDOnly = null, int? topX = null)
         {

@@ -251,6 +251,7 @@ namespace Rdmp.Core.QueryBuilding.Parameters
         /// 
         /// </summary>
         /// <param name="toImport"></param>
+        /// <param name="parameterNameSubstitutions"></param>
         public void ImportAndElevateResolvedParametersFromSubquery(ParameterManager toImport, out Dictionary<string,string> parameterNameSubstitutions)
         {
             if (toImport == this)

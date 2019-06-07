@@ -55,7 +55,11 @@ namespace Rdmp.Core.Logging
 
         #endregion
 
+        /// <param name="parent"></param>
         /// <param name="suggestedRollbackCommand">Human readible text indicating how this load might be rolled back, may contain specific SQL or just general advice.</param>
+        /// <param name="destinationTable"></param>
+        /// <param name="sources"></param>
+        /// <param name="expectedInserts"></param>
         public TableLoadInfo(DataLoadInfo parent,string suggestedRollbackCommand,string destinationTable, DataSource[] sources, int expectedInserts)
         {
             this._databaseSettings = parent.DatabaseSettings;

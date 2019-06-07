@@ -10,7 +10,6 @@ using System.Data;
 using System.Diagnostics;
 using System.Linq;
 using FAnsi.Discovery;
-using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Triggers;
