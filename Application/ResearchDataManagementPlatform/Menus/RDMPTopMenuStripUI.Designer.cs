@@ -55,6 +55,7 @@
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.managePluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
+            this.listAllTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
             this.showPerformanceCounterToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.openExeDirectoryToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
@@ -66,7 +67,6 @@
             this.licenseToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.checkForUpdatesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.rdmpTaskBar1 = new ResearchDataManagementPlatform.WindowManagement.TopBar.RDMPTaskBarUI();
-            this.listAllTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.menuStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -101,8 +101,10 @@
             // newToolStripMenuItem
             // 
             this.newToolStripMenuItem.Name = "newToolStripMenuItem";
+            this.newToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.N)));
             this.newToolStripMenuItem.Size = new System.Drawing.Size(207, 22);
-            this.newToolStripMenuItem.Text = "New";
+            this.newToolStripMenuItem.Text = "New...";
+            this.newToolStripMenuItem.Click += new System.EventHandler(this.NewToolStripMenuItem_Click);
             // 
             // runToolStripMenuItem
             // 
@@ -297,6 +299,13 @@
             this.codeGenerationToolStripMenuItem.Text = "Code Generation...";
             this.codeGenerationToolStripMenuItem.Click += new System.EventHandler(this.codeGenerationToolStripMenuItem_Click);
             // 
+            // listAllTypesToolStripMenuItem
+            // 
+            this.listAllTypesToolStripMenuItem.Name = "listAllTypesToolStripMenuItem";
+            this.listAllTypesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.listAllTypesToolStripMenuItem.Text = "List All Types";
+            this.listAllTypesToolStripMenuItem.Click += new System.EventHandler(this.ListAllTypesToolStripMenuItem_Click);
+            // 
             // toolStripSeparator1
             // 
             this.toolStripSeparator1.Name = "toolStripSeparator1";
@@ -378,13 +387,6 @@
             this.rdmpTaskBar1.Name = "rdmpTaskBar1";
             this.rdmpTaskBar1.Size = new System.Drawing.Size(1160, 25);
             this.rdmpTaskBar1.TabIndex = 57;
-            // 
-            // listAllTypesToolStripMenuItem
-            // 
-            this.listAllTypesToolStripMenuItem.Name = "listAllTypesToolStripMenuItem";
-            this.listAllTypesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.listAllTypesToolStripMenuItem.Text = "List All Types";
-            this.listAllTypesToolStripMenuItem.Click += new System.EventHandler(this.ListAllTypesToolStripMenuItem_Click);
             // 
             // RDMPTopMenuStripUI
             // 
