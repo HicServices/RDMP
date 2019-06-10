@@ -124,10 +124,7 @@ namespace Rdmp.UI.Wizard
             foreach (var dd in new ComboBox[]{ddCicPipeline,ddExtractionPipeline,ddFilePipeline})
             {
                 if (dd.Items.Count == 1)
-                {
-                    dd.SelectedItem = dd.Items[0];
-                    dd.Enabled = false;
-                }
+                    dd.SelectedItem = dd.Items[0]; //select it                
             }
             
         }
@@ -386,6 +383,12 @@ namespace Rdmp.UI.Wizard
 
             if (ddExtractionPipeline.SelectedItem == null)
                 return "You must select an extraction pipeline";
+
+            if(ddCohortSources.SelectedItem == null)
+                return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
+
+            if(this.cbxCohort.SelectedItem == null && _cohortFile == null)
+                return "You must choose either a file or a cohort identification query to build the cohort from";
 
             //no problems
             return null;
