@@ -99,7 +99,7 @@ namespace rdmp
             }
             catch (Exception e)
             {
-                NLog.LogManager.GetCurrentClassLogger().Info(e.Message);
+                NLog.LogManager.GetCurrentClassLogger().Error(e.Message);
                 NLog.LogManager.GetCurrentClassLogger().Info(e, "Fatal error occurred so returning -1");
                 return -1;
             }
@@ -166,14 +166,21 @@ namespace rdmp
         {
             var logger = LogManager.GetCurrentClassLogger();
 
+                        
+            if(!opts.NoConnectionStringsSpecified())
+            {
+                logger.Info("Connection string options have been specified on command line, yaml config values will be ignored");
+                return;
+            }
+
             string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var yaml = Path.Combine(assemblyFolder,"Databases.yaml");
-            
+
             if(File.Exists(yaml))
             {
                 try
                 {
-                        // Setup the input
+                    // Setup the input
 			        using(var input = new StreamReader(yaml))
                     {
                         // Load the stream
