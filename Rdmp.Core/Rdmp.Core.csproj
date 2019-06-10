@@ -230,6 +230,7 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.5" />
+    <PackageReference Include="HIC.BadMedicine" Version="0.0.1.1" />
     <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.10" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">

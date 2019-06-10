@@ -38,6 +38,9 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         [Option('k', "Skip Pipelines", Default = false, HelpText = "Skips creating the default Pipelines and Managed Server References in the Catalogue database once created.")]
         public bool SkipPipelines { get; set; }
         
+        [Option('e', "ExampleDatasets", Default = false, HelpText = "Create example datasets, projects, extraction configurations and cohort queries")]
+        public bool ExampleDatasets{get;set;}
+
         [Usage]
         public static IEnumerable<Example> Examples
         {
@@ -45,6 +48,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 yield return new Example("Normal Scenario", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_"});
                 yield return new Example("Drop existing", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true });
+                yield return new Example("Create example datasets", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", DropDatabases = true,ExampleDatasets = true });
                 yield return new Example("Binary Collation", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress",Prefix =  "TEST_" , DropDatabases = true,BinaryCollation =true });
                 yield return new Example("Drop existing", new PlatformDatabaseCreationOptions { ServerName = @"localhost\sqlexpress", Prefix = "TEST_", Username = "sa", Password = "lawl", DropDatabases = true });
             }
