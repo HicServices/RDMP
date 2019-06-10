@@ -9,6 +9,10 @@ using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 using System;
 using System.Linq;
@@ -17,11 +21,16 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
     internal class ExampleDatasetsCreation
     {
-        private PlatformDatabaseCreationRepositoryFinder repo;
+        private PlatformDatabaseCreationRepositoryFinder _repos;
 
-        public ExampleDatasetsCreation(PlatformDatabaseCreationRepositoryFinder repo)
+
+        private const int NumberOfPeople = 5000;
+        private const int NumberOfRowsPerDataset = 10000;
+
+
+        public ExampleDatasetsCreation(PlatformDatabaseCreationRepositoryFinder repos)
         {
-            this.repo = repo;
+            this._repos = repos;
         }
 
         internal void Create(DiscoveredDatabase db,bool allowDrop, ICheckNotifier notifier)
@@ -44,16 +53,71 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             notifier.OnCheckPerformed(new CheckEventArgs("Generating people",CheckResult.Success));
             //people
             var people = new PersonCollection();
-            people.GeneratePeople(100000,r);
+            people.GeneratePeople(NumberOfPeople,r);
 
             //datasets
-            var biochem = ImportCatalogue(Create<Biochemistry>(db,people,r,notifier,500000,"chi","Healthboard","SampleDate","TestCode"));
-            var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier,500000,"chi","dtCreated","hb_extract"));
-            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier,50000,"chi","PrescribedDate","Name"));
-            var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier,500000,"chi","AdmissionDate"));
+            var biochem = ImportCatalogue(Create<Biochemistry>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","Healthboard","SampleDate","TestCode"));
+            var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","dtCreated","hb_extract"));
+            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier,NumberOfRowsPerDataset/10,"chi","PrescribedDate","Name")); //<- this is slooo!
+            var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","AdmissionDate"));
 
             //create only on disk this one
-            var carotid = Create<CarotidArteryScan>(db,people,r,notifier,500000,"RECORD_NUMBER");
+            var carotid = Create<CarotidArteryScan>(db,people,r,notifier,NumberOfRowsPerDataset,"RECORD_NUMBER");
+
+            CreateGraph(biochem,"Test Codes","TestCode",null,false);
+            CreateGraph(biochem,"Test Codes By Date","TestCode","SampleDate",true);
+            
+            CreateFilter(biochem,"Creatinine","TestCode","TestCode like '%CRE%'",@"Serum creatinine is a blood measurement.  It is an indicator of renal health.");
+
+            CreateFilter(biochem,"Test Code","TestCode","TestCode like @code","Filters any test code set");
+        }
+
+        private IFilter CreateFilter(Catalogue cata, string name,string parentExtractionInformation, string whereSql,string desc)
+        {
+            var filter = new ExtractionFilter(_repos.CatalogueRepository,name,GetExtractionInformation(cata,parentExtractionInformation));
+            filter.WhereSQL = whereSql;
+            filter.Description = desc;
+            filter.SaveToDatabase();
+
+            var parameterCreator = new ParameterCreator(filter.GetFilterFactory(),null,null);
+            parameterCreator.CreateAll(filter,null);
+
+            return filter;
+        }
+
+        private void CreateGraph(Catalogue cata, string name, string dimension, string axisIfAny, bool pivot)
+        {
+            var ac = new AggregateConfiguration(_repos.CatalogueRepository,cata,name);
+            
+            var mainDimension = ac.AddDimension(GetExtractionInformation(cata,dimension));
+            
+            if(!string.IsNullOrWhiteSpace(axisIfAny))
+            {
+                var axisDimension = ac.AddDimension(GetExtractionInformation(cata,axisIfAny));
+                var axis = new AggregateContinuousDateAxis(_repos.CatalogueRepository,axisDimension);
+                axis.StartDate = "'1970-01-01'";
+                axis.AxisIncrement = FAnsi.Discovery.QuerySyntax.Aggregation.AxisIncrement.Year;
+                axis.SaveToDatabase();
+            }
+
+            if(pivot)
+            {
+                ac.PivotOnDimensionID = mainDimension.ID;
+                ac.SaveToDatabase();
+            }
+                
+        }
+
+        private ExtractionInformation GetExtractionInformation(Catalogue cata, string name)
+        {
+            try
+            {
+                return cata.GetAllExtractionInformation(ExtractionCategory.Any).Single(ei=>ei.GetRuntimeName().Equals(name,StringComparison.CurrentCultureIgnoreCase));
+            }
+            catch
+            {
+                throw new Exception("Could not find an ExtractionInformation called '" + name + "' in dataset " + cata.Name);
+            }
         }
 
         private DiscoveredTable Create<T>(DiscoveredDatabase db,PersonCollection people, Random r, ICheckNotifier notifier,int numberOfRecords, params string[] primaryKey) where T:IDataGenerator
@@ -81,7 +145,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         }
         private TableInfo ImportTableInfo(DiscoveredTable tbl)
         {
-            var importer = new TableInfoImporter(repo.CatalogueRepository,tbl);
+            var importer = new TableInfoImporter(_repos.CatalogueRepository,tbl);
             importer.DoImport(out TableInfo ti,out _);
             
             return ti;
@@ -93,8 +157,18 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         }
         private Catalogue ImportCatalogue(TableInfo ti)
         {
-            var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos);
-            forwardEngineer.ExecuteForwardEngineering(out Catalogue cata, out _,out _);
+            var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos,true);
+            forwardEngineer.ExecuteForwardEngineering(out Catalogue cata, out _,out ExtractionInformation[] eis);
+            
+            var chi = eis.SingleOrDefault(e=>e.GetRuntimeName().Equals("chi",StringComparison.CurrentCultureIgnoreCase));
+            if(chi != null)
+            {
+                chi.IsExtractionIdentifier = true;
+                chi.SaveToDatabase();
+
+                var eds = new ExtractableDataSet(_repos.DataExportRepository,cata);
+            }
+
             return cata;
         }
         
