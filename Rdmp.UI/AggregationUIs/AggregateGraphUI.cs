@@ -270,7 +270,9 @@ namespace Rdmp.UI.AggregationUIs
                     adapter.Fill(_dt);
                     _cmd = null;
 
-
+                    //trim all leading/trailing whitespace from column
+                    foreach(DataColumn c in _dt.Columns)
+                        c.ColumnName = c.ColumnName.Trim();
 
                     if (_dt.Rows.Count == 0)
                         throw new Exception("Query Returned No Rows");
