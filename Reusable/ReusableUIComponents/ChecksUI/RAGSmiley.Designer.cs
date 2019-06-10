@@ -32,9 +32,11 @@
             this.pbGreen = new System.Windows.Forms.PictureBox();
             this.pbYellow = new System.Windows.Forms.PictureBox();
             this.pbRed = new System.Windows.Forms.PictureBox();
+            this.pbGrey = new System.Windows.Forms.PictureBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbGreen)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbYellow)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRed)).BeginInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbGrey)).BeginInit();
             this.SuspendLayout();
             // 
             // pbGreen
@@ -82,10 +84,26 @@
             this.pbRed.TabStop = false;
             this.pbRed.Click += new System.EventHandler(this.pb_Click);
             // 
+            // pbGrey
+            // 
+            this.pbGrey.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.pbGrey.BackColor = System.Drawing.Color.Transparent;
+            this.pbGrey.Image = ((System.Drawing.Image)(resources.GetObject("pbGrey.Image")));
+            this.pbGrey.Location = new System.Drawing.Point(0, 0);
+            this.pbGrey.Name = "pbGrey";
+            this.pbGrey.Size = new System.Drawing.Size(25, 25);
+            this.pbGrey.SizeMode = System.Windows.Forms.PictureBoxSizeMode.Zoom;
+            this.pbGrey.TabIndex = 1;
+            this.pbGrey.TabStop = false;
+            this.pbGrey.Visible = false;
+            // 
             // RAGSmiley
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.pbGrey);
             this.Controls.Add(this.pbRed);
             this.Controls.Add(this.pbYellow);
             this.Controls.Add(this.pbGreen);
@@ -94,7 +112,9 @@
             ((System.ComponentModel.ISupportInitialize)(this.pbGreen)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbYellow)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbRed)).EndInit();
+            ((System.ComponentModel.ISupportInitialize)(this.pbGrey)).EndInit();
             this.ResumeLayout(false);
+
         }
 
         #endregion
@@ -102,5 +122,6 @@
         private System.Windows.Forms.PictureBox pbGreen;
         private System.Windows.Forms.PictureBox pbYellow;
         private System.Windows.Forms.PictureBox pbRed;
+        private System.Windows.Forms.PictureBox pbGrey;
     }
 }
