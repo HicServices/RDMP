@@ -145,13 +145,21 @@ namespace Rdmp.UI.Wizard
         {
             ragProjectNumber.Reset();
 
+            //if there is no project number
+            if(string.IsNullOrWhiteSpace(tbProjectNumber.Text))
+            {
+                ragProjectNumber.Warning(new Exception("Project Number is required"));
+                _projectNumber = -1;
+                return;
+            }
+            
             try
             {
                 _projectNumber = int.Parse(tbProjectNumber.Text);
-
+                
                 var collisionProject = _existingProjects.FirstOrDefault(p => p.ProjectNumber == _projectNumber);
                 if(collisionProject != null)
-                    ragProjectNumber.Fatal(new Exception("There is already an existing Project ('" + collisionProject + "') with ProjectNumber " + _projectNumber));
+                    ragProjectNumber.Warning(new Exception("There is already an existing Project ('" + collisionProject + "') with ProjectNumber " + _projectNumber));
             }
             catch (Exception ex)
             {
@@ -317,7 +325,6 @@ namespace Rdmp.UI.Wizard
 
                 if(cbDefineCohort.Checked)
                 {
-
                     //associate the configuration with the cohort
                     _configuration.Cohort_ID = _cohortCreated.ID;
 
