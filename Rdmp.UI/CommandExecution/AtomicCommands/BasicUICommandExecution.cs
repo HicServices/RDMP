@@ -219,6 +219,27 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         }
 
         /// <summary>
+        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
+        /// </summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        protected bool YesNo(string text,string caption)
+        {
+            return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
+        }
+
+        /// <summary>
+        /// Displays the given message to the user
+        /// </summary>
+        /// <param name="message"></param>
+        protected void Show(string message)
+        {
+            MessageBox.Show(message);
+        }
+
+
+        /// <summary>
         /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible"/> if there are any failures
         /// </summary>
         /// <param name="checkable"></param>

@@ -40,19 +40,19 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            base.Execute();
-
             if(_catalogue == null) 
                 SetCatalogue(SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository));
 
             if(_project == null)
                 _project = SelectOne<Project>(Activator.RepositoryLocator.DataExportRepository);
 
-            if(_project == null)
+            if(_project == null || _catalogue == null)
                 return;
             
-            var eds = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).Single();
+            base.Execute();
 
+            var eds = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
+            
             IExtractionConfiguration alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
 
             if(alreadyInConfiguration != null)
