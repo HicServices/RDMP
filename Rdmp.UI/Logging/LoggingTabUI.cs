@@ -290,6 +290,13 @@ namespace Rdmp.UI.Logging
 
         public void SetFilter(LogViewerFilter filter)
         {
+            if(
+                _navigationTrack != null && _navigationTrack.CurrentTab != null //there is a back navigation stack setup
+                && filter != _navigationTrack.CurrentTab //we are not doing a Back operation
+                )
+                    _navigationTrack.CurrentTab.Tag = tbContentFilter.Text; //Since user is making a new navigation to a new location, record the current text filter to preserve it for Back operations.
+                        
+
             Filter = filter;
             
             //push the old filter
@@ -308,6 +315,9 @@ namespace Rdmp.UI.Logging
             }
 
             FetchDataTable();
+
+            //clear/restore the current user entered text filter
+            tbContentFilter.Text = filter.Tag as string ?? "";            
         }
 
         private void RegenerateFilters()
@@ -321,6 +331,7 @@ namespace Rdmp.UI.Logging
 
             if(_navigationTrack == null)
             {
+                //what happens when user clicks back/forward
                 _navigationTrack = new NavigationTrack<LogViewerFilter>(f=>true,f=>
                 {
                     if(f.LoggingTable != LoggingTables.None)

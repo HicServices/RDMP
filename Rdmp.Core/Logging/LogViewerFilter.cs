@@ -30,6 +30,11 @@ namespace Rdmp.Core.Logging
 
         public int? Table { get; set; }
 
+        /// <summary>
+        /// An object that contains data about the filter or supplementary information.  The default is null.
+        /// </summary>
+        public object Tag {get;set;}
+
         public override string ToString()
         {
             StringBuilder sb = new StringBuilder();
