@@ -133,7 +133,7 @@ namespace Rdmp.UI.Menus
             }
 
             if (nameable != null)
-                Add(new ExecuteCommandRename(_activator.RefreshBus, nameable), Keys.F2);
+                Add(new ExecuteCommandRename(_activator, nameable), Keys.F2);
 
             //add seldom used submenus (pin, view dependencies etc)
             Items.Add(inspectionMenuItem);

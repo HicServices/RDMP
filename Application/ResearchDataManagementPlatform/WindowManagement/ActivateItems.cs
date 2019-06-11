@@ -547,5 +547,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             foreach (IProblemProvider p in ProblemProviders)
                 p.RefreshProblems(CoreChildProvider);
         }
+
+        /// <inheritdoc/>
+        public bool YesNo(string text,string caption)
+        {
+            return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
+        }
     }
 }

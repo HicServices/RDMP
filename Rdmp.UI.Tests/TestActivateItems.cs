@@ -209,6 +209,10 @@ namespace Rdmp.UI.Tests
         public bool ApplyThemeToMenus { get; set; }
 
         
+        public bool YesNo(string text, string caption)
+        {
+            throw new Exception("Did not expect to be asked a question but we were asked :" + text);
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

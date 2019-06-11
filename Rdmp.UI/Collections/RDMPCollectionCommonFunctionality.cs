@@ -166,7 +166,7 @@ namespace Rdmp.UI.Collections
 
             if(renameableColumn != null)
             {
-                RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn);
+                RenameProvider = new RenameProvider(_activator, tree, renameableColumn);
                 RenameProvider.RegisterEvents();
             }
 

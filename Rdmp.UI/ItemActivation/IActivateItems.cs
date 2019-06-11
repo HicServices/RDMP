@@ -191,5 +191,13 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="databaseEntity"></param>
         /// <returns></returns>
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
+        
+        /// <summary>
+        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
+        /// </summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        bool YesNo(string text, string caption);
     }
 }

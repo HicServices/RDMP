@@ -226,7 +226,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected bool YesNo(string text,string caption)
         {
-            return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
+            return Activator.YesNo(text,caption);
         }
 
         /// <summary>

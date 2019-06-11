@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using ReusableUIComponents.Dialogs;
 
@@ -19,7 +20,7 @@ namespace Rdmp.UI.Collections.Providers
     /// </summary>
     public class RenameProvider
     {
-        private readonly RefreshBus _refreshBus;
+        private readonly IActivateItems _activator;
         private readonly ObjectListView _olv;
         private readonly OLVColumn _columnThatSupportsRenaming;
         
@@ -34,9 +35,9 @@ namespace Rdmp.UI.Collections.Providers
                 _columnThatSupportsRenaming.IsEditable = value;
             } }
 
-        public RenameProvider(RefreshBus refreshBus, ObjectListView olv, OLVColumn columnThatSupportsRenaming)
+        public RenameProvider(IActivateItems activator, ObjectListView olv, OLVColumn columnThatSupportsRenaming)
         {
-            _refreshBus = refreshBus;
+            _activator = activator;
             _olv = olv;
             _columnThatSupportsRenaming = columnThatSupportsRenaming;
         }
@@ -82,7 +83,7 @@ namespace Rdmp.UI.Collections.Providers
             try
             {
                 if (name != null)
-                    new ExecuteCommandRename(_refreshBus, name, (string) e.NewValue).Execute();
+                    new ExecuteCommandRename(_activator, name, (string) e.NewValue).Execute();
             }
             catch (Exception exception)
             {
