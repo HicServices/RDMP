@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.Menus.MenuItems;
+using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.Menus
 {
@@ -46,6 +48,12 @@ namespace Rdmp.UI.Menus
             Items.Add(extract);
 
             Items.Add(new DQEMenuItem(_activator,catalogue));
+
+            if(catalogue.LoadMetadata_ID.HasValue)
+                Add(new ExecuteCommandShow(_activator,catalogue.LoadMetadata,1,true){OverrideCommandName="Load"},Keys.None, GoTo);
+            else
+                Add(new ImpossibleCommand("No load has been created for this Catalogue"){ OverrideCommandName = "Load"},Keys.None,GoTo);
         }
+
     }
 }

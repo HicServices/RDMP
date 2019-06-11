@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
@@ -42,11 +43,17 @@ namespace Rdmp.UI.Menus
         protected ToolStripMenuItem ActivateCommandMenuItem;
         private RDMPContextMenuStripArgs _args;
 
+        private Dictionary <string,ToolStripMenuItem> _subMenuDictionary = new Dictionary<string, ToolStripMenuItem>();
+
+        public const string Inspection = "Inspection";
+        public const string Tree = "Tree";
+        public const string GoTo = "Go To";
+
         public RDMPContextMenuStrip(RDMPContextMenuStripArgs args, object o)
         {
             _o = o;
             _args = args;
-
+            
             _activator = _args.ItemActivator;
 
             _activator.Theme.ApplyTo(this);
@@ -63,13 +70,12 @@ namespace Rdmp.UI.Menus
                 var export = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(e).FirstOrDefault();
 
                 if(export != null)
-                    Add(new ExecuteCommandShow(_activator,export,0,true){OverrideCommandName = "Show Export Definition"});
+                    Add(new ExecuteCommandShow(_activator,export,0,true){OverrideCommandName = "Show Export Definition"},Keys.None,GoTo);
 
                 var import = _activator.RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectImport>(e).FirstOrDefault();
                 if(import != null)
-                    Add(new ExecuteCommandShow(_activator,import,0){OverrideCommandName = "Show Import Definition"});
+                    Add(new ExecuteCommandShow(_activator,import,0){OverrideCommandName = "Show Import Definition"},Keys.None,GoTo);
             }
-
         }
 
         protected void ReBrandActivateAs(string newTextForActivate, RDMPConcept newConcept, OverlayKind overlayKind = OverlayKind.None)
@@ -78,6 +84,8 @@ namespace Rdmp.UI.Menus
             ActivateCommandMenuItem.Image = _activator.CoreIconProvider.GetImage(newConcept, overlayKind);
             ActivateCommandMenuItem.Text = newTextForActivate;
         }
+
+
         protected ToolStripMenuItem Add(IAtomicCommand cmd, Keys shortcutKey = Keys.None, ToolStripMenuItem toAddTo = null)
         {
             var mi = AtomicCommandUIFactory.CreateMenuItem(cmd);
@@ -93,6 +101,27 @@ namespace Rdmp.UI.Menus
             return mi;
         }
 
+        /// <summary>
+        /// Creates a new command under a submenu named <paramref name="submenu"/> (if this doesn't exist yet it will be created).
+        /// </summary>
+        /// <param name="cmd"></param>
+        /// <param name="shortcutKey"></param>
+        /// <param name="submenu"></param>
+        protected void Add(IAtomicCommand cmd, Keys shortcutKey, string submenu)
+        {
+            Add(cmd,shortcutKey,AddMenuIfNotExists(submenu));
+        }
+
+        private ToolStripMenuItem AddMenuIfNotExists(string submenu)
+        {
+            if(!_subMenuDictionary.ContainsKey(submenu))
+            {
+                var m = new ToolStripMenuItem(submenu);
+                _subMenuDictionary.Add(submenu,m);
+            }
+
+            return _subMenuDictionary[submenu];
+        }
 
         public void AddCommonMenuItems(RDMPCollectionCommonFunctionality commonFunctionality)
         {
@@ -100,8 +129,12 @@ namespace Rdmp.UI.Menus
             var nameable = _o as INamed;
             var databaseEntity = _o as DatabaseEntity;
 
-            var treeMenuItem = new ToolStripMenuItem("Tree");
-            var inspectionMenuItem = new ToolStripMenuItem("Inspection");
+            var treeMenuItem = AddMenuIfNotExists(Tree);
+            var inspectionMenuItem =  AddMenuIfNotExists(Inspection);
+            
+            //ensure all submenus appear in the same place
+            foreach(var mi in _subMenuDictionary.Values)
+                Items.Add(mi);
 
             //add plugin menu items
             foreach (var plugin in _activator.PluginUserInterfaces)
