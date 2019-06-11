@@ -144,7 +144,9 @@
     <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    
+    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">
