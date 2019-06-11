@@ -13,7 +13,7 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary
 {
 
     [Category("Unit")]
-    class DateEuTest
+    class DateEuTest : ValidationTests
     {
         private IPrimaryConstraint _date;
 

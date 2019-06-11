@@ -34,6 +34,8 @@ using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Validation;
+using ReusableLibraryCode.Checks;
 
 namespace Tests.Common
 {
@@ -584,6 +586,8 @@ namespace Tests.Common
             MEF = new MEF();
             MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
             Repository.CatalogueRepository.MEF = MEF;
+
+            Validator.RefreshExtraTypes(MEF.SafeDirectoryCatalog,new ThrowImmediatelyCheckNotifier());
         }
 
         //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
