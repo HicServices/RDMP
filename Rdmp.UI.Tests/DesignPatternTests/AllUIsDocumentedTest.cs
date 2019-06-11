@@ -40,6 +40,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
 
             Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand), 
+                "CommandExecution",
                 "CommandExecution.AtomicCommands",
                 "CommandExecution.AtomicCommands.PluginCommands",
                 "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
