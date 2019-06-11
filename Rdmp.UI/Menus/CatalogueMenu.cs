@@ -5,8 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.Menus.MenuItems;
@@ -53,6 +55,16 @@ namespace Rdmp.UI.Menus
                 Add(new ExecuteCommandShow(_activator,catalogue.LoadMetadata,1,true){OverrideCommandName="Load"},Keys.None, GoTo);
             else
                 Add(new ImpossibleCommand("No load has been created for this Catalogue"){ OverrideCommandName = "Load"},Keys.None,GoTo);
+
+            if(_activator.CoreChildProvider is DataExportChildProvider exp)
+            {
+                var eds = exp.ExtractableDataSets.SingleOrDefault(d=>d.Catalogue_ID == catalogue.ID);
+                if(eds != null)
+                {
+                    Add(new ExecuteCommandShow(_activator,eds.ExtractionConfigurations,1,true){OverrideCommandName="Extractions...",},Keys.None, GoTo);
+                    
+                }
+            }
         }
 
     }

@@ -29,7 +29,7 @@ namespace Rdmp.UI.Menus
 
             var root = selectedDataSet.RootFilterContainer;
 
-            Add(new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue, 1) { OverrideCommandName = "Show Catalogue" });
+            Add(new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue, 1) { OverrideCommandName = "Catalogue" },Keys.None,GoTo);
 
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 
