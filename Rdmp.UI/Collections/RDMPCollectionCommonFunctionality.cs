@@ -276,9 +276,27 @@ namespace Rdmp.UI.Collections
         {
             bool hasProblems = _activator.HasProblem(e.Model);
 
-            e.Item.ForeColor = hasProblems ? Color.Red : Color.Black;
-            e.Item.BackColor = hasProblems ? Color.FromArgb(255,220,220) : Color.White;
+            var disableable = e.Model as IDisableable;
 
+            if (disableable != null && disableable.IsDisabled)
+            {
+                e.Item.ForeColor = Color.FromArgb(152,152,152);
+                
+                //make it italic
+                if(!e.Item.Font.Italic)
+                    e.Item.Font = new Font(e.Item.Font,FontStyle.Italic);
+
+                e.Item.BackColor = Color.FromArgb(225,225,225);
+            }
+            else
+            {
+                //make it not italic
+                if(e.Item.Font.Italic)
+                    e.Item.Font = new Font(e.Item.Font,FontStyle.Regular);
+
+                e.Item.ForeColor = hasProblems ? Color.Red : Color.Black;
+                e.Item.BackColor = hasProblems ? Color.FromArgb(255,220,220) : Color.White;
+            }
         }
 
         private TreeListView.Tree TreeFactoryGetter(TreeListView view)

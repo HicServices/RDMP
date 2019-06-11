@@ -55,11 +55,6 @@ namespace Rdmp.Core.Providers
         /// <inheritdoc/>
         public string DescribeProblem(object o)
         {
-            var disableable = o as IDisableable;
-
-            if (disableable != null && disableable.IsDisabled)
-                return "Object is disabled";
-
             if(o is INamed n && UsefulStuff.IsBadName(n.Name))
                 return "Name contains illegal characters";
 
