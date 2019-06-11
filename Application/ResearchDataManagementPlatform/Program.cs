@@ -5,6 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.IO;
+using System.Linq;
 using System.Runtime.InteropServices;
 using CommandLine;
 using Rdmp.Core.Startup;
@@ -25,6 +27,9 @@ namespace ResearchDataManagementPlatform
         [STAThread]
         static void Main(string[] args)
         {
+            if (args.Any(a => a.Equals("--squirrel-install", StringComparison.InvariantCultureIgnoreCase)))
+                return;
+
             try
             {
                 AttachConsole(-1);
@@ -34,12 +39,13 @@ namespace ResearchDataManagementPlatform
                 Console.WriteLine("Couldn't redirect console. Nevermind");
             }
 
-            UsefulStuff.GetParser().ParseArguments<ResearchDataManagementPlatformOptions>(args).MapResult(RunApp,err=>-1);
+            UsefulStuff.GetParser()
+                       .ParseArguments<ResearchDataManagementPlatformOptions>(args.Except(new[] { "--squirrel-firstrun" }))
+                       .MapResult(RunApp, err => -1);
         }
 
         private static object RunApp(ResearchDataManagementPlatformOptions arg)
         {
-
             RDMPBootStrapper<RDMPMainForm> bootStrapper = new RDMPBootStrapper<RDMPMainForm>(new EnvironmentInfo("net461"),arg.CatalogueConnectionString, arg.DataExportConnectionString);
             bootStrapper.Show(false);
             return 0;
