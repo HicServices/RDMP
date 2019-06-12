@@ -34,11 +34,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _explicitNewValuePassed = true;
         }
 
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
-
         public override void Execute()
         {
             base.Execute();
