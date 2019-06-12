@@ -64,10 +64,12 @@ namespace ReusableUIComponents.Heatmapping
         /// - Each subsequent column (HeatLine1, HeatLine2 etc above) is a horizontal line of the heatmap with each pixel intensity being determined by the value on the corresponding date (in the first column)
         
         private RainbowColorPicker _rainbow = new RainbowColorPicker(NumberOfColors);
-        private const double MinPixelHeight = 12.0;
+        private const double MinPixelHeight = 15.0;
         private const double MaxPixelHeight = 20.0;
 
         private const double MaxLabelsWidth = 150;
+        private const double LabelsHorizontalPadding = 10.0;
+
         private double _currentLabelsWidth = 0;
 
         private object oDataTableLock = new object();
@@ -349,7 +351,7 @@ namespace ReusableUIComponents.Heatmapping
         {
             var nameStrings = _dataTable.Columns.Cast<DataColumn>().Select(c => c.ColumnName);
             var longestString = nameStrings.Aggregate("", (max, cur) => max.Length > cur.Length ? max : cur);
-            var longestStringWidth = g.MeasureString(longestString, font).Width;
+            var longestStringWidth = g.MeasureString(longestString, font).Width + LabelsHorizontalPadding;
 
             if (VerticalScroll.Visible)
                 longestStringWidth += SystemInformation.VerticalScrollBarWidth;
