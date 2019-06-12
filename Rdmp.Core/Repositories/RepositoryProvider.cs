@@ -99,5 +99,16 @@ namespace Rdmp.Core.Repositories
             }
             return toReturn;
         }
+
+        /// <inheritdoc/>
+        public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
+        {
+            if(CatalogueRepository.SupportsObjectType(typeof(T)))
+                return CatalogueRepository.GetObjectByID<T>(value);
+            if(DataExportRepository.SupportsObjectType(typeof(T)))
+                return DataExportRepository.GetObjectByID<T>(value);
+            else
+                throw new ArgumentException("Did not know what repository to use to fetch objects of Type '" + typeof(T) + "'");
+        }
     }
 }

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
@@ -19,6 +20,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     public class ExecuteCommandShow : BasicUICommandExecution,IAtomicCommand
     {
         private IMapsDirectlyToDatabaseTable _objectToShow;
+        private Func<IEnumerable<CatalogueItem>> p;
         private readonly IMapsDirectlyToDatabaseTable[] _objectsToPickFrom;
 
 
@@ -35,13 +37,21 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         }
 
 
-        public ExecuteCommandShow(IActivateItems activator, IMapsDirectlyToDatabaseTable[] objectsToPickFrom, int expansionDepth, bool useIconAndTypeName=false) :base(activator) 
+        public ExecuteCommandShow(IActivateItems activator, IEnumerable<IMapsDirectlyToDatabaseTable> objectsToPickFrom, int expansionDepth, bool useIconAndTypeName=false) :base(activator) 
         {
+            if(objectsToPickFrom == null)
+            {
+                SetImpossible("No objects found");
+                return;
+            }
+
+            var obs  =  objectsToPickFrom.ToArray();
+
             //no objects!
-            if(objectsToPickFrom.Length == 0)
+            if(obs.Length == 0)
                 SetImpossible("No objects found");
             else
-            if(objectsToPickFrom.Length == 1)
+            if(obs.Length == 1)
             {
                 //one object only
                 _objectToShow = objectsToPickFrom.Single();
@@ -51,12 +61,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             {
                 //many objects, lets assume they are of the same type for display purposes
                 _objectType = objectsToPickFrom.First().GetType();
-                _objectsToPickFrom = objectsToPickFrom;
+                _objectsToPickFrom = obs;
             }
 
             _expansionDepth = expansionDepth;
             _useIconAndTypeName = useIconAndTypeName;
         }
+
+
         public override string GetCommandName()
         {
             return _useIconAndTypeName && _objectType != null? "Show " + _objectType.Name :base.GetCommandName(); 

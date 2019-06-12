@@ -39,6 +39,12 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             return _linkedRepositoryProvider.ArbitraryDatabaseObjectExists(repositoryTypeName,databaseObjectTypeName,objectID);
         }
 
+        /// <inheritdoc/>
+        public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
+        {
+            return _linkedRepositoryProvider.GetObjectByID<T>(value);
+        }
+
         public PlatformDatabaseCreationRepositoryFinder(PlatformDatabaseCreationOptions options)
         {
             var cata = options.GetBuilder(PlatformDatabaseCreation.DefaultCatalogueDatabaseName);

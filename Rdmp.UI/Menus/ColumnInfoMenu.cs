@@ -4,6 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -30,6 +33,10 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandAddJoinInfo(_activator, columnInfo.TableInfo));
 
             Add(new ExecuteCommandAnonymiseColumnInfo(_activator, columnInfo));
+            
+            AddGoTo<TableInfo>(columnInfo.TableInfo_ID, "Table");
+            AddGoTo(_activator.CoreChildProvider.AllCatalogueItems.Where(ci=>ci.ColumnInfo_ID == columnInfo.ID),"Catalogue Item(s)");
         }
+
     }
 }

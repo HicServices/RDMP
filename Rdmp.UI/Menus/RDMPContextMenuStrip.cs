@@ -21,6 +21,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -110,6 +111,19 @@ namespace Rdmp.UI.Menus
         protected void Add(IAtomicCommand cmd, Keys shortcutKey, string submenu)
         {
             Add(cmd,shortcutKey,AddMenuIfNotExists(submenu));
+        }
+        
+        protected void AddGoTo(IEnumerable<IMapsDirectlyToDatabaseTable> objects, string title)
+        {           
+            Add(new ExecuteCommandShow(_activator,objects,1){OverrideCommandName = title },Keys.None,GoTo);
+        }
+        protected void AddGoTo<T>(int? foreignKey, string title) where T:IMapsDirectlyToDatabaseTable
+        {
+            if(foreignKey.HasValue)
+                Add(new ExecuteCommandShow(_activator,RepositoryLocator.GetObjectByID<T>(foreignKey.Value),1){OverrideCommandName = title },Keys.None,GoTo);
+            else
+                Add(new ImpossibleCommand("No object exists"){ OverrideCommandName = title},Keys.None,GoTo);
+
         }
 
         private ToolStripMenuItem AddMenuIfNotExists(string submenu)

@@ -8,6 +8,7 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
@@ -51,19 +52,13 @@ namespace Rdmp.UI.Menus
 
             Items.Add(new DQEMenuItem(_activator,catalogue));
 
-            if(catalogue.LoadMetadata_ID.HasValue)
-                Add(new ExecuteCommandShow(_activator,catalogue.LoadMetadata,1,true){OverrideCommandName="Load"},Keys.None, GoTo);
-            else
-                Add(new ImpossibleCommand("No load has been created for this Catalogue"){ OverrideCommandName = "Load"},Keys.None,GoTo);
+            AddGoTo<LoadMetadata>(catalogue.LoadMetadata_ID,"Data Load");
 
             if(_activator.CoreChildProvider is DataExportChildProvider exp)
             {
                 var eds = exp.ExtractableDataSets.SingleOrDefault(d=>d.Catalogue_ID == catalogue.ID);
                 if(eds != null)
-                {
-                    Add(new ExecuteCommandShow(_activator,eds.ExtractionConfigurations,1,true){OverrideCommandName="Extractions...",},Keys.None, GoTo);
-                    
-                }
+                    AddGoTo(eds.ExtractionConfigurations,"Extraction Configuration(s)");
             }
         }
 
