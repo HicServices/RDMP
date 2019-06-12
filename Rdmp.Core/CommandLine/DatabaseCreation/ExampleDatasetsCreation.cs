@@ -160,6 +160,24 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             var forwardEngineer = new ForwardEngineerCatalogue(ti,ti.ColumnInfos,true);
             forwardEngineer.ExecuteForwardEngineering(out Catalogue cata, out _,out ExtractionInformation[] eis);
             
+            //get descriptions of the columns from BadMedicine
+            var desc = new Descriptions();
+            cata.Description = desc.Get(cata.Name);
+            if(cata.Description != null)
+            {
+                cata.SaveToDatabase();
+
+                foreach(var ci in cata.CatalogueItems)
+                {
+                    var ciDescription = desc.Get(cata.Name,ci.Name);
+                    if(ciDescription != null)
+                    {
+                        ci.Description = ciDescription.Trim();
+                        ci.SaveToDatabase();
+                    }
+                }
+            }           
+
             var chi = eis.SingleOrDefault(e=>e.GetRuntimeName().Equals("chi",StringComparison.CurrentCultureIgnoreCase));
             if(chi != null)
             {
@@ -168,7 +186,6 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
                 var eds = new ExtractableDataSet(_repos.DataExportRepository,cata);
             }
-
             return cata;
         }
         

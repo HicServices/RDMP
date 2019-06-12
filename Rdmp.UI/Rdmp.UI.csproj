@@ -22,7 +22,7 @@
     <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
     <PackageReference Include="Microsoft.CSharp" Version="4.*" />
     <PackageReference Include="System.Net.Http" Version="4.*" />
-    <PackageReference Include="HIC.BadMedicine" Version="0.0.1.1" />
+    <PackageReference Include="HIC.BadMedicine" Version="0.0.1.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />

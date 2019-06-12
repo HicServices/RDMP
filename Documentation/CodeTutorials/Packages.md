@@ -15,7 +15,7 @@
 | [CsvHelper](https://github.com/JoshClose/CsvHelper) | 7.1.1 | MS-PL / Apache 2.0 | Enables reading/writing CSV files | &#9744; |
 | [NPOI](https://github.com/tonyqus/npoi) | 2.4.1 | Apache 2.0 | Enables reading/writing Microsoft Excel files | &#9744; |
 | [FAnsi SQL](https://github.com/HicServices/FAnsiSql) | 0.9.0.5 | [GPL 3.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | DBMS abstraction layer | &#9744; |
-| [Bad Medicine](https://github.com/HicServices/BadMedicine) | 0.0.1.1 | [GPL 3.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Generate Test Datasets for tests/exericses | &#9744; |
+| [Bad Medicine](https://github.com/HicServices/BadMedicine) | 0.0.1.2 | [GPL 3.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Generate Test Datasets for tests/exericses | &#9744; |
 | MySql.Data | 8.0.14 | [GPL 2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Enables interaction with MySql databases | &#9744; |
 | Oracle ODP.NET Managed Driver| 18.3.0 | [OTNLA](https://www.oracle.com/technetwork/licenses/distribution-license-152002.html) | Enables interaction with Oracle databases | &#9744; |
 | [SSH.NET](https://github.com/sshnet/SSH.NET)  | 2013.4.7 | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers | &#9744; |
