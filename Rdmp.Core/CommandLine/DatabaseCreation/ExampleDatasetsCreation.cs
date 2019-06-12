@@ -11,7 +11,9 @@ using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.FilterImporting;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -97,7 +99,46 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             vOperations.Folder = new CatalogueFolder(vOperations,@"\admissions");
             vOperations.SaveToDatabase();
 
+             
+            //A cohort
+            var f = CreateFilter(vConditions,"Lung Cancer Condition","Condition","Condition like 'C349'","ICD-10-CM Diagnosis Code C34.9 Malignant neoplasm of unspecified part of bronchus or lung");
+            
+            CreateCohortIdentificationConfiguration((ExtractionFilter)f);
 
+
+        }
+
+        private CohortIdentificationConfiguration CreateCohortIdentificationConfiguration(ExtractionFilter inclusionFilter1)
+        {
+            //Create the top level configuration object
+            var cic = new CohortIdentificationConfiguration(_repos.CatalogueRepository,"Tayside Lung Cancer Cohort");
+
+            //create a UNION container for Inclusion Criteria
+            var container = new CohortAggregateContainer(_repos.CatalogueRepository,SetOperation.UNION);
+            container.Name = "Inclusion Criteria";
+            container.SaveToDatabase();
+
+            cic.RootCohortAggregateContainer_ID = container.ID;
+            cic.SaveToDatabase();
+
+            //Create a new cohort set to the 'Inclusion Criteria' based on the filters Catalogue
+            var cata = inclusionFilter1.ExtractionInformation.CatalogueItem.Catalogue;
+            var ac = cic.CreateNewEmptyConfigurationForCatalogue(cata,(a,b)=>{throw new Exception("Problem encountered with chi column(s)");},false);
+            container.AddChild(ac,0);
+
+            //Add the filter to the WHERE logic of the cohort set
+            var whereContainer = new AggregateFilterContainer(_repos.CatalogueRepository,FilterContainerOperation.OR);
+
+            ac.Name = "People with " + inclusionFilter1.Name;
+            ac.RootFilterContainer_ID = whereContainer.ID;
+            ac.SaveToDatabase();
+            
+            FilterImporter filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository),null);
+            var cloneFilter = filterImporter.ImportFilter(inclusionFilter1,null);
+            
+            whereContainer.AddChild(cloneFilter);
+
+            return cic;
         }
 
         private IFilter CreateFilter(AggregateConfiguration graph, string name, string whereSql)
