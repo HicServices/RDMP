@@ -117,13 +117,12 @@ namespace Rdmp.UI.Menus
         {           
             Add(new ExecuteCommandShow(_activator,objects,1){OverrideCommandName = title },Keys.None,GoTo);
         }
-        protected void AddGoTo<T>(int? foreignKey, string title) where T:IMapsDirectlyToDatabaseTable
+        protected void AddGoTo<T>(int? foreignKey, string title = null) where T:IMapsDirectlyToDatabaseTable
         {
             if(foreignKey.HasValue)
-                Add(new ExecuteCommandShow(_activator,RepositoryLocator.GetObjectByID<T>(foreignKey.Value),1){OverrideCommandName = title },Keys.None,GoTo);
+                Add(new ExecuteCommandShow(_activator,RepositoryLocator.GetObjectByID<T>(foreignKey.Value),1){OverrideCommandName = title ?? typeof(T).Name },Keys.None,GoTo);
             else
-                Add(new ImpossibleCommand("No object exists"){ OverrideCommandName = title},Keys.None,GoTo);
-
+                Add(new ImpossibleCommand("No object exists"){ OverrideCommandName = title ?? typeof(T).Name},Keys.None,GoTo);
         }
 
         private ToolStripMenuItem AddMenuIfNotExists(string submenu)

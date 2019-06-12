@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -29,7 +30,7 @@ namespace Rdmp.UI.Menus
 
             var root = selectedDataSet.RootFilterContainer;
 
-            Add(new ExecuteCommandShow(_activator, selectedDataSet.ExtractableDataSet.Catalogue, 1) { OverrideCommandName = "Catalogue" },Keys.None,GoTo);
+            AddGoTo<Catalogue>(selectedDataSet.ExtractableDataSet.Catalogue_ID);
 
             Add(new ExecuteCommandExecuteExtractionConfiguration(_activator, selectedDataSet));
 

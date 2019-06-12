@@ -39,7 +39,7 @@ namespace Rdmp.Core.Curation.Data.Pipelines
 
         /// <inheritdoc cref="PipelineComponent_ID"/>
         [NoMappingToDatabase]
-        public IHasDependencies PipelineComponent { get
+        public IPipelineComponent PipelineComponent { get
         {
             return Repository.GetObjectByID<PipelineComponent>(PipelineComponent_ID);
         }}

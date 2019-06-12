@@ -55,6 +55,8 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             olvAvailableColumnName.ImageGetter += ImageGetter;
             olvSelectedColumnName.ImageGetter += ImageGetter;
+            
+            olvSelected.ItemActivate += OlvSelected_ItemActivate;
 
             olvAvailableColumnCategory.AspectGetter += AvailableColumnCategoryAspectGetter;
             olvAvailable.AlwaysGroupByColumn = olvAvailableColumnCategory;
@@ -84,6 +86,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             helpIconJoin.SetHelpText("Configure JoinInfos","Your query involves more than 1 table and RDMP does not yet know which columns to use to join the tables on.  Click the 'Configure' button below on any ticked tables for which no joins are shown");
         }
+
 
         void olvSelected_CellRightClick(object sender, CellRightClickEventArgs e)
         {
@@ -323,6 +326,20 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             if(!cmd.IsImpossible)
                 cmd.Execute();
+        }
+
+        
+        private void OlvSelected_ItemActivate(object sender, EventArgs e)
+        {
+            var ei = (olvSelected.SelectedObject as ExtractableColumn)?.CatalogueExtractionInformation;
+
+            if(ei != null)
+            {
+                var cmd = new ExecuteCommandShow(Activator,ei,1);
+                
+                if(!cmd.IsImpossible)
+                    cmd.Execute();
+            }
         }
 
         private void olvSelected_ModelCanDrop(object sender, BrightIdeasSoftware.ModelDropEventArgs e)

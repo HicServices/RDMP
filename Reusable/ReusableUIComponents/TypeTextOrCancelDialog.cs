@@ -52,10 +52,7 @@ namespace ReusableUIComponents
                 e.Handled = true;
                 e.SuppressKeyPress = true;
             }
-        }
 
-        private void textBox1_KeyUp(object sender, KeyEventArgs e)
-        {
             if (e.KeyCode == Keys.Escape)
                 btnCancel_Click(null, null);
 

@@ -76,18 +76,18 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             CreateFilter(biochem,"Test Code","TestCode","TestCode like @code","Filters any test code set");
             
             CreateFilter(
-                CreateGraph(vConditions,"Conditions frequency","Condition",false,"Field"),
+                CreateGraph(vConditions,"Conditions frequency","Field",false,"Condition"),
                 "Common Conditions Only",
                 @"(Condition in 
-(select top 20 Condition from vConditions c
+(select top 40 Condition from vConditions c
  WHERE Condition <> 'NULL' AND Condition <> 'Nul' 
  group by Condition order by count(*) desc))");
                         
             CreateFilter(
-                CreateGraph(vOperations,"Operation frequency","Operation",false,"Field"),
+                CreateGraph(vOperations,"Operation frequency","Field",false,"Operation"),
                 "Common Operation Only",
                 @"(Operation in 
-(select top 20 Operation from vOperations c
+(select top 40 Operation from vOperations c
  WHERE Operation <> 'NULL' AND Operation <> 'Nul' 
  group by Operation order by count(*) desc))");            
             
@@ -131,7 +131,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             ac.Name = "People with " + inclusionFilter1.Name;
             ac.RootFilterContainer_ID = whereContainer.ID;
-            ac.SaveToDatabase();
+            cic.EnsureNamingConvention(ac); //this will put cicx at the front and cause implicit SaveToDatabase
             
             FilterImporter filterImporter = new FilterImporter(new AggregateFilterFactory(_repos.CatalogueRepository),null);
             var cloneFilter = filterImporter.ImportFilter(inclusionFilter1,null);

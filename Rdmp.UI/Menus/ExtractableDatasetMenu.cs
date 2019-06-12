@@ -4,8 +4,11 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.Icons.IconProvision;
+using System.Linq;
 
 namespace Rdmp.UI.Menus
 {
@@ -26,6 +29,11 @@ namespace Rdmp.UI.Menus
                 Items.Add("Disable Extraction (temporarily)", CatalogueIcons.ExtractableDataSetDisabled,
                     (s, e) => SetDisabled(true));
 
+
+            AddGoTo<Catalogue>(_dataset.Catalogue_ID);
+            
+            if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                AddGoTo(dx.SelectedDataSets.Where(s=>s.ExtractableDataSet_ID == _dataset.ID).Select(s=>s.ExtractionConfiguration),"Extraction Configurations");
         }
 
         private void SetDisabled(bool disable)

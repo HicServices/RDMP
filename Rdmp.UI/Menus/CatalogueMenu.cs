@@ -60,6 +60,18 @@ namespace Rdmp.UI.Menus
                 if(eds != null)
                     AddGoTo(eds.ExtractionConfigurations,"Extraction Configuration(s)");
             }
+
+            AddGoTo(
+                _activator
+                .CoreChildProvider
+                .AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate && ac.Catalogue_ID == catalogue.ID)
+                .Select(ac=>ac.GetCohortIdentificationConfigurationIfAny())
+                .Where(cic=>cic != null)
+                .Distinct(),
+                "Cohort Identification Configuration(s)");
+
+            AddGoTo(_activator.CoreChildProvider.AllGovernancePeriods.Where(p=>p.GovernedCatalogues.Contains(catalogue)),"Governance");
+
         }
 
     }

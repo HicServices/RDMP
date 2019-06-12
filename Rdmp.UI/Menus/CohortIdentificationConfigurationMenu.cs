@@ -4,11 +4,13 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.Icons.IconProvision;
@@ -49,6 +51,10 @@ namespace Rdmp.UI.Menus
             Items.Add(new ToolStripSeparator());
 
             Add(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator));
+
+            if(_activator.CoreChildProvider is DataExportChildProvider dx)
+                AddGoTo(dx.AllProjectAssociatedCics.Where(a=>a.CohortIdentificationConfiguration_ID == cic.ID).Select(a=>a.Project).Distinct(),"Project(s)");
+            
         }
 
         public CohortIdentificationConfigurationMenu(RDMPContextMenuStripArgs args, ProjectCohortIdentificationConfigurationAssociation association) : this(args,association.CohortIdentificationConfiguration)
