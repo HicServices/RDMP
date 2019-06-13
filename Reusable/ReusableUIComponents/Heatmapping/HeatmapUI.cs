@@ -199,7 +199,7 @@ namespace ReusableUIComponents.Heatmapping
             
             if(Visible)
                 //show the tool tip
-                tt.Show(value.ToString(), this, new Point(pos.X,pos.Y - 10));//allow room for cusor to not overdraw the tool tip
+                tt.Show(value.ToString(), this, new Point(pos.X+20,pos.Y - 10));//allow room for cusor to not overdraw the tool tip
             
         }
 
@@ -229,8 +229,10 @@ namespace ReusableUIComponents.Heatmapping
             if (dataTableRow >= _dataTable.Rows.Count)
                 return _dataTable.Columns[dataTableCol].ColumnName;
 
+            if(dataTableCol == 0)
+                return _dataTable.Rows[dataTableRow][dataTableCol];
 
-            return _dataTable.Rows[dataTableRow][dataTableCol];
+            return  _dataTable.Rows[dataTableRow][0] + ":" + _dataTable.Columns[dataTableCol].ColumnName  + Environment.NewLine + _dataTable.Rows[dataTableRow][dataTableCol];
         }
 
         protected override void OnPaint(PaintEventArgs e)
