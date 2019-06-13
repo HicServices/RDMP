@@ -8,16 +8,23 @@ using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
+using Rdmp.Core.CohortCommitting;
+using Rdmp.Core.CohortCommitting.Pipeline;
+using Rdmp.Core.CohortCommitting.Pipeline.Sources;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.Progress;
 using System;
+using System.IO;
 using System.Linq;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
@@ -25,11 +32,11 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
     public class ExampleDatasetsCreation
     {
         private IRDMPPlatformRepositoryServiceLocator _repos;
-
-
+        
         private const int NumberOfPeople = 5000;
         private const int NumberOfRowsPerDataset = 10000;
-
+        
+        int projectNumber = 1;
 
         public ExampleDatasetsCreation(IRDMPPlatformRepositoryServiceLocator repos)
         {
@@ -100,12 +107,61 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             vOperations.SaveToDatabase();
 
              
-            //A cohort
+            //Create cohort store database
+            var wizard = new CreateNewCohortDatabaseWizard(db,_repos.CatalogueRepository,_repos.DataExportRepository,false);
+            var externalCohortTable = wizard.CreateDatabase(new PrivateIdentifierPrototype("chi","varchar(10)"),new ThrowImmediatelyCheckNotifier());
+            
+            //Find the pipeline for committing cohorts
+            var cohortCreationPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Source?.Class == typeof(CohortIdentificationConfigurationSource).FullName);
+            
+            if(cohortCreationPipeline == null)
+                throw new Exception("Could not find a cohort committing pipeline");
+            
+            //A cohort creation query
             var f = CreateFilter(vConditions,"Lung Cancer Condition","Condition","Condition like 'C349'","ICD-10-CM Diagnosis Code C34.9 Malignant neoplasm of unspecified part of bronchus or lung");
             
-            CreateCohortIdentificationConfiguration((ExtractionFilter)f);
+            var cic = CreateCohortIdentificationConfiguration((ExtractionFilter)f);
 
+            var cohort = CommitCohortToNewProject(cic,externalCohortTable,cohortCreationPipeline,"Lung Cancer Project","P1 Lung Cancer Patients",out Project project);
 
+            CreateExtractionConfiguration(project,cohort,"First Extraction",biochem,prescribing,demography,admissions);
+
+        }
+
+        private void CreateExtractionConfiguration(Project project, ExtractableCohort cohort,string name, params Catalogue[] catalogues)
+        {
+            var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository,project);
+            extractionConfiguration.Name = name;
+            extractionConfiguration.Cohort_ID = cohort.ID;
+            extractionConfiguration.SaveToDatabase();
+
+            foreach(var c in catalogues)
+            {
+                //Get it's extractableness
+                var eds = _repos.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(c).SingleOrDefault() 
+                            ?? new ExtractableDataSet(_repos.DataExportRepository,c); //or make it extractable
+                
+                 extractionConfiguration.AddDatasetToConfiguration(eds);
+            }
+        }
+
+        private ExtractableCohort CommitCohortToNewProject(CohortIdentificationConfiguration cic, ExternalCohortTable externalCohortTable,IPipeline cohortCreationPipeline,string projectName,string cohortName, out Project project)
+        {
+            //create a new data extraction Project
+            project = new Project(_repos.DataExportRepository,projectName);
+            project.ProjectNumber = projectNumber++;
+            project.ExtractionDirectory = Path.GetTempPath();
+            project.SaveToDatabase();
+
+            //create a cohort
+            var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,1,externalCohortTable),_repos.DataExportRepository,"Created by running cic " + cic.ID);
+            request.CohortIdentificationConfiguration = cic;
+
+            var engine = request.GetEngine(cohortCreationPipeline,new ThrowImmediatelyDataLoadEventListener());                        
+
+            engine.ExecutePipeline(new GracefulCancellationToken());
+
+            return request.CohortCreatedIfAny;
         }
 
         private CohortIdentificationConfiguration CreateCohortIdentificationConfiguration(ExtractionFilter inclusionFilter1)

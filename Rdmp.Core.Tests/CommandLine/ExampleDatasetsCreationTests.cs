@@ -2,6 +2,7 @@
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Defaults;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 
@@ -18,6 +19,10 @@ namespace Rdmp.Core.Tests.CommandLine
             //Should be empty RDMP metadata database
             Assert.AreEqual(0,CatalogueRepository.GetAllObjects<Catalogue>().Length);
             Assert.AreEqual(0,CatalogueRepository.GetAllObjects<AggregateConfiguration>().Length);
+
+            //create the pipelines
+            var pipes = new CataloguePipelinesAndReferencesCreation(RepositoryLocator,null,null);
+            pipes.CreatePipelines();
 
             //create all the stuff
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
