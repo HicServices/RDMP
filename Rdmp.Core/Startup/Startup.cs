@@ -45,7 +45,6 @@ namespace Rdmp.Core.Startup
 
         private readonly EnvironmentInfo _environmentInfo;
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
-        private ICheckNotifier _mefCheckNotifier;
         public event FoundPlatformDatabaseHandler DatabaseFound = delegate { };
         public event MEFDownloadProgressHandler MEFFileDownloaded = delegate { };
 
@@ -66,10 +65,11 @@ namespace Rdmp.Core.Startup
         #endregion
 
         #region Database Discovery
-        public void DoStartup(ICheckNotifier mefCheckNotifier)
+        public void DoStartup(ICheckNotifier notifier)
         {
-            _mefCheckNotifier = mefCheckNotifier;
             bool foundCatalogue = false;
+
+            notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
 
             Assembly.Load(typeof(Catalogue).Assembly.FullName);
             Assembly.Load(typeof(ExtractableDataSet).Assembly.FullName);
@@ -82,7 +82,7 @@ namespace Rdmp.Core.Startup
 
             try
             {
-                foundCatalogue = Find((ITableRepository) RepositoryLocator.CatalogueRepository,cataloguePatcher);
+                foundCatalogue = Find((ITableRepository) RepositoryLocator.CatalogueRepository,cataloguePatcher,notifier);
             }
             catch (Exception e)
             {
@@ -95,7 +95,7 @@ namespace Rdmp.Core.Startup
                     //setup connection string keywords
                     foreach (ConnectionStringKeyword keyword in RepositoryLocator.CatalogueRepository.GetAllObjects<ConnectionStringKeyword>())
                     {
-                        var tomem = new ToMemoryCheckNotifier(mefCheckNotifier);
+                        var tomem = new ToMemoryCheckNotifier(notifier);
                         keyword.Check(tomem);
 
                         //don't add broken keywords!
@@ -109,18 +109,18 @@ namespace Rdmp.Core.Startup
                 }
                 catch (Exception ex)
                 {
-                    _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",CheckResult.Fail, ex));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not apply ConnectionStringKeywords",CheckResult.Fail, ex));
                 }
             
 
             //only load data export manager if catalogue worked
             if(foundCatalogue)
             {
-                LoadMEF(RepositoryLocator.CatalogueRepository);
+                LoadMEF(RepositoryLocator.CatalogueRepository,notifier);
 
                 //find tier 2 databases
                 foreach (var patcher in _patcherManager.Tier2Patchers) 
-                    FindWithPatcher(patcher);
+                    FindWithPatcher(patcher,notifier);
 
                 try
                 {
@@ -130,27 +130,30 @@ namespace Rdmp.Core.Startup
                     if(dataExportRepository == null)
                         return;
 
-                    Find((ITableRepository) dataExportRepository, new DataExportPatcher());
+                    Find((ITableRepository) dataExportRepository, new DataExportPatcher(),notifier);
                 }
                 catch (Exception e)
                 {
                     DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null,new DataExportPatcher(), RDMPPlatformDatabaseStatus.Broken,e));
                 }
 
-                FindTier3Databases( RepositoryLocator.CatalogueRepository);
+                FindTier3Databases( RepositoryLocator.CatalogueRepository,notifier);
             }
 
-            Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,mefCheckNotifier);
+            Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,notifier);
         }
 
-        private void FindTier3Databases(ICatalogueRepository catalogueRepository)
+        private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
         {
             foreach (PluginPatcher patcher in _patcherManager.GetTier3Patchers(catalogueRepository.MEF,PluginPatcherFound))
-                FindWithPatcher(patcher);
+                FindWithPatcher(patcher,notifier);
         }
 
-        private bool Find(ITableRepository tableRepository, IPatcher patcher)
+        private bool Find(ITableRepository tableRepository, IPatcher patcher,ICheckNotifier notifier)
         {
+            var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
+            notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Connecting to {0} on {1}",db.GetRuntimeName(),db.Server.Name) ,CheckResult.Success));
+
             //is it reachable
             try
             {
@@ -193,7 +196,7 @@ namespace Rdmp.Core.Startup
             return true;
         }
 
-        private void FindWithPatcher(IPatcher patcher)
+        private void FindWithPatcher(IPatcher patcher,ICheckNotifier notifier)
         {
             var dbs = RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>().Where(eds => eds.WasCreatedBy(patcher));
 
@@ -205,11 +208,11 @@ namespace Rdmp.Core.Startup
                         .ExpectServer(server, DataAccessContext.InternalDataProcessing)
                         .Builder;
 
-                    Find(new CatalogueRepository(builder), patcher);
+                    Find(new CatalogueRepository(builder), patcher,notifier);
                 }
                 catch (Exception e)
                 {
-                    _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not resolve ExternalDatabaseServer '" + server + "'",CheckResult.Warning,e));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not resolve ExternalDatabaseServer '" + server + "'",CheckResult.Warning,e));
                 }
             }
         }
@@ -218,7 +221,7 @@ namespace Rdmp.Core.Startup
 
         #region MEF
 
-        private void LoadMEF(ICatalogueRepository catalogueRepository)
+        private void LoadMEF(ICatalogueRepository catalogueRepository, ICheckNotifier notifier)
         {
             DirectoryInfo downloadDirectory = catalogueRepository.MEF.DownloadDirectory;
              
@@ -247,7 +250,7 @@ namespace Rdmp.Core.Startup
                 if(!existingFiles.Any(f=>f.Name.Equals(compatiblePlugins[i].Name)))
                     compatiblePlugins[i].LoadModuleAssemblies.SingleOrDefault()?.DownloadAssembly(subdir); 
                 else
-                    _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Found existing file '" + compatiblePlugins[i].Name +"' so didn't bother downloading it.",CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Found existing file '" + compatiblePlugins[i].Name +"' so didn't bother downloading it.",CheckResult.Success));
                                 
                 foreach(var archive in  subdir.GetFiles("*"+PackPluginRunner.PluginPackageSuffix).ToList())
                 {                    
@@ -276,12 +279,12 @@ namespace Rdmp.Core.Startup
                             }
                             catch(Exception ex)
                             {
-                                _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
+                                notifier.OnCheckPerformed(new CheckEventArgs("Could not extract Plugin to '" + outDir.FullName+"'",CheckResult.Warning,ex));
                             }
                     else
-                        _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
+                        notifier.OnCheckPerformed(new CheckEventArgs("Found existing directory '" + outDir.FullName+"' so didn't bother unzipping.",CheckResult.Success));
 
-                    var dir = _environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib"),_mefCheckNotifier);
+                    var dir = _environmentInfo.GetPluginSubDirectory(outDir.CreateSubdirectory("lib"),notifier);
                     
                     //it is a UI only plugin? or plugin doesn't support the current runtime/platform
                     if(dir == null)
@@ -302,12 +305,12 @@ namespace Rdmp.Core.Startup
                 try
                 {
                     unexpectedDirectory.Delete(true);
-                    _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Deleted unreferenced plugin folder " + unexpectedDirectory.FullName, CheckResult.Success));
+                    notifier.OnCheckPerformed(new CheckEventArgs("Deleted unreferenced plugin folder " + unexpectedDirectory.FullName, CheckResult.Success));
 
                 }
                 catch (Exception ex)
                 {
-                    _mefCheckNotifier.OnCheckPerformed(
+                    notifier.OnCheckPerformed(
                         new CheckEventArgs(
                             "Found unreferenced (no Plugin) folder " + unexpectedDirectory.FullName +
                             " but we were unable to delete it (possibly because it is in use, try closing all your local RDMP applications and restarting this one)",
@@ -317,17 +320,17 @@ namespace Rdmp.Core.Startup
 
             AssemblyResolver.SetupAssemblyResolver(toLoad.ToArray());
             
-            MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(_mefCheckNotifier, toLoad.Select(d=>d.FullName).ToArray());
+            MEFSafeDirectoryCatalog = new SafeDirectoryCatalog(notifier, toLoad.Select(d=>d.FullName).ToArray());
             catalogueRepository.MEF.Setup(MEFSafeDirectoryCatalog);
             
-            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("Loading Help...", CheckResult.Success));
             var sw = Stopwatch.StartNew();
 
             if(!CatalogueRepository.SuppressHelpLoading)
                 catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory);
 
             sw.Stop();
-            _mefCheckNotifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
         }
         #endregion
     }
