@@ -484,7 +484,7 @@ namespace Rdmp.Core.Providers
         {
             BlackListedSources.Add(source);
 
-            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Blacklisted source '" + source + "'", CheckResult.Fail, ex));
+            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not reach cohort '" + source + "' (it may be slow responding or inaccessible due to user permissions)", CheckResult.Fail, ex));
 
             //tell them not to bother looking for the cohort data because its inaccessible
             foreach (ExtractableCohort cohort in Cohorts.Where(c => c.ExternalCohortTable_ID == source.ID).ToArray())
