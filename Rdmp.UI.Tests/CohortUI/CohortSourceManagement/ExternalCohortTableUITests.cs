@@ -20,7 +20,7 @@ namespace Rdmp.UI.Tests.CohortUI.CohortSourceManagement
 			Assert.IsNotNull(ui);
 
             //because cohort table doesnt actually go to a legit database the source should have been blacklisted during the child provider stage (not really related to our UI).
-			AssertErrorWasShown(ExpectedErrorType.Fatal,"Blacklisted source 'My cohorts'"); 
+			AssertErrorWasShown(ExpectedErrorType.Fatal,"Could not reach cohort 'My cohorts' (it may be slow responding or inaccessible"); 
 			AssertNoErrors(ExpectedErrorType.KilledForm);
             AssertNoErrors(ExpectedErrorType.ErrorProvider);
             AssertNoErrors(ExpectedErrorType.FailedCheck); //checks are not run until user manually runs them in this UI

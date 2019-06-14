@@ -34,8 +34,8 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         }
 
         #endregion
-
-        #region Relationship Properties
+        
+        #region Relationships
 
         /// <inheritdoc cref="PipelineComponent_ID"/>
         [NoMappingToDatabase]

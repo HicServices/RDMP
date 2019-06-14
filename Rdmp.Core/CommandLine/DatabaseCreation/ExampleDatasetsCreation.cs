@@ -29,6 +29,9 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
+    /// <summary>
+    /// Handles the creation of example RDMP datasets and metadata object (catalogues, cohorts , projects etc).
+    /// </summary>
     public class ExampleDatasetsCreation
     {
         private IRDMPPlatformRepositoryServiceLocator _repos;
