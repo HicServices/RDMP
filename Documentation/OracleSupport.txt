@@ -1,4 +1,0 @@
-todo: figuring out IsAutoIncrement is outstanding
-
-todo: anywhere theres @ we should use IQuerySyntaxHelper.ParameterSymbol
-todo: anwyhere theres @@SelectIdentity

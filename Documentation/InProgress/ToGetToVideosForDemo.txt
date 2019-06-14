@@ -1,3 +1,0 @@
-Connect to matron FTP (134.36.204.2, Plain FTP, Account, tznind, *** - dundee password)
-/Data/Thomas Nind
-Download HICToolsDevelopedVideos.zip
