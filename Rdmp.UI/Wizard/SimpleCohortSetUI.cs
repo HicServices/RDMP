@@ -81,7 +81,7 @@ namespace Rdmp.UI.Wizard
                             //confirm with user before we erase these
                             _activator.YesNo(
                                 "Changing the dataset will clear the Filters you have configured, is this what you want?",
-                                "Change Dataset")
+                                "Change Dataset"))
                             ClearFilters();
                         else
                         {
