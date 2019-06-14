@@ -20,14 +20,14 @@ namespace Rdmp.Core.Providers
     /// <summary>
     /// Identifies all problems with all objects found in the Catalogue database.  This only includes problems that are fast to detect at runtime.
     /// </summary>
-    public class CatalogueProblemProvider : IProblemProvider
+    public class CatalogueProblemProvider : ProblemProvider
     {
         private ICoreChildProvider _childProvider;
         private HashSet<int> _orphanCatalogueItems = new HashSet<int>();
         private HashSet<int> _usedJoinables;
 
         /// <inheritdoc/>
-        public void RefreshProblems(ICoreChildProvider childProvider)
+        public override void RefreshProblems(ICoreChildProvider childProvider)
         {
             _childProvider = childProvider;
             
@@ -47,17 +47,8 @@ namespace Rdmp.Core.Providers
         }
 
         /// <inheritdoc/>
-        public bool HasProblem(object o)
+        protected override string DescribeProblemImpl(object o)
         {
-            return !string.IsNullOrWhiteSpace(DescribeProblem(o));
-        }
-
-        /// <inheritdoc/>
-        public string DescribeProblem(object o)
-        {
-            if(o is INamed n && UsefulStuff.IsBadName(n.Name))
-                return "Name contains illegal characters";
-
             if (o is AllGovernanceNode)
                 return DescribeProblem((AllGovernanceNode) o);
 
