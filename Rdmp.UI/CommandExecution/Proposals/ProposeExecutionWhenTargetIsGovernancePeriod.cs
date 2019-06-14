@@ -32,10 +32,16 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override ICommandExecution ProposeExecution(ICommand cmd, GovernancePeriod target, InsertOption insertOption = InsertOption.Default)
         {
-            var files = cmd as FileCollectionCommand;
+            
 
-            if (files != null && files.Files.Length == 1)
+            if (cmd is FileCollectionCommand files && files.Files.Length == 1)
                 return new ExecuteCommandAddNewGovernanceDocument(ItemActivator, target, files.Files[0]);
+
+            if(cmd is CatalogueCommand c)
+                return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator,target,c.Catalogue);
+
+            if(cmd is ManyCataloguesCommand mcat)
+                return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator,target,mcat.Catalogues);
 
             //no drag and drop support
             return null;

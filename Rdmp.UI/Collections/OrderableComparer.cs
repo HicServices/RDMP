@@ -41,11 +41,7 @@ namespace Rdmp.UI.Collections
         {
             //Use IOrderable.Order
             if (x is IOrderable xOrderable && y is IOrderable yOrderable)
-                return xOrderable.Order - yOrderable.Order;
-
-            //Or use INamed.Name
-            if(ShouldSortByName(x) && ShouldSortByName(y))
-                return String.Compare(((INamed)x).Name, ((INamed)y).Name, StringComparison.CurrentCultureIgnoreCase);
+                    return xOrderable.Order - yOrderable.Order;
 
              //or use whatever
             return _modelComparer.Compare(x, y);

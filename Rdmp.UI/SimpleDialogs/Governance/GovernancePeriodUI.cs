@@ -134,23 +134,19 @@ namespace Rdmp.UI.SimpleDialogs.Governance
             {
                 try
                 {
-                    foreach(Catalogue c in selector.MultiSelected)
-                        AddCatalogue(c);
+                    AddCatalogues(selector.MultiSelected.Cast<Catalogue>().ToArray());
                 }
                 catch (Exception ex)
                 {
                     ExceptionViewer.Show("Could not add relationship to Catalogue:" + selector.Selected,ex);
                 }
-
-                Publish(_governancePeriod);
             }
-            
         }
 
-        private void AddCatalogue(ICatalogue c)
+        private void AddCatalogues(ICatalogue[] catalogues)
         {
-            _governancePeriod.CreateGovernanceRelationshipTo(c);
-            olvCatalogues.AddObject(c);
+            var cmd = new ExecuteCommandAddCatalogueToGovernancePeriod(Activator,_governancePeriod,catalogues);
+            cmd.Execute();
         }
 
         private void lbCatalogues_KeyUp(object sender, KeyEventArgs e)
@@ -196,8 +192,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
                                     "' does not govern any novel Catalogues (Catalogues already in your configuration are not repeat imported)");
                 else
                 {
-                    foreach (var c in toAdd)
-                        AddCatalogue(c);
+                    AddCatalogues(toAdd);
 
                     Publish(_governancePeriod);
                 }

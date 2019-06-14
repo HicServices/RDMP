@@ -961,7 +961,7 @@ namespace Rdmp.Core.Providers
             if(!_childDictionary.ContainsKey(model))
                 return new object[0];//return none
             
-            return _childDictionary[model].ToArray();
+            return _childDictionary[model].OrderBy(o=>o.ToString()).ToArray();
         }
 
         private void AddChildren(CohortIdentificationConfiguration cic)
