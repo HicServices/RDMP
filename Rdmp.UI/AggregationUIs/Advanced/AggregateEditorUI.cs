@@ -236,34 +236,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             //set the name to the tostring not the .Name so that we ignore the cic prefix
             tbName.Text = _aggregate.ToString();
         }
-
-        private void OnListboxKeyUp(object sender, KeyEventArgs e)
-        {
-            var s = (ObjectListView) sender;
-            
-            if(e.KeyCode == Keys.Delete)
-            {
-                var deletable = s.SelectedObject as IDeleteable;
-
-                if(deletable != null)
-                    if(MessageBox.Show("Are you sure you want to delete '" + deletable +"'?","Confirm Delete",MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    {
-                        try
-                        {
-                            deletable.DeleteInDatabase();
-                        }
-                        catch (Exception ex )
-                        {
-                            ExceptionViewer.Show(ex);
-                        }
-                        
-                        PublishToSelfOnly();
-                    }
-            }
-        }
- 
-        
-       
+               
         private void olvAny_CellEditFinishing(object sender, CellEditEventArgs e)
         {
             var revertable = e.RowObject as IRevertable;
@@ -388,11 +361,10 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             var axisDimensions = allDimensions.Where(d => d.AggregateContinuousDateAxis != null).ToArray();
 
             if(axisDimensions.Length >1)
-                if (
-                    MessageBox.Show(
+                if (Activator.YesNo(
                         "Aggregate " + _aggregate +
                         " has more than 1 dimension, this is highly illegal, shall I delete all the axis configurations for you?",
-                        "Delete all axis?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                        "Delete all axis?"))
                     foreach (AggregateDimension a in axisDimensions)
                         a.AggregateContinuousDateAxis.DeleteInDatabase();
                 else
@@ -441,25 +413,22 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             if(selectedDimension == null)
                 return;
             
-            //is there already an axis?
+            //is there already an axis? if so keep the old start/end dates
             var existing = _aggregate.GetAxisIfAny();
-
-            //if they are selecting a different one
-            if (existing != null && existing.AggregateDimension_ID != selectedDimension.ID)
-                if (
-                    MessageBox.Show(
-                        "You are about to change the Axis dimension, are you sure you want to delete the old one '" +
-                        existing.AggregateDimension + "' and replace it with '" + selectedDimension + "'?",
-                        "Confirm deleting old Axis", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    existing.DeleteInDatabase();
-                else
-                {
-                    PublishToSelfOnly();//user chose to abandon the change
-                    return;
-                }
-
+            
+            //create a new one
             var axis = new AggregateContinuousDateAxis(Activator.RepositoryLocator.CatalogueRepository, selectedDimension);
             axis.AxisIncrement = AxisIncrement.Month;
+                          
+            //copy over old values of start/end/increment
+            if (existing != null && existing.AggregateDimension_ID != selectedDimension.ID)
+            {
+                axis.StartDate = existing.StartDate;
+                axis.EndDate = existing.EndDate;
+                axis.AxisIncrement = existing.AxisIncrement;
+                existing.DeleteInDatabase();
+            }
+            
             axis.SaveToDatabase();
             PublishToSelfOnly();
         }

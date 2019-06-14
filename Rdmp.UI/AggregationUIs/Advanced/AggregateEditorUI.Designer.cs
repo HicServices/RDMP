@@ -256,7 +256,6 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             this.olvJoin.View = System.Windows.Forms.View.Details;
             this.olvJoin.CellEditFinishing += new BrightIdeasSoftware.CellEditEventHandler(this.olvAny_CellEditFinishing);
             this.olvJoin.ItemActivate += new System.EventHandler(this.olvJoin_ItemActivate);
-            this.olvJoin.KeyUp += new System.Windows.Forms.KeyEventHandler(this.OnListboxKeyUp);
             // 
             // olvJoinTableName
             // 
