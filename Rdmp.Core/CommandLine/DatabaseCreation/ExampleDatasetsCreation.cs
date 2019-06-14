@@ -71,9 +71,46 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             //datasets
             var biochem = ImportCatalogue(Create<Biochemistry>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","Healthboard","SampleDate","TestCode"));
             var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","dtCreated","hb_extract"));
-            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier,NumberOfRowsPerDataset/10,"chi","PrescribedDate","Name")); //<- this is slooo!
+            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","PrescribedDate","Name")); //<- this is slooo!
             var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","AdmissionDate"));
             var carotid = Create<CarotidArteryScan>(db,people,r,notifier,NumberOfRowsPerDataset,"RECORD_NUMBER");
+
+            //the following should not be extractable
+            ForExtractionInformations(demography,
+                e=>e.DeleteInDatabase(),
+"chi_num_of_curr_record",
+"surname",
+"forename",
+"current_address_L1",
+"current_address_L2",
+"current_address_L3",
+"current_address_L4",
+"birth_surname",
+"previous_surname",
+"midname",
+"alt_forename",
+"other_initials",
+"previous_address_L1",
+"previous_address_L2",
+"previous_address_L3",
+"previous_address_L4",
+"previous_postcode",
+"date_address_changed",
+"adr",
+"previous_gp_accept_date",
+"hic_dataLoadRunID");
+
+            //the following should be special approval only
+              ForExtractionInformations(demography,
+                e=>{
+                    e.ExtractionCategory = ExtractionCategory.SpecialApprovalRequired;
+                    e.SaveToDatabase();
+                    },
+            "current_postcode",
+            "current_gp",
+            "previous_gp", 
+            "date_of_birth");
+
 
             CreateAdmissionsViews(db);
             var vConditions = ImportCatalogue(db.ExpectTable("vConditions"));
@@ -85,6 +122,18 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             CreateFilter(biochem,"Creatinine","TestCode","TestCode like '%CRE%'",@"Serum creatinine is a blood measurement.  It is an indicator of renal health.");
             CreateFilter(biochem,"Test Code","TestCode","TestCode like @code","Filters any test code set");
             
+            CreateExtractionInformation(demography,"Age","date_of_birth","FLOOR(DATEDIFF(DAY, date_of_birth, GETDATE()) / 365.25) As Age");
+            var fAge = CreateFilter(demography,"Older at least x years","Age","FLOOR(DATEDIFF(DAY, date_of_birth, GETDATE()) / 365.25) >= @age","Patients age is greater than or equal to the provided @age");
+            SetParameter(fAge,"@age","int","16");
+
+            CreateGraph(demography,"Patient Ages","Age",false,null);
+
+            CreateGraph(prescribing,"Approved Name","ApprovedName",false,null);
+            CreateGraph(prescribing,"Approved Name Over Time","PrescribedDate",true,"ApprovedName");
+            
+            CreateGraph(prescribing,"Bnf","FormattedBnfCode",false,null);
+            CreateGraph(prescribing,"Bnf Over Time","PrescribedDate",true,"FormattedBnfCode");
+
             CreateFilter(
                 CreateGraph(vConditions,"Conditions frequency","Field",false,"Condition"),
                 "Common Conditions Only",
@@ -129,6 +178,33 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             CreateExtractionConfiguration(project,cohort,"First Extraction",biochem,prescribing,demography,admissions);
 
+        }
+
+        private void ForExtractionInformations(Catalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
+        {
+            foreach(var e in extractionInformations.Select(s=>GetExtractionInformation(catalogue,s)))
+                action(e);
+        }
+
+        private void SetParameter(IFilter filter, string paramterToSet, string dataType, string value)
+        {
+            var p = filter.GetAllParameters().Single(fp=>fp.ParameterName == paramterToSet);
+            p.ParameterSQL = "DECLARE " + paramterToSet + " AS " + dataType;
+            p.Value = value;
+            p.SaveToDatabase();
+        }
+
+        private ExtractionInformation CreateExtractionInformation(Catalogue catalogue, string name, string columnInfoName, string selectSQL)
+        {
+            var col = catalogue.GetTableInfoList(false).SelectMany(t=>t.ColumnInfos).SingleOrDefault(c=>c.GetRuntimeName() == columnInfoName);
+            if(col == null)
+                throw new Exception("Could not find ColumnInfo called '" + columnInfoName +"' in Catalogue " + catalogue);
+
+            var ci = new CatalogueItem(_repos.CatalogueRepository,catalogue,name);
+            ci.ColumnInfo_ID = col.ID;
+            ci.SaveToDatabase();
+            
+            return new ExtractionInformation(_repos.CatalogueRepository,ci,col,selectSQL);
         }
 
         private void CreateExtractionConfiguration(Project project, ExtractableCohort cohort,string name, params Catalogue[] catalogues)
@@ -288,7 +364,10 @@ UNPIVOT
         private AggregateConfiguration CreateGraph(Catalogue cata, string name, string dimension1,bool isAxis, string dimension2)
         {
             var ac = new AggregateConfiguration(_repos.CatalogueRepository,cata,name);
-            
+            ac.CountSQL = "count(*) as NumberOfRecords";
+            ac.SaveToDatabase();
+            ac.IsExtractable = true;
+
             var mainDimension = ac.AddDimension(GetExtractionInformation(cata,dimension1));
             var otherDimension = string.IsNullOrWhiteSpace(dimension2) ? null : ac.AddDimension(GetExtractionInformation(cata,dimension2));
             
