@@ -82,10 +82,8 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
             var popup = new PopupChecksUI("Creating Cohort Table", false);
             ExternalCohortTableCreatedIfAny = Wizard.CreateDatabase(PrivateIdentifierPrototype, popup);
 
-            
-
             if(popup.GetWorst() <= CheckResult.Warning)
-                if(MessageBox.Show("Close Form?","Close",MessageBoxButtons.YesNo ) == DialogResult.Yes)
+                if(Activator.YesNo("Close Form?","Close"))
                     ParentForm.Close();
         }
 

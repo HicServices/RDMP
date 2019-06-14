@@ -83,7 +83,7 @@ namespace Rdmp.UI.DashboardTabs
                 }
                 catch (DashboardControlHydrationException e)
                 {
-                    if(MessageBox.Show("Error Hydrating Control '" + c+ "', Do you want to delete the control? (No will attempt to clear the control state but leave it on the Dashboard).  Exception was:"+Environment.NewLine + e.Message,"Delete Broken Control?",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if(Activator.YesNo("Error Hydrating Control '" + c+ "', Do you want to delete the control? (No will attempt to clear the control state but leave it on the Dashboard).  Exception was:"+Environment.NewLine + e.Message,"Delete Broken Control?"))
                     {
                         c.DeleteInDatabase();
                         continue;

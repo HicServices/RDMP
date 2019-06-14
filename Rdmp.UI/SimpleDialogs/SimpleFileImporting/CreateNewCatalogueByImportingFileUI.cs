@@ -303,7 +303,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 SetupState(State.DatabaseSelected);
             else
             {
-                if(MessageBox.Show("Create Database '" + db.GetRuntimeName() +"'","Create Database",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if(Activator.YesNo("Create Database '" + db.GetRuntimeName() +"'","Create Database"))
                 {
                     db.Server.CreateDatabase(db.GetRuntimeName());
                     SetupState(State.DatabaseSelected);

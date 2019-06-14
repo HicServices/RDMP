@@ -112,10 +112,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
         public override void ConsultAboutClosing(object sender, FormClosingEventArgs e)
         {
             if (_extractionFilter != null && _extractionFilter.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                if (DialogResult.Yes ==
-                    MessageBox.Show(
+                if (Activator.YesNo(
                         "You have unsaved changes to Filter \"" + _extractionFilter.Name +
-                        "\", would you like to save these now?", "Save Changes to Filter?", MessageBoxButtons.YesNo))
+                        "\", would you like to save these now?", "Save Changes to Filter?"))
                     ObjectSaverButton1.Save();
                 else
                 {

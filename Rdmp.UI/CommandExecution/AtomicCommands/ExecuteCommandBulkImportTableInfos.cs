@@ -54,7 +54,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             var existing = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<TableInfo>();
             var ignoredTables = new List<TableInfo>();
 
-            if (MessageBox.Show("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (YesNo("Would you also like to import ShareDefinitions (metadata)?", "Import Metadata From File(s)"))
             {
                 OpenFileDialog ofd = new OpenFileDialog() { Multiselect = true };
                 ofd.Filter = "Share Definitions|*.sd";
@@ -73,9 +73,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             bool generateCatalogues = false;
 
-            if (MessageBox.Show("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (YesNo("Would you like to try to guess non-matching Catalogues by Name?", "Guess by name"))
                 catalogues.AddRange(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>());
-            else if(MessageBox.Show("Would you like to generate empty Catalogues for non-matching tables instead?","Generate New Catalogues", MessageBoxButtons.YesNo)== DialogResult.Yes)
+            else if(YesNo("Would you like to generate empty Catalogues for non-matching tables instead?","Generate New Catalogues"))
                 generateCatalogues = true;
             
             var married = new Dictionary<CatalogueItem, ColumnInfo>();
@@ -136,7 +136,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     new ForwardEngineerCatalogue(ti, cis).ExecuteForwardEngineering();
             }
 
-            if (married.Any() && MessageBox.Show("Found " + married.Count + " columns, make them all extractable?", "Make Extractable", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (married.Any() && YesNo("Found " + married.Count + " columns, make them all extractable?", "Make Extractable"))
                 foreach (var kvp in married)
                 {
                     //yup thats how we roll, the database is main memory!

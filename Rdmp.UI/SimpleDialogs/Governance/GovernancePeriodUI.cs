@@ -156,7 +156,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
                 var toDelete = olvCatalogues.SelectedObject as Catalogue;
 
                 if(toDelete != null)
-                    if(MessageBox.Show("Are you sure you want to erase the fact that '" + _governancePeriod.Name + "' provides governance over Catalogue '" + toDelete + "'","Confirm Deleting Governance Relationship?",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if(Activator.YesNo("Are you sure you want to erase the fact that '" + _governancePeriod.Name + "' provides governance over Catalogue '" + toDelete + "'","Confirm Deleting Governance Relationship?"))
                     {
                         _governancePeriod.DeleteGovernanceRelationshipTo(toDelete);
                         olvCatalogues.RemoveObject(toDelete);

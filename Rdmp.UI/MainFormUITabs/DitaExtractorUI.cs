@@ -49,10 +49,7 @@ namespace Rdmp.UI.MainFormUITabs
 
                 if (outputPath.GetFiles().Any())
                 {
-                    DialogResult dr = MessageBox.Show("There are files already in this directory, do you want to delete them?",
-                                    "Clear Directory?", MessageBoxButtons.YesNo);
-
-                    if(dr == DialogResult.Yes)
+                    if(Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
                         foreach (FileInfo file in outputPath.GetFiles())
                             file.Delete();
                 }

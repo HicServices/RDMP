@@ -382,7 +382,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 
             if (!eis.Any())
             {
-                if(MessageBox.Show("You have not marked any columns as extractable, are you sure you want to create a dataset with no extractable columns?","Create with no extractable columns?",MessageBoxButtons.YesNo) == DialogResult.No)
+                if(!Activator.YesNo("You have not marked any columns as extractable, are you sure you want to create a dataset with no extractable columns?","Create with no extractable columns?"))
                     return;
             }
             else

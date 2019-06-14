@@ -89,8 +89,8 @@ namespace Rdmp.UI.Wizard
                 MessageBox.Show("Enter a name for your Cohort Identification Criteria");
                 return;
             }
-
-            if(MessageBox.Show("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm",MessageBoxButtons.YesNo) != DialogResult.Yes)
+            
+            if(!Activator.YesNo("Are you sure you are happy with your configuration, this wizard will close after creating?","Confirm"))
                 return;
 
             var cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueRepository, tbName.Text);

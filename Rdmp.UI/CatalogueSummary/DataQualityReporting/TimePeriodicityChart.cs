@@ -152,16 +152,6 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
             }
         }
 
-        private int GetOffset(string yearMonth)
-        {
-            var match = Regex.Match(yearMonth, @"\d{4}-([A-Za-z]*)");
-
-            if(!match.Success)
-                throw new Exception("Regex did not match!");
-
-            return DateTime.ParseExact(match.Groups[1].Value, "MMMM", CultureInfo.CurrentCulture).Month;
-        }
-
 
         private double pointStartX = 0;
         private double pointStartY = 0;
@@ -226,7 +216,7 @@ namespace Rdmp.UI.CatalogueSummary.DataQualityReporting
                            .Distinct() //distinct because we get a line and a text for each - works because all .Equals are on ID of underlying object
                            .ToArray())//use ToArray so we can modify it in for loop
                 {
-                    if(MessageBox.Show("Delete annotation '" + ui.TextAnnotation.Text +"'", "Confirm deleting annotation from database",MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+                    if(Activator.YesNo("Delete annotation '" + ui.TextAnnotation.Text +"'", "Confirm deleting annotation from database"))
                         ui.Delete(chart1);//delete it is what we are actually doing
                 }
         }

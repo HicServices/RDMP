@@ -153,10 +153,7 @@ namespace Rdmp.UI.FindAndReplace
         
         private void btnReplaceAll_Click(object sender, EventArgs e)
         {
-            if (
-                MessageBox.Show(
-                    "Are you sure you want to do a system wide find and replace? This operation cannot be undone",
-                    "Are you sure", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (Activator.YesNo("Are you sure you want to do a system wide find and replace? This operation cannot be undone","Are you sure"))
             {
                 foreach (FindAndReplaceNode node in olvAllObjects.FilteredObjects)
                 {

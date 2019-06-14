@@ -114,7 +114,7 @@ namespace Rdmp.UI.LocationsMenu.Ticketing
 
         private void btnDelete_Click(object sender, EventArgs e)
         {
-            if (MessageBox.Show("Are you sure you want to delete the Ticketing system from this Catalogue database? there can be only one so be sure before you delete it.","Confirm deleting Ticketing system",MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+            if (Activator.YesNo("Are you sure you want to delete the Ticketing system from this Catalogue database? there can be only one so be sure before you delete it.","Confirm deleting Ticketing system"))
             {
                 _ticketingSystemConfiguration.DeleteInDatabase();
                 RefreshUIFromDatabase();
@@ -168,9 +168,7 @@ namespace Rdmp.UI.LocationsMenu.Ticketing
                 {
                     var toDelete = _ticketingSystemConfiguration.DataAccessCredentials;
 
-                    if (
-                        MessageBox.Show("Confirm deleting Encrypted Credentials " + toDelete.Name + "?",
-                            "Confirm delete?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (Activator.YesNo("Confirm deleting Encrypted Credentials " + toDelete.Name + "?","Confirm delete?"))
                         toDelete.DeleteInDatabase();
                 }
             }

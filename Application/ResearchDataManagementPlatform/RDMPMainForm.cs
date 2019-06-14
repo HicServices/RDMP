@@ -95,6 +95,8 @@ namespace ResearchDataManagementPlatform
             _rdmpTopMenuStrip1.InjectButton(exceptionCounter);
 
             _windowManager = new WindowManager(_theme,this,_refreshBus, dockPanel1, RepositoryLocator, exceptionCounter);
+            SetItemActivator(_windowManager.ActivateItems);
+
             _rdmpTopMenuStrip1.SetWindowManager(_windowManager);
             
             //put the version of the software into the window title
@@ -224,10 +226,9 @@ namespace ResearchDataManagementPlatform
 
         private void CloseForm(object sender, FormClosingEventArgs e)
         {
-
+            
             if (e.CloseReason == CloseReason.UserClosing && UserSettings.ConfirmApplicationExiting)
-                if (MessageBox.Show("Are you sure you want to Exit?", "Confirm Exit", MessageBoxButtons.YesNo) !=
-                    DialogResult.Yes)
+                if (!Activator.YesNo("Are you sure you want to Exit?", "Confirm Exit"))
                 {
                     e.Cancel = true;
                     return;

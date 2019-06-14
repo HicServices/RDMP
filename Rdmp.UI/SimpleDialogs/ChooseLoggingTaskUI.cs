@@ -192,9 +192,7 @@ namespace Rdmp.UI.SimpleDialogs
                     return;
                 }
 
-                var dr = MessageBox.Show("Create a new dataset and new data task called \"" + toCreate + "\" in " + target, "Create new logging task", MessageBoxButtons.YesNo);
-
-                if(dr == DialogResult.Yes)
+                if(Activator.YesNo("Create a new dataset and new data task called \"" + toCreate + "\" in " + target, "Create new logging task"))
                 {
                     if (liveServer != null)
                     {

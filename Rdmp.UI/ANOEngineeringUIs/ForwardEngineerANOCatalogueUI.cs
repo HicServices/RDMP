@@ -452,11 +452,10 @@ namespace Rdmp.UI.ANOEngineeringUIs
 
                     foreach (KeyValuePair<PreLoadDiscardedColumn, IDilutionOperation> dilutionOps in engine.DilutionOperationsForMigrations)
                         CreateDilutionMutilation(dilutionOps,engine.LoadMetadata);
-                    
 
                     Publish(engine.NewCatalogue);
 
-                    if(MessageBox.Show("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if(Activator.YesNo("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success"))
                         Activator.WindowArranger.SetupEditLoadMetadata(this,engine.LoadMetadata);
                 }
                 else

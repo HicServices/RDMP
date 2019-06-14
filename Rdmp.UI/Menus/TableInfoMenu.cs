@@ -103,7 +103,7 @@ namespace Rdmp.UI.Menus
         private void SynchronizeANOConfiguration_Click(TableInfo tableInfo)
         {
             //let use check the TableInfo accurately reflects the underlying database first
-            if (MessageBox.Show("Check that TableInfo is synchronized with underlying database first?", "Check database first?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+            if (_activator.YesNo("Check that TableInfo is synchronized with underlying database first?", "Check database first?"))
             {
                 try
                 {
@@ -194,7 +194,7 @@ namespace Rdmp.UI.Menus
                     if (!pks.Any())
                         MessageBox.Show("Your table does not have any primary keys so cannot support an archive trigger");
 
-                    if (MessageBox.Show("Are you sure you want to create a backup triggered _Archive table using the following primary keys?:" + Environment.NewLine + string.Join("" + Environment.NewLine, pks.Select(p => p.GetRuntimeName())), "Confirm Creating Archive?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if (_activator.YesNo("Are you sure you want to create a backup triggered _Archive table using the following primary keys?:" + Environment.NewLine + string.Join("" + Environment.NewLine, pks.Select(p => p.GetRuntimeName())), "Confirm Creating Archive?"))
                     {
 
                         var db = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.InternalDataProcessing);

@@ -230,7 +230,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
                 if(exports.Any(e=>e.Exists()))
-                    if(MessageBox.Show("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
                     {
                         foreach(ObjectExport e in exports)
                             e.DeleteInDatabase(); 
@@ -238,13 +238,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     else
                         return false;
             }
-
-            DialogResult result = MessageBox.Show(
-                (overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")) +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
-                "Delete " + deleteable.GetType().Name,
-                MessageBoxButtons.YesNo);
-            
-            if (result == DialogResult.Yes)
+                        
+            if (
+                YesNo(
+                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")
+                +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
+                "Delete " + deleteable.GetType().Name))
             {
                 deleteable.DeleteInDatabase();
                 
@@ -416,8 +415,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <returns></returns>
         public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
         {
-            return MessageBox.Show(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
-                           "Object Changed", MessageBoxButtons.YesNo) == DialogResult.Yes;
+            return YesNo(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
+                           "Object Changed");
         }
 
         public T Activate<T, T2>(T2 databaseObject)

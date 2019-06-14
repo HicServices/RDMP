@@ -140,9 +140,9 @@ namespace Rdmp.UI.SimpleDialogs
                 else
                 {
                     if (
-                        MessageBox.Show(
+                        Activator.YesNo(
                             "Are you sure you want to tie this SQL to this specific Catalogue? and stop it being Globally viewable to all Catalogues?",
-                            "Disable Globalness?", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            "Disable Globalness?"))
                         _supportingSQLTable.IsGlobal = false;
                     else
                         cbGlobal.Checked = true;

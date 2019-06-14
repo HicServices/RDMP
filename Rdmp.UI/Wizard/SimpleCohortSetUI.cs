@@ -79,9 +79,9 @@ namespace Rdmp.UI.Wizard
                     else //there are some user specified ones
                         if (
                             //confirm with user before we erase these
-                            MessageBox.Show(
+                            _activator.YesNo(
                                 "Changing the dataset will clear the Filters you have configured, is this what you want?",
-                                "Change Dataset", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                                "Change Dataset")
                             ClearFilters();
                         else
                         {

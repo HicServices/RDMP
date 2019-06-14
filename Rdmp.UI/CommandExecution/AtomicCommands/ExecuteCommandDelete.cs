@@ -35,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             else
             if(_deletables.Count>1)
             {
-                if(MessageBox.Show("Delete " + _deletables.Count + " Items?","Delete Items",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if(YesNo("Delete " + _deletables.Count + " Items?","Delete Items"))
                 {
                     foreach(IDeleteable d in _deletables)
                         d.DeleteInDatabase();

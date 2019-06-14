@@ -361,9 +361,7 @@ namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
                     worked = converter.ConvertFullColumnInfo(UserAcceptSql, checksUI1);
 
                 if (worked)
-                    if (
-                        MessageBox.Show("successfully changed column to ANO, close form?", "Close form?",
-                            MessageBoxButtons.YesNoCancel) == DialogResult.Yes)
+                    if (Activator.YesNo("successfully changed column to ANO, close form?", "Close form?"))
                         this.ParentForm.Close();
             }
             catch (Exception exception)

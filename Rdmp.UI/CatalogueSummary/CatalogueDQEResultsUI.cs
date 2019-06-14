@@ -68,6 +68,7 @@ namespace Rdmp.UI.CatalogueSummary
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
+            timePeriodicityChart1.SetItemActivator(activator);
 
             //clear old DQE graphs
             ClearDQEGraphs();

@@ -64,11 +64,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
                 if (duplicate != null)
                 {
-                    var drMarkSame = MessageBox.Show("There is already a filter called " + _filter.Name +
-                                                     " in ExtractionInformation " + toAddTo + " do you want to mark this filter as a child of that master filter?",
-                        "Duplicate, mark these as the same?", MessageBoxButtons.YesNo);
-
-                    if (drMarkSame == DialogResult.Yes)
+                    if (YesNo(
+                        "There is already a filter called " + _filter.Name +
+                        " in ExtractionInformation " + toAddTo + " do you want to mark this filter as a child of that master filter?",
+                        "Duplicate, mark these as the same?"))
                     {
                         _filter.ClonedFromExtractionFilter_ID = duplicate.ID;
                         _filter.SaveToDatabase();

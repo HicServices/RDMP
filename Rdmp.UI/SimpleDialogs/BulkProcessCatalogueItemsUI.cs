@@ -171,9 +171,7 @@ namespace Rdmp.UI.SimpleDialogs
                             //multiple matches so ask the user what one he wants
                             for (int i = 0; i < guesses.Length; i++) //note that this sneakily also deals with case where guesses is empty
                             {
-                                DialogResult dialogResult = MessageBox.Show("Found multiple matches, approve match?:" + Environment.NewLine + catalogueItem.Name + Environment.NewLine + guesses[i], "Multiple matched guesses", MessageBoxButtons.YesNo);
-
-                                if (dialogResult == DialogResult.Yes)
+                                if (Activator.YesNo("Found multiple matches, approve match?:" + Environment.NewLine + catalogueItem.Name + Environment.NewLine + guesses[i], "Multiple matched guesses"))
                                 {
                                     catalogueItem.SetColumnInfo(guesses[i]);
                                     countOfColumnInfoAssociationsCreated++;

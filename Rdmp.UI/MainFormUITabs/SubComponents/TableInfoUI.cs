@@ -91,15 +91,8 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
             var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
 
-            if (oldName != newName)
-            {
-                DialogResult dialogResult = MessageBox.Show("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?", MessageBoxButtons.YesNo);
-
-                if (dialogResult == DialogResult.Yes)
-                    DoRefactoring(oldName,newName);
-
-            }
-
+            if (oldName != newName && Activator.YesNo("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?"))
+                DoRefactoring(oldName,newName);
             
             _tableInfo.Name = newName;
 

@@ -154,10 +154,9 @@ namespace Rdmp.UI.ExtractionUIs
                 if (!cataItem.Name.Equals(ExtractionInformation.GetRuntimeName()))
                     //which now has a different name (usually alias)
                     if (
-                        MessageBox.Show(
+                        Activator.YesNo(
                             "Rename CatalogueItem " + cataItem.Name + " to match the new Alias? (" +
-                            ExtractionInformation.GetRuntimeName() + ")", "Update CatalogueItem name?",
-                            MessageBoxButtons.YesNo) == DialogResult.Yes)
+                            ExtractionInformation.GetRuntimeName() + ")", "Update CatalogueItem name?"))
                     {
                         cataItem.Name = ExtractionInformation.GetRuntimeName();
                         cataItem.SaveToDatabase();
