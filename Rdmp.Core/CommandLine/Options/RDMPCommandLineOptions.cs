@@ -41,7 +41,7 @@ namespace Rdmp.Core.CommandLine.Options
         public bool LogStartup{get;set;}
         
         [Option(Required = false, HelpText = @"Command to run on the engine: 'run' or 'check' ", Default = CommandLineActivity.run)]
-        public CommandLineActivity Command { get; set; }
+        public CommandLineActivity Command { get; set; } = CommandLineActivity.run;
 
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
         public bool FailOnWarnings { get; set; }
