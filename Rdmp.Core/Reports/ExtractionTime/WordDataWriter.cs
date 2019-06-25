@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
+using System.Text.RegularExpressions;
 using NPOI.XWPF.UserModel;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -98,7 +100,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
                     if (_destination.GeneratesFiles)
                     {
                         SetTableCell(t,rownum,0,"MD5");
-                        SetTableCell(t,rownum,1,UsefulStuff.HashFile(_destination.OutputFile));
+                        SetTableCell(t,rownum,1,FormatHashString(UsefulStuff.HashFile(_destination.OutputFile)));
                         rownum++;
                     
                         FileInfo f = new FileInfo(_destination.OutputFile);
@@ -170,7 +172,33 @@ namespace Rdmp.Core.Reports.ExtractionTime
             }
         }
 
-        
+        private string FormatHashString(string s)
+        {
+            if(string.IsNullOrWhiteSpace(s))
+                return null;
+
+            //add a space every 8 hex pairs
+            // E5-F2-AB-D9-A2-6E-15-38 E5-F2-AB-D9-A2-6E-15-38
+            StringBuilder result  = new StringBuilder();
+
+            StringReader sr = new StringReader(s);
+            
+            char[] buff = new char[23];
+
+            while(sr.Read(buff,0,23) > 0)
+            {
+                result.Append(buff);
+                result.Append(" ");
+                
+                //skip a character (should be a -, if not something has gone badly wrong)
+                var skipped = sr.Read();
+                if(!(skipped == '-' || skipped == -1))
+                    return s;
+
+            }
+
+            return result.ToString().Trim();
+        }
 
         private void AddFiltersAndParameters(XWPFDocument document)
         {

@@ -74,7 +74,7 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline
             }
             else
             {
-                _releaseFolder = GetFromProjectFolder();
+                _releaseFolder = GetFromProjectFolder(_project);
             }
 
             if (_releaseFolder.Exists && _releaseFolder.EnumerateFileSystemInfos().Any())
@@ -92,14 +92,14 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline
                                     _releaseFolder.FullName);
         }
 
-        private DirectoryInfo GetFromProjectFolder()
+        public DirectoryInfo GetFromProjectFolder(IProject p)
         {
-            if (string.IsNullOrWhiteSpace(_project.ExtractionDirectory))
+            if (string.IsNullOrWhiteSpace(p.ExtractionDirectory))
                 return null;
 
             var prefix = DateTime.UtcNow.ToString("yyyy-MM-dd");
             string suffix = String.Empty;
-            if (_releaseData.ConfigurationsForRelease.Keys.Any())
+            if (_releaseData != null && _releaseData.ConfigurationsForRelease != null && _releaseData.ConfigurationsForRelease.Keys.Any())
             {
                 var releaseTicket = _releaseData.ConfigurationsForRelease.Keys.First().ReleaseTicket;
                 if (_releaseData.ConfigurationsForRelease.Keys.All(x => x.ReleaseTicket == releaseTicket))
@@ -110,13 +110,13 @@ namespace Rdmp.Core.DataExport.DataRelease.Pipeline
 
             if (String.IsNullOrWhiteSpace(suffix))
             {
-                if (String.IsNullOrWhiteSpace(_project.MasterTicket))
-                    suffix = _project.ID + "_" + _project.Name;
+                if (String.IsNullOrWhiteSpace(p.MasterTicket))
+                    suffix = p.ID + "_" + p.Name;
                 else
-                    suffix = _project.MasterTicket;
+                    suffix = p.MasterTicket;
             }
 
-            return new DirectoryInfo(Path.Combine(_project.ExtractionDirectory, prefix + "_" + suffix));
+            return new DirectoryInfo(Path.Combine(p.ExtractionDirectory, prefix + "_" + suffix));
         }
     }
 }

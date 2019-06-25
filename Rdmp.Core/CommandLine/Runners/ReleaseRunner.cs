@@ -44,24 +44,32 @@ namespace Rdmp.Core.CommandLine.Runners
         protected override void Initialize()
         {
             _pipeline = RepositoryLocator.CatalogueRepository.GetObjectByID<Pipeline>(_options.Pipeline);
-            
-            //some datasets only
-            _selectedDatasets = RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<SelectedDataSets>(_options.SelectedDataSets).ToArray();
-
-            //get all configurations user has picked or are refernced by _selectedDatasets
+                        
+            //get all configurations user has picked
             HashSet<int> configurations = new HashSet<int>(_options.Configurations);
-            foreach (ISelectedDataSets selectedDataSets in _selectedDatasets)
-                configurations.Add(selectedDataSets.ExtractionConfiguration_ID);
-
-            //fetch them all by ID
             _configurations = RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<ExtractionConfiguration>(configurations).ToArray();
 
+            //some datasets only
+            if(_options.SelectedDataSets != null && _options.SelectedDataSets.Any())
+            {
+                _selectedDatasets = RepositoryLocator.DataExportRepository.GetAllObjectsInIDList<SelectedDataSets>(_options.SelectedDataSets).ToArray();
+                
+                //if user has specified some selected datasets that do not belong to configurations they specified then we will need to include
+                //those configurations as well
+                foreach(var s in _selectedDatasets)
+                    if(!configurations.Contains(s.ExtractionConfiguration_ID))
+                    {
+                        //add the config since it's not included in _options.Configurations
+                        _configurations = _configurations.ToList().Union(new []{s.ExtractionConfiguration }).ToArray();
+                    }
+            }
+            else
+                _selectedDatasets = _configurations.SelectMany(c=>c.SelectedDataSets).ToArray();
+                        
             if (!_configurations.Any())
                 throw new Exception("No Configurations have been selected for release");
 
             _project = _configurations.Select(c => c.Project).Distinct().Single();
-
-            
         }
 
         protected override void AfterRun()

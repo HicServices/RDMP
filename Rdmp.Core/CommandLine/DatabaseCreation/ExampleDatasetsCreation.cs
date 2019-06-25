@@ -11,6 +11,8 @@ using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
+using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -19,6 +21,8 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
+using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -26,6 +30,7 @@ using ReusableLibraryCode.Progress;
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
@@ -39,8 +44,6 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         private const int NumberOfPeople = 5000;
         private const int NumberOfRowsPerDataset = 10000;
         
-        int projectNumber = 1;
-
         public ExampleDatasetsCreation(IRDMPPlatformRepositoryServiceLocator repos)
         {
             this._repos = repos;
@@ -173,11 +176,63 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             var f = CreateFilter(vConditions,"Lung Cancer Condition","Condition","Condition like 'C349'","ICD-10-CM Diagnosis Code C34.9 Malignant neoplasm of unspecified part of bronchus or lung");
             
             var cic = CreateCohortIdentificationConfiguration((ExtractionFilter)f);
+            
+            var cohort = CommitCohortToNewProject(cic,externalCohortTable,cohortCreationPipeline,"Lung Cancer Project","P1 Lung Cancer Patients",123,out Project project);
+            
+            var cohortDb = cohort.ExternalCohortTable.Discover();
+            var cohortTable = cohortDb.ExpectTable(cohort.ExternalCohortTable.TableName);
+            using (var con = cohortDb.Server.GetConnection())
+            {
+                con.Open();
+                //delete half the records (so we can simulate cohort refresh)
+                var cmd = cohortDb.Server.GetCommand(string.Format("DELETE TOP (10) PERCENT from {0}",cohortTable.GetFullyQualifiedName()), con);
+                cmd.ExecuteNonQuery();
+            }
+            
+            var ec1 = CreateExtractionConfiguration(project,cohort,"First Extraction (2016 - project 123)",true,notifier,biochem,prescribing,demography);
+            var ec2 = CreateExtractionConfiguration(project,cohort,"Project 123 - 2017 Refresh",true,notifier,biochem,prescribing,demography,admissions);
+            var ec3 = CreateExtractionConfiguration(project,cohort,"Project 123 - 2018 Refresh",true,notifier,biochem,prescribing,demography,admissions);
 
-            var cohort = CommitCohortToNewProject(cic,externalCohortTable,cohortCreationPipeline,"Lung Cancer Project","P1 Lung Cancer Patients",out Project project);
+            ReleaseAllConfigurations(notifier,ec1,ec2,ec3);
+        }
 
-            CreateExtractionConfiguration(project,cohort,"First Extraction",biochem,prescribing,demography,admissions);
+        private void ReleaseAllConfigurations(ICheckNotifier notifier,params ExtractionConfiguration[] extractionConfigurations)
+        {
+            var releasePipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Destination?.Class == typeof(BasicDataReleaseDestination).FullName);
 
+            try
+            {
+                //cleanup any old releases
+                var project = extractionConfigurations.Select(ec=>ec.Project).Distinct().Single();
+
+                var folderProvider = new ReleaseFolderProvider();
+                var dir = folderProvider.GetFromProjectFolder(project);
+                if(dir.Exists)
+                    dir.Delete(true);
+            }
+            catch(Exception ex)
+            {
+                notifier.OnCheckPerformed(new CheckEventArgs("Could not detect/delete release folder for extractions",CheckResult.Warning,ex));
+                return;
+            }
+
+
+            if(releasePipeline != null)
+                try
+                {
+                    var optsRelease = new ReleaseOptions()
+                    {
+                        Configurations = extractionConfigurations.Select(ec=>ec.ID).Distinct().ToArray(),
+                        Pipeline = releasePipeline.ID
+                    };
+
+                    var runnerRelease = new ReleaseRunner(optsRelease);
+                    runnerRelease.Run(_repos,new ThrowImmediatelyDataLoadEventListener(),notifier,new GracefulCancellationToken());
+                }
+                catch(Exception ex)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not Release ExtractionConfiguration (nevermind)",CheckResult.Warning,ex));
+                }
         }
 
         private void ForExtractionInformations(Catalogue catalogue, Action<ExtractionInformation> action,params string[] extractionInformations)
@@ -207,7 +262,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             return new ExtractionInformation(_repos.CatalogueRepository,ci,col,selectSQL);
         }
 
-        private void CreateExtractionConfiguration(Project project, ExtractableCohort cohort,string name, params Catalogue[] catalogues)
+        private ExtractionConfiguration CreateExtractionConfiguration(Project project, ExtractableCohort cohort,string name,bool isReleased,ICheckNotifier notifier, params Catalogue[] catalogues)
         {
             var extractionConfiguration = new ExtractionConfiguration(_repos.DataExportRepository,project);
             extractionConfiguration.Name = name;
@@ -222,18 +277,43 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 
                  extractionConfiguration.AddDatasetToConfiguration(eds);
             }
+
+            var extractionPipeline = _repos.CatalogueRepository.GetAllObjects<Pipeline>().FirstOrDefault(p=>p?.Destination?.Class == typeof(ExecuteDatasetExtractionFlatFileDestination).FullName);
+
+            if(isReleased && extractionConfiguration != null)
+            {
+                var optsExtract = new ExtractionOptions()
+                {
+                    Pipeline = extractionPipeline.ID,
+                    ExtractionConfiguration = extractionConfiguration.ID
+                };
+                var runnerExtract = new ExtractionRunner(optsExtract);
+                try
+                {
+                    runnerExtract.Run(_repos,new ThrowImmediatelyDataLoadEventListener(),notifier,new GracefulCancellationToken());
+                }
+                catch(Exception ex)
+                {
+                    notifier.OnCheckPerformed(new CheckEventArgs("Could not run ExtractionConfiguration (nevermind)",CheckResult.Warning,ex));
+                }
+
+                extractionConfiguration.IsReleased = true;
+                extractionConfiguration.SaveToDatabase();
+            }
+
+            return extractionConfiguration;
         }
 
-        private ExtractableCohort CommitCohortToNewProject(CohortIdentificationConfiguration cic, ExternalCohortTable externalCohortTable,IPipeline cohortCreationPipeline,string projectName,string cohortName, out Project project)
+        private ExtractableCohort CommitCohortToNewProject(CohortIdentificationConfiguration cic, ExternalCohortTable externalCohortTable,IPipeline cohortCreationPipeline,string projectName,string cohortName,int projectNumber, out Project project)
         {
             //create a new data extraction Project
             project = new Project(_repos.DataExportRepository,projectName);
-            project.ProjectNumber = projectNumber++;
+            project.ProjectNumber = projectNumber;
             project.ExtractionDirectory = Path.GetTempPath();
             project.SaveToDatabase();
 
             //create a cohort
-            var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,1,externalCohortTable),_repos.DataExportRepository,"Created by running cic " + cic.ID);
+            var request = new CohortCreationRequest(project,new CohortDefinition(null,cohortName,1,projectNumber,externalCohortTable),_repos.DataExportRepository,"Created by running cic " + cic.ID);
             request.CohortIdentificationConfiguration = cic;
 
             var engine = request.GetEngine(cohortCreationPipeline,new ThrowImmediatelyDataLoadEventListener());                        
@@ -471,10 +551,10 @@ UNPIVOT
 
                 foreach(var ci in cata.CatalogueItems)
                 {
-                    var ciDescription = desc.Get(cata.Name,ci.Name);
+                    var ciDescription = Trim(desc.Get(cata.Name,ci.Name));
                     if(ciDescription != null)
                     {
-                        ci.Description = ciDescription.Trim();
+                        ci.Description = ciDescription;
                         ci.SaveToDatabase();
                     }
                 }
@@ -490,6 +570,14 @@ UNPIVOT
             }
             return cata;
         }
-        
+
+        private string Trim(string s)
+        {
+            if(string.IsNullOrWhiteSpace(s))
+                return null;
+
+            //replace 2+ tabs and spaces with single spaces
+            return Regex.Replace(s,@"[ \t]{2,}"," ").Trim();
+        }
     }
 }
