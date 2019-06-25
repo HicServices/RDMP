@@ -6,11 +6,10 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using System.Linq;
 
-namespace Rdmp.UI.SimpleDialogs.Governance
+namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandAddCatalogueToGovernancePeriod:BasicUICommandExecution
     {
