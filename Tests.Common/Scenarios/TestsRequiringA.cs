@@ -5,9 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
+using FAnsi.Discovery.TableCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 
@@ -16,8 +18,19 @@ namespace Tests.Common.Scenarios
     /// <summary>
     /// Base class for all tests that need a lot of objects created for them (e.g. a <see cref="Catalogue"/> with a <see cref="LoadMetadata"/>
     /// </summary>
-    public abstract class TestsRequiringA : DatabaseTests
+    public abstract class TestsRequiringA : DatabaseTests, IDatabaseColumnRequestAdjuster
     {
+        public void AdjustColumns(List<DatabaseColumnRequest> columns)
+        {
+            //create string columns as varchar(500) to avoid load errors  when creating new csv files you want to load into the database
+            foreach(var c in columns)
+            {
+                if(c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.MaxWidthForStrings.HasValue)
+                    c.TypeRequested.MaxWidthForStrings = Math.Max(500,c.TypeRequested.MaxWidthForStrings.Value);
+
+            }
+        }
+
         protected DiscoveredTable CreateDataset<T>(int people, int rows,Random r, out PersonCollection peopleGenerated) where T:IDataGenerator
         {
             var f = new DataGeneratorFactory();
@@ -28,7 +41,7 @@ namespace Tests.Common.Scenarios
 
             var dt = instance.GetDataTable(peopleGenerated,rows);
 
-            return DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable(typeof(T).Name,dt);            
+            return DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable(typeof(T).Name,dt,null,false,this);
         }
         protected DiscoveredTable CreateDataset<T>(int people, int rows,Random r) where T:IDataGenerator
         {
