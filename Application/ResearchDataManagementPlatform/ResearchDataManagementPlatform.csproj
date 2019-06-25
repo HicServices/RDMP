@@ -4,43 +4,9 @@
     <OutputType>WinExe</OutputType>
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>net461</TargetFramework>
-        <IsWebBootstrapper>true</IsWebBootstrapper>
-    <PublishUrl>C:\Development\Deployments\RDMP\ResearchDataManagementPlatform\</PublishUrl>
-    <Install>true</Install>
-    <InstallFrom>Web</InstallFrom>
-    <UpdateEnabled>true</UpdateEnabled>
-    <UpdateMode>Foreground</UpdateMode>
-    <UpdateInterval>1</UpdateInterval>
-    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
-    <UpdatePeriodically>true</UpdatePeriodically>
-    <UpdateRequired>true</UpdateRequired>
-    <MapFileExtensions>true</MapFileExtensions>
-    <InstallUrl>https://hic.dundee.ac.uk/Installers/RDMP/ResearchDataManagementPlatform/</InstallUrl>
-    <UpdateUrl>https://hic.dundee.ac.uk/Installers/RDMP/ResearchDataManagementPlatform/</UpdateUrl>
-    <MinimumRequiredVersion>1.0.0.0</MinimumRequiredVersion>
-    <CreateWebPageOnPublish>true</CreateWebPageOnPublish>
-    <WebPage>publish.htm</WebPage>
-    <ApplicationRevision>4</ApplicationRevision>
-    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <UseApplicationTrust>false</UseApplicationTrust>
-    <PublishWizardCompleted>true</PublishWizardCompleted>
-    <BootstrapperEnabled>true</BootstrapperEnabled>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-	<DocumentationFile />
-  </PropertyGroup>
   <PropertyGroup>
-    <SignManifests>true</SignManifests>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestCertificateThumbprint>281B452B12FB1AE15FE7F790EC4119495C4525B9</ManifestCertificateThumbprint>
-  </PropertyGroup>
-  <PropertyGroup>
-    <ManifestTimestampUrl>http://timestamp.verisign.com/scripts/timstamp.dll</ManifestTimestampUrl>
-  </PropertyGroup>
-  <PropertyGroup>
-    <GenerateManifests>true</GenerateManifests>
     <LangVersion>7.1</LangVersion>
   </PropertyGroup>
   <ItemGroup>
