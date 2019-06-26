@@ -49,10 +49,10 @@ namespace ReusableCodeTests
                 Assert.Fail("Could not find file {0}",packagesMarkdown);
             
             //<PackageReference Include="NUnit3TestAdapter" Version="3.13.0" />
-            Regex rPackageRef = new Regex(@"<PackageReference\s+Include=""(.*)""\s+Version=""(.*)""",RegexOptions.IgnoreCase);
+            Regex rPackageRef = new Regex(@"<PackageReference\s+Include=""(.*)""\s+Version=""([^""]*)""", RegexOptions.IgnoreCase);
 
             //<dependency id="CsvHelper" version="12.1.2" />
-            Regex rDependencyRef = new Regex(@"<dependency\s+id=""(.*)""\s+version=""(.*)""",RegexOptions.IgnoreCase);
+            Regex rDependencyRef = new Regex(@"<dependency\s+id=""(.*)""\s+version=""([^""]*)""", RegexOptions.IgnoreCase);
             
             //For each dependency listed in the csproj
             foreach(Match p in rPackageRef.Matches(File.ReadAllText(csproj)))
