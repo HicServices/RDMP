@@ -16,13 +16,14 @@
 			      <dependency id="HIC.BadMedicine" version="0.0.1.2" />
             <dependency id="HIC.FansiSql" version="0.9.1.10" />
             <dependency id="CsvHelper" version="12.1.2" />
-            <dependency id="Newtonsoft.Json" version="11.0.2"/>
+            <dependency id="Newtonsoft.Json" version="12.0.2"/>
             <dependency id="CommandLineParser" version="2.3.0" />
             <dependency id="SSH.NET" version="2013.4.7" />
             <dependency id="NUnit" version="3.11.0" />
             <dependency id="Moq" version="4.10.1" />
             <dependency id="NLog" version="4.6.2" />
-            <dependency id="YamlDotNet" version="6.0.0.0" />
+            <dependency id="YamlDotNet" version="6.0.0" />
+            <dependency id="Microsoft.NET.Test.Sdk" version="16.0.1" />
         </dependencies>
     </metadata>
     <files>
