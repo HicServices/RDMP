@@ -32,5 +32,4 @@
 | [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [12.0.1](https://www.nuget.org/packages/Newtonsoft.Json/12.0.1) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [6.0.0](https://www.nuget.org/packages/YamlDotNet/6.0.0) | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|
 | [SecurityCodeScan](https://security-code-scan.github.io/) | [GitHub](https://github.com/security-code-scan/security-code-scan) | [3.2.0](https://www.nuget.org/packages/SecurityCodeScan/3.2.0) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html)| Performs static build time analysis for vulnerabilities in the codebase (e.g. Sql injection)| |
-
-
+| System.Runtime.Loader | [GitHub](https://github.com/dotnet/corefx) | [4.3.0](https://www.nuget.org/packages/System.Runtime.Loader/4.3.0) |[MIT](https://opensource.org/licenses/MIT)  | Allows loading assemblies in dot net core| |

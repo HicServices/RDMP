@@ -26,6 +26,7 @@
             <dependency id="Microsoft.NET.Test.Sdk" version="16.0.1" />
             <dependency id="ExcelNumberFormat" version="1.0.5" />
             <dependency id="NPOI" version="2.4.1" />
+            <dependency id="System.Runtime.Loader" version="4.3.0" />
         </dependencies>
     </metadata>
     <files>

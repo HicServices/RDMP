@@ -23,6 +23,7 @@
             <dependency id="ExcelNumberFormat" version="1.0.5" />
             <dependency id="NPOI" version="2.4.1" />
             <dependency id="HIC.BadMedicine" version="0.0.1.2" />
+            <dependency id="System.Runtime.Loader" version="4.3.0" />
         </dependencies>
     </metadata>
   <files>
