@@ -219,6 +219,9 @@ namespace ReusableUIComponents.Dialogs
 
         private void SetMessage(string message, string keywordNotToAdd = null)
         {
+            if(string.IsNullOrWhiteSpace(message))
+                message = "";            
+
             //unless the text is unreasonably long or we don't have help documentation available
             if (message.Length > 100000 || CommentStore == null)
             {

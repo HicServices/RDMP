@@ -140,6 +140,10 @@ namespace rdmp
             var factory = new RunnerFactory();
             opts.DoStartup(GetEnvironmentInfo(),opts.LogStartup ? (ICheckNotifier)checker: new IgnoreAllErrorsCheckNotifier());
 
+            //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
+            if(opts.LogStartup && opts.Command == CommandLineActivity.check)
+                checker.Worst = LogLevel.Info;
+
             var runner = factory.CreateRunner(opts);
 
             int runExitCode = runner.Run(opts.GetRepositoryLocator(), listener, checker, new GracefulCancellationToken());

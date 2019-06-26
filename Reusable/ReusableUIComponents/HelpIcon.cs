@@ -76,7 +76,8 @@ namespace ReusableUIComponents
                 if (_workFlow != null)
                     _workFlow.Start(true);
                 else
-                    WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
+                    if(_title != null && _originalHoverText != null)
+                        WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
         }
     }
 }
