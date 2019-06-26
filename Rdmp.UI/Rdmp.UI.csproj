@@ -19,9 +19,6 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.Net.Http" Version="4.*" />
     <PackageReference Include="HIC.BadMedicine" Version="0.0.1.2" />
   </ItemGroup>
   <ItemGroup>

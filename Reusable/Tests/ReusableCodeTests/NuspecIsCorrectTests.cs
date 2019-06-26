@@ -26,6 +26,18 @@ namespace ReusableCodeTests
         [TestCase("../../../../../../Rdmp.Core/Rdmp.Core.csproj","../../../../../../Plugins/Plugin.Test/Plugin.Test.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
         [TestCase("../../../../../../Rdmp.Core/Rdmp.Core.csproj","../../../../../../Plugins/Plugin/Plugin.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
         [TestCase("../../../../../../Rdmp.Core/Rdmp.Core.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+
+        //reusable dependencies should be in all nuspec files
+        [TestCase("../../../../../../Reusable/MapsDirectlyToDatabaseTable/MapsDirectlyToDatabaseTable.csproj","../../../../../../Plugins/Plugin.Test/Plugin.Test.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Reusable/MapsDirectlyToDatabaseTable/MapsDirectlyToDatabaseTable.csproj","../../../../../../Plugins/Plugin/Plugin.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Reusable/MapsDirectlyToDatabaseTable/MapsDirectlyToDatabaseTable.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Reusable/ReusableLibraryCode/ReusableLibraryCode.csproj","../../../../../../Plugins/Plugin.Test/Plugin.Test.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Reusable/ReusableLibraryCode/ReusableLibraryCode.csproj","../../../../../../Plugins/Plugin/Plugin.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Reusable/ReusableLibraryCode/ReusableLibraryCode.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+
+        //ui dependencies should be in Plugin.UI.nuspec
+        [TestCase("../../../../../../Rdmp.UI/Rdmp.UI.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Reusable/ReusableUIComponents/ReusableUIComponents.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
         public void TestDependencyCorrect( string csproj, string nuspec, string packagesMarkdown)
         {
             if(!File.Exists(csproj))
