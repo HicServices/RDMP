@@ -5,10 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Text;
+using System.Linq;
 using System.Text.RegularExpressions;
 
 namespace ReusableCodeTests
@@ -19,7 +17,15 @@ namespace ReusableCodeTests
     /// </summary>
     class NuspecIsCorrectTests
     {
+        static string[] Analyzers = new string[]{"SecurityCodeScan" };
+
+        //test dependencies should be in Plugin.Test.nuspec
         [TestCase("../../../../../../Tests.Common/Tests.Common.csproj","../../../../../../Plugins/Plugin.Test/Plugin.Test.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        
+        //core dependencies should be in all nuspec files
+        [TestCase("../../../../../../Rdmp.Core/Rdmp.Core.csproj","../../../../../../Plugins/Plugin.Test/Plugin.Test.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Rdmp.Core/Rdmp.Core.csproj","../../../../../../Plugins/Plugin/Plugin.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
+        [TestCase("../../../../../../Rdmp.Core/Rdmp.Core.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
         public void TestDependencyCorrect( string csproj, string nuspec, string packagesMarkdown)
         {
             if(!File.Exists(csproj))
@@ -44,21 +50,27 @@ namespace ReusableCodeTests
 
                 bool found = false;
                  
-                //make sure it appears in the nuspec
-                foreach(Match d in rDependencyRef.Matches(File.ReadAllText(nuspec)))
+                //analyzers do not have to be listed as a dependency in nuspec (but we should document them in packages.md)
+                if(!Analyzers.Contains(package))
                 {
-                    string packageDependency = d.Groups[1].Value;
-                    string versionDependency = d.Groups[2].Value;
-
-                    if(packageDependency.Equals(package))
+                    //make sure it appears in the nuspec
+                    foreach(Match d in rDependencyRef.Matches(File.ReadAllText(nuspec)))
                     {
-                        Assert.AreEqual(version,versionDependency, "Package {0} is version {1} in {2} but version {3} in {4}",package,version,csproj,packageDependency,versionDependency,nuspec);   
-                        found = true;
-                    }
-                }
+                        string packageDependency = d.Groups[1].Value;
+                        string versionDependency = d.Groups[2].Value;
 
-                if(!found)
-                    Assert.Fail("Package {0} in {1} is not listed as a dependency of {2}",package,csproj,nuspec);
+                        if(packageDependency.Equals(package))
+                        {
+                            Assert.AreEqual(version,versionDependency, "Package {0} is version {1} in {2} but version {3} in {4}",package,version,csproj,versionDependency,nuspec);
+                            found = true;
+                        }
+                    }
+
+                    if(!found)
+                        Assert.Fail("Package {0} in {1} is not listed as a dependency of {2}. Recommended line is:\r\n{3}",package,csproj,nuspec,
+                            BuildRecommendedDependencyLine(package,version));
+                }
+                
 
                 //And make sure it appears in the packages.md file
                 if(packagesMarkdown != null)
@@ -76,12 +88,18 @@ namespace ReusableCodeTests
                     }
 
                     if(!found)
-                        Assert.Fail("Package {0} in {1} is not documented in {2}. Recommended line is:\r\n{3}",package,csproj,packagesMarkdown,BuildRecommendedLine(package,version));
+                        Assert.Fail("Package {0} in {1} is not documented in {2}. Recommended line is:\r\n{3}",package,csproj,packagesMarkdown,
+                            BuildRecommendedMarkdownLine(package,version));
                 }
             }
         }
 
-        private object BuildRecommendedLine(string package, string version)
+        private object BuildRecommendedDependencyLine(string package, string version)
+        {
+            return string.Format("<dependency id=\"{0}\" version=\"{1}\" />",package,version);
+        }
+
+        private object BuildRecommendedMarkdownLine(string package, string version)
         {
             return string.Format("| {0} | [GitHub]() | [{1}](https://www.nuget.org/packages/{0}/{1}) | | | |",package,version);
         }

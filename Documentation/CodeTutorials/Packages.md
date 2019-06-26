@@ -20,8 +20,9 @@
 | Command Line Parser | [GitHub](https://github.com/commandlineparser/commandline) | [2.4.3](https://www.nuget.org/packages/CommandLineParser/2.4.3) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
 | CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [12.1.2](https://www.nuget.org/packages/CsvHelper/12.1.2) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.4.1](https://www.nuget.org/packages/NPOI/2.4.1) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
+| ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) | [1.0.5](https://www.nuget.org/packages/ExcelNumberFormat/1.0.5) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
 | [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [4.6.2](https://www.nuget.org/packages/NLog/4.6.5) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
-| FAnsi SQL |[GitHub](https://github.com/HicServices/FAnsiSql) | [0.9.1.10](https://www.nuget.org/packages/HIC.FansiSql/0.9.1.10) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | DBMS abstraction layer |
+| HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [0.9.1.10](https://www.nuget.org/packages/HIC.FansiSql/0.9.1.10) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | DBMS abstraction layer |
 | HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [0.0.1.2](https://www.nuget.org/packages/HIC.BadMedicine/0.0.1.2) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2016.1.0](https://www.nuget.org/packages/SSH.NET/2016.1.0) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
 | Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.10.1](https://www.nuget.org/packages/Moq/4.10.1) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
@@ -30,6 +31,6 @@
 | NUnit3TestAdapter | [GitHub](https://github.com/nunit/nunit3-vs-adapter)| [3.13.0](https://www.nuget.org/packages/NUnit3TestAdapter/3.13.0) | [MIT](https://opensource.org/licenses/MIT) | Run unit tests from within Visual Studio |
 | [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [12.0.1](https://www.nuget.org/packages/Newtonsoft.Json/12.0.1) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
 | YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [6.0.0](https://www.nuget.org/packages/YamlDotNet/6.0.0) | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|
-
+| [SecurityCodeScan](https://security-code-scan.github.io/) | [GitHub](https://github.com/security-code-scan/security-code-scan) | [3.2.0](https://www.nuget.org/packages/SecurityCodeScan/3.2.0) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html)| Performs static build time analysis for vulnerabilities in the codebase (e.g. Sql injection)| |
 
 
