@@ -20,6 +20,7 @@
 | Command Line Parser | [GitHub](https://github.com/commandlineparser/commandline) | [2.4.3](https://www.nuget.org/packages/CommandLineParser/2.4.3) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
 | CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [12.1.2](https://www.nuget.org/packages/CsvHelper/12.1.2) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.4.1](https://www.nuget.org/packages/NPOI/2.4.1) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
+| [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [4.6.2](https://www.nuget.org/packages/NLog/4.6.5) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
 | FAnsi SQL |[GitHub](https://github.com/HicServices/FAnsiSql) | [0.9.1.10](https://www.nuget.org/packages/HIC.FansiSql/0.9.1.10) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | DBMS abstraction layer |
 | Bad Medicine | [GitHub](https://github.com/HicServices/BadMedicine) | [0.0.1.2](https://www.nuget.org/packages/HIC.BadMedicine/0.0.1.2) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
 | SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2016.1.0](https://www.nuget.org/packages/SSH.NET/2016.1.0) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
