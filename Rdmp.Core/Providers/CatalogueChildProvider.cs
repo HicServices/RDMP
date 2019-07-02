@@ -179,6 +179,9 @@ namespace Rdmp.Core.Providers
         public Curation.Data.Plugin[] AllPlugins { get; }
         public Curation.Data.Plugin[] AllCompatiblePlugins { get; }
 
+        public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
+            
+
         public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
             _commentStore = repository.CommentStore;
@@ -516,6 +519,9 @@ namespace Rdmp.Core.Providers
             foreach (var useCase in useCases)
             {
                 var node = new StandardPipelineUseCaseNode(useCase.Key, useCase.Value, _commentStore);
+                
+                //keep track of all the use cases
+                PipelineUseCases.Add(node);
 
                 foreach (Pipeline pipeline in AddChildren(node, descendancy.Add(node)))
                     unknownPipelines.Remove(pipeline);

@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
@@ -91,5 +92,11 @@ namespace Rdmp.Core.Providers
         IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
 
         DatabaseEntity GetLatestCopyOf(DatabaseEntity e);
+
+
+        /// <summary>
+        /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.
+        /// </summary>
+        HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get; }
     }
 }

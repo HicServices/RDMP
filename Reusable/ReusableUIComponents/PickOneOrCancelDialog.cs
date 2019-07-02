@@ -22,6 +22,26 @@ namespace ReusableUIComponents
     {
         public T Picked { get; set; } = default(T);
 
+        /// <summary>
+        /// Prompts user to pick one of the <paramref name="options"/> displaying the given <paramref name="message"/>.  See overload
+        /// for customising text and image shown for each option
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="message"></param>
+        public PickOneOrCancelDialog(T[] options,string message):this(options,message,null,null)
+        {
+
+        }
+            
+
+        /// <summary>
+        /// Prompts user to pick one of the <paramref name="options"/> displaying the given <paramref name="message"/>.  <paramref name="options"/>
+        /// are shown with the given <paramref name="imageGetter"/> icon and the text for each item is <paramref name="nameGetter"/>.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="message"></param>
+        /// <param name="imageGetter"></param>
+        /// <param name="nameGetter"></param>
         public PickOneOrCancelDialog(T[] options,string message, Func<T,Image> imageGetter, Func<T,string> nameGetter)
         {
             InitializeComponent();
@@ -32,7 +52,10 @@ namespace ReusableUIComponents
             if(imageGetter != null)
                 olvOptions.ImageGetter = (m)=>imageGetter((T)m);
 
-            olvOptions.AspectGetter = (m)=>nameGetter((T)m);
+            if(nameGetter != null)
+                olvOptions.AspectGetter = (m)=>nameGetter((T)m);
+            else
+                olvOptions.AspectGetter = (m)=>m.ToString();
 
             objectListView1.AddObjects(options);
         }
