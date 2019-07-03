@@ -6,10 +6,12 @@
 
 using System;
 using System.Data;
+using System.Globalization;
 using System.IO;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
+using Rdmp.Core.DataLoad.Engine.Attachers;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
@@ -94,7 +96,10 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
         [DemandsInitialization(ExcelDataFlowSource.AddFilenameColumnNamed_DemandDescription)]
         public string AddFilenameColumnNamed { get; set; }
-        
+
+        [DemandsInitialization(Attacher.Culture_DemandDescription)]
+        public override CultureInfo Culture { get => _source.Culture; set => _source.Culture = value; }
+
         private GracefulCancellationToken cancellationToken = new GracefulCancellationToken();
 
           protected DelimitedFlatFileAttacher(char separator)

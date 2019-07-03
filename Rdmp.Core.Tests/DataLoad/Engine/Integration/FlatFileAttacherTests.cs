@@ -8,6 +8,7 @@ using System;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
@@ -356,14 +357,25 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
         }
         
-        [TestCase(DatabaseType.MySql,"27/01/2001","en-GB")]
-        [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB")]
-        [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB")]
-        [TestCase(DatabaseType.MySql,"01/27/2001","en-us")]
-        [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us")]
-        [TestCase(DatabaseType.Oracle,"01/27/2001","en-us")]        
-        public void Test_FlatFileAttcher_AmbiguousDates(DatabaseType type,string val,string culture)
+        [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-GB")]
+        [TestCase(DatabaseType.MySql,"27/01/2001","en-GB","en-us")]
+        [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-us")]
+        [TestCase(DatabaseType.MySql,"01/27/2001","en-us", "en-GB")]
+
+        [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-GB")]
+        [TestCase(DatabaseType.MicrosoftSQLServer,"27/01/2001","en-GB","en-us")]
+        [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-us")]
+        [TestCase(DatabaseType.MicrosoftSQLServer,"01/27/2001","en-us","en-GB")]
+                
+        [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-GB")]
+        [TestCase(DatabaseType.Oracle,"27/01/2001","en-GB","en-us")]
+        [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-us")]
+        [TestCase(DatabaseType.Oracle,"01/27/2001","en-us","en-GB")]
+
+        public void Test_FlatFileAttcher_AmbiguousDates(DatabaseType type,string val,string attacherCulture, string threadCulture)
         { 
+            Thread.CurrentThread.CurrentCulture = new CultureInfo(threadCulture);
+
             string filename = Path.Combine(LoadDirectory.ForLoading.FullName, "bob.csv");
             var sw = new StreamWriter(filename);
 
@@ -384,11 +396,11 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Import(tbl,out TableInfo ti,out _);
             var attacher = new AnySeparatorFileAttacher();
-            attacher.Initialize(LoadDirectory, db);
             attacher.Separator = ",";
             attacher.FilePattern = "bob*";
             attacher.TableName = tbl.GetRuntimeName();
-            attacher.Culture = new CultureInfo(culture);
+            attacher.Culture = new CultureInfo(attacherCulture);
+            attacher.Initialize(LoadDirectory, db);
             
             var job = new ThrowImmediatelyDataLoadJob(new HICDatabaseConfiguration(_database.Server, null),ti);
 
