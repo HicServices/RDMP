@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi.Discovery;
 using System;
+using System.Drawing;
 using System.Windows.Forms;
 
 
@@ -19,6 +21,11 @@ namespace ReusableUIComponents
         private readonly bool _allowBlankText;
         public string ResultText {get { return textBox1.Text.Trim(); }}
 
+        /// <summary>
+        /// True to require that text typed be sane for usage as a column name, table name etc e.g. "bob" but not "bob::bbbbb".
+        /// </summary>
+        public bool RequireSaneHeaderText{get;set;}
+
         public TypeTextOrCancelDialog(string header, string label, int maxCharacters, string startingTextForInputBox = null, bool allowBlankText = false)
         {
             _allowBlankText = allowBlankText;
@@ -30,7 +37,7 @@ namespace ReusableUIComponents
 
             textBox1.Text = startingTextForInputBox;
             SetEnabledness();
-
+            
         }
 
         private void btnOk_Click(object sender, EventArgs e)
@@ -67,6 +74,20 @@ namespace ReusableUIComponents
 
         private void SetEnabledness()
         {
+            textBox1.ForeColor = Color.Black;
+
+            //if theres some text typed and we want typed text to be sane
+            if(RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
+            {
+                //if the sane name doesn't match the 
+                if(!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSane(textBox1.Text),StringComparison.CurrentCultureIgnoreCase))
+                {
+                    btnOk.Enabled = false;
+                    textBox1.ForeColor = Color.Red;
+                    return;
+                }
+            }
+
             btnOk.Enabled = (!string.IsNullOrWhiteSpace(textBox1.Text)) || _allowBlankText;
         }
     }

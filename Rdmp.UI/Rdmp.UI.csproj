@@ -144,6 +144,10 @@
     <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">

@@ -8,6 +8,7 @@ using System;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
@@ -59,7 +60,7 @@ namespace Rdmp.UI.Collections.Providers
             if (e.Column != _columnThatSupportsRenaming)
                 return;
 
-            if (!(e.RowObject is INamed))
+            if (!(e.RowObject is INamed) || e.RowObject is ITableInfo)
                 e.Cancel = true;
         }
 
@@ -83,7 +84,15 @@ namespace Rdmp.UI.Collections.Providers
             try
             {
                 if (name != null)
-                    new ExecuteCommandRename(_activator, name, (string) e.NewValue).Execute();
+                {
+                    var cmd = new ExecuteCommandRename(_activator, name, (string) e.NewValue);
+
+                    if(cmd.IsImpossible)
+                        MessageBox.Show(cmd.ReasonCommandImpossible);
+                    else
+                        cmd.Execute();
+                }
+                    
             }
             catch (Exception exception)
             {
