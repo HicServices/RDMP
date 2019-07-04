@@ -59,8 +59,8 @@
             this.tbAcronym = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             this.btnRenameTableInfo = new System.Windows.Forms.Button();
+            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.pChangeAll.SuspendLayout();
             this.pFilter.SuspendLayout();
@@ -389,6 +389,17 @@
             this.panel1.Size = new System.Drawing.Size(819, 568);
             this.panel1.TabIndex = 27;
             // 
+            // btnRenameTableInfo
+            // 
+            this.btnRenameTableInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRenameTableInfo.Location = new System.Drawing.Point(727, 30);
+            this.btnRenameTableInfo.Name = "btnRenameTableInfo";
+            this.btnRenameTableInfo.Size = new System.Drawing.Size(75, 23);
+            this.btnRenameTableInfo.TabIndex = 27;
+            this.btnRenameTableInfo.Text = "Rename...";
+            this.btnRenameTableInfo.UseVisualStyleBackColor = true;
+            this.btnRenameTableInfo.Click += new System.EventHandler(this.BtnRenameTableInfo_Click);
+            // 
             // helpIcon1
             // 
             this.helpIcon1.BackColor = System.Drawing.Color.Transparent;
@@ -401,17 +412,6 @@
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
             this.helpIcon1.SuppressClick = false;
             this.helpIcon1.TabIndex = 8;
-            // 
-            // btnRenameTableInfo
-            // 
-            this.btnRenameTableInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnRenameTableInfo.Location = new System.Drawing.Point(727, 30);
-            this.btnRenameTableInfo.Name = "btnRenameTableInfo";
-            this.btnRenameTableInfo.Size = new System.Drawing.Size(75, 23);
-            this.btnRenameTableInfo.TabIndex = 27;
-            this.btnRenameTableInfo.Text = "Rename";
-            this.btnRenameTableInfo.UseVisualStyleBackColor = true;
-            this.btnRenameTableInfo.Click += new System.EventHandler(this.BtnRenameTableInfo_Click);
             // 
             // ConfigureCatalogueExtractabilityUI
             // 

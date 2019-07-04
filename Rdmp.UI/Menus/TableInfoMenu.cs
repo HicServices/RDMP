@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
@@ -35,14 +36,25 @@ namespace Rdmp.UI.Menus
         public TableInfoMenu(RDMPContextMenuStripArgs args, TableInfo tableInfo)
             : base(args, tableInfo)
         {
-            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
-            Add(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, tableInfo));
 
-            Items.Add(new ToolStripSeparator());
-            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo));
-            Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo));
-            Items.Add(new ToolStripSeparator());
+            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false),Keys.None,"New");
+            Add(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, tableInfo),Keys.None,"New");
+                        
+            Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
+            Add(new ExecuteCommandAddJoinInfo(_activator, tableInfo),Keys.None,"New");
 
+            
+            try
+            {
+                Add(new ExecuteCommandAlterTableName(_activator,tableInfo),Keys.None,"Alter");
+                Add(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,tableInfo),Keys.None,"Alter");
+                Add(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,tableInfo),Keys.None,"Alter");
+            }
+            catch(Exception ex)
+            {
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs("Failed to build Alter commands",CheckResult.Fail,ex));
+            }
+            
             Items.Add("Synchronize TableInfo ", CatalogueIcons.Sync, delegate { TableInfo_Click(tableInfo); });
             Items.Add("Synchronize ANO Configuration ", CatalogueIcons.Sync, delegate { SynchronizeANOConfiguration_Click(tableInfo); });
 
@@ -59,9 +71,7 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandScriptTable(_activator, tableInfo));
 
             Items.Add(new ToolStripSeparator());
-            Items.Add("Create Shadow _Archive Table (Do not create on highly volatile tables!)", CatalogueIcons.Backup, delegate { CreateBackupTrigger_Click(tableInfo); });
-
-            Items.Add(new ToolStripSeparator());
+            
             Items.Add("Configure Primary Key Collision Resolution ", CatalogueIcons.CollisionResolution, delegate { ConfigurePrimaryKeyCollisionResolution_Click(tableInfo); });
 
             Items.Add(new ToolStripSeparator());
@@ -180,35 +190,5 @@ namespace Rdmp.UI.Menus
             ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptionsFactory().Create(tableInfo));
         }
 
-        private void CreateBackupTrigger_Click(TableInfo tableInfo)
-        {
-            try
-            {
-                var checks = new PopupChecksUI("Implementing archive trigger on table " + tableInfo, true);
-
-                TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(tableInfo);
-                if (synchronizer.Synchronize(checks))
-                {
-                    var pks = tableInfo.ColumnInfos.Where(col => col.IsPrimaryKey).ToArray();
-
-                    if (!pks.Any())
-                        MessageBox.Show("Your table does not have any primary keys so cannot support an archive trigger");
-
-                    if (_activator.YesNo("Are you sure you want to create a backup triggered _Archive table using the following primary keys?:" + Environment.NewLine + string.Join("" + Environment.NewLine, pks.Select(p => p.GetRuntimeName())), "Confirm Creating Archive?"))
-                    {
-
-                        var db = DataAccessPortal.GetInstance().ExpectDatabase(tableInfo, DataAccessContext.InternalDataProcessing);
-
-                        MicrosoftSQLTriggerImplementer implementer = new MicrosoftSQLTriggerImplementer(db.ExpectTable(tableInfo.GetRuntimeName()));
-                        implementer.CreateTrigger(checks);
-                        MessageBox.Show("Success, look for the new table " + tableInfo.GetRuntimeName() + "_Archive which will contain old records whenever there is an update");
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                ExceptionViewer.Show(e);
-            }
-        }
     }
 }

@@ -18,6 +18,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
@@ -160,6 +161,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<ColPair>().ToArray());
 
             CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
+            CommonFunctionality.AddHelpString(btnAddToExisting,"Add to existing catalogue","Use this option if you want to create a Catalogue which extracts from multiple tables (via a JOIN).  Once used you will still need to configure a JoinInfo between column(s) in all the tables the Catalogue draws data from.");
         }
 
 
