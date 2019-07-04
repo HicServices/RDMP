@@ -1,1 +1,2 @@
-Get-ChildItem -Path ./ -recurse | where {$_.name -match '.*\.((cs)|(xml))$'} | Compress-Archive -DestinationPath "./Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip" -Force
+Get-ChildItem -Path ./ -recurse | where {$_.name -match '.*\.cs$'} | Compress-Archive -DestinationPath "./Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip" -Force
+Get-ChildItem -Path ./ -recurse | where {$_.name -match '.*\.xml$'} | Select-Object -Unique | Compress-Archive -DestinationPath "./Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip" -Update
