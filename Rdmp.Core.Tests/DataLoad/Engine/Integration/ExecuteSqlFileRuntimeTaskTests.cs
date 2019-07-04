@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
@@ -18,8 +19,10 @@ using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime;
+using Rdmp.Core.DataLoad.Modules.Mutilators;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
+using ReusableLibraryCode.Progress;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
@@ -83,6 +86,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
 
+
+
             var task = new ExecuteSqlFileRuntimeTask(pt, new RuntimeArgumentCollection(new IArgument[0], new StageArgs(LoadStage.AdjustRaw, db, dir)));
 
             task.Check(new ThrowImmediatelyCheckNotifier());
@@ -95,7 +100,62 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                   
             var ex = Assert.Throws<ExecuteSqlFileRuntimeTaskException>(()=>task.Run(job, new GracefulCancellationToken()));
             StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.Message);
-            StringAssert.Contains("Bob.sql",ex.Message);
+
+            task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
+        }
+
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void ExecuteSqlRuntimeTask_InvalidID(DatabaseType dbType)
+        {
+            var dt = new DataTable();
+            dt.Columns.Add("Lawl");
+            dt.Rows.Add(new object[] { 2 });
+
+            var db = GetCleanedServer(dbType, true);
+
+            var tbl = db.CreateTable("Fish", dt);
+
+            TableInfo ti;
+            ColumnInfo[] cols;
+            Import(tbl,out ti,out cols);
+
+            string sql = @"UPDATE {T:0} Set {C:0} = 1";
+            
+            IRuntimeTask task;
+            IProcessTask pt;
+            
+            var dir = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory),"ExecuteSqlFileRuntimeTaskTests", true);
+                       
+            var sqlArg = new IArgument[]{Mock.Of<IArgument>(x => 
+            x.Name == "Sql" &&
+            x.Value == sql &&
+            x.GetValueAsSystemType() == sql) };
+
+            var args = new RuntimeArgumentCollection(sqlArg, new StageArgs(LoadStage.AdjustRaw, db, dir));
+
+            pt = Mock.Of<IProcessTask>(x => 
+            x.Path == typeof(ExecuteSqlMutilation).FullName &&
+            x.GetAllArguments() == sqlArg
+            );
+
+            task = new MutilateDataTablesRuntimeTask(pt,args,CatalogueRepository.MEF);
+                        
+            task.Check(new ThrowImmediatelyCheckNotifier());
+            HICDatabaseConfiguration configuration = new HICDatabaseConfiguration(db.Server);
+
+            var job = new ThrowImmediatelyDataLoadJob();
+            
+            job.RegularTablesToLoad = new List<ITableInfo> {ti};
+            job.LookupTablesToLoad = new List<ITableInfo>();
+            job.Configuration = configuration;
+                                  
+            var ex = Assert.Throws<Exception>(()=>task.Run(job, new GracefulCancellationToken()));
+
+            StringAssert.Contains("Mutilate failed",ex.Message);
+            StringAssert.Contains("Failed to find a TableInfo in the load with ID 0",ex.InnerException.Message);
+
+            task.LoadCompletedSoDispose(Core.DataLoad.ExitCodeType.Success,new ThrowImmediatelyDataLoadEventListener());
         }
 
         [TestCase(DatabaseType.MySql)]
