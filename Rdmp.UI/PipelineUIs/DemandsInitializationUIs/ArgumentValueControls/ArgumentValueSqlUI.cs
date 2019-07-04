@@ -38,7 +38,7 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
             DialogResult d = dialog.ShowDialog();
 
             if (d == DialogResult.OK)
-                _args.Setter(dialog.Result);
+                _args.Setter(_args.InitialValue = dialog.Result);
         }
     }
 }

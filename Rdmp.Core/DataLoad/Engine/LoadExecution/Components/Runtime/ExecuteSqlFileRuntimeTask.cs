@@ -5,16 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text.RegularExpressions;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
-using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
@@ -27,9 +22,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
     {
         public string Filepath;
         private IProcessTask _task;
-
-        Regex _regexEntity = new Regex(@"{([CT]):(\d+)}",RegexOptions.IgnoreCase);
-        private IDataLoadJob _job;
+                
         private LoadStage _loadStage;
 
         public ExecuteSqlFileRuntimeTask(IProcessTask task, RuntimeArgumentCollection args) : base(task, args)
@@ -37,12 +30,10 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
             _task = task;
             Filepath = task.Path;
         }
-
+        
         public override ExitCodeType Run(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             var db = RuntimeArguments.StageSpecificArguments.DbInfo;
-            _job = job;
-
             _loadStage = RuntimeArguments.StageSpecificArguments.LoadStage;
 
             if (!Exists())
@@ -72,84 +63,12 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
                 throw new Exception("Could not read the sql file at " + Filepath + ": " + e);
             }
             
-            commandText = _regexEntity.Replace(commandText, GetEntityForMatch);
-
-            try
-            {
-                Dictionary<int,Stopwatch> performance = new Dictionary<int, Stopwatch>();
-
-                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " (" + db.DescribeDatabase() + ")"));
-                using (var con = db.Server.GetConnection())
-                {
-                    con.Open();
-                    UsefulStuff.ExecuteBatchNonQuery(commandText, con, null, out performance, 600000);
-                }
-
-                foreach (KeyValuePair<int, Stopwatch> section in performance)
-                    job.OnNotify(this,
-                        new NotifyEventArgs(ProgressEventType.Information,
-                            "Batch ending on line  \"" + section.Key + "\" finished after " + section.Value.Elapsed));
-            }
-            catch (Exception e)
-            {
-                throw new Exception("Failed to execute the query from " + Filepath + ": " + e);
-            }
-
-            return ExitCodeType.Success;
+            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Executing script " + Filepath + " (" + db.DescribeDatabase() + ")"));
+            var executer = new ExecuteSqlInDleStage(job,_loadStage);
+            return executer.Execute(commandText,db);
         }
 
-        private string GetEntityForMatch(Match match)
-        {
-            if (match.Groups.Count != 3)
-                throw new ExecuteSqlFileRuntimeTaskException("Regex Match in Sql File had " + match.Groups.Count + " Groups, expected 3,  Match was:'" + match.Value + "'");
-
-            char entity;
-            int id;
-            try
-            {
-                entity = match.Groups[1].Value.ToUpper()[0];
-                id = int.Parse(match.Groups[2].Value);
-            }
-            catch (Exception e)
-            {
-                throw new ExecuteSqlFileRuntimeTaskException("Error performing substitution in Sql File, Failed to replace match " + match.Value + " due to parse expectations" ,e);
-            }
-
-
-            var tables = _job.RegularTablesToLoad.Union(_job.LookupTablesToLoad);
-
-
-            var syntaxHelper = RuntimeArguments.StageSpecificArguments.DbInfo.Server.GetQuerySyntaxHelper();
-            var namer = _job.Configuration.DatabaseNamer;
-
-            switch (entity)
-            {
-                case 'T':
-                    var toReturnTable = tables.SingleOrDefault(t => t.ID == id);
-
-                    if (toReturnTable == null)
-                        throw new ExecuteSqlFileRuntimeTaskException("Failed to find a TableInfo in the load with ID "+id + ".  All TableInfo IDs referenced in script " + Filepath + " must be part of the LoadMetadata");
-
-                    return toReturnTable.GetRuntimeName(_loadStage, namer);
-
-                case 'C':
-
-                    var toReturnColumn = tables.SelectMany(t=>t.ColumnInfos).SingleOrDefault(t => t.ID == id);
-
-                    if (toReturnColumn == null)
-                        throw new ExecuteSqlFileRuntimeTaskException("Failed to find a ColumnInfo in the load with ID " + id + ".  All ColumnInfo IDs referenced in script " + Filepath + " must be part of the LoadMetadata");
-
-                    var db = toReturnColumn.TableInfo.GetDatabaseRuntimeName(_loadStage, namer);
-                    var tbl = toReturnColumn.TableInfo.GetRuntimeName(_loadStage, namer);
-                    var col = toReturnColumn.GetRuntimeName(_loadStage);
-
-                    return syntaxHelper.EnsureFullyQualified(db, null, tbl, col);
-
-                default :
-                    throw new ExecuteSqlFileRuntimeTaskException("Error performing substitution in Sql File, Unexpected Type char in regex:" + entity);
-            }
-        }
-
+        
 
         public override bool Exists()
         {
