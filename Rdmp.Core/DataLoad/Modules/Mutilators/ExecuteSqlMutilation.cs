@@ -41,7 +41,7 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators
 
         public void LoadCompletedSoDispose(ExitCodeType exitCode, IDataLoadEventListener postLoadEventsListener)
         {
-            throw new NotImplementedException();
+            
         }
 
         public ExitCodeType Mutilate(IDataLoadJob job)
