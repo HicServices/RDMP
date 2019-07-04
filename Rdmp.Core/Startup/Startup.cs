@@ -327,7 +327,7 @@ namespace Rdmp.Core.Startup
             var sw = Stopwatch.StartNew();
 
             if(!CatalogueRepository.SuppressHelpLoading)
-                catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory);
+                catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory,"SourceCodeForSelfAwareness.zip");
 
             sw.Stop();
             notifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));
