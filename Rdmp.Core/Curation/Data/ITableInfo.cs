@@ -95,5 +95,11 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="context"></param>
         /// <returns></returns>
         DiscoveredTable Discover(DataAccessContext context);
+
+        /// <summary>
+        /// Returns the fully qualified name of the TableInfo
+        /// </summary>
+        /// <returns></returns>
+        string GetFullyQualifiedName();
     }
 }

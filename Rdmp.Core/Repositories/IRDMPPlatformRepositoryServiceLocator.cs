@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.DataQualityEngine.Data;
 
 namespace Rdmp.Core.Repositories
 {
@@ -23,6 +24,16 @@ namespace Rdmp.Core.Repositories
         /// <param name="objectID"></param>
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable GetArbitraryDatabaseObject(string repositoryTypeName, string databaseObjectTypeName,int objectID);
+        
         bool ArbitraryDatabaseObjectExists(string repositoryTypeName, string databaseObjectTypeName, int objectID);
+
+        /// <summary>
+        ///  Cross repository method equivallent to GetObjectByID.  Only works if <typeparamref name="T"/> is a Type supported by either
+        ///  CatalogueRepository / DataExportRepository (i.e. you can't fetch something like an <see cref="Evaluation"/> - which is a DQE object)
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="value"></param>
+        /// <returns></returns>
+        IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable;
     }
 }

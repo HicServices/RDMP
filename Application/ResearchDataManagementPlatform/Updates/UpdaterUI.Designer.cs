@@ -35,6 +35,7 @@
             this.olvType = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvInstall = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pbLoading = new System.Windows.Forms.PictureBox();
+            this.cbShowOlderVersions = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.objectListView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
@@ -98,10 +99,22 @@
             this.pbLoading.TabIndex = 4;
             this.pbLoading.TabStop = false;
             // 
+            // cbShowOlderVersions
+            // 
+            this.cbShowOlderVersions.AutoSize = true;
+            this.cbShowOlderVersions.Location = new System.Drawing.Point(571, 5);
+            this.cbShowOlderVersions.Name = "cbShowOlderVersions";
+            this.cbShowOlderVersions.Size = new System.Drawing.Size(115, 17);
+            this.cbShowOlderVersions.TabIndex = 5;
+            this.cbShowOlderVersions.Text = "Show Old Versions";
+            this.cbShowOlderVersions.UseVisualStyleBackColor = true;
+            this.cbShowOlderVersions.CheckedChanged += new System.EventHandler(this.CbShowOlderVersions_CheckedChanged);
+            // 
             // UpdaterUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.cbShowOlderVersions);
             this.Controls.Add(this.pbLoading);
             this.Controls.Add(this.objectListView1);
             this.Controls.Add(this.lblStatus);
@@ -121,5 +134,6 @@
         private BrightIdeasSoftware.OLVColumn olvType;
         private BrightIdeasSoftware.OLVColumn olvInstall;
         private System.Windows.Forms.PictureBox pbLoading;
+        private System.Windows.Forms.CheckBox cbShowOlderVersions;
     }
 }

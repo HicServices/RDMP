@@ -68,10 +68,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if(_cic == null)
                 return;
 
-            if (MessageBox.Show(
-                    "This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
+            if (YesNo("This will create a 100% copy of the entire CohortIdentificationConfiguration including all datasets, " +
                     "filters, parameters and set operations. Are you sure this is what you want?",
-                    "Confirm Cloning", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    "Confirm Cloning"))
             {
                 var checks = new PopupChecksUI("Cloning " + _cic, false);
                 var clone = _cic.CreateClone(checks);

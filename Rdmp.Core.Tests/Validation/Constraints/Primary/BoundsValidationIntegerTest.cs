@@ -9,12 +9,13 @@ using NUnit.Framework;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary;
+using Tests.Common;
 
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary
 {
 
     [Category("Unit")]
-    class BoundsValidationIntegerTest
+    class BoundsValidationIntegerTest : ValidationTests
     {
 
         [Test]

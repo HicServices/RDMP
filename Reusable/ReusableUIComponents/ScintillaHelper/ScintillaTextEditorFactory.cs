@@ -34,6 +34,8 @@ namespace ReusableUIComponents.ScintillaHelper
         /// <param name="language">Determines highlighting, options include mssql,csharp or null</param>
         /// <param name="syntaxHelper"></param>
         /// <param name="spellCheck"></param>
+        /// <param name="lineNumbers"></param>
+        /// <param name="currentDirectory"></param>
         /// <returns></returns>
         public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
         {

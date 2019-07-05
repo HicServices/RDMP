@@ -231,15 +231,15 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
         {
             var deletables = olvParameters.SelectedObjects.OfType<IDeleteable>().ToArray();
 
-            DialogResult dr;
+            bool dr;
             if(deletables.Any() && e.KeyCode == Keys.Delete)
             {
                 if (deletables.Length == 1)
-                    dr = MessageBox.Show("Confirm deleting " + deletables[0], "Confirm Delete?", MessageBoxButtons.YesNo);
+                    dr = Activator.YesNo("Confirm deleting " + deletables[0], "Confirm Delete?");
                 else
-                    dr = MessageBox.Show("Confirm deleting " + deletables.Length + " Parameters?", "Confirm delete",MessageBoxButtons.YesNo);
+                    dr =  Activator.YesNo("Confirm deleting " + deletables.Length + " Parameters?", "Confirm delete");
 
-                if(dr == DialogResult.Yes)
+                if(dr)
                 {
                     foreach (IDeleteable d in olvParameters.SelectedObjects)
                     {

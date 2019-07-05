@@ -116,7 +116,7 @@ namespace Rdmp.UI.ExtractionUIs
                     if (rbSupplemental.Checked || rbSpecialApproval.Checked)
                         extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.Supplemental));
 
-                    if (rbCore.Checked)
+                    if (rbSpecialApproval.Checked)
                         extractionInformations.AddRange(_catalogue.GetAllExtractionInformation(ExtractionCategory.SpecialApprovalRequired));
 
                 }

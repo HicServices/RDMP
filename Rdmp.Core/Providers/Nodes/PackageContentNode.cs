@@ -15,7 +15,7 @@ namespace Rdmp.Core.Providers.Nodes
     /// Collection of all datasets in a given <see cref="Package"/>.  This lets you define template sets of datasets which all get extracted together
     /// e.g. 'Core Datasets'.
     /// </summary>
-    public class PackageContentNode:Node,IDeleteable
+    public class PackageContentNode:Node,IDeletableWithCustomMessage, IMasqueradeAs
     {
         private readonly IExtractableDataSetPackageManager _contents;
         public IExtractableDataSetPackage Package { get; set; }
@@ -57,6 +57,16 @@ namespace Rdmp.Core.Providers.Nodes
         public void DeleteInDatabase()
         {
             _contents.RemoveDataSetFromPackage(Package, DataSet);
+        }
+
+        public object MasqueradingAs()
+        {
+            return DataSet;
+        }
+
+        public string GetDeleteMessage()
+        {
+            return "Remove '" + DataSet + "' from Pacakge";
         }
     }
 }

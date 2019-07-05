@@ -208,10 +208,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
-            
+                        
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
             var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
             
+            if(databaseObject is Catalogue c)
+            {
+                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                {
+                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
+                    {
+                        var cmd = new ExecuteCommandChangeExtractability(this,c);
+                        cmd.Execute();
+                    }
+                    else
+                        return false;
+                }
+            }
+
             string overrideConfirmationText = null;
 
             if (customMessageDeletable != null)
@@ -230,7 +244,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             {
                 var exports = RepositoryLocator.CatalogueRepository.GetReferencesTo<ObjectExport>(databaseObject).ToArray();
                 if(exports.Any(e=>e.Exists()))
-                    if(MessageBox.Show("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport",MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    if(YesNo("This object has been shared as an ObjectExport.  Deleting it may prevent you loading any saved copies.  Do you want to delete the ObjectExport definition?","Delete ObjectExport"))
                     {
                         foreach(ObjectExport e in exports)
                             e.DeleteInDatabase(); 
@@ -238,13 +252,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
                     else
                         return false;
             }
-
-            DialogResult result = MessageBox.Show(
-                (overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")) +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
-                "Delete " + deleteable.GetType().Name,
-                MessageBoxButtons.YesNo);
-            
-            if (result == DialogResult.Yes)
+                        
+            if (
+                YesNo(
+                    overrideConfirmationText?? ("Are you sure you want to delete '" + deleteable + "' from the database?")
+                +Environment.NewLine + "(" + deleteable.GetType().Name + idText +")",
+                "Delete " + deleteable.GetType().Name))
             {
                 deleteable.DeleteInDatabase();
                 
@@ -416,8 +429,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <returns></returns>
         public bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity)
         {
-            return MessageBox.Show(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
-                           "Object Changed", MessageBoxButtons.YesNo) == DialogResult.Yes;
+            return YesNo(databaseEntity + " is out of date with database, would you like to reload a fresh copy?",
+                           "Object Changed");
         }
 
         public T Activate<T, T2>(T2 databaseObject)
@@ -546,6 +559,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             foreach (IProblemProvider p in ProblemProviders)
                 p.RefreshProblems(CoreChildProvider);
+        }
+
+        /// <inheritdoc/>
+        public bool YesNo(string text,string caption)
+        {
+            return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
         }
     }
 }

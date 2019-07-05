@@ -131,12 +131,13 @@ namespace Rdmp.Core.Validation
 
             return ValidateAgainstDomainObject();
         }
-        
+
         /// <summary>
         /// Validate against the supplied domain object, which takes the form of a generic object with Properties matching TargetProperty or an SqlDataReader or a DataTable
         /// </summary>
         /// <param name="domainObject"></param>
         /// /// <param name="currentResults">It is expected that Validate is called multiple times (once per row) therefore you can store the Result of the last one and pass it back into the method the next time you call it in order to maintain a running total</param>
+        /// <param name="worstConsequence"></param>
         public VerboseValidationResults ValidateVerboseAdditive(object domainObject,VerboseValidationResults currentResults, out Consequence? worstConsequence)
         {
             worstConsequence = null;
@@ -285,6 +286,7 @@ namespace Rdmp.Core.Validation
         /// An ArgumentException is thrown if a matching constraint cannot be found.
         /// </summary>
         /// <param name="name"></param>
+        /// <param name="consequence"></param>
         /// <returns>A Constraint</returns>
         public static IConstraint CreateConstraint(string name, Consequence consequence)
         {

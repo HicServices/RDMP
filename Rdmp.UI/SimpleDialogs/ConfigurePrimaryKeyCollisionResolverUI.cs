@@ -329,12 +329,8 @@ namespace Rdmp.UI.SimpleDialogs
         private void btnSetAllAscending_Click(object sender, EventArgs e)
         {
             if (!AllAreSameDirection())
-            {
-                DialogResult dialogResult = MessageBox.Show("Are you sure you want to override the current resolution direction(s) with ASC , You will loose any currently configured column specific directions.", "Override current directions?", MessageBoxButtons.YesNo);
-
-                if(dialogResult != DialogResult.Yes)
+                if(!Activator.YesNo("Are you sure you want to override the current resolution direction(s) with ASC , You will loose any currently configured column specific directions.", "Override current directions?"))
                     return;
-            }
 
             foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
             {
@@ -346,12 +342,8 @@ namespace Rdmp.UI.SimpleDialogs
         private void btnSetAllDescending_Click(object sender, EventArgs e)
         {
             if (!AllAreSameDirection())
-            {
-                DialogResult dialogResult = MessageBox.Show("Are you sure you want to override the current resolution direction(s) with DESC, You will loose any currently configured column specific directions.", "Override current directions?", MessageBoxButtons.YesNo);
-
-                if (dialogResult != DialogResult.Yes)
+                if (!Activator.YesNo("Are you sure you want to override the current resolution direction(s) with DESC, You will loose any currently configured column specific directions.", "Override current directions?"))
                     return;
-            }
 
             foreach (IResolveDuplication item in lbConflictResolutionColumns.Items)
             {

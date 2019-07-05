@@ -14,6 +14,7 @@ using ReusableUIComponents.Dialogs;
 using ReusableLibraryCode;
 using System.Diagnostics;
 using System.IO;
+using System.Reflection;
 
 namespace ResearchDataManagementPlatform.Updates
 {
@@ -21,12 +22,15 @@ namespace ResearchDataManagementPlatform.Updates
     {
         private const string Url = "https://github.com/HicServices/RDMP";
         private UpdateInfo _updateInfo;
+        private Version _currentVersion;
 
         public UpdaterUI()
         {
             InitializeComponent();
 
             GetUpdatesAsync();
+
+            _currentVersion = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
 
             olvVersion.AspectGetter = (m)=>((ReleaseEntry)m).Version.ToString();
             olvInstall.AspectGetter = (m)=>{return "Install";};
@@ -136,11 +140,23 @@ namespace ResearchDataManagementPlatform.Updates
                 return;
             }
             
+            releasesToApply = releasesToApply.Where(v=>cbShowOlderVersions.Checked || IsNewer(v)).ToList();
+            
             if(releasesToApply.Any())
                 objectListView1.AddObjects(releasesToApply);
             else
                 lblStatus.Text = "No Updates Available";
+        }
 
+        private bool IsNewer(ReleaseEntry v)
+        {
+            return _currentVersion < v.Version.Version;
+        }
+
+        private void CbShowOlderVersions_CheckedChanged(object sender, EventArgs e)
+        {
+            objectListView1.ClearObjects();
+            GetUpdatesAsync();
         }
     }
 }

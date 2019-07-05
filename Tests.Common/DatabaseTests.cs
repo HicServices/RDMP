@@ -10,7 +10,6 @@ using System.Data;
 using System.Data.SqlClient;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
@@ -225,6 +224,9 @@ namespace Tests.Common
             //its a healthy message, jolly good
             if (args.Status == RDMPPlatformDatabaseStatus.Healthy)
                 return;
+
+             if(args.Status == RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+                Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
 
             if (args.Exception != null)
                 Assert.Fail(args.SummariseAsString());

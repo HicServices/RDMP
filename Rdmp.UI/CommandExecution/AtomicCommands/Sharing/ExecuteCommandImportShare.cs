@@ -38,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
             }
         }
 
-        public virtual Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return FamFamFamIcons.page_white_get;
         }

@@ -14,15 +14,12 @@
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="AutoCompleteMenu-ScintillaNET" Version="1.6.1" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.1.10" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.2" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="System.Data.DataSetExtensions" Version="4.*" />
-    <PackageReference Include="Microsoft.CSharp" Version="4.*" />
-    <PackageReference Include="System.Net.Http" Version="4.*" />
-    <PackageReference Include="HIC.BadMedicine" Version="0.0.1.1" />
+    <PackageReference Include="HIC.BadMedicine" Version="0.0.1.2" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
@@ -96,6 +93,9 @@
     <Compile Update="ExtractionUIs\JoinsAndLookups\KeyDropLocationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="SimpleDialogs\PerformanceCounterUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="ExtractionUIs\JoinsAndLookups\LookupBrowserUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -132,6 +132,22 @@
     <Compile Update="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Wizard\CreateNewDataExtractionProjectUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
+      <SubType>Form</SubType>
+    </Compile>    
+    <Compile Update="LocationsMenu\ChoosePlatformDatabasesUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="ExtractionUIs\FilterUIs\ExtractionFilterUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">

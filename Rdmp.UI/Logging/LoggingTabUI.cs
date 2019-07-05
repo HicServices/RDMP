@@ -46,16 +46,15 @@ namespace Rdmp.UI.Logging
 
         private Label lblCurrentFilter;
         private PictureBox pbRemoveFilter;
-        protected DataGridView dataGridView1;
+        private DataGridView dataGridView1;
 
         
-        protected LogViewerFilter Filter = new LogViewerFilter(LoggingTables.DataLoadTask);
+        private LogViewerFilter Filter = new LogViewerFilter(LoggingTables.DataLoadTask);
 
-        protected int TopX;
-        private string _customFilter;
+        private int TopX;
         private string _freeTextFilter;
         private Panel pFilter;
-        protected LogManager LogManager;
+        private LogManager LogManager;
         
         NavigationTrack<LogViewerFilter> _navigationTrack;
         private Panel panel1;
@@ -145,7 +144,7 @@ namespace Rdmp.UI.Logging
 
 
 
-        protected virtual IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
+        private IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {
             var rowId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
 
@@ -185,7 +184,7 @@ namespace Rdmp.UI.Logging
             }
         }
         #region InitializeComponent
-        protected void InitializeComponent()
+        private void InitializeComponent()
         {
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(LoggingTabUI));
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
@@ -273,7 +272,7 @@ namespace Rdmp.UI.Logging
         }
         #endregion
 
-        protected void LoadDataTable(DataTable dt)
+        private void LoadDataTable(DataTable dt)
         {
             AddFreeTextSearchColumn(dt);
 
@@ -291,6 +290,13 @@ namespace Rdmp.UI.Logging
 
         public void SetFilter(LogViewerFilter filter)
         {
+            if(
+                _navigationTrack != null && _navigationTrack.CurrentTab != null //there is a back navigation stack setup
+                && filter != _navigationTrack.CurrentTab //we are not doing a Back operation
+                )
+                    _navigationTrack.CurrentTab.Tag = tbContentFilter.Text; //Since user is making a new navigation to a new location, record the current text filter to preserve it for Back operations.
+                        
+
             Filter = filter;
             
             //push the old filter
@@ -309,20 +315,14 @@ namespace Rdmp.UI.Logging
             }
 
             FetchDataTable();
+
+            //clear/restore the current user entered text filter
+            tbContentFilter.Text = filter.Tag as string ?? "";            
         }
 
         private void RegenerateFilters()
         {
-            string rowFilter = "";
-
-            if (!string.IsNullOrWhiteSpace(_customFilter) && !string.IsNullOrWhiteSpace(_freeTextFilter))
-                rowFilter = _customFilter + " AND " + _freeTextFilter;
-            else if (!string.IsNullOrWhiteSpace(_customFilter))
-                rowFilter = _customFilter;
-            else
-                rowFilter = _freeTextFilter;
-
-            ((DataTable)dataGridView1.DataSource).DefaultView.RowFilter = rowFilter;
+            ((DataTable)dataGridView1.DataSource).DefaultView.RowFilter = _freeTextFilter;
         }
 
         public override void SetDatabaseObject(IActivateItems activator, ExternalDatabaseServer databaseObject)
@@ -331,6 +331,7 @@ namespace Rdmp.UI.Logging
 
             if(_navigationTrack == null)
             {
+                //what happens when user clicks back/forward
                 _navigationTrack = new NavigationTrack<LogViewerFilter>(f=>true,f=>
                 {
                     if(f.LoggingTable != LoggingTables.None)

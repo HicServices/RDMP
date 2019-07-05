@@ -15,6 +15,9 @@ namespace Rdmp.UI.Menus
         public LookupMenu(RDMPContextMenuStripArgs args, Lookup lookup) : base(args, lookup)
         {
             Add(new ExecuteCommandBrowseLookup(args.ItemActivator, lookup));
+
+            AddGoTo<TableInfo>(lookup.Description.TableInfo_ID,"Table");
+            AddGoTo<ColumnInfo>(lookup.ForeignKey_ID,"Foreign Key");
         }
     }
 }

@@ -88,7 +88,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             Console.WriteLine("Successfully configured RAW server");
         }
 
-        private void CreatePipelines()
+        public void CreatePipelines()
         {
             var bulkInsertCsvPipe = CreatePipeline("BULK INSERT:CSV Import File", typeof(DelimitedFlatFileDataFlowSource), typeof(DataTableUploadDestination));
             CreatePipeline("BULK INSERT:Excel File", typeof(ExcelDataFlowSource), typeof(DataTableUploadDestination));

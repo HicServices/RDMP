@@ -6,7 +6,6 @@
 
 using System.Drawing;
 using System.IO;
-using NPOI.XWPF.UserModel;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Reports;

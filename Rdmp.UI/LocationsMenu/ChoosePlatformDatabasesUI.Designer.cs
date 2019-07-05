@@ -55,13 +55,14 @@ namespace Rdmp.UI.LocationsMenu
             this.btnUseExisting = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.gbCreateNew = new System.Windows.Forms.GroupBox();
-            this.btnBack1 = new System.Windows.Forms.Button();
-            this.pResults = new System.Windows.Forms.Panel();
+            this.label9 = new System.Windows.Forms.Label();
+            this.tbPassword = new System.Windows.Forms.TextBox();
+            this.label4 = new System.Windows.Forms.Label();
             this.tbUsername = new System.Windows.Forms.TextBox();
             this.label3 = new System.Windows.Forms.Label();
-            this.label4 = new System.Windows.Forms.Label();
-            this.tbPassword = new System.Windows.Forms.TextBox();
-            this.label9 = new System.Windows.Forms.Label();
+            this.btnBack1 = new System.Windows.Forms.Button();
+            this.pResults = new System.Windows.Forms.Panel();
+            this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
             this.gbUseExisting.SuspendLayout();
             this.pReferenceADataExport.SuspendLayout();
             this.pReferenceACatalogue.SuspendLayout();
@@ -319,6 +320,7 @@ namespace Rdmp.UI.LocationsMenu
             // 
             // gbCreateNew
             // 
+            this.gbCreateNew.Controls.Add(this.cbCreateExampleDatasets);
             this.gbCreateNew.Controls.Add(this.label9);
             this.gbCreateNew.Controls.Add(this.tbPassword);
             this.gbCreateNew.Controls.Add(this.label4);
@@ -337,6 +339,51 @@ namespace Rdmp.UI.LocationsMenu
             this.gbCreateNew.TabStop = false;
             this.gbCreateNew.Text = "Create New Platform Databases";
             this.gbCreateNew.Visible = false;
+            // 
+            // label9
+            // 
+            this.label9.AutoSize = true;
+            this.label9.Location = new System.Drawing.Point(12, 70);
+            this.label9.Name = "label9";
+            this.label9.Size = new System.Drawing.Size(500, 13);
+            this.label9.TabIndex = 8;
+            this.label9.Text = "(* Username and Password are Optional.  If omitted then Integrated Security will " +
+    "be used - recommended)";
+            // 
+            // tbPassword
+            // 
+            this.tbPassword.Location = new System.Drawing.Point(285, 47);
+            this.tbPassword.Name = "tbPassword";
+            this.tbPassword.Size = new System.Drawing.Size(143, 20);
+            this.tbPassword.TabIndex = 4;
+            this.tbPassword.UseSystemPasswordChar = true;
+            this.tbPassword.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label4
+            // 
+            this.label4.AutoSize = true;
+            this.label4.Location = new System.Drawing.Point(221, 50);
+            this.label4.Name = "label4";
+            this.label4.Size = new System.Drawing.Size(60, 13);
+            this.label4.TabIndex = 6;
+            this.label4.Text = "*Password:";
+            // 
+            // tbUsername
+            // 
+            this.tbUsername.Location = new System.Drawing.Point(76, 47);
+            this.tbUsername.Name = "tbUsername";
+            this.tbUsername.Size = new System.Drawing.Size(143, 20);
+            this.tbUsername.TabIndex = 3;
+            this.tbUsername.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            // 
+            // label3
+            // 
+            this.label3.AutoSize = true;
+            this.label3.Location = new System.Drawing.Point(12, 50);
+            this.label3.Name = "label3";
+            this.label3.Size = new System.Drawing.Size(62, 13);
+            this.label3.TabIndex = 6;
+            this.label3.Text = "*Username:";
             // 
             // btnBack1
             // 
@@ -358,52 +405,17 @@ namespace Rdmp.UI.LocationsMenu
             this.pResults.Size = new System.Drawing.Size(749, 410);
             this.pResults.TabIndex = 16;
             // 
-            // tbUsername
+            // cbCreateExampleDatasets
             // 
-            this.tbUsername.Location = new System.Drawing.Point(76, 47);
-            this.tbUsername.Name = "tbUsername";
-            this.tbUsername.Size = new System.Drawing.Size(143, 20);
-            this.tbUsername.TabIndex = 3;
-            this.tbUsername.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
+            this.cbCreateExampleDatasets.AutoSize = true;
+            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(434, 48);
+            this.cbCreateExampleDatasets.Name = "cbCreateExampleDatasets";
+            this.cbCreateExampleDatasets.Size = new System.Drawing.Size(111, 17);
+            this.cbCreateExampleDatasets.TabIndex = 9;
+            this.cbCreateExampleDatasets.Text = "Example Datasets";
+            this.cbCreateExampleDatasets.UseVisualStyleBackColor = true;
             // 
-            // label3
-            // 
-            this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(12, 50);
-            this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(62, 13);
-            this.label3.TabIndex = 6;
-            this.label3.Text = "*Username:";
-            // 
-            // label4
-            // 
-            this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(221, 50);
-            this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(60, 13);
-            this.label4.TabIndex = 6;
-            this.label4.Text = "*Password:";
-            // 
-            // tbPassword
-            // 
-            this.tbPassword.Location = new System.Drawing.Point(285, 47);
-            this.tbPassword.Name = "tbPassword";
-            this.tbPassword.Size = new System.Drawing.Size(143, 20);
-            this.tbPassword.TabIndex = 4;
-            this.tbPassword.UseSystemPasswordChar = true;
-            this.tbPassword.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
-            // 
-            // label9
-            // 
-            this.label9.AutoSize = true;
-            this.label9.Location = new System.Drawing.Point(12, 70);
-            this.label9.Name = "label9";
-            this.label9.Size = new System.Drawing.Size(500, 13);
-            this.label9.TabIndex = 8;
-            this.label9.Text = "(* Username and Password are Optional.  If omitted then Integrated Security will " +
-    "be used - recommended)";
-            // 
-            // ChoosePlatformDatabases
+            // ChoosePlatformDatabasesUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
@@ -412,7 +424,7 @@ namespace Rdmp.UI.LocationsMenu
             this.Controls.Add(this.pChooseOption);
             this.Controls.Add(this.gbUseExisting);
             this.Controls.Add(this.pResults);
-            this.Name = "ChoosePlatformDatabases";
+            this.Name = "ChoosePlatformDatabasesUI";
             this.Text = "Platform Databases";
             this.KeyUp += new System.Windows.Forms.KeyEventHandler(this.ChooseDatabase_KeyUp);
             this.gbUseExisting.ResumeLayout(false);
@@ -465,5 +477,6 @@ namespace Rdmp.UI.LocationsMenu
         private System.Windows.Forms.TextBox tbPassword;
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label9;
+        private System.Windows.Forms.CheckBox cbCreateExampleDatasets;
     }
 }

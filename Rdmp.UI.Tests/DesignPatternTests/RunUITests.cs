@@ -12,6 +12,7 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using Tests.Common;
 
@@ -52,7 +53,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandRunDetached),
                 
                 typeof(ExecuteCommandShowXmlDoc),
-
+                typeof(ImpossibleCommand),
      
 typeof(ExecuteCommandChangeLoadStage),
 typeof(ExecuteCommandReOrderProcessTask),

@@ -10,7 +10,6 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Startup;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
@@ -36,10 +35,20 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             CatalogueRepository.SuppressHelpLoading = true;
 
+            var repo = new PlatformDatabaseCreationRepositoryFinder(options);
+
             if (!options.SkipPipelines)
             {
-                var creator = new CataloguePipelinesAndReferencesCreation(new PlatformDatabaseCreationRepositoryFinder(options), logging, dqe);
+                var creator = new CataloguePipelinesAndReferencesCreation(repo, logging, dqe);
                 creator.Create();
+            }
+
+            if(options.ExampleDatasets)
+            {
+                var examples = new ExampleDatasetsCreation(repo);
+                var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
+
+                examples.Create(server.GetCurrentDatabase(),options.DropDatabases,new ThrowImmediatelyCheckNotifier(){WriteToConsole = true });
             }
         }
 

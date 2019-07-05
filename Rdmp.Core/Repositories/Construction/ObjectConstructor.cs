@@ -178,6 +178,8 @@ namespace Rdmp.Core.Repositories.Construction
         /// of all compatible constructors with the objects needed to invoke them.
         /// </summary>
         /// <param name="type"></param>
+        /// <param name="allowBlankConstructor"></param>
+        /// <param name="allowPrivate"></param>
         /// <param name="parameterObjects"></param>
         /// <returns></returns>
         public Dictionary<ConstructorInfo, List<object>> GetConstructors(Type type, bool allowBlankConstructor, bool allowPrivate, params object[] parameterObjects)

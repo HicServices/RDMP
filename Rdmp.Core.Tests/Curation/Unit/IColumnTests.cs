@@ -12,7 +12,6 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
-using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using ReusableLibraryCode.Checks;

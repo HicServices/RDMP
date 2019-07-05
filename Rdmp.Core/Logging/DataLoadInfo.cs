@@ -130,14 +130,17 @@ namespace Rdmp.Core.Logging
         }
         #endregion
 
-  
+
         /// <summary>
         /// Marks the start of a new data load in the database.  Automatically populates StartTime and UserAccount from
         /// Environment.  Also creates a new ID in the database.
         /// </summary>
+        /// <param name="dataLoadTaskName"></param>
         /// <param name="packageName">The SSIS package or executable that started the data load</param>
         /// <param name="description">A description of what the data load is trying to achieve</param>
+        /// <param name="suggestedRollbackCommand"></param>
         /// <param name="isTest">If true then the database record will be marked as Test=1</param>
+        /// <param name="settings"></param>
         public DataLoadInfo(string dataLoadTaskName, string packageName, string description,string suggestedRollbackCommand,bool isTest,DiscoveredServer settings)
         {
             if(settings != null)

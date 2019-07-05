@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Annotations;
 
@@ -39,6 +40,9 @@ namespace Rdmp.UI.Rules
             
             if (property.GetCustomAttributes(typeof(NotNullAttribute), true).Any())
                 new NotNullRule<T>(_activator, databaseObject, getter, c);
+
+            if(databaseObject is INamed && !(databaseObject is ExternalDatabaseServer))
+                new NoBadNamesRule<T>(_activator, databaseObject, getter, c);
         }
     }
 }

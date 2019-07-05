@@ -114,7 +114,7 @@ namespace Rdmp.Core.Curation.Data
             OriginDate = ObjectToNullableDateTime(r["OriginDate"]);
             DataLoadProgress = ObjectToNullableDateTime(r["DataLoadProgress"]);
             LoadMetadata_ID = int.Parse(r["LoadMetaData_ID"].ToString());
-            LoadPeriodicity = r["LoadPeriodicity"].ToString();
+            _loadPeriodicity = r["LoadPeriodicity"].ToString();
             IsDisabled = Convert.ToBoolean(r["IsDisabled"]);
             DefaultNumberOfDaysToLoadEachTime = Convert.ToInt32(r["DefaultNumberOfDaysToLoadEachTime"]);
         }

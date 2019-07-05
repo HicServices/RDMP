@@ -4,11 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.Menus.MenuItems;
+using ReusableLibraryCode.CommandExecution;
 
 namespace Rdmp.UI.Menus
 {
@@ -46,6 +51,28 @@ namespace Rdmp.UI.Menus
             Items.Add(extract);
 
             Items.Add(new DQEMenuItem(_activator,catalogue));
+
+            AddGoTo<LoadMetadata>(catalogue.LoadMetadata_ID,"Data Load");
+
+            if(_activator.CoreChildProvider is DataExportChildProvider exp)
+            {
+                var eds = exp.ExtractableDataSets.SingleOrDefault(d=>d.Catalogue_ID == catalogue.ID);
+                if(eds != null)
+                    AddGoTo(eds.ExtractionConfigurations,"Extraction Configuration(s)");
+            }
+
+            AddGoTo(
+                _activator
+                .CoreChildProvider
+                .AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate && ac.Catalogue_ID == catalogue.ID)
+                .Select(ac=>ac.GetCohortIdentificationConfigurationIfAny())
+                .Where(cic=>cic != null)
+                .Distinct(),
+                "Cohort Identification Configuration(s)");
+
+            AddGoTo(_activator.CoreChildProvider.AllGovernancePeriods.Where(p=>p.GovernedCatalogues.Contains(catalogue)),"Governance");
+
         }
+
     }
 }

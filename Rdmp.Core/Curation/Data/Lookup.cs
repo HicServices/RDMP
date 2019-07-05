@@ -306,6 +306,7 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="primaryKey"></param>
         /// <param name="foreignKey"></param>
+        /// <param name="descriptionColumn"></param>
         public void SetKnownColumns(ColumnInfo primaryKey, ColumnInfo foreignKey, ColumnInfo descriptionColumn)
         {
             if(PrimaryKey_ID != primaryKey.ID || ForeignKey_ID != foreignKey.ID || Description_ID != descriptionColumn.ID)

@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.UI.Collections
 {
@@ -29,18 +30,31 @@ namespace Rdmp.UI.Collections
             _modelComparer = new ModelObjectComparer(primarySortColumn, primarySortOrder);
         }
 
+        /// <summary>
+        /// Decides the order to use.  This overrides the users settings when certain situations arise e.g. two <see cref="IOrderable"/> objects are
+        /// next to each other in the tree at the same branch (in this case reordering them could be very confusing to the user).
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
         public int Compare(object x, object y)
         {
             //Use IOrderable.Order
             if (x is IOrderable xOrderable && y is IOrderable yOrderable)
-                return xOrderable.Order - yOrderable.Order;
-
-            //Or use INamed.Name
-             if (x is INamed xNamed && y is INamed yNamed)
-                return String.Compare(xNamed.Name, yNamed.Name, StringComparison.CurrentCultureIgnoreCase);
+                    return xOrderable.Order - yOrderable.Order;
 
              //or use whatever
             return _modelComparer.Compare(x, y);
+        }
+
+        /// <summary>
+        /// Return true if the object should never be reordered and always ordered alphabetically based on it's <see cref="INamed.Name"/>
+        /// </summary>
+        /// <param name="x"></param>
+        /// <returns></returns>
+        private bool ShouldSortByName(object x)
+        {
+             return x is INamed && !(x is IProject);
         }
     }
 }

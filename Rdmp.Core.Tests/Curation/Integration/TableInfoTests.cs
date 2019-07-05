@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.Data;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
@@ -52,7 +53,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 Database = "CHI_AMALG",
                 Server = "Highly restricted",
                 Name = "Fishmongery!",
-                State = "Totally unstable",
                 DatabaseType = DatabaseType.Oracle
             };
 
@@ -63,7 +63,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.IsTrue(tableAfter.Database == "CHI_AMALG");
             Assert.IsTrue(tableAfter.Server == "Highly restricted");
             Assert.IsTrue(tableAfter.Name == "Fishmongery!");
-            Assert.IsTrue(tableAfter.State == "Totally unstable");
             Assert.IsTrue(tableAfter.DatabaseType == DatabaseType.Oracle);
 
             tableAfter.DeleteInDatabase();
@@ -177,6 +176,56 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
                 StringAssert.EndsWith("Omg.Fish_Legacy(@index) AS Fish_Legacy",tvfTi.Name);
             }
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MySql)]
+        public void TestView(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType);
+
+            DataTable dt = new DataTable();
+            dt.Columns.Add("FF");
+
+            var tbl = db.CreateTable("MyTable",dt);
+            Import(tbl,out TableInfo tblInfo,out _);
+            
+            Assert.IsTrue(tblInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
+            Assert.AreEqual(TableType.Table,tblInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
+
+            var viewName = "MyView";
+
+            //oracle likes to create stuff under your user account not the database your actually using!
+            if(dbType == DatabaseType.Oracle)
+            {
+                var syntax = tbl.GetQuerySyntaxHelper();
+                viewName = syntax.EnsureFullyQualified(tbl.Database.GetRuntimeName(),null,"MyView");
+            }
+            
+            var sql = string.Format(@"CREATE VIEW {0} AS
+SELECT FF
+FROM {1}",
+viewName,
+ tbl.GetFullyQualifiedName());
+
+            using(var con = tbl.Database.Server.GetConnection())
+            {
+                con.Open();
+
+                var cmd = tbl.GetCommand(sql,con);
+                cmd.ExecuteNonQuery();
+            }
+
+            var view = tbl.Database.ExpectTable("MyView",null,TableType.View);
+            Import(view,out TableInfo viewInfo,out _);
+            
+            Assert.IsTrue(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
+            Assert.AreEqual(TableType.View,viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
+
+            view.Drop();
+            Assert.IsFalse(view.Exists());
+            
         }
     }
 }

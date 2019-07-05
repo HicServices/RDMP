@@ -239,9 +239,9 @@ namespace Rdmp.UI.SimpleControls
         {
             if (_o == null)
                 return;
-
+            
             if (_isEnabled)
-                if (MessageBox.Show("Save Changes To '" + _o + "'?", "Save Changes", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (_activator.YesNo("Save Changes To '" + _o + "'?", "Save Changes"))
                     Save();
                 else
                     _o.RevertToDatabaseState();

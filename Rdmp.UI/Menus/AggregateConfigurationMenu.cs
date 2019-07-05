@@ -92,6 +92,8 @@ namespace Rdmp.UI.Menus
                     Items.Add(matchIdentifiers);
                 }
             }
+
+            AddGoTo<Catalogue>(aggregate.Catalogue_ID);
         }
 
         private void ClearShortcut()

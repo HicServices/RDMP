@@ -27,6 +27,7 @@ namespace Rdmp.Core.Curation.Data.Spontaneous
         /// <summary>
         /// Creates a ne memory only TopX constraint for use with <see cref="QueryBuilding.AggregateBuilder"/>.
         /// </summary>
+        /// <param name="repo"></param>
         /// <param name="topX"></param>
         /// <param name="orderByDirection"></param>
         /// <param name="orderByColumn"></param>

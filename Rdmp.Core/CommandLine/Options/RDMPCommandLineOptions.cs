@@ -4,7 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
 using System.Data.SqlClient;
+using System.Linq;
 using CommandLine;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
@@ -27,7 +30,7 @@ namespace Rdmp.Core.CommandLine.Options
 
         [Option( Required = false, HelpText = "Name of the Data Export database e.g. RDMP_DataExport")]
         public string DataExportDatabaseName { get; set; }
-        
+
         [Option(Required = false, HelpText = "Full connection string to the Catalogue database, this overrides CatalogueDatabaseName and allows custom ports, username/password etc")]
         public string CatalogueConnectionString { get; set; }
 
@@ -37,8 +40,8 @@ namespace Rdmp.Core.CommandLine.Options
         [Option(Required =false, HelpText = @"Log StartUp output")]
         public bool LogStartup{get;set;}
         
-        [Option(Required = true, HelpText = @"Command to run on the engine: 'run' or 'check' ")]
-        public CommandLineActivity Command { get; set; }
+        [Option(Required = false, HelpText = @"Command to run on the engine: 'run' or 'check' ", Default = CommandLineActivity.run)]
+        public CommandLineActivity Command { get; set; } = CommandLineActivity.run;
 
         [Option(Required = false, Default = false, HelpText = "Process returns errorcode '1' (instead of 0) if there are warnings")]
         public bool FailOnWarnings { get; set; }
@@ -88,5 +91,21 @@ namespace Rdmp.Core.CommandLine.Options
 
             return _repositoryLocator;
         }
+
+        /// <summary>
+        /// Returns true if none of the settings relating to connection strings have been set.  This is used to determine whether system defaults should
+        /// be used (e.g. from Databases.yaml).
+        /// </summary>
+        /// <returns></returns>
+        public bool NoConnectionStringsSpecified()
+        {
+            return string.IsNullOrWhiteSpace(ServerName) &&
+            string.IsNullOrWhiteSpace(CatalogueDatabaseName) &&
+            string.IsNullOrWhiteSpace(DataExportDatabaseName) &&
+            string.IsNullOrWhiteSpace(CatalogueConnectionString) &&
+            string.IsNullOrWhiteSpace(DataExportConnectionString);
+        }
+
+
     }
 }

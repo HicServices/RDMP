@@ -34,6 +34,8 @@ namespace Rdmp.UI.Copying.Commands
         /// want to be randomly creating these as the user waves an object around over the user interface trying to decide where to drop it.
         /// </summary>
         /// <param name="cohortAggregateContainer"></param>
+        /// <param name="importMandatoryFilters"></param>
+        /// <param name="caller"></param>
         /// <returns></returns>
         public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortAggregateContainer cohortAggregateContainer,bool importMandatoryFilters=true, [CallerMemberName] string caller = null)
         {

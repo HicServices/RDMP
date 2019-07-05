@@ -11,11 +11,6 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution;
 using ReusableUIComponents.CommandExecution;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {

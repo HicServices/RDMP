@@ -7,9 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
-using System.Diagnostics;
 using System.IO;
-using System.Linq;
 using System.Threading;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
@@ -87,6 +85,7 @@ namespace Rdmp.Core.Curation.Data
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="f"></param>
+        /// <param name="plugin"></param>
         public LoadModuleAssembly(ICatalogueRepository repository, FileInfo f, Plugin plugin)
         {
             var dictionaryParameters = GetDictionaryParameters(f, plugin);

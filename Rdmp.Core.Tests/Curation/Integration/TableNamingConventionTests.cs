@@ -32,7 +32,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 Database = "CHI_AMALG",
                 Server = "Highly restricted",
                 Name = "Fishmongery!",
-                State = "Totally unstable",
                 DatabaseType = DatabaseType.Oracle
             };
 
@@ -43,7 +42,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.IsTrue(tableInfoAfter.Database == "CHI_AMALG");
             Assert.IsTrue(tableInfoAfter.Server == "Highly restricted");
             Assert.IsTrue(tableInfoAfter.Name == "Fishmongery!");
-            Assert.IsTrue(tableInfoAfter.State == "Totally unstable");
             Assert.IsTrue(tableInfoAfter.DatabaseType == DatabaseType.Oracle);
 
             tableInfoAfter.DeleteInDatabase();

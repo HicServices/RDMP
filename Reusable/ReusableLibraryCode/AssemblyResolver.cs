@@ -19,7 +19,7 @@ namespace ReusableLibraryCode
     /// </summary>
     public class AssemblyResolver
     {
-        private static HashSet<string> assemblyResolveAttempts = new HashSet<string>(); 
+        private static Dictionary<string,Assembly> assemblyResolveAttempts = new Dictionary<string, Assembly>(); 
 
         public static void SetupAssemblyResolver(params DirectoryInfo[] dirs)
         {
@@ -29,17 +29,20 @@ namespace ReusableLibraryCode
                 var parts = assemblyInfo.Split(',');
                 string name = parts[0];
 
-                if (assemblyResolveAttempts.Contains(assemblyInfo))
-                    return null;
+                if (assemblyResolveAttempts.ContainsKey(assemblyInfo))
+                    return assemblyResolveAttempts[assemblyInfo];
 
-                assemblyResolveAttempts.Add(assemblyInfo);
-
+                //start out assuming we cannot load it
+                assemblyResolveAttempts.Add(assemblyInfo,null);
+                
                 foreach(DirectoryInfo dir in dirs)
                 {
                     var dll = dir.EnumerateFiles(name + ".dll").SingleOrDefault();
                     if(dll != null)
-                        return LoadFile(dll);
+                        return assemblyResolveAttempts[assemblyInfo] = LoadFile(dll); //cache and return answer
                 }
+
+                
 
                 var assembly = Assembly.GetExecutingAssembly().Location;
                 if (String.IsNullOrWhiteSpace(assembly))
@@ -53,7 +56,7 @@ namespace ReusableLibraryCode
                 if (file == null)
                     return null;
 
-                return Assembly.LoadFile(file.FullName);
+                return assemblyResolveAttempts[assemblyInfo] = Assembly.LoadFile(file.FullName); //cache and return answer
             };
         } 
  
@@ -63,7 +66,7 @@ namespace ReusableLibraryCode
             {
                 return F1(f);
 
-            }catch(FileLoadException ex)
+            }catch(FileLoadException)
             {
                 //AssemblyLoadContext.Default.LoadFromAssemblyPath causes this Exception at runtime only
                 return F2(f);

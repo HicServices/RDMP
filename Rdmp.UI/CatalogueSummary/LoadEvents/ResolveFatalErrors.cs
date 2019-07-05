@@ -56,25 +56,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             var newState = DataLoadInfo.FatalErrorStates.Resolved;
             
             if (string.IsNullOrEmpty(Explanation.Text))
-            {
-
-                var answer = MessageBox.Show(
-                    @"You have no explanation, are you trying to UNRESOLVE a previously RESOLVED error?
-Yes - Delete Explanation in database and mark as unresolved
-No - Mark as Resolved but with no Explanation
-Cancel - Do not close form and do not make any database changes", "Unresolve", MessageBoxButtons.YesNoCancel);
-
-
-                if(answer == DialogResult.Cancel)
-                    return;
-
-                if(answer == DialogResult.Yes)
-                    newState = DataLoadInfo.FatalErrorStates.Outstanding;
-                
-                //this is so hacky because ArchivalFatalError has no concept of statusID (resolved/unresolved/blocked).  Originally fatal error recording allowed for agency specific states and even for them to delete these states but that is so not required.  Who needs more than resolved/unresolved? so now we just assume Explanation = resolved, No Explanation = unresolved.  Use CatalogueItemIssues if you want real issue recording or a TicketingSystem
-                if (answer == DialogResult.No)
-                    Explanation.Text = "No Explanation"; 
-            }
+                Explanation.Text = "No Explanation"; 
 
             //resolve it in the database
             _logManager.ResolveFatalErrors(_toResolve.Select(f => f.ID).ToArray(), newState, Explanation.Text);

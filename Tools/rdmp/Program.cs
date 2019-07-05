@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Data.SqlClient;
 using System.IO;
 using System.Reflection;
 using CommandLine;
@@ -47,7 +46,7 @@ namespace rdmp
             }
             catch(Exception ex)
             {
-                Console.WriteLine("Could not load NLog.config");
+                Console.WriteLine("Could not load NLog.config:" + ex.Message);
             }
 
             PreStartup();
@@ -100,7 +99,7 @@ namespace rdmp
             }
             catch (Exception e)
             {
-                NLog.LogManager.GetCurrentClassLogger().Info(e.Message);
+                NLog.LogManager.GetCurrentClassLogger().Error(e.Message);
                 NLog.LogManager.GetCurrentClassLogger().Info(e, "Fatal error occurred so returning -1");
                 return -1;
             }
@@ -141,6 +140,10 @@ namespace rdmp
             var factory = new RunnerFactory();
             opts.DoStartup(GetEnvironmentInfo(),opts.LogStartup ? (ICheckNotifier)checker: new IgnoreAllErrorsCheckNotifier());
 
+            //if user wants to run checking chances are they don't want checks to fail becasue of errors logged during startup (MEF shows lots of errors!)
+            if(opts.LogStartup && opts.Command == CommandLineActivity.check)
+                checker.Worst = LogLevel.Info;
+
             var runner = factory.CreateRunner(opts);
 
             int runExitCode = runner.Run(opts.GetRepositoryLocator(), listener, checker, new GracefulCancellationToken());
@@ -167,14 +170,21 @@ namespace rdmp
         {
             var logger = LogManager.GetCurrentClassLogger();
 
+                        
+            if(!opts.NoConnectionStringsSpecified())
+            {
+                logger.Info("Connection string options have been specified on command line, yaml config values will be ignored");
+                return;
+            }
+
             string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
             var yaml = Path.Combine(assemblyFolder,"Databases.yaml");
-            
+
             if(File.Exists(yaml))
             {
                 try
                 {
-                        // Setup the input
+                    // Setup the input
 			        using(var input = new StreamReader(yaml))
                     {
                         // Load the stream

@@ -242,6 +242,7 @@ namespace Rdmp.UI.LocationsMenu
                 opts.Prefix = tbDatabasePrefix.Text;
                 opts.Username = tbUsername.Text;
                 opts.Password = tbPassword.Text;
+                opts.ExampleDatasets = cbCreateExampleDatasets.Checked;
 
                 var task = new Task(() =>
                 {

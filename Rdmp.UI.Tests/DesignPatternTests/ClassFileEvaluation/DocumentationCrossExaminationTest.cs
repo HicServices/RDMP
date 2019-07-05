@@ -234,6 +234,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
              "HicHash",
             "UserManual",
             "ObjectType",
+            "UserInterfaceOverview",
+            "MyPipelinePlugin",
+            "TestAnonymisationPluginsDatabaseTests"
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

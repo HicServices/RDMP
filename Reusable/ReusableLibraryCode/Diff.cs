@@ -247,15 +247,17 @@ namespace ReusableLibraryCode {
     } // Diff
 
 
-    /// <summary>
-    /// This function converts all textlines of the text into unique numbers for every unique textline
-    /// so further work can work only with simple numbers.
-    /// </summary>
-    /// <param name="aText">the input text</param>
-    /// <param name="h">This extern initialized hashtable is used for storing all ever used textlines.</param>
-    /// <param name="trimSpace">ignore leading and trailing space characters</param>
-    /// <returns>a array of integers.</returns>
-    private static int[] DiffCodes(string aText, Hashtable h, bool trimSpace, bool ignoreSpace, bool ignoreCase) {
+        /// <summary>
+        /// This function converts all textlines of the text into unique numbers for every unique textline
+        /// so further work can work only with simple numbers.
+        /// </summary>
+        /// <param name="aText">the input text</param>
+        /// <param name="h">This extern initialized hashtable is used for storing all ever used textlines.</param>
+        /// <param name="trimSpace">ignore leading and trailing space characters</param>
+        /// <param name="ignoreSpace">ignore whitespace differents e.g. double spaces vs single spaces</param>
+        /// <param name="ignoreCase">ignore capitalisation in comparison</param>
+        /// <returns>a array of integers.</returns>
+        private static int[] DiffCodes(string aText, Hashtable h, bool trimSpace, bool ignoreSpace, bool ignoreCase) {
       // get all codes of the text
       string []Lines;
       int []Codes;
@@ -461,7 +463,6 @@ namespace ReusableLibraryCode {
     /// dynamic array
     private static Item[] CreateDiffs(DiffData DataA, DiffData DataB) {
       ArrayList a = new ArrayList();
-      Item aItem;
       Item []result;
 
       int StartA, StartB;
@@ -490,13 +491,14 @@ namespace ReusableLibraryCode {
             LineB++;
 
           if ((StartA < LineA) || (StartB < LineB)) {
-            // store a new difference-item
-            aItem = new Item();
-            aItem.StartA = StartA;
-            aItem.StartB = StartB;
-            aItem.deletedA = LineA - StartA;
-            aItem.insertedB = LineB - StartB;
-            a.Add(aItem);
+                        // store a new difference-item
+                        a.Add( new Item
+                        {
+                            StartA = StartA,
+                            StartB = StartB,
+                            deletedA = LineA - StartA,
+                            insertedB = LineB - StartB
+                        });
           } // if
         } // if
       } // while

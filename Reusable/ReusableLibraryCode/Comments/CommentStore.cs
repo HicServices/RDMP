@@ -9,8 +9,10 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.IO.Compression;
 using System.Text.RegularExpressions;
 using NuDoq;
+using System.Reflection;
 
 namespace ReusableLibraryCode.Comments
 {
@@ -38,6 +40,30 @@ namespace ReusableLibraryCode.Comments
         
         public virtual void ReadComments(params string[] directoriesToLookInForComments)
         {
+            Dictionary<string,ZipArchive> zips = new Dictionary<string, ZipArchive>(StringComparer.CurrentCultureIgnoreCase);
+            HashSet<string> dirs = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+
+            
+            foreach(var d in directoriesToLookInForComments)
+            {
+                if(Path.HasExtension(d) && Path.GetExtension(d) == ".zip")
+                {
+                    if(File.Exists(d) && !zips.ContainsKey(d))
+                        try
+                        {
+                            zips.Add(d,ZipFile.OpenRead(d));
+
+                        }catch(System.Exception)
+                        {
+                            //couldn't open zip file :(
+                            continue;
+                        }
+                }
+                else
+                    if(!dirs.Contains(d))
+                        dirs.Add(d);
+            }
+                    
 
             foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
             {
@@ -47,18 +73,41 @@ namespace ReusableLibraryCode.Comments
                 if (xmlFile.StartsWith("System") || _ignoreHelpFor.Contains(xmlFile))
                     continue;
 
-                foreach (string d in directoriesToLookInForComments)
+                //can we get it from the zips?
+                foreach (var zip in zips.Values)
                 {
-                    var f = Path.Combine(d, xmlFile);
-                    if (File.Exists(f))
+                    var entry = zip.GetEntry(xmlFile);
+                    if(entry != null)
                     {
-                        var doc = DocReader.Read(assembly, f);
-                        doc.Accept(new CommentsVisitor(this));
+                        var f = Path.GetTempFileName();
+                        entry.ExtractToFile(f,true);
+
+                        ReadComments(assembly,f);
+
+                        File.Delete(f);
+                        continue;
 
                     }
                 }
                 
+                //can we get it from a dir
+                foreach(var dir in dirs)
+                    ReadComments(assembly,Path.Combine(dir, xmlFile));
             }
+
+            //dispose zips
+            foreach(IDisposable d in zips.Values)
+                d.Dispose();
+        }
+
+        private void ReadComments(Assembly assembly,string filename)
+        {
+            if (File.Exists(filename))
+            {
+                var doc = DocReader.Read(assembly, filename);
+                doc.Accept(new CommentsVisitor(this));
+            }
+            
         }
 
         public void Add(string name, string summary)

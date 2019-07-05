@@ -75,6 +75,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="availableObjects"></param>
+        /// <param name="initialSearchText"></param>
         /// <returns></returns>
         protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null) where T : DatabaseEntity
         {
@@ -96,6 +97,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="availableObjects"></param>
         /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null) where T : DatabaseEntity
         {
@@ -142,6 +144,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="repository"></param>
         /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null) where T : DatabaseEntity
         {
@@ -201,19 +204,45 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <param name="maxLength"></param>
         /// <param name="initialText"></param>
         /// <param name="text"></param>
+        /// <param name="requireSaneHeaderText"></param>
         /// <returns></returns>
-        protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text)
+        protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText = false)
         {
-            var textTyper = new TypeTextOrCancelDialog(header,prompt, maxLength, initialText);
+            var textTyper = new TypeTextOrCancelDialog(header,prompt, maxLength, initialText)
+            {
+                RequireSaneHeaderText = requireSaneHeaderText
+            };
+
             text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
             return !string.IsNullOrWhiteSpace(text);
         }
 
-        /// <inheritdoc cref="TypeText(string, string, int, string, out string)"/>
+        /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
         protected bool TypeText(string header, string prompt, out string text)
         {
             return TypeText(header, prompt, 500, null, out text);
         }
+
+        /// <summary>
+        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
+        /// </summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        protected bool YesNo(string text,string caption)
+        {
+            return Activator.YesNo(text,caption);
+        }
+
+        /// <summary>
+        /// Displays the given message to the user
+        /// </summary>
+        /// <param name="message"></param>
+        protected void Show(string message)
+        {
+            MessageBox.Show(message);
+        }
+
 
         /// <summary>
         /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible"/> if there are any failures

@@ -5,14 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
-using System.Text;
 using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
-using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

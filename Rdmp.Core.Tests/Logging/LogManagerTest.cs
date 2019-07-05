@@ -39,19 +39,15 @@ namespace Rdmp.Core.Tests.Logging
 
                 var lds = new DiscoveredServer(UnitTestLoggingConnectionString);
 
+                var manager = new LogManager(lds);
+                
                 _dataLoadTaskName = "LogTest";
 
                 _dataLoadTaskHelper = new DataLoadTaskHelper(lds);
                 _dataLoadTaskHelper.SetUp();
 
-                try
-                {
-                    _dataLoadTaskHelper.CreateDataLoadTask(_dataLoadTaskName);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Could not create data load task called " + _dataLoadTaskName +" (probably because it already exists eh?)");
-                }
+                manager.CreateNewLoggingTaskIfNotExists(_dataLoadTaskName);
+
                 // Insert some data load runs that are used by all the tests
                 _logManager = new LogManager(lds);
 

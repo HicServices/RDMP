@@ -65,6 +65,12 @@
     <Compile Update="ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
       <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
     </Compile>
+    <Compile Update="PickOneOrCancelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="PickOneOrCancelDialog.Designer.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="RichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
@@ -165,6 +171,12 @@
     <Compile Update="TransparentHelpSystem\HelpBox.Designer.cs">
       <DependentUpon>HelpBox.cs</DependentUpon>
     </Compile>
+    <Compile Update="PickOneOrCancelDialog.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="TypeTextOrCancelDialog - Copy.Designer.cs">
+      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
+    </Compile>
     <Compile Update="TypeTextOrCancelDialog.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -253,6 +265,9 @@
     </EmbeddedResource>
     <EmbeddedResource Update="TransparentHelpSystem\HelpBox.resx">
       <DependentUpon>HelpBox.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Update="TypeTextOrCancelDialog - Copy.resx">
+      <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="TypeTextOrCancelDialog.resx">
       <DependentUpon>TypeTextOrCancelDialog.cs</DependentUpon>

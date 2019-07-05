@@ -13,7 +13,7 @@ task :ci_integration, [:config] => [:setup_connection, :assemblyinfo, :build, :a
 
 task :plugins, [:config] => [:assemblyinfo, :build, :deployplugins]
 
-task :release => [:assemblyinfo, :bundlesource, :build_release, :squirrel, :github]
+task :release => [:assemblyinfo, :bundlesource, :build_release, :build_cli, :squirrel, :github]
 
 task :tests, [:config] => [:run_unit_tests]
 
@@ -41,6 +41,17 @@ end
 
 task :build_release => :restorepackages do
 	sh "\"#{$MSBUILD15CMD}\" #{SOLUTION} \/t:Clean;Build \/p:Configuration=Release"
+end
+
+task :build_cli => :restorepackages do
+	Dir.chdir("Tools/rdmp/") do
+        sh "dotnet publish -r win-x64 -c Release -o Publish"
+		Dir.chdir("Publish/") do
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v *.dll"
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v *.exe"
+		end
+    end
+	sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/Publish', 'Tools/rdmp/rdmp-cli-win-x64.zip'); }\""
 end
 
 task :build_low_warning, [:config,:level,:aserrors] => :restorepackages do |msb, args|
@@ -111,7 +122,7 @@ task :squirrel do
 	
 	Dir.chdir "Application/ResearchDataManagementPlatform" do
 		sh "nuget pack RDMP.nuspec -Properties Configuration=Release -Version #{version}"
-		sh "#{SQUIRREL} --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version} -n \"/a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v\""
+		sh "#{SQUIRREL}/Squirrel.exe --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version} -n \"/a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v\""
 	end
 end
 
@@ -144,6 +155,9 @@ task :github do
         upload_to_github(upload_url, "RELEASES")
         upload_to_github(upload_url, "ResearchDataManagementPlatform-#{version}-full.nupkg")
         upload_to_github(upload_url, "Setup.exe")
+    end
+	Dir.chdir("Tools/rdmp") do
+		upload_to_github(upload_url, "rdmp-cli-win-x64.zip")
     end
 end
 

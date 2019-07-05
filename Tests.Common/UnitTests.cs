@@ -34,6 +34,8 @@ using Rdmp.Core.DataExport.DataRelease.Audit;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataLoad.Modules.DataFlowOperations;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Validation;
+using ReusableLibraryCode.Checks;
 
 namespace Tests.Common
 {
@@ -584,6 +586,8 @@ namespace Tests.Common
             MEF = new MEF();
             MEF.Setup(new SafeDirectoryCatalog(TestContext.CurrentContext.TestDirectory));
             Repository.CatalogueRepository.MEF = MEF;
+
+            Validator.RefreshExtraTypes(MEF.SafeDirectoryCatalog,new ThrowImmediatelyCheckNotifier());
         }
 
         //Fields that can be safely ignored when comparing an object created in memory with one created into the database.
@@ -652,6 +656,10 @@ namespace Tests.Common
                         Assert.Fail("Dates differed, {0} Property {1} differed Memory={2} and Db={3}",memObj.GetType().Name, property.Name, memValue, dbValue);
                     else
                         return;
+
+                //treat empty strings as the same as 
+                memValue = memValue as string == string.Empty ? null : memValue;
+                dbValue = dbValue as string == string.Empty ? null : dbValue;
 
                 //all other properties should be legit
                 Assert.AreEqual(memValue, dbValue, "{0} Property {1} differed Memory={2} and Db={3}", memObj.GetType().Name,property.Name, memValue, dbValue);

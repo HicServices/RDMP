@@ -6,15 +6,17 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.Providers.Nodes
 {
     /// <summary>
     /// Collection of all project specific datasets (<see cref="Catalogue"/>s which can only be used with this <see cref="Project"/>).
     /// </summary>
-    public class ProjectCataloguesNode:Node
+    public class ProjectCataloguesNode:Node, IOrderable
     {
         public Project Project { get; set; }
+        public int Order { get => 5; set{ } }
 
         public ProjectCataloguesNode(Project project)
         {

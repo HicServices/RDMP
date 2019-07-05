@@ -10,13 +10,10 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
-using Rdmp.Core.Reports;
 using Rdmp.UI.ProjectUI;
 using Rdmp.UI.Raceway;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableLibraryCode.Comments;
 using ReusableUIComponents.CommandExecution.Proposals;
 using Tests.Common;
 
@@ -43,6 +40,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
 
             Errors.AddRange(EnforceTypeBelongsInNamespace(typeof(IAtomicCommand), 
+                "CommandExecution",
                 "CommandExecution.AtomicCommands",
                 "CommandExecution.AtomicCommands.PluginCommands",
                 "CommandExecution.AtomicCommands.WindowArranging"));//legal namespaces
@@ -71,8 +69,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         {
 
             SetupMEF();
-
-            List<Exception> whoCares;
             foreach (Type type in MEF.GetAllTypes().Where(InterfaceType.IsAssignableFrom))
             {
                 if (type.Namespace == null) 

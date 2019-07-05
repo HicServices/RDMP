@@ -64,8 +64,7 @@ namespace Rdmp.UI.MainFormUITabs
         private void c_ddOverrideChildren_Click(object sender, EventArgs e)
         {
             if (_catalogue != null)
-                if (MessageBox.Show("Are you sure?", "Confirm", MessageBoxButtons.YesNo, MessageBoxIcon.Question,
-                    MessageBoxDefaultButton.Button2) == DialogResult.Yes)
+                if (Activator.YesNo("Are you sure?", "Confirm"))
                 {
                     var catalogueItems = _catalogue.CatalogueItems.ToArray();
                     foreach (var catalogueItem in catalogueItems)

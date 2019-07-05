@@ -147,7 +147,12 @@ namespace Rdmp.Core.DataFlowPipeline
 
         private object CreateComponent(IPipelineComponent toBuild)
         {
-            object toReturn = _constructor.Construct(toBuild.GetClassAsSystemType());
+            var type = toBuild.GetClassAsSystemType();
+            
+            if(type == null)
+                throw new Exception("Could not find Type '" + toBuild.Class  +"'");
+
+            object toReturn = _constructor.Construct(type);
 
             //all the IArguments we need to initialize the class
             var allArguments = toBuild.GetAllArguments().ToArray();

@@ -62,8 +62,8 @@ namespace Rdmp.Core.Tests.DataExport
             var childProvider = new DataExportChildProvider(new RepositoryProvider(memory), null, new IgnoreAllErrorsCheckNotifier());
 
             //the orphan cic should not appear in the tree view under Project=>Cohorts=>Associated Cics
-            var cohorts = (ProjectCohortsNode)childProvider.GetChildren(p).First();
-            var cics = (ProjectCohortIdentificationConfigurationAssociationsNode) childProvider.GetChildren(cohorts).First();
+            var cohorts = childProvider.GetChildren(p).OfType<ProjectCohortsNode>().Single();
+            var cics =  childProvider.GetChildren(cohorts).OfType<ProjectCohortIdentificationConfigurationAssociationsNode>().First();
             
             Assert.IsEmpty(childProvider.GetChildren(cics));
         }

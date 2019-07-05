@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.CohortCommitting.Pipeline.Destinations

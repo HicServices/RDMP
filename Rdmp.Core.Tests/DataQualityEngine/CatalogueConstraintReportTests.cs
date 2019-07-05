@@ -11,7 +11,6 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.DataLoad.Triggers;
-using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.Core.DataQualityEngine.Reports;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;

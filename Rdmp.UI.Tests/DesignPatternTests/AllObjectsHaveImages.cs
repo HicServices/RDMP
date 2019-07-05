@@ -40,7 +40,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
 
             };
 
-            List<Exception> whoCares;
             foreach (Type type in RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(t => typeof (IHasDependencies).IsAssignableFrom(t) && !t.IsInterface))
             {
                 //skip masqueraders

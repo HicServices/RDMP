@@ -209,6 +209,7 @@ namespace Rdmp.UI.TestsAndSetup
         RDMPPlatformDatabaseStatus lastStatus = RDMPPlatformDatabaseStatus.Healthy;
         private bool _couldNotReachTier1Database;
         private ChoosePlatformDatabasesUI _choosePlatformsUI;
+        private bool _haveWarnedAboutOutOfDate = false;
 
         private void HandleDatabaseFoundOnSimpleUI(PlatformDatabaseFoundEventArgs eventArgs)
         {
@@ -263,6 +264,13 @@ namespace Rdmp.UI.TestsAndSetup
                     break;
                 case RDMPPlatformDatabaseStatus.Healthy:
                     ragSmiley1.OnCheckPerformed(new CheckEventArgs(eventArgs.SummariseAsString(),CheckResult.Success));
+                    return;
+                case RDMPPlatformDatabaseStatus.SoftwareOutOfDate:
+                        if(!_haveWarnedAboutOutOfDate)
+                        {
+                            MessageBox.Show("The RDMP database you are connecting to is running a newer schema to your software, please consider updating the software to the latest version");
+                            _haveWarnedAboutOutOfDate = true;
+                        }
                     return;
                 default:
                     throw new ArgumentOutOfRangeException();

@@ -7,6 +7,7 @@
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
@@ -42,7 +43,7 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 
 
         /// <summary>
-        /// Called immediately before checking the object set up by the last call to <see cref="RDMPControlCommonFunctionality.AddChecks"/>
+        /// Called immediately before checking the object set up by the last call to <see cref="RDMPControlCommonFunctionality.AddChecks(ICheckable)"/>
         /// </summary>
         protected virtual void OnBeforeChecking()
         {

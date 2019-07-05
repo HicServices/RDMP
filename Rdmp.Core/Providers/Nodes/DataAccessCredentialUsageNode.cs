@@ -57,11 +57,7 @@ namespace Rdmp.Core.Providers.Nodes
 
         public void DeleteInDatabase()
         {
-            //if (MessageBox.Show("Are you sure you want to remove usage rights under Context " + credentialUsage.Context + " for TableInfo " + credentialUsage.TableInfo, "Revoke Usage Permission", MessageBoxButtons.YesNo) == DialogResult.Yes)
-            //{
             TableInfo.CatalogueRepository.TableInfoCredentialsManager.BreakLinkBetween(Credentials, TableInfo, Context);
-
-            //;
         }
     }
 }

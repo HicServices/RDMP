@@ -1,29 +1,38 @@
+
+
 # Packages Used By RDMP
 
+### Risk Assessment common to all:
+1. Packages on NuGet are virus scanned by the NuGet site.
+2. This package is widely used and is actively maintained.
+3. It is open source.
 
-| Package | Version | License | Purpose | Peer Reviewed |
-| ------- | ------- | ----- | ------- | -------------- |
-| [DockPanelSuite](https://github.com/dockpanelsuite/dockpanelsuite) | 3.1.0-beta2 | [MIT](https://opensource.org/licenses/MIT)  | Provides window docking for main client application | &#9744; |
-| [ObjectListView](http://objectlistview.sourceforge.net/cs/index.html) | 2.9.1 | GPL 3.0 | Provides tree layout for user interfaces in main client application | &#9744; |
-| [ScintillaNET](https://github.com/jacobslusser/ScintillaNET) | 3.6.3.0 | [MIT](https://opensource.org/licenses/MIT) | Provides text editor component with highlighting etc | &#9744; |
-| [AutoCompleteMenu-ScintillaNET](https://github.com/Ahmad45123/AutoCompleteMenu-ScintillaNET) | 1.5.0 | GNU V3 | Adds autocomplete to ScintillaNET text editor| &#9744; |
-| [NHun Spell](http://www.crawler-lib.net/nhunspell)  | 1.2.5554.16953 | LGPL / MPL  | Adds spell check support to ScintillaNET text editor | &#9744; |
-| [FAM FAM FAM Icons](http://www.famfamfam.com/lab/icons/silk/) | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces | &#9744; |
-| [SettingsPlugin](https://github.com/jamesmontemagno/SettingsPlugin) | 3.1.1 | [MIT](https://opensource.org/licenses/MIT)| Read/Write user settings for main client application | &#9744; |
-| [NUDoq](https://github.com/kzu/NuDoq) | 1.2.5 | Apache 2.0 | Read xmldoc files for auto generated user help system in main client application | &#9744; |
-| [Command Line Parser](https://github.com/commandlineparser/commandline) | 2.3 | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables | &#9744; |
-| [CsvHelper](https://github.com/JoshClose/CsvHelper) | 7.1.1 | MS-PL / Apache 2.0 | Enables reading/writing CSV files | &#9744; |
-| [NPOI](https://github.com/tonyqus/npoi) | 2.4.1 | Apache 2.0 | Enables reading/writing Microsoft Excel files | &#9744; |
-| [FAnsi SQL](https://github.com/HicServices/FAnsiSql) | 0.9.0.5 | [GPL 3.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | DBMS abstraction layer | &#9744; |
-| [Bad Medicine](https://github.com/HicServices/BadMedicine) | 0.0.1.1 | [GPL 3.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Generate Test Datasets for tests/exericses | &#9744; |
-| MySql.Data | 8.0.14 | [GPL 2.0](https://www.gnu.org/licenses/old-licenses/gpl-2.0.html) | Enables interaction with MySql databases | &#9744; |
-| Oracle ODP.NET Managed Driver| 18.3.0 | [OTNLA](https://www.oracle.com/technetwork/licenses/distribution-license-152002.html) | Enables interaction with Oracle databases | &#9744; |
-| [SSH.NET](https://github.com/sshnet/SSH.NET)  | 2013.4.7 | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers | &#9744; |
-| [Moq 4](https://github.com/moq/moq4) | 3.6.1 |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing | &#9744; |
-| Nunit | 3.11.0 | NUnit License | Unit testing | &#9744; |
-| NUnit3TestAdapter| 3.10.0 | NUnit License | Run unit tests from within Visual Studio | &#9744; |
-| Newtonsoft.Json | 11.0.2 | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission | &#9744; |
-| [YamlDotNet](https://github.com/aaubry/YamlDotNet) | 6.0.0 | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files| &#9744; |
-
-
-
+| Package | Source Code | Version | License | Purpose | Additional Risk Assessment |
+| ------- | ------------| --------| ------- | ------- | -------------------------- |
+| [DockPanelSuite](http://dockpanelsuite.com/) | [GitHub](https://github.com/dockpanelsuite/dockpanelsuite) | [3.1.0-beta2](https://www.nuget.org/packages/DockPanelSuite/3.1.0-beta2) | [MIT](https://opensource.org/licenses/MIT)  | Provides Window layout and docking for RDMP. | There are no powershell initialization files in the package which can be run by the NuGet installer. The "beta2" pre-release was chosen because... |
+| [ObjectListView.Official](http://objectlistview.sourceforge.net/cs/index.html) | [Svn](http://objectlistview.sourceforge.net/cs/download.html#bleeding-edge-source) | [2.9.1](https://www.nuget.org/packages/ObjectListView.Official/2.9.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Provides tree layout for user interfaces in main client application |
+| [jacobslusser.ScintillaNET](https://www.scintilla.org/) | [GitHub](https://github.com/jacobslusser/ScintillaNET) | [3.6.3.0](https://www.nuget.org/packages/jacobslusser.ScintillaNET/3.6.3) | [MIT](https://opensource.org/licenses/MIT) | Provides text editor component with highlighting etc |
+| AutoCompleteMenu-ScintillaNET | [GitHub](https://github.com/Ahmad45123/AutoCompleteMenu-ScintillaNET) | [1.6.1](https://www.nuget.org/packages/AutoCompleteMenu-ScintillaNET/1.6.1) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Adds autocomplete to ScintillaNET text editor|
+| [NHunspell](http://www.crawler-lib.net/nhunspell) | [SourceForge](https://sourceforge.net/p/nhunspell/code/ci/default/tree/) | [1.2.5554.16953](https://www.nuget.org/packages/NHunspell/1.2.5554.16953) | LGPL / MPL  | Adds spell check support to ScintillaNET text editor |
+| [FAM FAM FAM Icons](http://www.famfamfam.com/lab/icons/silk/) | N\A | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
+| Xam.Plugins.Settings | [GitHub](https://github.com/jamesmontemagno/SettingsPlugin)| [3.1.1](https://www.nuget.org/packages/Xam.Plugins.Settings/3.1.1) | [MIT](https://opensource.org/licenses/MIT)| Read/Write user settings for main client application |
+| [NuDoc](http://www.cazzulino.com/NuDoq) |[GitHub](https://github.com/kzu/NuDoq) | [0.5.0](https://www.nuget.org/packages/NuDoc/0.5.0) | Apache 2.0 | Read xmldoc files for auto generated user help system in main client application |
+| CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [2.4.3](https://www.nuget.org/packages/CommandLineParser/2.4.3) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
+| CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [12.1.2](https://www.nuget.org/packages/CsvHelper/12.1.2) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
+| NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.4.1](https://www.nuget.org/packages/NPOI/2.4.1) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
+| ExcelNumberFormat | [GitHub](https://github.com/andersnm/ExcelNumberFormat) | [1.0.5](https://www.nuget.org/packages/ExcelNumberFormat/1.0.5) |[MIT](https://opensource.org/licenses/MIT)  | Handles translating number formats from Excel formats into usable values | |
+| [NLog](https://nlog-project.org/) | [GitHub](https://github.com/NLog/NLog) | [4.6.2](https://www.nuget.org/packages/NLog/4.6.2) | [BSD 3-Clause](https://github.com/NLog/NLog/blob/dev/LICENSE.txt) | Flexible user configurable logging | |
+| HIC.FAnsiSql |[GitHub](https://github.com/HicServices/FAnsiSql) | [0.9.2](https://www.nuget.org/packages/HIC.FansiSql/0.9.2) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | DBMS abstraction layer |
+| HIC.BadMedicine | [GitHub](https://github.com/HicServices/BadMedicine) | [0.0.1.2](https://www.nuget.org/packages/HIC.BadMedicine/0.0.1.2) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html) | Generate Test Datasets for tests/exericses |
+| SSH.NET  | [GitHub](https://github.com/sshnet/SSH.NET)  | [2016.1.0](https://www.nuget.org/packages/SSH.NET/2016.1.0) | [MIT](https://github.com/sshnet/SSH.NET/blob/develop/LICENSE) | Enables fetching files from SFTP servers |
+| Moq 4 | [GitHub](https://github.com/moq/moq4) | [4.10.1](https://www.nuget.org/packages/Moq/4.10.1) |[BSD 3](https://github.com/moq/moq4/blob/master/License.txt)  | Mock objects during unit testing |
+| [Nunit](https://nunit.org/) |[GitHub](https://github.com/nunit/nunit) | [3.11.0](https://www.nuget.org/packages/NUnit/3.11.0) | [MIT](https://opensource.org/licenses/MIT) | Unit testing |
+| Microsoft.NET.Test.Sdk | [GitHub](https://github.com/microsoft/vstest/) | [16.0.1](https://www.nuget.org/packages/Microsoft.NET.Test.Sdk/16.0.1) | [MIT](https://opensource.org/licenses/MIT) | Required for running tests| |
+| NUnit3TestAdapter | [GitHub](https://github.com/nunit/nunit3-vs-adapter)| [3.13.0](https://www.nuget.org/packages/NUnit3TestAdapter/3.13.0) | [MIT](https://opensource.org/licenses/MIT) | Run unit tests from within Visual Studio |
+| [Newtonsoft.Json](https://www.newtonsoft.com/json) | [GitHub](https://github.com/JamesNK/Newtonsoft.Json) | [12.0.2](https://www.nuget.org/packages/Newtonsoft.Json/12.0.2) | [MIT](https://opensource.org/licenses/MIT) | Serialization of objects for sharing/transmission |
+| YamlDotNet | [GitHub](https://github.com/aaubry/YamlDotNet)  | [6.0.0](https://www.nuget.org/packages/YamlDotNet/6.0.0) | [MIT](https://opensource.org/licenses/MIT) |Loading configuration files|
+| [SecurityCodeScan](https://security-code-scan.github.io/) | [GitHub](https://github.com/security-code-scan/security-code-scan) | [3.2.0](https://www.nuget.org/packages/SecurityCodeScan/3.2.0) | [GPL 3.0](https://www.gnu.org/licenses/gpl-3.0.html)| Performs static build time analysis for vulnerabilities in the codebase (e.g. Sql injection)| |
+| System.Runtime.Loader | [GitHub](https://github.com/dotnet/corefx) | [4.3.0](https://www.nuget.org/packages/System.Runtime.Loader/4.3.0) |[MIT](https://opensource.org/licenses/MIT)  | Allows loading assemblies in dot net core| |
+| System.Data.SqlClient | [GitHub](https://github.com/dotnet/corefx) | [4.6.1](https://www.nuget.org/packages/System.Data.SqlClient/4.6.1) | [MIT](https://opensource.org/licenses/MIT) | Enables interaction with Microsoft Sql Server databases |  |
+ | System.Drawing.Common | [GitHub](https://github.com/dotnet/corefx)  | [4.5.1](https://www.nuget.org/packages/System.Drawing.Common/4.5.1) |[MIT](https://opensource.org/licenses/MIT) | Enables working with Bitmap resources |  |
+ 

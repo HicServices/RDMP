@@ -61,7 +61,13 @@ namespace ReusableUIComponents.ChecksUI
             pbRed.Visible = false;
         }
 
-        
+        protected override void OnEnabledChanged(EventArgs e)
+        {
+            base.OnEnabledChanged(e);
+            
+            pbGrey.Visible = !Enabled;
+        }
+
         private void pb_Click(object sender, EventArgs e)
         {
             Exception tag = ((Control)sender).Tag as Exception;

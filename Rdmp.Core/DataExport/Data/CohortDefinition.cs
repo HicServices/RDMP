@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using ReusableLibraryCode;
 using System;
 using System.Linq;
 
@@ -52,7 +53,10 @@ namespace Rdmp.Core.DataExport.Data
             LocationOfCohort = locationOfCohort;
 
             if (string.IsNullOrWhiteSpace(description))
-                throw new NullReferenceException("Description for cohort with ID " + id + " is blank this is not permitted");
+                if(id == null)
+                    throw new ArgumentNullException("Cohorts must have a description");
+                else
+                    throw new NullReferenceException("There is a cohort (with ID " + id + ") in "+locationOfCohort.DefinitionTableName+" which has a blank/null description.  You must fix this.");
         }
         
         /// <inheritdoc/>
@@ -68,9 +72,23 @@ namespace Rdmp.Core.DataExport.Data
                     }
                         
 
-                bool foundSimilar =
-                    ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort)//see if there is one with the same name
-                        .Any(t => t.Description.Equals(Description) && t.Version.Equals(Version));//and description (it might have a different ID but it is still against the rules)
+                bool foundSimilar = false;
+
+                try
+                {
+                    foundSimilar = ExtractableCohort.GetImportableCohortDefinitions((ExternalCohortTable)LocationOfCohort)//see if there is one with the same name
+                            .Any(t => t.Description.Equals(Description) && t.Version.Equals(Version));//and description (it might have a different ID but it is still against the rules)
+
+                }catch(Exception ex)
+                {
+                    matchDescription = 
+                    string.Format("Error occured when checking for existing cohorts in the Project.  We were looking in {0} Error was: {1}",
+                        LocationOfCohort + Environment.NewLine + Environment.NewLine,
+                        ExceptionHelper.ExceptionToListOfInnerMessages(ex));
+
+                    return false;    
+                }
+                    
 
             if (foundSimilar)
             {

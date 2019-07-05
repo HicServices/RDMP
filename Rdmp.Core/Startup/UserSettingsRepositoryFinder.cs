@@ -103,5 +103,10 @@ namespace Rdmp.Core.Startup
 
             _linkedRepositoryProvider = newrepo;
         }
+
+        public IMapsDirectlyToDatabaseTable GetObjectByID<T>(int value) where T : IMapsDirectlyToDatabaseTable
+        {
+            return _linkedRepositoryProvider.GetObjectByID<T>(value);
+        }
     }
 }

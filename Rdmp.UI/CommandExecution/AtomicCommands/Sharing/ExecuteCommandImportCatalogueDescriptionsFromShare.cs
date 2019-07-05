@@ -46,7 +46,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Sharing
                 throw new Exception("ShareDefinition was not for a Catalogue");
             
             if(_targetCatalogue.Name != (string) first.Properties["Name"])
-                if(MessageBox.Show("Catalogue Name is '"+_targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] +"'.  Import Anyway?","Import Anyway?",MessageBoxButtons.YesNo) == DialogResult.No)
+                if(!YesNo("Catalogue Name is '"+_targetCatalogue.Name + "' but ShareDefinition is for, '" + first.Properties["Name"] +"'.  Import Anyway?","Import Anyway?"))
                     return;
 
             shareManager.ImportPropertiesOnly(_targetCatalogue, first);

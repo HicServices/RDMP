@@ -124,10 +124,7 @@ namespace Rdmp.UI.Wizard
             foreach (var dd in new ComboBox[]{ddCicPipeline,ddExtractionPipeline,ddFilePipeline})
             {
                 if (dd.Items.Count == 1)
-                {
-                    dd.SelectedItem = dd.Items[0];
-                    dd.Enabled = false;
-                }
+                    dd.SelectedItem = dd.Items[0]; //select it                
             }
             
         }
@@ -148,13 +145,21 @@ namespace Rdmp.UI.Wizard
         {
             ragProjectNumber.Reset();
 
+            //if there is no project number
+            if(string.IsNullOrWhiteSpace(tbProjectNumber.Text))
+            {
+                ragProjectNumber.Warning(new Exception("Project Number is required"));
+                _projectNumber = -1;
+                return;
+            }
+            
             try
             {
                 _projectNumber = int.Parse(tbProjectNumber.Text);
-
+                
                 var collisionProject = _existingProjects.FirstOrDefault(p => p.ProjectNumber == _projectNumber);
                 if(collisionProject != null)
-                    ragProjectNumber.Fatal(new Exception("There is already an existing Project ('" + collisionProject + "') with ProjectNumber " + _projectNumber));
+                    ragProjectNumber.Warning(new Exception("There is already an existing Project ('" + collisionProject + "') with ProjectNumber " + _projectNumber));
             }
             catch (Exception ex)
             {
@@ -320,7 +325,6 @@ namespace Rdmp.UI.Wizard
 
                 if(cbDefineCohort.Checked)
                 {
-
                     //associate the configuration with the cohort
                     _configuration.Cohort_ID = _cohortCreated.ID;
 
@@ -386,6 +390,12 @@ namespace Rdmp.UI.Wizard
 
             if (ddExtractionPipeline.SelectedItem == null)
                 return "You must select an extraction pipeline";
+
+            if(ddCohortSources.SelectedItem == null)
+                return "You must choose an Identifier Allocation database (to put your cohort / anonymous mappings)";
+
+            if(this.cbxCohort.SelectedItem == null && _cohortFile == null)
+                return "You must choose either a file or a cohort identification query to build the cohort from";
 
             //no problems
             return null;

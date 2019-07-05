@@ -5,18 +5,15 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
-using System.Xml;
 using System.Xml.Linq;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -43,8 +40,6 @@ namespace Rdmp.Core.CommandLine.Runners
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
             var toCommit = new FileInfo(_packOpts.File);
-
-            bool toReturn = false;
 
             if (!toCommit.Exists)
                 throw new FileNotFoundException("Could not find file '" + toCommit + "'");

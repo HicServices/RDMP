@@ -20,10 +20,7 @@ namespace ReusableLibraryCode.Performance
     public class ComprehensiveQueryPerformanceCounter
     {
         public BiDictionary<string,QueryPerformed> DictionaryOfQueries = new BiDictionary<string, QueryPerformed>();
-
-        public int CacheHits;
-        public int CacheMisses;
-
+        
         public ComprehensiveQueryPerformanceCounter()
         {
             

@@ -11,7 +11,6 @@ using System.Text.RegularExpressions;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataLoad.Triggers;
 
 namespace Rdmp.Core.QueryBuilding

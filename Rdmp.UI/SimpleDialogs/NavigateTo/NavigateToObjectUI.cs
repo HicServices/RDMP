@@ -62,9 +62,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         private const int DiagramTabDistance = 20;
 
         private Bitmap _magnifier;
-        private int _diagramBottom;
-
-
+        
         private Task _lastFetchTask = null;
         private CancellationTokenSource _lastCancellationToken;
         private Type[] _types;
@@ -120,8 +118,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         });
 
         private bool _isClosed;
-        private bool _skipEnter;
-        private bool _skipEscape;
 
         private List<Type> showOnlyTypes = new List<Type>();
         private AttributePropertyFinder<UsefulPropertyAttribute> _usefulPropertyFinder;
@@ -228,7 +224,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 MoveSelectionDown();
             }
 
-            if (e.KeyCode == Keys.Enter && !_skipEnter)
+            if (e.KeyCode == Keys.Enter)
             {
                 e.Handled = true;
                 PerformCompletionAction(keyboardSelectedIndex);
@@ -236,9 +232,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             
             if (e.KeyCode == Keys.Escape)
             {
-                if(_skipEscape)
-                    return;
-
                 e.Handled = true;
                 Close();
             }
@@ -294,8 +287,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 newHeight = _matches.Count*RowHeight;
             }
             SetClientSizeCore(ClientSize.Width,
-                    Math.Max(_diagramBottom,
-                        (int)((newHeight) + DrawMatchesStartingAtY)));
+                    Math.Max(0,(int)((newHeight) + DrawMatchesStartingAtY)));
             
         }
 

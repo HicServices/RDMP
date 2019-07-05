@@ -78,7 +78,7 @@ namespace Rdmp.UI.Versioning
             Patch[] patchesInDatabase;
             SortedDictionary<string, Patch> allPatchesInAssembly;
 
-            if (Patch.IsPatchingRequired(builder, patcher, out databaseVersion, out patchesInDatabase, out allPatchesInAssembly))
+            if (Patch.IsPatchingRequired(builder, patcher, out databaseVersion, out patchesInDatabase, out allPatchesInAssembly) == Patch.PatchingState.Required)
                 new PatchingUI(builder, repository, databaseVersion, patcher, patchesInDatabase, allPatchesInAssembly).ShowDialog();
         }
 
@@ -93,6 +93,7 @@ namespace Rdmp.UI.Versioning
                 toApply.Add(potentialInstallable.locationInAssembly, potentialInstallable);
 
 
+            checksUI1.BeginUpdate();
             try
             {
                 //make sure the existing patches in the live database are not freaky phantom patches
@@ -100,12 +101,10 @@ namespace Rdmp.UI.Versioning
                     //if patch is not in database assembly
                     if (!_allPatchesInAssembly.Any(a => a.Value.Equals(patch)))
                     {
-
                         checksUI1.OnCheckPerformed(new CheckEventArgs(
                             "The database contains an unexplained patch called " + patch.locationInAssembly +
-                            " (it is not in " + _patcher.GetDbAssembly().FullName + " ) so how did it get there?", CheckResult.Fail,
+                            " (it is not in " + _patcher.GetDbAssembly().FullName + " ) so how did it get there?", CheckResult.Warning,
                             null));
-                        stop = true;
                     }
                     else if (!_allPatchesInAssembly[patch.locationInAssembly].EntireScript.Equals(patch.EntireScript))
                     {
@@ -131,6 +130,10 @@ namespace Rdmp.UI.Versioning
             {
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Patch evaluation failed", CheckResult.Fail, exception));
                 stop = true;
+            }
+            finally
+            {
+                checksUI1.EndUpdate();
             }
             
 

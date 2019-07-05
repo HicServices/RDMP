@@ -447,9 +447,9 @@ Only define secondary columns if you really need them! if any of the key fields 
                 if (actuallyDoIt)
                 {
                     bool alsoCreateExtractionInformation =
-                        MessageBox.Show(
+                        Activator.YesNo(
                             "Also create a virtual extractable column(s) in '" + _catalogue + "' called '<Column>_Desc'",
-                            "Create Extractable Column?", MessageBoxButtons.YesNo) == DialogResult.Yes;
+                            "Create Extractable Column?");
 
                     var keyPairs = new List<Tuple<ColumnInfo, ColumnInfo>>();
                     keyPairs.Add(Tuple.Create(f1,p1));

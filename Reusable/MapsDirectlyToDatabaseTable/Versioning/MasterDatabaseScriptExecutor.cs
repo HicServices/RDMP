@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
 using FAnsi.Discovery;
@@ -394,10 +393,12 @@ INSERT INTO [RoundhousE].[ScriptsRun]
 
                 while (r.Read())
                 {
-                    string text_of_script = (string)r["text_of_script"];
-                    string script_name = (string)r["script_name"] ;
-
-                    if(script_name.Equals(InitialDatabaseScriptName))
+                    string text_of_script = r["text_of_script"] as string;
+                    string script_name = r["script_name"] as string;
+                    
+                    if(string.IsNullOrWhiteSpace(script_name) || 
+                        string.IsNullOrWhiteSpace(text_of_script) || 
+                        script_name.Equals(InitialDatabaseScriptName))
                         continue;
 
                     Patch p = new Patch(script_name,text_of_script);

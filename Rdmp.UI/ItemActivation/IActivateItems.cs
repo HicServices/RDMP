@@ -155,13 +155,18 @@ namespace Rdmp.UI.ItemActivation
         /// </summary>
         string CurrentDirectory { get; }
 
+        /// <summary>
+        /// Shows the <paramref name="form"/>.  This method exists so tests can suppress the behaviour and to facilitate standardisation
+        /// </summary>
+        /// <param name="form"></param>
+        /// <returns></returns>
         DialogResult ShowDialog(Form form);
         
         /// <summary>
         /// Closes the Form <paramref name="f"/> and reports the <paramref name="reason"/> to the user
         /// in a highly visible way
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="f"></param>
         /// <param name="reason"></param>
         void KillForm(Form f, Exception reason);
 
@@ -169,7 +174,7 @@ namespace Rdmp.UI.ItemActivation
         /// Closes the Form <paramref name="f"/> and reports the <paramref name="reason"/> to the user
         /// in a highly visible way
         /// </summary>
-        /// <param name="c"></param>
+        /// <param name="f"></param>
         /// <param name="reason"></param>
         void KillForm(Form f, string reason);
 
@@ -186,5 +191,13 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="databaseEntity"></param>
         /// <returns></returns>
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
+        
+        /// <summary>
+        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
+        /// </summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        bool YesNo(string text, string caption);
     }
 }

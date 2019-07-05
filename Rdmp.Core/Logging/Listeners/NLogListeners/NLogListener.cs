@@ -14,7 +14,7 @@ namespace Rdmp.Core.Logging.Listeners.NLogListeners
     /// </summary>
     public abstract class NLogListener
     {
-        public LogLevel Worst { get; private set; }
+        public LogLevel Worst { get; set; }
         public bool ThrowOnError { get; set; }
 
         public NLogListener(bool throwOnError)

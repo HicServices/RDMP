@@ -234,6 +234,7 @@ namespace Rdmp.Core.Curation.Data
             });
             
             ClearAllInjections();
+            parent.ClearAllInjections();
         }
 
         internal CatalogueItem(ICatalogueRepository repository, DbDataReader r)

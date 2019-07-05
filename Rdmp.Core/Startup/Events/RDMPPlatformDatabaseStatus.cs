@@ -11,6 +11,7 @@ namespace Rdmp.Core.Startup.Events
         Unreachable,
         Broken,
         RequiresPatching,
-        Healthy
+        Healthy,
+        SoftwareOutOfDate
     }
 }

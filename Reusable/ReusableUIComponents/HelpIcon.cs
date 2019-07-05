@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.TransparentHelpSystem;
@@ -17,7 +16,14 @@ namespace ReusableUIComponents
     /// </summary>
     public partial class HelpIcon : UserControl
     {
+        public const int MaxHoverTextLength = 150;
+
+        /// <summary>
+        /// Returns the text that will be displayed when the user hovers over the control (this may be truncated if the text provided to <see cref="SetHelpText"/> was very long)
+        /// </summary>
+        public string HoverText{get=>_hoverText;}
         private string _hoverText;
+
         private string _title;
         private HelpWorkflow _workFlow;
         private string _originalHoverText;
@@ -37,8 +43,7 @@ namespace ReusableUIComponents
             _originalHoverText = hoverText;
             Visible = !String.IsNullOrWhiteSpace(_hoverText);
 
-            Regex rgx = new Regex("(.{150}\\s)");
-            _hoverText = rgx.Replace(hoverText, "$1\n");
+            _hoverText = GetShortText(_hoverText);
 
             tt = new ToolTip
             {
@@ -53,13 +58,26 @@ namespace ReusableUIComponents
             Cursor = Cursors.Hand;
         }
 
+        private string GetShortText(string hoverText)
+        {
+            if(string.IsNullOrWhiteSpace(_hoverText))
+                return null;
+
+            if (hoverText.Length <= MaxHoverTextLength)
+                return hoverText;
+
+            //enforce a maximum of 150 characters
+            return hoverText.Substring(0, MaxHoverTextLength-3) + "...";
+        }
+
         private void HelpIcon_MouseClick(object sender, MouseEventArgs e)
         {
             if(!SuppressClick)
                 if (_workFlow != null)
                     _workFlow.Start(true);
                 else
-                    WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
+                    if(_title != null && _originalHoverText != null)
+                        WideMessageBox.Show(_title, _originalHoverText, WideMessageBoxTheme.Help);
         }
     }
 }

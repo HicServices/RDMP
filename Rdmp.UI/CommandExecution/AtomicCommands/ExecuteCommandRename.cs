@@ -9,36 +9,32 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.UI.Refreshing;
-using ReusableLibraryCode.CommandExecution;
+using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandRename : BasicCommandExecution,IAtomicCommand
+    public class ExecuteCommandRename : BasicUICommandExecution,IAtomicCommand
     {
         private string _newValue;
-        private readonly RefreshBus _refreshBus;
         private readonly INamed _nameable;
         private bool _explicitNewValuePassed;
 
-        public ExecuteCommandRename(RefreshBus refreshBus, INamed nameable)
+        public ExecuteCommandRename(IActivateItems activator, INamed nameable):base(activator)
         {
-            _refreshBus = refreshBus;
             _nameable = nameable;
+
+            if(nameable is ITableInfo)
+                SetImpossible("TableInfos cannot not be renamed");
         }
 
-        public ExecuteCommandRename(RefreshBus refreshBus, INamed nameable, string newValue):this(refreshBus,nameable)
+        public ExecuteCommandRename(IActivateItems activator, INamed nameable, string newValue):this(activator,nameable)
         {
             _newValue = newValue;
             _explicitNewValuePassed = true;
-        }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
         }
 
         public override void Execute()
@@ -49,7 +45,27 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             {
                 var dialog = new TypeTextOrCancelDialog("Rename " + _nameable.GetType().Name, "Name", 2000, _nameable.Name);
                 if (dialog.ShowDialog() == DialogResult.OK)
+                {
+                    while(UsefulStuff.IsBadName(dialog.ResultText))
+                    {
+                        
+                        if(YesNo("Name contains illegal characters, do you want to use it anyway?","Bad Name"))
+                        {
+                            //user wants to use the name anyway
+                            break;
+                        }
+                            
+                        //user does not want to use the bad name
+
+                        //type a new one then
+                        dialog = new TypeTextOrCancelDialog("Rename " + _nameable.GetType().Name, "Name", 2000, dialog.ResultText);
+
+                        //no? in that case lets just give up altogether
+                        if(dialog.ShowDialog() != DialogResult.OK)
+                            return;
+                    }
                     _newValue = dialog.ResultText;
+                }
                 else
                     return;
             }
@@ -58,7 +74,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             EnsureNameIfCohortIdentificationAggregate();
 
             _nameable.SaveToDatabase();
-            _refreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)_nameable));
+            Publish((DatabaseEntity)_nameable);
 
         }
 

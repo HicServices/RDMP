@@ -8,7 +8,6 @@ using System;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
-using System.Linq;
 using NPOI.OpenXmlFormats.Wordprocessing;
 using NPOI.Util;
 using NPOI.XWPF.UserModel;
@@ -132,7 +131,7 @@ namespace Rdmp.Core.Reports
         /// <summary>
         /// Opens windows explorer to show the file
         /// </summary>
-        /// <param name="document"></param>
+        /// <param name="fileInfo"></param>
         protected void ShowFile(FileInfo fileInfo)
         {
             UsefulStuff.GetInstance().ShowFileInWindowsExplorer(fileInfo);

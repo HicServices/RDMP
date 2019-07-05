@@ -11,7 +11,6 @@ using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Injection;
-using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.SyntaxChecking;
 using Rdmp.Core.Repositories;

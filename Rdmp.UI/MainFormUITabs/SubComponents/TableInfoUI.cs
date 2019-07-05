@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
@@ -88,64 +89,22 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
                 return true;
             
             var newName = _tableInfo.GetFullyQualifiedName();
+            _tableInfo.Name = newName;
 
             var oldName = _tableInfo.Repository.GetObjectByID<TableInfo>(_tableInfo.ID).GetFullyQualifiedName();
 
-            if (oldName != newName)
-            {
-                DialogResult dialogResult = MessageBox.Show("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?", MessageBoxButtons.YesNo);
-
-                if (dialogResult == DialogResult.Yes)
-                    DoRefactoring(oldName,newName);
-
-            }
-
-            
-            _tableInfo.Name = newName;
+            if (oldName != newName && Activator.YesNo("You have just renamed a TableInfo, would you like to refactor your changes into ExtractionInformations?", "Apply Code Refactoring?"))
+                DoRefactoring(oldName,newName);     
 
             return true;
         }
         private void DoRefactoring(string toReplace, string toReplaceWith)
         {
-            int updatesMade = 0;
+            var refactorer = new SelectSQLRefactorer();
+            
+            int updatesMade = refactorer.RefactorTableName(_tableInfo,toReplace,toReplaceWith);
 
-            List<ExtractionInformation> unchanged = new List<ExtractionInformation>();
-
-            foreach (ColumnInfo columnInfo in _tableInfo.ColumnInfos)
-            {
-                ExtractionInformation[] extractionInformations = columnInfo.ExtractionInformations.ToArray();
-
-                foreach (ExtractionInformation extractionInformation in extractionInformations)
-                {
-                    if (extractionInformation.SelectSQL.Contains(toReplace))
-                    {
-                        string newvalue = extractionInformation.SelectSQL.Replace(toReplace, toReplaceWith);
-                        
-                        if(extractionInformation.SelectSQL.Equals(newvalue))
-                            unchanged.Add(extractionInformation);
-                        else
-                        {
-                            extractionInformation.SelectSQL = newvalue;
-                            extractionInformation.SaveToDatabase();
-                            updatesMade++;
-                        }
-                    }
-                }
-            }
-
-            //rename all ColumnInfos that belong to this TableInfo 
-            foreach (ColumnInfo columnInfo in _tableInfo.ColumnInfos)
-            {
-                columnInfo.Name = columnInfo.Name.Replace(toReplace + ".", toReplaceWith + ".");
-                columnInfo.SaveToDatabase();
-                updatesMade++;
-            }
-
-            if (unchanged.Any())
-                WideMessageBox.Show("Updates made","Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos, the following ExtractionInformations could not be refactored:" + 
-                    string.Join(Environment.NewLine,unchanged.Select(n => "ID=" + n.ID + Environment.NewLine + "Select SQL =" + n.SelectSQL)),WideMessageBoxTheme.Help);
-            else
-                MessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos.");
+            MessageBox.Show("Made " + updatesMade + " replacements in ExtractionInformation/ColumnInfos.");
         }
 
         private void tbTableInfoName_TextChanged(object sender, EventArgs e)

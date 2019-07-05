@@ -152,8 +152,7 @@ namespace Rdmp.UI.CohortUI
 
                 ExtractableCohort toDelete = node.Cohort;
 
-                if (MessageBox.Show("Are you sure you want to delete " + toDelete + " (ID=" + toDelete.ID + ")",
-                                    "Confirm Delete", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                if (Activator.YesNo("Are you sure you want to delete " + toDelete + " (ID=" + toDelete.ID + ")","Confirm Delete"))
                 {
                     try
                     {

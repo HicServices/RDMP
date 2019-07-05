@@ -30,25 +30,13 @@ namespace Rdmp.UI.SimpleDialogs
         {
             if (DatabaseCommandHelper.PerformanceCounter == null)
             {
-
                 lblCommandsAudited.Text = "Commands Audited:0";
-                progressBar1.Value = 0;
-                lblCacheUtilization.Text = "Cache Utilisation:";
             }
             else
             {
                 int timesSeen = DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Seconds.Sum(s=>s.TimesSeen);
 
                 lblCommandsAudited.Text = "Commands Audited:" + timesSeen + " (" + DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Firsts.Count + " distinct)";
-
-                int hits = DatabaseCommandHelper.PerformanceCounter.CacheHits;
-                int misses = DatabaseCommandHelper.PerformanceCounter.CacheMisses;
-
-                progressBar1.Maximum = hits + misses;
-                progressBar1.Value = hits;
-                
-
-                lblCacheUtilization.Text = "Cache Utilisation:" + hits + "/" + (hits + misses);
             }
         }
 
@@ -67,8 +55,6 @@ namespace Rdmp.UI.SimpleDialogs
                 btnToggleCommandAuditing.Text = "Start Command Auditing";
                 btnViewPerformanceResults.Enabled = false;
             }
-            
-
         }
         
         private void CatalogueLibraryPerformanceCounterUI_FormClosing(object sender, FormClosingEventArgs e)

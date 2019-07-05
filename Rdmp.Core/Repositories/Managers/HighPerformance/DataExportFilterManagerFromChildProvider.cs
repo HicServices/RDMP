@@ -28,6 +28,7 @@ namespace Rdmp.Core.Repositories.Managers.HighPerformance
         /// fast access to them.
         /// </summary>
         /// <param name="repository"></param>
+        /// <param name="childProvider"></param>
         public DataExportFilterManagerFromChildProvider(DataExportRepository repository, DataExportChildProvider childProvider): base(repository)
         {
             _containersToFilters = new From1ToM<IContainer, IFilter>(f=>f.FilterContainer_ID.Value,childProvider.AllDeployedExtractionFilters.Where(f=>f.FilterContainer_ID.HasValue));

@@ -94,6 +94,7 @@ namespace Rdmp.UI.Collections
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI with the default settings
         /// </summary>
+        /// <param name="collection"></param>
         /// <param name="tree">The main tree in the collection UI</param>
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
@@ -106,6 +107,7 @@ namespace Rdmp.UI.Collections
         /// <summary>
         /// Sets up common functionality for an RDMPCollectionUI
         /// </summary>
+        /// <param name="collection"></param>
         /// <param name="tree">The main tree in the collection UI</param>
         /// <param name="activator">The current activator, used to launch objects, register for refresh events etc </param>
         /// <param name="iconColumn">The column of tree view which should contain the icon for each row object</param>
@@ -164,7 +166,7 @@ namespace Rdmp.UI.Collections
 
             if(renameableColumn != null)
             {
-                RenameProvider = new RenameProvider(_activator.RefreshBus, tree, renameableColumn);
+                RenameProvider = new RenameProvider(_activator, tree, renameableColumn);
                 RenameProvider.RegisterEvents();
             }
 
@@ -274,9 +276,27 @@ namespace Rdmp.UI.Collections
         {
             bool hasProblems = _activator.HasProblem(e.Model);
 
-            e.Item.ForeColor = hasProblems ? Color.Red : Color.Black;
-            e.Item.BackColor = hasProblems ? Color.FromArgb(255,220,220) : Color.White;
+            var disableable = e.Model as IDisableable;
 
+            if (disableable != null && disableable.IsDisabled)
+            {
+                e.Item.ForeColor = Color.FromArgb(152,152,152);
+                
+                //make it italic
+                if(!e.Item.Font.Italic)
+                    e.Item.Font = new Font(e.Item.Font,FontStyle.Italic);
+
+                e.Item.BackColor = Color.FromArgb(225,225,225);
+            }
+            else
+            {
+                //make it not italic
+                if(e.Item.Font.Italic)
+                    e.Item.Font = new Font(e.Item.Font,FontStyle.Regular);
+
+                e.Item.ForeColor = hasProblems ? Color.Red : Color.Black;
+                e.Item.BackColor = hasProblems ? Color.FromArgb(255,220,220) : Color.White;
+            }
         }
 
         private TreeListView.Tree TreeFactoryGetter(TreeListView view)

@@ -73,8 +73,6 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
         /// <summary>
         /// Returns this since RDMPForm is a Form and therefore a top level control
         /// </summary>
-        /// <param name="c"></param>
-        /// <param name="found">pass null when calling this</param>
         /// <returns></returns>
         public IRDMPControl GetTopmostRDMPUserControl()
         {

@@ -30,6 +30,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="parameterSQL">The declaration sql e.g. DECLARE @bob as int</param>
         /// <param name="value">The value to set the paramater e.g. 1</param>
         /// <param name="comment">Some text to appear above the parameter, explaining its purpose</param>
+        /// <param name="syntaxHelper"></param>
         public ConstantParameter(string parameterSQL,string value,string comment, IQuerySyntaxHelper syntaxHelper)
         {
             _syntaxHelper = syntaxHelper;

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -33,6 +34,7 @@ using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Settings;
+using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Settings;
@@ -208,51 +210,32 @@ namespace ResearchDataManagementPlatform.Menus
 
             rdmpTaskBar1.SetWindowManager(_windowManager);
 
-            //menu is dynamic but we need to add something to it or it won't show arrow
-            newToolStripMenuItem.DropDownOpening += NewToolStripMenuItemOnDropDownOpening;
-            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-
             // Location menu
             LocationsMenu.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(new ExecuteCommandChoosePlatformDatabase(Activator.RepositoryLocator)));
 
             Activator.Theme.ApplyTo(menuStrip1);
         }
 
-        private void NewToolStripMenuItemOnDropDownOpening(object sender, EventArgs eventArgs)
+
+        private IAtomicCommand[] GetNewCommands()
         {
-            //recreate this menu each time since it can change the IsImpossible status of stuff
-            newToolStripMenuItem.DropDownItems.Clear();
-            
             //Catalogue commands
-            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingFile(Activator));
-            AddToNew(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator, false));
-            AddToNew(new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator));
-            AddToNew(new ExecuteCommandCreateNewLoadMetadata(Activator));
-            AddToNew(new ExecuteCommandCreateNewStandardRegex(Activator));
-
-            //Saved cohorts database creation
-            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateNewCohortDatabaseUsingWizard(Activator));
-
-            //cohort creation
-            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator));
-            AddToNew(new ExecuteCommandCreateNewCohortFromFile(Activator));
-            AddToNew(new ExecuteCommandCreateNewCohortFromCatalogue(Activator));
-
-            //Data export commands
-            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateNewExtractableDataSetPackage(Activator));
-            AddToNew(new ExecuteCommandCreateNewDataExtractionProject(Activator));
-            AddToNew(new ExecuteCommandRelease(Activator) { OverrideCommandName = "New Release..." });
-
-            newToolStripMenuItem.DropDownItems.Add(new ToolStripSeparator());
-            AddToNew(new ExecuteCommandCreateANOVersion(Activator));
-        }
-
-        private void AddToNew(IAtomicCommand cmd)
-        {
-            newToolStripMenuItem.DropDownItems.Add(_atomicCommandUIFactory.CreateMenuItem(cmd));
+            return new IAtomicCommand[]
+            {
+                new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator, false),
+                new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),
+                new ExecuteCommandCreateNewLoadMetadata(Activator),
+                new ExecuteCommandCreateNewStandardRegex(Activator),
+                new ExecuteCommandCreateNewCohortDatabaseUsingWizard(Activator),
+                new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(Activator),
+                new ExecuteCommandCreateNewCohortFromFile(Activator),
+                new ExecuteCommandCreateNewCohortFromCatalogue(Activator),
+                new ExecuteCommandCreateNewExtractableDataSetPackage(Activator),
+                new ExecuteCommandCreateNewDataExtractionProject(Activator),
+                new ExecuteCommandRelease(Activator) { OverrideCommandName = "New Release..." },
+                new ExecuteCommandCreateANOVersion(Activator)
+            };
         }
 
         void WindowFactory_TabChanged(object sender, IDockContent newTab)
@@ -356,6 +339,17 @@ namespace ResearchDataManagementPlatform.Menus
             var file = new FileInfo(Path.GetTempFileName());
             File.WriteAllText(file.FullName,string.Join(Environment.NewLine,Activator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Select(t=>t.FullName)));
             UsefulStuff.GetInstance().ShowFileInWindowsExplorer(file);
+        }
+
+        private void NewToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var dlg = new PickOneOrCancelDialog<IAtomicCommand>(GetNewCommands(),"Create New:",c=>c.GetImage(Activator.CoreIconProvider),c=>c.GetCommandName());
+
+            if(dlg.ShowDialog() == DialogResult.OK)
+            {
+                var picked = dlg.Picked;
+                picked.Execute();
+            }
         }
     }
 }

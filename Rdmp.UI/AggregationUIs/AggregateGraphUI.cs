@@ -270,7 +270,9 @@ namespace Rdmp.UI.AggregationUIs
                     adapter.Fill(_dt);
                     _cmd = null;
 
-
+                    //trim all leading/trailing whitespace from column
+                    foreach(DataColumn c in _dt.Columns)
+                        c.ColumnName = c.ColumnName.Trim();
 
                     if (_dt.Rows.Count == 0)
                         throw new Exception("Query Returned No Rows");
@@ -711,6 +713,7 @@ namespace Rdmp.UI.AggregationUIs
         /// Loads the Graph without establishing a lifetime subscription to refresh events (use if you are a derrived class who has it's own subscription or if you plan
         /// to load multiple different graphs into this control one after the other).
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="graph"></param>
         public void SetAggregate(IActivateItems activator,AggregateConfiguration graph)
         {

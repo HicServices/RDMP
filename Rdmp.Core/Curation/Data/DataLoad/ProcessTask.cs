@@ -114,18 +114,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get { return Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);} }
-
-        /// <inheritdoc cref="RelatesSolelyToCatalogue_ID"/>
-        [NoMappingToDatabase]
-        public Catalogue RelatesSolelyToCatalogue {
-            get
-            {
-                return RelatesSolelyToCatalogue_ID == null
-                    ? null
-                    : Repository.GetObjectByID<Catalogue>((int) RelatesSolelyToCatalogue_ID);
-            }
-        }
-
+        
         /// <inheritdoc/>
         [NoMappingToDatabase]
         public ILoadProgress[] LoadProgresses { get { return LoadMetadata.LoadProgresses; }}
@@ -158,7 +147,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             LoadMetadata_ID = int.Parse(r["LoadMetaData_ID"].ToString());
 
             if (r["RelatesSolelyToCatalogue_ID"] != DBNull.Value)
-                RelatesSolelyToCatalogue_ID = int.Parse(r["RelatesSolelyToCatalogue_ID"].ToString());
+                _relatesSolelyToCatalogueID = int.Parse(r["RelatesSolelyToCatalogue_ID"].ToString());
 
             Path = r["Path"] as string;
             Name = r["Name"] as string;

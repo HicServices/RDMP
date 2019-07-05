@@ -6,11 +6,9 @@
 
 using System;
 using System.IO;
-using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using NUnit.Framework;
-using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Tests.Curation.Unit.ExerciseData
 {
