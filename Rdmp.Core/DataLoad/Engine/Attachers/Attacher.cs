@@ -21,8 +21,10 @@ namespace Rdmp.Core.DataLoad.Engine.Attachers
     /// </summary>
     public abstract class Attacher : IAttacher
     {
-        [DemandsInitialization("Culture to use for bulk insert operations (determines date formats etc)")]
-        public CultureInfo Culture { get; set; }
+        public const string Culture_DemandDescription = "Culture to use for bulk insert operations (determines date formats etc)";
+
+        [DemandsInitialization(Culture_DemandDescription)]
+        public virtual CultureInfo Culture { get; set; }
 
         protected DiscoveredDatabase _dbInfo;
 

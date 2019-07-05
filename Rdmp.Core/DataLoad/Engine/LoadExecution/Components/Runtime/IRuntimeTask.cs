@@ -6,6 +6,7 @@
 
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
@@ -13,7 +14,7 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Runtime
     /// <summary>
     /// See RuntimeTask
     /// </summary>
-    public interface IRuntimeTask : IDataLoadComponent
+    public interface IRuntimeTask : IDataLoadComponent,ICheckable
     {
         bool Exists();
         void Abort(IDataLoadEventListener postLoadEventListener);

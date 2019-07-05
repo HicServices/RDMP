@@ -85,6 +85,21 @@ namespace ReusableUIComponents.ChecksUI
         Thread _checkingThread; 
         private YesNoYesToAllDialog yesNoYesToAllDialog = new YesNoYesToAllDialog();
         
+        /// <summary>
+        /// Pauses drawing the list view while you make changes to it
+        /// </summary>
+        public void BeginUpdate()
+        {
+            olvChecks.BeginUpdate();
+        }
+
+        /// <summary>
+        /// Resumes drawing the list view
+        /// </summary>
+        public void EndUpdate()
+        {
+            olvChecks.EndUpdate();
+        }
 
         public void StartChecking(ICheckable rootCheckable, bool bClearUI =true)
         {
@@ -126,15 +141,6 @@ namespace ReusableUIComponents.ChecksUI
             _checkingThread.Start();
         }
 
-        internal void BeginUpdate()
-        {
-            olvChecks.BeginUpdate();
-        }
-        
-        internal void EndUpdate()
-        {
-            olvChecks.EndUpdate();
-        }
         void checker_AllChecksFinished(ToMemoryCheckNotifier listener)
         {
 

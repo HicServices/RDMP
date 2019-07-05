@@ -26,6 +26,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public ExecuteCommandRename(IActivateItems activator, INamed nameable):base(activator)
         {
             _nameable = nameable;
+
+            if(nameable is ITableInfo)
+                SetImpossible("TableInfos cannot not be renamed");
         }
 
         public ExecuteCommandRename(IActivateItems activator, INamed nameable, string newValue):this(activator,nameable)

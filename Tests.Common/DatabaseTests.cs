@@ -225,6 +225,9 @@ namespace Tests.Common
             if (args.Status == RDMPPlatformDatabaseStatus.Healthy)
                 return;
 
+             if(args.Status == RDMPPlatformDatabaseStatus.SoftwareOutOfDate)
+                Assert.Fail(@"Your TEST database schema is out of date with the API version you are testing with, 'run rdmp.exe install ...' to install the version which matches your nuget package.");
+
             if (args.Exception != null)
                 Assert.Fail(args.SummariseAsString());
 

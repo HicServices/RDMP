@@ -4,7 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FAnsi.Naming;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
@@ -133,6 +136,140 @@ namespace Rdmp.Core.Sharing.Refactoring
                 return "IColumn '" + column + "' did not contain the fully specified table name ('" + fullyQualifiedName + "') during refactoring";
 
             return null;
+        }
+
+        /// <summary>
+        /// Returns true if the <paramref name="tableInfo"/> supports refactoring (e.g. renaming). See <see cref="GetReasonNotRefactorable(ITableInfo)"/>
+        /// for the reason why
+        /// </summary>
+        /// <param name="tableInfo"></param>
+        /// <returns></returns>
+        public bool IsRefactorable(ITableInfo tableInfo)
+        {
+            return GetReasonNotRefactorable(tableInfo) == null;
+        }
+
+        /// <summary>
+        /// Returns the reason why <paramref name="table"/> is not refactorable e.g. if it's name is not properly qualified
+        /// with database.  Returns null if it is refactorable
+        /// </summary>
+        /// <param name="table"></param>
+        /// <returns></returns>
+        public string GetReasonNotRefactorable(ITableInfo table)
+        {
+            if(string.IsNullOrWhiteSpace(table.Name))
+                return "Table has no Name property, this should be the fully qualified database table name";
+
+            if(string.IsNullOrWhiteSpace(table.Database))
+                return "Table does not have it's Database property set";
+
+            //ensure database and Name match correctly
+            var syntaxHelper = table.GetQuerySyntaxHelper();
+            var db = table.GetDatabaseRuntimeName(Curation.Data.DataLoad.LoadStage.PostLoad);
+
+            if(!table.Name.StartsWith(syntaxHelper.EnsureWrapped(db)))
+                return string.Format("Table with Name '{0}' has incorrect database propery '{1}'", table.Name , table.Database);
+
+            if(table.Name != table.GetFullyQualifiedName())
+                return string.Format("Table name '{0}' did not match the expected fully qualified name '{1}'",table.Name,table.GetFullyQualifiedName());
+
+            return null;
+        }
+
+        /// <summary>
+        /// Changes the name of the <paramref name="tableInfo"/> to a new name (which must be fully qualified). This will also
+        /// update any <see cref="ColumnInfo"/> and <see cref="ExtractionInformation"/> objects declared against the <see cref="tableInfo"/>.
+        /// 
+        /// <para>If you have transforms etc in <see cref="ExtractionInformation"/> then these may not be succesfully refactored and should
+        /// be returned in <paramref name="unchanged"/></para>
+        /// </summary>
+        /// <param name="tableInfo"></param>
+        /// <param name="newFullyQualifiedTableName"></param>
+        /// <param name="unchanged"></param>
+        /// <returns>Total number of changes made in columns and table name</returns>
+        public int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
+        {
+             return RefactorTableName(tableInfo, tableInfo.GetFullyQualifiedName(), newFullyQualifiedTableName);
+        }
+
+        /// <inheritdoc cref="RefactorTableName(ITableInfo, string)"/>
+        public int RefactorTableName(ITableInfo tableInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+        {
+            if(!IsRefactorable(tableInfo))
+                throw new RefactoringException(string.Format("TableInfo {0} is not refactorable because {1}",tableInfo,GetReasonNotRefactorable(tableInfo)));
+                        
+            int updatesMade = 0;
+            
+            //if it's a new name
+            if(tableInfo.Name != newFullyQualifiedTableName)
+            {
+                tableInfo.Name = newFullyQualifiedTableName;
+                Save(tableInfo);
+                updatesMade++;
+            }
+            
+            //Rename all ColumnInfos that belong to this TableInfo 
+            foreach (ColumnInfo columnInfo in tableInfo.ColumnInfos)
+                updatesMade += RefactorTableName(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
+                
+            return updatesMade;      
+        }
+
+        /// <summary>
+        /// Replaces the <paramref name="oldFullyQualifiedTableName"/> with the <paramref name="newFullyQualifiedTableName"/> in the
+        /// given <paramref name="columnInfo"/> and any <see cref="ExtractionInformation"/> declared against it.
+        /// </summary>
+        /// <param name="columnInfo"></param>
+        /// <param name="oldFullyQualifiedTableName"></param>
+        /// <param name="newFullyQualifiedTableName"></param>
+        /// <returns>Total number of changes made including <paramref name="columnInfo"/> and any <see cref="ExtractionInformation"/> declared on it</returns>
+        public int RefactorTableName(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+        {
+            int updatesMade = 0;
+            
+            //run what they asked for
+            updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName,newFullyQualifiedTableName);
+
+            //if they asked for .dbo. also run ..
+            if(oldFullyQualifiedTableName.Contains(".dbo."))
+                updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace(".dbo.",".."),newFullyQualifiedTableName);
+            //if they asked for .. also run .dbo.
+            else if(oldFullyQualifiedTableName.Contains(".."))
+                updatesMade += RefactorTableNameImpl(columnInfo,oldFullyQualifiedTableName.Replace("..",".dbo."),newFullyQualifiedTableName);
+
+            return updatesMade;
+        }
+
+        private int RefactorTableNameImpl(ColumnInfo columnInfo, string oldFullyQualifiedTableName, string newFullyQualifiedTableName)
+        {
+            int updatesMade = 0;
+                        
+            ExtractionInformation[] extractionInformations = columnInfo.ExtractionInformations.ToArray();
+
+            foreach (ExtractionInformation extractionInformation in extractionInformations)
+            {
+                if (extractionInformation.SelectSQL.Contains(oldFullyQualifiedTableName))
+                {
+                    string newvalue = extractionInformation.SelectSQL.Replace(oldFullyQualifiedTableName, newFullyQualifiedTableName);
+                        
+                    if(!extractionInformation.SelectSQL.Equals(newvalue))
+                    {
+                        extractionInformation.SelectSQL = newvalue;
+                        extractionInformation.SaveToDatabase();
+                        updatesMade++;
+                    }
+                }
+            }
+            
+            //rename ColumnInfos
+            if(columnInfo.Name.StartsWith(oldFullyQualifiedTableName))
+            {
+                columnInfo.Name = Regex.Replace(columnInfo.Name , "^" + Regex.Escape(oldFullyQualifiedTableName),newFullyQualifiedTableName);
+                columnInfo.SaveToDatabase();
+                updatesMade++;
+            }
+                
+            return updatesMade;
         }
     }
 }

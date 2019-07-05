@@ -13,13 +13,13 @@ using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
-    public class CatalogueTests : DatabaseTests
+    public class CatalogueTests : UnitTests
     {
         [Test]
-        public void getlist_listCatalogues_greaterThanOne()
+        public void Test_GetObjects_Catalogue()
         {
-            Catalogue catalogueWithId = new Catalogue(CatalogueRepository, "bob");
-            Catalogue[] catas = CatalogueRepository.GetAllObjects<Catalogue>();
+            Catalogue catalogueWithId = new Catalogue(Repository, "bob");
+            Catalogue[] catas = Repository.GetAllObjects<Catalogue>();
 
             Assert.IsTrue(catas.Length > 0);
 
@@ -29,8 +29,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void SettingPropertyViaRelationshipDoesntSave_NoticeHowYouHaveToCacheThePropertyCatalogueToSetIt()
         {
-            Catalogue c = new Catalogue(CatalogueRepository,"frank");
-            CatalogueItem ci = new CatalogueItem(CatalogueRepository,c,"bob");
+            Catalogue c = new Catalogue(Repository,"frank");
+            CatalogueItem ci = new CatalogueItem(Repository,c,"bob");
 
 
             var cata = ci.Catalogue;
@@ -51,11 +51,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
         public void update_changeNameOfCatalogue_passes()
         {
             //create a new one
-            var cata = new Catalogue(CatalogueRepository, "fishing");
+            var cata = new Catalogue(Repository, "fishing");
             int expectedID = cata.ID;
 
             //find it and change it's name
-            Catalogue[] catas = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
+            Catalogue[] catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catas)
             {
@@ -67,7 +67,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
 
             //find it again and see if it's name has changed - then delete it so we don't polute the db
-            Catalogue[] catasAfter = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
+            Catalogue[] catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catasAfter)
             {
@@ -83,11 +83,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
         public void update_changeAllProperties_pass()
         {
             //create a new one
-            var cata = new Catalogue(CatalogueRepository, "fishing");
+            var cata = new Catalogue(Repository, "fishing");
             int expectedID = cata.ID;
 
             //find it and change it's name
-            Catalogue[] catas = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
+            Catalogue[] catas = Repository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catas)
             {
@@ -134,7 +134,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
 
             //find it again and see if it has changed - then delete it so we don't polute the db
-            Catalogue[] catasAfter = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
+            Catalogue[] catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
 
             foreach (var catalogue in catasAfter)
             {
@@ -184,15 +184,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void create_blankConstructorCatalogue_createsNewInDatabase()
         {
-            int before = CatalogueRepository.GetAllObjects<Catalogue>().Count();
+            int before = Repository.GetAllObjects<Catalogue>().Count();
 
-            var newCatalogue = new Catalogue(CatalogueRepository, "fishing");
+            var newCatalogue = new Catalogue(Repository, "fishing");
             int expectedID = newCatalogue.ID;
 
             Assert.IsTrue(expectedID > 1);
 
 
-            Catalogue[] catasAfter = CatalogueRepository.GetAllObjects<Catalogue>().ToArray();
+            Catalogue[] catasAfter = Repository.GetAllObjects<Catalogue>().ToArray();
             int after = catasAfter.Count();
 
             Assert.AreEqual(before, after - 1);
@@ -213,13 +213,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void GetCatalogueWithID_InvalidID_throwsException()
         {
-            Assert.Throws<KeyNotFoundException>(() => CatalogueRepository.GetObjectByID<Catalogue>(-1));
+            Assert.Throws<KeyNotFoundException>(() => Repository.GetObjectByID<Catalogue>(-1));
         }
 
         [Test]
         public void GetCatalogueWithID_validID_pass()
         {
-            Catalogue c = new Catalogue(CatalogueRepository, "TEST");
+            Catalogue c = new Catalogue(Repository, "TEST");
 
             Assert.NotNull(c);
             Assert.True(c.Name == "TEST");
@@ -232,30 +232,30 @@ namespace Rdmp.Core.Tests.Curation.Integration
         public void TestGetTablesAndLookupTables()
         {
             //One catalogue
-            Catalogue cata = new Catalogue(CatalogueRepository, "TestGetTablesAndLookupTables");
+            Catalogue cata = new Catalogue(Repository, "TestGetTablesAndLookupTables");
 
             //6 virtual columns
-            CatalogueItem ci1 = new CatalogueItem(CatalogueRepository, cata, "Col1");
-            CatalogueItem ci2 = new CatalogueItem(CatalogueRepository, cata, "Col2");
-            CatalogueItem ci3 = new CatalogueItem(CatalogueRepository, cata, "Col3");
-            CatalogueItem ci4 = new CatalogueItem(CatalogueRepository, cata, "Col4");
-            CatalogueItem ci5 = new CatalogueItem(CatalogueRepository, cata, "Description");
-            CatalogueItem ci6 = new CatalogueItem(CatalogueRepository, cata, "Code");
+            CatalogueItem ci1 = new CatalogueItem(Repository, cata, "Col1");
+            CatalogueItem ci2 = new CatalogueItem(Repository, cata, "Col2");
+            CatalogueItem ci3 = new CatalogueItem(Repository, cata, "Col3");
+            CatalogueItem ci4 = new CatalogueItem(Repository, cata, "Col4");
+            CatalogueItem ci5 = new CatalogueItem(Repository, cata, "Description");
+            CatalogueItem ci6 = new CatalogueItem(Repository, cata, "Code");
 
             //2 columns come from table 1
-            TableInfo t1 = new TableInfo(CatalogueRepository, "Table1");
-            ColumnInfo t1_c1 = new ColumnInfo(CatalogueRepository, "Col1","varchar(10)",t1);
-            ColumnInfo t1_c2 = new ColumnInfo(CatalogueRepository, "Col2", "int", t1);
+            TableInfo t1 = new TableInfo(Repository, "Table1");
+            ColumnInfo t1_c1 = new ColumnInfo(Repository, "Col1","varchar(10)",t1);
+            ColumnInfo t1_c2 = new ColumnInfo(Repository, "Col2", "int", t1);
 
             //2 columns come from table 2
-            TableInfo t2 = new TableInfo(CatalogueRepository, "Table2");
-            ColumnInfo t2_c1 = new ColumnInfo(CatalogueRepository, "Col3", "varchar(10)", t2);
-            ColumnInfo t2_c2 = new ColumnInfo(CatalogueRepository, "Col4", "int", t2);
+            TableInfo t2 = new TableInfo(Repository, "Table2");
+            ColumnInfo t2_c1 = new ColumnInfo(Repository, "Col3", "varchar(10)", t2);
+            ColumnInfo t2_c2 = new ColumnInfo(Repository, "Col4", "int", t2);
 
             //2 columns come from the lookup table
-            TableInfo t3 = new TableInfo(CatalogueRepository, "Table3");
-            ColumnInfo t3_c1 = new ColumnInfo(CatalogueRepository, "Description", "varchar(10)", t3);
-            ColumnInfo t3_c2 = new ColumnInfo(CatalogueRepository, "Code", "int", t3);
+            TableInfo t3 = new TableInfo(Repository, "Table3");
+            ColumnInfo t3_c1 = new ColumnInfo(Repository, "Description", "varchar(10)", t3);
+            ColumnInfo t3_c2 = new ColumnInfo(Repository, "Code", "int", t3);
 
             //wire up virtual columns to underlying columns
             ci1.SetColumnInfo(t1_c1);
@@ -266,7 +266,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             ci6.SetColumnInfo( t3_c2);
 
             //configure the lookup relationship
-            var lookup = new Lookup(CatalogueRepository, t3_c1, t1_c2, t3_c2,ExtractionJoinType.Left, "");
+            var lookup = new Lookup(Repository, t3_c1, t1_c2, t3_c2,ExtractionJoinType.Left, "");
             try
             {
                 var allTables = cata.GetTableInfoList(true).ToArray();
@@ -307,7 +307,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_DefaultIsRoot()
         {
-            var c = new Catalogue(CatalogueRepository, "bob");
+            var c = new Catalogue(Repository, "bob");
             try
             {
                 Assert.AreEqual("\\",c.Folder.Path);
@@ -320,14 +320,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_ChangeAndSave()
         {
-            var c = new Catalogue(CatalogueRepository, "bob"); 
+            var c = new Catalogue(Repository, "bob"); 
             try
             {
                 c.Folder.Path = "\\Research\\Important";
                 Assert.AreEqual("\\research\\important\\", c.Folder.Path);
                 c.SaveToDatabase();
 
-                var c2 = CatalogueRepository.GetObjectByID<Catalogue>(c.ID);
+                var c2 = Repository.GetObjectByID<Catalogue>(c.ID);
                 Assert.AreEqual("\\research\\important\\", c2.Folder.Path);
             }
             finally
@@ -340,7 +340,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_CannotSetToNonRoot()
         {
-            var c = new Catalogue(CatalogueRepository, "bob");
+            var c = new Catalogue(Repository, "bob");
             try
             {
                 var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = "fish");
@@ -355,7 +355,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_CannotSetToNull()
         {
-            var c = new Catalogue(CatalogueRepository, "bob");
+            var c = new Catalogue(Repository, "bob");
             try
             {
                 var ex = Assert.Throws<NotSupportedException>(()=>c.Folder.Path = null);
@@ -370,7 +370,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_CannotHaveDoubleSlashes()
         {
-            var c = new Catalogue(CatalogueRepository, "bob");
+            var c = new Catalogue(Repository, "bob");
             try
             {
                 //notice the @ symbol that makes the double slashes actual double slashes - common error we might make and what this test is designed to prevent
@@ -386,8 +386,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_Subfoldering()
         {
-            var c1 = new Catalogue(CatalogueRepository, "C1");
-            var c2 = new Catalogue(CatalogueRepository, "C2");
+            var c1 = new Catalogue(Repository, "C1");
+            var c2 = new Catalogue(Repository, "C2");
 
             try
             {
@@ -414,9 +414,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_SubfolderingDuplicateNames()
         {
-            var c1 = new Catalogue(CatalogueRepository, "C1");
-            var c2 = new Catalogue(CatalogueRepository, "C2");
-            var c3 = new Catalogue(CatalogueRepository, "C3");
+            var c1 = new Catalogue(Repository, "C1");
+            var c2 = new Catalogue(Repository, "C2");
+            var c3 = new Catalogue(Repository, "C3");
 
             try
             {
@@ -451,12 +451,12 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void CatalogueFolder_SubfolderingAdvanced()
         {
-            var c1 = new Catalogue(CatalogueRepository, "C1");
-            var c2 = new Catalogue(CatalogueRepository, "C2");
-            var c3 = new Catalogue(CatalogueRepository, "C3");
-            var c4 = new Catalogue(CatalogueRepository, "C4");
-            var c5 = new Catalogue(CatalogueRepository, "C5");
-            var c6 = new Catalogue(CatalogueRepository, "C6");
+            var c1 = new Catalogue(Repository, "C1");
+            var c2 = new Catalogue(Repository, "C2");
+            var c3 = new Catalogue(Repository, "C3");
+            var c4 = new Catalogue(Repository, "C4");
+            var c5 = new Catalogue(Repository, "C5");
+            var c6 = new Catalogue(Repository, "C6");
 
 
             // 
@@ -528,7 +528,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void RelatedCatalogueTest_NoCatalogues()
         {
-            TableInfo t = new TableInfo(CatalogueRepository,"MyTable");
+            TableInfo t = new TableInfo(Repository,"MyTable");
             try
             {
                 Assert.AreEqual(0,t.GetAllRelatedCatalogues().Length);
@@ -545,16 +545,16 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(false)]
         public void RelatedCatalogueTest_OneCatalogue(bool createExtractionInformation)
         {
-            TableInfo t = new TableInfo(CatalogueRepository, "MyTable");
-            ColumnInfo c = new ColumnInfo(CatalogueRepository,"MyCol","varchar(10)",t);
+            TableInfo t = new TableInfo(Repository, "MyTable");
+            ColumnInfo c = new ColumnInfo(Repository,"MyCol","varchar(10)",t);
             
-            Catalogue cata = new Catalogue(CatalogueRepository,"MyCata");
-            CatalogueItem ci = new CatalogueItem(CatalogueRepository,cata,"MyCataItem");
+            Catalogue cata = new Catalogue(Repository,"MyCata");
+            CatalogueItem ci = new CatalogueItem(Repository,cata,"MyCataItem");
 
             try
             {
                 if (createExtractionInformation)
-                    new ExtractionInformation(CatalogueRepository, ci, c, "dbo.SomeFunc('Bob') as MySelectLine");
+                    new ExtractionInformation(Repository, ci, c, "dbo.SomeFunc('Bob') as MySelectLine");
                 else
                     ci.SetColumnInfo(c);
 
@@ -575,25 +575,25 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(false)]
         public void RelatedCatalogueTest_TwoCatalogues_TwoColumnsEach(bool createExtractionInformation)
         {
-            TableInfo t = new TableInfo(CatalogueRepository, "MyTable");
-            ColumnInfo c1 = new ColumnInfo(CatalogueRepository, "MyCol1", "varchar(10)", t);
-            ColumnInfo c2 = new ColumnInfo(CatalogueRepository, "MyCol2", "varchar(10)", t);
+            TableInfo t = new TableInfo(Repository, "MyTable");
+            ColumnInfo c1 = new ColumnInfo(Repository, "MyCol1", "varchar(10)", t);
+            ColumnInfo c2 = new ColumnInfo(Repository, "MyCol2", "varchar(10)", t);
             
-            Catalogue cata1 = new Catalogue(CatalogueRepository, "cata1");
-            CatalogueItem ci1_1 = new CatalogueItem(CatalogueRepository, cata1, "MyCataItem1_1");
-            CatalogueItem ci1_2 = new CatalogueItem(CatalogueRepository, cata1, "MyCataItem1_2");
+            Catalogue cata1 = new Catalogue(Repository, "cata1");
+            CatalogueItem ci1_1 = new CatalogueItem(Repository, cata1, "MyCataItem1_1");
+            CatalogueItem ci1_2 = new CatalogueItem(Repository, cata1, "MyCataItem1_2");
 
-            Catalogue cata2 = new Catalogue(CatalogueRepository, "cata2");
-            CatalogueItem ci2_1 = new CatalogueItem(CatalogueRepository, cata2, "MyCataItem2_1");
-            CatalogueItem ci2_2 = new CatalogueItem(CatalogueRepository, cata2, "MyCataItem2_2");
+            Catalogue cata2 = new Catalogue(Repository, "cata2");
+            CatalogueItem ci2_1 = new CatalogueItem(Repository, cata2, "MyCataItem2_1");
+            CatalogueItem ci2_2 = new CatalogueItem(Repository, cata2, "MyCataItem2_2");
             try
             {
                 if (createExtractionInformation)
                 {
-                    new ExtractionInformation(CatalogueRepository, ci1_1, c1, "dbo.SomeFunc('Bob') as MySelectLine");
-                    new ExtractionInformation(CatalogueRepository, ci1_2, c2, "dbo.SomeFunc('Bob') as MySelectLine");
-                    new ExtractionInformation(CatalogueRepository, ci2_1, c2, "dbo.SomeFunc('Bob') as MySelectLine");
-                    new ExtractionInformation(CatalogueRepository, ci2_2, c1, "dbo.SomeFunc('Bob') as MySelectLine");
+                    new ExtractionInformation(Repository, ci1_1, c1, "dbo.SomeFunc('Bob') as MySelectLine");
+                    new ExtractionInformation(Repository, ci1_2, c2, "dbo.SomeFunc('Bob') as MySelectLine");
+                    new ExtractionInformation(Repository, ci2_1, c2, "dbo.SomeFunc('Bob') as MySelectLine");
+                    new ExtractionInformation(Repository, ci2_2, c1, "dbo.SomeFunc('Bob') as MySelectLine");
                 }
                 else
                 {

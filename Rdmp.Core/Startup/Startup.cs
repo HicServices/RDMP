@@ -139,8 +139,9 @@ namespace Rdmp.Core.Startup
 
                 FindTier3Databases( RepositoryLocator.CatalogueRepository,notifier);
             }
-
-            Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,notifier);
+            
+            if(MEFSafeDirectoryCatalog != null)
+                Validator.RefreshExtraTypes(MEFSafeDirectoryCatalog,notifier);
         }
 
         private void FindTier3Databases(ICatalogueRepository catalogueRepository,ICheckNotifier notifier)
@@ -167,14 +168,13 @@ namespace Rdmp.Core.Startup
             }
 
 
-            bool patchingRequired;
+            Patch.PatchingState patchingRequired;
             try
             {
                 //is it up-to-date on patches?
                 Version databaseVersion;
                 Patch[] patchesInDatabase;
                 SortedDictionary<string, Patch> allPatchesInAssembly;
-                
                 
                 patchingRequired = Patch.IsPatchingRequired((SqlConnectionStringBuilder) tableRepository.ConnectionStringBuilder, patcher, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
             }
@@ -185,13 +185,19 @@ namespace Rdmp.Core.Startup
                 return false;
             }
 
-            if (patchingRequired)
-                //database is broken
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.RequiresPatching));
-            else
-                //database is broken
-                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Healthy));
-          
+            switch(patchingRequired)
+            {
+                case Patch.PatchingState.NotRequired:
+                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.Healthy));
+                    break;
+                case Patch.PatchingState.Required: 
+                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.RequiresPatching));
+                    break;
+                case Patch.PatchingState.SoftwareBehindDatabase:
+                    DatabaseFound(this, new PlatformDatabaseFoundEventArgs(tableRepository, patcher, RDMPPlatformDatabaseStatus.SoftwareOutOfDate));
+                    break;
+                default : throw new ArgumentOutOfRangeException("patchingRequired");
+            }          
 
             return true;
         }
@@ -327,7 +333,7 @@ namespace Rdmp.Core.Startup
             var sw = Stopwatch.StartNew();
 
             if(!CatalogueRepository.SuppressHelpLoading)
-                catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory);
+                catalogueRepository.CommentStore.ReadComments(Environment.CurrentDirectory,"SourceCodeForSelfAwareness.zip");
 
             sw.Stop();
             notifier.OnCheckPerformed(new CheckEventArgs("Help loading took:" + sw.Elapsed, CheckResult.Success));

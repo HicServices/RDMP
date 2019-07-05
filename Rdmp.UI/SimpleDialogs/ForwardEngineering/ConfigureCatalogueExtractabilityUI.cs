@@ -9,13 +9,16 @@ using System.Diagnostics;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
@@ -24,6 +27,8 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Tutorials;
+using ReusableLibraryCode.DataAccess;
+using ReusableUIComponents;
 using ReusableUIComponents.TransparentHelpSystem;
 
 namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
@@ -156,6 +161,7 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
             ddIsExtractionIdentifier.Items.AddRange(olvColumnExtractability.Objects.OfType<ColPair>().ToArray());
 
             CommonFunctionality.AddHelp(btnPickProject, "IExtractableDataSet.Project_ID", "Project Specific Datasets");
+            CommonFunctionality.AddHelpString(btnAddToExisting,"Add to existing catalogue","Use this option if you want to create a Catalogue which extracts from multiple tables (via a JOIN).  Once used you will still need to configure a JoinInfo between column(s) in all the tables the Catalogue draws data from.");
         }
 
 
@@ -534,6 +540,19 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         public ObjectSaverButton GetObjectSaverButton()
         {
             return objectSaverButton1;
+        }
+
+        private void BtnRenameTableInfo_Click(object sender, EventArgs e)
+        {
+            var cmd = new ExecuteCommandAlterTableName(Activator,_tableInfo);
+
+            if(cmd.IsImpossible)
+                MessageBox.Show(cmd.ReasonCommandImpossible);
+            else
+            {
+                cmd.Execute();
+                tbTableName.Text = _tableInfo.GetFullyQualifiedName();
+            }
         }
     }
 }

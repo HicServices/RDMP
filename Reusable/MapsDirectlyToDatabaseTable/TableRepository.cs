@@ -159,6 +159,12 @@ namespace MapsDirectlyToDatabaseTable
                 PropertyInfo prop = oTableWrapperObject.GetType().GetProperty(p.ParameterName.Trim('@'));
                 
                 object propValue = prop.GetValue(oTableWrapperObject, null);
+                
+                //if it is a complex type but IConvertible e.g. CatalogueFolder
+                if(!prop.PropertyType.IsValueType && propValue is IConvertible c)
+                    if(c.GetTypeCode() == TypeCode.String)
+                        propValue = c.ToString();
+
                 SetParameterToValue(p, propValue);
             }
 

@@ -208,10 +208,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
-            
+                        
             //If there is some special way of describing the effects of deleting this object e.g. Selected Datasets
             var customMessageDeletable = deleteable as IDeletableWithCustomMessage;
             
+            if(databaseObject is Catalogue c)
+            {
+                if(c.GetExtractabilityStatus(RepositoryLocator.DataExportRepository).IsExtractable)
+                {
+                    if(YesNo("Catalogue must first be made non extractable before it can be deleted, mark non extractable?","Make Non Extractable"))
+                    {
+                        var cmd = new ExecuteCommandChangeExtractability(this,c);
+                        cmd.Execute();
+                    }
+                    else
+                        return false;
+                }
+            }
+
             string overrideConfirmationText = null;
 
             if (customMessageDeletable != null)

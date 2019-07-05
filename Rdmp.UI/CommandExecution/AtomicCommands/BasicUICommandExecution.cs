@@ -204,15 +204,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <param name="maxLength"></param>
         /// <param name="initialText"></param>
         /// <param name="text"></param>
+        /// <param name="requireSaneHeaderText"></param>
         /// <returns></returns>
-        protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text)
+        protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText = false)
         {
-            var textTyper = new TypeTextOrCancelDialog(header,prompt, maxLength, initialText);
+            var textTyper = new TypeTextOrCancelDialog(header,prompt, maxLength, initialText)
+            {
+                RequireSaneHeaderText = requireSaneHeaderText
+            };
+
             text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
             return !string.IsNullOrWhiteSpace(text);
         }
 
-        /// <inheritdoc cref="TypeText(string, string, int, string, out string)"/>
+        /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
         protected bool TypeText(string header, string prompt, out string text)
         {
             return TypeText(header, prompt, 500, null, out text);

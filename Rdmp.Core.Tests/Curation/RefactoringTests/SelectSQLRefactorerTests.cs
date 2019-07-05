@@ -4,44 +4,28 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.Core.Sharing.Refactoring.Exceptions;
+using System;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.RefactoringTests
 {
-    public class SelectSQLRefactorerTests:DatabaseTests
+    public class SelectSQLRefactorerTests:UnitTests
     {
-        private TableInfo tableInfo;
-        private ColumnInfo columnInfo;
-        
-        private Catalogue catalogue;
-        private CatalogueItem catalogueItem;
-
-        [SetUp]
-        public void CreateEntities()
-        {
-            tableInfo = new TableInfo(CatalogueRepository, "[database]..[table]");
-            tableInfo.Database = "database";
-            tableInfo.SaveToDatabase();
-
-            columnInfo = new ColumnInfo(CatalogueRepository, "[database]..[table].[column]", "varchar(10)", tableInfo);
-
-            catalogue = new Catalogue(CatalogueRepository, "MyCatalogue");
-            catalogueItem = new CatalogueItem(CatalogueRepository, catalogue, "MyCatalogueItem");
-        }
-        
-        [TearDown]
-        public void DeleteEntities()
-        {
-            tableInfo.DeleteInDatabase();
-            catalogue.DeleteInDatabase();
-        }
         [Test]
         public void RefactorTableName_TestValidReplacement_ColumnInfo()
         {
+            var columnInfo = WhenIHaveA<ColumnInfo>();
+            columnInfo.Name = "[database]..[table].[column]";
+            
+            var tableInfo = columnInfo.TableInfo;
+            tableInfo.Database = "database";
+            tableInfo.Name = "[database]..[table]";
+
             var refactorer = new SelectSQLRefactorer();
             refactorer.RefactorTableName(columnInfo,tableInfo,"[database]..[table2]");
 
@@ -51,9 +35,19 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
         [Test]
         public void RefactorTableName_TestValidReplacement_ExtractionInformation()
         {
-            var ei = new ExtractionInformation(CatalogueRepository, catalogueItem, columnInfo,"UPPER([database]..[table].[column])");
+            var ei = WhenIHaveA<ExtractionInformation>();
+            ei.SelectSQL = "UPPER([database]..[table].[column])";
             ei.Alias = "MyCatalogueItem";
             ei.SaveToDatabase();
+            
+            var ci = ei.ColumnInfo;
+            ci.Name = "[database]..[table].[column]";
+            ci.SaveToDatabase();
+            
+            var tableInfo = ei.ColumnInfo.TableInfo;
+            tableInfo.Database = "database";
+            tableInfo.Name = "[database]..[table]";
+            tableInfo.SaveToDatabase();
 
             var refactorer = new SelectSQLRefactorer();
             refactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
@@ -67,10 +61,20 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
         [TestCase("dbo.MyNewRand()", false)]
         public void RefactorTableName_IsRefactorable_ExtractionInformation(string transformSql,bool expectedToBeRefactorable)
         {
-            var ei = new ExtractionInformation(CatalogueRepository, catalogueItem, columnInfo, transformSql);
+            var ei = WhenIHaveA<ExtractionInformation>();
+            ei.SelectSQL = transformSql;
             ei.Alias = "MyCatalogueItem";
             ei.SaveToDatabase();
 
+            var ci = ei.ColumnInfo;
+            ci.Name = "[database]..[table].[column]";
+            ci.SaveToDatabase();
+
+            var tableInfo = ei.ColumnInfo.TableInfo;
+            tableInfo.Database = "database";
+            tableInfo.Name = "[database]..[table]";
+            tableInfo.SaveToDatabase();
+            
             var refactorer = new SelectSQLRefactorer();
             
             Assert.AreEqual(expectedToBeRefactorable,refactorer.IsRefactorable(ei));
@@ -79,6 +83,60 @@ namespace Rdmp.Core.Tests.Curation.RefactoringTests
                 refactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]");
             else
                 Assert.Throws<RefactoringException>(() => refactorer.RefactorTableName(ei, tableInfo, "[database]..[table2]"));
+        }
+
+        [TestCase("[Fish]..[MyTbl]","[Fish]..[MyTbl2]")]
+        public void RefactorTableName_IsRefactorable_TableInfoWithNoColumnInfos(string oldName, string newName)
+        {
+            var ti = WhenIHaveA<TableInfo>();
+            ti.Name = oldName;
+            ti.Database = "Fish";
+            ti.SaveToDatabase();
+
+            foreach(IDeleteable d in ti.ColumnInfos)
+                d.DeleteInDatabase();
+            
+            var refactorer = new SelectSQLRefactorer();
+            Assert.IsTrue(refactorer.IsRefactorable(ti));
+
+            Assert.AreEqual(1,refactorer.RefactorTableName(ti,newName));
+            Assert.AreEqual(newName,ti.Name);
+        }
+
+        [TestCase("[Donkey]..[MyTbl]","[Fish]..[MyTbl2]","'[Donkey]..[MyTbl]' has incorrect database propery 'Fish'")]
+        public void RefactorTableName_IsNotRefactorable_TableInfoWithNoColumnInfos(string oldName, string newName,string expectedReason)
+        {
+            var ti = WhenIHaveA<TableInfo>();
+            ti.Name = oldName;
+            ti.Database = "Fish";
+            ti.SaveToDatabase();
+
+            foreach(IDeleteable d in ti.ColumnInfos)
+                d.DeleteInDatabase();
+            
+            var refactorer = new SelectSQLRefactorer();
+            Assert.IsFalse(refactorer.IsRefactorable(ti));
+
+            var ex = Assert.Throws<RefactoringException>(()=>refactorer.RefactorTableName(ti,newName));
+            StringAssert.Contains(expectedReason,ex.Message);
+        }
+
+
+        //It shouldn't matter if you have dbo or not
+        [TestCase("[Fish]..","[Fish]..")]
+        [TestCase("[Fish].dbo.","[Fish]..")]
+        [TestCase("[Fish]..","[Fish].dbo.")]
+        [TestCase("[Fish].dbo.","[Fish].dbo.")]
+        public void RefactorTableName_IsRefactorable_ColumnInfo(string columnTable,string findTableName)
+        {
+            var col = WhenIHaveA<ColumnInfo>();
+            col.Name = columnTable + "[MyTbl].[A]";
+            col.SaveToDatabase();
+
+            var refactorer = new SelectSQLRefactorer();
+            Assert.AreEqual(1,refactorer.RefactorTableName(col,findTableName + "[MyTbl].[A]" , findTableName + "[MyTbl2].[A]"));
+
+            Assert.AreEqual( findTableName + "[MyTbl2].[A]",col.Name);
         }
     }
 }

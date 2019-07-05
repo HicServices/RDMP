@@ -59,6 +59,7 @@
             this.tbAcronym = new System.Windows.Forms.TextBox();
             this.label8 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnRenameTableInfo = new System.Windows.Forms.Button();
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.olvColumnExtractability)).BeginInit();
             this.pChangeAll.SuspendLayout();
@@ -362,6 +363,7 @@
             // 
             // panel1
             // 
+            this.panel1.Controls.Add(this.btnRenameTableInfo);
             this.panel1.Controls.Add(this.label2);
             this.panel1.Controls.Add(this.tbAcronym);
             this.panel1.Controls.Add(this.olvColumnExtractability);
@@ -387,11 +389,28 @@
             this.panel1.Size = new System.Drawing.Size(819, 568);
             this.panel1.TabIndex = 27;
             // 
+            // btnRenameTableInfo
+            // 
+            this.btnRenameTableInfo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnRenameTableInfo.Location = new System.Drawing.Point(727, 30);
+            this.btnRenameTableInfo.Name = "btnRenameTableInfo";
+            this.btnRenameTableInfo.Size = new System.Drawing.Size(75, 23);
+            this.btnRenameTableInfo.TabIndex = 27;
+            this.btnRenameTableInfo.Text = "Rename...";
+            this.btnRenameTableInfo.UseVisualStyleBackColor = true;
+            this.btnRenameTableInfo.Click += new System.EventHandler(this.BtnRenameTableInfo_Click);
+            // 
             // helpIcon1
             // 
+            this.helpIcon1.BackColor = System.Drawing.Color.Transparent;
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.helpIcon1.Location = new System.Drawing.Point(207, 144);
+            this.helpIcon1.MaximumSize = new System.Drawing.Size(19, 19);
+            this.helpIcon1.MinimumSize = new System.Drawing.Size(19, 19);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.SuppressClick = false;
             this.helpIcon1.TabIndex = 8;
             // 
             // ConfigureCatalogueExtractabilityUI
@@ -452,5 +471,6 @@
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.Panel panel1;
         private ReusableUIComponents.HelpIcon helpIcon1;
+        private System.Windows.Forms.Button btnRenameTableInfo;
     }
 }
