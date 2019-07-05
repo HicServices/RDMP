@@ -67,14 +67,16 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             catch (Exception e)
             {
                 throw new InvalidPatchException(locationInAssembly,"Could not process the scripts --Version: entry ('"+versionNumber +"') into a valid C# Version object",e);
-
             }
 
-            if(!lines[1].StartsWith(DescriptionKey))
+            if(lines.Length >=2)
+            {
+                if(!lines[1].StartsWith(DescriptionKey))
                 throw new InvalidPatchException(locationInAssembly,"Second line of patch scripts must start with " + DescriptionKey);
 
-            string description = lines[1].Substring(DescriptionKey.Length);
-            Description = description;
+                string description = lines[1].Substring(DescriptionKey.Length);
+                Description = description;
+            } 
         }
 
 
@@ -166,7 +168,31 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             throw new Exception("Cannot compare " + this.GetType().Name + " to " + obj.GetType().Name);
         }
 
-        public static bool IsPatchingRequired(SqlConnectionStringBuilder builder, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
+        /// <summary>
+        /// Describes the state of a database schema when compared to the <see cref="IPatcher"/> which manages it's schema
+        /// </summary>
+        public enum PatchingState
+        {
+            /// <summary>
+            /// Indicates that the running <see cref="IPatcher"/> has not detected any patches that require to be run on
+            /// the database schema
+            /// </summary>
+            NotRequired,
+
+            /// <summary>
+            /// Indicates that the running <see cref="IPatcher"/> has identified patches that should be applied to the
+            /// database schema
+            /// </summary>
+            Required,
+
+            /// <summary>
+            /// Indicates that the running <see cref="IPatcher"/> is older than the current database schema that is being
+            /// connected to
+            /// </summary>
+            SoftwareBehindDatabase
+        }
+
+        public static PatchingState IsPatchingRequired(SqlConnectionStringBuilder builder, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
         {
             databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(builder);
 
@@ -178,14 +204,13 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             AssemblyName databaseAssemblyName = patcher.GetDbAssembly().GetName();
             
             if (databaseAssemblyName.Version < databaseVersion)
-                throw new VersionNotFoundException("The software library " + databaseAssemblyName.Name + " is version " + databaseAssemblyName.Version + " but the database is version " + databaseVersion + " which means your software is out of date and behind the current version of the database.  Most likely you have a new version of one software app in the suite e.g. CatalogueManager which has updated the database with a new patch and you are now trying to run an old version of DataExportManager or Dashboard or an older version of CatalogueManager or something? Your software is likely to be VERY unstable and it is strongly advised that you update the correct version of the software for interacting with this database");
+                return PatchingState.SoftwareBehindDatabase;
 
-            // a.Union(b).Except(a.Intersect(b));
-            //if there is a patch mismatch
+            //if there are patches that have not been applied
             return
-                patchesInDatabase.Union(allPatchesInAssembly.Values)
-                    .Except(patchesInDatabase.Intersect(allPatchesInAssembly.Values))
-                    .Any();
+                allPatchesInAssembly.Values
+                    .Except(patchesInDatabase)
+                    .Any() ? PatchingState.Required:PatchingState.NotRequired;
         }
     }
 }
