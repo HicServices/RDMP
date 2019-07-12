@@ -226,6 +226,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 }
             }
 
+            if( databaseObject is AggregateConfiguration ac && ac.IsJoinablePatientIndexTable())
+            {
+                var users = ac.JoinableCohortAggregateConfiguration?.Users?.Select(u=>u.AggregateConfiguration);
+                if(users != null)
+                {
+                    users = users.ToArray();
+                    if(users.Any())
+                    {
+                        WideMessageBox.Show("Cannot Delete",$"Cannot Delete '{ac.Name}' because it is linked to by the following AggregateConfigurations:{Environment.NewLine}{string.Join(Environment.NewLine,users)}");
+                        return false;
+                    }                       
+                }
+            }
+
             string overrideConfirmationText = null;
 
             if (customMessageDeletable != null)
