@@ -55,6 +55,7 @@ namespace Rdmp.UI.LocationsMenu
             this.btnUseExisting = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.gbCreateNew = new System.Windows.Forms.GroupBox();
+            this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.tbPassword = new System.Windows.Forms.TextBox();
             this.label4 = new System.Windows.Forms.Label();
@@ -62,7 +63,8 @@ namespace Rdmp.UI.LocationsMenu
             this.label3 = new System.Windows.Forms.Label();
             this.btnBack1 = new System.Windows.Forms.Button();
             this.pResults = new System.Windows.Forms.Panel();
-            this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
+            this.label10 = new System.Windows.Forms.Label();
+            this.tbSeed = new System.Windows.Forms.TextBox();
             this.gbUseExisting.SuspendLayout();
             this.pReferenceADataExport.SuspendLayout();
             this.pReferenceACatalogue.SuspendLayout();
@@ -320,6 +322,8 @@ namespace Rdmp.UI.LocationsMenu
             // 
             // gbCreateNew
             // 
+            this.gbCreateNew.Controls.Add(this.tbSeed);
+            this.gbCreateNew.Controls.Add(this.label10);
             this.gbCreateNew.Controls.Add(this.cbCreateExampleDatasets);
             this.gbCreateNew.Controls.Add(this.label9);
             this.gbCreateNew.Controls.Add(this.tbPassword);
@@ -339,6 +343,16 @@ namespace Rdmp.UI.LocationsMenu
             this.gbCreateNew.TabStop = false;
             this.gbCreateNew.Text = "Create New Platform Databases";
             this.gbCreateNew.Visible = false;
+            // 
+            // cbCreateExampleDatasets
+            // 
+            this.cbCreateExampleDatasets.AutoSize = true;
+            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(434, 48);
+            this.cbCreateExampleDatasets.Name = "cbCreateExampleDatasets";
+            this.cbCreateExampleDatasets.Size = new System.Drawing.Size(111, 17);
+            this.cbCreateExampleDatasets.TabIndex = 9;
+            this.cbCreateExampleDatasets.Text = "Example Datasets";
+            this.cbCreateExampleDatasets.UseVisualStyleBackColor = true;
             // 
             // label9
             // 
@@ -405,15 +419,23 @@ namespace Rdmp.UI.LocationsMenu
             this.pResults.Size = new System.Drawing.Size(749, 410);
             this.pResults.TabIndex = 16;
             // 
-            // cbCreateExampleDatasets
+            // label10
             // 
-            this.cbCreateExampleDatasets.AutoSize = true;
-            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(434, 48);
-            this.cbCreateExampleDatasets.Name = "cbCreateExampleDatasets";
-            this.cbCreateExampleDatasets.Size = new System.Drawing.Size(111, 17);
-            this.cbCreateExampleDatasets.TabIndex = 9;
-            this.cbCreateExampleDatasets.Text = "Example Datasets";
-            this.cbCreateExampleDatasets.UseVisualStyleBackColor = true;
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(551, 50);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(35, 13);
+            this.label10.TabIndex = 10;
+            this.label10.Text = "Seed:";
+            // 
+            // tbSeed
+            // 
+            this.tbSeed.Location = new System.Drawing.Point(592, 46);
+            this.tbSeed.Name = "tbSeed";
+            this.tbSeed.Size = new System.Drawing.Size(135, 20);
+            this.tbSeed.TabIndex = 11;
+            this.tbSeed.Text = "500";
+            this.tbSeed.TextChanged += new System.EventHandler(this.TbSeed_TextChanged);
             // 
             // ChoosePlatformDatabasesUI
             // 
@@ -478,5 +500,7 @@ namespace Rdmp.UI.LocationsMenu
         private System.Windows.Forms.Label label4;
         private System.Windows.Forms.Label label9;
         private System.Windows.Forms.CheckBox cbCreateExampleDatasets;
+        private System.Windows.Forms.TextBox tbSeed;
+        private System.Windows.Forms.Label label10;
     }
 }

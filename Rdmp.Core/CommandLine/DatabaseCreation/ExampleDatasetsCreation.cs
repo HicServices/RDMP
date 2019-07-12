@@ -49,7 +49,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             this._repos = repos;
         }
 
-        internal void Create(DiscoveredDatabase db,bool allowDrop, ICheckNotifier notifier)
+        internal void Create(DiscoveredDatabase db,bool allowDrop, ICheckNotifier notifier, int seed)
         {
             if(db.Exists())
                 if(allowDrop)
@@ -64,7 +64,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             notifier.OnCheckPerformed(new CheckEventArgs("Succesfully created "+ db.GetRuntimeName(),CheckResult.Success));
 
             //fixed seed so everyone gets the same datasets
-            var r = new Random(500);
+            var r = new Random(seed);
 
             notifier.OnCheckPerformed(new CheckEventArgs("Generating people",CheckResult.Success));
             //people
