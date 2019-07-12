@@ -79,42 +79,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null) where T : DatabaseEntity
         {
-            if (availableObjects.Count == 1)
-                return availableObjects[0];
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-            dialog.SetInitialFilter(initialSearchText);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-                return (T)dialog.Selected;
-
-            return null;
+            return SelectOne(availableObjects, out T selected, initialSearchText) ? selected : null;
         }
-
-        /// <summary>
-        /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
-        /// </summary>
-        /// <typeparam name="T"></typeparam>
-        /// <param name="availableObjects"></param>
-        /// <param name="selected"></param>
-        /// <param name="initialSearchText"></param>
-        /// <returns></returns>
-        protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null) where T : DatabaseEntity
-        {
-            if (availableObjects.Count == 1)
-            {
-                selected = availableObjects[0];
-                return true;
-            }
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-            dialog.SetInitialFilter(initialSearchText);
-
-            selected = dialog.ShowDialog() == DialogResult.OK? (T) dialog.Selected:null;
-
-            return selected != null;
-        }
-
+        
         /// <summary>
         /// Prompts user to select 1 object of type T from all the ones stored in the repository provided
         /// </summary>
@@ -124,18 +91,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected T SelectOne<T>(IRepository repository, string initialSearchText = null) where T : DatabaseEntity
         {
-            var availableObjects = repository.GetAllObjects<T>();
-            
-            if (availableObjects.Length == 1)
-                return availableObjects[0];
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-            dialog.SetInitialFilter(initialSearchText);
-
-            if (dialog.ShowDialog() == DialogResult.OK)
-                return (T)dialog.Selected;
-
-            return null;
+            return SelectOne(repository.GetAllObjects<T>().ToList(),out T answer,initialSearchText) ? answer: null;
         }
 
         /// <summary>
@@ -148,13 +104,41 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null) where T : DatabaseEntity
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(repository.GetAllObjects<T>(), false, false);
+            return SelectOne(repository.GetAllObjects<T>().ToList(),out selected,initialSearchText);
+        }
+
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="availableObjects"></param>
+        /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
+        /// <returns></returns>
+        protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null) where T : DatabaseEntity
+        {
+            //if theres only one object available to select
+            if (availableObjects.Count == 1)
+                if(YesNo("You only have one compatible object, use '"+availableObjects[0]+"'","Select '" + availableObjects[0] + "'?"))
+                {
+                    selected = availableObjects[0];
+                    return true;
+                }
+                else
+                {
+                    selected = null;
+                    return false;
+                }
+                    
+
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
             dialog.SetInitialFilter(initialSearchText);
 
-            selected = dialog.ShowDialog() == DialogResult.OK ? (T)dialog.Selected : null;
-            
+            selected = dialog.ShowDialog() == DialogResult.OK? (T) dialog.Selected:null;
+
             return selected != null;
         }
+
         protected DiscoveredTable SelectTable(bool allowDatabaseCreation,string taskDescription)
         {
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
