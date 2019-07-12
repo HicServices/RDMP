@@ -109,7 +109,7 @@ namespace Rdmp.Core.Reports
                             if (_args.TimespanCalculator != null)
                             {
                                 string timespan = _args.TimespanCalculator.GetHumanReadableTimepsanIfKnownOf(c, true);
-                                if (!string.IsNullOrWhiteSpace(timespan))
+                                if (!string.IsNullOrWhiteSpace(timespan) && !timespan.Equals("Unknown"))
                                     InsertParagraph(document,timespan, TextFontSize);
                             }
 
