@@ -147,6 +147,15 @@
     <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\Reports\DataGeneratorUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+      <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
     
   </ItemGroup>
   <ItemGroup>

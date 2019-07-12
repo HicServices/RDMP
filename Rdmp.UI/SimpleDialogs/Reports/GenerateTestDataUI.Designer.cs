@@ -36,14 +36,16 @@
             this.ragSmileyDirectory = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.pPopulationSize = new System.Windows.Forms.Panel();
             this.tbPopulationSize = new System.Windows.Forms.TextBox();
+            this.cbLookups = new System.Windows.Forms.CheckBox();
             this.label7 = new System.Windows.Forms.Label();
             this.ragSmileyPopulation = new ReusableUIComponents.ChecksUI.RAGSmiley();
             this.btnGenerate = new System.Windows.Forms.Button();
             this.helpIcon1 = new ReusableUIComponents.HelpIcon();
-            this.cbLookups = new System.Windows.Forms.CheckBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.pDatasets = new System.Windows.Forms.Panel();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.label1 = new System.Windows.Forms.Label();
+            this.tbSeed = new System.Windows.Forms.TextBox();
             this.pOutputDirectory.SuspendLayout();
             this.pPopulationSize.SuspendLayout();
             this.panel1.SuspendLayout();
@@ -103,6 +105,8 @@
             // 
             // pPopulationSize
             // 
+            this.pPopulationSize.Controls.Add(this.tbSeed);
+            this.pPopulationSize.Controls.Add(this.label1);
             this.pPopulationSize.Controls.Add(this.tbPopulationSize);
             this.pPopulationSize.Controls.Add(this.cbLookups);
             this.pPopulationSize.Controls.Add(this.label7);
@@ -121,6 +125,16 @@
             this.tbPopulationSize.Size = new System.Drawing.Size(137, 20);
             this.tbPopulationSize.TabIndex = 3;
             this.tbPopulationSize.TextChanged += new System.EventHandler(this.tbPopulationSize_TextChanged);
+            // 
+            // cbLookups
+            // 
+            this.cbLookups.AutoSize = true;
+            this.cbLookups.Location = new System.Drawing.Point(263, 8);
+            this.cbLookups.Name = "cbLookups";
+            this.cbLookups.Size = new System.Drawing.Size(114, 17);
+            this.cbLookups.TabIndex = 7;
+            this.cbLookups.Text = "Generate Lookups";
+            this.cbLookups.UseVisualStyleBackColor = true;
             // 
             // label7
             // 
@@ -157,20 +171,16 @@
             // helpIcon1
             // 
             this.helpIcon1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.helpIcon1.BackColor = System.Drawing.Color.Transparent;
+            this.helpIcon1.BackgroundImage = ((System.Drawing.Image)(resources.GetObject("helpIcon1.BackgroundImage")));
+            this.helpIcon1.BackgroundImageLayout = System.Windows.Forms.ImageLayout.Center;
             this.helpIcon1.Location = new System.Drawing.Point(865, 5);
+            this.helpIcon1.MaximumSize = new System.Drawing.Size(19, 19);
+            this.helpIcon1.MinimumSize = new System.Drawing.Size(19, 19);
             this.helpIcon1.Name = "helpIcon1";
             this.helpIcon1.Size = new System.Drawing.Size(19, 19);
+            this.helpIcon1.SuppressClick = false;
             this.helpIcon1.TabIndex = 6;
-            // 
-            // cbLookups
-            // 
-            this.cbLookups.AutoSize = true;
-            this.cbLookups.Location = new System.Drawing.Point(263, 8);
-            this.cbLookups.Name = "cbLookups";
-            this.cbLookups.Size = new System.Drawing.Size(114, 17);
-            this.cbLookups.TabIndex = 7;
-            this.cbLookups.Text = "Generate Lookups";
-            this.cbLookups.UseVisualStyleBackColor = true;
             // 
             // panel1
             // 
@@ -200,6 +210,23 @@
             this.panel2.Name = "panel2";
             this.panel2.Size = new System.Drawing.Size(887, 423);
             this.panel2.TabIndex = 0;
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Location = new System.Drawing.Point(383, 9);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(35, 13);
+            this.label1.TabIndex = 8;
+            this.label1.Text = "Seed:";
+            // 
+            // tbSeed
+            // 
+            this.tbSeed.Location = new System.Drawing.Point(424, 7);
+            this.tbSeed.Name = "tbSeed";
+            this.tbSeed.Size = new System.Drawing.Size(100, 20);
+            this.tbSeed.TabIndex = 9;
+            this.tbSeed.TextChanged += new System.EventHandler(this.TbSeed_TextChanged);
             // 
             // GenerateTestDataUI
             // 
@@ -241,5 +268,7 @@
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Panel pDatasets;
         private System.Windows.Forms.Panel panel2;
+        private System.Windows.Forms.TextBox tbSeed;
+        private System.Windows.Forms.Label label1;
     }
 }

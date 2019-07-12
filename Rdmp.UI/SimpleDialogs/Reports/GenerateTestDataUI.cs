@@ -38,6 +38,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
     public partial class GenerateTestDataUI : RDMPForm
     {
         public HelpWorkflow HelpWorkflow { get; private set; }
+        int? _seed;
 
         public GenerateTestDataUI(IActivateItems activator, ICommandExecution command):base(activator)
         {
@@ -146,6 +147,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private void btnGenerate_Click(object sender, EventArgs e)
         {
             
+            var uis = pDatasets.Controls.OfType<DataGeneratorUI>().Where(ui=>ui.Generate).ToArray();
+            
+            if(!uis.Any())
+            {
+                MessageBox.Show("At least one dataset must be selected");
+                return;
+            }
+            
             try
             {
                 if (started)
@@ -156,20 +165,33 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
                 started = true;
 
+
+                var r = _seed.HasValue ? new Random(_seed.Value):new Random();
+
+
                 var identifiers = new PersonCollection();
-                identifiers.GeneratePeople(populationSize,new Random());
+                identifiers.GeneratePeople(populationSize,r);
 
                 if(cbLookups.Checked)
                     DataGenerator.WriteLookups(_extractDirectory);
 
-                foreach (DataGeneratorUI ui in pDatasets.Controls)
+                //run them at the same time
+                if(!_seed.HasValue)
                 {
-                    Executing.Add(ui);
-                    ui.BeginGeneration(identifiers, _extractDirectory);
-                    DataGeneratorUI ui1 = ui;
-                    ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
+                    foreach (DataGeneratorUI ui in uis)
+                    {
+                        Executing.Add(ui);
+                        ui.BeginGeneration(identifiers, _extractDirectory);
+                        DataGeneratorUI ui1 = ui;
+                        ui.Completed += () => { Executing.Remove(ui1); AnnounceIfComplete();};    
+                    }
                 }
-                
+                else
+                { 
+                    Queue<DataGeneratorUI> queue = new Queue<DataGeneratorUI>(uis);
+                    Execute(identifiers,queue,queue.Dequeue(),r);
+                }
+                                
                 UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_extractDirectory);
 
             }
@@ -177,6 +199,33 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             {
                 ExceptionViewer.Show(exception);
             }
+        }
+
+        private void Execute(PersonCollection identifiers, Queue<DataGeneratorUI> queue, DataGeneratorUI current, Random r)
+        {
+            if(current == null)
+                return;
+
+            //tell form it is running
+            Executing.Add(current);
+
+            var dataGeneratorFactory = new DataGeneratorFactory();
+                    
+            //reset the current generator to use the seed provided    
+            current.Generator = dataGeneratorFactory.Create(current.Generator.GetType(),r);
+
+
+            current.BeginGeneration(identifiers, _extractDirectory);
+
+            //when it is complete
+            current.Completed += () => 
+            {
+                if(queue.Count != 0)
+                    Execute(identifiers,queue,queue.Dequeue(),r);
+
+                Executing.Remove(current);
+                AnnounceIfComplete();
+            };    
         }
 
         private void AnnounceIfComplete()
@@ -223,6 +272,22 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
                 EnableOrDisableGoButton();
             }
+        }
+        
+
+        private void TbSeed_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                _seed = int.Parse(tbSeed.Text);
+                tbSeed.ForeColor= Color.Black;
+
+            }catch(Exception ex)
+            {
+                _seed = null;
+                tbSeed.ForeColor= Color.Red;
+            }
+
         }
     }
 }
