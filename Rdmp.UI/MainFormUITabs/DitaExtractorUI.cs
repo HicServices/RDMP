@@ -47,10 +47,10 @@ namespace Rdmp.UI.MainFormUITabs
             {
                 DirectoryInfo outputPath = new DirectoryInfo(tbExtractionDirectory.Text);
 
-                if (outputPath.GetFiles().Any())
+                if (outputPath.GetFiles("*.dita*").Any())
                 {
                     if(Activator.YesNo("There are files already in this directory, do you want to delete them?","Clear Directory?"))
-                        foreach (FileInfo file in outputPath.GetFiles())
+                        foreach (FileInfo file in outputPath.GetFiles("*.dita*"))
                             file.Delete();
                 }
 
