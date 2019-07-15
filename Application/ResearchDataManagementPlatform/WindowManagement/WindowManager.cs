@@ -168,16 +168,29 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         /// <summary>
-        /// Brings the specified collection to the front
+        /// Brings the specified collection to the front (must already be visible)
         /// </summary>
         /// <param name="collection"></param>
         public void Pop(RDMPCollection collection)
         {
-            if(!IsVisible(collection))
-                throw new Exception("Can only pop when toolbox is already visible");
-
             if (_visibleToolboxes.ContainsKey(collection))
             {
+                switch (_visibleToolboxes[collection].DockState)
+                {
+                    case DockState.DockLeftAutoHide:
+                        _visibleToolboxes[collection].DockState = DockState.DockLeft;
+                        break;
+                    case DockState.DockRightAutoHide:
+                        _visibleToolboxes[collection].DockState = DockState.DockRight;
+                        break;
+                    case DockState.DockTopAutoHide:
+                        _visibleToolboxes[collection].DockState = DockState.DockTop;
+                        break;
+                    case DockState.DockBottomAutoHide:
+                        _visibleToolboxes[collection].DockState = DockState.DockBottom;
+                        break;
+                }
+
                 _visibleToolboxes[collection].Activate();
             }
         }
@@ -217,7 +230,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 return;
 
             if(IsVisible(collection))
+            {
+                Pop(collection);
                 return;
+            }
 
             Create(collection);
         }
