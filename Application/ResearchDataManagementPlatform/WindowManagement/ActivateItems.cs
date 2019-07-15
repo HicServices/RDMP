@@ -480,7 +480,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var floatable = WindowFactory.Create(this,RefreshBus, uiInstance, tabImage, databaseObject);
             floatable.Show(_mainDockPanel, DockState.Document);
             uiInstance.SetDatabaseObject(this, databaseObject);
-            floatable.TabText = uiInstance.GetTabName();
+
+            SetTabText(floatable,uiInstance);
 
             return uiInstance;
         }
@@ -543,7 +544,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 try
                 {
                     uiInstance.SetDatabaseObject(this,(DatabaseEntity) databaseObject);
-                    floatable.TabText = uiInstance.GetTabName();
+                    SetTabText(floatable,uiInstance);
                 }
                 catch (Exception e)
                 {
@@ -555,6 +556,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
             else
                 throw new PersistenceException("DeserializeInstruction must have either a DatabaseObject or an ObjectCollection");
+        }
+
+        private void SetTabText(DockContent floatable, INamedTab tab)
+        {
+            string tabText = tab.GetTabName();
+
+            floatable.TabText = tabText;
+
+            if (floatable != null && floatable.ParentForm != null)
+                floatable.ParentForm.Text = tabText + " - RDMP";
         }
 
         public PersistableObjectCollectionDockContent Activate(IObjectCollectionControl collectionControl, IPersistableObjectCollection objectCollection)
