@@ -79,7 +79,7 @@ namespace Rdmp.Core.Reports
             foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
                 if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
                 {
-                    if (t.IsInterface || t.IsAbstract)
+                    if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous"))
                         continue;
                     try
                     {

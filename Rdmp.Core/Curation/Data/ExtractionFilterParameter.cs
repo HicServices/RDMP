@@ -19,9 +19,7 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// Describes an SQL parameter (e.g. @drugname) which is required for use of an ExtractionFilter (it's parent).
-    /// 
-    /// <para>See the description of ExtractionFilter to see how filters are cloned and adjusted depending on usage context</para>
+    /// Describes an SQL parameter (e.g. @drugname) which is required for use of an <see cref="ExtractionFilter"/> (it's parent).
     /// </summary>
     public class ExtractionFilterParameter : DatabaseEntity, IDeleteable, ISqlParameter, IHasDependencies
     {
