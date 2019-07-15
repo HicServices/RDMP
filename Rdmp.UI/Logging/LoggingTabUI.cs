@@ -113,19 +113,11 @@ namespace Rdmp.UI.Logging
                     var mi = new ToolStripMenuItem(cmd.GetCommandName(), null, (s, x) => cmd1.Execute());
                     menu.Items.Add(mi);
                 }
-
-                var row = dataGridView1.Rows[e.RowIndex];
-
-                StringBuilder sb = new StringBuilder();
-
-                foreach (DataGridViewColumn c in dataGridView1.Columns)
-                    if (c.Visible)
-                        sb.AppendLine(c.Name + ":" + row.Cells[c.Name].Value);
-
+                                
                 if (menu.Items.Count != 0)
                     menu.Items.Add(new ToolStripSeparator());
 
-                menu.Items.Add("View as text", null, (s, ex) => WideMessageBox.Show("Full Text", sb.ToString(), WideMessageBoxTheme.Help));
+                menu.Items.Add("View as text", null, (s, ex) => WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]));
 
                 menu.Show(Cursor.Position.X, Cursor.Position.Y);
             }
@@ -140,9 +132,9 @@ namespace Rdmp.UI.Logging
 
             if (cmd != null)
                 cmd.Execute();
+            else
+                WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]);
         }
-
-
 
         private IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
         {

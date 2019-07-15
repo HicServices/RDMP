@@ -27,6 +27,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -67,7 +68,8 @@ namespace Rdmp.UI.DataViewing
 
             btnExecuteSql.Click += (s,e) => RunQuery();
             btnResetSql.Click += btnResetSql_Click;
-
+            
+            dataGridView1.CellDoubleClick += dataGridView1_CellDoubleClick;
 
         }
 
@@ -190,6 +192,8 @@ namespace Rdmp.UI.DataViewing
 
                         a.Fill(dt);
 
+                        MorphBinaryColumns(dt);
+
                         Invoke(new MethodInvoker(() => { dataGridView1.DataSource = dt; }));
                         con.Close();
                     }
@@ -209,6 +213,31 @@ namespace Rdmp.UI.DataViewing
                         }));
                 }
             });
+        }
+
+        private void MorphBinaryColumns(DataTable table)
+        {
+            var targetNames = table.Columns.Cast<DataColumn>()
+              .Where(col => col.DataType.Equals(typeof(byte[])))
+              .Select(col => col.ColumnName).ToList();
+            foreach (string colName in targetNames)
+            {
+                // add new column and put it where the old column was
+                var tmpName = "new";
+                table.Columns.Add(new DataColumn(tmpName, typeof(string)));
+                table.Columns[tmpName].SetOrdinal(table.Columns[colName].Ordinal);
+
+                // fill in values in new column for every row
+                foreach (DataRow row in table.Rows)
+                {
+                    row[tmpName] = "0x" + string.Join("",
+                      ((byte[])row[colName]).Select(b => b.ToString("X2")).ToArray());
+                }
+
+                // cleanup
+                table.Columns.Remove(colName);
+                table.Columns[tmpName].ColumnName = colName;
+            }
         }
 
         public IPersistableObjectCollection GetCollection()
@@ -244,6 +273,14 @@ namespace Rdmp.UI.DataViewing
         private void btnResetSql_Click(object sender, EventArgs e)
         {
             _scintilla.Text = _originalSql;
+        }
+
+        void dataGridView1_CellDoubleClick(object sender, DataGridViewCellEventArgs e)
+        {
+            if (e.RowIndex == -1)
+                return;
+
+            WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]);
         }
     }
 }

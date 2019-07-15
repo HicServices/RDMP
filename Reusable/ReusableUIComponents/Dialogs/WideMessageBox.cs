@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
@@ -136,6 +137,32 @@ namespace ReusableUIComponents.Dialogs
         {
             summary.GetSummary(out string title,out string body, out string stackTrace,out CheckResult level);
             Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
+        }
+        public static void Show(string title, DataGridViewRow row, bool isModalDialog = true, WideMessageBoxTheme theme = WideMessageBoxTheme.Help)
+        {
+            Show(title, GetText(row), null,isModalDialog,null, theme);
+        }
+
+        private static string GetText(DataGridViewRow row)
+        {
+            const int MAX_LENGTH = 5000;
+
+            StringBuilder sb = new StringBuilder();
+
+            foreach (DataGridViewColumn c in row.DataGridView.Columns)
+                if (c.Visible)
+                {
+                    var v = row.Cells[c.Name].Value;
+                    var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
+
+                    if(stringval.Length > MAX_LENGTH)
+                        stringval = stringval.Substring(0, MAX_LENGTH) + "...";
+
+                    sb.AppendLine(c.Name + ":" + stringval);
+                }
+                    
+
+            return sb.ToString();
         }
         public static void Show(string title, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
         {
