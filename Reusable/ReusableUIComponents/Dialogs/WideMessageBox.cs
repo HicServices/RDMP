@@ -376,6 +376,45 @@ namespace ReusableUIComponents.Dialogs
 
             if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape || (e.KeyData == Keys.W && e.Control))
                 e.Handled = true;
+
+            if(e.KeyCode == Keys.C && e.Control)
+            {
+                e.Handled = true;
+
+                //Ctrl+C with nothing selected copies it all
+                if(richTextBox1.SelectedText.Length == 0)
+                {
+                    //gets around formatting of hyperlinks appearing in Ctrl+C
+                    Clipboard.SetText(Args.Title + Environment.NewLine + Environment.NewLine + Args.Message);
+                }
+                else
+                {
+                    //the text (which may include 'hyperlinks') e.g. "Bob Project #Project(ExtractionConfiguration #IExtractionConfigurationID=3"
+                    string text = richTextBox1.SelectedText;
+
+                    //
+                    /*
+                     From the rtf text, for example:
+
+                     {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fnil\fcharset0 Courier New;}}
+\uc1\pard\f0\fs17 Bob Project \v #Project\v0 (ExtractionConfiguration \v #IExtractionConfiguration\v0 ID=3}
+
+                    Grab the hyperlinks
+ */
+                    //gets around formatting of hyperlinks appearing in Ctrl+C
+                    Regex rtfHyperlinks = new Regex(@"\\v #([^\\]*)\\v");
+
+                    foreach (Match m in rtfHyperlinks.Matches(richTextBox1.SelectedRtf))
+                    {
+                        //replace the hyperlink text in the 'unformatted' text
+                        text = text.Replace("#" + m.Groups[1].Value,"");
+                    }
+
+                    Clipboard.SetText(text);
+                }
+                    
+
+            }
         }
 
         private Size GetPreferredSizeOfTextControl(Control c)
