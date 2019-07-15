@@ -8,13 +8,15 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using FAnsi.Discovery;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Readonly audit of a table that was loaded as part of a historical data load (See HIC.Logging.ArchivalDataLoadInfo).
     /// </summary>
-    public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable
+    public class ArchivalTableLoadInfo : IArchivalLoggingRecordOfPastEvent, IComparable,IHasSummary
     {
         public ArchivalDataLoadInfo Parent { get; private set; }
 
@@ -97,6 +99,13 @@ namespace Rdmp.Core.Logging.PastEvents
                     return Start > other.Start ? 1 : -1;
 
             return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        }
+        public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
+        {
+            title = $"{TargetTable} ({Start})";
+            body =  $"Start:{Start}\r\nEnd:{End}\r\nINSERTS:{Inserts}\r\nUPDATES:{Updates}\r\nDELETES:{Deletes}";
+            stackTrace = null;
+            level = CheckResult.Success;                
         }
     }
 }

@@ -21,7 +21,7 @@ namespace ReusableLibraryCode.Checks
     /// 5. If OnCheckPerformed compeltes without Exception evaluate the bool return if there was a ProposedFix and apply the fix if it is true</para>
     /// 
     /// </summary>
-    public class CheckEventArgs
+    public class CheckEventArgs : IHasSummary
     {
         public string Message { get; set; }
         public CheckResult Result { get; set; }
@@ -75,6 +75,14 @@ namespace ReusableLibraryCode.Checks
             }
 
             return new NotifyEventArgs(status, Message,Ex);
+        }
+
+        public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
+        {
+            title = "Check Result";
+            body = Message;
+            stackTrace= StackTrace;
+            level = Result;
         }
     }
 }

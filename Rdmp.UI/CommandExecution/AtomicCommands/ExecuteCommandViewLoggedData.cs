@@ -45,7 +45,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var server = SelectOne(_loggingServers);
+            var server = SelectOne(_loggingServers,null,true);
 
             LoggingTabUI loggingTabUI =  Activator.Activate<LoggingTabUI, ExternalDatabaseServer>(server);
             loggingTabUI.SetFilter(_filter);

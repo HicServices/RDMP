@@ -111,6 +111,13 @@
     <Compile Update="TestsAndSetup\StartupUI.cs">
       <SubType>Form</SubType>
     </Compile>
+
+    <Compile Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">
       <SubType>UserControl</SubType>
     </Compile>

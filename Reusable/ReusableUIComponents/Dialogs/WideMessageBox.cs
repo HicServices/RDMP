@@ -11,6 +11,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
@@ -131,9 +132,14 @@ namespace ReusableUIComponents.Dialogs
                 btnViewSourceCode.Enabled = false;
         }
 
-        public static void Show(string mainMessage, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        public static void Show(IHasSummary summary,bool isModalDialog = true)
         {
-            WideMessageBox wmb = new WideMessageBox(new WideMessageBoxArgs(mainMessage,message, environmentDotStackTrace, keywordNotToAdd, theme));
+            summary.GetSummary(out string title,out string body, out string stackTrace,out CheckResult level);
+            Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
+        }
+        public static void Show(string title, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        {
+            WideMessageBox wmb = new WideMessageBox(new WideMessageBoxArgs(title,message, environmentDotStackTrace, keywordNotToAdd, theme));
 
             if (isModalDialog)
                 wmb.ShowDialog();
@@ -142,9 +148,9 @@ namespace ReusableUIComponents.Dialogs
             
         }
 
-        public static void Show(string mainMessage, string message, WideMessageBoxTheme theme)
+        public static void Show(string title, string message, WideMessageBoxTheme theme)
         {
-            Show(mainMessage, message,null,theme:theme);
+            Show(title, message,null,theme:theme);
         }
         private void ApplyTheme(WideMessageBoxTheme theme)
         {

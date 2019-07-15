@@ -6,13 +6,15 @@
 
 using System;
 using System.Data.Common;
+using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.Logging.PastEvents
 {
     /// <summary>
     /// Readonly audit of a historical logged event which was noteworthy during the logged activity (See ArchivalDataLoadInfo)
     /// </summary>
-    public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable
+    public class ArchivalProgressLog : IArchivalLoggingRecordOfPastEvent, IComparable, IHasSummary
     {
         public int ID { get; internal set; }
         public DateTime Date { get; internal set; }
@@ -44,6 +46,14 @@ namespace Rdmp.Core.Logging.PastEvents
                     return Date > other.Date ? 1 : -1;
 
             return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
+        }
+
+        public void GetSummary(out string title, out string body,out string stackTrace, out CheckResult level)
+        {
+            level = EventType == "OnWarning"? CheckResult.Warning : CheckResult.Success;
+            title = Date.ToString();
+            body = Description;
+            stackTrace = null;
         }
     }
 }
