@@ -13,6 +13,7 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
@@ -70,6 +71,18 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             return null;
         }
+
+        internal void SetDefaultIfNotExists(ExternalDatabaseServer newServer, PermissableDefaults permissableDefault, bool askYesNo)
+        {
+            var defaults = Activator.RepositoryLocator.CatalogueRepository.GetServerDefaults();
+
+            var current = defaults.GetDefaultFor(permissableDefault);
+            
+            if(current == null)
+                if(!askYesNo || YesNo($"Set as the default {permissableDefault} server?", "Set as default"))
+                    defaults.SetDefault(permissableDefault,newServer);
+        }
+
         /// <summary>
         /// Prompts user to select 1 of the objects of type T in the list you provide
         /// </summary>
