@@ -145,7 +145,9 @@ namespace ReusableUIComponents.Dialogs
 
         private static string GetText(DataGridViewRow row)
         {
-            const int MAX_LENGTH = 5000;
+            //don't have more than 64k characters since this can break GDI+ etc
+            const int MAX_LENGTH_ELEMENT = 10000;
+            const int MAX_LENGTH_OVERALL = 20000;
 
             StringBuilder sb = new StringBuilder();
 
@@ -155,12 +157,14 @@ namespace ReusableUIComponents.Dialogs
                     var v = row.Cells[c.Name].Value;
                     var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
 
-                    if(stringval.Length > MAX_LENGTH)
-                        stringval = stringval.Substring(0, MAX_LENGTH) + "...";
+                    if(stringval.Length > MAX_LENGTH_ELEMENT)
+                        stringval = stringval.Substring(0, MAX_LENGTH_ELEMENT) + "...";
 
                     sb.AppendLine(c.Name + ":" + stringval);
                 }
                     
+            if(sb.Length >= MAX_LENGTH_OVERALL)
+                return sb.ToString(0, MAX_LENGTH_OVERALL);
 
             return sb.ToString();
         }
