@@ -423,6 +423,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CacheFetchFailure {
+            get {
+                object obj = ResourceManager.GetObject("CacheFetchFailure", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap CacheProgress {
             get {
                 object obj = ResourceManager.GetObject("CacheProgress", resourceCulture);
@@ -603,6 +613,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap CumulativeExtractionResults {
+            get {
+                object obj = ResourceManager.GetObject("CumulativeExtractionResults", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap DashboardControl {
             get {
                 object obj = ResourceManager.GetObject("DashboardControl", resourceCulture);
@@ -693,6 +713,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap DQEGraphAnnotation {
+            get {
+                object obj = ResourceManager.GetObject("DQEGraphAnnotation", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap DropHere {
             get {
                 object obj = ResourceManager.GetObject("DropHere", resourceCulture);
@@ -706,6 +736,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static System.Drawing.Bitmap EmptyProject {
             get {
                 object obj = ResourceManager.GetObject("EmptyProject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Evaluation {
+            get {
+                object obj = ResourceManager.GetObject("Evaluation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1253,6 +1293,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap LoadModuleAssembly {
+            get {
+                object obj = ResourceManager.GetObject("LoadModuleAssembly", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap LoadPeriodically {
             get {
                 object obj = ResourceManager.GetObject("LoadPeriodically", resourceCulture);
@@ -1493,6 +1543,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ProcessTaskArgument {
+            get {
+                object obj = ResourceManager.GetObject("ProcessTaskArgument", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Project {
             get {
                 object obj = ResourceManager.GetObject("Project", resourceCulture);
@@ -1516,6 +1576,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static System.Drawing.Bitmap ProjectCataloguesNode {
             get {
                 object obj = ResourceManager.GetObject("ProjectCataloguesNode", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap ProjectCohortIdentificationConfigurationAssociation {
+            get {
+                object obj = ResourceManager.GetObject("ProjectCohortIdentificationConfigurationAssociation", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1583,6 +1653,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap ReleaseLog {
+            get {
+                object obj = ResourceManager.GetObject("ReleaseLog", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap RemoteRDMP {
             get {
                 object obj = ResourceManager.GetObject("RemoteRDMP", resourceCulture);
@@ -1623,9 +1703,29 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap SelectedDataSetsForcedJoin {
+            get {
+                object obj = ResourceManager.GetObject("SelectedDataSetsForcedJoin", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap Spanner {
             get {
                 object obj = ResourceManager.GetObject("Spanner", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SpontaneouslyInventedColumn {
+            get {
+                object obj = ResourceManager.GetObject("SpontaneouslyInventedColumn", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1676,6 +1776,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static System.Drawing.Bitmap StarHollow {
             get {
                 object obj = ResourceManager.GetObject("StarHollow", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap SupplementalExtractionResults {
+            get {
+                object obj = ResourceManager.GetObject("SupplementalExtractionResults", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -1813,6 +1923,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        public static System.Drawing.Bitmap TicketingSystemConfiguration {
+            get {
+                object obj = ResourceManager.GetObject("TicketingSystemConfiguration", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         public static System.Drawing.Bitmap TimeCoverageField {
             get {
                 object obj = ResourceManager.GetObject("TimeCoverageField", resourceCulture);
@@ -1916,6 +2036,16 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static System.Drawing.Bitmap WhatIsACohort {
             get {
                 object obj = ResourceManager.GetObject("WhatIsACohort", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap WindowLayout {
+            get {
+                object obj = ResourceManager.GetObject("WindowLayout", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
