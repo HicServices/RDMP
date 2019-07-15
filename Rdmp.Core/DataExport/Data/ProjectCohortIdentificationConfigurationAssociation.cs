@@ -16,7 +16,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IProjectCohortIdentificationConfigurationAssociation"/>
     public class ProjectCohortIdentificationConfigurationAssociation : DatabaseEntity, IProjectCohortIdentificationConfigurationAssociation,IInjectKnown<CohortIdentificationConfiguration>
     {
         #region Database Properties

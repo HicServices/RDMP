@@ -23,7 +23,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IExternalCohortTable"/>
     public class ExternalCohortTable : DatabaseEntity, IDataAccessCredentials, IExternalCohortTable,INamed
     {
         #region Database Properties

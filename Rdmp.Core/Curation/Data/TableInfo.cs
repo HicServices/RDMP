@@ -258,7 +258,7 @@ namespace Rdmp.Core.Curation.Data
             return GetQuerySyntaxHelper().GetRuntimeName(Name);
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="ITableInfo.GetFullyQualifiedName"/>
         public string GetFullyQualifiedName()
         {
             return GetQuerySyntaxHelper().EnsureFullyQualified(Database, Schema, GetRuntimeName());

@@ -15,7 +15,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IExtractableDataSet"/>
     public class ExtractableDataSet : DatabaseEntity, IExtractableDataSet, IInjectKnown<ICatalogue>
     {
         #region Database Properties

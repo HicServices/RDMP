@@ -23,7 +23,7 @@ using ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.Data
 {
 
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IExtractableCohort"/>
     public class ExtractableCohort : DatabaseEntity, IExtractableCohort, IInjectKnown<IExternalCohortDefinitionData>, IInjectKnown<ExternalCohortTable>,  ICustomSearchString
     {
         /// <summary>

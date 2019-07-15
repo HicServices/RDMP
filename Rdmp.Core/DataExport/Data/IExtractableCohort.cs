@@ -15,7 +15,7 @@ using ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <summary>
-    /// While actual patient identifiers are stored in an external database (referenced by a ExternalCohortTable), the RDMP still needs to have a reference to each cohort for extaction.
+    /// While actual patient identifiers are stored in an external database (referenced by a ExternalCohortTable), RDMP still needs to have a reference to each cohort for extaction.
     /// The ExtractableCohort object is a record that documents the location and ID of a cohort in your ExternalCohortTable.  This record means that the RDMP can record which cohorts
     /// are part of which ExtractionConfiguration in a Project without ever having to move the identifiers into the RDMP application database.
     /// 

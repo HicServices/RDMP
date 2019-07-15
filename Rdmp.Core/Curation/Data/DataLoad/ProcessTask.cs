@@ -77,7 +77,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             set { SetField(ref  _path, value); }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="IProcessTask.Name"/>
         [NotNull]
         public string Name
         {
@@ -115,7 +115,9 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         [NoMappingToDatabase]
         public IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get { return Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);} }
         
-        /// <inheritdoc/>
+        /// <summary>
+        /// All <see cref="ILoadProgress"/> (if any) that can be advanced by executing this load.  This allows batch execution of large loads
+        /// </summary>
         [NoMappingToDatabase]
         public ILoadProgress[] LoadProgresses { get { return LoadMetadata.LoadProgresses; }}
 
@@ -277,7 +279,10 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Returns all tables loaded by the parent <see cref="LoadMetadata"/>
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<TableInfo> GetTableInfos()
         {
             return LoadMetadata.GetDistinctTableInfoList(true);

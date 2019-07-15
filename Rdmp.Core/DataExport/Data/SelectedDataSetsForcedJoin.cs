@@ -14,7 +14,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="ISelectedDataSetsForcedJoin"/>
     public class SelectedDataSetsForcedJoin : DatabaseEntity, ISelectedDataSetsForcedJoin, IInjectKnown<TableInfo>
     {
         #region Database Properties
