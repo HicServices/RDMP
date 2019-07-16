@@ -6,8 +6,34 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## Added 
 
-## [3.0.16-rc]
+- Example data generated on install can now be given a seed (allows for reproducibility)
+- Creating a Query Caching server for an cohort identification AggregateConfiguration now asks you if you want to set it as the default QueryCaching server (if there isn't already one)
+- Double clicking a row in SQL query editor user interfaces now shows text summary of the row
+- DLE load logs tree view now supports double clicking on messages/errors to see summary.
+- All RDMP platform objects now have icons even if not visible in the UI (this affects the objects documentation file generation)
+
+## Changed
+
+- Updated to latest version of BadMedicine (0.1.5)
+- Improved error message shown when attempting to delete a used patient index table (now lists the users)
+- System no longer auto selects objects when there is only 1 option (e.g. when user starts a Release when there is only one Project in the system).  This previously created an inconsistent user experience.
+- Dita extraction checks no longer propose deleting non dita files in the output directory
+
+## Fixed 
+
+- Fixed bug when cloning a Pipeline called "Bob" when there was already an existing Pipeline called "Bob (Clone)"
+- Fixed validation issue in some user interfaces of INamed classes (e.g. Catalogue) where all properties were checked for illegal characters instead of just the Name
+- Fixed image scaling in Metadata reports to 100% (previously 133%)
+- Governance report now properly escapes newlines and quotes in Catalogue descriptions when outputting as CSV
+- Fixed bug in Plugin code generator for tables with a Name property (previously incorrect C# code was generated)
+- Fixed bug in SQL query editor user interface when the query returned a table that included binary columns with large amounts of data in
+- Clicking a collection button or using GoTo/Show now correctly pops the relevant collection if it is set to auto dock (pinned).
+- Application title bar now correctly updates after loading a tab (previously it was left with the caption "Loading...")
+- 
+
+## [3.0.16-rc] - 2019-07-08
 
 ## Added 
 
