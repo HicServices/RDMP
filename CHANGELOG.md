@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
-## Added 
+### Added 
 
 - Example data generated on install can now be given a seed (allows for reproducibility)
 - Creating a Query Caching server for an cohort identification AggregateConfiguration now asks you if you want to set it as the default QueryCaching server (if there isn't already one)
@@ -14,14 +14,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - DLE load logs tree view now supports double clicking on messages/errors to see summary.
 - All RDMP platform objects now have icons even if not visible in the UI (this affects the objects documentation file generation)
 
-## Changed
+### Changed
 
 - Updated to latest version of BadMedicine (0.1.5)
 - Improved error message shown when attempting to delete a used patient index table (now lists the users)
 - System no longer auto selects objects when there is only 1 option (e.g. when user starts a Release when there is only one Project in the system).  This previously created an inconsistent user experience.
 - Dita extraction checks no longer propose deleting non dita files in the output directory
 
-## Fixed 
+### Fixed 
 
 - Fixed bug when cloning a Pipeline called "Bob" when there was already an existing Pipeline called "Bob (Clone)"
 - Fixed validation issue in some user interfaces of INamed classes (e.g. Catalogue) where all properties were checked for illegal characters instead of just the Name
@@ -35,7 +35,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [3.0.16-rc] - 2019-07-08
 
-## Added 
+### Added 
 
 - Forward/backward navigation in LogViewer now preserves text filters / TOP X
 - Added the ability to create example datasets and configurations/projects etc during installation / startup
@@ -47,7 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new DLE module ExecuteSqlFileRuntimeTask which runs the SQL stored in the RDMP platform database (rather than relying on an sql file on disk like ExecuteSqlFileRuntimeTask)
 - RDMP platform database schemas no longer require 100% matching to models.  This allows limited backwards compatibility between minor versions of RDMP in which new fields are added to the database.
 
-## Changed
+### Changed
 
 - Updated to latest version of BadMedicine (0.0.1.2)
 - Updated to latest version of FAnsiSql (0.9.2.0)
@@ -60,7 +60,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - xmldoc are now shipped inside SourceCodeForSelfAwareness.zip (instead of side by side with the binary).  This avoids an issue where [Squirrel drops xmldoc files](https://github.com/Squirrel/Squirrel.Windows/issues/1323)
 
 
-## Fixed 
+### Fixed 
 
 - Fixed bug in CLI (rdmp.exe) where yaml settings would override command line values for connection strings to platform databases
 - Disabled smiley controls now render in greyscale
