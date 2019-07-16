@@ -28,16 +28,11 @@ namespace Rdmp.Core.Curation.Data.DataLoad
     /// varchar(5) and anonymises into 3 digits and 2 characters with a suffix of _G.  This product would then be used by all ColumnInfos that contain GP codes (current GP
     /// previous GP, Prescriber code etc).  Anonymisation occurs at  ColumnInfo level after being loaded from a RAW data load bubble as is pushed to the STAGING bubble.
     /// 
-    /// <para>Each ANOTable describes a corresponding table on an ANO server (see the Server_ID property - we refer to this as an ANOStore) including details of the transformation and a UNIQUE name/suffix.  This let's you
-    /// quickly identify what data has be annonymised by what ANOTable when you find a random excel sheet kicking around on a hard disk devoid of context.</para>
+    /// <para>Each ANOTable describes a corresponding table on an ANO server (see the Server_ID property - we refer to this as an ANOStore) including details of the
+    /// transformation and a UNIQUE name/suffix.  This let's you quickly identify what data has be annonymised by what ANOTable.</para>
     ///  
     /// <para>It is very important to curate your ANOTables properly or you could end up with irrecoverable data, for example sticking to a single ANO server, taking regular backups
     /// NEVER deleting ANOTables that reference existing data  (in the ANOStore database).</para>
-    /// 
-    /// <para>The ANOTable.cs class does it's best to ensure you do not corrupt the data in your Catalogue e.g. by loading 10 files then changing the transform then loading 10 more which
-    /// would result in mixed typed data in the final anonymised state but if you edit the ANOTable data directly you could still end up with corrupted configurations.  Fortunately
-    /// in almost all cases it should be possible to manually salvage the configuration without loosing data.  The only time you would loose data is when you delete the identifier substitutions
-    /// off the ANOStore server (see DeleteANOTableInANOStore method which will let you do this for empty tables)</para>
     /// 
     /// </summary>
     public class ANOTable : DatabaseEntity, ISaveable, IDeleteable,ICheckable,IRevertable, IHasDependencies
