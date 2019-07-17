@@ -131,7 +131,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreNotEqual(p2, p);
             Assert.AreNotEqual(p2.ID,p.ID);
 
-            Assert.AreEqual(p2.Name, p.Name + "(Clone)");
+            Assert.AreEqual(p2.Name, p.Name + " (Clone)");
 
             Assert.AreEqual(componentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Count());
             Assert.AreEqual(argumentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Count());
