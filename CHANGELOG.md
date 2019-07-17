@@ -34,7 +34,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in SQL query editor user interface when the query returned a table that included binary columns with large amounts of data in
 - Clicking a collection button or using GoTo/Show now correctly pops the relevant collection if it is set to auto dock (pinned).
 - Application title bar now correctly updates after loading a tab (previously it was left with the caption "Loading...")
-- 
+- Un Pinning in a collection using X now correctly maintains tree selection (consistent with the context menu Tree=>UnPin)
 
 ## [3.0.16-rc] - 2019-07-08
 
