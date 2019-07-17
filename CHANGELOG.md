@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+...
+
+## [3.0.16-rc2] - 2019-07-17
+
 ### Added 
 
 - Example data generated on install can now be given a seed (allows for reproducibility)
@@ -75,7 +79,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc2...develop
+[3.0.16-rc2]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc...v3.0.16-rc2
 [3.0.16-rc]: https://github.com/HicServices/RDMP/compare/v3.0.15...v3.0.16-rc
 [FAnsiSql]: https://github.com/HicServices/FAnsiSql/
 [BadMedicine]: https://github.com/HicServices/BadMedicine/
