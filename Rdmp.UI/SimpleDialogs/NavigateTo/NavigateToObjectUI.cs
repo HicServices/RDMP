@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -117,6 +118,22 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
         });
 
+        Dictionary<string, Type> ShortCodes =
+            new Dictionary<string, Type> {
+
+            {"c",typeof (Catalogue)},
+            {"ci",typeof (CatalogueItem)},
+            {"sd",typeof (SupportingDocument)},
+            {"p",typeof (Project)},
+            {"ec",typeof (ExtractionConfiguration)},
+            {"co",typeof (ExtractableCohort)},
+            {"cic",typeof (CohortIdentificationConfiguration)},
+            {"t",typeof (TableInfo)},
+            {"col",typeof (ColumnInfo)},
+            {"lmd",typeof (LoadMetadata)}
+
+                };
+
         private bool _isClosed;
 
         private List<Type> showOnlyTypes = new List<Type>();
@@ -166,9 +183,11 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                     _typeNames.Add(t.Name);
             }
             
+            //autocomplete is all Type names (e.g. "Catalogue") + all short codes (e.g. "c")
             textBox1.AutoCompleteMode = AutoCompleteMode.Append;
             textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            textBox1.AutoCompleteCustomSource.AddRange(_typeNames.ToArray());
+            textBox1.AutoCompleteCustomSource.AddRange(
+                _typeNames.Union(ShortCodes.Select(kvp=>kvp.Key)).ToArray());
             
             Type[] startingFilters = null;
 
@@ -183,8 +202,11 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 b.Image = activator.CoreIconProvider.GetImage(t);
                 b.CheckOnClick = true;
                 b.Tag = t;
-                b.DisplayStyle = ToolStripItemDisplayStyle.ImageAndText;
-                b.Text = t.Name;
+                b.DisplayStyle = ToolStripItemDisplayStyle.Image;
+
+                string shortCode = ShortCodes.Single(kvp=>kvp.Value == t).Key;
+
+                b.Text = $"{t.Name} ({shortCode})";
                 b.CheckedChanged += CollectionCheckedChanged;
                 b.Checked = startingFilters != null && startingFilters.Contains(t);
 
@@ -370,6 +392,10 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
 
+            if(!string.IsNullOrWhiteSpace(text))
+                foreach(var kvp in ShortCodes)
+                    text = Regex.Replace(text,$@"\b{kvp.Key}\b",kvp.Value.Name);
+            
             //if user hasn't typed any explicit Type filters
             if(string.IsNullOrWhiteSpace(text) || !_typeNames.Intersect(text.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
                 //add the buttons pressed
@@ -545,6 +571,13 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         private void NavigateToObjectUI_FormClosed(object sender, FormClosedEventArgs e)
         {
             _isClosed = true;
+        }
+
+        protected override void OnLoad(EventArgs e)
+        {
+            base.OnLoad(e);
+
+            AdjustHeight();
         }
     }
 }

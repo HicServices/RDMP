@@ -34,6 +34,10 @@ namespace Rdmp.UI.Collections.Providers.Filtering
 
         public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken)
         {
+            //if we have nothing to search for return no results
+            if(string.IsNullOrWhiteSpace(searchText))
+                return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();
+            
             var tokens = (searchText??"").Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
             
             var regexes = new List<Regex>();
