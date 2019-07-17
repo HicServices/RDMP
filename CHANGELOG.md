@@ -36,6 +36,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Clicking a collection button or using GoTo/Show now correctly pops the relevant collection if it is set to auto dock (pinned).
 - Application title bar now correctly updates after loading a tab (previously it was left with the caption "Loading...")
 - Un Pinning in a collection using X now correctly maintains tree selection (consistent with the context menu Tree=>UnPin)
+- Fixed display order of cohort sets in Cohort Query Builder to correctly match the compiler (previously the tree view order was misleading)
 
 ## [3.0.16-rc] - 2019-07-08
 
@@ -53,8 +54,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Updated to latest version of BadMedicine (0.0.1.2)
-- Updated to latest version of FAnsiSql (0.9.2.0)
+- Updated to latest version of [BadMedicine] (0.0.1.2)
+- Updated to latest version of [FAnsiSql] (0.9.2)
 - File=>New now launches modal dialog instead of dropdown menu
 - Project objects can now be sorted (previously they always appeared alphabetically)
 - Project creation UI now shows duplicate ProjectNumbers as a Warning instead of an Error allowing users to create 2+ Projects with shared cohorts
@@ -76,3 +77,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 [Unreleased]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc...develop
 [3.0.16-rc]: https://github.com/HicServices/RDMP/compare/v3.0.15...v3.0.16-rc
+[FAnsiSql]: https://github.com/HicServices/FAnsiSql/
+[BadMedicine]: https://github.com/HicServices/BadMedicine/
