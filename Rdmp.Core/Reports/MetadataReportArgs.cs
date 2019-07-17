@@ -58,6 +58,11 @@ namespace Rdmp.Core.Reports
         public bool IncludeInternalItems { get; set; }
 
         /// <summary>
+        /// True to output descriptions of <see cref="CatalogueItem"/> even if they don't have any <see cref="ExtractionInformation"/>
+        /// </summary>
+        public bool IncludeNonExtractableItems { get;set;}
+
+        /// <summary>
         /// When outputting <see cref="Lookup"/> tables this is the maximum number of rows that will be written from the lookup table.
         /// </summary>
         public int MaxLookupRows { get; set; }

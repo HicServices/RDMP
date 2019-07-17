@@ -59,17 +59,24 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 ColumnInfo columnInfo;
                 string text;
 
-                if(SelectOne(Activator.CoreChildProvider.AllColumnInfos,out columnInfo))
-                    if(TypeText("Name", "Type a name for the new CatalogueItem", 500, columnInfo.GetRuntimeName(),out text))
-                    {
-                        var ci = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
-                        ci.Name = text;
-                        ci.SetColumnInfo(columnInfo);
-                        ci.SaveToDatabase();
+                //get them to pick a column info
+                SelectOne(Activator.CoreChildProvider.AllColumnInfos,out columnInfo);
+                                               
+                //get them to type a name for it (based on the ColumnInfo if picked)
+                if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
+                {
+                    var ci = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
+                    ci.Name = text;
 
-                        Publish(_catalogue);
-                        Emphasise(ci,int.MaxValue);
-                    }
+                    //set the associated column if they did pick it
+                    if(columnInfo != null)
+                        ci.SetColumnInfo(columnInfo);
+
+                    ci.SaveToDatabase();
+
+                    Publish(_catalogue);
+                    Emphasise(ci,int.MaxValue);
+                }
             }
             else
             {

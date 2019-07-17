@@ -11,8 +11,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Example data generated on install can now be given a seed (allows for reproducibility)
 - Creating a Query Caching server for an cohort identification AggregateConfiguration now asks you if you want to set it as the default QueryCaching server (if there isn't already one)
 - Double clicking a row in SQL query editor user interfaces now shows text summary of the row
-- DLE load logs tree view now supports double clicking on messages/errors to see summary.
+- DLE load logs tree view now supports double clicking on messages/errors to see summary
 - All RDMP platform objects now have icons even if not visible in the UI (this affects the objects documentation file generation)
+- MetadataReport now supports generating data for Catalogues with no extractable columns
 
 ### Changed
 

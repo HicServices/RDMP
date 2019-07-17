@@ -67,7 +67,6 @@ namespace Rdmp.Core.Reports
         {
             try
             {
-
                 //if theres only one catalogue call it 'prescribing.docx' etc
                 string filename = _args.Catalogues.Length == 1 ? _args.Catalogues[0].Name : "MetadataReport";
 
@@ -132,9 +131,11 @@ namespace Rdmp.Core.Reports
                                 }
 
                             }
-
-                            InsertHeader(document,"Columns",2);
+                                                        
                             CreateDescriptionsTable(document,c);
+
+                            if(_args.IncludeNonExtractableItems)
+                                CreateNonExtractableColumnsTable(document,c);
 
                             //if this is not the last Catalogue create a new page
                             if (completed != _args.Catalogues.Length)
@@ -274,8 +275,13 @@ namespace Rdmp.Core.Reports
             var extractionInformations = c.GetAllExtractionInformation(ExtractionCategory.Any).Where(Include).ToList();
             extractionInformations.Sort(IsExtractionIdentifiersFirstOrder);
 
-            var table = InsertTable(document,extractionInformations.Count + 1, 4);
-            
+            if (!extractionInformations.Any())
+                return;
+
+            InsertHeader(document, "Extractable Columns", 2);
+
+            var table = InsertTable(document, extractionInformations.Count + 1, 4);
+
             int tableLine = 0;
 
             SetTableCell(table, tableLine, 0, "Column", TextFontSize);
@@ -288,10 +294,10 @@ namespace Rdmp.Core.Reports
 
             foreach (ExtractionInformation information in extractionInformations)
             {
-                SetTableCell(table,tableLine, 0, information.GetRuntimeName(),TextFontSize);
-                SetTableCell(table,tableLine, 1, information.ColumnInfo.Data_type,TextFontSize);
+                SetTableCell(table, tableLine, 0, information.GetRuntimeName(), TextFontSize);
+                SetTableCell(table, tableLine, 1, information.ColumnInfo.Data_type, TextFontSize);
                 string description = information.CatalogueItem.Description;
-                
+
                 //a field should only ever be a foreign key to one Lookup table
                 var lookups = information.ColumnInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
 
@@ -312,6 +318,36 @@ namespace Rdmp.Core.Reports
                 SetTableCell(table, tableLine, 2, description, TextFontSize);
                 SetTableCell(table, tableLine, 3, information.ExtractionCategory.ToString(), TextFontSize);
 
+                tableLine++;
+            }
+
+            AutoFit(table);
+        }
+        private void CreateNonExtractableColumnsTable(XWPFDocument document, Catalogue c)
+        {
+            var nonExtractableCatalogueItems = c.CatalogueItems.Where(ci => ci.ExtractionInformation == null).ToList();
+
+            if (!nonExtractableCatalogueItems.Any())
+                return;
+
+            InsertHeader(document, "Other Columns (Not Extractable)", 2);
+
+            var table = InsertTable(document, nonExtractableCatalogueItems.Count + 1, 3);
+
+            int tableLine = 0;
+
+            SetTableCell(table, tableLine, 0, "Column", TextFontSize);
+            SetTableCell(table, tableLine, 1, "Datatype", TextFontSize);
+            SetTableCell(table, tableLine, 2, "Description", TextFontSize);
+
+            tableLine++;
+
+
+            foreach (CatalogueItem ci in nonExtractableCatalogueItems.OrderBy(ci => ci.Name))
+            {
+                SetTableCell(table, tableLine, 0, ci.Name, TextFontSize);
+                SetTableCell(table, tableLine, 1, ci.ColumnInfo?.Data_type ?? @"N\A", TextFontSize);
+                SetTableCell(table, tableLine, 2, ci.Description, TextFontSize);
                 tableLine++;
             }
 
