@@ -274,7 +274,8 @@ namespace Rdmp.UI.Tests
         }
 
         /// <summary>
-        /// Returns all controls of type T that are in the currently shown user interface 
+        /// Returns all controls of type T that are in the currently shown user interface (<see cref="LastUserInterfaceLaunched")
+        /// 
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>

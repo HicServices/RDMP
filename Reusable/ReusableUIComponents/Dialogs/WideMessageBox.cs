@@ -26,6 +26,16 @@ namespace ReusableUIComponents.Dialogs
     public partial class WideMessageBox : Form
     {
         /// <summary>
+        /// The maximum number of characters displayed in the title
+        /// </summary>
+        public const int MAX_LENGTH_TITLE = 10000;
+
+        /// <summary>
+        /// The maximum number of characters displayed in the body
+        /// </summary>
+        public const int MAX_LENGTH_BODY = 20000;
+
+        /// <summary>
         /// The currently displayed message
         /// </summary>
         public WideMessageBoxArgs Args { get; set; }
@@ -103,7 +113,7 @@ namespace ReusableUIComponents.Dialogs
             //if there is a title
             if (!string.IsNullOrWhiteSpace(title))
             {
-                lblMainMessage.Text = title;
+                lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title.Substring(0,MAX_LENGTH_TITLE): title;
             }
             else
             {
@@ -145,10 +155,7 @@ namespace ReusableUIComponents.Dialogs
 
         private static string GetText(DataGridViewRow row)
         {
-            //don't have more than 64k characters since this can break GDI+ etc
             const int MAX_LENGTH_ELEMENT = 10000;
-            const int MAX_LENGTH_OVERALL = 20000;
-
             StringBuilder sb = new StringBuilder();
 
             foreach (DataGridViewColumn c in row.DataGridView.Columns)
@@ -163,8 +170,8 @@ namespace ReusableUIComponents.Dialogs
                     sb.AppendLine(c.Name + ":" + stringval);
                 }
                     
-            if(sb.Length >= MAX_LENGTH_OVERALL)
-                return sb.ToString(0, MAX_LENGTH_OVERALL);
+            if(sb.Length >= MAX_LENGTH_BODY)
+                return sb.ToString(0, MAX_LENGTH_BODY);
 
             return sb.ToString();
         }
@@ -259,8 +266,11 @@ namespace ReusableUIComponents.Dialogs
             if(string.IsNullOrWhiteSpace(message))
                 message = "";            
 
-            //unless the text is unreasonably long or we don't have help documentation available
-            if (message.Length > 100000 || CommentStore == null)
+            if(message.Length > MAX_LENGTH_BODY)
+                message = message.Substring(0,MAX_LENGTH_BODY);
+
+            //if we don't have help documentation available just set the message without looking for hyperlinks
+            if (CommentStore == null)
             {
                 richTextBox1.Text = message;
                 return;
