@@ -36,12 +36,18 @@ namespace Rdmp.UI.LoadExecutionUIs
         private LoadMetadata _loadMetadata;
         private ILoadProgress[] _allLoadProgresses;
 
-        ToolStripMenuItem miDebugOptions = new ToolStripMenuItem("Debug Options");
 
-        ToolStripMenuItem miSkipArchiving = new ToolStripMenuItem("Skip Archiving") { CheckOnClick = true };
-        ToolStripMenuItem miMigrateRAWToStaging = new ToolStripMenuItem("Migrate RAW=>STAGING"){CheckOnClick = true,Checked = true};
-        ToolStripMenuItem miMigrateStagingToLive = new ToolStripMenuItem("Migrate STAGING=>Live") { CheckOnClick = true ,Checked=true};
+        private ToolStripComboBox dd_DebugOptions = new ToolStripComboBox();
 
+
+        private enum DebugOptions
+        {
+            RunNormally,
+            StopAfterRAW,
+            StopAfterSTAGING,
+            SkipArchiving
+        }
+               
         public ExecuteLoadMetadataUI()
         {
             InitializeComponent();
@@ -54,7 +60,8 @@ namespace Rdmp.UI.LoadExecutionUIs
             checkAndExecuteUI1.CommandGetter = AutomationCommandGetter;
             checkAndExecuteUI1.StateChanged += SetButtonStates;
 
-            miDebugOptions.DropDownItems.AddRange(new []{miSkipArchiving,miMigrateRAWToStaging,miMigrateStagingToLive});
+            dd_DebugOptions.ComboBox.DropDownStyle = ComboBoxStyle.DropDownList;
+            dd_DebugOptions.ComboBox.DataSource = Enum.GetValues(typeof(DebugOptions));
         }
         
         public override void SetDatabaseObject(IActivateItems activator, LoadMetadata databaseObject)
@@ -67,13 +74,15 @@ namespace Rdmp.UI.LoadExecutionUIs
             SetButtonStates(null,null);
 
             SetLoadProgressGroupBoxState();
+            
 
             CommonFunctionality.Add(new ExecuteCommandViewLoadDiagram(activator, _loadMetadata));
 
             CommonFunctionality.AddToMenu(new ExecuteCommandEditLoadMetadataDescription(activator, _loadMetadata));
-            CommonFunctionality.AddToMenu(miDebugOptions);
             
             CommonFunctionality.Add(new ExecuteCommandViewLoadMetadataLogs(activator, (LoadMetadata) databaseObject));
+            
+            CommonFunctionality.Add(dd_DebugOptions);
 
             AddPluginCommands();
         }
@@ -112,15 +121,17 @@ namespace Rdmp.UI.LoadExecutionUIs
         {
             var lp = GetLoadProgressIfAny();
 
+            var debugOpts = (DebugOptions)dd_DebugOptions.SelectedItem;
+            
             var options = new DleOptions
             {
                 Command = activityRequested,
                 LoadMetadata = _loadMetadata.ID,
                 Iterative = cbRunIteratively.Checked,
                 DaysToLoad = Convert.ToInt32(udDaysPerJob.Value),
-                DoNotArchiveData = miSkipArchiving.Checked,
-                StopAfterRAW = !miMigrateRAWToStaging.Checked,
-                StopAfterSTAGING = !miMigrateStagingToLive.Checked,
+                DoNotArchiveData = debugOpts != DebugOptions.RunNormally,
+                StopAfterRAW = debugOpts == DebugOptions.StopAfterRAW,
+                StopAfterSTAGING = debugOpts == DebugOptions.StopAfterRAW || debugOpts == DebugOptions.StopAfterSTAGING,
             };
 
             if (lp != null)
