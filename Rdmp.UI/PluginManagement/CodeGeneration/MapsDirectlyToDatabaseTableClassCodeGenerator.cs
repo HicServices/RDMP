@@ -87,15 +87,14 @@ namespace Rdmp.UI.PluginManagement.CodeGeneration
 
             databaseFields.AppendLine("\t#endregion");
             databaseFields.AppendLine();
+            
+            constructors.AppendLine("\t}");
 
             if (isINamed)
-                constructors.AppendLine(@"\tpublic override string ToString()
-        {
-            return Name;
-        }");
-
-
-            constructors.AppendLine("\t}");
+                constructors.AppendLine("\t" + @"public override string ToString()
+    {
+        return Name;
+    }");
 
             return classStart.ToString() + databaseFields + databaseProperties + constructors + "}";
 

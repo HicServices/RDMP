@@ -49,7 +49,8 @@ namespace Rdmp.Core.Reports
 
                     for (int i = 0; i < Summaries.Count; i++)
                     {
-                        SetTableCell(t, (i*2) + 1, 0, keys[i].Name);
+                        //creates the run
+                        SetTableCell(t, (i*2) + 1, 0, "");
                         
                         var bmp = iconProvider.GetImage(keys[i]);
 
@@ -58,6 +59,7 @@ namespace Rdmp.Core.Reports
                             var run = t.Rows[(i*2) + 1].GetCell(0).Paragraphs.First().Runs.First();
                             GetPicture(run,bmp);
                         }
+                        SetTableCell(t, (i * 2) + 1, 0," "+ keys[i].Name);
 
                         SetTableCell(t,(i*2) + 2, 0, Summaries[keys[i]]);
                     }
@@ -77,7 +79,7 @@ namespace Rdmp.Core.Reports
             foreach (Type t in _mef.GetAllTypes().Where(t=>typeof(DatabaseEntity).IsAssignableFrom(t)))
                 if (typeof (IMapsDirectlyToDatabaseTable).IsAssignableFrom(t))
                 {
-                    if (t.IsInterface || t.IsAbstract)
+                    if (t.IsInterface || t.IsAbstract || t.Name.StartsWith("Spontaneous"))
                         continue;
                     try
                     {

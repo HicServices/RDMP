@@ -8,6 +8,7 @@ using System.Data.SqlClient;
 using System.Drawing;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
@@ -57,6 +58,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 _cic.QueryCachingServer_ID = newServer.ID;
                 _cic.SaveToDatabase();
 
+                SetDefaultIfNotExists(newServer,PermissableDefaults.CohortIdentificationQueryCachingServer_ID,true);
+                
                 Publish(_cic);
             }
         }

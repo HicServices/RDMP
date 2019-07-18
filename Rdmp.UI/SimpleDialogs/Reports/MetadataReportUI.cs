@@ -40,14 +40,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
     public partial class MetadataReportUI : RDMPForm
     {
         MetadataReport _report;
-        private readonly Catalogue[] _extractableCatalogues;
+        private readonly Catalogue[] _catalogues;
 
         public MetadataReportUI(IActivateItems activator,ICatalogue initialSelection = null):base(activator)
         {
             InitializeComponent();
 
-            _extractableCatalogues = Activator.CoreChildProvider.AllCatalogues.Where(c => c.CatalogueItems.Any(ci => ci.ExtractionInformation != null)).ToArray();
-            cbxCatalogues.Items.AddRange(_extractableCatalogues);
+            _catalogues = Activator.CoreChildProvider.AllCatalogues;
+            cbxCatalogues.Items.AddRange(_catalogues);
 
             if (initialSelection != null)
             {
@@ -58,7 +58,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
         private void btnGenerateReport_Click(object sender, EventArgs e)
         {
-            IEnumerable<Catalogue> toReportOn = _extractableCatalogues;
+            IEnumerable<Catalogue> toReportOn = _catalogues;
 
             if(rbAllCatalogues.Checked)
                 toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated).ToArray();
@@ -76,6 +76,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
                 TimespanCalculator = new DatasetTimespanCalculator(),
                 IncludeDeprecatedItems = cbIncludeDeprecatedCatalogueItems.Checked,
                 IncludeInternalItems = cbIncludeInternalCatalogueItems.Checked,
+                IncludeNonExtractableItems = cbIncludeNonExtractable.Checked,
                 MaxLookupRows = (int)nMaxLookupRows.Value
             };
 

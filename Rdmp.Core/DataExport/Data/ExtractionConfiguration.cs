@@ -25,7 +25,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IExtractionConfiguration"/>
     public class ExtractionConfiguration : DatabaseEntity, IExtractionConfiguration, ICollectSqlParameters,INamed,ICustomSearchString
     {
         #region Database Properties

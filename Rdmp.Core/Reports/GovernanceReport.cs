@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using CsvHelper;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Repositories;
@@ -32,60 +33,71 @@ namespace Rdmp.Core.Reports
 
         public void GenerateReport()
         {
-            StringBuilder sb = new StringBuilder();
-            
-            //first line of file
-            sb.AppendLine("Extractable Datasets");
-            sb.AppendLine("Folder,Catalogue,Current Governance,Dataset Period,Description");
-            
-            Dictionary<GovernancePeriod, ICatalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
-            
-            foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>().Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null)))
-            {
-                if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
-                    continue;
-
-                //get active governances
-                var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired()).Select(g=>g.Key).ToArray();
-                var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
-
-                string relevantGovernance = "\"";
-
-                if (activeGovs.Any())
-                    relevantGovernance += string.Join("," , activeGovs.Select(gov => gov.Name));
-                else if (expiredGovs.Any())
-                    relevantGovernance += "No Current Governance (Expired Governances: " + string.Join(",", expiredGovs.Select(gov => gov.Name)) + ")";
-                else
-                    relevantGovernance += "No Governance Required";
-
-                relevantGovernance += "\"";
-
-                //write the results out to Excel
-                sb.Append(catalogue.Folder).Append(",");
-                sb.Append(catalogue.Name).Append(",");
-                sb.Append(relevantGovernance).Append(",");
-                sb.Append(_timespanCalculator.GetHumanReadableTimepsanIfKnownOf(catalogue,true)).Append(",");
-                sb.Append(ShortenDescription(catalogue.Description)).AppendLine();
-            }
-
-            sb.AppendLine();
-            
-            // next section header
-            sb.AppendLine("Active Governance");
-            
-            OutputGovernanceList(govs,sb, false);
-
-            //take a blank line
-            sb.AppendLine();
-
-            // next section header
-            sb.AppendLine("Expired Governance");
-
-            OutputGovernanceList(govs,sb, true);
-
             var f = GetUniqueFilenameInWorkArea("GovernanceReport", ".csv");
 
-            File.WriteAllText(f.FullName, sb.ToString());
+            using (var s = new StreamWriter(f.FullName))
+            {
+                using (CsvWriter writer = new CsvWriter(s))
+                {
+                    writer.Configuration.Delimiter = ",";
+
+                    writer.WriteField("Extractable Datasets");
+                    writer.NextRecord();
+                        
+                    writer.WriteField("Folder");
+                    writer.WriteField("Catalogue");
+                    writer.WriteField("Current Governance");
+                    writer.WriteField("Dataset Period");
+                    writer.WriteField("Description");
+                    writer.NextRecord();
+
+
+                    Dictionary<GovernancePeriod, ICatalogue[]> govs = _repository.GetAllObjects<GovernancePeriod>().ToDictionary(period => period, period => period.GovernedCatalogues.ToArray());
+            
+                    foreach (Catalogue catalogue in _repository.GetAllObjects<Catalogue>().Where(c=>c.CatalogueItems.Any(ci=>ci.ExtractionInformation != null)))
+                    {
+                        if (catalogue.IsDeprecated || catalogue.IsColdStorageDataset || catalogue.IsInternalDataset)
+                            continue;
+
+                        //get active governances
+                        var activeGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && !kvp.Key.IsExpired()).Select(g=>g.Key).ToArray();
+                        var expiredGovs = govs.Where(kvp => kvp.Value.Contains(catalogue) && kvp.Key.IsExpired()).Select(g => g.Key).ToArray();
+
+                        string relevantGovernance = null;
+
+                        if (activeGovs.Any())
+                            relevantGovernance = string.Join("," , activeGovs.Select(gov => gov.Name));
+                        else if (expiredGovs.Any())
+                            relevantGovernance = "No Current Governance (Expired Governances: " + string.Join(",", expiredGovs.Select(gov => gov.Name)) + ")";
+                        else
+                            relevantGovernance = "No Governance Required";
+
+
+                        //write the results out to Excel
+                        writer.WriteField(catalogue.Folder);
+                        writer.WriteField(catalogue.Name);
+                        writer.WriteField(relevantGovernance);
+                        writer.WriteField(_timespanCalculator.GetHumanReadableTimepsanIfKnownOf(catalogue,true));
+                        writer.WriteField(ShortenDescription(catalogue.Description));
+
+                        writer.NextRecord();
+                    }
+
+                    writer.NextRecord();
+
+                    // next section header
+                    writer.WriteField("Active Governance");
+            
+                    OutputGovernanceList(govs,writer, false);
+
+                    writer.NextRecord();
+                    // next section header
+                    writer.WriteField("Expired Governance");
+
+                    OutputGovernanceList(govs,writer, true);
+                }
+            }
+                
             ShowFile(f);
         }
 
@@ -94,12 +106,13 @@ namespace Rdmp.Core.Reports
             if (string.IsNullOrWhiteSpace(description))
                 return description;
 
-            var toReturn = description.Replace(Environment.NewLine, " ");
+            description = description.Replace("\r\n"," ");
+            description = description.Replace("\n"," ");
 
-            if (toReturn.Length >= 100)
-                return toReturn.Substring(0, 100) + "...";
+            if (description.Length >= 100)
+                return description.Substring(0, 100) + "...";
             else
-                return toReturn;
+                return description;
         }
 
         /// <summary>
@@ -108,10 +121,16 @@ namespace Rdmp.Core.Reports
         /// <param name="govs"></param>
         /// <param name="sb"></param>
         /// <param name="expired"></param>
-        private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, StringBuilder sb, bool expired)
+        private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
         {
             //headers for this section
-            sb.AppendLine("Governance Period Name,Catalogues,Approval Start,Approval End,Documents");
+            writer.WriteField("Governance");
+            writer.WriteField("Period Name");
+            writer.WriteField("Catalogues");
+            writer.WriteField("Approval Start");
+            writer.WriteField("Approval End");
+            writer.WriteField("Documents");
+            writer.NextRecord();
             
             foreach (KeyValuePair<GovernancePeriod, ICatalogue[]> kvp in govs)
             {
@@ -123,11 +142,13 @@ namespace Rdmp.Core.Reports
                 if (kvp.Key.IsExpired() != expired)
                     continue;
 
-                sb.Append(kvp.Key.Name).Append(",");
-                sb.Append("\""+string.Join(",", kvp.Value.Select(cata => cata.Name))).Append("\",");
-                sb.Append(kvp.Key.StartDate).Append(",");
-                sb.Append(kvp.Key.EndDate == null ? "Never Expires" : kvp.Key.EndDate.ToString()).Append(",");
-                sb.Append("\""+ string.Join(",", kvp.Key.GovernanceDocuments.Select(doc => doc.GetFilenameOnly()))).AppendLine("\"");
+                writer.WriteField(kvp.Key.Name);
+                writer.WriteField(string.Join(",", kvp.Value.Select(cata => cata.Name)));
+                writer.WriteField(kvp.Key.StartDate);
+                writer.WriteField(kvp.Key.EndDate == null ? "Never Expires" : kvp.Key.EndDate.ToString());
+                writer.WriteField(string.Join(",", kvp.Key.GovernanceDocuments.Select(doc => doc.GetFilenameOnly())));
+
+                writer.NextRecord();
             }
         }
     }

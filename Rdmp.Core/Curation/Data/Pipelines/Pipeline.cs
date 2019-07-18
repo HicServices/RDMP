@@ -140,7 +140,9 @@ namespace Rdmp.Core.Curation.Data.Pipelines
         /// <returns></returns>
         public Pipeline Clone()
         {
-            var clonePipe = new Pipeline((ICatalogueRepository)Repository, Name + "(Clone)");
+            string name = GetUniqueCloneName();
+
+            var clonePipe = new Pipeline((ICatalogueRepository)Repository,name);
             clonePipe.Description = Description;
 
             var originalSource = Source;
@@ -170,6 +172,23 @@ namespace Rdmp.Core.Curation.Data.Pipelines
 
             return clonePipe;
         }
+
+        private string GetUniqueCloneName()
+        {
+            var otherPipelines = CatalogueRepository.GetAllObjects<Pipeline>();
+
+            string proposedName = $"{Name} (Clone)";
+            int suffix = 1;
+
+            while(otherPipelines.Any(p=>proposedName.Equals(p.Name,StringComparison.CurrentCultureIgnoreCase)))
+            {
+                suffix++;
+                proposedName = $"{Name} (Clone{suffix})";
+            }
+
+            return proposedName;
+        }
+
         /// <inheritdoc/>
         public IHasDependencies[] GetObjectsThisDependsOn()
         {

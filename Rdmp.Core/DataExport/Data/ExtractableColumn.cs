@@ -20,14 +20,14 @@ namespace Rdmp.Core.DataExport.Data
     /// Sometimes when extracting data in an ExtractionConfiguration of a Project you don't want to extract all the available (extractable) columns in a dataset.  For example you might
     /// have some columns which require 'special approval' to be released and most extracts will not include the columns.  ExtractableColumn is the object which records which columns in
     /// a given ExtractionConfiguration are being released to the researcher.  It also allows you to change the implementation of the column, for example a given researcher might want 
-    /// all values UPPERd or he might want the Value field of Prescribing to be passed through his adjustment Scalar Valued Function to normalise or some other wierdness.
+    /// all values UPPERd or he might want the Value field of Prescribing to be passed through his adjustment Scalar Valued Function.
     /// 
     /// <para>When selecting a column for extraction in ExtractionConfigurationUI an ExtractableColumn will be created with a pointer to the original ExtractionInformation 
     /// (CatalogueExtractionInformation_ID) in the Catalogue database.  The ExtractionInformations SelectSQL will also be copied out.  The ExtractionQueryBuilder will use these records to
     /// assemble the correct SQL for each Catalogue in your ExtractionConfiguration.</para>
     /// 
     /// <para>The ExtractableColumn 'copy' process allows not only for you to modify the SelectSQL on a 'per extraction' basis but also it means that if you ever delete an ExtractionInformation
-    /// from the Catalogue or change the implementation then the record in DataExportManager still reflects the values that were actually used to execute the extraction.  This means
+    /// from the Catalogue or change the implementation then the record in DataExport database still reflects the values that were actually used to execute the extraction.  This means
     /// that if you clone a 10 year old extraction you will still get the same SQL (along with lots of warnings about orphan CatalogueExtractionInformation_ID etc).  It even allows you
     /// to delete entire datasets (Catalogues) without breaking old extractions (this is not a good idea though - you should always just deprecate the Catalogue instead).</para>
     /// </summary>

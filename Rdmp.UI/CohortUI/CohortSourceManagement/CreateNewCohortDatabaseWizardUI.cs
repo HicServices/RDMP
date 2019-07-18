@@ -26,8 +26,8 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
     /// username/password then these will be stored in the Data Export Manager database in encrypted form (See PasswordEncryptionKeyLocationUI) and used to do Sql Authentication when
     /// doing data extractions.</para> 
     ///  
-    /// <para>After you have chosen the correct private identifier you should choose a strategy for allocating release identifiers.  Because each agency handles governance and identifier assignment
-    /// differently you can select 'Allow Null Release Identifiers' and provide allocate them yourself manually (e.g. through a stored proceedure).</para>
+    /// <para>You can use <see cref="CreateNewCohortDatabaseWizard"/> to create a suitable database based on the private identifiers you
+    /// hold in your existing datasets.</para>
     /// </summary>
     partial class CreateNewCohortDatabaseWizardUI : RDMPUserControl
     {

@@ -27,7 +27,8 @@ namespace Rdmp.UI.Collections
 
         public OrderableComparer(OLVColumn primarySortColumn, SortOrder primarySortOrder)
         {
-            _modelComparer = new ModelObjectComparer(primarySortColumn, primarySortOrder);
+            if(primarySortColumn != null)
+                _modelComparer = new ModelObjectComparer(primarySortColumn, primarySortOrder);
         }
 
         /// <summary>
@@ -43,8 +44,12 @@ namespace Rdmp.UI.Collections
             if (x is IOrderable xOrderable && y is IOrderable yOrderable)
                     return xOrderable.Order - yOrderable.Order;
 
-             //or use whatever
-            return _modelComparer.Compare(x, y);
+            //or use whatever the model is
+            if (_modelComparer != null)
+                _modelComparer.Compare(x, y);
+            
+            
+            return string.Compare(x.ToString(),y.ToString());
         }
 
         /// <summary>

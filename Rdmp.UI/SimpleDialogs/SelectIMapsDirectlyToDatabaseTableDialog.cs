@@ -279,6 +279,7 @@ namespace Rdmp.UI.SimpleDialogs
                         MultiSelected.Add(o);
                 }
                 olvObjects.RebuildColumns();
+                UpdateButtonEnabledness();
             }
         }
 

@@ -8,9 +8,11 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Windows.Forms;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 using KeyEventArgs = System.Windows.Forms.KeyEventArgs;
@@ -23,6 +25,16 @@ namespace ReusableUIComponents.Dialogs
     [TechnicalUI]
     public partial class WideMessageBox : Form
     {
+        /// <summary>
+        /// The maximum number of characters displayed in the title
+        /// </summary>
+        public const int MAX_LENGTH_TITLE = 10000;
+
+        /// <summary>
+        /// The maximum number of characters displayed in the body
+        /// </summary>
+        public const int MAX_LENGTH_BODY = 20000;
+
         /// <summary>
         /// The currently displayed message
         /// </summary>
@@ -101,7 +113,7 @@ namespace ReusableUIComponents.Dialogs
             //if there is a title
             if (!string.IsNullOrWhiteSpace(title))
             {
-                lblMainMessage.Text = title;
+                lblMainMessage.Text = title.Length > MAX_LENGTH_TITLE ? title.Substring(0,MAX_LENGTH_TITLE): title;
             }
             else
             {
@@ -131,9 +143,41 @@ namespace ReusableUIComponents.Dialogs
                 btnViewSourceCode.Enabled = false;
         }
 
-        public static void Show(string mainMessage, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        public static void Show(IHasSummary summary,bool isModalDialog = true)
         {
-            WideMessageBox wmb = new WideMessageBox(new WideMessageBoxArgs(mainMessage,message, environmentDotStackTrace, keywordNotToAdd, theme));
+            summary.GetSummary(out string title,out string body, out string stackTrace,out CheckResult level);
+            Show(title,body,stackTrace,isModalDialog,null,GetTheme(level));
+        }
+        public static void Show(string title, DataGridViewRow row, bool isModalDialog = true, WideMessageBoxTheme theme = WideMessageBoxTheme.Help)
+        {
+            Show(title, GetText(row), null,isModalDialog,null, theme);
+        }
+
+        private static string GetText(DataGridViewRow row)
+        {
+            const int MAX_LENGTH_ELEMENT = 10000;
+            StringBuilder sb = new StringBuilder();
+
+            foreach (DataGridViewColumn c in row.DataGridView.Columns)
+                if (c.Visible)
+                {
+                    var v = row.Cells[c.Name].Value;
+                    var stringval = v == null || v == DBNull.Value ? "NULL" : v.ToString();
+
+                    if(stringval.Length > MAX_LENGTH_ELEMENT)
+                        stringval = stringval.Substring(0, MAX_LENGTH_ELEMENT) + "...";
+
+                    sb.AppendLine(c.Name + ":" + stringval);
+                }
+                    
+            if(sb.Length >= MAX_LENGTH_BODY)
+                return sb.ToString(0, MAX_LENGTH_BODY);
+
+            return sb.ToString();
+        }
+        public static void Show(string title, string message, string environmentDotStackTrace = null, bool isModalDialog = true, string keywordNotToAdd = null,WideMessageBoxTheme theme = WideMessageBoxTheme.Exception)
+        {
+            WideMessageBox wmb = new WideMessageBox(new WideMessageBoxArgs(title,message, environmentDotStackTrace, keywordNotToAdd, theme));
 
             if (isModalDialog)
                 wmb.ShowDialog();
@@ -142,9 +186,9 @@ namespace ReusableUIComponents.Dialogs
             
         }
 
-        public static void Show(string mainMessage, string message, WideMessageBoxTheme theme)
+        public static void Show(string title, string message, WideMessageBoxTheme theme)
         {
-            Show(mainMessage, message,null,theme:theme);
+            Show(title, message,null,theme:theme);
         }
         private void ApplyTheme(WideMessageBoxTheme theme)
         {
@@ -222,8 +266,11 @@ namespace ReusableUIComponents.Dialogs
             if(string.IsNullOrWhiteSpace(message))
                 message = "";            
 
-            //unless the text is unreasonably long or we don't have help documentation available
-            if (message.Length > 100000 || CommentStore == null)
+            if(message.Length > MAX_LENGTH_BODY)
+                message = message.Substring(0,MAX_LENGTH_BODY);
+
+            //if we don't have help documentation available just set the message without looking for hyperlinks
+            if (CommentStore == null)
             {
                 richTextBox1.Text = message;
                 return;
@@ -339,6 +386,45 @@ namespace ReusableUIComponents.Dialogs
 
             if (e.KeyCode == Keys.Back || e.KeyCode == Keys.Escape || (e.KeyData == Keys.W && e.Control))
                 e.Handled = true;
+
+            if(e.KeyCode == Keys.C && e.Control)
+            {
+                e.Handled = true;
+
+                //Ctrl+C with nothing selected copies it all
+                if(richTextBox1.SelectedText.Length == 0)
+                {
+                    //gets around formatting of hyperlinks appearing in Ctrl+C
+                    Clipboard.SetText(Args.Title + Environment.NewLine + Environment.NewLine + Args.Message);
+                }
+                else
+                {
+                    //the text (which may include 'hyperlinks') e.g. "Bob Project #Project(ExtractionConfiguration #IExtractionConfigurationID=3"
+                    string text = richTextBox1.SelectedText;
+
+                    //
+                    /*
+                     From the rtf text, for example:
+
+                     {\rtf1\ansi\ansicpg1252\deff0\deflang2057{\fonttbl{\f0\fnil\fcharset0 Courier New;}}
+\uc1\pard\f0\fs17 Bob Project \v #Project\v0 (ExtractionConfiguration \v #IExtractionConfiguration\v0 ID=3}
+
+                    Grab the hyperlinks
+ */
+                    //gets around formatting of hyperlinks appearing in Ctrl+C
+                    Regex rtfHyperlinks = new Regex(@"\\v #([^\\]*)\\v");
+
+                    foreach (Match m in rtfHyperlinks.Matches(richTextBox1.SelectedRtf))
+                    {
+                        //replace the hyperlink text in the 'unformatted' text
+                        text = text.Replace("#" + m.Groups[1].Value,"");
+                    }
+
+                    Clipboard.SetText(text);
+                }
+                    
+
+            }
         }
 
         private Size GetPreferredSizeOfTextControl(Control c)

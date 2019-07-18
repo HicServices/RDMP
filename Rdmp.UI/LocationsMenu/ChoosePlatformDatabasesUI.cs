@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Drawing;
 using System.IO;
 using System.Text;
 using System.Threading.Tasks;
@@ -243,6 +244,7 @@ namespace Rdmp.UI.LocationsMenu
                 opts.Username = tbUsername.Text;
                 opts.Password = tbPassword.Text;
                 opts.ExampleDatasets = cbCreateExampleDatasets.Checked;
+                opts.Seed = _seed;
 
                 var task = new Task(() =>
                 {
@@ -338,6 +340,22 @@ namespace Rdmp.UI.LocationsMenu
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
+        }
+
+        int _seed = 500;
+
+        private void TbSeed_TextChanged(object sender, EventArgs e)
+        {
+            try
+            {
+                _seed = int.Parse(tbSeed.Text);
+                tbSeed.ForeColor = Color.Black;
+            }
+            catch(Exception)
+            {
+                _seed = 500;
+                tbSeed.ForeColor = Color.Red;
+            }
         }
     }
 }

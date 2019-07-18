@@ -18,8 +18,9 @@ using ReusableLibraryCode.Annotations;
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// A collection of LoadModuleAssembly objects that make up a complete Plugin.  The Plugin is the head in which a name, upload location and verison are recorded then each
-    /// dll that makes up the functionality is linked as LoadModuleAssemblies (See LoadModuleAssembly)
+    /// A nupkg file which contains compiled code to add additional capabilities to RDMP (e.g. to handle Dicom images).  Plugins are loaded and
+    /// stored in the RDMP platform databases and written to disk/loaded when executed by the RDMP client - this ensures that all users run the same
+    /// version of the Plugin(s).
     /// </summary>
     public class Plugin : DatabaseEntity,INamed
     {

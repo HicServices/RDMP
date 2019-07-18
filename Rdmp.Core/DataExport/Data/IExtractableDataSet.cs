@@ -12,12 +12,8 @@ using Rdmp.Core.Repositories;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <summary>
-    /// While the Catalogue Manager database includes support for marking which columns in which Catalogues are extractable (via ExtractionInformation) we need an additional layer
-    /// in the Data Export Manager database.  This layer is the ExtractableDataSet object.  An ExtractableDataSet is 'the permission to perform extractions of a given Catalogue'.  We
-    /// have this second layer for two main reasons.  The first is so that there is no cross database referential integrity problem for example if you delete a Catalogue 5 years after
-    /// performing an extract we can still report to the user the facts in a graceful manner if they clone the old configuration.  The second reason is that you could (if you were crazy)
-    /// have multiple DataExportManager databases all feeding off the same Catalogue database - e.g. one that does identifiable extracts and one which does anonymous extracts.  Some
-    /// datasets (Catalogues) would therefore be extractable in one DataExportManager database while a different set would be extractable in the other DataExportManager database.
+    /// Controls whether a given <see cref="Catalogue"/> is extractable or not.  Includes whether it is usable only with a specific <see cref="Project"/> or
+    /// if extraction of the <see cref="Catalogue"/> has been temporarily disabled.
     /// </summary>
     public interface IExtractableDataSet:IMapsDirectlyToDatabaseTable,IRevertable
     {

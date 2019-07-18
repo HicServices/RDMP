@@ -24,10 +24,10 @@ namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
     /// A virtual column that is made available to researchers.  Each Catalogue has 1 or more CatalogueItems, these contain the descriptions of what is contained
-    /// in the column as well as any outstanding/resolved issues with the column (see CatalogueItemIssue).
+    /// in the column as well as any outstanding/resolved issues.
     /// 
-    /// <para>It is important to note that CatalogueItems are not tied to underlying database tables/columns except via an ExtractionInformation.  This means that you can
-    /// for example have multiple different versions of the same underlying ColumnInfo </para>
+    /// <para>It is important to note that <see cref="CatalogueItem"/> are tied to underlying database via <see cref="ExtractionInformation"/>.  This means
+    /// that you can for example have multiple different versions of the same underlying <see cref="ColumnInfo"/> </para>
     /// 
     /// <para>e.g.
     /// CatalogueItem: PatientDateOfBirth (ExtractionInformation verbatim but 'Special Approval Required')

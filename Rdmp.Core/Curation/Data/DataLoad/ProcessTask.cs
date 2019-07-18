@@ -30,7 +30,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
     /// 
     /// <para>Each ProcessTask can have one or more strongly typed arguments (see entity ProcessTaskArgument), these are discovered at design time by using
     /// reflection to query the Path e.g. 'AnySeparatorFileAttacher' for all properties marked with [DemandsInitialization] attribute.  This allows for 3rd party developers
-    /// to write plugin classes to easily handle freaky source file types or complex/bespoke data load requirements.</para>
+    /// to write plugin classes to easily handle proprietary/bespoke source file types or complex data load requirements.</para>
     /// </summary>
     public class ProcessTask : DatabaseEntity, IProcessTask, IOrderable,INamed, ICheckable
     {
@@ -77,7 +77,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             set { SetField(ref  _path, value); }
         }
 
-        /// <inheritdoc/>
+        /// <inheritdoc cref="IProcessTask.Name"/>
         [NotNull]
         public string Name
         {
@@ -115,7 +115,9 @@ namespace Rdmp.Core.Curation.Data.DataLoad
         [NoMappingToDatabase]
         public IEnumerable<ProcessTaskArgument> ProcessTaskArguments { get { return Repository.GetAllObjectsWithParent<ProcessTaskArgument>(this);} }
         
-        /// <inheritdoc/>
+        /// <summary>
+        /// All <see cref="ILoadProgress"/> (if any) that can be advanced by executing this load.  This allows batch execution of large loads
+        /// </summary>
         [NoMappingToDatabase]
         public ILoadProgress[] LoadProgresses { get { return LoadMetadata.LoadProgresses; }}
 
@@ -277,7 +279,10 @@ namespace Rdmp.Core.Curation.Data.DataLoad
             }
         }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// Returns all tables loaded by the parent <see cref="LoadMetadata"/>
+        /// </summary>
+        /// <returns></returns>
         public IEnumerable<TableInfo> GetTableInfos()
         {
             return LoadMetadata.GetDistinctTableInfoList(true);

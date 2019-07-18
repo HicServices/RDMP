@@ -30,39 +30,32 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
             this.btnGenerateReport = new System.Windows.Forms.Button();
             this.btnStop = new System.Windows.Forms.Button();
             this.cbxCatalogues = new System.Windows.Forms.ComboBox();
-            this.groupBox1 = new System.Windows.Forms.GroupBox();
+            this.gbInclude = new System.Windows.Forms.GroupBox();
+            this.cbIncludeDeprecatedCatalogueItems = new System.Windows.Forms.CheckBox();
+            this.cbIncludeGraphs = new System.Windows.Forms.CheckBox();
+            this.cbIncludeNonExtractable = new System.Windows.Forms.CheckBox();
+            this.cbIncludeInternalCatalogueItems = new System.Windows.Forms.CheckBox();
+            this.cbIncludeDistinctIdentifiers = new System.Windows.Forms.CheckBox();
+            this.cbIncludeRowCounts = new System.Windows.Forms.CheckBox();
             this.btnPick = new System.Windows.Forms.Button();
             this.rbSpecificCatalogue = new System.Windows.Forms.RadioButton();
             this.rbAllCatalogues = new System.Windows.Forms.RadioButton();
+            this.gbCatalogue = new System.Windows.Forms.GroupBox();
             this.label2 = new System.Windows.Forms.Label();
             this.tbTimeout = new System.Windows.Forms.TextBox();
-            this.cbIncludeRowCounts = new System.Windows.Forms.CheckBox();
-            this.cbIncludeDistinctIdentifiers = new System.Windows.Forms.CheckBox();
-            this.aggregateGraph1 = new AggregateGraphUI();
-            this.cbIncludeGraphs = new System.Windows.Forms.CheckBox();
+            this.aggregateGraph1 = new Rdmp.UI.AggregationUIs.AggregateGraphUI();
             this.nMaxLookupRows = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
             this.progressBarsUI1 = new ReusableUIComponents.Progress.ProgressBarsUI();
             this.gbReportOptions = new System.Windows.Forms.GroupBox();
-            this.cbIncludeInternalCatalogueItems = new System.Windows.Forms.CheckBox();
-            this.cbIncludeDeprecatedCatalogueItems = new System.Windows.Forms.CheckBox();
-            this.groupBox1.SuspendLayout();
+            this.gbInclude.SuspendLayout();
+            this.gbCatalogue.SuspendLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nMaxLookupRows)).BeginInit();
             this.gbReportOptions.SuspendLayout();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 13);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(88, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "To Generate For:";
             // 
             // btnGenerateReport
             // 
@@ -92,28 +85,104 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.cbxCatalogues.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
             this.cbxCatalogues.Enabled = false;
             this.cbxCatalogues.FormattingEnabled = true;
-            this.cbxCatalogues.Location = new System.Drawing.Point(48, 79);
+            this.cbxCatalogues.Location = new System.Drawing.Point(113, 41);
             this.cbxCatalogues.Name = "cbxCatalogues";
-            this.cbxCatalogues.Size = new System.Drawing.Size(338, 21);
+            this.cbxCatalogues.Size = new System.Drawing.Size(282, 21);
             this.cbxCatalogues.TabIndex = 4;
             // 
-            // groupBox1
+            // gbInclude
             // 
-            this.groupBox1.Controls.Add(this.btnPick);
-            this.groupBox1.Controls.Add(this.rbSpecificCatalogue);
-            this.groupBox1.Controls.Add(this.rbAllCatalogues);
-            this.groupBox1.Controls.Add(this.cbxCatalogues);
-            this.groupBox1.Location = new System.Drawing.Point(17, 29);
-            this.groupBox1.Name = "groupBox1";
-            this.groupBox1.Size = new System.Drawing.Size(430, 111);
-            this.groupBox1.TabIndex = 0;
-            this.groupBox1.TabStop = false;
-            this.groupBox1.Text = "Catalogue";
+            this.gbInclude.Controls.Add(this.cbIncludeDeprecatedCatalogueItems);
+            this.gbInclude.Controls.Add(this.cbIncludeGraphs);
+            this.gbInclude.Controls.Add(this.cbIncludeNonExtractable);
+            this.gbInclude.Controls.Add(this.cbIncludeInternalCatalogueItems);
+            this.gbInclude.Controls.Add(this.cbIncludeDistinctIdentifiers);
+            this.gbInclude.Controls.Add(this.cbIncludeRowCounts);
+            this.gbInclude.Location = new System.Drawing.Point(453, 4);
+            this.gbInclude.Name = "gbInclude";
+            this.gbInclude.Size = new System.Drawing.Size(325, 117);
+            this.gbInclude.TabIndex = 0;
+            this.gbInclude.TabStop = false;
+            this.gbInclude.Text = "Include";
+            // 
+            // cbIncludeDeprecatedCatalogueItems
+            // 
+            this.cbIncludeDeprecatedCatalogueItems.AutoSize = true;
+            this.cbIncludeDeprecatedCatalogueItems.Checked = true;
+            this.cbIncludeDeprecatedCatalogueItems.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbIncludeDeprecatedCatalogueItems.Location = new System.Drawing.Point(145, 65);
+            this.cbIncludeDeprecatedCatalogueItems.Name = "cbIncludeDeprecatedCatalogueItems";
+            this.cbIncludeDeprecatedCatalogueItems.Size = new System.Drawing.Size(158, 17);
+            this.cbIncludeDeprecatedCatalogueItems.TabIndex = 5;
+            this.cbIncludeDeprecatedCatalogueItems.Text = "Deprecated CatalogueItems";
+            this.cbIncludeDeprecatedCatalogueItems.UseVisualStyleBackColor = true;
+            this.cbIncludeDeprecatedCatalogueItems.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
+            // 
+            // cbIncludeGraphs
+            // 
+            this.cbIncludeGraphs.AutoSize = true;
+            this.cbIncludeGraphs.Checked = true;
+            this.cbIncludeGraphs.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbIncludeGraphs.Location = new System.Drawing.Point(6, 19);
+            this.cbIncludeGraphs.Name = "cbIncludeGraphs";
+            this.cbIncludeGraphs.Size = new System.Drawing.Size(60, 17);
+            this.cbIncludeGraphs.TabIndex = 5;
+            this.cbIncludeGraphs.Text = "Graphs";
+            this.cbIncludeGraphs.UseVisualStyleBackColor = true;
+            this.cbIncludeGraphs.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
+            // 
+            // cbIncludeNonExtractable
+            // 
+            this.cbIncludeNonExtractable.AutoSize = true;
+            this.cbIncludeNonExtractable.Location = new System.Drawing.Point(145, 42);
+            this.cbIncludeNonExtractable.Name = "cbIncludeNonExtractable";
+            this.cbIncludeNonExtractable.Size = new System.Drawing.Size(181, 17);
+            this.cbIncludeNonExtractable.TabIndex = 5;
+            this.cbIncludeNonExtractable.Tag = "";
+            this.cbIncludeNonExtractable.Text = "Non Extractable Catalogue Items";
+            this.cbIncludeNonExtractable.UseVisualStyleBackColor = true;
+            this.cbIncludeNonExtractable.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
+            // 
+            // cbIncludeInternalCatalogueItems
+            // 
+            this.cbIncludeInternalCatalogueItems.AutoSize = true;
+            this.cbIncludeInternalCatalogueItems.Location = new System.Drawing.Point(145, 19);
+            this.cbIncludeInternalCatalogueItems.Name = "cbIncludeInternalCatalogueItems";
+            this.cbIncludeInternalCatalogueItems.Size = new System.Drawing.Size(140, 17);
+            this.cbIncludeInternalCatalogueItems.TabIndex = 5;
+            this.cbIncludeInternalCatalogueItems.Text = "Internal Catalogue Items";
+            this.cbIncludeInternalCatalogueItems.UseVisualStyleBackColor = true;
+            this.cbIncludeInternalCatalogueItems.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
+            // 
+            // cbIncludeDistinctIdentifiers
+            // 
+            this.cbIncludeDistinctIdentifiers.AutoSize = true;
+            this.cbIncludeDistinctIdentifiers.Checked = true;
+            this.cbIncludeDistinctIdentifiers.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbIncludeDistinctIdentifiers.Location = new System.Drawing.Point(6, 43);
+            this.cbIncludeDistinctIdentifiers.Name = "cbIncludeDistinctIdentifiers";
+            this.cbIncludeDistinctIdentifiers.Size = new System.Drawing.Size(135, 17);
+            this.cbIncludeDistinctIdentifiers.TabIndex = 5;
+            this.cbIncludeDistinctIdentifiers.Text = "Distinct Identifier Count";
+            this.cbIncludeDistinctIdentifiers.UseVisualStyleBackColor = true;
+            this.cbIncludeDistinctIdentifiers.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
+            // 
+            // cbIncludeRowCounts
+            // 
+            this.cbIncludeRowCounts.AutoSize = true;
+            this.cbIncludeRowCounts.Checked = true;
+            this.cbIncludeRowCounts.CheckState = System.Windows.Forms.CheckState.Checked;
+            this.cbIncludeRowCounts.Location = new System.Drawing.Point(6, 66);
+            this.cbIncludeRowCounts.Name = "cbIncludeRowCounts";
+            this.cbIncludeRowCounts.Size = new System.Drawing.Size(84, 17);
+            this.cbIncludeRowCounts.TabIndex = 5;
+            this.cbIncludeRowCounts.Text = "Row Counts";
+            this.cbIncludeRowCounts.UseVisualStyleBackColor = true;
             // 
             // btnPick
             // 
             this.btnPick.Enabled = false;
-            this.btnPick.Location = new System.Drawing.Point(389, 79);
+            this.btnPick.Location = new System.Drawing.Point(401, 41);
             this.btnPick.Name = "btnPick";
             this.btnPick.Size = new System.Drawing.Size(32, 21);
             this.btnPick.TabIndex = 5;
@@ -124,7 +193,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             // rbSpecificCatalogue
             // 
             this.rbSpecificCatalogue.AutoSize = true;
-            this.rbSpecificCatalogue.Location = new System.Drawing.Point(26, 56);
+            this.rbSpecificCatalogue.Location = new System.Drawing.Point(7, 42);
             this.rbSpecificCatalogue.Name = "rbSpecificCatalogue";
             this.rbSpecificCatalogue.Size = new System.Drawing.Size(100, 17);
             this.rbSpecificCatalogue.TabIndex = 3;
@@ -136,7 +205,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             // 
             this.rbAllCatalogues.AutoSize = true;
             this.rbAllCatalogues.Checked = true;
-            this.rbAllCatalogues.Location = new System.Drawing.Point(26, 33);
+            this.rbAllCatalogues.Location = new System.Drawing.Point(7, 19);
             this.rbAllCatalogues.Name = "rbAllCatalogues";
             this.rbAllCatalogues.Size = new System.Drawing.Size(92, 17);
             this.rbAllCatalogues.TabIndex = 0;
@@ -145,10 +214,23 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.rbAllCatalogues.UseVisualStyleBackColor = true;
             this.rbAllCatalogues.CheckedChanged += new System.EventHandler(this.rbAllCatalogues_CheckedChanged);
             // 
+            // gbCatalogue
+            // 
+            this.gbCatalogue.Controls.Add(this.btnPick);
+            this.gbCatalogue.Controls.Add(this.rbSpecificCatalogue);
+            this.gbCatalogue.Controls.Add(this.rbAllCatalogues);
+            this.gbCatalogue.Controls.Add(this.cbxCatalogues);
+            this.gbCatalogue.Location = new System.Drawing.Point(5, 4);
+            this.gbCatalogue.Name = "gbCatalogue";
+            this.gbCatalogue.Size = new System.Drawing.Size(442, 117);
+            this.gbCatalogue.TabIndex = 0;
+            this.gbCatalogue.TabStop = false;
+            this.gbCatalogue.Text = "Generate For Catalogue";
+            // 
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(233, 57);
+            this.label2.Location = new System.Drawing.Point(16, 21);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(79, 13);
             this.label2.TabIndex = 8;
@@ -156,37 +238,12 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             // 
             // tbTimeout
             // 
-            this.tbTimeout.Location = new System.Drawing.Point(318, 54);
+            this.tbTimeout.Location = new System.Drawing.Point(101, 18);
             this.tbTimeout.Name = "tbTimeout";
             this.tbTimeout.Size = new System.Drawing.Size(100, 20);
             this.tbTimeout.TabIndex = 9;
             this.tbTimeout.Text = "30";
             this.tbTimeout.TextChanged += new System.EventHandler(this.tbTimeout_TextChanged);
-            // 
-            // cbIncludeRowCounts
-            // 
-            this.cbIncludeRowCounts.AutoSize = true;
-            this.cbIncludeRowCounts.Checked = true;
-            this.cbIncludeRowCounts.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIncludeRowCounts.Location = new System.Drawing.Point(6, 65);
-            this.cbIncludeRowCounts.Name = "cbIncludeRowCounts";
-            this.cbIncludeRowCounts.Size = new System.Drawing.Size(122, 17);
-            this.cbIncludeRowCounts.TabIndex = 5;
-            this.cbIncludeRowCounts.Text = "Include Row Counts";
-            this.cbIncludeRowCounts.UseVisualStyleBackColor = true;
-            // 
-            // cbIncludeDistinctIdentifiers
-            // 
-            this.cbIncludeDistinctIdentifiers.AutoSize = true;
-            this.cbIncludeDistinctIdentifiers.Checked = true;
-            this.cbIncludeDistinctIdentifiers.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIncludeDistinctIdentifiers.Location = new System.Drawing.Point(6, 42);
-            this.cbIncludeDistinctIdentifiers.Name = "cbIncludeDistinctIdentifiers";
-            this.cbIncludeDistinctIdentifiers.Size = new System.Drawing.Size(173, 17);
-            this.cbIncludeDistinctIdentifiers.TabIndex = 5;
-            this.cbIncludeDistinctIdentifiers.Text = "Include Distinct Identifier Count";
-            this.cbIncludeDistinctIdentifiers.UseVisualStyleBackColor = true;
-            this.cbIncludeDistinctIdentifiers.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
             // 
             // aggregateGraph1
             // 
@@ -199,22 +256,9 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.aggregateGraph1.Timeout = 0;
             this.aggregateGraph1.Visible = false;
             // 
-            // cbIncludeGraphs
-            // 
-            this.cbIncludeGraphs.AutoSize = true;
-            this.cbIncludeGraphs.Checked = true;
-            this.cbIncludeGraphs.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIncludeGraphs.Location = new System.Drawing.Point(6, 19);
-            this.cbIncludeGraphs.Name = "cbIncludeGraphs";
-            this.cbIncludeGraphs.Size = new System.Drawing.Size(98, 17);
-            this.cbIncludeGraphs.TabIndex = 5;
-            this.cbIncludeGraphs.Text = "Include Graphs";
-            this.cbIncludeGraphs.UseVisualStyleBackColor = true;
-            this.cbIncludeGraphs.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
-            // 
             // nMaxLookupRows
             // 
-            this.nMaxLookupRows.Location = new System.Drawing.Point(318, 77);
+            this.nMaxLookupRows.Location = new System.Drawing.Point(101, 41);
             this.nMaxLookupRows.Maximum = new decimal(new int[] {
             100000,
             0,
@@ -232,7 +276,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             // label3
             // 
             this.label3.AutoSize = true;
-            this.label3.Location = new System.Drawing.Point(226, 79);
+            this.label3.Location = new System.Drawing.Point(9, 43);
             this.label3.Name = "label3";
             this.label3.Size = new System.Drawing.Size(90, 13);
             this.label3.TabIndex = 12;
@@ -249,78 +293,49 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             // 
             // gbReportOptions
             // 
-            this.gbReportOptions.Controls.Add(this.cbIncludeDeprecatedCatalogueItems);
-            this.gbReportOptions.Controls.Add(this.cbIncludeInternalCatalogueItems);
-            this.gbReportOptions.Controls.Add(this.cbIncludeGraphs);
-            this.gbReportOptions.Controls.Add(this.cbIncludeRowCounts);
             this.gbReportOptions.Controls.Add(this.label3);
             this.gbReportOptions.Controls.Add(this.tbTimeout);
-            this.gbReportOptions.Controls.Add(this.cbIncludeDistinctIdentifiers);
             this.gbReportOptions.Controls.Add(this.label2);
             this.gbReportOptions.Controls.Add(this.nMaxLookupRows);
-            this.gbReportOptions.Location = new System.Drawing.Point(453, 29);
+            this.gbReportOptions.Location = new System.Drawing.Point(799, 4);
             this.gbReportOptions.Name = "gbReportOptions";
-            this.gbReportOptions.Size = new System.Drawing.Size(575, 104);
+            this.gbReportOptions.Size = new System.Drawing.Size(229, 117);
             this.gbReportOptions.TabIndex = 14;
             this.gbReportOptions.TabStop = false;
-            this.gbReportOptions.Text = "Report Options";
+            this.gbReportOptions.Text = "Options";
             // 
-            // cbIncludeInternalCatalogueItems
-            // 
-            this.cbIncludeInternalCatalogueItems.AutoSize = true;
-            this.cbIncludeInternalCatalogueItems.Location = new System.Drawing.Point(229, 14);
-            this.cbIncludeInternalCatalogueItems.Name = "cbIncludeInternalCatalogueItems";
-            this.cbIncludeInternalCatalogueItems.Size = new System.Drawing.Size(178, 17);
-            this.cbIncludeInternalCatalogueItems.TabIndex = 5;
-            this.cbIncludeInternalCatalogueItems.Text = "Include Internal Catalogue Items";
-            this.cbIncludeInternalCatalogueItems.UseVisualStyleBackColor = true;
-            this.cbIncludeInternalCatalogueItems.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
-            // 
-            // cbIncludeDeprecatedCatalogueItems
-            // 
-            this.cbIncludeDeprecatedCatalogueItems.AutoSize = true;
-            this.cbIncludeDeprecatedCatalogueItems.Checked = true;
-            this.cbIncludeDeprecatedCatalogueItems.CheckState = System.Windows.Forms.CheckState.Checked;
-            this.cbIncludeDeprecatedCatalogueItems.Location = new System.Drawing.Point(229, 34);
-            this.cbIncludeDeprecatedCatalogueItems.Name = "cbIncludeDeprecatedCatalogueItems";
-            this.cbIncludeDeprecatedCatalogueItems.Size = new System.Drawing.Size(196, 17);
-            this.cbIncludeDeprecatedCatalogueItems.TabIndex = 5;
-            this.cbIncludeDeprecatedCatalogueItems.Text = "Include Deprecated CatalogueItems";
-            this.cbIncludeDeprecatedCatalogueItems.UseVisualStyleBackColor = true;
-            this.cbIncludeDeprecatedCatalogueItems.CheckedChanged += new System.EventHandler(this.cbIncludeDistinctIdentifiers_CheckedChanged);
-            // 
-            // ConfigureMetadataReport
+            // MetadataReportUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1040, 864);
+            this.Controls.Add(this.gbInclude);
+            this.Controls.Add(this.gbCatalogue);
             this.Controls.Add(this.gbReportOptions);
             this.Controls.Add(this.progressBarsUI1);
             this.Controls.Add(this.aggregateGraph1);
-            this.Controls.Add(this.groupBox1);
             this.Controls.Add(this.btnStop);
             this.Controls.Add(this.btnGenerateReport);
-            this.Controls.Add(this.label1);
             this.Name = "MetadataReportUI";
             this.Text = "Metadata Report";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.ConfigureMetadataReport_FormClosing);
-            this.groupBox1.ResumeLayout(false);
-            this.groupBox1.PerformLayout();
+            this.gbInclude.ResumeLayout(false);
+            this.gbInclude.PerformLayout();
+            this.gbCatalogue.ResumeLayout(false);
+            this.gbCatalogue.PerformLayout();
             ((System.ComponentModel.ISupportInitialize)(this.nMaxLookupRows)).EndInit();
             this.gbReportOptions.ResumeLayout(false);
             this.gbReportOptions.PerformLayout();
             this.ResumeLayout(false);
-            this.PerformLayout();
 
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Button btnGenerateReport;
         private System.Windows.Forms.Button btnStop;
         private System.Windows.Forms.ComboBox cbxCatalogues;
-        private System.Windows.Forms.GroupBox groupBox1;
+        private System.Windows.Forms.GroupBox gbInclude;
+        private System.Windows.Forms.GroupBox gbCatalogue;
         private System.Windows.Forms.RadioButton rbSpecificCatalogue;
         private System.Windows.Forms.RadioButton rbAllCatalogues;
         private System.Windows.Forms.Label label2;
@@ -329,6 +344,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private System.Windows.Forms.CheckBox cbIncludeRowCounts;
         private System.Windows.Forms.CheckBox cbIncludeDistinctIdentifiers;
         private System.Windows.Forms.CheckBox cbIncludeGraphs;
+        private System.Windows.Forms.CheckBox cbIncludeNonExtractable;
         private System.Windows.Forms.NumericUpDown nMaxLookupRows;
         private System.Windows.Forms.Label label3;
         private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;

@@ -14,7 +14,7 @@ using ReusableLibraryCode.Annotations;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="IExtractableDataSetPackage"/>
     public class ExtractableDataSetPackage:DatabaseEntity, IExtractableDataSetPackage
     {
         #region Database Properties

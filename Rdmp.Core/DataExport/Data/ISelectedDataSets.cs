@@ -11,8 +11,7 @@ using Rdmp.Core.Curation.Data;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <summary>
-    /// Usually when creating an ExtractionConfiguration you do not want to extract all the datasets (Catalogues).  SelectedDataSets represents the desire to extract a
-    /// given dataset for a given ExtractableDataSet for a given ExtractionConfiguration.  
+    /// Represents the desire to extract a given dataset for a given <see cref="ExtractableDataSet"/> for a given <see cref="ExtractionConfiguration"/>.  
     /// </summary>
     public interface ISelectedDataSets:IDeleteable,IRevertable
     {

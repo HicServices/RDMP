@@ -24,19 +24,7 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.Curation.Data
 {
-    /// <summary>
-    /// <para>Records information about a server.  This can be a system specific database e.g. a Logging database or an ANOStore or it could be a generic
-    /// database you use to hold data (e.g. lookups).  These are usually database servers but don't have to be (e.g. you could create a reference to an FTP server).</para>
-    /// 
-    /// <para>IMPORTANT: do not add an ExternalDatabaseServer just because you store data on it, instead you should import pointers to the data you hold as TableInfo 
-    /// objects which themselves store Server/Database which allows for minimal disruption when you decide to move a table to a different server (it also allows
-    /// for accessing the data under different accounts based on what is being done - loading vs extraction : see DataAccessCredentials_TableInfo).</para>
-    /// 
-    /// <para>ExternalDatabaseServer are really only for fixed global entities such as logging/identifier dumps etc.</para>
-    /// 
-    /// <para>Servers can but do not have to have usernames/passwords in which case integrated security (windows account) is used when openning connections.  Password
-    /// is encrypted in the same fashion as in the DataAccessCredentials table.</para>
-    /// </summary>
+    /// <inheritdoc cref="IExternalDatabaseServer"/>
     public class ExternalDatabaseServer : DatabaseEntity, IExternalDatabaseServer, IDataAccessCredentials, INamed, ICheckable
     {
         #region Database Properties

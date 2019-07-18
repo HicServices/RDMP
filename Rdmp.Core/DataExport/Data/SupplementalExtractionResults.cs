@@ -14,7 +14,7 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="ISupplementalExtractionResults"/>
     public class SupplementalExtractionResults : ReferenceOtherObjectDatabaseEntity, ISupplementalExtractionResults
     {
         #region Database Properties

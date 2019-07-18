@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using System;
 using System.Data.Common;
 
@@ -12,7 +14,7 @@ namespace Rdmp.Core.Logging.PastEvents
     /// <summary>
     /// Readonly audit of a historical error which resulted in the failure of the logged activity (which is also a past / readonly event).
     /// </summary>
-    public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent
+    public class ArchivalFatalError : IArchivalLoggingRecordOfPastEvent,IHasSummary
     {
         public int ID { get; private set; }
         public DateTime Date { get; internal set; }
@@ -50,6 +52,12 @@ namespace Rdmp.Core.Logging.PastEvents
 
             return System.String.Compare(ToString(), obj.ToString(), System.StringComparison.Ordinal);
         }
-
+        public void GetSummary(out string title, out string body, out string stackTrace, out CheckResult level)
+        {
+            title = $"{Source} ({Date})";
+            body = Description;
+            stackTrace = null;
+            level = CheckResult.Fail;
+        }
     }
 }

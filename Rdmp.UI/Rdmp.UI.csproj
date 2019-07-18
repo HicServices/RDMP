@@ -19,7 +19,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="HIC.BadMedicine" Version="0.1.4" />
+    <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Rdmp.Core\Rdmp.Core.csproj" />
@@ -111,6 +111,18 @@
     <Compile Update="TestsAndSetup\StartupUI.cs">
       <SubType>Form</SubType>
     </Compile>
+    <Compile Update="SimpleDialogs\NavigateTo\NavigateToObjectUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\NavigateTo\RunUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="CatalogueSummary\LoadEvents\LoadEventsTreeView.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="CatalogueSummary\LoadEvents\ResolveFatalErrors.cs">
+      <SubType>Form</SubType>
+    </Compile>
     <Compile Update="CohortUI\CohortSourceManagement\ExternalCohortTableUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
@@ -145,6 +157,15 @@
       <SubType>UserControl</SubType>
     </Compile>
     <Compile Update="SimpleDialogs\ForwardEngineering\ConfigureCatalogueExtractabilityUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\Reports\GenerateTestDataUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Update="SimpleDialogs\Reports\DataGeneratorUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+      <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
     

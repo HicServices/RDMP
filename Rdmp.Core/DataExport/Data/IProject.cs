@@ -14,7 +14,11 @@ using ReusableLibraryCode;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <summary>
-    /// See Project
+    /// All extractions through DataExportManager must be done through Projects.  A Project has a name, extraction directory and optionally Tickets (if you have a ticketing system 
+    /// configured).  A Project should never be deleted even after all ExtractionConfigurations have been executed as it serves as an audit and a cloning point if you 
+    /// ever need to clone any of the ExtractionConfigurations (e.g. to do an update of project data 5 years on).
+    /// 
+    /// <para>The <see cref="ProjectNumber"/> must match the project number of the cohorts in your cohort database.</para>
     /// </summary>
     public interface IProject:IHasDependencies, INamed
     {

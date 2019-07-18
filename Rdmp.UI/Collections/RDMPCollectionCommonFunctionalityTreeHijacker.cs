@@ -36,10 +36,7 @@ namespace Rdmp.UI.Collections
         }
 
         protected override TreeListView.BranchComparer GetBranchComparer()
-        {
-            if (_lastSortColumn == null)
-                return null;
-
+        {            
             return new TreeListView.BranchComparer(new OrderableComparer(_lastSortColumn, _lastSortOrder));
         }
     }

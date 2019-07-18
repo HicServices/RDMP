@@ -175,6 +175,21 @@ namespace Rdmp.UI.Icons.IconProvision
 
         AllPluginsNode,
         AllExpiredPluginsNode,
-        ProcessTask
+        ProcessTask,
+
+
+        DQEGraphAnnotation,
+        Evaluation,
+        CumulativeExtractionResults,
+        ProjectCohortIdentificationConfigurationAssociation,
+        SelectedDataSetsForcedJoin,
+        SupplementalExtractionResults,
+        ReleaseLog,
+        LoadModuleAssembly,
+        TicketingSystemConfiguration,
+        WindowLayout,
+        SpontaneouslyInventedColumn,
+        ProcessTaskArgument,
+        CacheFetchFailure
     }
 }

@@ -42,14 +42,7 @@ namespace Rdmp.Core.Curation.Data.DataLoad
 
 
 
-    /// <summary>
-    /// Entrypoint to the loading metadata for one or more Catalogues. This includes name, description, scheduled start dates etc.  All other loading
-    /// entities are attached to this entity for example each load Process (Unzip files called *.zip / Dowload all files from FTP server X) contains
-    /// a reference to the LoadMetadata that it belongs in.
-    /// 
-    /// <para>A LoadMetadata also allows you to override various settings such as forcing a specific alternate server to load - for when you want to overule
-    /// the location that TableInfo thinks data is on e.g. into a test environment mirror of live.</para>
-    /// </summary>
+    /// <inheritdoc cref="ILoadMetadata"/>
     public class LoadMetadata : DatabaseEntity, ILoadMetadata, IHasDependencies, IHasQuerySyntaxHelper
     {
 

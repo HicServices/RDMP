@@ -16,7 +16,7 @@ using ReusableLibraryCode;
 
 namespace Rdmp.Core.DataExport.Data
 {
-    /// <inheritdoc/>
+    /// <inheritdoc cref="ICumulativeExtractionResults"/>
     public class CumulativeExtractionResults : DatabaseEntity, ICumulativeExtractionResults, IInjectKnown<IExtractableDataSet>
     {
         #region Database Properties

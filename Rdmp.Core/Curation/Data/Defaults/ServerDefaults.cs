@@ -14,7 +14,9 @@ namespace Rdmp.Core.Curation.Data.Defaults
     /// <inheritdoc cref="IServerDefaults"/>
     class ServerDefaults : IServerDefaults
     {
-        /// <inheritdoc/>
+        /// <summary>
+        /// The source repository from which the defaults were read
+        /// </summary>
         private readonly CatalogueRepository _repository;
         
         /// <summary>

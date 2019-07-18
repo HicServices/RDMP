@@ -243,8 +243,7 @@ namespace Rdmp.Core.QueryBuilding
             AddColumnRange(columnsToAdd, true);
         }
 
-        /// <inheritdoc/>
-        /// <param name="columnsToAdd"></param>
+        /// <inheritdoc cref="ISqlQueryBuilder.AddColumnRange(IColumn[])"/>
         /// <param name="includeAsGroupBy">false to add the columns only to the SELECT section of the query (and not GROUP BY)</param>
         public void AddColumnRange(IColumn[] columnsToAdd, bool includeAsGroupBy)
         {

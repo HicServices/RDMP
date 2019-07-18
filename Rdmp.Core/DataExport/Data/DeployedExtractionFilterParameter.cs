@@ -18,7 +18,7 @@ using ReusableLibraryCode.Checks;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <summary>
-    /// Stores parameter values for a DeployedExtractionFilter
+    /// Stores parameter values for a DeployedExtractionFilter e.g. @healthboard = 'T'
     /// </summary>
     public class DeployedExtractionFilterParameter: DatabaseEntity, ISqlParameter
     {

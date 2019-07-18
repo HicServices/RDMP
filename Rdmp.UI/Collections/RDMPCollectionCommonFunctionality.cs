@@ -384,7 +384,7 @@ namespace Rdmp.UI.Collections
                 _pinFilter.UnApplyToTree();
             
             _pinFilter = new CollectionPinFilterUI();
-            _pinFilter.ApplyToTree(_activator.CoreChildProvider, Tree, objectToPin, descendancy);
+            _pinFilter.ApplyToTree(_activator, Tree, objectToPin, descendancy);
             CurrentlyPinned = objectToPin;
 
             _pinFilter.UnApplied += (s, e) =>

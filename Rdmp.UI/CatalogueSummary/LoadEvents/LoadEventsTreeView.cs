@@ -24,6 +24,7 @@ using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
+using ReusableLibraryCode;
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {
@@ -64,6 +65,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         readonly ToolStripButton _btnFetch = new ToolStripButton("Go");
 
         private int _toFetch = 1000;
+
 
 
         //constructor
@@ -360,13 +362,18 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
                 //if it is not a freaky temp table
                 if (!tli.TargetTable.EndsWith("_STAGING") && !tli.TargetTable.EndsWith("_RAW"))
                 {
-                    //if there are inserts
-                    if (
-                        (tli.Inserts != null && tli.Inserts > 0 )
-                        ||
-                        (tli.Updates != null && tli.Updates > 0 )
-                        )
-                        RightClickMenu.Items.Add("View Inserts/Updates", null, (a, b) => new ViewInsertsAndUpdatesDialog(tli, _loadMetadata.GetDistinctTableInfoList(true)).Show());
+                    var mi = new ToolStripMenuItem("View Inserts/Updates", null, (a, b) => new ViewInsertsAndUpdatesDialog(tli, _loadMetadata.GetDistinctTableInfoList(true)).Show());
+
+                    //if there are inserts/updates
+                    if( tli.Inserts > 0 || tli.Updates > 0 )
+                        mi.Enabled = true;
+                    else
+                    {
+                        mi.Enabled = false;
+                        mi.ToolTipText = "No records were changed by this load";
+                    }                     
+
+                    RightClickMenu.Items.Add(mi);
                 }
             }
 
@@ -395,16 +402,19 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
         private void treeView1_ItemActivate(object sender, EventArgs e)
         {
             var o = treeView1.SelectedObject;
-            var dli = o as ArchivalDataLoadInfo;
-            var cat = o as LoadEventsTreeView_Category;
-
+            
             if (o == null)
                 return;
             
-            if(dli != null)
+            if(o is ArchivalDataLoadInfo dli)
                 new ExecuteCommandViewLoggedData(Activator,new LogViewerFilter(LoggingTables.DataLoadRun){Run = dli.ID}).Execute();
-            else if (cat != null)
+            else 
+            if (o is LoadEventsTreeView_Category cat)
                 new ExecuteCommandViewLoggedData(Activator,  new LogViewerFilter(cat.AssociatedTable) { Run = cat.RunId}).Execute();
+            else 
+            if(o is IHasSummary s)
+                WideMessageBox.Show(s);
+            
         }
 
         private void treeView1_KeyUp(object sender, KeyEventArgs e)

@@ -28,7 +28,6 @@ namespace Rdmp.Core.Curation.Data
     /// 
     /// <para>Catalogues are always flat views although they can be built from multiple relational data tables underneath.</para>
     /// 
-    /// <para>Whenever you see Catalogue, think Dataset (which is a reserved class in C#, hence the somewhat confusing name Catalogue)</para>
     /// </summary>
     public interface ICatalogue : IHasDependencies, IHasQuerySyntaxHelper,INamed, IMightBeDeprecated
     {

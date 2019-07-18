@@ -13,11 +13,10 @@ using Rdmp.Core.DataExport.DataRelease.Audit;
 namespace Rdmp.Core.DataExport.Data
 {
     /// <summary>
-    /// Data Export Manager keeps a record of the final SQL generated/used to perform an extraction of any ExtractionConfiguration in records called CumulativeExtractionResults.
-    /// These records include the SQL executed, the date, the filters, the number of records extracted etc.  This is in addition to the information logged in the Logging database.
+    /// Audit record of the final SQL generated/used to perform an extraction of any <see cref="ExtractionConfiguration"/> and the number of extracted rows etc.
     /// This record is overwritten if you re-extract the ExtractionConfiguration again.  The record is used to ensure that you cannot release an extract if there have been changes
     /// to the configuration subsequent to your last extraction.  This is particularly useful if you have many large datasets that you are extracting over a long period of time either
-    /// because they are very large, have complex filters or are liable to crash on a semi regular basis.  Under such circumstances you can extract half of your datasets one day and 
+    /// because they are very large, have complex filters or are unstable.  Under such circumstances you can extract half of your datasets one day and 
     /// then adjust the others to correct issues and be confident that the system is tracking those changes to ensure that the current state of the system always matches the extracted
     /// files at release time.
     /// </summary>

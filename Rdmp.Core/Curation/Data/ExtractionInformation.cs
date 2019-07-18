@@ -28,9 +28,9 @@ namespace Rdmp.Core.Curation.Data
     /// <para>The interface ExtractionInformationUI handles all of these requirements transparentely.  Also recorded in ExtractionInformation is ExtractionCategory
     /// which lets you flag the sensitivity of the data being extracted e.g. SpecialApprovalRequired</para>
     /// 
-    /// <para>Finally one ExtractionInformation (and only one) in each CatalogueItem set (of parent Catalogue) must be flagged as IsExtractionIdentifier.  This 
-    /// is the column which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify people
-    /// in your datasets (e.g. Community Health Index or NHS Number).</para>
+    /// <para>One (or more) ExtractionInformation in each CatalogueItem set (of parent Catalogue) can be flagged as <see cref="ConcreteColumn.IsExtractionIdentifier"/>.
+    /// This is the column(s) which will be joined against cohorts in data extraction linkages.  This should be the private identifier you use to identify
+    /// people in your datasets (e.g. Community Health Index or NHS Number).</para>
     /// </summary>
     public class ExtractionInformation : ConcreteColumn, IHasDependencies, IInjectKnown<ColumnInfo>,IInjectKnown<CatalogueItem>, IHasQuerySyntaxHelper
     {

@@ -41,7 +41,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.trackBar1 = new System.Windows.Forms.TrackBar();
             this.progressBar1 = new System.Windows.Forms.ProgressBar();
             this.label9 = new System.Windows.Forms.Label();
-            this.lblName = new System.Windows.Forms.Label();
+            this.cbGenerate = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -146,20 +146,21 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.label9.TabIndex = 12;
             this.label9.Text = "Progress:";
             // 
-            // lblName
+            // cbGenerate
             // 
-            this.lblName.AutoSize = true;
-            this.lblName.Location = new System.Drawing.Point(6, 4);
-            this.lblName.Name = "lblName";
-            this.lblName.Size = new System.Drawing.Size(45, 13);
-            this.lblName.TabIndex = 13;
-            this.lblName.Text = "lblName";
+            this.cbGenerate.AutoSize = true;
+            this.cbGenerate.Location = new System.Drawing.Point(6, 4);
+            this.cbGenerate.Name = "cbGenerate";
+            this.cbGenerate.Size = new System.Drawing.Size(15, 14);
+            this.cbGenerate.TabIndex = 14;
+            this.cbGenerate.UseVisualStyleBackColor = true;
+            this.cbGenerate.CheckedChanged += new System.EventHandler(this.CbGenerate_CheckedChanged);
             // 
-            // TestDataGenerator
+            // DataGeneratorUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.lblName);
+            this.Controls.Add(this.cbGenerate);
             this.Controls.Add(this.label9);
             this.Controls.Add(this.progressBar1);
             this.Controls.Add(this.label8);
@@ -171,7 +172,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.Controls.Add(this.label4);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.trackBar1);
-            this.Name = "TestDataGenerator";
+            this.Name = "DataGeneratorUI";
             this.Size = new System.Drawing.Size(820, 92);
             ((System.ComponentModel.ISupportInitialize)(this.trackBar1)).EndInit();
             this.ResumeLayout(false);
@@ -192,6 +193,6 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private System.Windows.Forms.TrackBar trackBar1;
         private System.Windows.Forms.ProgressBar progressBar1;
         private System.Windows.Forms.Label label9;
-        private System.Windows.Forms.Label lblName;
+        private System.Windows.Forms.CheckBox cbGenerate;
     }
 }

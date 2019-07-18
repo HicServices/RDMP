@@ -17,6 +17,8 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.Remoting;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using ReusableUIComponents;
 
@@ -31,6 +33,7 @@ namespace Rdmp.UI.Collections
     {
         private TreeListView _tree;
         public event EventHandler UnApplied;
+        IActivateItems _activator;
 
         public CollectionPinFilterUI()
         {
@@ -82,9 +85,11 @@ namespace Rdmp.UI.Collections
             return PinnableTypes.Contains(o.GetType());
         }
 
-        public void ApplyToTree(ICoreChildProvider childProvider,TreeListView tree, IMapsDirectlyToDatabaseTable objectToEmphasise, DescendancyList descendancy)
+        public void ApplyToTree(IActivateItems activator,TreeListView tree, IMapsDirectlyToDatabaseTable objectToEmphasise, DescendancyList descendancy)
         {
-            if(_tree != null)
+            _activator = activator;
+
+            if (_tree != null)
                 throw new Exception("Scope filter is already applied to a tree");
 
             _toPin = null;
@@ -116,7 +121,7 @@ namespace Rdmp.UI.Collections
             _beforeModelFilter = _tree.ModelFilter;
             _beforeUseFiltering = _tree.UseFiltering;
 
-            RefreshWhiteList(childProvider,descendancy);
+            RefreshWhiteList(_activator.CoreChildProvider,descendancy);
         }
 
         private void RefreshWhiteList(ICoreChildProvider childProvider,DescendancyList descendancy)
@@ -160,7 +165,14 @@ namespace Rdmp.UI.Collections
 
         private void pbRemoveFilter_Click(object sender, EventArgs e)
         {
-            UnApplyToTree();
+            if(_activator != null && _toPin is DatabaseEntity de)
+            {
+                var cmd = new ExecuteCommandUnpin(_activator,de);
+                cmd.Execute();
+            }
+            else
+                UnApplyToTree();
+
         }
 
         public void OnRefreshObject(ICoreChildProvider childProvider, RefreshObjectEventArgs e)

@@ -25,6 +25,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         {
             InitializeComponent();
             trackBar1.LargeChange = 1;
+            cbGenerate.Checked = true;
         }
 
         public IDataGenerator Generator
@@ -37,7 +38,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
                 if(value != null)
                     value.RowsGenerated += ValueOnRowsGenerated;
 
-                lblName.Text = value != null ? value.GetType().Name:"";
+                cbGenerate.Text = value != null ? value.GetType().Name:"";
             }
         }
         
@@ -87,6 +88,14 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         {
             if (TrackBarMouseUp != null)
                 TrackBarMouseUp();
+        }
+
+        public bool Generate { get {return cbGenerate.Checked;} set{cbGenerate.Checked = value;} }
+
+        private void CbGenerate_CheckedChanged(object sender, EventArgs e)
+        {
+            trackBar1.Enabled = Generate;
+            progressBar1.Enabled = Generate;
         }
     }
 }

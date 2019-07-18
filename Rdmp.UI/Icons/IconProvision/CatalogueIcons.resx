@@ -679,4 +679,43 @@
   <data name="ProcessTask" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\ProcessTask.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="CacheFetchFailure" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\CacheFetchFailure.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CumulativeExtractionResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\CumulativeExtractionResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DQEGraphAnnotation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\DQEGraphAnnotation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Evaluation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Evaluation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="LoadModuleAssembly" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\LoadModuleAssembly.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProcessTaskArgument" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ProcessTaskArgument.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ProjectCohortIdentificationConfigurationAssociation" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ProjectCohortIdentificationConfigurationAssociation.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReleaseLog" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\ReleaseLog.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SelectedDataSetsForcedJoin" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SelectedDataSetsForcedJoin.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SpontaneouslyInventedColumn" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SpontaneouslyInventedColumn.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SupplementalExtractionResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\SupplementalExtractionResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TicketingSystemConfiguration" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\TicketingSystemConfiguration.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WindowLayout" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\WindowLayout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

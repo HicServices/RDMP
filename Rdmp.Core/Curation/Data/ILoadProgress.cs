@@ -12,8 +12,8 @@ using Rdmp.Core.Curation.Data.DataLoad;
 namespace Rdmp.Core.Curation.Data
 {
     /// <summary>
-    /// Describes the progress of a long term epic data load operation which cannot be completed in a single Data load bubble (execution of LoadMetadata through the data load engine).
-    /// This entity includes start and end dates for what is trying to be loaded as well as how far through that process progess has been made up to.
+    /// Describes the progress of a large iterative load which cannot be completed in a single batch.  Includes start and end dates for what is trying to
+    /// be loaded as well as how far through that process progress has been made up to date.
     /// </summary>
     public interface ILoadProgress :INamed
     {

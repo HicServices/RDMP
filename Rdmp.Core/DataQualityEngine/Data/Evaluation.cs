@@ -16,9 +16,8 @@ using ReusableLibraryCode;
 namespace Rdmp.Core.DataQualityEngine.Data
 {
     /// <summary>
-    /// Root object for a DQE run including the time the DQE engine was run, the Catalogue being evaluated and all the results.  This class basically follows an 
-    /// IMapsDirectlyToDatabaseTable/DatabaseEntity pattern except that it doesn't allow for modification/saving since a DQE run is immutable and only created after
-    /// a succesful run.
+    /// Root object for a DQE run including the time the DQE engine was run, the <see cref="Catalogue"/> being evaluated and all the results.
+    /// An <see cref="Evaluation"/> is immutable and created created after each successful run.
     /// </summary>
     public class Evaluation:DatabaseEntity
     {

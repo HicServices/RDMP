@@ -71,6 +71,28 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
         }
 
+        [Test]
+        public void ClonePipelineNaming()
+        {
+            Pipeline p = new Pipeline(CatalogueRepository);
+            p.Name = "My Pipe";
+            p.SaveToDatabase();
+
+            var clone1 = p.Clone();
+            var clone2 = p.Clone();
+            var clone3 = p.Clone();
+
+            Assert.AreEqual("My Pipe (Clone)",clone1.Name);
+            Assert.AreEqual("My Pipe (Clone2)",clone2.Name);
+            Assert.AreEqual("My Pipe (Clone3)",clone3.Name);
+
+            var cloneOfClone1 = clone3.Clone();
+            var cloneOfClone2 = clone3.Clone();
+            
+            Assert.AreEqual("My Pipe (Clone3) (Clone)",cloneOfClone1.Name);
+            Assert.AreEqual("My Pipe (Clone3) (Clone2)",cloneOfClone2.Name);
+        }
+
         [TestCase(true)]
         [TestCase(false)]
         public void CloneAPipeline(bool revertAfterClone)
@@ -109,7 +131,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Assert.AreNotEqual(p2, p);
             Assert.AreNotEqual(p2.ID,p.ID);
 
-            Assert.AreEqual(p2.Name, p.Name + "(Clone)");
+            Assert.AreEqual(p2.Name, p.Name + " (Clone)");
 
             Assert.AreEqual(componentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponent>().Count());
             Assert.AreEqual(argumentsBefore *2, RepositoryLocator.CatalogueRepository.GetAllObjects<PipelineComponentArgument>().Count());

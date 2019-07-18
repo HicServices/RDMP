@@ -28,7 +28,9 @@ namespace Rdmp.Core.QueryBuilding
     {
         public string JoinSQL { get; private set; }
 
-        /// <inheritdoc/>
+        /// <summary>
+        /// The identifiable column which is being substituted on
+        /// </summary>
         public IColumn OriginalDatasetColumn;
         private readonly IQuerySyntaxHelper _querySyntaxHelper;
 

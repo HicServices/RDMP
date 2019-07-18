@@ -29,6 +29,13 @@ namespace Rdmp.Core.Reports
         const int H3Size = 12;  
         const int H4Size = 11;
 
+        /// <summary>
+        /// <see cref="Units.ToEMU(double)"/> seems to result in word showing images at 133% size.  This constant fixes that
+        /// problem when using the <see cref="GetPicture(XWPFDocument, Bitmap)"/> methods.
+        /// 
+        /// </summary>
+        private const float PICTURE_SCALING = 0.75f;
+
         protected void InsertParagraph(XWPFDocument document, string ptext, int textFontSize = -1)
         {
             var h = document.CreateParagraph();
@@ -90,9 +97,11 @@ namespace Rdmp.Core.Reports
                 bmp.Save(ms,ImageFormat.Png);
                 
                 ms.Seek(0, 0);
-
-                // Add an image into the document.    
-                return run.AddPicture(ms,PICTURE_TYPE_PNG,"",Units.ToEMU(bmp.Width), Units.ToEMU(bmp.Height));
+                
+                // Add an image into the document.
+                var picture = run.AddPicture(ms,PICTURE_TYPE_PNG,"",Units.ToEMU(bmp.Width * PICTURE_SCALING), Units.ToEMU(bmp.Height *PICTURE_SCALING));
+                
+                return picture;
             }
         }
 

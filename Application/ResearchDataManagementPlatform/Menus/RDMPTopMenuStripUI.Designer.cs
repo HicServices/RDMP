@@ -53,7 +53,6 @@
             this.testsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.generateTestDataToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.pluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
-            this.managePluginsToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.codeGenerationToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.listAllTypesToolStripMenuItem = new System.Windows.Forms.ToolStripMenuItem();
             this.toolStripSeparator1 = new System.Windows.Forms.ToolStripSeparator();
@@ -278,31 +277,23 @@
             // pluginsToolStripMenuItem
             // 
             this.pluginsToolStripMenuItem.DropDownItems.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.managePluginsToolStripMenuItem,
             this.codeGenerationToolStripMenuItem,
             this.listAllTypesToolStripMenuItem});
             this.pluginsToolStripMenuItem.Name = "pluginsToolStripMenuItem";
             this.pluginsToolStripMenuItem.Size = new System.Drawing.Size(229, 22);
             this.pluginsToolStripMenuItem.Text = "Plugins";
             // 
-            // managePluginsToolStripMenuItem
-            // 
-            this.managePluginsToolStripMenuItem.Name = "managePluginsToolStripMenuItem";
-            this.managePluginsToolStripMenuItem.ShortcutKeys = ((System.Windows.Forms.Keys)((System.Windows.Forms.Keys.Control | System.Windows.Forms.Keys.U)));
-            this.managePluginsToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
-            this.managePluginsToolStripMenuItem.Text = "Manage Plugins...";
-            // 
             // codeGenerationToolStripMenuItem
             // 
             this.codeGenerationToolStripMenuItem.Name = "codeGenerationToolStripMenuItem";
-            this.codeGenerationToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.codeGenerationToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.codeGenerationToolStripMenuItem.Text = "Code Generation...";
             this.codeGenerationToolStripMenuItem.Click += new System.EventHandler(this.codeGenerationToolStripMenuItem_Click);
             // 
             // listAllTypesToolStripMenuItem
             // 
             this.listAllTypesToolStripMenuItem.Name = "listAllTypesToolStripMenuItem";
-            this.listAllTypesToolStripMenuItem.Size = new System.Drawing.Size(210, 22);
+            this.listAllTypesToolStripMenuItem.Size = new System.Drawing.Size(172, 22);
             this.listAllTypesToolStripMenuItem.Text = "List All Types";
             this.listAllTypesToolStripMenuItem.Click += new System.EventHandler(this.ListAllTypesToolStripMenuItem_Click);
             // 
@@ -341,42 +332,43 @@
             // userManualToolStripMenuItem
             // 
             this.userManualToolStripMenuItem.Name = "userManualToolStripMenuItem";
-            this.userManualToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.userManualToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.userManualToolStripMenuItem.Text = "Show User Manual";
             this.userManualToolStripMenuItem.Click += new System.EventHandler(this.userManualToolStripMenuItem_Click);
             // 
             // generateClassTableSummaryToolStripMenuItem
             // 
             this.generateClassTableSummaryToolStripMenuItem.Name = "generateClassTableSummaryToolStripMenuItem";
-            this.generateClassTableSummaryToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
-            this.generateClassTableSummaryToolStripMenuItem.Text = "Generate Class/Table Summary";
+            this.generateClassTableSummaryToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
+            this.generateClassTableSummaryToolStripMenuItem.Text = "Show Objects Help";
+            this.generateClassTableSummaryToolStripMenuItem.ToolTipText = "Lists all RDMP objects (e.g. Catalogue) and what they model within the system.";
             this.generateClassTableSummaryToolStripMenuItem.Click += new System.EventHandler(this.generateClassTableSummaryToolStripMenuItem_Click);
             // 
             // showHelpToolStripMenuItem
             // 
             this.showHelpToolStripMenuItem.Name = "showHelpToolStripMenuItem";
             this.showHelpToolStripMenuItem.ShortcutKeys = System.Windows.Forms.Keys.F1;
-            this.showHelpToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.showHelpToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.showHelpToolStripMenuItem.Text = "Show Help";
             this.showHelpToolStripMenuItem.Click += new System.EventHandler(this.showHelpToolStripMenuItem_Click);
             // 
             // tutorialsToolStripMenuItem
             // 
             this.tutorialsToolStripMenuItem.Name = "tutorialsToolStripMenuItem";
-            this.tutorialsToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.tutorialsToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.tutorialsToolStripMenuItem.Text = "Tutorials";
             // 
             // licenseToolStripMenuItem
             // 
             this.licenseToolStripMenuItem.Name = "licenseToolStripMenuItem";
-            this.licenseToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.licenseToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.licenseToolStripMenuItem.Text = "License";
             this.licenseToolStripMenuItem.Click += new System.EventHandler(this.licenseToolStripMenuItem_Click);
             // 
             // checkForUpdatesToolStripMenuItem
             // 
             this.checkForUpdatesToolStripMenuItem.Name = "checkForUpdatesToolStripMenuItem";
-            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(238, 22);
+            this.checkForUpdatesToolStripMenuItem.Size = new System.Drawing.Size(180, 22);
             this.checkForUpdatesToolStripMenuItem.Text = "Check for updates";
             this.checkForUpdatesToolStripMenuItem.Click += new System.EventHandler(this.checkForUpdatesToolStripMenuItem_Click);
             // 
@@ -427,7 +419,6 @@
         private System.Windows.Forms.ToolStripMenuItem showHelpToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem fileToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem pluginsToolStripMenuItem;
-        private System.Windows.Forms.ToolStripMenuItem managePluginsToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem codeGenerationToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem runToolStripMenuItem;
         private System.Windows.Forms.ToolStripMenuItem tutorialsToolStripMenuItem;
