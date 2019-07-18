@@ -141,6 +141,9 @@
     <Compile Update="SubComponents\CohortIdentificationConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
+    <Compile Update="Validation\ValidationSetupUI.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
     <Compile Update="SubComponents\ViewCohortIdentificationConfigurationUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
