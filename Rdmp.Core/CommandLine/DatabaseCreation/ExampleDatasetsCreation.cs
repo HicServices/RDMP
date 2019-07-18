@@ -544,7 +544,7 @@ UNPIVOT
             
             //get descriptions of the columns from BadMedicine
             var desc = new Descriptions();
-            cata.Description = desc.Get(cata.Name);
+            cata.Description = Trim(desc.Get(cata.Name));
             if(cata.Description != null)
             {
                 cata.SaveToDatabase();
