@@ -41,7 +41,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         [Option('e', "ExampleDatasets", Default = false, HelpText = "Create example datasets, projects, extraction configurations and cohort queries")]
         public bool ExampleDatasets{get;set;}
 
-        [Option('s', "Seed", Default = false, HelpText = "When ExampleDatasets is set this is the seed that is used for generating the data")]
+        [Option('s', "Seed", Default = 500, HelpText = "When ExampleDatasets is set this is the seed that is used for generating the data")]
         public int Seed { get; set; } = 500;
 
         [Usage]

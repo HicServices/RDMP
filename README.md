@@ -13,6 +13,10 @@ Signed release binaries for the RDMP client and Command Line Interface (CLI) are
 
 The UserManual can be downloaded at <https://github.com/HicServices/RDMP/raw/master/Documentation/UserManual.docx>.  Additionally there is a comprehensive [Frequently Asked Questions List](Documentation/CodeTutorials/FAQ.md)
 
+## Changelog
+
+A history of all additions, changes and bugfixes is kept in [CHANGELOG.md](./CHANGELOG.md)
+
 ## Build
 
 You can build directly through Visual Studio by opening HIC.DataManagementPlatform.sln.  The startup project for the main RDMP user interface is ResearchDataManagementPlatform.csproj.
