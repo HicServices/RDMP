@@ -10,6 +10,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug in Catalogue validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
 - Fixed scrollbars not appearing in Catalogue validation setup window when lots of validation rules are applied to a single column
 - Type text dialog prompt now resizes correctly and has a display limit of 20,000 characters for messages
+- Fixed bug that prevented exiting if the RDMP directory (in user's application data folder) was deleted while the program was running
 
 ## [3.0.16-rc2] - 2019-07-17
 

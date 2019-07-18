@@ -24,6 +24,7 @@ using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
+using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
@@ -234,8 +235,20 @@ namespace ResearchDataManagementPlatform
                     return;
                 }
 
-            if (_persistenceFile != null)
-                dockPanel1.SaveAsXml(_persistenceFile.FullName); //save when Form closes
+            try
+            {
+                if (_persistenceFile != null)
+                {
+                    if (!_persistenceFile.Directory.Exists)
+                        _persistenceFile.Directory.Create();
+
+                    dockPanel1.SaveAsXml(_persistenceFile.FullName); //save when Form closes
+                }
+            }
+            catch(Exception ex)
+            {
+                ExceptionViewer.Show("Could not write persistence file",ex);
+            }
         }
 
         private IDockContent DeserializeContent(string persiststring)
