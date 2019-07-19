@@ -54,6 +54,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
                 rbSpecificCatalogue.Checked = true;
                 cbxCatalogues.SelectedItem = initialSelection;
             }
+            aggregateGraph1.Silent = true;
         }
 
         private void btnGenerateReport_Click(object sender, EventArgs e)

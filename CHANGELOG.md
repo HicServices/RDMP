@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Attempting to generate a graph from a query that returns more than 1,000,000 cells now asks for confirmation.
+
 ### Fixed 
 - Fixed bug in Catalogue validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
 - Fixed scrollbars not appearing in Catalogue validation setup window when lots of validation rules are applied to a single column
