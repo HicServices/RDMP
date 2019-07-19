@@ -13,7 +13,7 @@ task :ci_integration, [:config] => [:setup_connection, :assemblyinfo, :build, :a
 
 task :plugins, [:config] => [:assemblyinfo, :build, :deployplugins]
 
-task :release => [:assemblyinfo, :bundlesource, :build_release, :build_cli, :squirrel, :github]
+task :release => [:assemblyinfo, :build_release, :bundlesource, :build_cli, :squirrel, :github]
 
 task :tests, [:config] => [:run_unit_tests]
 
@@ -31,8 +31,10 @@ task :setup_connection do
     end
 end
 
-task :bundlesource do
+task :bundlesource, [:config] do |t, args|
+	args.with_defaults(:config => :Release)
 	sh "powershell ./BundleSourceIntoZipFile.ps1"
+	FileUtils.cp "./Tools/BundleUpSourceIntoZip/output/SourceCodeForSelfAwareness.zip","./Application/ResearchDataManagementPlatform/bin/#{args.config}/net461/SourceCodeForSelfAwareness.zip"
 end
 
 task :build, [:config] => :restorepackages do |msb, args|
