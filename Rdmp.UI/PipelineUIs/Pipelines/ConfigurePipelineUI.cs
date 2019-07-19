@@ -83,18 +83,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
         
         private void tbDescription_TextChanged(object sender, EventArgs e)
         {
-            if (!string.IsNullOrWhiteSpace(_pipeline.Description) && string.IsNullOrWhiteSpace(tbDescription.Text))
-            {
-                if (MessageBox.Show("Are you sure you want to delete the current Description entirely?",
-                    "Confirm deleting description?", MessageBoxButtons.YesNo) == DialogResult.Yes)
-                    _pipeline.Description = null;
-                else
-                {
-                    tbDescription.Text = _pipeline.Description;
-                }
-            }
-            else
-                _pipeline.Description = tbDescription.Text;
+            _pipeline.Description = tbDescription.Text;
 
             try
             {
