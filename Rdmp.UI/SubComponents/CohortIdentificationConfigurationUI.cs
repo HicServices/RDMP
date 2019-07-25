@@ -83,6 +83,11 @@ namespace Rdmp.UI.SubComponents
             _miClearCache.Image = CatalogueIcons.ExternalDatabaseServer_Cache;
 
             cbIncludeCumulative.CheckedChanged += (s, e) => CohortCompilerUI1.Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
+
+            //This is important, OrderableComparer ensures IOrderable objects appear in the correct order but the comparator
+            //doesn't get called unless the column has a sorting on it
+            olvNameCol.Sortable = true;
+            tlvCic.Sort(olvNameCol);
         }
 
         void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
@@ -114,7 +119,7 @@ namespace Rdmp.UI.SubComponents
                     AddFavouriteColumn = false,
                     AddCheckColumn = false,
                     AllowPinning = false,
-                    AllowSorting =  false,
+                    AllowSorting =  true, //important, we need sorting on so that we can override sort order with our OrderableComparer
                 });
 
                 tlvCic.AddObject(_configuration);
