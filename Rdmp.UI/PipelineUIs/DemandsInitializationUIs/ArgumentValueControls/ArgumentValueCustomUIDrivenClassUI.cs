@@ -84,8 +84,8 @@ namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
                 if(dr != DialogResult.Cancel)
                 {
                     var result = instanceAsCustomUI.GetFinalStateOfUnderlyingObject();
-
                     _args.Setter(result);
+                    _args.InitialValue = result;
                 }
             }
             catch (Exception ex)
