@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Attempting to generate a graph from a query that returns more than 1,000,000 cells now asks for confirmation.
 - Updated to latest version of [FAnsiSql] (0.9.3) for better Oracle support
 - Oracle extraction commands no longer generate parameters (e.g. @projectNumber).  Previously invalid SQL was generated.
+- Improved layout of message boxes and link highlighting
 
 ### Fixed 
 - Fixed bug in Catalogue validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
