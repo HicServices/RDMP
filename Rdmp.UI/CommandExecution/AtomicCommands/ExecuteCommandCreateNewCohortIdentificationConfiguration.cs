@@ -9,11 +9,13 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Wizard;
 using ReusableLibraryCode.Icons.IconProvision;
+using ReusableLibraryCode.Settings;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -46,29 +48,56 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            var wizard = new CreateNewCohortIdentificationConfigurationUI(Activator);
+            
+            CohortIdentificationConfiguration cic;
 
-            if(wizard.ShowDialog() == DialogResult.OK)
+            if (UserSettings.ShowCohortWizard)
             {
-                var cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
-                if(cic == null)
+                var wizard = new CreateNewCohortIdentificationConfigurationUI(Activator);
+
+                if (wizard.ShowDialog() == DialogResult.OK)
+                    cic = wizard.CohortIdentificationCriteriaCreatedIfAny;
+                else 
                     return;
-
-                if (_associateWithProject != null)
+            }
+            else
+            {
+                if (TypeText("Cohort Query Name", "Cohort Name", out string name))
                 {
-                    var assoc = _associateWithProject.AssociateWithCohortIdentification(cic);
-                    Publish(assoc);
-                    Emphasise(assoc, int.MaxValue);
+                    cic = new CohortIdentificationConfiguration(Activator.RepositoryLocator.CatalogueRepository, name);
+                    cic.CreateRootContainerIfNotExists();
+                    var exclusion = cic.RootCohortAggregateContainer;
+                    exclusion.Name = "Exclusion Criteria";
+                    exclusion.Operation = SetOperation.EXCEPT;
+                    exclusion.SaveToDatabase();
 
+                    var inclusion = new CohortAggregateContainer(Activator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+                    inclusion.Name = "Inclusion Criteria";
+                    inclusion.SaveToDatabase();
+
+                    exclusion.AddChild(inclusion);
                 }
                 else
-                {
-                    Publish(cic);
-                    Emphasise(cic, int.MaxValue);    
-                }
+                    return;
+            }
 
-                Activate(cic);
-            }   
+            if (cic == null)
+                return;
+
+            if (_associateWithProject != null)
+            {
+                var assoc = _associateWithProject.AssociateWithCohortIdentification(cic);
+                Publish(assoc);
+                Emphasise(assoc, int.MaxValue);
+
+            }
+            else
+            {
+                Publish(cic);
+                Emphasise(cic, int.MaxValue);
+            }
+
+            Activate(cic);
         }
 
 
