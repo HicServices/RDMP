@@ -294,6 +294,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             if (saveable != null)
                 saveable.SaveToDatabase();
 
+            _aggregate.SaveToDatabase();
             Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(_aggregate));
         }
 
