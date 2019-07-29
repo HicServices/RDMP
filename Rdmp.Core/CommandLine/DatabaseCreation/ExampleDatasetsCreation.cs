@@ -41,18 +41,18 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
     {
         private IRDMPPlatformRepositoryServiceLocator _repos;
         
-        private const int NumberOfPeople = 5000;
-        private const int NumberOfRowsPerDataset = 10000;
+        public const int NumberOfPeople = 5000;
+        public const int NumberOfRowsPerDataset = 10000;
         
         public ExampleDatasetsCreation(IRDMPPlatformRepositoryServiceLocator repos)
         {
             this._repos = repos;
         }
 
-        internal void Create(DiscoveredDatabase db,bool allowDrop, ICheckNotifier notifier, int seed)
+        internal void Create(DiscoveredDatabase db, ICheckNotifier notifier, PlatformDatabaseCreationOptions options)
         {
             if(db.Exists())
-                if(allowDrop)
+                if(options.DropDatabases)
                     db.Drop();
                 else
                     throw new Exception("Database " + db.GetRuntimeName() + " already exists and allowDrop option was not specified");
@@ -64,19 +64,19 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             notifier.OnCheckPerformed(new CheckEventArgs("Succesfully created "+ db.GetRuntimeName(),CheckResult.Success));
 
             //fixed seed so everyone gets the same datasets
-            var r = new Random(seed);
+            var r = new Random(options.Seed);
 
             notifier.OnCheckPerformed(new CheckEventArgs("Generating people",CheckResult.Success));
             //people
             var people = new PersonCollection();
-            people.GeneratePeople(NumberOfPeople,r);
+            people.GeneratePeople(options.NumberOfPeople, r);
 
             //datasets
-            var biochem = ImportCatalogue(Create<Biochemistry>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","Healthboard","SampleDate","TestCode"));
-            var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","dtCreated","hb_extract"));
-            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","PrescribedDate","Name")); //<- this is slooo!
-            var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","AdmissionDate"));
-            var carotid = Create<CarotidArteryScan>(db,people,r,notifier,NumberOfRowsPerDataset,"RECORD_NUMBER");
+            var biochem = ImportCatalogue(Create<Biochemistry>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","Healthboard","SampleDate","TestCode"));
+            var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","dtCreated","hb_extract"));
+            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","PrescribedDate","Name")); //<- this is slooo!
+            var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","AdmissionDate"));
+            var carotid = Create<CarotidArteryScan>(db,people,r,notifier, options.NumberOfRowsPerDataset, "RECORD_NUMBER");
 
             //the following should not be extractable
             ForExtractionInformations(demography,

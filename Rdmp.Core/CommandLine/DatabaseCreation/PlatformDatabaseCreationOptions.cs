@@ -44,6 +44,12 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
         [Option('s', "Seed", Default = 500, HelpText = "When ExampleDatasets is set this is the seed that is used for generating the data")]
         public int Seed { get; set; } = 500;
 
+        [Option("NumberOfPeople", Default = ExampleDatasetsCreation.NumberOfPeople, HelpText = "When ExampleDatasets is set this is the number of unique patients to generate before building dataset rows (patient pool)")]
+        public int NumberOfPeople { get; set; } = ExampleDatasetsCreation.NumberOfPeople;
+
+        [Option("NumberOfRowsPerDataset", Default = ExampleDatasetsCreation.NumberOfRowsPerDataset, HelpText = "When ExampleDatasets is set this is the number of rows to create in each dataset")]
+        public int NumberOfRowsPerDataset { get; set; } = ExampleDatasetsCreation.NumberOfRowsPerDataset;
+
         [Usage]
         public static IEnumerable<Example> Examples
         {

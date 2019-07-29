@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added user setting for skipping Cohort Creation wizard
 - MDFAttacher emits more messages when looking up location on disk to copy MDF file to.
 - Added menu option to set IsExtractionIdentifier on a Catalogue without having to open ExtractionInformations directly
+- Added the ability to set custom number of patients / rows per dataset when creating example datasets (from command line or when setting up client)
 
 ### Changed
 

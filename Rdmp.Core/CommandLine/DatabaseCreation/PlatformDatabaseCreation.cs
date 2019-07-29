@@ -47,8 +47,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             {
                 var examples = new ExampleDatasetsCreation(repo);
                 var server = new DiscoveredServer(options.GetBuilder("ExampleData"));
-
-                examples.Create(server.GetCurrentDatabase(),options.DropDatabases,new ThrowImmediatelyCheckNotifier(){WriteToConsole = true },options.Seed);
+                
+                examples.Create(server.GetCurrentDatabase(),new ThrowImmediatelyCheckNotifier(){WriteToConsole = true },options);
             }
         }
 
