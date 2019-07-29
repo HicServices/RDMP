@@ -41,6 +41,8 @@ namespace Rdmp.UI.Menus
             Add(new ExecuteCommandChangeExtractability(_activator, catalogue),Keys.None,extractability);
             Add(new ExecuteCommandMakeCatalogueProjectSpecific(_activator).SetTarget(catalogue),Keys.None,extractability);
             Add(new ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(_activator, catalogue),Keys.None,extractability);
+            Add(new ExecuteCommandSetExtractionIdentifier(_activator,catalogue),Keys.None,extractability);
+
             Items.Add(extractability);
 
             var extract = new ToolStripMenuItem("Import/Export Descriptions");

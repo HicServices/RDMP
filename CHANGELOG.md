@@ -11,6 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cohort sets with HAVING sql now support 'View Dataset Sample' (of matched records)
 - Added user setting for skipping Cohort Creation wizard
 - MDFAttacher emits more messages when looking up location on disk to copy MDF file to.
+- Added menu option to set IsExtractionIdentifier on a Catalogue without having to open ExtractionInformations directly
+
 ### Changed
 
 - Attempting to generate a graph from a query that returns more than 1,000,000 cells now asks for confirmation.
