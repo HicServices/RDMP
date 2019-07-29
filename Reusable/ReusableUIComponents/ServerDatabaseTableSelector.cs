@@ -160,7 +160,9 @@ namespace ReusableUIComponents
         private void UpdateDatabaseListAsync(object sender, DoWorkEventArgs e)
         {
             var builder = (DbConnectionStringBuilder)((object[])e.Argument)[0];
-            
+
+            ragSmiley1.Reset();
+
             _workerRefreshDatabasesToken = new CancellationTokenSource();
             try
             {
@@ -185,9 +187,6 @@ namespace ReusableUIComponents
         //handle complete
         private void UpdateDatabaseAsyncCompleted(object sender, RunWorkerCompletedEventArgs e)
         {
-            //success?
-            ragSmiley1.Reset();
-
             if (e.Error != null)
                 ragSmiley1.Fatal(e.Error);
             else if (!e.Cancelled)
