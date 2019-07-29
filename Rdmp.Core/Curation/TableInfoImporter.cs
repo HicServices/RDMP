@@ -34,6 +34,7 @@ namespace Rdmp.Core.Curation
         private readonly DatabaseType _type;
         
         private DiscoveredServer _server;
+        private TableType _importTableType;
 
         #region Construction
 
@@ -49,7 +50,7 @@ namespace Rdmp.Core.Curation
         /// <param name="password"></param>
         /// <param name="usageContext"></param>
         /// <param name="importFromSchema"></param>
-        public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any, string importFromSchema = null)
+        public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any, string importFromSchema = null,TableType importTableType = TableType.Table)
         {
             _repository = repository;
             _importFromServer = importFromServer;
@@ -61,8 +62,8 @@ namespace Rdmp.Core.Curation
             _password = string.IsNullOrWhiteSpace(password) ? null : password;
             _usageContext = usageContext;
             _importFromSchema = importFromSchema;
+            _importTableType = importTableType;
 
-            
             InitializeBuilder();
         }
 
@@ -81,7 +82,8 @@ namespace Rdmp.Core.Curation
             table.Database.Server.ExplicitUsernameIfAny,
             table.Database.Server.ExplicitPasswordIfAny,
             usageContext,
-            table.Schema)
+            table.Schema,
+            table.TableType)
         {
             _usageContext = DataAccessContext.Any;
             InitializeBuilder();
@@ -115,14 +117,18 @@ namespace Rdmp.Core.Curation
             tableName += querySyntaxHelper.EnsureWrapped(_importTableName);
             databaseName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
-            DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName).ExpectTable(_importTableName,_importFromSchema).DiscoverColumns();
+            DiscoveredColumn[] discoveredColumns = _server.ExpectDatabase(_importDatabaseName)
+                .ExpectTable(_importTableName,_importFromSchema, _importTableType)
+                .DiscoverColumns();
             
             TableInfo parent = new TableInfo(_repository, tableName)
             {
                 DatabaseType = _type,
                 Database = databaseName,
                 Server = _importFromServer,
-                Schema = _importFromSchema
+                Schema = _importFromSchema,
+                IsView = _importTableType == TableType.View
+
             };
 
             parent.SaveToDatabase();

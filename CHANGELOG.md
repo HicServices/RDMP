@@ -4,11 +4,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+
 ## [Unreleased]
+
+...
+
+## [3.1.0]
 
 ### Added
 
 - Cohort sets with HAVING sql now support 'View Dataset Sample' (of matched records)
+- Added new property IsView to TableInfo
 
 ### Changed
 
@@ -97,7 +103,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc2...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/release/3.1.0...develop
+[3.1.0]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc2...release/3.1.0
 [3.0.16-rc2]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc...v3.0.16-rc2
 [3.0.16-rc]: https://github.com/HicServices/RDMP/compare/v3.0.15...v3.0.16-rc
 [FAnsiSql]: https://github.com/HicServices/FAnsiSql/

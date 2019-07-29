@@ -219,6 +219,9 @@ viewName,
 
             var view = tbl.Database.ExpectTable("MyView",null,TableType.View);
             Import(view,out TableInfo viewInfo,out _);
+
+            var sync = new TableInfoSynchronizer(viewInfo);
+            sync.Synchronize(new ThrowImmediatelyCheckNotifier());
             
             Assert.IsTrue(viewInfo.Discover(DataAccessContext.InternalDataProcessing).Exists());
             Assert.AreEqual(TableType.View,viewInfo.Discover(DataAccessContext.InternalDataProcessing).TableType);
