@@ -21,7 +21,7 @@ namespace Rdmp.UI.Validation
     /// <summary>
     /// Regular expressions are a great way of validating the content of your datasets.  For example you could have a regex pattern ^[MFU]$ which would force a cells contents to be either
     /// M, F or U with nothing else allowed.  Rather than having each data analyst type the same regular expression into the validation rules of each column you can create a StandardRegex.
-    /// This StandardRegex will then be available as a validation rule for any column (See ValidationSetupForm).
+    /// This StandardRegex will then be available as a validation rule for any column (See <see cref="ValidationSetupUI"/>).
     /// 
     /// <para>Because regular expressions can get pretty complicated both a concept name and a verbose description that explains what the pattern matches and what it won't match.  You can also 
     /// test your implementation by typing values into the 'Testing Box' and clicking Test.  For example if you typed in 'Male' with the above pattern it would fail validation because it

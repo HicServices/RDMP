@@ -25,7 +25,7 @@ namespace Rdmp.UI.Validation
     internal delegate void RequestDeletionHandler(object sender);
 
     /// <summary>
-    /// Part of ValidationSetupForm, this control is for configuring/viewing a single validation rule on a column/transform of a dataset (Catalogue).  For example it might be a NotNull
+    /// Part of <see cref="ValidationSetupUI"/>, this control is for configuring/viewing a single validation rule on a column/transform of a dataset (Catalogue).  For example it might be a NotNull
     /// validation constraint which means rows with a null value in this field will fail validation.  Why would you do this you ask? when you can have a database constraint in your data
     /// repository that prevents null values? well sometimes research data is quite dirty and if a problematic field(especially if it is a non-essential column) is sometimes worth allowing
     /// it through even though it's null and highlighting problem records with the validation rule NotNull.

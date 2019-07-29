@@ -13,7 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Attempting to generate a graph from a query that returns more than 1,000,000 cells now asks for confirmation.
-- Updated to latest version of [FAnsiSql] (0.9.3) for better Oracle support
+- Updated to latest version of [FAnsiSql] (0.9.4) for better Oracle support
 - Oracle extraction commands no longer generate parameters (e.g. @projectNumber).  Previously invalid SQL was generated.
 - Improved layout of message boxes and link highlighting
 
