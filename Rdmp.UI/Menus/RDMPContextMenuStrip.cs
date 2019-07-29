@@ -112,7 +112,29 @@ namespace Rdmp.UI.Menus
         {
             Add(cmd,shortcutKey,AddMenuIfNotExists(submenu));
         }
-        
+
+        /// <summary>
+        /// Creates a new command under GoTo that navigates the user to the results of <paramref name="func"/>.  This function
+        /// is only evaluated when the GoTo menu is expanded (not when the main context menu is popped).
+        /// </summary>
+        /// <param name="func"></param>
+        /// <param name="title"></param>
+        protected void AddGoTo(Func<IEnumerable<IMapsDirectlyToDatabaseTable>> func, string title)
+        {
+            var mi = AddMenuIfNotExists(GoTo);
+            bool bFirstTime = true;
+
+            mi.DropDownOpening += (s,e) => 
+            {
+                if(bFirstTime)
+                {
+                    AddGoTo(func(),title);
+                    bFirstTime = false;
+                }
+            };
+            
+        }
+
         protected void AddGoTo(IEnumerable<IMapsDirectlyToDatabaseTable> objects, string title)
         {           
             Add(new ExecuteCommandShow(_activator,objects,1){OverrideCommandName = title },Keys.None,GoTo);

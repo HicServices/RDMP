@@ -15,6 +15,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Cohort sets with HAVING sql now support 'View Dataset Sample' (of matched records)
 - Added new property IsView to TableInfo
+- Added GoTo menu item Catalogue=>TableInfo
 
 ### Changed
 
