@@ -19,7 +19,7 @@ A history of all additions, changes and bugfixes is kept in [CHANGELOG.md](./CHA
 
 ## Build
 
-You can build directly through Visual Studio (**2017 or later**) by opening HIC.DataManagementPlatform.sln.  The startup project for the main RDMP user interface is ResearchDataManagementPlatform.csproj.
+You can build directly through Visual Studio (**2017 or later**) by opening HIC.DataManagementPlatform.sln.  You will also need to install the DotNetCore 2.2 SDK.  The startup project for the main RDMP user interface is ResearchDataManagementPlatform.csproj.
 
 Alternatively you can run `msbuild` or `rake build` (set path to MSBuild15CMD in `rakeconfig.rb` first) to perform a console build.
 
