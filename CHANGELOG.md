@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Cohort sets with HAVING sql now support 'View Dataset Sample' (of matched records)
-
+- Added user setting for skipping Cohort Creation wizard
+- 
 ### Changed
 
 - Attempting to generate a graph from a query that returns more than 1,000,000 cells now asks for confirmation.

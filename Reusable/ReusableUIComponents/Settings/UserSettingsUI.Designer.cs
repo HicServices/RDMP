@@ -43,6 +43,7 @@
             this.tbHeatmapColours = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.cbWait5Seconds = new System.Windows.Forms.CheckBox();
+            this.cbShowCohortWizard = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // cbShowHomeOnStartup
@@ -90,7 +91,7 @@
             // label2
             // 
             this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(24, 181);
+            this.label2.Location = new System.Drawing.Point(24, 197);
             this.label2.Name = "label2";
             this.label2.Size = new System.Drawing.Size(47, 13);
             this.label2.TabIndex = 3;
@@ -99,7 +100,7 @@
             // cbThemeMenus
             // 
             this.cbThemeMenus.AutoSize = true;
-            this.cbThemeMenus.Location = new System.Drawing.Point(76, 205);
+            this.cbThemeMenus.Location = new System.Drawing.Point(76, 221);
             this.cbThemeMenus.Name = "cbThemeMenus";
             this.cbThemeMenus.Size = new System.Drawing.Size(139, 17);
             this.cbThemeMenus.TabIndex = 4;
@@ -111,7 +112,7 @@
             // 
             this.ddTheme.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddTheme.FormattingEnabled = true;
-            this.ddTheme.Location = new System.Drawing.Point(76, 178);
+            this.ddTheme.Location = new System.Drawing.Point(76, 194);
             this.ddTheme.Name = "ddTheme";
             this.ddTheme.Size = new System.Drawing.Size(371, 21);
             this.ddTheme.TabIndex = 5;
@@ -130,7 +131,7 @@
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(2, 252);
+            this.label4.Location = new System.Drawing.Point(2, 268);
             this.label4.Name = "label4";
             this.label4.Size = new System.Drawing.Size(83, 13);
             this.label4.TabIndex = 6;
@@ -140,7 +141,7 @@
             // 
             this.ddWordWrap.DropDownStyle = System.Windows.Forms.ComboBoxStyle.DropDownList;
             this.ddWordWrap.FormattingEnabled = true;
-            this.ddWordWrap.Location = new System.Drawing.Point(91, 249);
+            this.ddWordWrap.Location = new System.Drawing.Point(91, 265);
             this.ddWordWrap.Name = "ddWordWrap";
             this.ddWordWrap.Size = new System.Drawing.Size(124, 21);
             this.ddWordWrap.TabIndex = 7;
@@ -160,7 +161,7 @@
             // label5
             // 
             this.label5.AutoSize = true;
-            this.label5.Location = new System.Drawing.Point(10, 296);
+            this.label5.Location = new System.Drawing.Point(10, 312);
             this.label5.Name = "label5";
             this.label5.Size = new System.Drawing.Size(88, 13);
             this.label5.TabIndex = 8;
@@ -168,7 +169,7 @@
             // 
             // tbHeatmapColours
             // 
-            this.tbHeatmapColours.Location = new System.Drawing.Point(104, 293);
+            this.tbHeatmapColours.Location = new System.Drawing.Point(104, 309);
             this.tbHeatmapColours.Name = "tbHeatmapColours";
             this.tbHeatmapColours.Size = new System.Drawing.Size(238, 20);
             this.tbHeatmapColours.TabIndex = 9;
@@ -177,7 +178,7 @@
             // label6
             // 
             this.label6.AutoSize = true;
-            this.label6.Location = new System.Drawing.Point(153, 316);
+            this.label6.Location = new System.Drawing.Point(153, 332);
             this.label6.Name = "label6";
             this.label6.Size = new System.Drawing.Size(146, 13);
             this.label6.TabIndex = 8;
@@ -194,6 +195,17 @@
             this.cbWait5Seconds.UseVisualStyleBackColor = true;
             this.cbWait5Seconds.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
             // 
+            // cbShowCohortWizard
+            // 
+            this.cbShowCohortWizard.AutoSize = true;
+            this.cbShowCohortWizard.Location = new System.Drawing.Point(39, 164);
+            this.cbShowCohortWizard.Name = "cbShowCohortWizard";
+            this.cbShowCohortWizard.Size = new System.Drawing.Size(123, 17);
+            this.cbShowCohortWizard.TabIndex = 2;
+            this.cbShowCohortWizard.Text = "Show Cohort Wizard";
+            this.cbShowCohortWizard.UseVisualStyleBackColor = true;
+            this.cbShowCohortWizard.CheckedChanged += new System.EventHandler(this.cb_CheckedChanged);
+            // 
             // UserSettingsFileUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
@@ -209,6 +221,7 @@
             this.Controls.Add(this.label3);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.cbWait5Seconds);
+            this.Controls.Add(this.cbShowCohortWizard);
             this.Controls.Add(this.cbFindShouldPin);
             this.Controls.Add(this.cbConfirmExit);
             this.Controls.Add(this.cbEmphasiseOnTabChanged);
@@ -238,5 +251,6 @@
         private System.Windows.Forms.TextBox tbHeatmapColours;
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.CheckBox cbWait5Seconds;
+        private System.Windows.Forms.CheckBox cbShowCohortWizard;
     }
 }

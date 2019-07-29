@@ -178,6 +178,12 @@ namespace ReusableLibraryCode.Settings
             get { return AppSettings.GetValueOrDefault("Wait5SecondsAfterStartupUI", true); }
             set { AppSettings.AddOrUpdateValue("Wait5SecondsAfterStartupUI", value); }
         }
+
+        public static bool ShowCohortWizard 
+        {
+            get { return AppSettings.GetValueOrDefault("ShowCohortWizard", true); }
+            set { AppSettings.AddOrUpdateValue("ShowCohortWizard", value); }
+        }
         #endregion
 
         public static bool GetTutorialDone(Guid tutorialGuid)

@@ -29,6 +29,7 @@ namespace ReusableUIComponents.Settings
             cbFindShouldPin.Checked = UserSettings.FindShouldPin;
             cbThemeMenus.Checked = UserSettings.ApplyThemeToMenus;
             cbWait5Seconds.Checked = UserSettings.Wait5SecondsAfterStartupUI;
+            cbShowCohortWizard.Checked = UserSettings.ShowCohortWizard;
 
             ddTheme.DataSource = new []
             {
@@ -71,6 +72,9 @@ namespace ReusableUIComponents.Settings
 
             if(cb == cbWait5Seconds)
                 UserSettings.Wait5SecondsAfterStartupUI = cb.Checked;
+
+            if(cb == cbShowCohortWizard)
+                UserSettings.ShowCohortWizard = cb.Checked;
         }
 
         private void ddTheme_SelectedIndexChanged(object sender, EventArgs e)
