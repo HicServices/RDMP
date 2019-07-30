@@ -28,6 +28,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -490,6 +491,13 @@ UNPIVOT
             //half a million biochemistry results
             var biochem = factory.Create(typeof(T),r);
             var dt = biochem.GetDataTable(people,numberOfRecords);
+
+            //prune "nulls"
+            foreach(DataRow dr in dt.Rows)
+                for(int i = 0;i<dt.Columns.Count;i++)
+                    if(string.Equals(dr[i] as string, "NULL",StringComparison.CurrentCultureIgnoreCase))
+                        dr[i] = DBNull.Value;
+
 
             notifier.OnCheckPerformed(new CheckEventArgs("Uploading " + dataset,CheckResult.Success));
             var tbl = db.CreateTable(dataset,dt,GetExplicitColumnDefinitions<T>());
