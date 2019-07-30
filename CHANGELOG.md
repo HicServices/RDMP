@@ -14,6 +14,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added menu option to set IsExtractionIdentifier on a Catalogue without having to open ExtractionInformations directly
 - Added the ability to set custom number of patients / rows per dataset when creating example datasets (from command line or when setting up client)
 - FlatFileAttacher now issues a warning if TableToLoad isn't one of the tables loaded by the currently executing load (previously it would just say 'table x wasn't found in RAW')
+- Added (initially hidden) column Order to cohort query builder to help debugging any issues with order of display
 
 ### Changed
 
