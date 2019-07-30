@@ -23,10 +23,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             _aggregateConfigurationCommand = aggregateConfigurationCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
-
-            if(aggregateConfigurationCommand.AllContainersInTreeIfPartOfOne.Contains(_targetCohortAggregateContainer))
-                SetImpossible("AggregateConfiguration " + aggregateConfigurationCommand + " is already part of this Cohort Identification Configuration");
-
         }
 
         public override void Execute()
@@ -35,14 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-            AggregateConfiguration child;
-
-            //it's possible that the user already thinks this cic is a cohort set for the aggregate in which case we shouldn't reimport it as a duplicate
-            if (cic.IsValidNamedConfiguration(_aggregateConfigurationCommand.Aggregate))
-                child = _aggregateConfigurationCommand.Aggregate;
-            else
-                //it belongs to a different cic or it isn't a cic aggregate or... pick one
-                child = cic.ImportAggregateConfigurationAsIdentifierList(_aggregateConfigurationCommand.Aggregate,CohortCommandHelper.PickOneExtractionIdentifier);
+            AggregateConfiguration child = cic.ImportAggregateConfigurationAsIdentifierList(_aggregateConfigurationCommand.Aggregate,CohortCommandHelper.PickOneExtractionIdentifier);
 
             //current contents
             var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();

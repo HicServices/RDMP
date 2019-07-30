@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to latest version of [FAnsiSql] (0.9.4) for better Oracle support
 - Oracle extraction commands no longer generate parameters (e.g. @projectNumber).  Previously invalid SQL was generated.
 - Improved layout of message boxes and link highlighting
+- Add (Copy Of) cohort set no longer complains about creating a copy of one already in the cohort builder configuration
 
 ### Fixed 
 - Fixed bug in Catalogue validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
