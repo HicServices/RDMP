@@ -14,6 +14,7 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
@@ -75,6 +76,7 @@ namespace Rdmp.UI.SubComponents
             tlvCic.RowHeight = 19;
             olvExecute.AspectGetter += ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
+            olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ParametersNode ? null : (o as IOrderable)?.Order;
             AssociatedCollection = RDMPCollection.Cohort;
 
             CohortCompilerUI1.SelectionChanged += CohortCompilerUI1_SelectionChanged;

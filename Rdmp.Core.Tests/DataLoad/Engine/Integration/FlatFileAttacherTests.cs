@@ -12,6 +12,7 @@ using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
+using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -414,6 +415,26 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             File.Delete(filename);
             tbl.Drop();
         }
+
+        [Test]
+        public void Test_TableToLoad_IDNotInLoadMetadata()
+        {
+            var source = new AnySeparatorFileAttacher();
+                        
+            var tiInLoad = new TableInfo(CatalogueRepository,"TableInLoad");
+            var tiNotInLoad = new TableInfo(CatalogueRepository, "TableNotInLoad");
+
+            source.TableToLoad = tiNotInLoad;
+
+            var job = new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ ThrowOnWarning = true});
+            job.RegularTablesToLoad = new System.Collections.Generic.List<ITableInfo>(new []{tiInLoad });
+
+
+            var ex = Assert.Throws<Exception>(()=>source.Attach(job,new GracefulCancellationToken()));
+
+            StringAssert.IsMatch("FlatFileAttacher TableToLoad was 'TableNotInLoad' \\(ID=\\d+\\) but that table was not one of the tables in the load:'TableInLoad'", ex.Message);
+        }
+
         [TearDown]
         public void TearDown()
         {

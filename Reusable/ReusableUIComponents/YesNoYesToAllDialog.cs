@@ -17,6 +17,7 @@ namespace ReusableUIComponents
     {
         private bool YesToAllClicked = false;
         private bool NoToAllClicked = false;
+        private object lockShowDialog = new object();
 
         public YesNoYesToAllDialog()
         {
@@ -25,7 +26,10 @@ namespace ReusableUIComponents
 
         new private DialogResult ShowDialog()
         {
-            if(YesToAllClicked)
+            if (InvokeRequired)
+                return (DialogResult)Invoke(new Func<DialogResult>(() => ShowDialog()));
+
+            if (YesToAllClicked)
                 return DialogResult.Yes;
 
             if(NoToAllClicked)
@@ -36,10 +40,14 @@ namespace ReusableUIComponents
 
         public DialogResult ShowDialog(string message, string caption)
         {
-            label1.Text = message;
+            if(InvokeRequired)
+                return (DialogResult)Invoke(new Func<DialogResult>(() => ShowDialog(message,caption)));
+
+          label1.Text = message;
             this.Text = caption;
 
-            return ShowDialog();
+            lock (lockShowDialog)
+                    return ShowDialog();
         }
 
         private void btnYes_Click(object sender, EventArgs e)

@@ -1,4 +1,5 @@
-﻿using ReusableUIComponents;
+﻿using System;
+using ReusableUIComponents;
 
 namespace Rdmp.UI.LocationsMenu
 {
@@ -55,6 +56,12 @@ namespace Rdmp.UI.LocationsMenu
             this.btnUseExisting = new System.Windows.Forms.Button();
             this.label7 = new System.Windows.Forms.Label();
             this.gbCreateNew = new System.Windows.Forms.GroupBox();
+            this.tbSeed = new System.Windows.Forms.TextBox();
+            this.tbRowCount = new System.Windows.Forms.TextBox();
+            this.label11 = new System.Windows.Forms.Label();
+            this.label10 = new System.Windows.Forms.Label();
+            this.tbPeopleCount = new System.Windows.Forms.TextBox();
+            this.label12 = new System.Windows.Forms.Label();
             this.cbCreateExampleDatasets = new System.Windows.Forms.CheckBox();
             this.label9 = new System.Windows.Forms.Label();
             this.tbPassword = new System.Windows.Forms.TextBox();
@@ -63,8 +70,6 @@ namespace Rdmp.UI.LocationsMenu
             this.label3 = new System.Windows.Forms.Label();
             this.btnBack1 = new System.Windows.Forms.Button();
             this.pResults = new System.Windows.Forms.Panel();
-            this.label10 = new System.Windows.Forms.Label();
-            this.tbSeed = new System.Windows.Forms.TextBox();
             this.gbUseExisting.SuspendLayout();
             this.pReferenceADataExport.SuspendLayout();
             this.pReferenceACatalogue.SuspendLayout();
@@ -323,7 +328,11 @@ namespace Rdmp.UI.LocationsMenu
             // gbCreateNew
             // 
             this.gbCreateNew.Controls.Add(this.tbSeed);
+            this.gbCreateNew.Controls.Add(this.tbRowCount);
+            this.gbCreateNew.Controls.Add(this.label11);
             this.gbCreateNew.Controls.Add(this.label10);
+            this.gbCreateNew.Controls.Add(this.tbPeopleCount);
+            this.gbCreateNew.Controls.Add(this.label12);
             this.gbCreateNew.Controls.Add(this.cbCreateExampleDatasets);
             this.gbCreateNew.Controls.Add(this.label9);
             this.gbCreateNew.Controls.Add(this.tbPassword);
@@ -344,10 +353,62 @@ namespace Rdmp.UI.LocationsMenu
             this.gbCreateNew.Text = "Create New Platform Databases";
             this.gbCreateNew.Visible = false;
             // 
+            // tbSeed
+            // 
+            this.tbSeed.Location = new System.Drawing.Point(592, 46);
+            this.tbSeed.Name = "tbSeed";
+            this.tbSeed.Size = new System.Drawing.Size(163, 20);
+            this.tbSeed.TabIndex = 11;
+            this.tbSeed.Text = "500";
+            this.tbSeed.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            // 
+            // tbRowCount
+            // 
+            this.tbRowCount.Location = new System.Drawing.Point(592, 88);
+            this.tbRowCount.Name = "tbRowCount";
+            this.tbRowCount.Size = new System.Drawing.Size(163, 20);
+            this.tbRowCount.TabIndex = 11;
+            this.tbRowCount.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            // 
+            // label11
+            // 
+            this.label11.AutoSize = true;
+            this.label11.Location = new System.Drawing.Point(523, 91);
+            this.label11.Name = "label11";
+            this.label11.Size = new System.Drawing.Size(63, 13);
+            this.label11.TabIndex = 10;
+            this.label11.Text = "Row Count:";
+            // 
+            // label10
+            // 
+            this.label10.AutoSize = true;
+            this.label10.Location = new System.Drawing.Point(551, 50);
+            this.label10.Name = "label10";
+            this.label10.Size = new System.Drawing.Size(35, 13);
+            this.label10.TabIndex = 10;
+            this.label10.Text = "Seed:";
+            // 
+            // tbPeopleCount
+            // 
+            this.tbPeopleCount.Location = new System.Drawing.Point(592, 67);
+            this.tbPeopleCount.Name = "tbPeopleCount";
+            this.tbPeopleCount.Size = new System.Drawing.Size(163, 20);
+            this.tbPeopleCount.TabIndex = 11;
+            this.tbPeopleCount.TextChanged += new System.EventHandler(this.Tb_TextChanged);
+            // 
+            // label12
+            // 
+            this.label12.AutoSize = true;
+            this.label12.Location = new System.Drawing.Point(518, 70);
+            this.label12.Name = "label12";
+            this.label12.Size = new System.Drawing.Size(74, 13);
+            this.label12.TabIndex = 10;
+            this.label12.Text = "Person Count:";
+            // 
             // cbCreateExampleDatasets
             // 
             this.cbCreateExampleDatasets.AutoSize = true;
-            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(434, 48);
+            this.cbCreateExampleDatasets.Location = new System.Drawing.Point(592, 23);
             this.cbCreateExampleDatasets.Name = "cbCreateExampleDatasets";
             this.cbCreateExampleDatasets.Size = new System.Drawing.Size(111, 17);
             this.cbCreateExampleDatasets.TabIndex = 9;
@@ -371,7 +432,6 @@ namespace Rdmp.UI.LocationsMenu
             this.tbPassword.Size = new System.Drawing.Size(143, 20);
             this.tbPassword.TabIndex = 4;
             this.tbPassword.UseSystemPasswordChar = true;
-            this.tbPassword.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label4
             // 
@@ -388,7 +448,6 @@ namespace Rdmp.UI.LocationsMenu
             this.tbUsername.Name = "tbUsername";
             this.tbUsername.Size = new System.Drawing.Size(143, 20);
             this.tbUsername.TabIndex = 3;
-            this.tbUsername.TextChanged += new System.EventHandler(this.textBox1_TextChanged);
             // 
             // label3
             // 
@@ -418,24 +477,6 @@ namespace Rdmp.UI.LocationsMenu
             this.pResults.Name = "pResults";
             this.pResults.Size = new System.Drawing.Size(749, 410);
             this.pResults.TabIndex = 16;
-            // 
-            // label10
-            // 
-            this.label10.AutoSize = true;
-            this.label10.Location = new System.Drawing.Point(551, 50);
-            this.label10.Name = "label10";
-            this.label10.Size = new System.Drawing.Size(35, 13);
-            this.label10.TabIndex = 10;
-            this.label10.Text = "Seed:";
-            // 
-            // tbSeed
-            // 
-            this.tbSeed.Location = new System.Drawing.Point(592, 46);
-            this.tbSeed.Name = "tbSeed";
-            this.tbSeed.Size = new System.Drawing.Size(135, 20);
-            this.tbSeed.TabIndex = 11;
-            this.tbSeed.Text = "500";
-            this.tbSeed.TextChanged += new System.EventHandler(this.TbSeed_TextChanged);
             // 
             // ChoosePlatformDatabasesUI
             // 
@@ -502,5 +543,9 @@ namespace Rdmp.UI.LocationsMenu
         private System.Windows.Forms.CheckBox cbCreateExampleDatasets;
         private System.Windows.Forms.TextBox tbSeed;
         private System.Windows.Forms.Label label10;
+        private System.Windows.Forms.TextBox tbRowCount;
+        private System.Windows.Forms.Label label11;
+        private System.Windows.Forms.TextBox tbPeopleCount;
+        private System.Windows.Forms.Label label12;
     }
 }

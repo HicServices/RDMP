@@ -17,6 +17,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Added new property IsView to TableInfo
 - Added GoTo menu item Catalogue=>TableInfo
 - Added user setting for skipping Cohort Creation wizard
+- MDFAttacher emits more messages when looking up location on disk to copy MDF file to.
+- Added menu option to set IsExtractionIdentifier on a Catalogue without having to open ExtractionInformations directly
+- Added the ability to set custom number of patients / rows per dataset when creating example datasets (from command line or when setting up client)
+- FlatFileAttacher now issues a warning if TableToLoad isn't one of the tables loaded by the currently executing load (previously it would just say 'table x wasn't found in RAW')
+- Added (initially hidden) column Order to cohort query builder to help debugging any issues with order of display
 
 ### Changed
 
@@ -24,7 +29,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Updated to latest version of [FAnsiSql] (0.9.4) for better Oracle support
 - Oracle extraction commands no longer generate parameters (e.g. @projectNumber).  Previously invalid SQL was generated.
 - Improved layout of message boxes and link highlighting
-
+- Add (Copy Of) cohort set no longer complains about creating a copy of one already in the cohort builder configuration
+- Extraction destination property CleanExtractionFolderBeforeExtraction now defaults to false (i.e. do not delete the contents of the extraction directory before extracting)
+- Extraction destination property CleanExtractionFolderBeforeExtraction is now implemented in the Checks phase of the component lifecycle rather than on reciept of first batch of records (this prevents accidentally deleting files produced by upstream components)
+- 
 ### Fixed 
 - Fixed bug in Catalogue validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
 - Fixed scrollbars not appearing in Catalogue validation setup window when lots of validation rules are applied to a single column
@@ -35,6 +43,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed obscure bug in plugins implementing the `ICustomUI` interface when returning a new object in `GetFinalStateOfUnderlyingObject` that resulted in the UI showing a stale version of the object
 - Connecting to a non existant server in ServerDatabaseTableSelector now shows the Exception in the RAG icon (previously just showed empty database list)
  
+- Fixed bug where adding/removing a column in Aggregate Editor would would reset the Name/Description if there were unsaved changes (to Name/Description)
+- Fixed bug where example datasets created would have the text value "NULL" instead of db nulls (only affected initial install/setup datasets)
+
 ## [3.0.16-rc2] - 2019-07-17
 
 ### Added 

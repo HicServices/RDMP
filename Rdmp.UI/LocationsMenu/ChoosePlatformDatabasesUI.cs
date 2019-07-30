@@ -45,6 +45,10 @@ namespace Rdmp.UI.LocationsMenu
 
         public bool ChangesMade = false;
 
+        int _seed = 500;
+        int _peopleCount = ExampleDatasetsCreation.NumberOfPeople;
+        int _rowCount = ExampleDatasetsCreation.NumberOfRowsPerDataset;
+
         public ChoosePlatformDatabasesUI(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _repositoryLocator = repositoryLocator;
@@ -71,6 +75,9 @@ namespace Rdmp.UI.LocationsMenu
             //yes
             tbCatalogueConnectionString.Text = cataDb == null ? null : cataDb.ConnectionString;
             tbDataExportManagerConnectionString.Text = dataExportDb == null ? null : dataExportDb.ConnectionString;
+
+            tbRowCount.Text = ExampleDatasetsCreation.NumberOfRowsPerDataset.ToString();
+            tbPeopleCount.Text = ExampleDatasetsCreation.NumberOfPeople.ToString();
         }
 
         private void SetState(State newState)
@@ -245,6 +252,8 @@ namespace Rdmp.UI.LocationsMenu
                 opts.Password = tbPassword.Text;
                 opts.ExampleDatasets = cbCreateExampleDatasets.Checked;
                 opts.Seed = _seed;
+                opts.NumberOfPeople = _peopleCount;
+                opts.NumberOfRowsPerDataset = _rowCount;
 
                 var task = new Task(() =>
                 {
@@ -337,24 +346,27 @@ namespace Rdmp.UI.LocationsMenu
                 tbDataExportManagerConnectionString.Text = dialog.SelectedDatabase.Server.Builder.ConnectionString;
         }
 
-        private void textBox1_TextChanged(object sender, EventArgs e)
+
+        private void Tb_TextChanged(object sender, EventArgs e)
         {
+            var tb = (TextBox)sender;
 
-        }
-
-        int _seed = 500;
-
-        private void TbSeed_TextChanged(object sender, EventArgs e)
-        {
             try
             {
-                _seed = int.Parse(tbSeed.Text);
-                tbSeed.ForeColor = Color.Black;
+                int result =  int.Parse(tb.Text);
+
+                if(sender == tbSeed)
+                    _seed = result;
+                else if(sender == tbPeopleCount)
+                    _peopleCount = result;
+                else if(sender == tbRowCount)
+                    _rowCount = result;                
+
+                tb.ForeColor = Color.Black;
             }
             catch(Exception)
             {
-                _seed = 500;
-                tbSeed.ForeColor = Color.Red;
+                tb.ForeColor = Color.Red;
             }
         }
     }
