@@ -23,7 +23,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Oracle extraction commands no longer generate parameters (e.g. @projectNumber).  Previously invalid SQL was generated.
 - Improved layout of message boxes and link highlighting
 - Add (Copy Of) cohort set no longer complains about creating a copy of one already in the cohort builder configuration
-
+- Extraction destination property CleanExtractionFolderBeforeExtraction now defaults to false (i.e. do not delete the contents of the extraction directory before extracting)
+- Extraction destination property CleanExtractionFolderBeforeExtraction is now implemented in the Checks phase of the component lifecycle rather than on reciept of first batch of records (this prevents accidentally deleting files produced by upstream components)
+- 
 ### Fixed 
 - Fixed bug in Catalogue validation setup window (DQE Validation Rules) which resulted in changes not being saved if it had been refreshed after initially loading
 - Fixed scrollbars not appearing in Catalogue validation setup window when lots of validation rules are applied to a single column
