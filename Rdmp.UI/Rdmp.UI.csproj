@@ -171,7 +171,9 @@
       <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    
+          <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Update="CohortUI\CohortSourceManagement\CreateNewCohortDatabaseWizardUI.resx">

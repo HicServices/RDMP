@@ -16,7 +16,7 @@ namespace Rdmp.UI.Menus
         {
             Add(new ExecuteCommandAddNewGovernanceDocument(_activator,period));
             
-            AddGoTo(period.GovernedCatalogues,"Catalogue(s)");
+            AddGoTo(()=>period.GovernedCatalogues,"Catalogue(s)");
         }
     }
 }

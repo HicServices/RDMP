@@ -30,6 +30,7 @@
         {
             this.btnSynchronize = new System.Windows.Forms.Button();
             this.cbIsPrimaryExtractionTable = new System.Windows.Forms.CheckBox();
+            this.cbIsView = new System.Windows.Forms.CheckBox();
             this.btnParameters = new System.Windows.Forms.Button();
             this.tbTableInfoDatabaseName = new System.Windows.Forms.TextBox();
             this.label51 = new System.Windows.Forms.Label();
@@ -61,13 +62,25 @@
             // 
             this.cbIsPrimaryExtractionTable.AutoSize = true;
             this.cbIsPrimaryExtractionTable.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
-            this.cbIsPrimaryExtractionTable.Location = new System.Drawing.Point(252, 8);
+            this.cbIsPrimaryExtractionTable.Location = new System.Drawing.Point(251, 8);
             this.cbIsPrimaryExtractionTable.Name = "cbIsPrimaryExtractionTable";
             this.cbIsPrimaryExtractionTable.Size = new System.Drawing.Size(151, 17);
             this.cbIsPrimaryExtractionTable.TabIndex = 1;
             this.cbIsPrimaryExtractionTable.Text = "Is Primary Extraction Table";
             this.cbIsPrimaryExtractionTable.UseVisualStyleBackColor = true;
             this.cbIsPrimaryExtractionTable.CheckedChanged += new System.EventHandler(this.cbIsPrimaryExtractionTable_CheckedChanged);
+            // 
+            // cbIsView
+            // 
+            this.cbIsView.AutoSize = true;
+            this.cbIsView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
+            this.cbIsView.Location = new System.Drawing.Point(358, 108);
+            this.cbIsView.Name = "cbIsView";
+            this.cbIsView.Size = new System.Drawing.Size(60, 17);
+            this.cbIsView.TabIndex = 1;
+            this.cbIsView.Text = "Is View";
+            this.cbIsView.UseVisualStyleBackColor = true;
+            this.cbIsView.CheckedChanged += new System.EventHandler(this.cbIsView_CheckedChanged);
             // 
             // btnParameters
             // 
@@ -203,6 +216,7 @@
             this.panel1.Controls.Add(this.label40);
             this.panel1.Controls.Add(this.label51);
             this.panel1.Controls.Add(this.cbIsPrimaryExtractionTable);
+            this.panel1.Controls.Add(this.cbIsView);
             this.panel1.Controls.Add(this.tbTableInfoName);
             this.panel1.Controls.Add(this.tbTableInfoID);
             this.panel1.Controls.Add(this.label1);
@@ -232,6 +246,7 @@
         #endregion
 
         private System.Windows.Forms.CheckBox cbIsPrimaryExtractionTable;
+        private System.Windows.Forms.CheckBox cbIsView;
         private System.Windows.Forms.TextBox tbTableInfoDatabaseName;
         private System.Windows.Forms.Label label51;
         private System.Windows.Forms.TextBox tbTableInfoDatabaseAccess;

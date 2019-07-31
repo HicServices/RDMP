@@ -60,10 +60,13 @@ namespace Rdmp.UI.Menus
             {
                 var eds = exp.ExtractableDataSets.SingleOrDefault(d=>d.Catalogue_ID == catalogue.ID);
                 if(eds != null)
-                    AddGoTo(eds.ExtractionConfigurations,"Extraction Configuration(s)");
+                    AddGoTo(()=>eds.ExtractionConfigurations,"Extraction Configuration(s)");
             }
 
+            AddGoTo(()=>catalogue.GetTableInfoList(true),"Table(s)");
+
             AddGoTo(
+                ()=>
                 _activator
                 .CoreChildProvider
                 .AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate && ac.Catalogue_ID == catalogue.ID)
@@ -72,7 +75,7 @@ namespace Rdmp.UI.Menus
                 .Distinct(),
                 "Cohort Identification Configuration(s)");
 
-            AddGoTo(_activator.CoreChildProvider.AllGovernancePeriods.Where(p=>p.GovernedCatalogues.Contains(catalogue)),"Governance");
+            AddGoTo(()=>_activator.CoreChildProvider.AllGovernancePeriods.Where(p=>p.GovernedCatalogues.Contains(catalogue)),"Governance");
 
         }
 

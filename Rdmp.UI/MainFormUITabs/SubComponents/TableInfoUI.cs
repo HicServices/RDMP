@@ -67,7 +67,8 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
             tbSchema.Text = _tableInfo.Schema;
 
             btnParameters.Enabled = _tableInfo.IsTableValuedFunction;
-            
+            cbIsView.Checked = _tableInfo.IsView;
+
             //if it's a Lookup table, don't let them try to make it IsPrimaryExtractionTable (but let them disable that if they have already made that mistake somehow)
             if (_tableInfo.IsLookupTable())
                 if (!cbIsPrimaryExtractionTable.Checked)
@@ -80,6 +81,12 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
             _tableInfo.IsPrimaryExtractionTable = cbIsPrimaryExtractionTable.Checked;
             _tableInfo.SaveToDatabase();
         }
+        private void cbIsView_CheckedChanged(object sender, EventArgs e)
+        {
+            _tableInfo.IsView = cbIsView.Checked;
+            _tableInfo.SaveToDatabase();
+        }
+
 
 
         bool objectSaverButton1_BeforeSave(DatabaseEntity arg)

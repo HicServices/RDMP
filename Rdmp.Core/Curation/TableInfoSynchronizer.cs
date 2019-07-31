@@ -79,7 +79,7 @@ namespace Rdmp.Core.Curation
             else
             {
                 //table exists?
-                expectedTable = expectedDatabase.ExpectTable(_tableToSync.GetRuntimeName(),_tableToSync.Schema);
+                expectedTable = expectedDatabase.ExpectTable(_tableToSync.GetRuntimeName(),_tableToSync.Schema,_tableToSync.IsView ? TableType.View:TableType.Table);
                 if(!expectedTable.Exists())
                     throw new SynchronizationFailedException("Database " + expectedDatabase + " did not contain a table called " + _tableToSync.GetRuntimeName());
             }
@@ -113,7 +113,7 @@ namespace Rdmp.Core.Curation
             if (_tableToSync.IsTableValuedFunction)
                 importer = new TableValuedFunctionImporter(_repository, (DiscoveredTableValuedFunction) expectedTable);
             else
-                importer = new TableInfoImporter(_repository, _toSyncTo.Name, _toSyncTo.GetCurrentDatabase().GetRuntimeName(), _tableToSync.GetRuntimeName(), _tableToSync.DatabaseType, username: usr, password: pwd, importFromSchema: _tableToSync.Schema);
+                importer = new TableInfoImporter(_repository, _toSyncTo.Name, _toSyncTo.GetCurrentDatabase().GetRuntimeName(), _tableToSync.GetRuntimeName(), _tableToSync.DatabaseType, username: usr, password: pwd, importFromSchema: _tableToSync.Schema, importTableType:_tableToSync.IsView ? TableType.View:TableType.Table);
 
             DiscoveredColumn[] newColumnsInLive = 
                 liveColumns.Where(
