@@ -20,6 +20,28 @@ namespace Rdmp.UI.Tests
     class WideMessageBoxTests:UITests
     {
         [Test]
+        public void Test_WideMessageBox_TinyStrings()
+        {
+            var args = new WideMessageBoxArgs("1","2","3", "4", WideMessageBoxTheme.Help);
+
+            //it is important that the args retain the original length e.g. so user can copy to clipboard the text
+            Assert.AreEqual(1, args.Title.Length);
+            Assert.AreEqual(1, args.Message.Length);
+
+            var wmb = new WideMessageBox(args);
+
+            //pretend like we launched it
+            LastUserInterfaceLaunched = wmb;
+
+            //the title and body should be a reasonable length
+            Assert.AreEqual(1, GetControl<Label>().Single().Text.Length);
+            Assert.AreEqual(1, GetControl<RichTextBox>().Single().Text.Length);
+
+            //dialog shouldn't go thinner than 600 pixels
+            Assert.AreEqual(600, wmb.Width);
+        }
+
+        [Test]
         public void Test_WideMessageBox_LargeStrings()
         {
             StringBuilder sb = new StringBuilder();
@@ -43,6 +65,12 @@ namespace Rdmp.UI.Tests
             //the title and body should be a reasonable length
             Assert.AreEqual(WideMessageBox.MAX_LENGTH_TITLE,GetControl<Label>().Single().Text.Length);
             Assert.AreEqual(WideMessageBox.MAX_LENGTH_BODY, GetControl<RichTextBox>().Single().Text.Length);
+
+            //when shown on screen it should not go off the edge of the screen
+
+            //find the widest screen
+            var availableWidth = Screen.AllScreens.Select(sc=>sc.Bounds.Width).Max();
+            Assert.LessOrEqual(wmb.Width, availableWidth);
         }
     }
 }

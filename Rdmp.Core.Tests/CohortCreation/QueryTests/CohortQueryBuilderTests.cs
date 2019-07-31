@@ -47,6 +47,35 @@ FROM
 	FROM 
 	[" + _scratchDatabaseName + @"]..[BulkData]",cohortIdentificationConfiguration.ID)),CollapseWhitespace(builder.GetDatasetSampleSQL()));
         }
+
+
+        /// <summary>
+        /// When we <see cref="CohortQueryBuilder.GetDatasetSampleSQL"/> we normally get "select TOP 1000 *" of the query body BUT
+        /// if theres HAVING sql then SQL will balk at select *.  In this case we expect it to just run the normal distinct chi
+        /// bit but put a TOP X on it.
+        /// </summary>
+        [Test]
+        public void Test_GetDatasetSampleSQL_WithHAVING()
+        {
+            aggregate1.HavingSQL = "count(*)>1";
+
+            CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null);
+
+            Assert.AreEqual(CollapseWhitespace(
+                string.Format(@"/*cic_{0}_UnitTestAggregate1*/
+	SELECT
+    distinct
+	TOP 1000
+	[" + _scratchDatabaseName + @"]..[BulkData].[chi]
+	FROM 
+	[" + _scratchDatabaseName + @"]..[BulkData]
+    group by 
+    [" + _scratchDatabaseName + @"]..[BulkData].[chi]
+    HAVING
+    count(*)>1", cohortIdentificationConfiguration.ID)), CollapseWhitespace(builder.GetDatasetSampleSQL()));
+        }
+
+
         [Test]
         public void TestGettingAggregateSQLFromEntirity()
         {

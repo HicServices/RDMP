@@ -28,6 +28,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
     /// </summary>
     public class FlatFileColumnCollection
     {
+        /// <summary>
+        /// Text to display in ASCII art of column matches when a column from the source could not be matched
+        /// with the destination.
+        /// </summary>
+        public const string UnmatchedText = "????";
+
         private readonly FlatFileToLoad _toLoad;
         private readonly bool _makeHeaderNamesSane;
         private readonly ExplicitTypingCollection _explicitlyTypedColumns;
@@ -93,6 +99,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         /// The number of headers including null ones (but not trailing null headers)
         /// </summary>
         public int Length { get { return _headers.Length; }}
+
 
         public void GetHeadersFromFile(CsvReader r)
         {
@@ -272,7 +279,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     continue;
                 }
 
-                ASCIIArt.AppendLine(_headers[index] + ">>>????");
+                ASCIIArt.AppendLine(_headers[index] + ">>>" + UnmatchedText);
                 headersNotFound.Add(_headers[index]);
             }
 

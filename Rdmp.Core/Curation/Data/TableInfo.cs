@@ -51,6 +51,7 @@ namespace Rdmp.Core.Curation.Data
         private int? _identifierDumpServer_ID;
         private bool _isTableValuedFunction;
         private string _schema;
+        private bool _isView;
 
         /// <summary>
         /// Fully specified table name
@@ -140,6 +141,11 @@ namespace Rdmp.Core.Curation.Data
             set { SetField(ref _schema, value); }
         }
 
+        public bool IsView {
+            get { return _isView; }
+            set { SetField(ref _isView, value); }
+        }
+
         #endregion
         
         // Temporary fix to remove downcasts to CatalogueRepository when using CatalogueRepository specific classes etc.
@@ -220,6 +226,8 @@ namespace Rdmp.Core.Curation.Data
                 IdentifierDumpServer_ID = null;
             else
                 IdentifierDumpServer_ID = (int)r["IdentifierDumpServer_ID"];
+
+            IsView = r["IsView"] != DBNull.Value && Convert.ToBoolean(r["IsView"]);
 
             ClearAllInjections();
         }
@@ -462,8 +470,8 @@ namespace Rdmp.Core.Curation.Data
 
             if (IsTableValuedFunction)
                 return db.ExpectTableValuedFunction(GetRuntimeName(), Schema);
-
-            return db.ExpectTable(GetRuntimeName(),Schema);
+            
+            return db.ExpectTable(GetRuntimeName(),Schema, IsView?TableType.View : TableType.Table);
         }
 
         /// <inheritdoc/>

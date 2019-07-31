@@ -52,7 +52,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             //The location of .mdf files from the perspective of the database server
-            var databaseDirectory = FindDefaultSQLServerDatabaseDirectory();
+            var databaseDirectory = FindDefaultSQLServerDatabaseDirectory(new FromDataLoadEventListenerToCheckNotifier(job));
             _locations = new MdfFileAttachLocations(LoadDirectory.ForLoading, databaseDirectory, OverrideMDFFileCopyDestination);
 
             job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information, "Identified the MDF file:" +_locations.OriginLocationMdf + " and corresponding LDF file:" + _locations.OriginLocationLdf));
@@ -238,8 +238,10 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             s.Stop();
         }
 
-        public string FindDefaultSQLServerDatabaseDirectory()
+        public string FindDefaultSQLServerDatabaseDirectory(ICheckNotifier notifier)
         {
+            notifier.OnCheckPerformed(new CheckEventArgs("About to look up Sql Server DATA directory Path",CheckResult.Success));
+
             try
             {
                 //connect to master to run the data directory discovery SQL
@@ -249,7 +251,15 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
                 using (var connection = new SqlConnection(builder.ConnectionString))
                 {
                     connection.Open();
-                    return new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
+
+                    notifier.OnCheckPerformed(new CheckEventArgs("About to run:\r\n" + GetDefaultSQLServerDatabaseDirectory,CheckResult.Success));
+
+                    string result = new SqlCommand(GetDefaultSQLServerDatabaseDirectory, connection).ExecuteScalar() as string;
+
+                    if(string.IsNullOrWhiteSpace(result))
+                        throw new Exception("Looking up DATA directory on server returned null (user may not have permissions to read from relevant sys tables)");
+
+                    return result;
                 }
             }
             catch (SqlException e)
@@ -265,7 +275,7 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             if (!string.IsNullOrWhiteSpace(OverrideMDFFileCopyDestination))
                 localSqlServerDataDirectory = OverrideMDFFileCopyDestination;
             else
-                localSqlServerDataDirectory = FindDefaultSQLServerDatabaseDirectory();
+                localSqlServerDataDirectory = FindDefaultSQLServerDatabaseDirectory(notifier);
             
             var mdfFilename = _dbInfo.GetRuntimeName() + ".mdf";
             var ldfFilename = _dbInfo.GetRuntimeName() + "_log.ldf";

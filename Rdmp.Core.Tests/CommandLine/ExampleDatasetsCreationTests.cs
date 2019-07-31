@@ -33,7 +33,7 @@ namespace Rdmp.Core.Tests.CommandLine
             //create all the stuff
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var creator = new ExampleDatasetsCreation(RepositoryLocator);
-            creator.Create(db,true,new ThrowImmediatelyCheckNotifier(),500);
+            creator.Create(db,new ThrowImmediatelyCheckNotifier(),new PlatformDatabaseCreationOptions(){Seed = 500,DropDatabases = true });
 
             //should have at least created some catalogues, graphs etc
             Assert.GreaterOrEqual(CatalogueRepository.GetAllObjects<Catalogue>().Length,4);

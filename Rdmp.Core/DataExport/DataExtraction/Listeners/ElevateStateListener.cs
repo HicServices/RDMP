@@ -24,7 +24,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Listeners
 
         public void OnNotify(object sender, NotifyEventArgs e)
         {
-            if (e.ProgressEventType == ProgressEventType.Error)
+            if (e.ProgressEventType == ProgressEventType.Error && extractCommand != null)
                 extractCommand.ElevateState(ExtractCommandState.Crashed);
         }
 

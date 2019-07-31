@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using FAnsi.Discovery;
+using ReusableUIComponents.Dialogs;
 using System;
 using System.Drawing;
 using System.Windows.Forms;
@@ -31,6 +32,12 @@ namespace ReusableUIComponents
             _allowBlankText = allowBlankText;
             InitializeComponent();
 
+            if(header.Length > WideMessageBox.MAX_LENGTH_TITLE)
+                header = header.Substring(0, WideMessageBox.MAX_LENGTH_TITLE);
+
+            if (label.Length > WideMessageBox.MAX_LENGTH_BODY)
+                label = label.Substring(0, WideMessageBox.MAX_LENGTH_BODY);
+
             this.Text = header;
             this.label1.Text = label;
             this.textBox1.MaxLength = maxCharacters;
@@ -38,6 +45,8 @@ namespace ReusableUIComponents
             textBox1.Text = startingTextForInputBox;
             SetEnabledness();
             
+            var desiredWidth = TextRenderer.MeasureText(label,label1.Font).Width;
+            Width = Math.Max(460,Math.Min(720, desiredWidth));            
         }
 
         private void btnOk_Click(object sender, EventArgs e)

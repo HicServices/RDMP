@@ -10,6 +10,7 @@ using System.ComponentModel;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
@@ -81,10 +82,7 @@ namespace Rdmp.UI.Validation
             ObjectSaverButton1.BeforeSave += objectSaverButton1_BeforeSave;
 
             olvName.ImageGetter = (o) => Activator.CoreIconProvider.GetImage(o);
-        }
-
-        private bool isFirstTime = true;
-        
+        }       
 
         public override void SetDatabaseObject(IActivateItems activator, Catalogue databaseObject)
         {
@@ -95,13 +93,7 @@ namespace Rdmp.UI.Validation
                 {OverrideCommandName = "View Results..."}.SetTarget(databaseObject));
 
             AddPluginCommandsToMenu();
-
-            //if someone renames a Catalogue we don't want to erase all the rule changes they have configured here
-            if(!isFirstTime)
-                return;
-            
-            isFirstTime = false;
-
+                
             _catalogue = databaseObject;
             
             SetupComboBoxes(databaseObject);
@@ -114,7 +106,12 @@ namespace Rdmp.UI.Validation
             
             var extractionInformations = databaseObject.GetAllExtractionInformation(ExtractionCategory.Any).ToArray();
             Array.Sort(extractionInformations);
+
+            //Update the objects in case the publish is because the user added new columns etc
+            var oldSelection = olvColumns.SelectedObject;
+            olvColumns.ClearObjects();
             olvColumns.AddObjects(extractionInformations);
+            olvColumns.SelectedObject = oldSelection;
 
             ValidateConfiguration();
         }
@@ -382,15 +379,11 @@ namespace Rdmp.UI.Validation
         private void SetTimePeriod(ExtractionInformation selected)
         {
             _catalogue.TimeCoverage_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
-            _catalogue.SaveToDatabase();
-            Publish(_catalogue);
         }
 
         private void SetPivot(ExtractionInformation selected)
         {
             _catalogue.PivotCategory_ExtractionInformation_ID = selected != null ? selected.ID : (int?)null;
-            _catalogue.SaveToDatabase();
-            Publish(_catalogue);
         }
 
         private void lblPickTimePeriodColumn_Click(object sender, EventArgs e)

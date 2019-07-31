@@ -557,6 +557,9 @@ namespace Rdmp.Core.Curation.Data.Aggregation
         /// <param name="notifier"></param>
         public void Check(ICheckNotifier notifier)
         {
+            if (HavingSQL != null && HavingSQL.StartsWith("HAVING", StringComparison.CurrentCultureIgnoreCase))
+                notifier.OnCheckPerformed(new CheckEventArgs("HavingSql does not need the word 'HAVING' at the start, it is implicit", CheckResult.Fail));
+
             //these are not checkable since they are intended for use by CohortQueryBuilder instead
             if(IsCohortIdentificationAggregate)
                 return;

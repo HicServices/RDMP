@@ -276,32 +276,19 @@ namespace ReusableUIComponents.Dialogs
                 return;
             }
 
-            bool lastWordWasALink = false;
             richTextBox1.Visible = false;
 
-            foreach (string word in Regex.Split(message, @"(?<=[. ,;)(<>-])"))
+            foreach (string word in Regex.Split(message, @"(?<=[. ,;)(<>\n-])"))
             {
-                if(string.IsNullOrWhiteSpace(word))
-                    continue;
-
                 //Try to match the trimmed keyword or the trimmed keyword without an s
-                var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')','<','>','-'));
+                var keyword = GetDocumentationKeyword(keywordNotToAdd, word.Trim('.', ' ', ',', ';', '(', ')','<','>','-','\r','\n'));
 
                 if (keyword != null)
-                {
-                    if (lastWordWasALink)
-                        richTextBox1.SelectedText = " ";
-                    
                     richTextBox1.InsertLink(word, keyword);
-
-                    lastWordWasALink = true;
-
-                }
                 else
-                {
-                    richTextBox1.SelectedText = word;
-                    lastWordWasALink = false;
-                }
+                //avoids bong sound
+                if (word != "")
+                    richTextBox1.SelectedText = word; //this appends the text to the text box (confusing I know)
             }
 
             //scroll back to the top
@@ -317,11 +304,14 @@ namespace ReusableUIComponents.Dialogs
         /// <returns></returns>
         private string GetDocumentationKeyword(string keywordNotToAdd, string word)
         {
+            if(string.IsNullOrWhiteSpace(word))
+                return null;
+
             //do not highlight common words like "example"
             if (KeywordBlacklist.Contains(word) || KeywordBlacklist.Contains(word.TrimEnd('s')))
                 return null;
 
-            var keyword = CommentStore.GetDocumentationKeywordIfExists(word, true);
+            var keyword = CommentStore.GetDocumentationKeywordIfExists(word.Trim(), true);
             
             if (keyword == keywordNotToAdd)
                 return null;
@@ -422,8 +412,6 @@ namespace ReusableUIComponents.Dialogs
 
                     Clipboard.SetText(text);
                 }
-                    
-
             }
         }
 
@@ -436,6 +424,9 @@ namespace ReusableUIComponents.Dialogs
             int minimumHeight = 150;
 
             Rectangle maxSize = Screen.GetBounds(c);
+            maxSize.Height = Math.Min(maxSize.Height,800);
+            maxSize.Width = Math.Min(maxSize.Width, 1024);
+
             return new Size(
                 (int)Math.Min(maxSize.Width, Math.Max(measureString.Width + 50,minimumWidth)),
                 (int)Math.Min(maxSize.Height,Math.Max(measureString.Height + 100,minimumHeight)));

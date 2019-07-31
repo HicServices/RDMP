@@ -89,7 +89,7 @@ namespace Rdmp.Core.Curation
                 order++;
                 
                 //create it with the same name
-                CatalogueItem cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`'));
+                CatalogueItem cataItem = new CatalogueItem(repo, intoExistingCatalogue, col.Name.Substring(col.Name.LastIndexOf(".") + 1).Trim('[', ']', '`','"'));
                 catalogueItemsCreated.Add(cataItem);
 
                 if (_markAllExtractable)

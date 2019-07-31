@@ -46,7 +46,7 @@ namespace Rdmp.UI.Collections
 
             //or use whatever the model is
             if (_modelComparer != null)
-                _modelComparer.Compare(x, y);
+                return _modelComparer.Compare(x, y);
             
             
             return string.Compare(x.ToString(),y.ToString());

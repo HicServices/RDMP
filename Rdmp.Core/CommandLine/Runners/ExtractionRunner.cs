@@ -100,7 +100,10 @@ namespace Rdmp.Core.CommandLine.Runners
             var datasetCommand = runnable as ExtractDatasetCommand;
 
             var logging = new ToLoggingDatabaseDataLoadEventListener(_logManager, dataLoadInfo);
-            var fork = new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand));
+            var fork = 
+                datasetCommand != null ?
+                new ForkDataLoadEventListener(logging, listener, new ElevateStateListener(datasetCommand)):
+                new ForkDataLoadEventListener(logging, listener);
 
             if(globalCommand != null)
             {

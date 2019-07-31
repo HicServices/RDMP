@@ -84,9 +84,6 @@ namespace Rdmp.Core.QueryBuilding
                 //select list is either [chi] or [chi],[mycolumn],[myexcitingcol] (in the case of a patient index table)
                 builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
 
-                if (topX != -1)
-                    builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), topX,AggregateTopXOrderByDirection.Descending,null);
-
                 //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select 
                 if(!isJoinAggregate)
                     builder.AddColumn(extractionIdentifier, false);
@@ -108,7 +105,10 @@ namespace Rdmp.Core.QueryBuilding
 
                 builder.DoNotWriteOutOrderBy = true;
             }
-            
+
+            if (topX != -1)
+                builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), topX, AggregateTopXOrderByDirection.Descending, null);
+
             AddJoinablesToBuilder(builder, aggregate,tabDepth);
 
             //set the where container

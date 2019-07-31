@@ -137,6 +137,9 @@ namespace Rdmp.Core.QueryBuilding
         {
             List<ConstantParameter> toReturn = new List<ConstantParameter>();
 
+            if(syntaxHelper.DatabaseType == FAnsi.DatabaseType.Oracle)
+                return toReturn;
+
             IProject project = configuration.Project;
 
             if (project.ProjectNumber == null)

@@ -123,19 +123,23 @@ namespace Rdmp.Core.QueryBuilding
             if(configuration == null)
                 throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
 
-            if(!string.IsNullOrWhiteSpace(configuration.HavingSQL))
-                throw new NotSupportedException("Cannot generate select * statements when the AggregateConfiguration has HAVING Sql");
-
             //create a clone of ourselves so we don't mess up the ParameterManager of this instance
             var cloneBuilder = new CohortQueryBuilder(configuration, _globals);
             cloneBuilder.TopX = topX;
             cloneBuilder.CacheServer = CacheServer;
 
+            //preview means we override the select columns with *
+            var overrideSelectList = "*";
+
+            // unless its a patient index table or has HAVING sql
+            if (!string.IsNullOrWhiteSpace(configuration.HavingSQL) || _isExplicitRequestForJoinableInceptionAggregateQuery)
+                overrideSelectList = null;
+            
             string sampleSQL = 
                 cloneBuilder.GetSQLForAggregate(configuration,
                 0, 
                 _isExplicitRequestForJoinableInceptionAggregateQuery,
-                _isExplicitRequestForJoinableInceptionAggregateQuery?null: "*", //preview means we override the select columns with * unless its a patient index table
+                overrideSelectList,
                 ""); //gets rid of the distinct keyword
 
             string parameterSql = "";

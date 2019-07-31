@@ -323,7 +323,7 @@ namespace ReusableUIComponents.Progress
                 if (model.Exception != null)
                     ExceptionViewer.Show(model.Message, model.Exception, false);
                 else
-                    WideMessageBox.Show(model.Message,"", model.Args.StackTrace, false,theme:model.GetTheme());
+                    WideMessageBox.Show("Progress Message",model.Message, model.Args.StackTrace, false,theme:model.GetTheme());
             }
         }
 

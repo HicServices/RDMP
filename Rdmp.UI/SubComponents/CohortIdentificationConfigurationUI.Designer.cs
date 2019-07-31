@@ -45,6 +45,7 @@ namespace Rdmp.UI.SubComponents
             this.tlvCic = new BrightIdeasSoftware.TreeListView();
             this.olvNameCol = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.olvExecute = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
+            this.olvOrder = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.splitContainer1 = new System.Windows.Forms.SplitContainer();
             this.CohortCompilerUI1 = new Rdmp.UI.SubComponents.CohortCompilerUI();
             this.timer1 = new System.Windows.Forms.Timer(this.components);
@@ -131,10 +132,12 @@ namespace Rdmp.UI.SubComponents
             // 
             this.tlvCic.AllColumns.Add(this.olvNameCol);
             this.tlvCic.AllColumns.Add(this.olvExecute);
+            this.tlvCic.AllColumns.Add(this.olvOrder);
             this.tlvCic.CellEditUseWholeCell = false;
             this.tlvCic.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
             this.olvNameCol,
-            this.olvExecute});
+            this.olvExecute,
+            this.olvOrder});
             this.tlvCic.Cursor = System.Windows.Forms.Cursors.Default;
             this.tlvCic.Dock = System.Windows.Forms.DockStyle.Fill;
             this.tlvCic.HideSelection = false;
@@ -156,6 +159,11 @@ namespace Rdmp.UI.SubComponents
             // olvExecute
             // 
             this.olvExecute.Text = "Execute";
+            //
+            // olvOrder
+            //
+            this.olvOrder.Text = "Order";
+            this.olvOrder.IsVisible = false;
             // 
             // splitContainer1
             // 
@@ -330,6 +338,7 @@ namespace Rdmp.UI.SubComponents
         private TreeListView tlvCic;
         private OLVColumn olvNameCol;
         private OLVColumn olvExecute;
+        private OLVColumn olvOrder;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button btnAbortLoad;

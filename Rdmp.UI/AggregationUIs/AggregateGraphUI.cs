@@ -52,7 +52,21 @@ namespace Rdmp.UI.AggregationUIs
     /// </summary>
     public partial class AggregateGraphUI : AggregateGraph_Design
     {
-        
+
+        /// <summary>
+        /// The maximum number of cells in a DataTable before we warn the user that rendering it is likely to hang
+        /// up System.Windows.Forms.DataVisualization.Charting for a minutes/hours
+        /// </summary>
+        public const int MAXIMUM_CELLS_BEFORE_WARNING = 1_000_000;
+
+        /// <summary>
+        /// Set to true to suppress yes/no dialogues from showing e.g. if there is too much data 
+        /// (see <see cref="MAXIMUM_CELLS_BEFORE_WARNING"/>) to sensibly render.  If true then
+        /// the sensible descision is taken e.g. to not try to render.
+        /// 
+        /// </summary>
+        public bool Silent { get;set;}
+
         public Scintilla QueryEditor { get;private set; }
         
         public int Timeout
@@ -532,9 +546,22 @@ namespace Rdmp.UI.AggregationUIs
             lblLoadStage.Text = "Data Binding Chart (" + _dt.Columns.Count + " columns)";
             lblLoadStage.Refresh();
 
-            chart1.DataBind();
+            int cells = _dt.Columns.Count * _dt.Rows.Count;
 
-            chart1.Visible = true;
+            bool abandon = false;
+
+            if(cells > MAXIMUM_CELLS_BEFORE_WARNING)
+                if(Silent)
+                    throw new Exception($"Aborting data binding because there were {cells} cells in the graph data table");
+                else 
+                    abandon = !Activator.YesNo($"Data Table has {String.Format("{0:n0}", cells)} cells.  Are you sure you want to attempt to graph it?", "Render Graph?");
+
+            if (!abandon)
+            {
+                chart1.DataBind();
+                chart1.Visible = true;
+            }
+            
             pbLoading.Visible = false;
             llCancel.Visible = false;
             lblLoadStage.Visible = false;

@@ -83,6 +83,7 @@
     <None Remove="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
     <None Remove="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
     <None Remove="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
+    <None Remove="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
     <None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
     <None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
     <None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -194,6 +195,7 @@
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
@@ -231,7 +233,7 @@
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.7" />
     <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.2" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.4" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

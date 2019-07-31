@@ -325,8 +325,11 @@ namespace Rdmp.Core.CohortCreation.Execution
             AggregateConfiguration configuration = cacheableTask.GetAggregateConfiguration();
             try
             {
+                //the identifier column that we read from
                 ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
-                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), identifierColumnInfo.Data_type));
+                var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
+                
+                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), destinationDataType));
             }
             catch (Exception e)
             {
@@ -336,6 +339,28 @@ namespace Rdmp.Core.CohortCreation.Execution
             CacheCommitArguments args = cacheableTask.GetCacheArguments(sql, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
 
             manager.CommitResults(args);
+        }
+
+        /// <summary>
+        /// Translates the <paramref name="data_type"/> which was read from <paramref name="cacheableTask"/> into an appropriate type
+        /// that can be written into the tables referenced by <paramref name="queryCachingServer"/>.
+        /// </summary>
+        /// <param name="data_type">The datatype you want translated e.g. varchar2(10) (oracle syntax)</param>
+        /// <param name="cacheableTask">Where the datatype was read from e.g. Oracle</param>
+        /// <param name="queryCachingServer">Where the datatype is going to be stored e.g. Sql Server</param>
+        /// <returns></returns>
+        private string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
+        {
+            var sourceSyntax = cacheableTask.GetDataAccessPoints().Single().GetQuerySyntaxHelper();
+            var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
+            
+            //if we have a change in syntax e.g. read from Oracle write to Sql Server
+            if (sourceSyntax.DatabaseType != destinationSyntax.DatabaseType)
+            {
+                return sourceSyntax.TypeTranslater.TranslateSQLDBType(data_type, destinationSyntax.TypeTranslater);
+            }
+
+            return data_type;
         }
 
         /// <summary>

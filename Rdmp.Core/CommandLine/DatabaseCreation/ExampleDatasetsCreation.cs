@@ -28,6 +28,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using System;
+using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -41,18 +42,18 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
     {
         private IRDMPPlatformRepositoryServiceLocator _repos;
         
-        private const int NumberOfPeople = 5000;
-        private const int NumberOfRowsPerDataset = 10000;
+        public const int NumberOfPeople = 5000;
+        public const int NumberOfRowsPerDataset = 10000;
         
         public ExampleDatasetsCreation(IRDMPPlatformRepositoryServiceLocator repos)
         {
             this._repos = repos;
         }
 
-        internal void Create(DiscoveredDatabase db,bool allowDrop, ICheckNotifier notifier, int seed)
+        internal void Create(DiscoveredDatabase db, ICheckNotifier notifier, PlatformDatabaseCreationOptions options)
         {
             if(db.Exists())
-                if(allowDrop)
+                if(options.DropDatabases)
                     db.Drop();
                 else
                     throw new Exception("Database " + db.GetRuntimeName() + " already exists and allowDrop option was not specified");
@@ -64,19 +65,19 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             notifier.OnCheckPerformed(new CheckEventArgs("Succesfully created "+ db.GetRuntimeName(),CheckResult.Success));
 
             //fixed seed so everyone gets the same datasets
-            var r = new Random(seed);
+            var r = new Random(options.Seed);
 
             notifier.OnCheckPerformed(new CheckEventArgs("Generating people",CheckResult.Success));
             //people
             var people = new PersonCollection();
-            people.GeneratePeople(NumberOfPeople,r);
+            people.GeneratePeople(options.NumberOfPeople, r);
 
             //datasets
-            var biochem = ImportCatalogue(Create<Biochemistry>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","Healthboard","SampleDate","TestCode"));
-            var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","dtCreated","hb_extract"));
-            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","PrescribedDate","Name")); //<- this is slooo!
-            var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier,NumberOfRowsPerDataset,"chi","AdmissionDate"));
-            var carotid = Create<CarotidArteryScan>(db,people,r,notifier,NumberOfRowsPerDataset,"RECORD_NUMBER");
+            var biochem = ImportCatalogue(Create<Biochemistry>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","Healthboard","SampleDate","TestCode"));
+            var demography = ImportCatalogue(Create<Demography>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","dtCreated","hb_extract"));
+            var prescribing = ImportCatalogue(Create<Prescribing>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","PrescribedDate","Name")); //<- this is slooo!
+            var admissions = ImportCatalogue(Create<HospitalAdmissions>(db,people,r,notifier, options.NumberOfRowsPerDataset, "chi","AdmissionDate"));
+            var carotid = Create<CarotidArteryScan>(db,people,r,notifier, options.NumberOfRowsPerDataset, "RECORD_NUMBER");
 
             //the following should not be extractable
             ForExtractionInformations(demography,
@@ -491,6 +492,13 @@ UNPIVOT
             var biochem = factory.Create(typeof(T),r);
             var dt = biochem.GetDataTable(people,numberOfRecords);
 
+            //prune "nulls"
+            foreach(DataRow dr in dt.Rows)
+                for(int i = 0;i<dt.Columns.Count;i++)
+                    if(string.Equals(dr[i] as string, "NULL",StringComparison.CurrentCultureIgnoreCase))
+                        dr[i] = DBNull.Value;
+
+
             notifier.OnCheckPerformed(new CheckEventArgs("Uploading " + dataset,CheckResult.Success));
             var tbl = db.CreateTable(dataset,dt,GetExplicitColumnDefinitions<T>());
 
@@ -544,7 +552,7 @@ UNPIVOT
             
             //get descriptions of the columns from BadMedicine
             var desc = new Descriptions();
-            cata.Description = desc.Get(cata.Name);
+            cata.Description = Trim(desc.Get(cata.Name));
             if(cata.Description != null)
             {
                 cata.SaveToDatabase();

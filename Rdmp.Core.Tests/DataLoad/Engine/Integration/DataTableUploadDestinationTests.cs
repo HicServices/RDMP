@@ -10,6 +10,7 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
@@ -551,76 +552,154 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual("decimal(19,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
         }
 
-        [Test]
-        public void TestResizing()
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
+        public void TestResizing(DatabaseType dbType)
         {
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
-            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestResizing");
+            var db = GetCleanedServer(dbType,true);
+            var server = db.Server;
+
+            var table = db.CreateTable("TestResizing",
+                new DatabaseColumnRequest[] 
+                {
+                    new DatabaseColumnRequest("MyInteger",new DatabaseTypeRequest(typeof(int))),
+                    new DatabaseColumnRequest("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                    new DatabaseColumnRequest("Description",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                    new DatabaseColumnRequest("StringNotNull",new DatabaseTypeRequest(typeof(string),100),false),
+                    new DatabaseColumnRequest("StringAllowNull",new DatabaseTypeRequest(typeof(string),100),true),
+                    new DatabaseColumnRequest("StringPk",new DatabaseTypeRequest(typeof(string),50),true){IsPrimaryKey = true }
+                });
 
             using (var con = server.GetConnection())
             {
                 con.Open();
-
-                if (table.Exists())
-                    table.Drop();
                 
-                //create an example table
-                var cmdCreateTable = server.GetCommand(
-                    @"
-CREATE TABLE [dbo].[TestResizing](
-	[MyInteger] [int] NULL,
-	[MyMaxString] [varchar](max) NULL,
-	[Description] [varchar](max) NULL,
-	[StringNotNull] [varchar](100) NOT NULL,
-    [StringAllowNull] [varchar](100) NULL,
-    [StringPk] [varchar](50) NOT NULL,
- CONSTRAINT [PK_MyExcitingPK] PRIMARY KEY CLUSTERED 
-(
-	[StringPk] ASC
-)WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON) ON [PRIMARY]
-) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]"
-                    , con);
-
-                //execute the table
-                cmdCreateTable.ExecuteNonQuery();
-
-                //make sure table exists
-                Assert.IsTrue(table.Exists());
-
                 //find the columns
                 DiscoveredColumn[] discoveredColumns = table.DiscoverColumns();
 
                 //should not allow nulls before
                 Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
                 //do resize
-                discoveredColumns.Single(c=>c.GetRuntimeName().Equals("StringNotNull")).DataType.Resize(500);
+                table.DiscoverColumn("StringNotNull").DataType.Resize(500);
 
                 //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
-                Assert.AreEqual("varchar(500)",table.DiscoverColumn("StringNotNull").DataType.SQLType);
+                Assert.AreEqual(
+                    dbType != DatabaseType.Oracle ? "varchar(500)" : "varchar2(500)"
+                    ,table.DiscoverColumn("StringNotNull").DataType.SQLType);
                 Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
 
                 //do the same with the one that allows nulls
                 Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
-                discoveredColumns.Single(c => c.GetRuntimeName().Equals("StringAllowNull")).DataType.Resize(101);
-                discoveredColumns.Single(c => c.GetRuntimeName().Equals("StringAllowNull")).DataType.Resize(103);
-                discoveredColumns.Single(c => c.GetRuntimeName().Equals("StringAllowNull")).DataType.Resize(105);
-                Assert.AreEqual("varchar(105)", table.DiscoverColumn("StringAllowNull").DataType.SQLType);
+                table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
+                table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
+                table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
+                Assert.AreEqual(
+                    dbType != DatabaseType.Oracle ? "varchar(105)" : "varchar2(105)"
+                    , table.DiscoverColumn("StringAllowNull").DataType.SQLType);
                 Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
 
                 //we should have correct understanding prior to resize
-                Assert.AreEqual("varchar(50)", discoveredColumns.Single(c => c.GetRuntimeName().Equals("StringPk")).DataType.SQLType);
-                Assert.AreEqual(true, discoveredColumns.Single(c => c.GetRuntimeName().Equals("StringPk")).IsPrimaryKey);
-                Assert.AreEqual(false, discoveredColumns.Single(c => c.GetRuntimeName().Equals("StringPk")).AllowNulls);
+                Assert.AreEqual(
+                    dbType != DatabaseType.Oracle ? "varchar(50)" : "varchar2(50)"
+                    , table.DiscoverColumn("StringPk").DataType.SQLType);
+                Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
+                Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
 
                 //now we execute the resize
-                discoveredColumns.Single(c => c.GetRuntimeName().Equals("StringPk")).DataType.Resize(500);
+                table.DiscoverColumn("StringPk").DataType.Resize(500);
 
-                Assert.AreEqual("varchar(500)", table.DiscoverColumn("StringPk").DataType.SQLType);
+                Assert.AreEqual(
+                    dbType != DatabaseType.Oracle ? "varchar(500)" : "varchar2(500)"
+                    , table.DiscoverColumn("StringPk").DataType.SQLType);
                 Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
                 Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
                 
                 con.Close();
             }
+        }
+
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.Oracle)]
+        public void TestResizing_WithDetection(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType, true);
+
+            var table = db.CreateTable("TestResizing",
+                new DatabaseColumnRequest[]
+                {
+                    new DatabaseColumnRequest("MyInteger",new DatabaseTypeRequest(typeof(int))),
+                    new DatabaseColumnRequest("MyMaxString",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                    new DatabaseColumnRequest("Description",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                    new DatabaseColumnRequest("StringNotNull",new DatabaseTypeRequest(typeof(string),10),false),
+                    new DatabaseColumnRequest("StringAllowNull",new DatabaseTypeRequest(typeof(string),100),true),
+                    new DatabaseColumnRequest("StringPk",new DatabaseTypeRequest(typeof(string),50),true){IsPrimaryKey = true }
+                });
+
+            Assert.AreEqual(10, table.DiscoverColumn("StringNotNull").DataType.GetLengthIfString());
+
+            var dt = new DataTable("TestResizing");
+            dt.Columns.Add("MyInteger");
+            dt.Columns.Add("MyMaxString");
+            dt.Columns.Add("Description");
+            dt.Columns.Add("StringNotNull");
+            dt.Columns.Add("StringAllowNull");
+            dt.Columns.Add("StringPk");
+
+            dt.Rows.Add("1",    //MyInteger
+                "fff",          //MyMaxString
+                "fff2",         //Description
+                "1234567891011",//StringNotNull - too long for the column, so it should resize
+                DBNull.Value,   //StringAllowNull
+                "f"             //StringPk
+                );
+            
+            var dt2 = dt.Clone();
+            dt2.Rows.Clear();
+            dt2.Rows.Add("1",    //MyInteger
+                "fff",          //MyMaxString
+                "fff2",         //Description
+                "12345678910112",//StringNotNull - too long for the column, so it should resize
+                DBNull.Value,   //StringAllowNull
+                "f2"             //StringPk
+                );
+
+            var dest = new DataTableUploadDestination();
+            dest.AllowResizingColumnsAtUploadTime = true;
+            dest.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
+            
+            dest.ProcessPipelineData(dt,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+            dest.ProcessPipelineData(dt2, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(),null);
+
+            //it should have resized us.
+            Assert.AreEqual(14, table.DiscoverColumn("StringNotNull").DataType.GetLengthIfString());
+
+        }
+        [TestCase(DatabaseType.MicrosoftSQLServer, "didn’t")]
+        [TestCase(DatabaseType.MySql, "didn’t")]
+        [TestCase(DatabaseType.Oracle, "didn’t")]
+        [TestCase(DatabaseType.MicrosoftSQLServer, "didn't")]
+        [TestCase(DatabaseType.MySql, "didn't")]
+        [TestCase(DatabaseType.Oracle, "didn't")]
+        public void Test_SingleQuote_InText(DatabaseType dbType,string testValue)
+        {
+            var db = GetCleanedServer(dbType, true);
+
+            var dt = new DataTable("TestFreeText");
+            dt.Columns.Add("MyFreeText");
+            dt.Rows.Add(testValue);
+            
+            var dest = new DataTableUploadDestination();
+            dest.AllowResizingColumnsAtUploadTime = true;
+            dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+            dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+
+            var tbl = db.ExpectTable("TestFreeText");
+            Assert.IsTrue(tbl.Exists());
+            Assert.AreEqual(1,tbl.GetRowCount());
         }
 
         [Test]

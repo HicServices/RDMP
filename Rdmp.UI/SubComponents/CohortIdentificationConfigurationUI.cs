@@ -14,6 +14,7 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
@@ -75,6 +76,7 @@ namespace Rdmp.UI.SubComponents
             tlvCic.RowHeight = 19;
             olvExecute.AspectGetter += ExecuteAspectGetter;
             tlvCic.ButtonClick += tlvCic_ButtonClick;
+            olvOrder.AspectGetter += (o)=> o is JoinableCollectionNode ? null : o is ParametersNode ? null : (o as IOrderable)?.Order;
             AssociatedCollection = RDMPCollection.Cohort;
 
             CohortCompilerUI1.SelectionChanged += CohortCompilerUI1_SelectionChanged;
@@ -83,6 +85,11 @@ namespace Rdmp.UI.SubComponents
             _miClearCache.Image = CatalogueIcons.ExternalDatabaseServer_Cache;
 
             cbIncludeCumulative.CheckedChanged += (s, e) => CohortCompilerUI1.Compiler.IncludeCumulativeTotals = cbIncludeCumulative.Checked;
+
+            //This is important, OrderableComparer ensures IOrderable objects appear in the correct order but the comparator
+            //doesn't get called unless the column has a sorting on it
+            olvNameCol.Sortable = true;
+            tlvCic.Sort(olvNameCol);
         }
 
         void CohortCompilerUI1_SelectionChanged(IMapsDirectlyToDatabaseTable obj)
@@ -114,7 +121,7 @@ namespace Rdmp.UI.SubComponents
                     AddFavouriteColumn = false,
                     AddCheckColumn = false,
                     AllowPinning = false,
-                    AllowSorting =  false,
+                    AllowSorting =  true, //important, we need sorting on so that we can override sort order with our OrderableComparer
                 });
 
                 tlvCic.AddObject(_configuration);

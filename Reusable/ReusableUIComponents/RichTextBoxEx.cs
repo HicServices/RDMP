@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Linq;
 using System.Runtime.InteropServices;
 using System.Windows.Forms;
 
@@ -184,11 +185,19 @@ namespace ReusableUIComponents
 			if (position < 0 || position > this.Text.Length)
 				throw new ArgumentOutOfRangeException("position");
 
+            //if it ends with whitespace then we have to put that outside the RTF
+            var suffix = string.Concat(text.Reverse().TakeWhile(c => c == '\r' || c == '\n' || c == ' ' || c == '\t').Reverse());
+            
 			this.SelectionStart = position;
-			this.SelectedRtf = @"{\rtf1\ansi "+text+@"\v #"+hyperlink+@"\v0}";
+			this.SelectedRtf = @"{\rtf1\ansi "+text.TrimEnd() +@"\v #"+hyperlink+@"\v0}";
 			this.Select(position, text.Length + hyperlink.Length + 1);
 			this.SetSelectionLink(true);
 			this.Select(position + text.Length + hyperlink.Length + 1, 0);
+
+            //avoids bong
+            if(suffix != "")
+                this.SelectedText = suffix;
+
 		}
 
 		/// <summary>

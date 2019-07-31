@@ -86,3 +86,4 @@ ix_PluginNameAndVersionMustBeUnique: Prevents you uploading two copies of the sa
 ix_JoinColumnsMustBeUnique: Prevents you creating two joins involving the same pair of columns
 ix_CumulativeExtractionResultsMustBeUnique: Prevents two release audits of the same extraction record
 ix_OneBinaryPerPlugin: Prevents a Plugin from having more than one binary file (nupkg)
+????: Source column could not be matched to destination table column

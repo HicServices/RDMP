@@ -212,7 +212,7 @@ namespace ReusableUIComponents.ChecksUI
 
         public void Clear()
         {
-            olvChecks.Items.Clear();
+            olvChecks.ClearObjects();
             yesNoYesToAllDialog = new YesNoYesToAllDialog();
         }
 

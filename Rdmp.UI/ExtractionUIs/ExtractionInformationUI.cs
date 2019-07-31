@@ -260,6 +260,9 @@ namespace Rdmp.UI.ExtractionUIs
 
         public override string GetTabName()
         {
+            if(ExtractionInformation == null)
+                return "Loading...";
+
             return ExtractionInformation.GetRuntimeName() + " (" + ExtractionInformation.CatalogueItem.Catalogue.Name +" Extraction Logic)";
         }
     }

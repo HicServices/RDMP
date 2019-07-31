@@ -163,7 +163,7 @@ namespace Rdmp.UI.Validation
             this.tableLayoutPanel1.Name = "tableLayoutPanel1";
             this.tableLayoutPanel1.RowCount = 1;
             this.tableLayoutPanel1.RowStyles.Add(new System.Windows.Forms.RowStyle(System.Windows.Forms.SizeType.Percent, 50F));
-            this.tableLayoutPanel1.Size = new System.Drawing.Size(965, 406);
+            this.tableLayoutPanel1.Size = new System.Drawing.Size(919, 406);
             this.tableLayoutPanel1.TabIndex = 5;
             // 
             // btnAddSecondaryConstraint
@@ -307,14 +307,14 @@ namespace Rdmp.UI.Validation
             this.timer1.Enabled = true;
             this.timer1.Interval = 500;
             // 
-            // ValidationSetupForm
+            // ValidationSetupUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.Controls.Add(this.splitContainer1);
             this.Controls.Add(this.label5);
             this.Controls.Add(this.toolStrip1);
-            this.Name = "ValidationSetupForm";
+            this.Name = "ValidationSetupUI";
             this.Size = new System.Drawing.Size(1183, 584);
             ((System.ComponentModel.ISupportInitialize)(this.olvColumns)).EndInit();
             this.splitContainer1.Panel1.ResumeLayout(false);

@@ -17,7 +17,8 @@ using ReusableLibraryCode.Progress;
 namespace Rdmp.Core.DataLoad.Engine.Job
 {
     /// <summary>
-    /// See DataLoadJob
+    /// Documents an ongoing load that is executing in the Data Load Engine.  This includes the load configuration (LoadMetadata), Logging object (DataLoadInfo),
+    /// file system (LoadDirectory) etc.
     /// </summary>
     public interface IDataLoadJob : IDataLoadEventListener, IDisposeAfterDataLoad
     {

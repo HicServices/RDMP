@@ -174,8 +174,18 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
                 if(DropExistingCohortTableIfExists)
                 {
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "About to drop existing table '" + tbl + "'"));
-                    tbl.Drop();
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Dropped existing table '" + tbl + "'"));
+                    
+                    try
+                    {
+                        tbl.Drop();
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Dropped existing table '" + tbl + "'"));
+                    }
+                    catch(Exception ex)
+                    {
+                        listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Warning dropping '" + tbl + "' failed",ex));
+                    }
+
+                    
                 }
                 else
                 {

@@ -48,7 +48,15 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
         public override ExitCodeType Attach(IDataLoadJob job, GracefulCancellationToken cancellationToken)
         {
             if (string.IsNullOrWhiteSpace(TableName) && TableToLoad != null)
-                TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw,job.Configuration.DatabaseNamer);
+            {
+                var allTables = job.RegularTablesToLoad.Union(job.LookupTablesToLoad).Distinct().ToArray();
+
+                if (!allTables.Contains(TableToLoad))
+                    job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"FlatFileAttacher TableToLoad was '{TableToLoad}' (ID={TableToLoad.ID}) but that table was not one of the tables in the load:{string.Join(",", allTables.Select(t=>"'" + t.Name + "'"))}"));
+
+                TableName = TableToLoad.GetRuntimeName(LoadBubble.Raw, job.Configuration.DatabaseNamer);
+            }
+                
 
             if(TableName != null)
                 TableName = TableName.Trim();

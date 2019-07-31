@@ -54,7 +54,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.5.0" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.2" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.9.4" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="NuDoc" Version="0.5.0" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">

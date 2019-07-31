@@ -24,6 +24,7 @@ using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using System.Linq;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 {
@@ -59,7 +60,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         [DemandsInitialization("Naming of flat files is usually based on Catalogue.Name, if this is true then the Catalogue.Acronym will be used instead",defaultValue:false)]
         public bool UseAcronymForFileNaming { get; set; }
 
-        [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
+        [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: false)]
         public bool CleanExtractionFolderBeforeExtraction { get; set; }
         
         private bool haveOpened = false;
@@ -67,17 +68,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
-            if (_firstTime)
-            {
-                if (CleanExtractionFolderBeforeExtraction)
-                {
-                    var rootDir = _request.GetExtractionDirectory();
-                    rootDir.Delete(true);
-                    rootDir.Create();
-                }
-                _firstTime = false;
-            }
-
             _request.ElevateState(ExtractCommandState.WritingToFile);
 
             if (!haveWrittenBundleContents && _request is ExtractDatasetCommand)
@@ -222,13 +212,11 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 
         private IExtractCommand _request ;
         private DataLoadInfo _dataLoadInfo;
-        private bool _firstTime;
 
         public void PreInitialize(IExtractCommand request, IDataLoadEventListener listener)
         {
             _request = request;
-            _firstTime = true;
-            
+
             if (_request == ExtractDatasetCommand.EmptyCommand)
             {
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Request is ExtractDatasetCommand.EmptyCommand, checking will not be carried out"));
@@ -440,7 +428,22 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 if(string.IsNullOrWhiteSpace(dsRequest.Catalogue.Acronym))
                     notifier.OnCheckPerformed(new CheckEventArgs("Catalogue '" + dsRequest.Catalogue +"' does not have an Acronym but UseAcronymForFileNaming is true",CheckResult.Fail));
             }
+
+            if (CleanExtractionFolderBeforeExtraction)
+            {
+                var rootDir = _request.GetExtractionDirectory();
+                var contents = rootDir.GetFileSystemInfos();
+
+                if (contents.Length > 0
+                    &&
+                    notifier.OnCheckPerformed(new CheckEventArgs(
+                        $"Extraction directory '{rootDir.FullName}' contained {contents.Length} files/folders:\r\n {string.Join(Environment.NewLine, contents.Take(100).Select(e => e.Name))}", CheckResult.Warning,null,"Delete Files"))
+                    )
+                {
+                    rootDir.Delete(true);
+                    rootDir.Create();
+                }                    
+            }
         }
     }
-
 }

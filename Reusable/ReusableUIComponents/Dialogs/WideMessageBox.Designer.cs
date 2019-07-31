@@ -34,11 +34,11 @@
             this.btnViewStackTrace = new System.Windows.Forms.Button();
             this.pbIcon = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
+            this.btnViewSourceCode = new System.Windows.Forms.Button();
+            this.richTextBox1 = new ReusableUIComponents.RichTextBoxEx();
             this.lblMainMessage = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
             this.btnBack = new System.Windows.Forms.Button();
-            this.btnViewSourceCode = new System.Windows.Forms.Button();
-            this.richTextBox1 = new ReusableUIComponents.RichTextBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
@@ -96,8 +96,38 @@
             this.panel1.Dock = System.Windows.Forms.DockStyle.Fill;
             this.panel1.Location = new System.Drawing.Point(0, 0);
             this.panel1.Name = "panel1";
-            this.panel1.Size = new System.Drawing.Size(759, 340);
+            this.panel1.Size = new System.Drawing.Size(759, 303);
             this.panel1.TabIndex = 6;
+            // 
+            // btnViewSourceCode
+            // 
+            this.btnViewSourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
+            this.btnViewSourceCode.Enabled = false;
+            this.btnViewSourceCode.Image = ((System.Drawing.Image)(resources.GetObject("btnViewSourceCode.Image")));
+            this.btnViewSourceCode.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnViewSourceCode.Location = new System.Drawing.Point(693, 7);
+            this.btnViewSourceCode.Name = "btnViewSourceCode";
+            this.btnViewSourceCode.Size = new System.Drawing.Size(58, 23);
+            this.btnViewSourceCode.TabIndex = 7;
+            this.btnViewSourceCode.Text = "Code";
+            this.btnViewSourceCode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
+            this.btnViewSourceCode.UseVisualStyleBackColor = true;
+            // 
+            // richTextBox1
+            // 
+            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.richTextBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
+            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
+            this.richTextBox1.Location = new System.Drawing.Point(53, 38);
+            this.richTextBox1.Name = "richTextBox1";
+            this.richTextBox1.ReadOnly = true;
+            this.richTextBox1.Size = new System.Drawing.Size(694, 222);
+            this.richTextBox1.TabIndex = 3;
+            this.richTextBox1.Text = "";
+            this.richTextBox1.WordWrap = false;
+            this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
             // 
             // lblMainMessage
             // 
@@ -136,43 +166,13 @@
             this.btnBack.UseVisualStyleBackColor = true;
             this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
-            // btnViewSourceCode
-            // 
-            this.btnViewSourceCode.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnViewSourceCode.Enabled = false;
-            this.btnViewSourceCode.Image = ((System.Drawing.Image)(resources.GetObject("btnViewSourceCode.Image")));
-            this.btnViewSourceCode.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnViewSourceCode.Location = new System.Drawing.Point(693, 7);
-            this.btnViewSourceCode.Name = "btnViewSourceCode";
-            this.btnViewSourceCode.Size = new System.Drawing.Size(58, 23);
-            this.btnViewSourceCode.TabIndex = 7;
-            this.btnViewSourceCode.Text = "Code";
-            this.btnViewSourceCode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
-            this.btnViewSourceCode.UseVisualStyleBackColor = true;
-            // 
-            // richTextBox1
-            // 
-            this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.richTextBox1.BackColor = System.Drawing.SystemColors.ControlLightLight;
-            this.richTextBox1.BorderStyle = System.Windows.Forms.BorderStyle.None;
-            this.richTextBox1.Location = new System.Drawing.Point(53, 38);
-            this.richTextBox1.Name = "richTextBox1";
-            this.richTextBox1.ReadOnly = true;
-            this.richTextBox1.Size = new System.Drawing.Size(694, 259);
-            this.richTextBox1.TabIndex = 3;
-            this.richTextBox1.Text = "";
-            this.richTextBox1.WordWrap = false;
-            this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
-            // 
             // WideMessageBox
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(759, 340);
-            this.Controls.Add(this.panel2);
             this.Controls.Add(this.panel1);
+            this.Controls.Add(this.panel2);
             this.FormBorderStyle = System.Windows.Forms.FormBorderStyle.SizableToolWindow;
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.KeyPreview = true;

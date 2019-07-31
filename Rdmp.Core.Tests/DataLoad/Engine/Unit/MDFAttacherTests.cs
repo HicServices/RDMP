@@ -37,7 +37,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             {
                 var attacher = new MDFAttacher();
                 attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
-                Assert.Throws<FileNotFoundException>(() => attacher.Attach(null, new GracefulCancellationToken()));
+                Assert.Throws<FileNotFoundException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
             }
             finally
             {
