@@ -394,7 +394,13 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="incrementOrderOfCollisions"></param>
         public void CreateInsertionPointAtOrder(IOrderable makeRoomFor, int order, bool incrementOrderOfCollisions)
         {
-            foreach (var orderable in GetOrderedContents().ToArray())
+            var contents = GetOrderedContents().ToArray();
+
+            //if there is nobody at that order then we are good
+            if (contents.All(c => c.Order != order))
+                return;
+
+            foreach (var orderable in contents)
             {
                 if (orderable.Order < order)
                     orderable.Order--;
