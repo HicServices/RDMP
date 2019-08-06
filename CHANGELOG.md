@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Fixed 
+- Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
+
 ## [3.1.0]
 
 ### Added

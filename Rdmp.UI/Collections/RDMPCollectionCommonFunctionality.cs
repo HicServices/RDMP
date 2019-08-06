@@ -631,9 +631,17 @@ namespace Rdmp.UI.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
-             if (!exists)
-                //remove it
+            
+            if (!exists)
+            {
+                //clear the current selection (if the object to be deleted is selected)
+                if(Tree.SelectedObject == o)
+                    Tree.SelectedObject = null;
+
+                //remove it from tree
                 Tree.RemoveObject(o);
+            }
+                
 
             if(!IsHiddenByFilter(o))
                 //By preference refresh the parent that way we deal with hierarchy changes

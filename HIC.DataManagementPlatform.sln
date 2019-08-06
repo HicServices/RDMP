@@ -56,6 +56,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.UI", "Plugins\Plugin
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Plugin.Test", "Plugins\Plugin.Test\Plugin.Test.csproj", "{3647CB7F-FA3A-487E-B766-6BD0B8B37579}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documentation", "Documentation", "{BEEC317E-0984-4EA6-AF33-CBF37096E01B}"
+	ProjectSection(SolutionItems) = preProject
+		Documentation\CodeTutorials\FAQ.md = Documentation\CodeTutorials\FAQ.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -495,6 +500,7 @@ Global
 		{D09313E9-0368-47BF-9900-D8296C2581BC} = {FDA39DF9-32DD-4180-AEDA-28AFF7A863AA}
 		{CE554269-9AFC-45FF-9A5B-2289938250CE} = {FDA39DF9-32DD-4180-AEDA-28AFF7A863AA}
 		{3647CB7F-FA3A-487E-B766-6BD0B8B37579} = {FDA39DF9-32DD-4180-AEDA-28AFF7A863AA}
+		{BEEC317E-0984-4EA6-AF33-CBF37096E01B} = {AEDF99FB-885A-4243-8DFE-6A4E3F40D50D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {F1E44105-BBB9-4FF0-8838-6BB62AAA1DBC}
