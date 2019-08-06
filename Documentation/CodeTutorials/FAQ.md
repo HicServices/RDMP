@@ -12,6 +12,8 @@
    1. [Does RDMP Support Schemas?](#schemas)
    1. [Does RDMP Support Views?](#views)
    1. [Does RDMP Support Table Valued Functions?](#tvf)
+1. Cohort Creation
+   1. [Cohort Builder isn't working or is slow](#cicslow)
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
@@ -128,6 +130,20 @@ You cannot load a view with data using the Data Load Engine.
 When importing a table from a Microsoft Sql Server database to create a `Catalogue` any table valued functions in the database will also be shown.  When you import these you will get a `TableInfo` which contains default values to supply to the function when querying it.  You can override these parameters e.g. for a project extraction, cohort identification configuration etc.
 
 ![A Table Valued Function TableInfo](Images/FAQ/TableValuedFunctionExample.png)
+
+## Cohort Builder isn't working or is slow
+
+<a name="cicslow"></a>
+   
+### Cohort Builder is not working with MySql
+
+Cohorts are built by combining datasets (with filters) using SET operations UNION/EXCEPT/INTERSECT.  These queries can become very big and run slowly.  In some DBMS certain operations aren't even supported (e.g. INTERSECT/EXCEPT in MySql).  Therefore it is recommended to create a Query Cache.
+
+![A Table Valued Function TableInfo](Images/FAQ/cicQueryCache.png)
+
+The query cache will be used to store the results of each subquery in indexed temporary tables (of patient identifiers).  The cache also records the SQL executed in order to invalidate the cache if the configuration is changed.
+
+The query cache must be on an SQL Server (or express) database in order to support the full array of SET operators.
 
 ## Data Load Engine
 
