@@ -400,23 +400,25 @@ namespace Rdmp.Core.Curation.Data.Cohort
             if(!useTransaction)
                 return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
 
-            var cataRepo = (CatalogueRepository) Repository;
-
-            
-            using (cataRepo.BeginNewTransactedConnection())
+            if (Repository is ITableRepository tableRepo)
             {
-                try
+                using (tableRepo.BeginNewTransactedConnection())
                 {
-                    var toReturn =  CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
-                    cataRepo.EndTransactedConnection(true);
-                    return toReturn;
-                }
-                catch (Exception)
-                {
-                    cataRepo.EndTransactedConnection(false);//abandon
-                    throw;
+                    try
+                    {
+                        var toReturn =  CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
+                        tableRepo.EndTransactedConnection(true);
+                        return toReturn;
+                    }
+                    catch (Exception)
+                    {
+                        tableRepo.EndTransactedConnection(false);//abandon
+                        throw;
+                    }
                 }
             }
+            else
+                return CreateCloneOfAggregateConfigurationPrivate(toClone, resolveMultipleExtractionIdentifiers);
         }
 
         private AggregateConfiguration CreateCloneOfAggregateConfigurationPrivate(AggregateConfiguration toClone, ChooseWhichExtractionIdentifierToUseFromManyHandler resolveMultipleExtractionIdentifiers)

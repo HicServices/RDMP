@@ -151,6 +151,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="order"></param>
         public void AddChild(AggregateConfiguration configuration, int order)
         {
+            CreateInsertionPointAtOrder(configuration,configuration.Order,true);
             _manager.Add(this, configuration, order);
             configuration.ReFetchOrder();
         }
@@ -184,6 +185,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="child"></param>
         public void AddChild(CohortAggregateContainer child)
         {
+            CreateInsertionPointAtOrder(child,child.Order,true);
             _manager.Add(this,child);
         }
 
