@@ -119,6 +119,9 @@ namespace ReusableLibraryCode.Comments
         /// <param name="obj"></param>
         public void AddXmlDoc(XmlNode obj)
         {
+            if(obj == null)
+                return;
+
             if (obj.Name == "member" && obj.Attributes != null)
             {
                 string memberName = obj.Attributes["name"]?.Value;

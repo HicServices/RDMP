@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Xml;
 using NUnit.Framework;
@@ -79,6 +80,48 @@ this is next para"
                 ,store["WindowFactory"]);
 
         }
+
+
+        [Test]
+        public void Test_CommentStoreXmlDoc_EmptyElements()
+        {
+            var store = new CommentStore();
+            
+            XmlDocument doc = new XmlDocument();
+            doc.LoadXml(
+                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+                <summary></summary>
+                </member>");
+
+            //shouldn't bomb
+            store.AddXmlDoc(null);
+            //also shouldn't bomb but should be 0
+            store.AddXmlDoc(doc.FirstChild.FirstChild);
+            
+            Assert.IsEmpty(store);
+
+            store.AddXmlDoc(doc.FirstChild);
+            Assert.IsEmpty(store);
+
+            doc.LoadXml(
+                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+                <summary>  </summary>
+                </member>");
+
+            store.AddXmlDoc(doc.FirstChild);
+            Assert.IsEmpty(store);
+
+            
+            doc.LoadXml(
+                @" <member name=""T:ResearchDataManagementPlatform.WindowManagement.WindowFactory"">
+                <summary> a </summary>
+                </member>");
+
+            store.AddXmlDoc(doc.FirstChild);
+            Assert.IsNotEmpty(store);
+        }
+
+
         [Test]
         public void Test_CommentStoreXmlDoc_TwoParaBothFormatted()
         {
