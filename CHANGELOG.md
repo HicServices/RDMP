@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ...
 
+### Changed
+
+- Help documentation for objects no longer uses NuDoq library (now faster and more maintainable)
+
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
 - Fixed bug where adding/moving cohort sets between containers (INTERSECT/UNION/EXCEPT) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).

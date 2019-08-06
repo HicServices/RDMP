@@ -16,7 +16,6 @@
 | [NHunspell](http://www.crawler-lib.net/nhunspell) | [SourceForge](https://sourceforge.net/p/nhunspell/code/ci/default/tree/) | [1.2.5554.16953](https://www.nuget.org/packages/NHunspell/1.2.5554.16953) | LGPL / MPL  | Adds spell check support to ScintillaNET text editor |
 | [FAM FAM FAM Icons](http://www.famfamfam.com/lab/icons/silk/) | N\A | N\A | [CC 2.5](https://creativecommons.org/licenses/by/2.5/) | Icons for user interfaces |
 | Xam.Plugins.Settings | [GitHub](https://github.com/jamesmontemagno/SettingsPlugin)| [3.1.1](https://www.nuget.org/packages/Xam.Plugins.Settings/3.1.1) | [MIT](https://opensource.org/licenses/MIT)| Read/Write user settings for main client application |
-| [NuDoc](http://www.cazzulino.com/NuDoq) |[GitHub](https://github.com/kzu/NuDoq) | [0.5.0](https://www.nuget.org/packages/NuDoc/0.5.0) | Apache 2.0 | Read xmldoc files for auto generated user help system in main client application |
 | CommandLineParser | [GitHub](https://github.com/commandlineparser/commandline) | [2.5.0](https://www.nuget.org/packages/CommandLineParser/2.5.0) | [MIT](https://opensource.org/licenses/MIT) | Allows command line arguments for main client application and CLI executables |
 | CsvHelper | [GitHub](https://github.com/JoshClose/CsvHelper) | [12.1.2](https://www.nuget.org/packages/CsvHelper/12.1.2) | MS-PL / Apache 2.0 | Enables reading/writing CSV files |
 | NPOI | [GitHub](https://github.com/tonyqus/npoi) | [2.4.1](https://www.nuget.org/packages/NPOI/2.4.1) | Apache 2.0 | Enables reading/writing Microsoft Excel files |
