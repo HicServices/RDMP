@@ -236,8 +236,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             project = new Project(DataExportRepository, testDbName);
             project.ProjectNumber = 1;
 
-            Directory.CreateDirectory(@"C:\temp\");
-            project.ExtractionDirectory = @"C:\temp\";
+            Directory.CreateDirectory(ProjectDirectory);
+            project.ExtractionDirectory = ProjectDirectory;
 
             project.SaveToDatabase();
 

@@ -73,7 +73,7 @@ namespace Rdmp.UI.Tests
             CommentStore = _commentStore;
 
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,Results);
-            CoreIconProvider = new DataExportIconProvider(repo,null);
+            CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
             FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]

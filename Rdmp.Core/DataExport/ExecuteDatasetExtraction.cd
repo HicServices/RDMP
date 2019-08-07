@@ -219,20 +219,18 @@
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations.ExecuteDatasetExtractionFlatFileDestination">
-    <Position X="15.75" Y="15.25" Width="3.25" />
+    <Position X="19" Y="15.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>QBCCAQyAAiQAACAARAgACAFAIZAAJAAAggIEEAgAQBA=</HashCode>
+      <HashCode>ABAAAQiAACAAICAAAAAAAAAAABAIBABAgAAAEAAIABA=</HashCode>
       <FileName>DataExport\DataExtraction\Pipeline\Destinations\ExecuteDatasetExtractionFlatFileDestination.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations.ExecuteFullExtractionToDatabaseMSSql">
-    <Position X="12" Y="15.25" Width="3.25" />
+    <Position X="11.75" Y="14" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>RBQCCByAAiAQAiCAQCqAEQBAAYAAJLAAggOAJAhgQCA=</HashCode>
+      <HashCode>BBQACByAACAQIiCAAAKAEQAAAAAIBLBAgAOAJAhIACA=</HashCode>
       <FileName>DataExport\DataExtraction\Pipeline\Destinations\ExecuteFullExtractionToDatabaseMSSql.cs</FileName>
     </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.DataExport.DataExtraction.Commands.ExtractGlobalsCommand">
     <Position X="9.5" Y="18.75" Width="2" />
@@ -240,6 +238,14 @@
       <HashCode>ABAAAAAAAAEAAAAEAAAAAAAAAAgAAAAgAAAACEAAAAA=</HashCode>
       <FileName>DataExport\DataExtraction\Commands\ExtractGlobalsCommand.cs</FileName>
     </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations.ExtractionDestination">
+    <Position X="15.25" Y="13.5" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>QBCCAAyAAiQAICAARCgACAFAIYAIJABAggIEAAgIQAA=</HashCode>
+      <FileName>DataExport\DataExtraction\Pipeline\Destinations\ExtractionDestination.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="Rdmp.Core.Curation.Data.Pipelines.IPipeline" Collapsed="true">
     <Position X="3.5" Y="8.25" Width="2" />
@@ -256,7 +262,7 @@
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations.IExecuteDatasetExtractionDestination" Collapsed="true">
-    <Position X="13" Y="13.5" Width="3.25" />
+    <Position X="13.25" Y="11.25" Width="3.25" />
     <TypeIdentifier>
       <HashCode>QBAAAACAAgAAAAAAAAgAAAAAAYAAJAAAgAAAAAAAQAA=</HashCode>
       <FileName>DataExport\DataExtraction\Pipeline\Destinations\IExecuteDatasetExtractionDestination.cs</FileName>

@@ -109,7 +109,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
                 File.WriteAllText(ldf1, "fish");
                 File.WriteAllText(ldf2, "fish");
 
-                string serverDatabasePath = @"c:\temp\";
+                string serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
                 Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
                 
             }

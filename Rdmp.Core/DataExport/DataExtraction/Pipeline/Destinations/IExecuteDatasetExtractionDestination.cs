@@ -31,11 +31,46 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         string OutputFile { get; }
         int SeparatorsStrippedOut { get; }
         string DateFormat { get; }
+        
+        /// <summary>
+        /// Returns a string suitable for naming the extracted artifact e.g. "Biochemistry", or "BIO".  Should not contain a file extension.
+        /// </summary>
+        /// <returns></returns>
         string GetFilename();
+        
+        
+        /// <summary>
+        /// Provide a short description of where the <see cref="ExtractionDestination"/> puts rows e.g. a file path for a csv
+        /// </summary>
+        /// <returns></returns>
         string GetDestinationDescription();
 
+        /// <summary>
+        /// Returns an assessment of how complete the <paramref name="selectedDataSet"/> extraction process is (e.g. does the current configuration
+        /// match the live system, does the extracted file exist on disk / in a database)
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <param name="selectedDataSet"></param>
+        /// <returns></returns>
         ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
+
+
+        /// <summary>
+        /// Factory method, returns a source component (for a release pipeline) which is capable of detecting and packaging up the artifacts created
+        /// by this <see cref="IExecuteDatasetExtractionDestination"/> (destination component for the extraction pipeline)
+        /// </summary>
+        /// <param name="catalogueRepository"></param>
+        /// <returns></returns>
         FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository);
+
+        /// <summary>
+        /// Returns an assessment of how complete the <paramref name="globalResult"/> extraction process is (e.g. does the extracted file exist on disk /
+        /// in a database)
+        /// </summary>
+        /// <param name="repositoryLocator"></param>
+        /// <param name="globalResult"></param>
+        /// <param name="globalToCheck"></param>
+        /// <returns></returns>
         GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
     }
 }

@@ -41,7 +41,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
         public override DataTable GetChunk(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (!_haveCopiedCohortAndAdjustedSql)
+            if (!_haveCopiedCohortAndAdjustedSql && Request != null)
                 CopyCohortToDataServer(listener,cancellationToken);
 
             return base.GetChunk(listener, cancellationToken);
@@ -54,6 +54,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         public static Semaphore OneCrossServerExtractionAtATime = new Semaphore(1, 1);
         private DiscoveredServer _server;
         private DiscoveredDatabase _tempDb;
+        private bool _semaphoreObtained;
+
         public override string HackExtractionSQL(string sql, IDataLoadEventListener listener)
         {
             //call base hacks
@@ -141,6 +143,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
             listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Information,"About to wait for Semaphore OneCrossServerExtractionAtATime to become available"));
             OneCrossServerExtractionAtATime.WaitOne(-1);
+            _semaphoreObtained = true;
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Captured Semaphore OneCrossServerExtractionAtATime"));
 
             try
@@ -213,7 +216,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to release Semaphore OneCrossServerExtractionAtATime"));
-            OneCrossServerExtractionAtATime.Release(1);
+            if(_semaphoreObtained)
+                OneCrossServerExtractionAtATime.Release(1);
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Released Semaphore OneCrossServerExtractionAtATime"));
 
             if(_hadToCreate)
