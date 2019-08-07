@@ -6,6 +6,7 @@
 
 using System.Drawing;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -15,14 +16,17 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
     {
         private readonly Bitmap _basic;
         private Bitmap _projectSpecific;
+        private readonly IDataExportRepository _dataExportRepository;
         private IconOverlayProvider _overlayProvider;
 
 
-        public CatalogueStateBasedIconProvider(IconOverlayProvider overlayProvider)
+        public CatalogueStateBasedIconProvider(IDataExportRepository dataExportRepository,
+            IconOverlayProvider overlayProvider)
         {
             _basic = CatalogueIcons.Catalogue;
             _projectSpecific = CatalogueIcons.ProjectCatalogue;
 
+            _dataExportRepository = dataExportRepository;
             _overlayProvider = overlayProvider;
 
         }
@@ -34,7 +38,7 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
             if (c == null)
                 return null;
 
-            var status = c.GetExtractabilityStatus(null);
+            var status = c.GetExtractabilityStatus(_dataExportRepository);
 
             Bitmap img;
             if (status != null && status.IsExtractable && status.IsProjectSpecific)

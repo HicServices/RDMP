@@ -18,6 +18,7 @@ using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;
@@ -36,13 +37,14 @@ namespace Rdmp.UI.Icons.IconProvision
 
         private DatabaseTypeIconProvider _databaseTypeIconProvider = new DatabaseTypeIconProvider();
 
-        public CatalogueIconProvider(IIconProvider[] pluginIconProviders)
+        public CatalogueIconProvider(IRDMPPlatformRepositoryServiceLocator repositoryLocator,
+            IIconProvider[] pluginIconProviders)
         {
             _pluginIconProviders = pluginIconProviders;
             OverlayProvider = new IconOverlayProvider();
             ImagesCollection = new EnumImageCollection<RDMPConcept>(CatalogueIcons.ResourceManager);
 
-            StateBasedIconProviders.Add(new CatalogueStateBasedIconProvider(OverlayProvider));
+            StateBasedIconProviders.Add(new CatalogueStateBasedIconProvider(repositoryLocator.DataExportRepository,OverlayProvider));
             StateBasedIconProviders.Add(new ExtractionInformationStateBasedIconProvider());
             StateBasedIconProviders.Add(new CheckResultStateBasedIconProvider());
             StateBasedIconProviders.Add(new CohortAggregateContainerStateBasedIconProvider());

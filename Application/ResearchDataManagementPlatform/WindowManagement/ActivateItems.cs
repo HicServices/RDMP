@@ -107,7 +107,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
 
             //handle custom icons from plugin user interfaces in which
-            CoreIconProvider = new DataExportIconProvider(PluginUserInterfaces.ToArray());
+            CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
             
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 

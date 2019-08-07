@@ -16,6 +16,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
 - Fixed bug where adding/moving cohort sets between containers (INTERSECT/UNION/EXCEPT) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
+- Fixed UI bug where selecting an extractable Catalogue would hide it's extractable (small green e) icon overlay
 
 ## [3.1.0]
 
