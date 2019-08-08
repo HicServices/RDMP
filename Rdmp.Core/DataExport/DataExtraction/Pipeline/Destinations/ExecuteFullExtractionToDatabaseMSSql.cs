@@ -348,17 +348,16 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         {
             return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
         }
-
-        protected override void TryExtractSupportingSQLTableImpl(IDataLoadEventListener listener, DiscoveredServer discoveredServer, string sqlSQL,
-            string sqlName, DirectoryInfo directory, IExtractionConfiguration configuration, out int linesWritten,
+        
+        protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten,
             out string destinationDescription)
         {
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download SQL for global SupportingSQL " + sqlName));
-            using (var con = discoveredServer.GetConnection())
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download SQL for global SupportingSQL " + sqlTable.SQL));
+            using (var con = sqlTable.GetServer().GetConnection())
             {
                 con.Open();
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened successfully, about to send SQL command " + sqlSQL));
-                var cmd = DatabaseCommandHelper.GetCommand(sqlSQL, con);
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened successfully, about to send SQL command " + sqlTable.SQL));
+                var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con);
                 var da = DatabaseCommandHelper.GetDataAdapter(cmd);
 
                 var sw = new Stopwatch();
@@ -367,7 +366,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
-                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sqlName));
+                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sqlTable.Name));
                 linesWritten = dt.Rows.Count;
 
                 var destinationDb = GetDestinationDatabase(listener);
@@ -382,8 +381,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         }
 
         
-        protected override void TryExtractLookupTableImpl(IDataLoadEventListener listener, DiscoveredServer server, BundledLookupTable lookup, DirectoryInfo lookupDir,
-            IExtractionConfiguration requestConfiguration, out int linesWritten, out string destinationDescription)
+        protected override void TryExtractLookupTableImpl(BundledLookupTable lookup, DirectoryInfo lookupDir,
+            IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
         {
             var tbl = lookup.TableInfo.Discover(DataAccessContext.DataExport);
             var dt = tbl.GetDataTable();

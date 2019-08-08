@@ -210,8 +210,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         #region Release Related Methods
 
         /// <inheritdoc/>
-        public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);
+        public abstract ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet);        
+        /// <inheritdoc/>
         public abstract GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck);
+        /// <inheritdoc/>
         public abstract FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository);
 
         #endregion
@@ -229,12 +231,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             }
 
             foreach (var doc in request.Globals.Documents)
-                request.Globals.States[doc] = TryExtractSupportingDocument(globalsDirectory, doc, listener)
+                request.Globals.States[doc] = TryExtractSupportingDocument(doc,globalsDirectory, listener)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
 
             foreach (var sql in request.Globals.SupportingSQL)
-                request.Globals.States[sql] = TryExtractSupportingSQLTable(globalsDirectory, request.Configuration, sql, listener, dataLoadInfo)
+                request.Globals.States[sql] = TryExtractSupportingSQLTable(sql,globalsDirectory, request.Configuration, listener, dataLoadInfo)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
         }
@@ -247,13 +249,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                        
             //extract the documents
             foreach (SupportingDocument doc in datasetBundle.Documents)
-                datasetBundle.States[doc] = TryExtractSupportingDocument(rootDir, doc, job)
+                datasetBundle.States[doc] = TryExtractSupportingDocument(doc,rootDir, job)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
 
             //extract supporting SQL
             foreach (SupportingSQLTable sql in datasetBundle.SupportingSQL)
-                datasetBundle.States[sql] = TryExtractSupportingSQLTable(supportingSQLFolder, _request.Configuration, sql, job, _dataLoadInfo)
+                datasetBundle.States[sql] = TryExtractSupportingSQLTable(sql,supportingSQLFolder, _request.Configuration, job, _dataLoadInfo)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
 
@@ -261,13 +263,13 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             foreach (BundledLookupTable lookup in datasetBundle.LookupTables)
             {
                 
-                datasetBundle.States[lookup] = TryExtractLookupTable(lookup,job, lookupDir)
+                datasetBundle.States[lookup] = TryExtractLookupTable(lookup, lookupDir,job)
                     ? ExtractCommandState.Completed
                     : ExtractCommandState.Crashed;
             }
         }
 
-        protected bool TryExtractLookupTable(BundledLookupTable lookup,IDataLoadEventListener job, DirectoryInfo lookupDir)
+        protected bool TryExtractLookupTable(BundledLookupTable lookup, DirectoryInfo lookupDir,IDataLoadEventListener job)
         {
             Stopwatch sw = new Stopwatch();
             sw.Start();
@@ -276,9 +278,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             
             try
             {
-                var server = DataAccessPortal.GetInstance().ExpectServer(lookup.TableInfo, DataAccessContext.DataExport);
-
-                TryExtractLookupTableImpl(job,server,lookup,lookupDir,_request.Configuration,out int linesWritten, out string destinationDescription);
+                TryExtractLookupTableImpl(lookup,lookupDir,_request.Configuration,job,out int linesWritten, out string destinationDescription);
 
                 sw.Stop();
                 job.OnProgress(this, new ProgressEventArgs("Lookup " + lookup, new ProgressMeasurement(linesWritten, ProgressType.Records), sw.Elapsed));
@@ -307,7 +307,14 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             }
         }
         
-        protected virtual bool TryExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
+        /// <summary>
+        /// Extracts the <paramref name="doc"/> into the supplied <paramref name="directory"/> (unless overridden to put it somewhere else)
+        /// </summary>
+        /// <param name="doc"></param>
+        /// <param name="directory"></param>
+        /// <param name="listener"></param>
+        /// <returns></returns>
+        protected virtual bool TryExtractSupportingDocument(SupportingDocument doc, DirectoryInfo directory, IDataLoadEventListener listener)
         {
             SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(doc);
 
@@ -342,7 +349,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             }
         }
 
-        protected bool TryExtractSupportingSQLTable(DirectoryInfo directory, IExtractionConfiguration configuration,SupportingSQLTable sql, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        protected bool TryExtractSupportingSQLTable(SupportingSQLTable sql, DirectoryInfo directory, IExtractionConfiguration configuration, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
         {
             try
             {
@@ -355,7 +362,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 string target = Path.Combine(directory.FullName, sql.Name + ".csv");
                 var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", target, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
 
-                TryExtractSupportingSQLTableImpl(listener,sql.GetServer(), sql.SQL, sql.Name,directory,configuration, out int sqlLinesWritten,out string description);
+                TryExtractSupportingSQLTableImpl(sql,directory,configuration,listener, out int sqlLinesWritten,out string description);
                 
                 sw.Stop();
 
@@ -398,17 +405,17 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             }
         }
 
-        protected virtual void TryExtractSupportingSQLTableImpl(IDataLoadEventListener listener, DiscoveredServer discoveredServer, string sqlSQL, string sqlName, DirectoryInfo directory, IExtractionConfiguration configuration, out int linesWritten, out string destinationDescription)
+        protected virtual void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
         {
-            var extractor = new ExtractTableVerbatim(discoveredServer, sqlSQL, sqlName,directory, configuration.Separator, DateFormat);
+            var extractor = new ExtractTableVerbatim(sqlTable.GetServer(),sqlTable.SQL,sqlTable.Name,directory, configuration.Separator, DateFormat);
             linesWritten = extractor.DoExtraction();
             destinationDescription = extractor.OutputFilename;
         }
 
-        protected virtual void TryExtractLookupTableImpl(IDataLoadEventListener listener, DiscoveredServer server, BundledLookupTable lookup, DirectoryInfo lookupDir, IExtractionConfiguration requestConfiguration, out int linesWritten, out string destinationDescription)
-        {
+        protected virtual void TryExtractLookupTableImpl( BundledLookupTable lookup, DirectoryInfo lookupDir, IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
+        {            
             //extracts all of them
-            var extractTableVerbatim = new ExtractTableVerbatim(server, new[] { lookup.TableInfo.Name }, lookupDir, _request.Configuration.Separator, DateFormat);
+            var extractTableVerbatim = new ExtractTableVerbatim(lookupDir, _request.Configuration.Separator, DateFormat,lookup.TableInfo.Discover(DataAccessContext.DataExport));
             linesWritten = extractTableVerbatim.DoExtraction();
             destinationDescription = extractTableVerbatim.OutputFilename;
         }
