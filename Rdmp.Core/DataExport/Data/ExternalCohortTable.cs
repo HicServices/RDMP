@@ -171,6 +171,41 @@ namespace Rdmp.Core.DataExport.Data
             return SelfCertifyingDataAccessPoint.Discover(DataAccessContext.DataExport);
         }
 
+        /// <inheritdoc/>
+        public DiscoveredTable DiscoverCohortTable()
+        {
+            var db = Discover();
+            return db.ExpectTable(db.Server.GetQuerySyntaxHelper().GetRuntimeName(TableName));
+        }
+
+        public DiscoveredTable DiscoverDefinitionTable()
+        {
+            var db = Discover();
+            return db.ExpectTable(db.Server.GetQuerySyntaxHelper().GetRuntimeName(DefinitionTableName));
+        }
+
+        /// <inheritdoc/>
+        public DiscoveredColumn DiscoverPrivateIdentifier()
+        {
+            return Discover(DiscoverCohortTable(), PrivateIdentifierField);
+        }
+        /// <inheritdoc/>
+        public DiscoveredColumn DiscoverReleaseIdentifier()
+        {
+            return Discover(DiscoverCohortTable(), ReleaseIdentifierField);
+        }
+
+        public DiscoveredColumn DiscoverDefinitionTableForeignKey()
+        {
+            return Discover(DiscoverCohortTable(), DefinitionTableForeignKeyField);
+        }
+
+        private DiscoveredColumn Discover(DiscoveredTable tbl, string column)
+        {
+            return tbl.DiscoverColumn(tbl.Database.Server.GetQuerySyntaxHelper().GetRuntimeName(column));
+        }
+        
+
         /// <summary>
         /// Checks that the remote cohort storage database described by this class exists and contains a compatible schema.
         /// </summary>
@@ -221,23 +256,21 @@ namespace Rdmp.Core.DataExport.Data
         {
             try
             {
-                var database = DataAccessPortal.GetInstance().ExpectDatabase(this, DataAccessContext.DataExport);
+                var database = Discover();
 
-                DiscoveredTable cohortTable = database.ExpectTable(TableName);
+                DiscoveredTable cohortTable = DiscoverCohortTable();
                 if (cohortTable.Exists())
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs("Found table " + cohortTable + " in database " + Database, CheckResult.Success, null));
-
-                    var columns = cohortTable.DiscoverColumns();
-
-                    ComplainIfColumnMissing(TableName, columns, PrivateIdentifierField, notifier);
-                    ComplainIfColumnMissing(TableName, columns, ReleaseIdentifierField, notifier);
-                    ComplainIfColumnMissing(TableName, columns, DefinitionTableForeignKeyField, notifier);
+                    
+                    DiscoverPrivateIdentifier();
+                    DiscoverReleaseIdentifier();
+                    DiscoverDefinitionTableForeignKey();
                 }
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not find table " + TableName + " in database " + Database, CheckResult.Fail, null));
 
-                DiscoveredTable foundCohortDefinitionTable = database.ExpectTable(DefinitionTableName);
+                DiscoveredTable foundCohortDefinitionTable = DiscoverDefinitionTable();
 
                 if (foundCohortDefinitionTable.Exists())
                 {
@@ -247,7 +280,6 @@ namespace Rdmp.Core.DataExport.Data
                     
                     foreach (string requiredField in ExternalCohortTable.CohortDefinitionTable_RequiredFields)
                         ComplainIfColumnMissing(DefinitionTableName, cols, requiredField, notifier);
-
                 }
                 else
                     notifier.OnCheckPerformed(new CheckEventArgs("Could not find table " + DefinitionTableName + " in database " + Database, CheckResult.Fail, null));
@@ -275,7 +307,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public void PushToServer(ICohortDefinition newCohortDefinition,IManagedConnection connection)
         {
-            newCohortDefinition.ID = Discover().ExpectTable(DefinitionTableName).Insert(new Dictionary<string, object>()
+            newCohortDefinition.ID = DiscoverDefinitionTable().Insert(new Dictionary<string, object>()
             {
                 {"projectNumber",newCohortDefinition.ProjectNumber},
                 {"version",newCohortDefinition.Version},

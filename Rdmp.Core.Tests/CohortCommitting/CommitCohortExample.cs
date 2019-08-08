@@ -77,7 +77,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
             Assert.AreEqual(500,cohort.ExternalProjectNumber);
             Assert.AreEqual(2,cohort.CountDistinct);
 
-            var tbl = externalCohortTable.Discover().ExpectTable(externalCohortTable.TableName);
+            var tbl = externalCohortTable.DiscoverCohortTable();
             Assert.AreEqual(2,tbl.GetRowCount());
             var dtInDatabase = tbl.GetDataTable();
             

@@ -9,11 +9,10 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
-using Newtonsoft.Json.Linq;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -21,9 +20,7 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
-using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -259,8 +256,14 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if (_destinationDatabase == null)
                 throw new Exception("Cannot pick a TableName until we know what type of server it is going to, _server is null");
 
+            //get rid of brackets and dots
+            tblName = Regex.Replace(tblName,"[.()]", "_");
+
+            var syntax = _destinationDatabase.Server.GetQuerySyntaxHelper();
+            syntax.ValidateTableName(tblName);
+
             //otherwise, fetch and cache answer
-            string cachedGetTableNameAnswer = _destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
+            string cachedGetTableNameAnswer = syntax.GetSensibleTableNameFromString(tblName);
 
             if (String.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
                 throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" + _request + "'");
@@ -527,11 +530,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Could not connect to TargetDatabaseServer '" + TargetDatabaseServer  +"'", CheckResult.Fail, e));
             }
-        }
-
-        public void PreInitialize(IProject value, IDataLoadEventListener listener)
-        {
-            this._project = value;
         }
     }
 }

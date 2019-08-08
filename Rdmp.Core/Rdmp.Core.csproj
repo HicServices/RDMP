@@ -233,7 +233,6 @@
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.7" />
     <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.9.5" />
     <PackageReference Include="NPOI" Version="2.4.1" />
     <PackageReference Include="System.Diagnostics.Debug" Version="4.3.0" />
     <PackageReference Include="System.IO.FileSystem.Primitives" Version="4.3.0" />

@@ -269,17 +269,18 @@ namespace Rdmp.Core.DataExport.Data
         {
             var ect = ExternalCohortTable;
 
-            var db = ect.Discover();
-            using (var con = db.Server.GetConnection())
+            var cohortTable = ect.DiscoverCohortTable();
+
+            using (var con = cohortTable.Database.Server.GetConnection())
             {
                 con.Open();
-                string sql = "SELECT DISTINCT * FROM " + ect.TableName + " WHERE " + this.WhereSQL();
+                string sql = "SELECT DISTINCT * FROM " + cohortTable.GetFullyQualifiedName() + " WHERE " + this.WhereSQL();
 
-                var da = db.Server.GetDataAdapter(sql, con);
+                var da = cohortTable.Database.Server.GetDataAdapter(sql, con);
                 var dtReturn = new DataTable();
                 da.Fill(dtReturn);
 
-                dtReturn.TableName = ect.GetQuerySyntaxHelper().GetRuntimeName(ect.TableName);
+                dtReturn.TableName = cohortTable.GetRuntimeName();
                 
                 return dtReturn;
             }
@@ -414,22 +415,14 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public string GetPrivateIdentifierDataType()
         {
-            DiscoveredTable table = ExternalCohortTable.Discover().ExpectTable(ExternalCohortTable.TableName);
-            
-            //discover the column
-            return table.DiscoverColumn(GetPrivateIdentifier(true))
-                .DataType.SQLType; //and return it's datatype
+            return ExternalCohortTable.DiscoverPrivateIdentifier().DataType.SQLType;
             
         }
 
         /// <inheritdoc/>
         public string GetReleaseIdentifierDataType()
         {
-            DiscoveredTable table = ExternalCohortTable.Discover().ExpectTable(ExternalCohortTable.TableName);
-
-            //discover the column
-            return table.DiscoverColumn(GetReleaseIdentifier(true))
-                .DataType.SQLType; //and return it's datatype
+            return ExternalCohortTable.DiscoverReleaseIdentifier().DataType.SQLType;
         }
         
 
