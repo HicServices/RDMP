@@ -33,8 +33,8 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
         [DemandsInitialization("Database to upload the cohort to prior to linking", defaultValue: "tempdb",mandatory:true)]
         public string TemporaryDatabaseName { get; set; }
 
-        [DemandsInitialization("Determines behaviour if TemporaryDatabaseName is not found on the dataset server.  True to create it as a new database (and drop it afterwards), False to crash", defaultValue: true)]
-        public bool CreateAndDestroyTemporaryDatabaseIfNotExists { get; set; }
+        [DemandsInitialization("Determines behaviour if TemporaryDatabaseName is not found on the dataset server.  True to create it as a new database, False to crash", defaultValue: true)]
+        public bool CreateTemporaryDatabaseIfNotExists { get; set; }
 
         [DemandsInitialization("Determines behaviour if TemporaryDatabaseName already contains a Cohort table.  True to drop it, False to crash", defaultValue: true)]
         public bool DropExistingCohortTableIfExists { get; set; }
@@ -158,7 +158,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
             
             //make sure tempdb exists (this covers you for servers where it doesn't exist e.g. mysql or when user has specified a different database name)
             if (!_tempDb.Exists())
-                if (CreateAndDestroyTemporaryDatabaseIfNotExists)
+                if (CreateTemporaryDatabaseIfNotExists)
                 {
                     _tempDb.Create();
                     _hadToCreate = true;
@@ -220,32 +220,18 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
                 OneCrossServerExtractionAtATime.Release(1);
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Released Semaphore OneCrossServerExtractionAtATime"));
 
-            if(_hadToCreate)
+            foreach (DiscoveredTable table in tablesToCleanup)
             {
-                //we created the db in the first place
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to drop database '" + _tempDb + "'"));
-                _tempDb.Drop();
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Dropped database '" + _tempDb +"' Successfully"));
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to drop table '" + table+"'"));
+                table.Drop();
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Dropped table '" + table + "'"));
             }
-            else
-            {
-                //we did not create the database but we did create the table
-                foreach (DiscoveredTable table in tablesToCleanup)
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to drop table '" + table+"'"));
-                    table.Drop();
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Dropped table '" + table + "'"));
-                }
-            }
-           
           
             base.Dispose(listener, pipelineFailureExceptionIfAny);
         }
 
         public override void Check(ICheckNotifier notifier)
         {
-            
-
             notifier.OnCheckPerformed(new CheckEventArgs("Checking not supported for Cross Server extraction since it involves shipping off the cohort into tempdb.",CheckResult.Warning));
         }
 

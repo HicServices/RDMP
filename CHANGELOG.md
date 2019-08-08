@@ -12,6 +12,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
 
 - Help documentation for objects no longer uses NuDoq library (now faster and more maintainable)
+- Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
 
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
