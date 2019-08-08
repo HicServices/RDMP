@@ -13,6 +13,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Help documentation for objects no longer uses NuDoq library (now faster and more maintainable)
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
+- Updated to latest version of [FAnsiSql] (0.9.5) for better Oracle support (and table/database name validation)
 
 ### Fixed 
 - Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
