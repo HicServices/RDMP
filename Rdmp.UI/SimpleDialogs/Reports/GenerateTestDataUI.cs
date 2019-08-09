@@ -282,7 +282,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
                 _seed = int.Parse(tbSeed.Text);
                 tbSeed.ForeColor= Color.Black;
 
-            }catch(Exception ex)
+            }catch(Exception )
             {
                 _seed = null;
                 tbSeed.ForeColor= Color.Red;

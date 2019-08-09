@@ -102,7 +102,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="repository"></param>
         /// <param name="initialSearchText"></param>
-        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
         /// <returns></returns>
         protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
@@ -116,7 +116,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <param name="repository"></param>
         /// <param name="selected"></param>
         /// <param name="initialSearchText"></param>
-        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
@@ -130,6 +130,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <param name="availableObjects"></param>
         /// <param name="selected"></param>
         /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {

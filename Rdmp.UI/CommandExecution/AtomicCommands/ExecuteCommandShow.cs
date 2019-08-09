@@ -20,7 +20,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     public class ExecuteCommandShow : BasicUICommandExecution,IAtomicCommand
     {
         private IMapsDirectlyToDatabaseTable _objectToShow;
-        private Func<IEnumerable<CatalogueItem>> p;
         private readonly IMapsDirectlyToDatabaseTable[] _objectsToPickFrom;
 
 
