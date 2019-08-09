@@ -46,9 +46,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
 
             return base.GetChunk(listener, cancellationToken);
         }
-
-        private bool _hadToCreate = false;
-
+        
         private List<DiscoveredTable> tablesToCleanup = new List<DiscoveredTable>();
 
         public static Semaphore OneCrossServerExtractionAtATime = new Semaphore(1, 1);
@@ -159,14 +157,10 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources
             //make sure tempdb exists (this covers you for servers where it doesn't exist e.g. mysql or when user has specified a different database name)
             if (!_tempDb.Exists())
                 if (CreateTemporaryDatabaseIfNotExists)
-                {
                     _tempDb.Create();
-                    _hadToCreate = true;
-                }
                 else
                     throw new Exception("Database '" + _tempDb + "' did not exist on server '" + _server + "' and CreateAndDestroyTemporaryDatabaseIfNotExists was false");
-            else
-                _hadToCreate = false;
+  
 
             var tbl = _tempDb.ExpectTable(cohortDataTable.TableName);
             
