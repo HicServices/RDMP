@@ -389,7 +389,7 @@ namespace Rdmp.Core.Reports.ExtractionTime
             float futureRecordsCountAsFraction = ((float)futureRecordsCount) / ((float)Executer.Destination.TableLoadInfo.Inserts) * 100.0f;
             float nullCountAsFraction = ((float)toGraph.countOfNullsSeen) / ((float)Executer.Destination.TableLoadInfo.Inserts) * 100.0f;
             float brokenDatesAsFraction = ((float)toGraph.countOfBrokenDates) / ((float)Executer.Destination.TableLoadInfo.Inserts) * 100.0f;
-            float recordsPriorToDatasetStartCountAsFraction = ((float)recordsPriorToDatasetStartCount) / ((float)Executer.Destination.TableLoadInfo.Inserts) * 100.0f; ;
+            float recordsPriorToDatasetStartCountAsFraction = ((float)recordsPriorToDatasetStartCount) / ((float)Executer.Destination.TableLoadInfo.Inserts) * 100.0f;
             
             wordHelper.WriteLine("Nulls:" + toGraph.countOfNullsSeen + "(" + nullCountAsFraction + "%)", WdBuiltinStyle.wdStyleNormal);
             wordHelper.WriteLine("Invalid Date formats:" + toGraph.countOfBrokenDates + "(" + brokenDatesAsFraction + "%)", WdBuiltinStyle.wdStyleNormal);

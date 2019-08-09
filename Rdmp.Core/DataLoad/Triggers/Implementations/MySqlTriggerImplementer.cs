@@ -38,7 +38,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             catch (Exception exception)
             {
                 //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
-                problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine; ;
+                problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
             }
         }
 

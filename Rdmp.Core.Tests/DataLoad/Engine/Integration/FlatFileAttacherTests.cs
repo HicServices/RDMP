@@ -38,7 +38,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [SetUp]
         public void CreateTestDatabase()
         {
-            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
             DirectoryInfo toCleanup = parentDir.GetDirectories().SingleOrDefault(d => d.Name.Equals("Test_CSV_Attachment"));

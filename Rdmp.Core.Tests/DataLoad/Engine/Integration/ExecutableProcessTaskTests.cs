@@ -45,7 +45,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 
                 Assert.AreEqual(1, runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>().Count());
 
-                var dictionaryOfStringArguments = runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>().ToDictionary(kvp => kvp.Key, kvp => kvp.Value); ;
+                var dictionaryOfStringArguments = runtimeTask.RuntimeArguments.GetAllArgumentsOfType<string>().ToDictionary(kvp => kvp.Key, kvp => kvp.Value);
                 Assert.IsNotNull(dictionaryOfStringArguments["DatabaseName"]);
                 Assert.AreEqual("Foo_STAGING", dictionaryOfStringArguments["DatabaseName"]);
             }

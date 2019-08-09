@@ -255,7 +255,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
         [Test]
         public void TestFactory()
         {
-            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 

@@ -119,7 +119,7 @@ namespace Rdmp.Core.Reports
         /// Pass false for active or true for expired
         /// </summary>
         /// <param name="govs"></param>
-        /// <param name="sb"></param>
+        /// <param name="writer"></param>
         /// <param name="expired"></param>
         private void OutputGovernanceList(Dictionary<GovernancePeriod, ICatalogue[]> govs, CsvWriter writer, bool expired)
         {

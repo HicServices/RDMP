@@ -53,7 +53,7 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Secondary
             b.LowerFieldName = "dob";
             b.Upper = DateTime.MaxValue;
 
-            Assert.NotNull(CallValidateOnInvalidData("admission_date", b)); ;
+            Assert.NotNull(CallValidateOnInvalidData("admission_date", b));
         }
 
 

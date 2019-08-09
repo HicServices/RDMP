@@ -114,7 +114,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             queryCacheServer.SetProperties(cachedb);
             
             //Create a Cohort Identification configuration (query) that will identify the cohort
-            CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs"); ;
+            CohortIdentificationConfiguration cic = new CohortIdentificationConfiguration(RepositoryLocator.CatalogueRepository, "RefreshCohort.cs");
 
             try
             {
