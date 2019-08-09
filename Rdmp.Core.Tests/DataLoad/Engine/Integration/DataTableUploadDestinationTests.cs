@@ -54,7 +54,11 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             destination.ProcessPipelineData( dt1, toConsole,token);
             var ex = Assert.Throws<Exception>(()=>destination.ProcessPipelineData( dt2, toConsole,token));
 
-            Assert.IsTrue(ex.InnerException.Message.Contains("Received an invalid column length from the bcp client for colid 1."));
+            string expectedText =
+                "BulkInsert failed on data row 1 the complaint was about source column <<name>> which had value <<BigFish>> destination data type was <<varchar(4)>>";
+            
+            Assert.IsNotNull(ex.InnerException);
+            StringAssert.Contains(expectedText,ex.InnerException.Message);
 
             destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
         }
@@ -149,7 +153,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 var interestingBit = exceptionMessage.Substring(exceptionMessage.IndexOf(": <<") + ": ".Length);
                 
                 string expectedErrorMessage = "<<" + errorColumn + ">> which had value <<"+dt1.Rows[0][errorColumn]+">> destination data type was <<varchar(1)>>";
-                Assert.AreEqual(expectedErrorMessage,interestingBit);
+                StringAssert.Contains(expectedErrorMessage,interestingBit);
 
                 destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
                 tbl.Drop();
@@ -207,7 +211,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             var interestingBit = exceptionMessage.Substring(exceptionMessage.IndexOf(": <<") + ": ".Length);
 
             string expectedErrorMessage = "<<color>> which had value <<blue>> destination data type was <<varchar(1)>>";
-            Assert.AreEqual(expectedErrorMessage, interestingBit);
+            StringAssert.Contains(expectedErrorMessage, interestingBit);
             
             destination.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
 
