@@ -30,6 +30,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
     <PackageReference Include="YamlDotNet" Version="6.1.1" />
   </ItemGroup>
   <ItemGroup>

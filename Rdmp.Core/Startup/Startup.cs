@@ -69,6 +69,9 @@ namespace Rdmp.Core.Startup
         {
             bool foundCatalogue = false;
 
+            notifier.OnCheckPerformed(new CheckEventArgs("Environment TargetFramework:" + _environmentInfo.TargetFramework, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("Environment RuntimeIdentifier:" + _environmentInfo.RuntimeIdentifier, CheckResult.Success));
+            
             notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
 
             Assembly.Load(typeof(Catalogue).Assembly.FullName);

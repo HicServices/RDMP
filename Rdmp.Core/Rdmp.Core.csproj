@@ -248,6 +248,7 @@
     </PackageReference>
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="SSH.NET" Version="2016.1.0" />
+    <PackageReference Include="System.Threading.ThreadPool" Version="4.3.0" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />

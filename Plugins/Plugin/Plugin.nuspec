@@ -34,6 +34,7 @@
             <dependency id="System.IO.FileSystem" version="4.3.0" />
             <dependency id="System.Runtime.Extensions" version="4.3.0" />
             <dependency id="System.Threading" version="4.3.0" />
+            <dependency id="System.Threading.ThreadPool" version="4.3.0" />
             <dependency id="System.Globalization" version="4.3.0" />
             <dependency id="System.Net.NameResolution" version="4.3.0" />
             <dependency id="System.Net.Primitives" version="4.3.0" /> 
