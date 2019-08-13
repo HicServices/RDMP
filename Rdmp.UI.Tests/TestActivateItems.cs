@@ -123,13 +123,7 @@ namespace Rdmp.UI.Tests
         {
             Emphasise?.Invoke(sender, new EmphasiseEventArgs(request));
         }
-
-        public void ActivateLookupConfiguration(object sender, Catalogue catalogue, TableInfo optionalLookupTableInfo = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        
+                
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             throw new NotImplementedException();

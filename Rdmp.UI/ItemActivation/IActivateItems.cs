@@ -130,9 +130,6 @@ namespace Rdmp.UI.ItemActivation
         /// </summary>
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
 
-        void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
-        
-
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);

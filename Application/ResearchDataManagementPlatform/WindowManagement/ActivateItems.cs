@@ -325,14 +325,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
         }
 
-        public void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null)
-        {
-            var t = Activate<LookupConfigurationUI, Catalogue>(catalogue);
-            
-            if(optionalLookupTableInfo != null)
-                t.SetLookupTableInfo(optionalLookupTableInfo);
-        }
-        
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             //if the collection an arbitrary one then it is definetly not the root collection for anyone
