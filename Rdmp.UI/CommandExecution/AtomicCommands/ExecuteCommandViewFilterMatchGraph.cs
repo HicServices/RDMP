@@ -8,9 +8,11 @@ using System.Drawing;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
@@ -58,8 +60,27 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             
             if(selected == null)
                 return;
+            
+            //if it's a cohort set
+            if (_filter is AggregateFilter aggFilter && aggFilter.GetAggregate().IsCohortIdentificationAggregate)
+            {
+                var cohortAggregate = aggFilter.GetAggregate();
 
-            Activator.ViewFilterGraph(this, new FilterGraphObjectCollection(selected, (ConcreteFilter)_filter));
+                //use this instead
+                var cmd = new ExecuteCommandViewCohortAggregateGraph(Activator,
+                    new CohortSummaryAggregateGraphObjectCollection(cohortAggregate,
+                    selected,
+                    CohortSummaryAdjustment.WhereRecordsIn,
+                    aggFilter));
+                    
+                cmd.Execute();
+            }
+            else
+            {
+                var collection = new FilterGraphObjectCollection(selected, (ConcreteFilter)_filter);
+                Activator.Activate<FilterGraphUI>(collection);
+            }
+                
         }
     }
 }

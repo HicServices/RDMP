@@ -132,8 +132,6 @@ namespace Rdmp.UI.ItemActivation
 
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
 
-        void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
-
         void ActivateViewLog(LoadMetadata loadMetadata);
 
         IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);

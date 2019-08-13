@@ -333,25 +333,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 t.SetLookupTableInfo(optionalLookupTableInfo);
         }
         
-        public void ViewFilterGraph(object sender,FilterGraphObjectCollection collection)
-        {
-            var aggFilter = collection.GetFilter() as AggregateFilter;
-
-            //if it's a cohort set
-            if(aggFilter != null && aggFilter.GetAggregate().IsCohortIdentificationAggregate)
-            {
-                var cohortAggregate = aggFilter.GetAggregate();
-                //use this instead
-                new ExecuteCommandViewCohortAggregateGraph(this, 
-                    new CohortSummaryAggregateGraphObjectCollection(cohortAggregate,collection.GetGraph(),CohortSummaryAdjustment.WhereRecordsIn,aggFilter))
-                    .Execute();
-
-                return;
-            }
-
-            Activate<FilterGraphUI>(collection);
-        }
-
         public void ActivateViewLog(LoadMetadata loadMetadata)
         {
             new ExecuteCommandViewLoadMetadataLogs(this).SetTarget(loadMetadata).Execute();

@@ -129,10 +129,6 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public void ViewFilterGraph(object sender, FilterGraphObjectCollection collection)
-        {
-            throw new NotImplementedException();
-        }
 
         public void ActivateViewLog(LoadMetadata loadMetadata)
         {
