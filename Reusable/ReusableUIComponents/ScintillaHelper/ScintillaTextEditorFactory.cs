@@ -60,7 +60,10 @@ namespace ReusableUIComponents.ScintillaHelper
             if (language == "csharp")
                 SetCSharpHighlighting(toReturn);
 
-            if(commandFactory != null)
+            if (language == "xml")
+                SetLexerEnumHighlighting(toReturn,Lexer.Xml);           
+
+            if (commandFactory != null)
             {
                 toReturn.AllowDrop = true;
                 toReturn.DragEnter += (s, e) => OnDragEnter(s, e, commandFactory);
@@ -241,6 +244,23 @@ namespace ReusableUIComponents.ScintillaHelper
 
             scintilla.Lexer = Lexer.Container;
             scintilla.StyleNeeded += (s,e)=>scintilla_StyleNeeded(scintilla,e);
+        }
+
+        private void SetLexerEnumHighlighting(Scintilla scintilla, Lexer lexer)
+        {
+            scintilla.StyleResetDefault();
+
+            scintilla.Styles[Style.Default].Font = "Consolas";
+            scintilla.Styles[Style.Default].Size = 10;
+            scintilla.StyleClearAll();
+
+            scintilla.Styles[CSharpLexer.StyleDefault].ForeColor = Color.Black;
+            scintilla.Styles[CSharpLexer.StyleKeyword].ForeColor = Color.Blue;
+            scintilla.Styles[CSharpLexer.StyleIdentifier].ForeColor = Color.Teal;
+            scintilla.Styles[CSharpLexer.StyleNumber].ForeColor = Color.Purple;
+            scintilla.Styles[CSharpLexer.StyleString].ForeColor = Color.Red;
+
+            scintilla.Lexer = lexer;
         }
     }
 }
