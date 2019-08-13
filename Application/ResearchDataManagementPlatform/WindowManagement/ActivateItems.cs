@@ -165,16 +165,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             CoreChildProvider.GetPluginChildren();
             RefreshBus.ChildProvider = CoreChildProvider;
         }
-
-        public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control,DatabaseEntity objectOfTypeT)
-        {
-            var content = WindowFactory.Create(this,control,objectOfTypeT);
-            content.Show(_mainDockPanel, DockState.Document);
-            control.SetDatabaseObject(this,objectOfTypeT);
-
-            return content;
-        }
-
+        
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
         {

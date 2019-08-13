@@ -88,13 +88,10 @@ namespace Rdmp.UI.Tests
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
         {
-            throw new NotImplementedException();
+            _uiTests.AndLaunch(singleControlForm);
+            return singleControlForm.FindForm();
         }
 
-        public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity objectOfTypeT)
-        {
-            throw new NotImplementedException();
-        }
 
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         public ICoreIconProvider CoreIconProvider { get; private set; }
@@ -110,12 +107,16 @@ namespace Rdmp.UI.Tests
 
         public T Activate<T>(IPersistableObjectCollection collection) where T : Control, IObjectCollectionControl, new()
         {
-            throw new NotImplementedException();
+            T t = new T();
+            _uiTests.AndLaunch(t);
+            t.SetCollection(this, collection);
+            return t;
         }
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
-            throw new NotImplementedException();
+            deleteable.DeleteInDatabase();
+            return true;
         }
 
         public event EmphasiseItemHandler Emphasise;
@@ -146,7 +147,7 @@ namespace Rdmp.UI.Tests
 
         public string GetDocumentation(Type type)
         {
-            throw new NotImplementedException();
+            return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
         }
 
         public string CurrentDirectory { get { return TestContext.CurrentContext.TestDirectory; }}

@@ -74,23 +74,34 @@ namespace Rdmp.UI.Tests
         public T AndLaunch<T>(DatabaseEntity o,bool setDatabaseObject=true) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
             Console.WriteLine("Launched " + typeof(T).Name);
-
-            //clear the old results
-            ClearResults();
-            
-            Form f = new Form();
+   
             T ui = new T();
-            f.Controls.Add(ui);
-            CreateControls(ui);
-
-            ui.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
-            ui.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
             
+            AndLaunch(ui);
+
             if(setDatabaseObject)
                 ui.SetDatabaseObject(ItemActivator, o);
 
-            LastUserInterfaceLaunched = ui;
             return ui;
+        }
+
+        public void AndLaunch(Control ui)
+        {
+            //clear the old results
+            ClearResults();
+
+            Form f = new Form();
+            
+            f.Controls.Add(ui);
+            CreateControls(ui);
+
+            if(ui is IRDMPControl rdmpUi)
+            {
+                rdmpUi.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
+                rdmpUi.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
+            }
+            
+            LastUserInterfaceLaunched = ui;
         }
 
 
@@ -388,7 +399,7 @@ namespace Rdmp.UI.Tests
                 foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
                 {
                     //todo
-                    var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch"));
+                    var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
                 
                     //ensure that the method supports the Type
                     var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);

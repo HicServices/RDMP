@@ -71,8 +71,6 @@ namespace Rdmp.UI.ItemActivation
 
         Form ShowWindow(Control singleControlForm, bool asDocument = false);
 
-        Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity objectOfTypeT);
-
         /// <summary>
         /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
         /// </summary>
