@@ -7,6 +7,7 @@
 using System;
 using System.ComponentModel;
 using System.Windows.Forms;
+using NHunspell;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
 
@@ -24,6 +25,13 @@ namespace ReusableUIComponents.ScintillaHelper
         private ToolStripMenuItem _miDelete;
         private ToolStripMenuItem _miSelectAll;
         private ToolStripMenuItem _miWordwrap;
+        private ToolStripMenuItem _miSpelling;
+
+        /// <summary>
+        /// Spell checker for the hosted control.  If set then right clicks will spell check the word
+        /// under the caret and show suggestions
+        /// </summary>
+        public Hunspell Hunspell { get; set; }
 
         public ScintillaMenu(Scintilla scintilla): base()
         {
@@ -48,6 +56,10 @@ namespace ReusableUIComponents.ScintillaHelper
                 mi.Checked = _scintilla.WrapMode == mode;
                 _miWordwrap.DropDownItems.Add(mi);
             }
+
+            _miSpelling = new ToolStripMenuItem("Spelling");
+            Items.Add(_miSpelling);
+
             Items.Add(_miWordwrap);
 
             Items.Add(new ToolStripSeparator());
@@ -88,6 +100,54 @@ namespace ReusableUIComponents.ScintillaHelper
             //check the current wrap mode and uncheck the rest
             foreach (ToolStripMenuItem item in _miWordwrap.DropDownItems)
                 item.Checked = (WrapMode) item.Tag == _scintilla.WrapMode;
+
+            _miSpelling.DropDown.Items.Clear();
+            _miSpelling.Enabled = false;
+
+            //if we are checking spelling
+            if (Hunspell != null)
+            {
+                //get current word
+                var word = GetCurrentWord();
+
+                if(!string.IsNullOrWhiteSpace(word))
+                {
+                    if(!Hunspell.Spell(word))
+                    {
+                        foreach(var suggested in Hunspell.Suggest(word))
+                        {
+                            var mi = new ToolStripMenuItem(suggested, null, (s, ev) => { SetWord( word, suggested);});
+                            _miSpelling.DropDownItems.Add(mi);
+                            _miSpelling.Enabled = true;
+                        }                        
+                    }
+                }
+            }
+        }
+
+        private string GetCurrentWord()
+        {
+            var pos = _scintilla.CurrentPosition;
+
+            var wordStart = _scintilla.WordStartPosition(pos, true);
+            var wordEnd = _scintilla.WordEndPosition(pos, true);
+            return _scintilla.GetTextRange(wordStart, wordEnd - wordStart);
+        }
+
+        private void SetWord(string oldWord, string newWord)
+        {
+            //make sure the current word matches the old word we are replacing 
+            //(I guess somehow an async something could have changed the text while the menu was open)
+            if(!string.Equals(GetCurrentWord(),oldWord))
+                return;
+            
+            var pos = _scintilla.CurrentPosition;
+            var wordStart = _scintilla.WordStartPosition(pos, true);
+            var wordEnd = _scintilla.WordEndPosition(pos, true);
+
+            _scintilla.DeleteRange(wordStart,wordEnd-wordStart);
+            _scintilla.InsertText(wordStart,newWord);
+
         }
     }
 }

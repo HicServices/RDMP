@@ -68,7 +68,9 @@ namespace ReusableUIComponents.ScintillaHelper
             }
 
             toReturn.WrapMode = (WrapMode)UserSettings.WrapMode;
-            toReturn.ContextMenuStrip = new ScintillaMenu(toReturn);
+            var scintillaMenu = new ScintillaMenu(toReturn);
+            toReturn.ContextMenuStrip = scintillaMenu;
+
             try
             {
                 if(spellCheck)
@@ -90,6 +92,7 @@ namespace ReusableUIComponents.ScintillaHelper
                     var hunspell = new Hunspell(aff,dic);
                     toReturn.TextChanged += (s,e)=>scintilla_TextChanged(s,e,hunspell);
                     toReturn.Disposed += (s, e) => scintilla_Disposed(s, e, hunspell);
+                    scintillaMenu.Hunspell = hunspell;
                 }
             }
             catch (Exception e)
