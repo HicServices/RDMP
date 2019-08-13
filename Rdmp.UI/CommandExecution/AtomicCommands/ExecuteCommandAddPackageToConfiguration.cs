@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             this._extractionConfiguration = extractionConfiguration;
 
             if(extractionConfiguration.IsReleased)
-                SetImpossible("ExtractionConfiguration has already been released");
+                SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
 
             if(activator.CoreChildProvider is DataExportChildProvider childProvider)
             {

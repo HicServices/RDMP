@@ -5,6 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data.Cohort;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using System;
+using System.Collections.Generic;
 
 namespace Rdmp.Core.Providers.Nodes
 {
@@ -14,6 +17,11 @@ namespace Rdmp.Core.Providers.Nodes
     public class ArbitraryFolderNode:SingletonNode,IOrderable
     {
         public int Order { get; set; }
+
+        /// <summary>
+        /// Commands to be created when/if the node is right clicked.  Null if no commands are required
+        /// </summary>
+        public Func<IEnumerable<IAtomicCommand>> CommandGetter { get;set;}
 
         public ArbitraryFolderNode(string caption, int order) : base(caption)
         {
