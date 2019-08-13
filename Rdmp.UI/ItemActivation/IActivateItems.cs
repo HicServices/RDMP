@@ -131,10 +131,7 @@ namespace Rdmp.UI.ItemActivation
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
 
         void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
-
-        void ActivateViewLog(LoadMetadata loadMetadata);
-
-        IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
+        
 
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);

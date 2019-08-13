@@ -456,7 +456,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
                     Publish(engine.NewCatalogue);
 
                     if(Activator.YesNo("Successfully created Catalogue '" + engine.NewCatalogue + "', close form?","Success"))
-                        Activator.WindowArranger.SetupEditLoadMetadata(this,engine.LoadMetadata);
+                        Activator.WindowArranger.SetupEditAnything(this,engine.LoadMetadata);
                 }
                 else
                     throw new Exception("Engine did not create a NewCatalogue/LoadMetadata");

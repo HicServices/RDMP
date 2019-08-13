@@ -7,6 +7,7 @@
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -36,7 +37,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            Activator.ActivateViewLoadMetadataDiagram(this, _loadMetadata);
+            Activator.Activate<LoadDiagramUI, LoadMetadata>(_loadMetadata);
         }
     }
 }

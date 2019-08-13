@@ -129,17 +129,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-
-        public void ActivateViewLog(LoadMetadata loadMetadata)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             throw new NotImplementedException();

@@ -333,18 +333,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 t.SetLookupTableInfo(optionalLookupTableInfo);
         }
         
-        public void ActivateViewLog(LoadMetadata loadMetadata)
-        {
-            new ExecuteCommandViewLoadMetadataLogs(this).SetTarget(loadMetadata).Execute();
-        }
-
-        public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
-        {
-            return Activate<LoadDiagramUI, LoadMetadata>(loadMetadata);
-        }
-
-
-
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             //if the collection an arbitrary one then it is definetly not the root collection for anyone
