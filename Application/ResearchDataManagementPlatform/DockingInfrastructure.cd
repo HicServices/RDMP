@@ -45,8 +45,8 @@
     <ShowAsAssociation>
       <Field Name="ActivateItems" />
       <Field Name="_windowFactory" />
-      <Property Name="Navigation" />
       <Property Name="MainForm" />
+      <Property Name="Navigation" />
     </ShowAsAssociation>
   </Class>
   <Class Name="ResearchDataManagementPlatform.WindowManagement.WindowFactory" Collapsed="true">
@@ -59,7 +59,7 @@
   <Class Name="ResearchDataManagementPlatform.WindowManagement.ActivateItems" Collapsed="true">
     <Position X="5.25" Y="2.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAQAACAgAAECghDUBAAAoCEgIQQggwNhBFQQQEFAAQA=</HashCode>
+      <HashCode>AIQAACAgAAEAgBDUBAAAoCEgAAQgAwNgDFQQAEFAAQA=</HashCode>
       <FileName>WindowManagement\ActivateItems.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -116,7 +116,7 @@
       <Compartment Name="Fields" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAEgAAABATGAAAAAAACAAABCAQAIAgEAAAAQAAAAAQA=</HashCode>
+      <HashCode>AAEgAAABATGAIAAAAACAAABCAQAIAgEAAAAQCAAAAQA=</HashCode>
       <FileName>RDMPMainForm.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -144,13 +144,6 @@
     <Position X="26.25" Y="9" Width="2" />
     <TypeIdentifier />
   </Class>
-  <Class Name="ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.NavigationTrack" Collapsed="true">
-    <Position X="5.25" Y="1.5" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AQCAAAAIAAAAAABCIAAAAAAAAAgABSAEAAAAAAgACAI=</HashCode>
-      <FileName>WindowManagement\ContentWindowTracking\NavigationTrack.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Rdmp.Core.Curation.Data.Dashboarding.PersistStringHelper" Collapsed="true">
     <Position X="7.5" Y="7.5" Width="1.75" />
     <TypeIdentifier />
@@ -164,6 +157,10 @@
     <Position X="20" Y="9" Width="2.75" />
     <TypeIdentifier />
     <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ReusableUIComponents.NavigationTrack&lt;T&gt;" Collapsed="true">
+    <Position X="5.25" Y="1.5" Width="2.25" />
+    <TypeIdentifier />
   </Class>
   <Interface Name="Rdmp.UI.ItemActivation.IActivateItems" Collapsed="true">
     <Position X="10.25" Y="5.5" Width="2.75" />

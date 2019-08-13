@@ -1,0 +1,200 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Collections: Hierarchical tree views of objects in RDMP">
+    <Position X="4.445" Y="0.5" Height="0.406" Width="3.695" />
+  </Comment>
+  <Comment CommentText="Single Object: tabs for interacting with a single object e.g. CatalogueUI hosts a single object Catalogue">
+    <Position X="8.499" Y="0.5" Height="0.572" Width="3.452" />
+  </Comment>
+  <Comment CommentText="Multi Object: tabs for interacting with multiple objects at once e.g. View graph + Filter (CohortSummaryAggregateGraphUI)">
+    <Position X="12.271" Y="0.5" Height="0.597" Width="3.687" />
+  </Comment>
+  <Comment CommentText="Ad Hoc / popup windows">
+    <Position X="16.25" Y="0.5" Height="0.572" Width="2.77" />
+  </Comment>
+  <Comment CommentText="UI API layer.  Everyone gets passed the same master instance and almost everything you want to do outside the scope of your own control gets done via this instance.">
+    <Position X="0.5" Y="0.5" Height="0.639" Width="3.554" />
+  </Comment>
+  <Comment CommentText="Atomic commands that can be displayed in menus, as buttons etc.  Each command does a specific thing e.g. ExecuteCommandAddDatasetsToConfiguration.">
+    <Position X="19.371" Y="0.5" Height="0.86" Width="3.281" />
+  </Comment>
+  <Class Name="Rdmp.UI.Collections.RDMPCollectionUI">
+    <Position X="5" Y="2.25" Width="2.75" />
+    <AssociationLine Name="CommonTreeFunctionality" Type="Rdmp.UI.Collections.RDMPCollectionCommonFunctionality">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="-1.95" Y="0.277" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>Collections\RDMPCollectionUI.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CommonTreeFunctionality" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.Collections.RDMPCollectionCommonFunctionality" Collapsed="true">
+    <Position X="5" Y="4.25" Width="2.75" />
+    <Compartments>
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>IBCAIAAEjEWAEUhCgEIDJAUIcQAhAAEAsBBAAACgCIQ=</HashCode>
+      <FileName>Collections\RDMPCollectionCommonFunctionality.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_collection" />
+      <Field Name="_activator" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.Curation.Data.Dashboarding.PersistableObjectCollection" Collapsed="true">
+    <Position X="12.25" Y="2.75" Width="3.5" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
+    <Position X="8.75" Y="5.25" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAIgsBwAACAAAAAAAEgAAghEAAgiAEAAAAAAAIAAEAA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="AssociatedCollection" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPForm">
+    <Position X="16.5" Y="1.5" Width="2.5" />
+    <AssociationLine Name="CommonFunctionality" Type="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality">
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.086" Y="-0.263" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <AssociationLine Name="Activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="17.094" Y="4.213" />
+        <Point X="17.094" Y="5.062" />
+        <Point X="12.083" Y="5.062" Type="JumpStart" />
+        <Point X="11.917" Y="5.062" Type="JumpEnd" />
+        <Point X="6.458" Y="5.062" Type="JumpStart" />
+        <Point X="6.292" Y="5.062" Type="JumpEnd" />
+        <Point X="3.5" Y="5.062" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAIIAAAAAAQEAAAAAAgABAAAAgAAAA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\RDMPForm.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CommonFunctionality" />
+      <Property Name="Activator" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality" Collapsed="true">
+    <Position X="13.5" Y="5.25" Width="3.25" />
+    <AssociationLine Name="_activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="15.125" Y="5.812" />
+        <Point X="15.125" Y="6.438" />
+        <Point X="10.583" Y="6.437" Type="JumpStart" />
+        <Point X="10.417" Y="6.438" Type="JumpEnd" />
+        <Point X="6.458" Y="6.437" Type="JumpStart" />
+        <Point X="6.292" Y="6.438" Type="JumpEnd" />
+        <Point X="3.5" Y="6.438" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>BAIYAAAAAAQCAAAABhAAACgggQEAAABAAgAAAAxEIQA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\RDMPControlCommonFunctionality.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_activator" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.UI.CommandExecution.AtomicCommands.BasicUICommandExecution">
+    <Position X="19.25" Y="5" Width="3.5" />
+    <AssociationLine Name="Activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="19.25" Y="7.5" />
+        <Point X="18.875" Y="7.5" />
+        <Point X="18.875" Y="6.875" />
+        <Point X="10.583" Y="6.875" Type="JumpStart" />
+        <Point X="10.417" Y="6.875" Type="JumpEnd" />
+        <Point X="6.458" Y="6.875" Type="JumpStart" />
+        <Point X="6.292" Y="6.875" Type="JumpEnd" />
+        <Point X="3.5" Y="6.875" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AIAAAABAAAAAQEBAAkAAIAAREEAEQAAgCAAAAAAAAAA=</HashCode>
+      <FileName>CommandExecution\AtomicCommands\BasicUICommandExecution.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="Activator" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IRDMPControl">
+    <Position X="9.25" Y="1.5" Width="1.5" />
+    <AssociationLine Name="CommonFunctionality" Type="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="10.438" Y="2.796" />
+        <Point X="10.438" Y="3.5" />
+        <Point X="12" Y="3.5" />
+        <Point X="12" Y="5.592" />
+        <Point X="13.5" Y="5.592" />
+      </Path>
+      <MemberNameLabel ManuallyPlaced="true">
+        <Position X="0.043" Y="-0.258" />
+      </MemberNameLabel>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAgABAAAAgAAAA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\IRDMPControl.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="CommonFunctionality" />
+      <Property Name="Activator" />
+    </ShowAsAssociation>
+  </Interface>
+  <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IRDMPSingleDatabaseObjectControl" Collapsed="true">
+    <Position X="8.75" Y="3.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAgAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\IRDMPSingleDatabaseObjectControl.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.UI.ItemActivation.IActivateItems">
+    <Position X="0.75" Y="1.25" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AIQAACAgAAEAABDUBAAAoCEAAAQgAgJgCBQQAABAAAA=</HashCode>
+      <FileName>ItemActivation\IActivateItems.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IObjectCollectionControl" Collapsed="true">
+    <Position X="12.25" Y="1.5" Width="3.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAEAAAAA=</HashCode>
+      <FileName>TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="ReusableLibraryCode.CommandExecution.AtomicCommands.IAtomicCommand" Collapsed="true">
+    <Position X="19.25" Y="4" Width="3.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="ReusableLibraryCode.CommandExecution.ICommandExecution">
+    <Position X="19.25" Y="1.5" Width="3.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Enum Name="Rdmp.UI.Collections.RDMPCollection">
+    <Position X="9.75" Y="7.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAIECAACQAAAAAAAAAAAAABAgAEAAAA=</HashCode>
+      <FileName>Collections\RDMPCollection.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
