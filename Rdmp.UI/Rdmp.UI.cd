@@ -18,6 +18,12 @@
   <Comment CommentText="Atomic commands that can be displayed in menus, as buttons etc.  Each command does a specific thing e.g. ExecuteCommandAddDatasetsToConfiguration.">
     <Position X="19.371" Y="0.5" Height="0.86" Width="3.281" />
   </Comment>
+  <Comment CommentText="Controls hosted on a DashboardLayoutUI">
+    <Position X="23.152" Y="0.5" Height="0.86" Width="3.095" />
+  </Comment>
+  <Comment CommentText="Example dashboardable control">
+    <Position X="23.25" Y="8.539" Height="0.304" Width="3.051" />
+  </Comment>
   <Class Name="Rdmp.UI.Collections.RDMPCollectionUI">
     <Position X="5" Y="2.25" Width="2.75" />
     <AssociationLine Name="CommonTreeFunctionality" Type="Rdmp.UI.Collections.RDMPCollectionCommonFunctionality">
@@ -75,9 +81,11 @@
     <AssociationLine Name="Activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="17.094" Y="4.213" />
-        <Point X="17.094" Y="5.062" />
-        <Point X="12.083" Y="5.062" Type="JumpStart" />
-        <Point X="11.917" Y="5.062" Type="JumpEnd" />
+        <Point X="17.094" Y="4.75" />
+        <Point X="12.083" Y="4.75" Type="JumpStart" />
+        <Point X="11.917" Y="4.75" Type="JumpEnd" />
+        <Point X="11.75" Y="4.75" />
+        <Point X="11.75" Y="5.062" />
         <Point X="6.458" Y="5.062" Type="JumpStart" />
         <Point X="6.292" Y="5.062" Type="JumpEnd" />
         <Point X="3.5" Y="5.062" />
@@ -94,10 +102,10 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality" Collapsed="true">
-    <Position X="13.5" Y="5.25" Width="3.25" />
+    <Position X="13.5" Y="5" Width="3.25" />
     <AssociationLine Name="_activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="15.125" Y="5.812" />
+        <Point X="15.125" Y="5.562" />
         <Point X="15.125" Y="6.438" />
         <Point X="10.583" Y="6.437" Type="JumpStart" />
         <Point X="10.417" Y="6.438" Type="JumpEnd" />
@@ -119,13 +127,15 @@
     <AssociationLine Name="Activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="19.25" Y="7.5" />
-        <Point X="18.875" Y="7.5" />
-        <Point X="18.875" Y="6.875" />
-        <Point X="10.583" Y="6.875" Type="JumpStart" />
-        <Point X="10.417" Y="6.875" Type="JumpEnd" />
-        <Point X="6.458" Y="6.875" Type="JumpStart" />
-        <Point X="6.292" Y="6.875" Type="JumpEnd" />
-        <Point X="3.5" Y="6.875" />
+        <Point X="11.5" Y="7.5" />
+        <Point X="11.5" Y="7" />
+        <Point X="10.583" Y="7" Type="JumpStart" />
+        <Point X="10.417" Y="7" Type="JumpEnd" />
+        <Point X="6.458" Y="7" Type="JumpStart" />
+        <Point X="6.292" Y="7" Type="JumpEnd" />
+        <Point X="3.875" Y="7" />
+        <Point X="3.875" Y="7.187" />
+        <Point X="3.5" Y="7.187" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -137,15 +147,33 @@
     </ShowAsAssociation>
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="Rdmp.UI.DashboardTabs.DashboardableControlHostPanel">
+    <Position X="23.25" Y="3.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAEAiAAABAAAACAAAACEABAAAAAAAAAAFAAAIA=</HashCode>
+      <FileName>DashboardTabs\DashboardableControlHostPanel.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="HostedControl" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.UI.PieCharts.GoodBadCataloguePieChart" Collapsed="true">
+    <Position X="23.25" Y="7.75" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AgAgAhCAgCQQCFBIAMCAAAACCAAAQAEgAAAEAEAEAWA=</HashCode>
+      <FileName>PieCharts\GoodBadCataloguePieChart.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IRDMPControl">
-    <Position X="9.25" Y="1.5" Width="1.5" />
+    <Position X="9.25" Y="1.5" Width="2.5" />
     <AssociationLine Name="CommonFunctionality" Type="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality" FixedFromPoint="true" FixedToPoint="true">
       <Path>
-        <Point X="10.438" Y="2.796" />
-        <Point X="10.438" Y="3.5" />
+        <Point X="11.229" Y="2.796" />
+        <Point X="11.229" Y="3.5" />
         <Point X="12" Y="3.5" />
-        <Point X="12" Y="5.592" />
-        <Point X="13.5" Y="5.592" />
+        <Point X="12" Y="5.342" />
+        <Point X="13.5" Y="5.342" />
       </Path>
       <MemberNameLabel ManuallyPlaced="true">
         <Position X="0.043" Y="-0.258" />
@@ -188,6 +216,20 @@
   <Interface Name="ReusableLibraryCode.CommandExecution.ICommandExecution">
     <Position X="19.25" Y="1.5" Width="3.5" />
     <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.UI.DashboardTabs.Construction.IDashboardableControl" Collapsed="true">
+    <Position X="23.25" Y="2.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DashboardTabs\Construction\IDashboardableControl.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.UI.DashboardTabs.Construction.INotifyMeOfEditState" Collapsed="true">
+    <Position X="23.25" Y="1.5" Width="3" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>DashboardTabs\Construction\INotifyMeOfEditState.cs</FileName>
+    </TypeIdentifier>
   </Interface>
   <Enum Name="Rdmp.UI.Collections.RDMPCollection">
     <Position X="9.75" Y="7.25" Width="1.5" />
