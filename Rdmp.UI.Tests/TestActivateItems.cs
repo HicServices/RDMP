@@ -59,6 +59,7 @@ namespace Rdmp.UI.Tests
         {
             _uiTests = uiTests;
             Results = new TestActivateItemsResults();
+            GlobalErrorCheckNotifier = new ToMemoryCheckNotifier();
 
             RepositoryLocator = new RepositoryProvider(repo);
             RefreshBus = new RefreshBus();

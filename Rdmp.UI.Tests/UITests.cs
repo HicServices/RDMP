@@ -180,11 +180,18 @@ namespace Rdmp.UI.Tests
                     Assert.IsEmpty(GetAllErrorProviderErrorsShown());
                     
                     break;
+                case ExpectedErrorType.GlobalErrorCheckNotifier:
+
+                    Assert.IsEmpty(((ToMemoryCheckNotifier)_itemActivator.GlobalErrorCheckNotifier).Messages);
+
+                    break;
+
                 case ExpectedErrorType.Any:
                     AssertNoErrors(ExpectedErrorType.KilledForm);
                     AssertNoErrors(ExpectedErrorType.Fatal);
                     AssertNoErrors(ExpectedErrorType.FailedCheck);
                     AssertNoErrors(ExpectedErrorType.ErrorProvider);
+                    AssertNoErrors(ExpectedErrorType.GlobalErrorCheckNotifier);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("expectedErrorLevel");
@@ -213,12 +220,12 @@ namespace Rdmp.UI.Tests
                     if (_checkResults == null)
                         throw new Exception("Could not check for Checks error because control did not register an ICheckable");
 
-                    //there must have been something checked that failed with the provided message
-                    Assert.IsTrue(_checkResults.Messages.Any(m=>
-                        m.Message.Contains(expectedContainsText) || 
-                        (m.Ex != null && m.Ex.Message.Contains(expectedContainsText))
-                        && m.Result == CheckResult.Fail));
+                    AssertFailedCheck(_checkResults,expectedContainsText);
 
+                    break;
+                case ExpectedErrorType.GlobalErrorCheckNotifier:
+
+                    AssertFailedCheck((ToMemoryCheckNotifier)_itemActivator.GlobalErrorCheckNotifier, expectedContainsText);
                     break;
                 case ExpectedErrorType.ErrorProvider:
 
@@ -229,6 +236,16 @@ namespace Rdmp.UI.Tests
                     throw new ArgumentOutOfRangeException("expectedErrorLevel");
             }
         }
+
+        private void AssertFailedCheck(ToMemoryCheckNotifier checkResults,string expectedContainsText)
+        {
+            //there must have been something checked that failed with the provided message
+            Assert.IsTrue(checkResults.Messages.Any(m =>
+                m.Message.Contains(expectedContainsText) ||
+                (m.Ex != null && m.Ex.Message.Contains(expectedContainsText))
+                && m.Result == CheckResult.Fail));
+        }
+
         private List<string> GetAllErrorProviderErrorsShown()
         {
 
@@ -448,6 +465,11 @@ namespace Rdmp.UI.Tests
         /// An ErrorProvider icon was shown next to some control
         /// </summary>
         ErrorProvider,
+
+        /// <summary>
+        /// System wide errors reported to <see cref="Rdmp.UI.ItemActivation.IActivateItems.GlobalErrorCheckNotifier"/>
+        /// </summary>
+        GlobalErrorCheckNotifier,
 
         /// <summary>
         /// An error at any level
