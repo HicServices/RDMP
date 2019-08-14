@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -71,7 +72,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
             {
-                OverrideCommandName = "Create New Cohort Identification Query"
+                OverrideCommandName = GlobalStrings.CreateNewCohortIdentificationQuery
             },tlpCohortCreation);
 
             AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator)
