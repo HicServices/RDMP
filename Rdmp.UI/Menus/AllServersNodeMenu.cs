@@ -13,7 +13,7 @@ namespace Rdmp.UI.Menus
     {
         public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
         {
-            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false));
+            Add(new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(_activator));
             Add(new ExecuteCommandBulkImportTableInfos(_activator));
         }
     }

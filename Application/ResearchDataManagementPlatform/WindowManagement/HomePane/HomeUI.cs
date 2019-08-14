@@ -52,9 +52,9 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             /////////////////////////////////////Data Management/////////////////////////////////
             //AddLabel("New Catalogue", tlpDataManagement);
 
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { OverrideCommandName = "New Catalogue From File" }, tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), tlpDataManagement);
 
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true) { OverrideCommandName = "New Catalogue From Existing Database Table" }, tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator), tlpDataManagement);
 
             AddCommand(new ExecuteCommandEditExistingCatalogue(_activator),
                 _activator.CoreChildProvider.AllCatalogues,

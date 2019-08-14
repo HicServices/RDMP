@@ -61,6 +61,24 @@ namespace Rdmp.Core {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to New Catalogue From Existing Database Table.
+        /// </summary>
+        public static string CreateNewCatalogueByImportingExistingDataTable {
+            get {
+                return ResourceManager.GetString("CreateNewCatalogueByImportingExistingDataTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creates a New Catalogue by associating it with an existing Table in your database.
+        /// </summary>
+        public static string CreateNewCatalogueByImportingExistingDataTableHelp {
+            get {
+                return ResourceManager.GetString("CreateNewCatalogueByImportingExistingDataTableHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to New Catalogue From File.
         /// </summary>
         public static string CreateNewCatalogueByImportingFile {
@@ -84,6 +102,24 @@ namespace Rdmp.Core {
         public static string CreateNewCohortIdentificationQuery {
             get {
                 return ResourceManager.GetString("CreateNewCohortIdentificationQuery", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create New TableInfo By Importing Existing Data Table.
+        /// </summary>
+        public static string CreateNewTableInfoByImportingExistingDataTable {
+            get {
+                return ResourceManager.GetString("CreateNewTableInfoByImportingExistingDataTable", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creates a new TableInfo referencing an existing Table in your database (does not create an associated Catalogue).
+        /// </summary>
+        public static string CreateNewTableInfoByImportingExistingDataTableHelp {
+            get {
+                return ResourceManager.GetString("CreateNewTableInfoByImportingExistingDataTableHelp", resourceCulture);
             }
         }
     }

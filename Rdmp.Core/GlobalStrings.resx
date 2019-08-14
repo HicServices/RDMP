@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="CreateNewCatalogueByImportingExistingDataTable" xml:space="preserve">
+    <value>New Catalogue From Existing Database Table</value>
+  </data>
   <data name="CreateNewCatalogueByImportingFile" xml:space="preserve">
     <value>New Catalogue From File</value>
   </data>
@@ -125,5 +128,14 @@
   </data>
   <data name="CreateNewCohortIdentificationQuery" xml:space="preserve">
     <value>Create New Cohort Identification Query</value>
+  </data>
+  <data name="CreateNewTableInfoByImportingExistingDataTable" xml:space="preserve">
+    <value>Create New TableInfo By Importing Existing Data Table</value>
+  </data>
+  <data name="CreateNewTableInfoByImportingExistingDataTableHelp" xml:space="preserve">
+    <value>Creates a new TableInfo referencing an existing Table in your database (does not create an associated Catalogue)</value>
+  </data>
+  <data name="CreateNewCatalogueByImportingExistingDataTableHelp" xml:space="preserve">
+    <value>Creates a New Catalogue by associating it with an existing Table in your database</value>
   </data>
 </root>

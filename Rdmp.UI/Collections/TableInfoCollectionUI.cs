@@ -106,7 +106,7 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a, false),
+                new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(a),
                 new ExecuteCommandBulkImportTableInfos(a)
             };
             

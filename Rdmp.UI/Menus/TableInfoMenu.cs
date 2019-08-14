@@ -37,7 +37,7 @@ namespace Rdmp.UI.Menus
             : base(args, tableInfo)
         {
 
-            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false),Keys.None,"New");
+            Add(new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(_activator),Keys.None,"New");
             Add(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, tableInfo),Keys.None,"New");
                         
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");

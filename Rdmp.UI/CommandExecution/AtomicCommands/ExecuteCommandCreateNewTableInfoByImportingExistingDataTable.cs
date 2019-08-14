@@ -14,9 +14,9 @@ using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewTableInfoByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand
     {
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(IActivateItems activator) : base(activator)
         {
             UseTripleDotSuffix = true;
         }
@@ -25,7 +25,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var importTable = new ImportSQLTableUI(Activator,true);
+            var importTable = new ImportSQLTableUI(Activator,false);
             importTable.ShowDialog();
         }
 
@@ -36,12 +36,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override string GetCommandHelp()
         {
-            return GlobalStrings.CreateNewCatalogueByImportingExistingDataTableHelp;
+            return GlobalStrings.CreateNewTableInfoByImportingExistingDataTableHelp;
         }
 
         public override string GetCommandName()
         {
-            return GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
+            return GlobalStrings.CreateNewTableInfoByImportingExistingDataTable;
         }
     }
 }

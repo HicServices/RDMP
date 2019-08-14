@@ -223,7 +223,8 @@ namespace ResearchDataManagementPlatform.Menus
             return new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator, false),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),
+                new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(Activator),
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),
                 new ExecuteCommandCreateNewLoadMetadata(Activator),
                 new ExecuteCommandCreateNewStandardRegex(Activator),
