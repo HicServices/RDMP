@@ -36,15 +36,8 @@
             this.gbWhatThisIs = new System.Windows.Forms.GroupBox();
             this.btnViewDataTable = new System.Windows.Forms.Button();
             this.lblNoIssues = new System.Windows.Forms.Label();
-            this.toolStrip1 = new System.Windows.Forms.ToolStrip();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.btnAllCatalogues = new System.Windows.Forms.ToolStripButton();
-            this.btnSingleCatalogue = new System.Windows.Forms.ToolStripButton();
-            this.btnShowLabels = new System.Windows.Forms.ToolStripButton();
-            this.btnRefresh = new System.Windows.Forms.ToolStripButton();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             this.gbWhatThisIs.SuspendLayout();
-            this.toolStrip1.SuspendLayout();
             this.SuspendLayout();
             // 
             // chart1
@@ -118,77 +111,16 @@
             this.lblNoIssues.TabIndex = 1;
             this.lblNoIssues.Text = "No Issues Reported In Dataset";
             // 
-            // toolStrip1
-            // 
-            this.toolStrip1.Items.AddRange(new System.Windows.Forms.ToolStripItem[] {
-            this.toolStripLabel1,
-            this.btnAllCatalogues,
-            this.btnSingleCatalogue,
-            this.btnShowLabels,
-            this.btnRefresh});
-            this.toolStrip1.Location = new System.Drawing.Point(0, 0);
-            this.toolStrip1.Name = "toolStrip1";
-            this.toolStrip1.Size = new System.Drawing.Size(393, 25);
-            this.toolStrip1.TabIndex = 5;
-            this.toolStrip1.Text = "toolStrip1";
-            // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(36, 22);
-            this.toolStripLabel1.Text = "Type:";
-            // 
-            // btnAllCatalogues
-            // 
-            this.btnAllCatalogues.Image = ((System.Drawing.Image)(resources.GetObject("btnAllCatalogues.Image")));
-            this.btnAllCatalogues.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnAllCatalogues.Name = "btnAllCatalogues";
-            this.btnAllCatalogues.Size = new System.Drawing.Size(41, 22);
-            this.btnAllCatalogues.Text = "All";
-            this.btnAllCatalogues.Click += new System.EventHandler(this.btnAllCatalogues_Click);
-            // 
-            // btnSingleCatalogue
-            // 
-            this.btnSingleCatalogue.Image = ((System.Drawing.Image)(resources.GetObject("btnSingleCatalogue.Image")));
-            this.btnSingleCatalogue.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnSingleCatalogue.Name = "btnSingleCatalogue";
-            this.btnSingleCatalogue.Size = new System.Drawing.Size(59, 22);
-            this.btnSingleCatalogue.Text = "Single";
-            this.btnSingleCatalogue.Click += new System.EventHandler(this.btnSingleCatalogue_Click);
-            // 
-            // btnShowLabels
-            // 
-            this.btnShowLabels.CheckOnClick = true;
-            this.btnShowLabels.Image = ((System.Drawing.Image)(resources.GetObject("btnShowLabels.Image")));
-            this.btnShowLabels.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnShowLabels.Name = "btnShowLabels";
-            this.btnShowLabels.Size = new System.Drawing.Size(60, 22);
-            this.btnShowLabels.Text = "Labels";
-            this.btnShowLabels.CheckStateChanged += new System.EventHandler(this.btnShowLabels_CheckStateChanged);
-            // 
-            // btnRefresh
-            // 
-            this.btnRefresh.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnRefresh.Image = ((System.Drawing.Image)(resources.GetObject("btnRefresh.Image")));
-            this.btnRefresh.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnRefresh.Name = "btnRefresh";
-            this.btnRefresh.Size = new System.Drawing.Size(23, 22);
-            this.btnRefresh.Text = "Refresh";
-            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
-            // 
             // GoodBadCataloguePieChart
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.Controls.Add(this.toolStrip1);
             this.Controls.Add(this.gbWhatThisIs);
             this.Name = "GoodBadCataloguePieChart";
             this.Size = new System.Drawing.Size(393, 250);
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).EndInit();
             this.gbWhatThisIs.ResumeLayout(false);
             this.gbWhatThisIs.PerformLayout();
-            this.toolStrip1.ResumeLayout(false);
-            this.toolStrip1.PerformLayout();
             this.ResumeLayout(false);
             this.PerformLayout();
 
@@ -199,12 +131,6 @@
         private System.Windows.Forms.DataVisualization.Charting.Chart chart1;
         private System.Windows.Forms.GroupBox gbWhatThisIs;
         private System.Windows.Forms.Label lblNoIssues;
-        private System.Windows.Forms.ToolStrip toolStrip1;
-        private System.Windows.Forms.ToolStripButton btnSingleCatalogue;
-        private System.Windows.Forms.ToolStripButton btnAllCatalogues;
-        private System.Windows.Forms.ToolStripButton btnRefresh;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
-        private System.Windows.Forms.ToolStripButton btnShowLabels;
         private System.Windows.Forms.Button btnViewDataTable;
     }
 }

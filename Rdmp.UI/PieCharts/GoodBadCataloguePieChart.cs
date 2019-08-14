@@ -16,6 +16,7 @@ using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.Dialogs;
@@ -29,14 +30,24 @@ namespace Rdmp.UI.PieCharts
     /// <para>Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)</para>
     /// 
     /// </summary>
-    public partial class GoodBadCataloguePieChart : UserControl,IDashboardableControl
+    public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
     {
+        private ToolStripButton btnSingleCatalogue = new ToolStripButton("Single",CatalogueIcons.Catalogue) { Name = "btnSingleCatalogue" };
+        private ToolStripButton btnAllCatalogues = new ToolStripButton("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode){Name= "btnAllCatalogues" };
+        private ToolStripButton btnRefresh = new ToolStripButton("Refresh",FamFamFamIcons.text_list_bullets) { Name = "btnRefresh" };
+        private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Type:"){Name= "toolStripLabel1" };
+        private ToolStripButton btnShowLabels = new ToolStripButton("Labels",FamFamFamIcons.text_align_left) { Name = "btnShowLabels", CheckOnClick = true };
+        
         public GoodBadCataloguePieChart()
         {
             InitializeComponent();
-            
-            btnRefresh.Image = FamFamFamIcons.arrow_refresh;
-            btnShowLabels.Image = FamFamFamIcons.text_list_bullets;
+
+            btnViewDataTable.Image = CatalogueIcons.TableInfo;
+
+            this.btnAllCatalogues.Click += new System.EventHandler(this.btnAllCatalogues_Click);
+            this.btnSingleCatalogue.Click += new System.EventHandler(this.btnSingleCatalogue_Click);
+            this.btnShowLabels.CheckStateChanged += new System.EventHandler(this.btnShowLabels_CheckStateChanged);
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             
             //put edit mode on for the designer
             NotifyEditModeChange(false);
@@ -44,7 +55,6 @@ namespace Rdmp.UI.PieCharts
         
         private DashboardControl _dashboardControlDatabaseRecord;
         private GoodBadCataloguePieChartObjectCollection _collection;
-        private IActivateItems _activator;
         
         private void GenerateChart()
         {
@@ -68,7 +78,7 @@ namespace Rdmp.UI.PieCharts
                 if (!_collection.IsSingleCatalogueMode)
                 {
                     //get the active (non depricated etc) Catalogues
-                    var activeCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(ShouldHaveDescription).ToArray();
+                    var activeCatalogues = Activator.CoreChildProvider.AllCatalogues.Where(ShouldHaveDescription).ToArray();
                         
                     //if there are some
                     if(activeCatalogues.Any())
@@ -121,7 +131,7 @@ namespace Rdmp.UI.PieCharts
 
         public bool ShouldHaveDescription(Catalogue c)
         {
-            return !c.IsColdStorageDataset && !c.IsInternalDataset && !c.IsDeprecated && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository);
+            return !c.IsColdStorageDataset && !c.IsInternalDataset && !c.IsDeprecated && !c.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository);
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -133,17 +143,20 @@ namespace Rdmp.UI.PieCharts
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             _bLoading = true;
-            _activator = activator;
-            _collection = (GoodBadCataloguePieChartObjectCollection)collection;
+            SetItemActivator(activator);
 
-            btnAllCatalogues.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemsNode);
-            btnSingleCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Link);
+            _collection = (GoodBadCataloguePieChartObjectCollection)collection;
 
             btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
             btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
             btnShowLabels.Checked = _collection.ShowLabels;
 
-            activator.Theme.ApplyTo(toolStrip1);
+            CommonFunctionality.Add(btnAllCatalogues);
+            CommonFunctionality.Add(toolStripLabel1);
+            CommonFunctionality.Add(btnAllCatalogues);
+            CommonFunctionality.Add(btnSingleCatalogue);
+            CommonFunctionality.Add(btnShowLabels);
+            CommonFunctionality.Add(btnRefresh);
 
             GenerateChart();
             _bLoading = false;
@@ -172,15 +185,15 @@ namespace Rdmp.UI.PieCharts
             var l = new Point(Margin.Left,Margin.Right);
             var s = new Size(Width - Margin.Horizontal, Height - Margin.Vertical);
 
+            CommonFunctionality.ToolStrip.Visible = isEditModeOn;
+
             if (isEditModeOn)
             {
-                Controls.Add(toolStrip1);
                 gbWhatThisIs.Location = new Point(l.X, l.Y + 25);//move it down 25 to allow space for tool bar
                 gbWhatThisIs.Size = new Size(s.Width, s.Height - 25);//and adjust height accordingly
             }
             else
             {
-                Controls.Remove(toolStrip1);
                 gbWhatThisIs.Location = l;
                 gbWhatThisIs.Size = s;
             }
@@ -197,7 +210,7 @@ namespace Rdmp.UI.PieCharts
 
         private void btnSingleCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -240,7 +253,7 @@ namespace Rdmp.UI.PieCharts
             dt.Columns.Add("Count Missing Descriptions");
             dt.Columns.Add("Missing List");
             
-            foreach (IGrouping<Catalogue, ExtractionInformation> g in _activator.CoreChildProvider.AllExtractionInformations.GroupBy(ei=>ei.CatalogueItem.Catalogue))
+            foreach (IGrouping<Catalogue, ExtractionInformation> g in Activator.CoreChildProvider.AllExtractionInformations.GroupBy(ei=>ei.CatalogueItem.Catalogue))
             {
                 if (!ShouldHaveDescription(g.Key))
                     continue;
