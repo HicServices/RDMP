@@ -6,6 +6,7 @@
 
 using System.Drawing;
 using System.IO;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -33,7 +34,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if(!File.Exists)
                 SetImpossible("File does not exist");
         }
-
+        
         public ExecuteCommandCreateNewCatalogueByImportingFile(IActivateItems activator, FileInfo file = null) : base(activator)
         {
             File = file;
@@ -82,10 +83,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override string GetCommandHelp()
         {
-            return "Creates a NEW Dataset and associated extractable Catalogue by importing an existing file." +
-                   "\r\n" +
-                   "Note: you cannot use this to import data into an existing Dataset";
+            return GlobalStrings.CreateNewCatalogueByImportingFileHelp;
         }
 
+        public override string GetCommandName()
+        {
+            return GlobalStrings.CreateNewCatalogueByImportingFile;
+        }
     }
 }

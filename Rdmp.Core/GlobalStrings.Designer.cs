@@ -19,7 +19,7 @@ namespace Rdmp.Core {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class GlobalStrings {
@@ -57,6 +57,24 @@ namespace Rdmp.Core {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to New Catalogue From File.
+        /// </summary>
+        public static string CreateNewCatalogueByImportingFile {
+            get {
+                return ResourceManager.GetString("CreateNewCatalogueByImportingFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Creates a NEW data table in your database and an extractable Catalogue reference to it in RDMP.  Table generated will be based on the file selected for import..
+        /// </summary>
+        public static string CreateNewCatalogueByImportingFileHelp {
+            get {
+                return ResourceManager.GetString("CreateNewCatalogueByImportingFileHelp", resourceCulture);
             }
         }
         
