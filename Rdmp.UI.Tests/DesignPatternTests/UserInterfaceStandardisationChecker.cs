@@ -22,6 +22,8 @@ using Rdmp.UI.DashboardTabs;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using Rdmp.UI.Overview;
+using Rdmp.UI.PieCharts;
+using Rdmp.UI.Raceway;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform;
 using ReusableUIComponents.CommandExecution.Proposals;
@@ -60,7 +62,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             typeof(DashboardableControlHostPanel),
             typeof(TimePeriodicityChart),
             typeof(LoadEventsTreeView),
-            
+            typeof(GoodBadCataloguePieChart),
+            typeof(DatasetRaceway),
             typeof(ResolveFatalErrors),
             typeof(DataLoadsGraph),
             typeof(RDMPMainForm)
