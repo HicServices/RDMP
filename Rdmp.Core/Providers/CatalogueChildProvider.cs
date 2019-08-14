@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -84,6 +85,9 @@ namespace Rdmp.Core.Providers
         
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
+
+        public AllDashboardsNode AllDashboardsNode { get;set;}
+        public DashboardLayout[] AllDashboards { get;set;}
 
         public AllObjectSharingNode AllObjectSharingNode { get; private set; }
         public ObjectImport[] AllImports { get; set; }
@@ -313,6 +317,10 @@ namespace Rdmp.Core.Providers
             AllRDMPRemotesNode = new AllRDMPRemotesNode();
             AddChildren(AllRDMPRemotesNode);
 
+            AllDashboardsNode = new AllDashboardsNode();
+            AllDashboards = GetAllObjects<DashboardLayout>(repository);
+            AddChildren(AllDashboardsNode);
+
             AllObjectSharingNode = new AllObjectSharingNode();
             AllExports = GetAllObjects<ObjectExport>(repository);
             AllImports = GetAllObjects<ObjectImport>(repository);
@@ -490,7 +498,12 @@ namespace Rdmp.Core.Providers
         {
             AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
         }
-        
+
+        private void AddChildren(AllDashboardsNode allDashboardsNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllDashboards), new DescendancyList(allDashboardsNode));
+        }
+
         private void AddChildren(AllObjectSharingNode allObjectSharingNode)
         {
             var descendancy = new DescendancyList(allObjectSharingNode);

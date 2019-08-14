@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -54,6 +55,10 @@ namespace Rdmp.Core.Providers
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
+
+        AllDashboardsNode AllDashboardsNode { get; }
+        DashboardLayout[] AllDashboards { get;  }
+
         AllObjectSharingNode AllObjectSharingNode { get; }
         ObjectImport[] AllImports { get; }
         ObjectExport[] AllExports { get; }

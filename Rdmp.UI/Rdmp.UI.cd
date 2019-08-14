@@ -21,9 +21,6 @@
   <Comment CommentText="Controls hosted on a DashboardLayoutUI">
     <Position X="16.235" Y="0.5" Height="0.55" Width="3.35" />
   </Comment>
-  <Comment CommentText="Example dashboardable control">
-    <Position X="12.598" Y="17.289" Height="0.304" Width="3.051" />
-  </Comment>
   <Comment CommentText="An ObjectCollectionControl (UI) has a single PersistableObjectCollection behind it (like View / ViewModel)">
     <Position X="12.301" Y="3.701" Height="0.75" Width="3.509" />
   </Comment>
@@ -155,14 +152,6 @@
     <ShowAsAssociation>
       <Property Name="HostedControl" />
     </ShowAsAssociation>
-  </Class>
-  <Class Name="Rdmp.UI.PieCharts.GoodBadCataloguePieChart" Collapsed="true">
-    <Position X="12.5" Y="16.5" Width="3" />
-    <TypeIdentifier>
-      <HashCode>AgAgAhCAgCAQCFBIAICAAAACCAAAQAEgAAAEAEAEAWA=</HashCode>
-      <FileName>PieCharts\GoodBadCataloguePieChart.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
   </Class>
   <Interface Name="Rdmp.UI.TestsAndSetup.ServicePropogation.IRDMPControl">
     <Position X="9.25" Y="1.5" Width="2.5" />

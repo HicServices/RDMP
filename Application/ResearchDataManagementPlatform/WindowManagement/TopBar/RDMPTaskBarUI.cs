@@ -27,7 +27,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
     {
         private WindowManager _manager;
         
-        private const string CreateNewDashboard = "<<New Dashboard>>";
         private const string CreateNewLayout = "<<New Layout>>";
 
         public RDMPTaskBarUI()
@@ -55,8 +54,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             btnLoad.BackgroundImage = provider.GetBackgroundImage(btnLoad.Size, RDMPCollection.DataLoad);
             
             btnFavourites.Image = CatalogueIcons.Favourite;
-
-            btnDeleteDash.Image = FamFamFamIcons.delete;
             btnDeleteLayout.Image = FamFamFamIcons.delete;
         }
 
@@ -107,7 +104,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
 
         private void ReCreateDropDowns()
         {
-            CreateDropDown<DashboardLayout>(cbxDashboards, CreateNewDashboard);
             CreateDropDown<WindowLayout>(cbxLayouts, CreateNewLayout);
         }
 
@@ -193,9 +189,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             var cbx = (ToolStripComboBox)sender;
             var toOpen = cbx.SelectedItem as INamed;
 
-            if (ReferenceEquals(cbx.SelectedItem, CreateNewDashboard))
-                AddNewDashboard();
-
             if (ReferenceEquals(cbx.SelectedItem, CreateNewLayout))
                 AddNewLayout();
 
@@ -219,7 +212,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         {
             btnSaveWindowLayout.Enabled = cbxLayouts.SelectedItem is WindowLayout;
             btnDeleteLayout.Enabled = cbxLayouts.SelectedItem is WindowLayout;
-            btnDeleteDash.Enabled = cbxDashboards.SelectedItem is DashboardLayout;
         }
 
         private void AddNewLayout()
@@ -238,19 +230,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             }
         }
 
-        private void AddNewDashboard()
-        {
-            var dialog = new TypeTextOrCancelDialog("Dashboard Name", "Name", 100, null, false);
-            if(dialog.ShowDialog() == DialogResult.OK)
-            {
-                var dash = new DashboardLayout(_manager.RepositoryLocator.CatalogueRepository, dialog.ResultText);
-                
-                var cmd = new ExecuteCommandActivate(_manager.ActivateItems, dash);
-                cmd.Execute();
-
-                ReCreateDropDowns();
-            }
-        }
 
         public void InjectButton(ToolStripButton button)
         {
@@ -260,9 +239,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private void btnDelete_Click(object sender, EventArgs e)
         {
             ToolStripComboBox cbx;
-            if (sender == btnDeleteDash)
-                cbx = cbxDashboards;
-            else if (sender == btnDeleteLayout)
+            if (sender == btnDeleteLayout)
                 cbx = cbxLayouts;
             else
                 throw new Exception("Unexpected sender");

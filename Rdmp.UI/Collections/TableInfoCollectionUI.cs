@@ -113,6 +113,7 @@ namespace Rdmp.UI.Collections
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDashboardsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllPipelinesNode);

@@ -7,7 +7,7 @@
 4. [Adding children with AddChildren method](#addChildren)
 <a name="background"></a>
 # Background
-The RDMP displays almost all the persistent objects  (Projects, Cohorts, Extraction Configurations etc) in various tree views `CatalogueManager.Collections.RDMPCollectionUI`.  In this tutorial we will look at making a code change to the tree structure.
+The RDMP displays almost all the persistent objects  (Projects, Cohorts, Extraction Configurations etc) in various tree views `RDMPCollectionUI`.  In this tutorial we will look at making a code change to the tree structure.
 
 At the time of writing this tutorial, all `ExtractionConfiguration` (![Pr](Icons/ExtractionConfiguration.png)) in a `Project` (![Pr](Icons/Project.png))appear in a single `ExtractionConfigurationsNode` folder (![Pr](Icons/ExtractionConfigurationsNode.png)).  This means that over time a Project can accrue a considerable number of configurations and it can be difficult to see the active one.  RDMP lets you freeze old Extraction Configurations but they are still visible in the tree. We want to add a new node under the `ExtractionConfigurationsNode` (![Pr](Icons/ExtractionConfigurationsNode.png)) in which to store all the frozen configurations.
 
@@ -24,7 +24,7 @@ Feel free to substitute in alternate tooling
 
 <a name="createIcon"></a>
 # Creating The Icon
-Go to the root directory of your RDMP checkout and open `\CatalogueManager\CatalogueManager\Icons\FolderOfX.pdn` and select the middle Layer 'Background'.  Copy in the new icon and resize it to look nice.
+Go to the root directory of your RDMP checkout and open `\Rdmp.UI\Icons\FolderOfX.pdn` and select the middle Layer 'Background'.  Copy in the new icon and resize it to look nice.
 
 ![EditFolderOfX](Images/CreatingANewCollectionTreeNode/EditFolderOfX.png) 
 
@@ -36,9 +36,6 @@ RDMP requires that all tree view objects have an entry in RDMPConcept Enum, a cl
 ![AddToRDMPConcept](Images/CreatingANewCollectionTreeNode/AddToRDMPConcept.png) 
 
 Next add a class 'FrozenExtractionConfigurationsNode.cs' (leave this empty for now).  This class should appear in one of the `Nodes` folders if it is a node.  If you are creating an icon for a `DatabaseEntity` then you will already have your class implemented and tested so you can skip this stage (You still need the RDMPConcept though).
-
-It is worth launching RDMP at this point to see the error that occurs when you have an Enum value in `RDMPConcept` that doesn't have an associated png (we have created it but not added it to the resources file yet)
-![NoResourceFileError](Images/CreatingANewCollectionTreeNode/NoResourceFileError.png) 
 
 Open CatalogueIcons.resx and add your image.
 

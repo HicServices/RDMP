@@ -190,6 +190,7 @@ namespace Rdmp.UI.Icons.IconProvision
         WindowLayout,
         SpontaneouslyInventedColumn,
         ProcessTaskArgument,
-        CacheFetchFailure
+        CacheFetchFailure,
+        AllDashboardsNode,
     }
 }
