@@ -58,13 +58,24 @@ namespace ReusableLibraryCode.CommandExecution
         }
 
         /// <summary>
-        /// makes the command unrunnable because of the given reason.  This will result in greyed out menu items, crashes when executed programatically etc.
+        /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programatically etc.
         /// </summary>
         /// <param name="reason"></param>
         protected void SetImpossible(string reason)
         {
             IsImpossible = true;
             ReasonCommandImpossible = reason;
+        }
+        /// <summary>
+        /// disables the command because of the given reason.  This will result in grayed out menu items, crashes when executed programatically etc.
+        /// This overload calls string.Format with the <paramref name="objects"/>
+        /// </summary>
+        /// /// <param name="reason"></param>
+        /// <param name="objects">Objects to pass to string.Format</param>
+        protected void SetImpossible(string reason, params object[] objects)
+        {
+            IsImpossible = true;
+            ReasonCommandImpossible = string.Format(reason,objects);
         }
 
         /// <summary>

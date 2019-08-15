@@ -138,4 +138,34 @@
   <data name="CreateNewCatalogueByImportingExistingDataTableHelp" xml:space="preserve">
     <value>Creates a New Catalogue by associating it with an existing Table in your database</value>
   </data>
+  <data name="Activate" xml:space="preserve">
+    <value>Edit</value>
+  </data>
+  <data name="TableHasNoPrimaryKey" xml:space="preserve">
+    <value>Table has no Primary Key</value>
+  </data>
+  <data name="Disabled" xml:space="preserve">
+    <value>Disabled</value>
+  </data>
+  <data name="Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Missing" xml:space="preserve">
+    <value>Missing</value>
+  </data>
+  <data name="TriggerStatusIsCurrently" xml:space="preserve">
+    <value>Trigger status is currently: {0}</value>
+  </data>
+  <data name="CreateArchiveTableCaption" xml:space="preserve">
+    <value>Create Archive Table/Trigger?</value>
+  </data>
+  <data name="CreateArchiveTableYesNo" xml:space="preserve">
+    <value>Are you sure you want to create a backup triggered _Archive table?</value>
+  </data>
+  <data name="CreateArchiveTableSuccess" xml:space="preserve">
+    <value>Success, look for the new table called {0} which will contain old records whenever there is an update</value>
+  </data>
+  <data name="ObjectCannotBeActivated" xml:space="preserve">
+    <value>Object cannot be Activated</value>
+  </data>
 </root>

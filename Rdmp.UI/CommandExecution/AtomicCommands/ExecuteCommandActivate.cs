@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -30,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 _o = masquerader.MasqueradingAs();
 
             if(!Activator.CommandExecutionFactory.CanActivate(_o))
-                SetImpossible("Object cannot be Activated");
+                SetImpossible(GlobalStrings.ObjectCannotBeActivated);
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -43,7 +44,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override string GetCommandName()
         {
-            return "Edit";
+            return GlobalStrings.Activate;
         }
 
         public override void Execute()

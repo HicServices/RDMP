@@ -19,7 +19,7 @@ namespace Rdmp.Core {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     public class GlobalStrings {
@@ -57,6 +57,42 @@ namespace Rdmp.Core {
             }
             set {
                 resourceCulture = value;
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Edit.
+        /// </summary>
+        public static string Activate {
+            get {
+                return ResourceManager.GetString("Activate", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Create Archive Table/Trigger?.
+        /// </summary>
+        public static string CreateArchiveTableCaption {
+            get {
+                return ResourceManager.GetString("CreateArchiveTableCaption", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Success, look for the new table called {0} which will contain old records whenever there is an update.
+        /// </summary>
+        public static string CreateArchiveTableSuccess {
+            get {
+                return ResourceManager.GetString("CreateArchiveTableSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Are you sure you want to create a backup triggered _Archive table?.
+        /// </summary>
+        public static string CreateArchiveTableYesNo {
+            get {
+                return ResourceManager.GetString("CreateArchiveTableYesNo", resourceCulture);
             }
         }
         
@@ -120,6 +156,60 @@ namespace Rdmp.Core {
         public static string CreateNewTableInfoByImportingExistingDataTableHelp {
             get {
                 return ResourceManager.GetString("CreateNewTableInfoByImportingExistingDataTableHelp", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Disabled.
+        /// </summary>
+        public static string Disabled {
+            get {
+                return ResourceManager.GetString("Disabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Enabled.
+        /// </summary>
+        public static string Enabled {
+            get {
+                return ResourceManager.GetString("Enabled", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Missing.
+        /// </summary>
+        public static string Missing {
+            get {
+                return ResourceManager.GetString("Missing", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Object cannot be Activated.
+        /// </summary>
+        public static string ObjectCannotBeActivated {
+            get {
+                return ResourceManager.GetString("ObjectCannotBeActivated", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Table has no Primary Key.
+        /// </summary>
+        public static string TableHasNoPrimaryKey {
+            get {
+                return ResourceManager.GetString("TableHasNoPrimaryKey", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Trigger status is currently: {0}.
+        /// </summary>
+        public static string TriggerStatusIsCurrently {
+            get {
+                return ResourceManager.GetString("TriggerStatusIsCurrently", resourceCulture);
             }
         }
     }

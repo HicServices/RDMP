@@ -244,9 +244,18 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             MessageBox.Show(message);
         }
 
-
         /// <summary>
-        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible"/> if there are any failures
+        /// Displays the given message to the user, calling String.Format 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
+        protected void Show(string message, params object[] objects)
+        {
+            MessageBox.Show(string.Format(message,objects));
+        }
+        
+        /// <summary>
+        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible(string)"/> if there are any failures
         /// </summary>
         /// <param name="checkable"></param>
         protected void SetImpossibleIfFailsChecks(ICheckable checkable)
