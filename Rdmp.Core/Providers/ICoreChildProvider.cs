@@ -51,6 +51,15 @@ namespace Rdmp.Core.Providers
         ColumnInfo[] AllColumnInfos { get;}
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
+
+        /// <summary>
+        /// Returns the root level object in the descendancy of <paramref name="model"/> or <paramref name="model"/>
+        /// if no descendancy is known.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable model);
+
         PermissionWindow[] AllPermissionWindows { get;}
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}

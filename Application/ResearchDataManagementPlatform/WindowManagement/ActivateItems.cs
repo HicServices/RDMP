@@ -354,12 +354,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <returns></returns>
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
         {
-            var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(objectToEmphasise);
-
-            if (descendancy != null && descendancy.Parents.Any())
-                return descendancy.Parents[0];
-
-            return objectToEmphasise;
+            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
         }
 
         public string GetDocumentation(Type type)

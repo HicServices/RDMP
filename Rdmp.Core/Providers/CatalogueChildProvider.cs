@@ -1220,6 +1220,18 @@ namespace Rdmp.Core.Providers
 
             return null;
         }
+        
+        
+        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
+        {
+            var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
+
+            if (descendancy != null && descendancy.Parents.Any())
+                return descendancy.Parents[0];
+
+            return objectToEmphasise;
+        }
+
 
         public virtual Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {

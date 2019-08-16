@@ -116,6 +116,7 @@ namespace Rdmp.UI.Tests
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
             deleteable.DeleteInDatabase();
+            RefreshBus.Publish(sender, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
             return true;
         }
 
@@ -142,7 +143,7 @@ namespace Rdmp.UI.Tests
 
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
         {
-            throw new NotImplementedException();
+            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
         }
 
         public string GetDocumentation(Type type)

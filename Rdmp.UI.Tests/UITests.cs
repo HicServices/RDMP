@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Refreshing;
@@ -85,6 +86,19 @@ namespace Rdmp.UI.Tests
             return ui;
         }
 
+
+        public T AndLaunch<T>() where T : RDMPCollectionUI,new()
+        {
+            Console.WriteLine("Launched " + typeof(T).Name);
+
+            T ui = new T();
+
+            AndLaunch(ui);
+
+            ui.SetItemActivator(ItemActivator);
+
+            return ui;
+        }
         public void AndLaunch(Control ui)
         {
             //clear the old results
