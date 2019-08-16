@@ -4,9 +4,15 @@
 This document describes how localization is implemented in RDMP.  The design follows the [approach set out by Microsoft](https://docs.microsoft.com/en-us/dotnet/standard/globalization-localization/).
 
 ## Strings
-All user visible strings in RDMP should be moved to GlobalStrings.resx
+All user visible strings in RDMP should be moved to [GlobalStrings.resx](../../Rdmp.Core/GlobalStrings.resx)
 
-Language specific strings should appear in GlobalStrings.[language].resx e.g. GlobalStrings.zh-Hans.resx
+Language specific strings should appear in GlobalStrings.[language].resx e.g. [GlobalStrings.zh-Hans.resx](../../Rdmp.Core/GlobalStrings.zh-Hans.resx)
+
+## Icons
+
+Most icons in RDMP are 19x19 png files.  These are stored in CatalogueIcons.resx and FamFamFamIcons.resx.  These resources files support language specific overriding in the same manner as with strings (above) e.g. [CatalogueIcons.zh-Hans](../../Rdmp.UI/Icons/IconProvision/CatalogueIcons.zh-Hans.resx).
+
+Each language should store these images in it's own subdirectory e.g. [zh-Hans](../../Rdmp.UI/Icons/zh-Hans)
 
 ## Naming Conventions
 Since there are lot of strings in RDMP we will need to follow to ensure maintainability.
