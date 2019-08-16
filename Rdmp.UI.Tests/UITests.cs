@@ -224,6 +224,15 @@ namespace Rdmp.UI.Tests
         }
 
         /// <summary>
+        /// Checks the recorded errors up to this point in the test and fails the test if there are errors.  This is the same
+        /// as passing <see cref="ExpectedErrorType.Any"/> to the overload
+        /// </summary>
+        protected void AssertNoErrors()
+        {
+            AssertNoErrors(ExpectedErrorType.Any);
+        }
+
+        /// <summary>
         /// Checks that the given <paramref name="expectedContainsText"/> was displayed to the user at the 
         /// given <paramref name="expectedErrorLevel"/>
         /// </summary>

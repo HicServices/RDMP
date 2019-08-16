@@ -404,9 +404,16 @@ namespace Tests.Common
             
             if (typeof (T) == typeof(ExtractableDataSet))
             {
+                //To make an extractable dataset we need an extraction identifier (e.g. chi) that will be linked in the cohort
                 var ei = WhenIHaveA<ExtractionInformation>();
                 ei.IsExtractionIdentifier = true;
                 ei.SaveToDatabase();
+
+                //And we need another column too just for sanity sakes (in the same table)
+                var ci2 = new CatalogueItem(Repository,ei.CatalogueItem.Catalogue,"ci2");
+                var col2 = new ColumnInfo(Repository, "My_Col2", "varchar(10)", ei.ColumnInfo.TableInfo);
+                var ei2 = new ExtractionInformation(Repository,ci2,col2,col2.GetFullyQualifiedName());
+
                 return (T)(object)new ExtractableDataSet(Repository,ei.CatalogueItem.Catalogue);
             }
             
@@ -414,7 +421,18 @@ namespace Tests.Common
                 return (T)(object)new CumulativeExtractionResults(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),"SELECT * FROM Anywhere");
             
             if (typeof (T) == typeof(SelectedDataSets))
-                return (T)(object)new SelectedDataSets(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),null);
+            {
+                var eds = WhenIHaveA<ExtractableDataSet>();
+                var config = WhenIHaveA<ExtractionConfiguration>();
+                               
+                foreach(var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+                {
+                    var ec = new ExtractableColumn(Repository, eds, config,ei,ei.Order,ei.SelectSQL);
+                }
+
+                return (T)(object)new SelectedDataSets(Repository,config,eds, null);
+            }
+                
 
             if (typeof (T) == typeof(ReleaseLog))
             {
