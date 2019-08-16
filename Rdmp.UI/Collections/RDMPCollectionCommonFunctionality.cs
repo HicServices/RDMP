@@ -650,12 +650,18 @@ namespace Rdmp.UI.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
-            
+
+            if(ShouldClearPinFilterOnRefresh(o,exists))
+                _pinFilter.UnApplyToTree();
+
             if (!exists)
             {
                 //clear the current selection (if the object to be deleted is selected)
-                if(Tree.SelectedObject == o)
+                if(Tree.IsSelected(o))
+                {
                     Tree.SelectedObject = null;
+                    Tree.SelectedObjects = null;
+                }                   
 
                 //remove it from tree
                 Tree.RemoveObject(o);
@@ -680,6 +686,23 @@ namespace Rdmp.UI.Collections
                 //if we have the object
                     if (Tree.IndexOf(o) != -1 && exists)
                         Tree.RefreshObject(o); //it exists so refresh it!
+        }
+
+        private bool ShouldClearPinFilterOnRefresh(object o, bool exists)
+        {
+            //there is no current pin
+            if(_pinFilter == null)
+                return false;
+
+            //the current pin is the object being deleted
+            if(!exists && Equals(CurrentlyPinned, o))
+                return true;
+
+            //the current pin does not exist anymore (e.g. if you pinned something low down and deleted something above it)
+            if (CurrentlyPinned is DatabaseEntity e && !e.Exists())
+                return true;
+
+            return false;
         }
 
         private bool IsHiddenByFilter(object o)

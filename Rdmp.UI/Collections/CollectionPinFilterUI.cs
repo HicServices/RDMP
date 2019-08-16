@@ -149,6 +149,10 @@ namespace Rdmp.UI.Collections
             //remove ourselves
             _tree.Parent.Controls.Remove(this);
             
+            //clear the tree selection since the selected index will now be invalid having shown/hidden half the tree
+            _tree.SelectedObject = null;
+            _tree.SelectedObjects = null;
+
             //bump the tree down again
             _tree.Top -= 19;
             _tree.Height += 19;
