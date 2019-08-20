@@ -18,7 +18,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Help documentation for objects no longer uses NuDoq library (now faster and more maintainable)
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
-- Updated to latest version of [FAnsiSql] (0.9.6) for better Oracle support (and table/database name validation)
+- Updated to latest version of [FAnsiSql] (0.9.7) for better Oracle support (and table/database name validation)
 - Dashboards now appear in tree view instead of application tool strip and are searchable
 
 ### Fixed 
@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where adding/moving cohort sets between containers (INTERSECT/UNION/EXCEPT) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
 - Fixed UI bug where selecting an extractable Catalogue would hide it's extractable (small green e) icon overlay
 - Fixed bug where deleting a Pinned object would not unpin the object
+- Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
 
 ## [3.1.0]
 

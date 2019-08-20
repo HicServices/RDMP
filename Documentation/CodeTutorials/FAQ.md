@@ -22,6 +22,7 @@
    1. [How does RDMP handle / translate untyped, C# and Database Types?](#typetranslation)
    1. [When loading data can I skip some columns?](#skipColumns)
    1. [Can I run SQL Scripts during a load?](#sqlScripts)
+   1. [RDMP is not listing my table as importable](#notlistingtable)
 1. Anonymisation
    1. [Does RDMP support data anonymisation?](#does-rdmp-support-data-anonymisation)
 1. Curation
@@ -247,6 +248,20 @@ If you want to share one script between lots of different loads you can drag the
 ![How to drop sql files onto load nodes](Images/FAQ/DragAndDropSqlScript.png)
 
 In order to allow other people to run the data load it is advised to store all SQL Script files on a shared network drive.
+
+<a name="notlistingtable"></a>
+### RDMP is not listing my table as importable
+
+RDMP can create references to tables and views from any database to which you have sufficient privelleges.  If you can see other tables in the database listed check the following:
+
+- The table does not have brackets in it's name e.g. `[MyDb]..[MyTbl (fff)]`
+- The table does not have dots in it's name e.g. `[MyDb]..[MyTbl.lol]`
+- The table is visible through other tools e.g. sql management studio
+
+If you cannot see any tables listed in the database
+
+- Check that the servername/database name are correct
+- If you need a connection string keyword (e.g. specific port) [create a ConnectionStringKeyword](#connectionStringKeywords)
 
 ## Anonymisation
 

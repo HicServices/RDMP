@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using FAnsi.Discovery;
+using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -155,6 +156,36 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
 
 
+        /// <summary>
+        /// RDMPDEV-1548 This test explores an issue in v3.1 RDMP where synchronization of a TableInfo would fail if there were other tables
+        /// in the database which contained brackets in the table name
+        /// </summary>
+        [Test]
+        public void Test_SynchronizeTable_BracketsInTableName()
+        {
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
+            //FAnsi doesn't let you create tables with brackets in the names so we have to do it manually
+            using(var con = db.Server.GetConnection())
+            {
+                con.Open();
+                var cmd = db.Server.GetCommand("CREATE TABLE [BB (ff)] (A int not null)",con);
+                cmd.ExecuteNonQuery();
+            }
+
+            var tbl = db.CreateTable("FF",
+                new DatabaseColumnRequest[]
+                {
+                    new DatabaseColumnRequest("F",new DatabaseTypeRequest(typeof(int)))
+                });
+
+            Import(tbl,out TableInfo ti,out _);
+
+            var s = new TableInfoSynchronizer(ti);
+            s.Synchronize(new ThrowImmediatelyCheckNotifier());
+        }
+
+
 
         [TearDown]
         public void DropTables()
@@ -172,7 +203,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
             if(credentials != null)
                 credentials.DeleteInDatabase();
 
-            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(TABLE_NAME).Drop();
+            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(TABLE_NAME);
+            if(tbl.Exists())
+                tbl.Drop();
         }
 
     }
