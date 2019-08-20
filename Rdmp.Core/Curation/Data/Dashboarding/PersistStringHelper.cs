@@ -186,5 +186,23 @@ namespace Rdmp.Core.Curation.Data.Dashboarding
 
             return persistString.Substring(persistString.IndexOf(ExtraText, StringComparison.Ordinal) + ExtraText.Length);
         }
+
+
+        /// <summary>
+        /// Returns the value of <paramref name="dict"/> corresponding to <paramref name="key"/>.  If not in the dictionary
+        /// then <paramref name="valueIfMissing"/> is returned
+        /// </summary>
+        /// <param name="dict"></param>
+        /// <param name="key"></param>
+        /// <param name="valueIfMissing"></param>
+        /// <returns></returns>
+        public bool GetBool(Dictionary<string, string> dict, string key, bool valueIfMissing)
+        {
+            if(dict == null || !dict.ContainsKey(key))
+                return valueIfMissing;
+
+            return bool.Parse(dict[key]);
+        }
+
     }
 }
