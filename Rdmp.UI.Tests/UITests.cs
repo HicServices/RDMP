@@ -422,7 +422,7 @@ namespace Rdmp.UI.Tests
                 foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
                 {
                     //todo
-                    var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
+                    var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
                 
                     //ensure that the method supports the Type
                     var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
