@@ -151,7 +151,8 @@ namespace Rdmp.UI.Collections
                 root is AllANOTablesNode ||
                 root is AllServersNode ||
                 root is AllConnectionStringKeywordsNode || 
-                root is AllStandardRegexesNode;
+                root is AllStandardRegexesNode ||
+                root is AllDashboardsNode;
 
         }
     }
