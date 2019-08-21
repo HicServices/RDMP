@@ -37,7 +37,7 @@ namespace Rdmp.UI.PieCharts
         private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Type:"){Name= "toolStripLabel1" };
         private ToolStripButton btnShowLabels = new ToolStripButton("Labels",FamFamFamIcons.text_align_left) { Name = "btnShowLabels", CheckOnClick = true };
 
-        private List<ToolStripButton> _flagOptions = new List<ToolStripButton>();
+        private List<ToolStripMenuItem> _flagOptions = new List<ToolStripMenuItem>();
 
         public GoodBadCataloguePieChart()
         {
@@ -73,9 +73,9 @@ namespace Rdmp.UI.PieCharts
 
         private void AddFlag(string caption, Func<GoodBadCataloguePieChartObjectCollection,bool> getProp, Action<GoodBadCataloguePieChartObjectCollection,bool> setProp)
         {
-            var btn = new ToolStripButton(caption);
+            var btn = new ToolStripMenuItem(caption);
             btn.Checked = getProp(_collection);
-            btn.CheckedChanged += (sender,e) =>{setProp(_collection,((ToolStripButton)sender).Checked);};
+            btn.CheckedChanged += (sender,e) =>{setProp(_collection,((ToolStripMenuItem)sender).Checked);};
             btn.CheckedChanged += (s, e) => GenerateChart();
             btn.CheckOnClick = true;
             _flagOptions.Add(btn);
