@@ -236,6 +236,21 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         }
 
         /// <summary>
+        /// Reports a low visibility error to the <see cref="IActivateItems.GlobalErrorCheckNotifier"/>.  Throws <paramref name="ex"/>
+        /// with <paramref name="msg"/> if no global errors handler is registered
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="ex"></param>
+        protected void GlobalError(string msg, Exception ex)
+        {
+            if (Activator?.GlobalErrorCheckNotifier == null)
+                throw new Exception(msg,ex);
+
+            Activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Fail, ex));
+        }
+
+
+        /// <summary>
         /// Displays the given message to the user
         /// </summary>
         /// <param name="message"></param>
