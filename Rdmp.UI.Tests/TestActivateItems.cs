@@ -115,6 +115,9 @@ namespace Rdmp.UI.Tests
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
+            if(deleteable is DatabaseEntity d && !d.Exists())
+                throw new Exception("Attempt made to delete an object which didn't exist");
+
             deleteable.DeleteInDatabase();
             RefreshBus.Publish(sender, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
             return true;
@@ -192,8 +195,16 @@ namespace Rdmp.UI.Tests
         public bool ApplyThemeToMenus { get; set; }
 
         
+        /// <summary>
+        /// The answer to give when asked <see cref="YesNo(string, string)"/>
+        /// </summary>
+        public bool? YesNoResponse { get;set;}
+
         public bool YesNo(string text, string caption)
         {
+            if(YesNoResponse.HasValue)
+                return YesNoResponse.Value;
+
             throw new Exception("Did not expect to be asked a question but we were asked :" + text);
         }
     }

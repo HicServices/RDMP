@@ -30,6 +30,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed UI bug where selecting an extractable Catalogue would hide it's extractable (small green e) icon overlay
 - Fixed bug where deleting a Pinned object would not unpin the object
 - Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
+- Fixed bug deleting multiple objects at once when some objects are parents of others (and cause implicit delete).
 
 ## [3.1.0]
 

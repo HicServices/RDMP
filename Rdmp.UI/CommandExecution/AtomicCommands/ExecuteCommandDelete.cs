@@ -38,7 +38,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 if(YesNo("Delete " + _deletables.Count + " Items?","Delete Items"))
                 {
                     foreach(IDeleteable d in _deletables)
-                        d.DeleteInDatabase();
+                        if(!(d is DatabaseEntity exists) || exists.Exists()) //don't delete stuff that doesn't exist!
+                            d.DeleteInDatabase();
                     
                     var publishMe = _deletables.OfType<DatabaseEntity>().First();
 
