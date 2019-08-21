@@ -52,6 +52,57 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             }
         }
 
+        /// <summary>
+        /// RDMPDEV-1550 tests system behaviour of <see cref="MDFAttacher"/> when the MDF file in ForLoading already exists
+        /// in the data path of the server to be loaded
+        /// </summary>
+        [Test]
+        public void Test_MDFFile_AlreadyExists()
+        {
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+
+            var data = workingDir.CreateSubdirectory("data");
+
+            var testDir = workingDir.CreateSubdirectory("MDFAttacherTests");
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException", true);
+            
+            try
+            {
+                // create mdf and ldf files (in ForLoading
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "MyFile.mdf"), "fish");
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "MyFile_log.ldf"), "fish");
+
+                //create an already existing file in the 'data' directory (immitates the copy to location)
+                File.WriteAllText(Path.Combine(data.FullName, "MyFile.mdf"), "fish");
+                
+
+                var attacher = new MDFAttacher();
+                attacher.OverrideMDFFileCopyDestination = data.FullName;
+
+                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                
+                //should be a warning since overwritting is default behaviour
+                var ex = Assert.Throws<Exception>(()=>
+                    attacher.Attach(
+                        new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true})
+                        , new GracefulCancellationToken())
+                );
+
+                StringAssert.Contains("mdf already exists",ex.Message);
+            }
+            finally
+            {
+                try
+                {
+                    testDir.Delete(true);
+                }
+                catch (IOException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
         [Test]
         public void TestLocations_NoNetworkPath()
         {

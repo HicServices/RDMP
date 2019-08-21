@@ -210,6 +210,12 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
 
         private void AsyncCopyMDFFilesWithEvents(string MDFSource, string MDFDestination, string LDFSource, string LDFDestination,IDataLoadEventListener job)
         {
+            if(File.Exists(MDFDestination))
+                job.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,$"File {MDFDestination} already exists, an attempt will be made to overwrite it"));
+
+            if (File.Exists(LDFDestination))
+                job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, $"File {LDFDestination} already exists, an attempt will be made to overwrite it"));
+
             Stopwatch s = new Stopwatch();
             s.Start();
             
