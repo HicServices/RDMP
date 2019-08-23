@@ -1,9 +1,18 @@
 ﻿--Version:3.2.0
 --Description: Changes all varchar(x) columns that involve user provided values into nvarchar(x)
-ALTER TABLE [dbo].[DataLoadTask] DROP CONSTRAINT [FK_DataLoadTask_DataSet]
-ALTER TABLE [dbo].[DataLoadRun] DROP CONSTRAINT [FK_DataLoadRun_DataLoadTask]
-ALTER TABLE [dbo].[DataLoadTask] DROP CONSTRAINT [PK_DataTask]
-ALTER TABLE DataSet DROP CONSTRAINT PK_DataSet;
+
+if exists (select 1 from sys.foreign_keys where name = 'FK_DataLoadTask_DataSet')
+	ALTER TABLE [dbo].[DataLoadTask] DROP CONSTRAINT [FK_DataLoadTask_DataSet]
+
+if exists (select 1 from sys.foreign_keys where name = 'FK_DataLoadRun_DataLoadTask')
+	ALTER TABLE [dbo].[DataLoadRun] DROP CONSTRAINT [FK_DataLoadRun_DataLoadTask]
+
+if exists (select 1 from sys.key_constraints where name = 'PK_DataTask')
+	ALTER TABLE [dbo].[DataLoadTask] DROP CONSTRAINT [PK_DataTask]
+
+if exists (select 1 from sys.key_constraints where name = 'PK_DataSet')
+	ALTER TABLE DataSet DROP CONSTRAINT PK_DataSet;
+
 GO
 
 alter table [DataLoadRun] alter column [description] nvarchar(max)NOT NULL
@@ -43,18 +52,21 @@ alter table [RowError] alter column [columnName] nvarchar(50)NULL
 
 GO
 
-ALTER TABLE DataSet
-ADD CONSTRAINT PK_DataSet PRIMARY KEY (dataSetID); 
+if not exists (select 1 from sys.key_constraints where name = 'PK_DataTask')
+	ALTER TABLE DataSet ADD CONSTRAINT PK_DataSet PRIMARY KEY (dataSetID); 
 
-ALTER TABLE [dbo].[DataLoadTask]  WITH CHECK ADD  CONSTRAINT [FK_DataLoadTask_DataSet] FOREIGN KEY([dataSetID])
-REFERENCES [dbo].[DataSet] ([dataSetID])
+if not exists (select 1 from sys.foreign_keys where name = 'FK_DataLoadTask_DataSet')
+	ALTER TABLE [dbo].[DataLoadTask]  WITH CHECK ADD  CONSTRAINT [FK_DataLoadTask_DataSet] FOREIGN KEY([dataSetID])
+	REFERENCES [dbo].[DataSet] ([dataSetID])
 
-ALTER TABLE [dbo].[DataLoadTask] ADD  CONSTRAINT [PK_DataTask] PRIMARY KEY CLUSTERED 
-(
-	[ID] ASC
-)
+if not exists (select 1 from sys.key_constraints where name = 'PK_DataTask')
+	ALTER TABLE [dbo].[DataLoadTask] ADD  CONSTRAINT [PK_DataTask] PRIMARY KEY CLUSTERED 
+	(
+		[ID] ASC
+	)
 
-ALTER TABLE [dbo].[DataLoadRun]  WITH CHECK ADD  CONSTRAINT [FK_DataLoadRun_DataLoadTask] FOREIGN KEY([dataLoadTaskID])
-REFERENCES [dbo].[DataLoadTask] ([ID])
-ON UPDATE CASCADE
+if not exists (select 1 from sys.foreign_keys where name = 'FK_DataLoadRun_DataLoadTask')
+	ALTER TABLE [dbo].[DataLoadRun]  WITH CHECK ADD  CONSTRAINT [FK_DataLoadRun_DataLoadTask] FOREIGN KEY([dataLoadTaskID])
+	REFERENCES [dbo].[DataLoadTask] ([ID])
+	ON UPDATE CASCADE
 

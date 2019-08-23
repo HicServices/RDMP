@@ -119,7 +119,7 @@
     <None Remove="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
     <None Remove="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
     <None Remove="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <None Remove="Databases\QueryCachingDatabase\runAfterCreateDatabase\up\001_UnicodeSupport.sql" />
+    <None Remove="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
     <None Remove="Validation\readme.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -238,7 +238,7 @@
     <EmbeddedResource Include="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
     <EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
-    <EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\up\001_UnicodeSupport.sql" />
+    <EmbeddedResource Include="Databases\QueryCachingDatabase\up\001_UnicodeSupport.sql" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.7" />

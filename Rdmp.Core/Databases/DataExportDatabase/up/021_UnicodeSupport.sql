@@ -1,6 +1,10 @@
 ﻿--Version:3.2.0
 --Description: Changes all varchar(x) columns that involve user provided values into nvarchar(x)
-ALTER TABLE [dbo].[ExtractionConfiguration] DROP CONSTRAINT [DF_ExtractionConfiguration_Separator]
+
+
+if exists (select 1 from sys.default_constraints where name = 'DF_ExtractionConfiguration_Separator')
+	ALTER TABLE [dbo].[ExtractionConfiguration] DROP CONSTRAINT [DF_ExtractionConfiguration_Separator]
+
 GO
 
 
@@ -65,4 +69,5 @@ alter table [ExtractableDataSetPackage] alter column [Creator] nvarchar(500)NOT 
 
 GO
 
-ALTER TABLE [dbo].[ExtractionConfiguration] ADD  CONSTRAINT [DF_ExtractionConfiguration_Separator]  DEFAULT (',') FOR [Separator]
+if not exists (select 1 from sys.default_constraints where name = 'DF_ExtractionConfiguration_Separator')
+	ALTER TABLE [dbo].[ExtractionConfiguration] ADD  CONSTRAINT [DF_ExtractionConfiguration_Separator]  DEFAULT (',') FOR [Separator]
