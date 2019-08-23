@@ -84,6 +84,7 @@
     <None Remove="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
     <None Remove="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
     <None Remove="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
+    <None Remove="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
     <None Remove="Databases\DataExportDatabase\runAfterCreateDatabase\CreateDataExportManager.sql" />
     <None Remove="Databases\DataExportDatabase\up\001_AddUsernamePasswordFieldsToExternalCohortTable.sql" />
     <None Remove="Databases\DataExportDatabase\up\002_FixServerAndDatabaseNameOnExternalCohort.sql" />
@@ -106,15 +107,19 @@
     <None Remove="Databases\DataExportDatabase\up\019_FAnsiSupport.sql" />
     <None Remove="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
     <None Remove="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
+    <None Remove="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
     <None Remove="Databases\DataQualityEngineDatabase\up\003_FixCascadeOnPeriodicityStateTable.sql" />
+    <None Remove="Databases\DataQualityEngineDatabase\up\004_UnicodeSupport.sql" />
     <None Remove="Databases\IdentifierDumpDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <None Remove="Databases\LoggingDatabase\runAfterCreateDatabase\CreateLogging.sql" />
     <None Remove="Databases\LoggingDatabase\up\001_IncreaseLengthOfDataSetIDColumn.sql" />
     <None Remove="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
+    <None Remove="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
     <None Remove="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
+    <None Remove="Databases\QueryCachingDatabase\runAfterCreateDatabase\up\001_UnicodeSupport.sql" />
     <None Remove="Validation\readme.txt" />
   </ItemGroup>
   <ItemGroup>
@@ -195,6 +200,7 @@
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\064_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\065_IsDisabledSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\066_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="Databases\CatalogueDatabase\up\070_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\069_IsViewProperty.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\068_FixNamespaces.sql" />
     <EmbeddedResource Include="Databases\CatalogueDatabase\up\067_AddJoinInfoID.sql" />
@@ -219,16 +225,20 @@
     <EmbeddedResource Include="Databases\DataExportDatabase\up\018_ObjectReferenceSupportDataExport.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\019_FAnsiSupport.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\019_NamesMustNotBeNull.sql" />
+    <EmbeddedResource Include="Databases\DataExportDatabase\up\021_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\DataExportDatabase\up\020_AddReleaseLogIDColumn.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\001_AnnotationsAndDiagram.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\002_AddPivotCategoryLogic.sql" />
+    <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\004_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\DataQualityEngineDatabase\up\003_FixCascadeOnPeriodicityStateTable.sql" />
     <EmbeddedResource Include="Databases\IdentifierDumpDatabase\runAfterCreateDatabase\CreateTables.sql" />
     <EmbeddedResource Include="Databases\LoggingDatabase\runAfterCreateDatabase\CreateLogging.sql" />
     <EmbeddedResource Include="Databases\LoggingDatabase\up\001_IncreaseLengthOfDataSetIDColumn.sql" />
+    <EmbeddedResource Include="Databases\LoggingDatabase\up\003_UnicodeSupport.sql" />
     <EmbeddedResource Include="Databases\LoggingDatabase\up\002_AddPerformanceIndexes.sql" />
     <EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\CreateTables.sql" />
+    <EmbeddedResource Include="Databases\QueryCachingDatabase\runAfterCreateDatabase\up\001_UnicodeSupport.sql" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="ExcelNumberFormat" Version="1.0.7" />

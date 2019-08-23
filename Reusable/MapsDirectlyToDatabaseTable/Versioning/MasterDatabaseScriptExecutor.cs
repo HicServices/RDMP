@@ -330,7 +330,15 @@ INSERT INTO [RoundhousE].[ScriptsRun]
                     if (shouldRun)
                     {
 
-                        RunSQL(db,patch.Value.EntireScript, patch.Key);
+                        try
+                        {
+                            RunSQL(db, patch.Value.EntireScript, patch.Key);
+                        }
+                        catch(Exception e)
+                        {
+                            throw new Exception($"Failed to apply patch '{ patch.Key }'",e);
+                        }
+                        
 
                         notifier.OnCheckPerformed(new CheckEventArgs("Executed patch " + patch.Value, CheckResult.Success, null));
                     }
