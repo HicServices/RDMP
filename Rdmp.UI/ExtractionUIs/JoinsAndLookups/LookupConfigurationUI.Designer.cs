@@ -103,6 +103,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             this.olvExtractionInformationsNameColumn.FillsFreeSpace = true;
             this.olvExtractionInformationsNameColumn.Groupable = false;
             this.olvExtractionInformationsNameColumn.Text = "ExtractionInformations";
+            this.olvExtractionInformationsNameColumn.MinimumWidth = 100;
             // 
             // tbCollation
             // 
@@ -153,6 +154,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             this.olvDescriptionsColumn.FillsFreeSpace = true;
             this.olvDescriptionsColumn.Groupable = false;
             this.olvDescriptionsColumn.Text = "Description Fields";
+            this.olvDescriptionsColumn.MinimumWidth = 100;
             // 
             // olvLookupColumns
             // 
@@ -180,6 +182,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             this.olvLookupNameColumn.FillsFreeSpace = true;
             this.olvLookupNameColumn.Groupable = false;
             this.olvLookupNameColumn.Text = "ColumnInfos";
+            this.olvLookupNameColumn.MinimumWidth = 100;
             // 
             // btnImportNewTableInfo
             // 

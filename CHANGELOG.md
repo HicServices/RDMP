@@ -13,7 +13,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Right clicking a mispelled word now offers spelling suggestions
 - You can now add new datasets to an extraction configuration directly from the "Core" folder in Execute Extraction window (rather than having to go back to the DataExport tree view)
-- MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occured previously).
+- MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occured previously)
+- Tab key now also works for autocomplete in SQL editor windows (previously only Enter worked)
+- Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
 
 ### Changed
 
@@ -31,6 +33,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where deleting a Pinned object would not unpin the object
 - Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
 - Fixed bug deleting multiple objects at once when some objects are parents of others (and cause implicit delete).
+- Fixed bug with low resolution monitors and the Create New Cohort Wizard
+- Fixed bug with low resolution monitors and collections where leading columns could shrink to be no longer visible
+- Adding new filters/containers (AND/OR) now correctly expand and highlight the created object in collections
+- Fixed AggregateEditorUI could incorrectly offer to save changes even when no changes had been made
+- Clonng a Cohort Identification Configuration now preserves custom set container names e.g. "UNION Inclusion Criteria"
+ 
+### Removed
+- Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
 
 ## [3.1.0]
 

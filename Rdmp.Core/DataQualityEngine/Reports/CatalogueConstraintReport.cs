@@ -434,7 +434,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
             if (_catalogue.TimeCoverage_ExtractionInformation_ID == null)
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Catalogue does not have a time periodicity field so we will be unable to generate a time coverage olap cube",
+                        "Catalogue does not have a time coverage field set",
                         CheckResult.Fail));
             else
             {
@@ -443,7 +443,7 @@ namespace Rdmp.Core.DataQualityEngine.Reports
                 _timePeriodicityField = periodicityExtractionInformation.GetRuntimeName();
                 notifier.OnCheckPerformed(
                     new CheckEventArgs(
-                        "Found time periodicity field "+_timePeriodicityField+" so we will be able to generate a time coverage olap cube",
+                        "Found time coverage field "+_timePeriodicityField,
                         CheckResult.Success));
 
                 if (!periodicityExtractionInformation.ColumnInfo.Data_type.ToLower().Contains("date"))

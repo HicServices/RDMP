@@ -108,7 +108,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             typeof(CatalogueItemsNode),
             typeof(DocumentationNode),
             typeof(AggregatesNode),
-            typeof(CohortSetsNode),
             typeof(LoadMetadataScheduleNode),
             typeof(AllCataloguesUsedByLoadMetadataNode),
             typeof(AllProcessTasksUsedByLoadMetadataNode),

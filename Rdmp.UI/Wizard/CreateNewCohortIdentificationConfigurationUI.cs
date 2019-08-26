@@ -31,6 +31,9 @@ namespace Rdmp.UI.Wizard
         {
             InitializeComponent();
 
+            if(VisualStudioDesignMode)
+                return;
+
             pbBigImageTopLeft.Image = CatalogueIcons.BigCohort;
 
             inclusionCriteria1.SetupFor(Activator);

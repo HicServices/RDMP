@@ -512,6 +512,9 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
 
+            //enforcing the naming convention on cic aggregates can result in ObjectSaverButton incorrectly getting enabled
+            GetObjectSaverButton()?.Enable(false);
+
             isRefreshing = false;
         }
 

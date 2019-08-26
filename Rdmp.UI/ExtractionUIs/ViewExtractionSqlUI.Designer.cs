@@ -104,6 +104,7 @@ namespace Rdmp.UI.ExtractionUIs
             this.olvColumn1.FillsFreeSpace = true;
             this.olvColumn1.Groupable = false;
             this.olvColumn1.Text = "ExtractionInformation(s)";
+            this.olvColumn1.MinimumWidth = 100;
             // 
             // olvFilters
             // 
@@ -131,6 +132,7 @@ namespace Rdmp.UI.ExtractionUIs
             this.olvFilterName.FillsFreeSpace = true;
             this.olvFilterName.Groupable = false;
             this.olvFilterName.Text = "Filters";
+            this.olvFilterName.MinimumWidth = 100;
             // 
             // ViewExtractionSql
             // 

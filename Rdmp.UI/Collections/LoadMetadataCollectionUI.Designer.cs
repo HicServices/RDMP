@@ -60,6 +60,7 @@ namespace Rdmp.UI.Collections
             this.olvName.AspectName = "ToString";
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Load Metadata";
+            this.olvName.MinimumWidth = 100;
             // 
             // LoadMetadataCollectionUI
             // 

@@ -124,6 +124,7 @@ namespace Rdmp.UI.ProjectUI
             this.olvName.Groupable = false;
             this.olvName.Text = "Name";
             this.olvName.Width = 118;
+            this.olvName.MinimumWidth = 100;
             // 
             // olvState
             // 

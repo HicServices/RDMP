@@ -91,6 +91,7 @@ namespace Rdmp.UI.Validation
             this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.Text = "Select column to configure validation";
+            this.olvName.MinimumWidth = 100;
             // 
             // ddPrimaryConstraints
             // 

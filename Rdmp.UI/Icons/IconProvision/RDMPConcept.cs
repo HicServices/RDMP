@@ -71,7 +71,7 @@ namespace Rdmp.UI.Icons.IconProvision
         AggregatesNode,
         AggregateGraph,
 
-        CohortSetsNode,
+        AllOrphanAggregateConfigurationsNode,
         CohortAggregate,
 
         JoinableCollectionNode,

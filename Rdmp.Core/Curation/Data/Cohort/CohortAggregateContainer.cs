@@ -289,6 +289,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
             //clone us with same order (in parents)
             var cloneContainer = new CohortAggregateContainer((ICatalogueRepository)Repository, Operation);
+            cloneContainer.Name = Name;
             cloneContainer.Order = Order;
             cloneContainer.SaveToDatabase();
 

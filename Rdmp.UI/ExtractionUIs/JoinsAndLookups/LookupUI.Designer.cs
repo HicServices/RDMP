@@ -73,6 +73,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             this.olvExtractionInformationName.AspectName = "ToString";
             this.olvExtractionInformationName.FillsFreeSpace = true;
             this.olvExtractionInformationName.Text = "All Descriptions Provided By Table";
+            this.olvExtractionInformationName.MinimumWidth = 100;
             // 
             // olvCompositeJoins
             // 
@@ -97,6 +98,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             this.olvCompositeJoinColumn.FillsFreeSpace = true;
             this.olvCompositeJoinColumn.Text = "Composite Joins";
             this.olvCompositeJoinColumn.Width = 142;
+            this.olvCompositeJoinColumn.MinimumWidth = 100;
             // 
             // label2
             // 

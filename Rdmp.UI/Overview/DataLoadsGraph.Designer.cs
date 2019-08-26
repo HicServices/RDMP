@@ -161,6 +161,7 @@ namespace Rdmp.UI.Overview
             this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.Text = "Name";
+            this.olvName.MinimumWidth = 100;
             // 
             // olvCategory
             // 
