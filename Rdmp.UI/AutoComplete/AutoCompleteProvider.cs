@@ -40,6 +40,7 @@ namespace Rdmp.UI.AutoComplete
             _imageList = _activator.CoreIconProvider.GetImageList(true);
             _autocomplete.ImageList = _imageList;
             _autocomplete.SearchPattern = @"[\w@\.]";
+            _autocomplete.AllowsTabKey = true;
         }
 
 
