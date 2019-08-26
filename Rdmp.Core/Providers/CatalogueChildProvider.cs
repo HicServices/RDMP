@@ -836,21 +836,6 @@ namespace Rdmp.Core.Providers
                 AddToDictionaries(new HashSet<object>(lookups), descendancy.Add(lookupsNode));
             }
 
-            if(cohortAggregates.Any())
-            {
-                //the cohort node is our child
-                var cohortNode = new CohortSetsNode(c,cohortAggregates);
-
-                childObjects.Add(cohortNode);
-
-                //we also record all the Aggregates that are cohorts under us - but since these are also under Cohort Aggregates we will ignore it for descendancy purposes
-                var nodeDescendancy = descendancy.Add(cohortNode);
-
-                AddToDictionaries(new HashSet<object>(cohortAggregates),nodeDescendancy);
-                foreach (AggregateConfiguration cohortAggregate in cohortAggregates)
-                    AddChildren(cohortAggregate, nodeDescendancy.Add(cohortAggregate));
-            }
-
             if (regularAggregates.Any())
             {
                 var aggregatesNode = new AggregatesNode(c, regularAggregates);

@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -35,6 +36,7 @@ using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SubComponents;
 using Rdmp.UI.SubComponents.Graphs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
@@ -299,6 +301,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             else
                 root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
+            if (root is CohortIdentificationConfiguration cic)
+                Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
+            else
             if (root != null)
                 _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
 
@@ -309,9 +314,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 var args = new EmphasiseEventArgs(request);
                 h(this, args);
 
-                var content = args.FormRequestingActivation as DockContent;
-
-                if(content != null)
+                if(args.FormRequestingActivation is DockContent content)
                     content.Activate();
             }
         }
