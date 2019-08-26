@@ -60,6 +60,7 @@ namespace Rdmp.UI.Collections
             this.olvName.FillsFreeSpace = true;
             this.olvName.Sortable = false;
             this.olvName.Text = "Cohort Identification Configurations";
+            this.olvName.MinimumWidth = 100;
             // 
             // CohortIdentificationCollectionUI
             // 

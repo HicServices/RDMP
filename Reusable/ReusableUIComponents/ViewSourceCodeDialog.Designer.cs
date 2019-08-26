@@ -113,6 +113,7 @@ namespace ReusableUIComponents
             this.olvFiles.AspectName = "ToString";
             this.olvFiles.FillsFreeSpace = true;
             this.olvFiles.Text = "Files";
+            this.olvFiles.MinimumWidth = 100;
             // 
             // ViewSourceCodeDialog
             // 

@@ -110,6 +110,7 @@ namespace Rdmp.UI.DataRelease
             this.olvName.AspectName = "ToString";
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Name";
+            this.olvName.MinimumWidth = 100;
             // 
             // olvReleaseability
             // 

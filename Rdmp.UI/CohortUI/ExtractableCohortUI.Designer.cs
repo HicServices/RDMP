@@ -143,6 +143,7 @@ namespace Rdmp.UI.CohortUI
             olvUsedIn.AspectName = "ToString";
             olvUsedIn.FillsFreeSpace = true;
             olvUsedIn.Text = "Used In";
+            olvUsedIn.MinimumWidth = 100;
             // 
             // tlvPreviousVersions
             // 
@@ -168,6 +169,7 @@ namespace Rdmp.UI.CohortUI
             olvOtherVersions.AspectName = "ToString";
             olvOtherVersions.FillsFreeSpace = true;
             olvOtherVersions.Text = "Other Versions";
+            olvOtherVersions.MinimumWidth = 100;
             // 
             // olvVersion
             // 

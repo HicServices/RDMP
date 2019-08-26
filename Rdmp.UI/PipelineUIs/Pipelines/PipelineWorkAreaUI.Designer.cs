@@ -120,6 +120,7 @@ namespace Rdmp.UI.PipelineUIs.Pipelines
             this.olvName.FillsFreeSpace = true;
             this.olvName.Groupable = false;
             this.olvName.Text = "Name";
+            this.olvName.MinimumWidth = 100;
             // 
             // olvNamespace
             // 

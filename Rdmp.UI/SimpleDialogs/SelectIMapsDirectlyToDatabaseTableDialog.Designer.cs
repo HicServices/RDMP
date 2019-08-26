@@ -85,6 +85,7 @@ namespace Rdmp.UI.SimpleDialogs
             this.olvName.AspectName = "ToString";
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Name";
+            this.olvName.MinimumWidth = 100;
             // 
             // btnSelect
             // 
