@@ -47,7 +47,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpCohortCreation.Controls.Clear();
             tlpDataExport.Controls.Clear();
             tlpDataLoad.Controls.Clear();
-            tlpAdvanced.Controls.Clear();
 
             /////////////////////////////////////Data Management/////////////////////////////////
             //AddLabel("New Catalogue", tlpDataManagement);
