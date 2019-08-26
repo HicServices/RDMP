@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Repositories.Managers;
@@ -106,7 +107,8 @@ namespace Rdmp.Core.Providers
         IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
 
         DatabaseEntity GetLatestCopyOf(DatabaseEntity e);
-
+        
+        AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
 
         /// <summary>
         /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.

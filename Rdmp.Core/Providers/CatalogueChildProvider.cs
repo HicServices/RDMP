@@ -185,6 +185,9 @@ namespace Rdmp.Core.Providers
 
         public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
             
+        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
+
+        public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 
         public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
@@ -272,6 +275,9 @@ namespace Rdmp.Core.Providers
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             AllAggregateDimensions = GetAllObjects<AggregateDimension>(repository);
 
+            //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
+            OrphanAggregateConfigurations = new HashSet<AggregateConfiguration>(AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate));
+
             foreach (AggregateConfiguration configuration in AllAggregateConfigurations)
             {
                 configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
@@ -353,6 +359,9 @@ namespace Rdmp.Core.Providers
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
+
+            //add the orphans under the orphan folder
+            AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),new DescendancyList(OrphanAggregateConfigurationsNode));
 
             //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
             //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
@@ -1009,6 +1018,10 @@ namespace Rdmp.Core.Providers
                     var agg = AllAggregateConfigurations.Single(ac => ac.ID == joinable.AggregateConfiguration_ID);
                     ForceAggregateNaming(agg,descendancy);
                     children.Add(agg);
+
+                    //it's no longer an orphan because it's in a known cic (as a patient index table)
+                    OrphanAggregateConfigurations.Remove(agg);
+
                     AddChildren(agg,descendancy.Add(agg));
                 }
                 catch (Exception e)
@@ -1040,6 +1053,9 @@ namespace Rdmp.Core.Providers
             {
                 ForceAggregateNaming(configuration, descendancy);
                 AddChildren(configuration, descendancy.Add(configuration));
+
+                //it's no longer an orphan because it's in a known cic
+                OrphanAggregateConfigurations.Remove(configuration);
             }
 
             //children are all aggregates and containers at the current hierarchy level in order
