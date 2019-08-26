@@ -37,7 +37,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug with low resolution monitors and collections where leading columns could shrink to be no longer visible
 - Adding new filters/containers (AND/OR) now correctly expand and highlight the created object in collections
 - Fixed AggregateEditorUI could incorrectly offer to save changes even when no changes had been made
-
+- Clonng a Cohort Identification Configuration now preserves custom set container names e.g. "UNION Inclusion Criteria"
+ 
 ### Removed
 - Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
 
