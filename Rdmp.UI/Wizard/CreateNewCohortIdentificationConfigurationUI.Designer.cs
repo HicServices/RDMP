@@ -39,12 +39,12 @@
             this.tbName = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.panel1 = new System.Windows.Forms.Panel();
-            this.inclusionCriteria1 = new SimpleCohortSetUI();
-            this.setOperationInclude = new SimpleSetOperation();
-            this.inclusionCriteria2 = new SimpleCohortSetUI();
-            this.setOperationExclude = new SimpleSetOperation();
-            this.exclusionCriteria1 = new SimpleCohortSetUI();
-            this.exclusionCriteria2 = new SimpleCohortSetUI();
+            this.inclusionCriteria1 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
+            this.setOperationInclude = new Rdmp.UI.Wizard.SimpleSetOperation();
+            this.inclusionCriteria2 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
+            this.setOperationExclude = new Rdmp.UI.Wizard.SimpleSetOperation();
+            this.exclusionCriteria1 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
+            this.exclusionCriteria2 = new Rdmp.UI.Wizard.SimpleCohortSetUI();
             ((System.ComponentModel.ISupportInitialize)(this.pbBigImageTopLeft)).BeginInit();
             this.panel1.SuspendLayout();
             this.SuspendLayout();
@@ -124,9 +124,8 @@
             // 
             // btnGo
             // 
-            this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnGo.Location = new System.Drawing.Point(792, 702);
+            this.btnGo.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnGo.Location = new System.Drawing.Point(367, 702);
             this.btnGo.Name = "btnGo";
             this.btnGo.Size = new System.Drawing.Size(124, 23);
             this.btnGo.TabIndex = 19;
@@ -136,19 +135,17 @@
             // 
             // tbName
             // 
-            this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
-            this.tbName.Location = new System.Drawing.Point(533, 705);
+            this.tbName.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.tbName.Location = new System.Drawing.Point(108, 704);
             this.tbName.Name = "tbName";
             this.tbName.Size = new System.Drawing.Size(253, 20);
             this.tbName.TabIndex = 20;
             // 
             // label1
             // 
-            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
-            | System.Windows.Forms.AnchorStyles.Right)));
+            this.label1.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(489, 708);
+            this.label1.Location = new System.Drawing.Point(65, 707);
             this.label1.Name = "label1";
             this.label1.Size = new System.Drawing.Size(38, 13);
             this.label1.TabIndex = 21;

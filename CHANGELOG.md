@@ -31,6 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where deleting a Pinned object would not unpin the object
 - Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
 - Fixed bug deleting multiple objects at once when some objects are parents of others (and cause implicit delete).
+- Fixed bug with low resolution monitors and the Create New Cohort Wizard
 
 ## [3.1.0]
 
