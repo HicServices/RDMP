@@ -21,7 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Help documentation for objects no longer uses NuDoq library (now faster and more maintainable)
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
-- Updated to latest version of [FAnsiSql] (0.9.7) for better Oracle support (and table/database name validation)
+- Updated to latest version of [FAnsiSql] (0.9.8) for better Oracle support (and table/database name validation)
 - Dashboards now appear in tree view instead of application tool strip and are searchable
 - CatalogueItem descriptions pie chart has flags for including internal/project specific etc in it's counts
 - CatalogueItem descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
