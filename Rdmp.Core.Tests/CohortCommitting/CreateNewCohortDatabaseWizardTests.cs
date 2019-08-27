@@ -118,9 +118,6 @@ namespace Rdmp.Core.Tests.CohortCommitting
         {
             var db = GetCleanedServer(type);
 
-            //drop it
-            db.Drop();
-
             CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 
             _extractionInfo2.IsExtractionIdentifier = true;
