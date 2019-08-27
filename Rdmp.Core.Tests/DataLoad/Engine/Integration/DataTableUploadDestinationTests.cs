@@ -1025,6 +1025,40 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             }
         }
 
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MySql)]
+        public void Test_DataTableUploadDestination_ScientificNotation(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType);
+
+            DataTable dt = new DataTable("ff");
+            dt.Columns.Add("mycol");
+            dt.Rows.Add("-4.10235746055587E-05"); //this string is untyped
+
+            var dest = new DataTableUploadDestination();
+            dest.PreInitialize(db,new ThrowImmediatelyDataLoadEventListener());
+
+            try
+            {
+                dest.ProcessPipelineData(dt,new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+                dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+            catch(Exception ex)
+            {
+                dest.Dispose(new ThrowImmediatelyDataLoadEventListener(),ex);
+                throw;
+            }
+                       
+            //in the database it should be typed
+            Assert.AreEqual(typeof(Decimal),db.ExpectTable("ff").DiscoverColumn("mycol").DataType.GetCSharpDataType());
+
+            var dt2 = db.ExpectTable("ff").GetDataTable();
+            
+            Assert.IsTrue((decimal)dt2.Rows[0][0]  == (decimal)-0.0000410235746055587);
+
+        }
+
         #region Two Batch Tests
         [TestCase(DatabaseType.MySql, true)]
         [TestCase(DatabaseType.MySql, false)]
