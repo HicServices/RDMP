@@ -294,9 +294,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                         deciders.ContainsKey(idx) && v is string s? 
                         deciders[idx].Parse(s) :
                         v).ToArray());
+                
+                return dtCloned;
             }
 
-            return dtCloned;
+            return workingTable;            
         }
 
         private void AllBadExceptLastSoRequeueThatOne(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)
