@@ -628,5 +628,46 @@ old""", chunk.Rows[2][2]);
             Assert.AreEqual(expectedGood,QuerySyntaxHelper.MakeHeaderNameSane(bad));
         }
 
+
+        [Test]
+        public void Test_ScientificNotation_StronglyTyped()
+        {
+            var f = Path.Combine(TestContext.CurrentContext.WorkDirectory,"meee.csv");
+            
+            StringBuilder sb = new StringBuilder();
+
+            sb.AppendLine("test");
+
+            //1 scientific notation on first row (test is the header)
+            sb.AppendLine("-4.10235746055587E-05");
+
+            //500 lines of random stuff to force 2 batches
+            for (int i=0;i< DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize; i++)
+                sb.AppendLine("5");
+
+            //a scientific notation in batch 2
+            sb.AppendLine("-4.10235746055587E-05");
+
+            File.WriteAllText(f,sb.ToString());
+
+            DelimitedFlatFileDataFlowSource source = new DelimitedFlatFileDataFlowSource();
+            source.PreInitialize(new FlatFileToLoad(new FileInfo(f)), new ThrowImmediatelyDataLoadEventListener());
+            source.Separator = ",";
+            source.MaxBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
+            source.StronglyTypeInputBatchSize = DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize;
+            source.StronglyTypeInput = true;
+
+            var dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(),new GracefulCancellationToken());
+            Assert.AreEqual(typeof(Decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
+            Assert.AreEqual(DelimitedFlatFileDataFlowSource.MinimumStronglyTypeInputBatchSize, dt.Rows.Count);
+            
+            dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            Assert.AreEqual(typeof(Decimal), dt.Columns.Cast<DataColumn>().Single().DataType);
+            Assert.AreEqual(2, dt.Rows.Count);
+            
+
+            dt = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+            Assert.IsNull(dt);
+        }
     }
 }

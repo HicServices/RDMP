@@ -11,6 +11,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
+using FAnsi.Discovery.TypeTranslation;
 using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Extensions;
@@ -29,7 +30,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         private readonly Func<string, object> _hackValuesFunc;
         private readonly bool _attemptToResolveNewlinesInRecords;
         private readonly CultureInfo _culture;
-        private readonly DateTimeTypeDecider _dateTimeParser;
+        TypeDeciderFactory typeDeciderFactory = new TypeDeciderFactory();
 
         /// <summary>
         /// Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if they
@@ -61,10 +62,10 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             _hackValuesFunc = hackValuesFunc;
             _attemptToResolveNewlinesInRecords = attemptToResolveNewlinesInRecords;
             _culture = culture;
-            _dateTimeParser = new DateTimeTypeDecider();
 
             if(culture != null)
-                _dateTimeParser.Culture = culture;
+                foreach(var d in typeDeciderFactory.Dictionary.Values.OfType<DateTimeTypeDecider>())
+                    d.Culture = culture;
         }
 
         public int PushCurrentLine(CsvReader reader,FlatFileLine lineToPush, DataTable dt,IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
@@ -144,36 +145,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     if (hackedValue is string)
                         hackedValue = ((string)hackedValue).Trim();
 
-                    try
+                   try
                     {
-                        //if we are trying to load a boolean value out of the flat file into the strongly typed C# data type
-                        if (dt.Columns[_headers[i]].DataType == typeof(Boolean))
-                        {
-                            bool boolean;
-                            int integer;
-                            if (hackedValue is string)
-                            {
-                                if (Boolean.TryParse((string) hackedValue, out boolean)) //could be the text "true"
-                                    hackedValue = boolean;
-                                else
-                                    if (int.TryParse((string)hackedValue, out integer)) //could be the number string "1" or "0"
-                                        hackedValue = integer;
+                        if (hackedValue is string s && typeDeciderFactory.Dictionary.ContainsKey(dt.Columns[_headers[i]].DataType))
+                            hackedValue = typeDeciderFactory.Dictionary[dt.Columns[_headers[i]].DataType].Parse(s);
 
-                                //else god knows what it is as a datatype, hopefully Convert.ChangeType will handle it
-                            }
-                            else if (int.TryParse(hackedValue.ToString(), out integer)) //could be the number 1 or 0 or something else that ToStrings into a legit value
-                                hackedValue = integer;
-
-                        }
-
-                        //if it is a datetime
-                        if(dt.Columns[_headers[i]].DataType == typeof(DateTime) && hackedValue is string)
-                            hackedValue = _dateTimeParser.Parse((string)hackedValue);
-
-                        //make it an int because apparently C# is too stupid to convert "1" into a bool but is smart enough to turn 1 into a bool.... seriously?!!?
-
-                        rowValues.Add(_headers[i], Convert.ChangeType(hackedValue, dt.Columns[_headers[i]].DataType));
-                        //convert to correct datatype (datatype was setup in SetupTypes)
+                        rowValues.Add(_headers[i], hackedValue);
                     }
                     catch (Exception e)
                     {
@@ -274,6 +251,52 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 
             //problem was fixed
             return true;
+        }
+
+        
+
+        public DataTable StronglyTypeTable(DataTable workingTable,ExplicitTypingCollection explicitTypingCollection)
+        {
+            Dictionary<int, IDecideTypesForStrings> deciders = new Dictionary<int, IDecideTypesForStrings>();
+            var factory = new TypeDeciderFactory();
+
+            DataTable dtCloned = workingTable.Clone();
+
+            bool typeChangeNeeded = false;
+
+            foreach (DataColumn col in workingTable.Columns)
+            {
+                //if we have already handled it
+                if (explicitTypingCollection != null && explicitTypingCollection.ExplicitTypesCSharp.ContainsKey(col.ColumnName))
+                    continue;
+
+                //let's make a decision about the data type to use based on the contents
+                var computedType = new DataTypeComputer(col);
+
+                //Type based on the contents of the column 
+                if (computedType.ShouldDowngradeColumnTypeToMatchCurrentEstimate(col))
+                {
+                    dtCloned.Columns[col.ColumnName].DataType = computedType.CurrentEstimate;
+
+                    //if we have a type decider to parse this data type
+                    if(factory.IsSupported(computedType.CurrentEstimate))
+                        deciders.Add(col.Ordinal,factory.Create(computedType.CurrentEstimate)); //record column index and parser
+
+                    typeChangeNeeded = true;
+                }
+            }
+
+            if (typeChangeNeeded)
+            {
+                foreach (DataRow row in workingTable.Rows)
+                    dtCloned.Rows.Add(row.ItemArray.Select((v,idx)=>
+
+                        deciders.ContainsKey(idx) && v is string s? 
+                        deciders[idx].Parse(s) :
+                        v).ToArray());
+            }
+
+            return dtCloned;
         }
 
         private void AllBadExceptLastSoRequeueThatOne(FlatFileLine lineToPush, List<FlatFileLine> allPeekedLines, FlatFileEventHandlers eventHandlers)

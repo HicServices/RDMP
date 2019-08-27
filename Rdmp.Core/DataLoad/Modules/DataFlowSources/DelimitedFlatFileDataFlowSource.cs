@@ -13,6 +13,7 @@ using CsvHelper;
 using CsvHelper.Configuration;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TypeTranslation;
+using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -35,6 +36,11 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
 
         private bool _dataAvailable;
         private IDataLoadEventListener _listener;
+
+        /// <summary>
+        /// The minimum value to allow the user to specify for <see cref="StronglyTypeInputBatchSize"/>
+        /// </summary>
+        public const int MinimumStronglyTypeInputBatchSize = 500;
 
         #region User viewable descriptions of what properties do (used to help wrapper classes have consistent definitions
         public const string ForceHeaders_DemandDescription = "Forces specific headers to be interpreted for columns, this is a string that will effectively be appended to the front of the file when it is read.  WARNING: Use this argument only when the file does not have any headers (Note that you must use the appropriate separator for your file)";
@@ -205,10 +211,10 @@ This will not help you avoid bad data as the full file structure must still be r
                             ? int.MaxValue
                             : StronglyTypeInputBatchSize;
 
-                        if(batchSizeToLoad < 500)
+                        if(batchSizeToLoad < MinimumStronglyTypeInputBatchSize)
                         {
                             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "You set StronglyTypeInputBatchSize to " + batchSizeToLoad + " this will be increased to 500 because that number is too small!",null));
-                            batchSizeToLoad = 500;
+                            batchSizeToLoad = MinimumStronglyTypeInputBatchSize;
                         }
 
                         //user want's to strongly type input with a custom batch size
@@ -219,7 +225,7 @@ This will not help you avoid bad data as the full file structure must still be r
                         rowsRead = IterativelyBatchLoadDataIntoDataTable(_workingTable, MaxBatchSize);
 
                     if (StronglyTypeInput)
-                        StronglyTypeWorkingTable();
+                        _workingTable = DataPusher.StronglyTypeTable(_workingTable,ExplicitlyTypedColumns);
 
                     if (rowsRead == 0)
                         EventHandlers.FileIsEmpty();
@@ -259,40 +265,7 @@ This will not help you avoid bad data as the full file structure must still be r
             }
 
         }
-
-        private void StronglyTypeWorkingTable()
-        {
-            DataTable dtCloned = _workingTable.Clone();
-
-            bool typeChangeNeeded = false;
-
-            foreach (DataColumn col in _workingTable.Columns)
-            {
-                //if we have already handled it
-                if (ExplicitlyTypedColumns != null && ExplicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(col.ColumnName))
-                    continue;
-
-                //let's make a decision about the data type to use based on the contents
-                var computedType = new DataTypeComputer(col);
-
-                //Type based on the contents of the column 
-                if (computedType.ShouldDowngradeColumnTypeToMatchCurrentEstimate(col))
-                {
-                    dtCloned.Columns[col.ColumnName].DataType = computedType.CurrentEstimate;
-                    typeChangeNeeded = true;
-                }
-            }
-
-            if (typeChangeNeeded)
-            {
-                foreach (DataRow row in _workingTable.Rows)
-                    dtCloned.ImportRow(row);
-
-                _workingTable = dtCloned;
-            }
-
-        }
-
+        
 
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
