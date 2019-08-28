@@ -23,7 +23,7 @@ namespace Rdmp.UI.Tests
     class ArbitraryFolderNodeTests:UITests
     {
 
-        [Test,UITimeout(5000)]
+        [Test,UITimeout(50000)]
         public void Test_ArbitraryFolderNode_CommandGetter_Throwing()
         {
             SetupMEF();
