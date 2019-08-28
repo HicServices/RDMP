@@ -127,7 +127,8 @@ namespace Tests.Common.Scenarios
         /// </summary>
         public void Destroy()
         {
-            BulkDataDatabase.Drop();
+            foreach(var t in BulkDataDatabase.DiscoverTables(true))
+                t.Drop();
         }
         
         /// <summary>
