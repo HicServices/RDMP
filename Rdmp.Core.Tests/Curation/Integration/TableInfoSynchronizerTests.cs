@@ -7,13 +7,13 @@
 using System;
 using System.Linq;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {

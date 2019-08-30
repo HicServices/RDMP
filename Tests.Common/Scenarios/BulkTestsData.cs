@@ -10,7 +10,6 @@ using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
@@ -18,6 +17,7 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 using ReusableLibraryCode.DataAccess;
+using TypeGuesser;
 
 namespace Tests.Common.Scenarios
 {

@@ -6,23 +6,19 @@
 
 using System;
 using System.Data;
-using System.Data.SqlClient;
 using System.Diagnostics;
 using System.IO;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
-using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using System.Linq;
 

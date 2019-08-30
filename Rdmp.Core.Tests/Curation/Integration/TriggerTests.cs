@@ -16,8 +16,8 @@ using Rdmp.Core.DataLoad.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
 using Tests.Common;
-using FAnsi.Discovery.TypeTranslation;
 using System.Collections.Generic;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {

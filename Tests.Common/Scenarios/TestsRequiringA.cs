@@ -25,8 +25,8 @@ namespace Tests.Common.Scenarios
             //create string columns as varchar(500) to avoid load errors  when creating new csv files you want to load into the database
             foreach(var c in columns)
             {
-                if(c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.MaxWidthForStrings.HasValue)
-                    c.TypeRequested.MaxWidthForStrings = Math.Max(500,c.TypeRequested.MaxWidthForStrings.Value);
+                if(c.TypeRequested.CSharpType == typeof(string) && c.TypeRequested.Width.HasValue)
+                    c.TypeRequested.Width = Math.Max(500,c.TypeRequested.Width.Value);
 
             }
         }

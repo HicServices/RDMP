@@ -11,7 +11,6 @@ using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
-using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -24,6 +23,7 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuilderTests
 {

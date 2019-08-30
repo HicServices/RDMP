@@ -13,7 +13,6 @@ using System.Linq;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -24,6 +23,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 {
@@ -85,7 +85,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         private DiscoveredTable discoveredTable;
 
         //All column values sent to server so far
-        Dictionary<string, DataTypeComputer> _dataTypeDictionary;
+        Dictionary<string, Guesser> _dataTypeDictionary;
 
         public DataTableUploadDestination()
         {
@@ -110,7 +110,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
                 
-                TargetTableName = QuerySyntaxHelper.MakeHeaderNameSane(toProcess.TableName);
+                TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
 
             ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
@@ -145,7 +145,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
                     
                     if (AllowResizingColumnsAtUploadTime)
-                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetDataTypeComputer(),StringComparer.CurrentCultureIgnoreCase);
+                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetGuesser(),StringComparer.CurrentCultureIgnoreCase);
                 }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
@@ -164,11 +164,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 }
 
                 _managedConnection = _server.BeginNewTransactedConnection();
-                _bulkcopy = discoveredTable.BeginBulkInsert(_managedConnection.ManagedTransaction);
+                _bulkcopy = discoveredTable.BeginBulkInsert(Culture,_managedConnection.ManagedTransaction);
                 
-                if(Culture != null)
-                    _bulkcopy.DateTimeDecider.Culture = Culture;
-
                 _firstTime = false;
             }
 
@@ -234,7 +231,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
             
             //Get the current estimates from the datatype computer
-            Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => v.Value.GetSqlDBType(typeTranslater),StringComparer.CurrentCultureIgnoreCase);
+            Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
 
             //adjust the computer to 
             //work out the max sizes - expensive bit
@@ -251,7 +248,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
             {
                 //get what is required for the current batch and the current type that is configured in the live table
                 string oldSqlType = oldTypes[column.ColumnName];
-                string newSqlType = _dataTypeDictionary[column.ColumnName].GetSqlDBType(typeTranslater);
+                string newSqlType = typeTranslater.GetSQLDBTypeForCSharpType(_dataTypeDictionary[column.ColumnName].Guess);
 
                 bool changesMade = false;
 

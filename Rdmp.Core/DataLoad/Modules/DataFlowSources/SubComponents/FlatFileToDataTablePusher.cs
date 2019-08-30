@@ -11,11 +11,11 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using CsvHelper;
-using FAnsi.Discovery.TypeTranslation;
-using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
+using TypeGuesser.Deciders;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
 {
@@ -30,7 +30,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         private readonly Func<string, object> _hackValuesFunc;
         private readonly bool _attemptToResolveNewlinesInRecords;
         private readonly CultureInfo _culture;
-        TypeDeciderFactory typeDeciderFactory = new TypeDeciderFactory();
+        TypeDeciderFactory typeDeciderFactory;
 
         /// <summary>
         /// Used in the event of reading too few cells for the current line.  The pusher will peek at the next lines to see if they
@@ -61,11 +61,12 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             _headers = headers;
             _hackValuesFunc = hackValuesFunc;
             _attemptToResolveNewlinesInRecords = attemptToResolveNewlinesInRecords;
-            _culture = culture;
+            _culture = culture ?? CultureInfo.CurrentCulture;
 
-            if(culture != null)
-                foreach(var d in typeDeciderFactory.Dictionary.Values.OfType<DateTimeTypeDecider>())
-                    d.Culture = culture;
+             typeDeciderFactory = new TypeDeciderFactory(_culture);
+
+
+
         }
 
         public int PushCurrentLine(CsvReader reader,FlatFileLine lineToPush, DataTable dt,IDataLoadEventListener listener, FlatFileEventHandlers eventHandlers)
@@ -258,7 +259,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
         public DataTable StronglyTypeTable(DataTable workingTable,ExplicitTypingCollection explicitTypingCollection)
         {
             Dictionary<int, IDecideTypesForStrings> deciders = new Dictionary<int, IDecideTypesForStrings>();
-            var factory = new TypeDeciderFactory();
+            var factory = new TypeDeciderFactory(_culture);
 
             DataTable dtCloned = workingTable.Clone();
 
@@ -271,16 +272,17 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     continue;
 
                 //let's make a decision about the data type to use based on the contents
-                var computedType = new DataTypeComputer(col);
+                var computedType = new Guesser();
+                computedType.AdjustToCompensateForValues(col);
 
                 //Type based on the contents of the column 
                 if (computedType.ShouldDowngradeColumnTypeToMatchCurrentEstimate(col))
                 {
-                    dtCloned.Columns[col.ColumnName].DataType = computedType.CurrentEstimate;
+                    dtCloned.Columns[col.ColumnName].DataType = computedType.Guess.CSharpType;
 
                     //if we have a type decider to parse this data type
-                    if(factory.IsSupported(computedType.CurrentEstimate))
-                        deciders.Add(col.Ordinal,factory.Create(computedType.CurrentEstimate)); //record column index and parser
+                    if(factory.IsSupported(computedType.Guess.CSharpType))
+                        deciders.Add(col.Ordinal,factory.Create(computedType.Guess.CSharpType)); //record column index and parser
 
                     typeChangeNeeded = true;
                 }

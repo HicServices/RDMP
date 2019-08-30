@@ -10,11 +10,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
 {

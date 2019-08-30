@@ -10,7 +10,6 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -25,6 +24,7 @@ using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Modules.Attachers
 {

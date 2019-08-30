@@ -7,7 +7,6 @@
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.Copying.Commands;
@@ -16,6 +15,7 @@ using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
+using TypeGuesser;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

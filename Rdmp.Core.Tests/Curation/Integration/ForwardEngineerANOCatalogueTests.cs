@@ -8,7 +8,6 @@ using System;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.ANOEngineering;
@@ -22,6 +21,7 @@ using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {

@@ -7,12 +7,10 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

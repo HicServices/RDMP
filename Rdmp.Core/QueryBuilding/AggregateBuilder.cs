@@ -418,7 +418,7 @@ namespace Rdmp.Core.QueryBuilding
             
             queryLines = queryLines.Where(l => !string.IsNullOrWhiteSpace(l.Text)).ToList();
 
-            _sql = aggregateHelper.BuildAggregate(queryLines, _axis, _pivotDimension != null);
+            _sql = aggregateHelper.BuildAggregate(queryLines, _axis);
         }
         
         private void ValidateDimensions()

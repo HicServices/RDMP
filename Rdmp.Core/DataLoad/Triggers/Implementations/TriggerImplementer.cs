@@ -10,9 +10,9 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using ReusableLibraryCode.Checks;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {

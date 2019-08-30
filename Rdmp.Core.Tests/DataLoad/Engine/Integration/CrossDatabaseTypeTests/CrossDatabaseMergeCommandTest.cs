@@ -36,11 +36,11 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             var dbTo = GetCleanedServer(databaseType, "CrossDatabaseMergeCommandTo");
 
             var dt = new DataTable();
-            var colName = new DataColumn("Name");
-            var colAge = new DataColumn("Age");
+            var colName = new DataColumn("Name",typeof(string));
+            var colAge = new DataColumn("Age",typeof(int));
             dt.Columns.Add(colName);
             dt.Columns.Add(colAge);
-            dt.Columns.Add("Postcode");
+            dt.Columns.Add("Postcode",typeof(string));
 
             //Data in live awaiting to be updated
             dt.Rows.Add(new object[]{"Dave",18,"DD3 1AB"});

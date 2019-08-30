@@ -158,7 +158,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
             //and maybe also help them out with a bit of sanity fixing
             if (_makeHeaderNamesSane)
                 for (int i = 0; i < _headers.Length; i++)
-                    _headers[i] = QuerySyntaxHelper.MakeHeaderNameSane(_headers[i]);
+                    _headers[i] = QuerySyntaxHelper.MakeHeaderNameSensible(_headers[i]);
         }
 
         

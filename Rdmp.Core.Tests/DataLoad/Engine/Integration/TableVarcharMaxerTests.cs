@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -19,6 +18,7 @@ using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {

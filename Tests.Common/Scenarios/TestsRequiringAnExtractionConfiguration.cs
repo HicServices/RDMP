@@ -10,7 +10,6 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
@@ -28,6 +27,7 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Tests.Common.Scenarios
 {

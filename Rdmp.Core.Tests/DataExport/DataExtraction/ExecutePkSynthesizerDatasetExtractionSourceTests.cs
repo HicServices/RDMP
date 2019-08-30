@@ -9,7 +9,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
@@ -21,6 +20,7 @@ using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Progress;
 using Tests.Common.Scenarios;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {

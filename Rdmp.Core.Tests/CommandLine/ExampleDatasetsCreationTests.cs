@@ -8,7 +8,6 @@ using NUnit.Framework;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Defaults;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 

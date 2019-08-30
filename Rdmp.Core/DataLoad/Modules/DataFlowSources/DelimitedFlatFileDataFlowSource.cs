@@ -12,8 +12,6 @@ using System.Linq;
 using CsvHelper;
 using CsvHelper.Configuration;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
-using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -199,7 +197,7 @@ This will not help you avoid bad data as the full file structure must still be r
                 {
                     //create a table with the name of the file
                     _workingTable = Headers.GetDataTableWithHeaders(_listener);
-                    _workingTable.TableName = QuerySyntaxHelper.MakeHeaderNameSane(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+                    _workingTable.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
                     
                     //set the data table to the new untyped but correctly headered table
                     SetDataTable(_workingTable);

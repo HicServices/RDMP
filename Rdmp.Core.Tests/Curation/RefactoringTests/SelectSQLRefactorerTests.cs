@@ -9,7 +9,6 @@ using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.Core.Sharing.Refactoring.Exceptions;
-using System;
 using Tests.Common;
 
 namespace Rdmp.Core.Tests.Curation.RefactoringTests

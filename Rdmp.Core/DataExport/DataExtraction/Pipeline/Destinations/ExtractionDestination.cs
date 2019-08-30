@@ -23,7 +23,6 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using ReusableLibraryCode.DataAccess;
 using Rdmp.Core.Curation;
 using System.Data.SqlClient;
-using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations

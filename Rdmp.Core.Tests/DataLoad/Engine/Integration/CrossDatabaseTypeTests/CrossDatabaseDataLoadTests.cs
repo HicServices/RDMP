@@ -13,7 +13,6 @@ using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -34,6 +33,7 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 {
@@ -276,7 +276,7 @@ MrMurder,2001-01-01,Yella");
             var db = GetCleanedServer(databaseType);
 
             var dtParent = new DataTable();
-            dtParent.Columns.Add("ID");
+            dtParent.Columns.Add("ID",typeof(int));
             dtParent.Columns.Add("Name");
             dtParent.Columns.Add("Height");
             dtParent.PrimaryKey = new[] {dtParent.Columns[0]};

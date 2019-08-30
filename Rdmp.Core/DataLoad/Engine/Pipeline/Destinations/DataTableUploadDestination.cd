@@ -30,7 +30,7 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.DataTypeComputer">
+  <Class Name="ReusableLibraryCode.DatabaseHelpers.Discovery.TypeTranslation.Guesser">
     <Position X="6.75" Y="2.75" Width="3.5" />
     <TypeIdentifier />
     <ShowAsAssociation>

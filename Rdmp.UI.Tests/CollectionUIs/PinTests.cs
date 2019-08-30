@@ -7,11 +7,6 @@
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Collections;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.UI.Tests.CollectionUIs
 {

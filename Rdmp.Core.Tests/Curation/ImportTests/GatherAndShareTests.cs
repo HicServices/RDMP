@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable.Attributes;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
@@ -20,6 +19,7 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Sharing.Dependency.Gathering;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.ImportTests
 {

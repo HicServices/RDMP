@@ -89,7 +89,7 @@ namespace ReusableUIComponents
             if(RequireSaneHeaderText && !string.IsNullOrWhiteSpace(textBox1.Text))
             {
                 //if the sane name doesn't match the 
-                if(!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSane(textBox1.Text),StringComparison.CurrentCultureIgnoreCase))
+                if(!textBox1.Text.Equals(QuerySyntaxHelper.MakeHeaderNameSensible(textBox1.Text),StringComparison.CurrentCultureIgnoreCase))
                 {
                     btnOk.Enabled = false;
                     textBox1.ForeColor = Color.Red;

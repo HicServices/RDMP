@@ -625,7 +625,7 @@ old""", chunk.Rows[2][2]);
         [TestCase("once #upon", "onceUpon")] //Dodgy characters are stripped before cammel casing after spaces so 'u' gets cammeled even though it has a symbol before it.
         public void TestMakingHeaderNamesSane(string bad, string expectedGood)
         {
-            Assert.AreEqual(expectedGood,QuerySyntaxHelper.MakeHeaderNameSane(bad));
+            Assert.AreEqual(expectedGood,QuerySyntaxHelper.MakeHeaderNameSensible(bad));
         }
 
 

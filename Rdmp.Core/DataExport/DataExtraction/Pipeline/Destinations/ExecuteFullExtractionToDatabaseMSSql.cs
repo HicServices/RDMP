@@ -11,7 +11,6 @@ using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
@@ -27,6 +26,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 {
@@ -263,7 +263,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             syntax.ValidateTableName(tblName);
 
             //otherwise, fetch and cache answer
-            string cachedGetTableNameAnswer = syntax.GetSensibleTableNameFromString(tblName);
+            string cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
 
             if (String.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
                 throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" + _request + "'");
@@ -369,7 +369,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 DataTable dt = new DataTable();
                 da.Fill(dt);
 
-                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sqlTable.Name));
+                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
                 linesWritten = dt.Rows.Count;
 
                 var destinationDb = GetDestinationDatabase(listener);
@@ -390,7 +390,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             var tbl = lookup.TableInfo.Discover(DataAccessContext.DataExport);
             var dt = tbl.GetDataTable();
                 
-            dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(lookup.TableInfo.Name));
+            dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(lookup.TableInfo.Name));
 
             //describe the destination for the abstract base
             destinationDescription = TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName;

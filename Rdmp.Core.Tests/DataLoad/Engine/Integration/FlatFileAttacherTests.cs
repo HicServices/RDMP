@@ -11,8 +11,6 @@ using System.Linq;
 using System.Threading;
 using FAnsi;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
-using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -25,6 +23,7 @@ using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {

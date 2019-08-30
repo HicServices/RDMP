@@ -6,17 +6,11 @@
 
 using BrightIdeasSoftware;
 using NUnit.Framework;
-using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.Collections;
-using Rdmp.UI.MainFormUITabs;
 using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace Rdmp.UI.Tests
 {
