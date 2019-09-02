@@ -10,6 +10,7 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
@@ -66,7 +67,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         
         private IBulkCopy _bulkcopy;
         private int _affectedRows = 0;
+        
         Stopwatch swTimeSpentWritting = new Stopwatch();
+        Stopwatch swMeasuringStrings = new Stopwatch();
 
         private DiscoveredServer _loggingDatabaseSettings;
 
@@ -227,21 +230,33 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
         private void ResizeColumnsIfRequired(DataTable toProcess, IDataLoadEventListener listener)
         {
+            swMeasuringStrings.Start();
+
             var tbl = _database.ExpectTable(TargetTableName);
             var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
             
             //Get the current estimates from the datatype computer
             Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
 
+            //columns in 
+            List<string> sharedColumns = new List<string>();
+
+            //for each destination column
+            foreach (string col in _dataTypeDictionary.Keys)
+                //if it appears in the toProcess DataTable
+                if (toProcess.Columns.Contains(col))
+                    sharedColumns.Add(col); //it is a shared column
+
+            
+            
             //adjust the computer to 
-            //work out the max sizes - expensive bit
-            foreach (DataRow row in toProcess.Rows)
-                //for each destination column
-                foreach (string col in _dataTypeDictionary.Keys)
-                    //if it appears in the toProcess DataTable
-                    if (toProcess.Columns.Contains(col))
-                        //run the datatype computer over it to compute max lengths
-                        _dataTypeDictionary[col].AdjustToCompensateForValue(row[col]);
+            //for each shared column adjust the corresponding computer for all rows
+            Parallel.ForEach(sharedColumns, col =>
+            {
+                var guesser = _dataTypeDictionary[col];
+                foreach (DataRow row in toProcess.Rows)
+                    guesser.AdjustToCompensateForValue(row[col]);
+            });            
 
             //see if any have changed
             foreach (DataColumn column in toProcess.Columns)
@@ -268,6 +283,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 if(changesMade)
                     _bulkcopy.InvalidateTableSchema();
             }
+            
+            swMeasuringStrings.Stop();
+            listener.OnProgress(this,new ProgressEventArgs("Measuring DataType Sizes",new ProgressMeasurement(_affectedRows + toProcess.Rows.Count,ProgressType.Records),swMeasuringStrings.Elapsed));
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -355,7 +373,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
         private void StartAuditIfExists(string tableName)
         {
-            if (LoggingServer != null)
+            if (LoggingServer != null && _dataLoadInfo == null)
             {
                 _loggingDatabaseSettings = DataAccessPortal.GetInstance().ExpectServer(LoggingServer, DataAccessContext.Logging);
                 var logManager = new LogManager(_loggingDatabaseSettings);

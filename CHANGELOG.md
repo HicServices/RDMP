@@ -38,7 +38,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding new filters/containers (AND/OR) now correctly expand and highlight the created object in collections
 - Fixed AggregateEditorUI could incorrectly offer to save changes even when no changes had been made
 - Clonng a Cohort Identification Configuration now preserves custom set container names e.g. "UNION Inclusion Criteria"
- 
+- Fixed bug in DataTableUploadDestination where multiple root (DataLoadInfo) logging entries were created for a single large bulk insert 
+
 ### Removed
 - Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
 
