@@ -35,40 +35,43 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
         
         public Bitmap GetImageIfSupportedObject(object o)
         {
-            var ei = o as ExtractionInformation;
+            
+            if(o is ExtractionCategory cat)
+                return GetImage(cat);
 
-            if (ei == null)
-                return null;
+            if (o is ExtractionInformation ei)
+            {
+                Bitmap toReturn = GetImage(ei.ExtractionCategory);
+                
+                if (ei.IsExtractionIdentifier)
+                    return _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
 
-            Bitmap toReturn;
-            switch (ei.ExtractionCategory)
+                return toReturn;
+
+            }
+
+            return null;
+        }
+
+        private Bitmap GetImage(ExtractionCategory category)
+        {
+            switch (category)
             {
                 case ExtractionCategory.Core:
-                    toReturn = _extractionInformation_Core;
-                    break;
+                    return _extractionInformation_Core;
                 case ExtractionCategory.Supplemental:
-                    toReturn = _extractionInformation_Supplemental;
-                    break;
+                    return _extractionInformation_Supplemental;
                 case ExtractionCategory.SpecialApprovalRequired:
-                    toReturn = _extractionInformation_SpecialApproval;
-                    break;
+                    return _extractionInformation_SpecialApproval;
                 case ExtractionCategory.Internal:
-                    toReturn = _extractionInformation_InternalOnly;
-                    break;
+                    return _extractionInformation_InternalOnly;
                 case ExtractionCategory.Deprecated:
-                    toReturn = _extractionInformation_Deprecated;
-                    break;
+                    return _extractionInformation_Deprecated;
                 case ExtractionCategory.ProjectSpecific:
-                    toReturn = _extractionInformation_ProjectSpecific;
-                    break;
+                    return _extractionInformation_ProjectSpecific;
                 default:
                     throw new ArgumentOutOfRangeException();//.Any is not valid for ExtractionInformations
             }
-
-            if (ei.IsExtractionIdentifier)
-                return _overlayProvider.GetOverlay(toReturn, OverlayKind.Key);
-            
-            return toReturn;
         }
     }
 }
