@@ -238,7 +238,7 @@ namespace Rdmp.Core.QueryBuilding
                             primaryExtractionTable = table;
                         else
                             throw new QueryBuildingException("There are multiple tables marked as IsPrimaryExtractionTable:" +
-                                                qb.PrimaryExtractionTable.Name + "(ID=" + qb.PrimaryExtractionTable.ID +
+                                                primaryExtractionTable.Name + "(ID=" + primaryExtractionTable.ID +
                                                 ") and " + table.Name + "(ID=" + table.ID + ")");
                 }
             }
