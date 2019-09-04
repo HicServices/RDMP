@@ -115,12 +115,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.QueryBuilderTe
 
             //should be using only 3 of the 4 joins because we already have a route to c4 without a fourth join
             Assert.AreEqual(3, builder.JoinsUsedInQuery.Count);
-            Assert.AreEqual(j1,builder.JoinsUsedInQuery[0]);
-            Assert.AreEqual(j2, builder.JoinsUsedInQuery[0]);
-            Assert.AreEqual(j3, builder.JoinsUsedInQuery[0]);
-
-
-
+            Assert.Contains(j1,builder.JoinsUsedInQuery);
+            Assert.Contains(j2, builder.JoinsUsedInQuery);
+            Assert.Contains(j3, builder.JoinsUsedInQuery);
         }
     }
 }
