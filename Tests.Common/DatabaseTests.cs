@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.Constraints;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
@@ -256,12 +257,9 @@ namespace Tests.Common
 
             DiscoveredDatabaseICanCreateRandomTablesIn = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(scratchDatabaseName);
 
-            //if it already exists drop it
-            if(DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
-                DiscoveredDatabaseICanCreateRandomTablesIn.Drop();
-
-            //create it
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);
+            //if scratch database doesn't exist create it
+            if(!DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
+                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);
         }
         
         public const string BlitzDatabases = @"
@@ -373,13 +371,15 @@ delete from {1}..Project
         /// <returns></returns>
         protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null, bool justDropTablesIfPossible = false)
         {
-            if (dbnName == null)
-                dbnName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
-
             DiscoveredServer wc1;
             DiscoveredDatabase wc2;
-            var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2,justDropTablesIfPossible);
-            forCleanup.Add(toReturn);
+            var toReturn =  GetCleanedServer(type, dbnName ?? DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName()
+                , out wc1, out wc2,justDropTablesIfPossible || dbnName == null);
+
+            //only drop databases if its not the scratch one
+            if(dbnName != null)
+                forCleanup.Add(toReturn);
+
             return toReturn;
         }
 
@@ -433,10 +433,7 @@ delete from {1}..Project
 
             if (justDropTablesIfPossible && database.Exists())
             {
-                foreach (var t in database.DiscoverTables(true))
-                    t.Drop();
-                foreach (var t in database.DiscoverTableValuedFunctions())
-                    t.Drop();
+                DeleteTables(database);
             }
             else
                 database.Create(true);
@@ -446,6 +443,33 @@ delete from {1}..Project
             Assert.IsTrue(database.Exists());
 
             return database;
+        }
+
+        private void DeleteTables(DiscoveredDatabase database)
+        {
+            var tables = new RelationshipTopologicalSort(database.DiscoverTables(true));
+
+            foreach (var t in tables.Order.Reverse())
+                try
+                {
+                    t.Drop();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception( $"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup",ex);
+                }
+            
+            foreach (var t in database.DiscoverTableValuedFunctions())
+                try
+                {
+                    
+                    t.Drop();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception( $"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup",ex);
+                }
+
         }
 
         protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
