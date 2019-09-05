@@ -21,13 +21,13 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
         [SetUp]
         public void CreateFunction()
         {
-            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, CatalogueRepository);
+            _function.Create(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), CatalogueRepository);
         }
 
         [Test]
         public void FunctionWorks()
         {
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = server.GetConnection())
             {
                 con.Open();
@@ -78,7 +78,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
         [Test]
         public void TestDiscovery()
         {
-            var db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             
             using (var con = db.Server.BeginNewTransactedConnection())
             {

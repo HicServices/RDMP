@@ -75,6 +75,11 @@ namespace Tests.Common.Scenarios
         private Random r = new Random();
 
         /// <summary>
+        /// the bulk test data created during <see cref="SetupTestData"/>
+        /// </summary>
+        public DiscoveredTable Table {get;private set; }
+
+        /// <summary>
         /// Prepares to create a new table in the <paramref name="targetDatabase"/> of test data using <see cref="Demography"/>. To actually generate the data
         /// call <see cref="SetupTestData"/>
         /// </summary>
@@ -114,7 +119,7 @@ namespace Tests.Common.Scenarios
                 tbl.Drop();
 
             //create the table but make sure the chi is a primary key and the correct data type and that we have a sensible primary key
-            BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{ 
+            Table = BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{ 
                 new DatabaseColumnRequest("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
                 new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
                 new DatabaseColumnRequest("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}

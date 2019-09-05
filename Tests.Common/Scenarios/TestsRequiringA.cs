@@ -31,7 +31,7 @@ namespace Tests.Common.Scenarios
             }
         }
 
-        protected DiscoveredTable CreateDataset<T>(int people, int rows,Random r, out PersonCollection peopleGenerated) where T:IDataGenerator
+        protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db,int people, int rows,Random r, out PersonCollection peopleGenerated) where T:IDataGenerator
         {
             var f = new DataGeneratorFactory();
             T instance = f.Create<T>(r);
@@ -40,12 +40,12 @@ namespace Tests.Common.Scenarios
             peopleGenerated.GeneratePeople(people,r);
 
             var dt = instance.GetDataTable(peopleGenerated,rows);
-
-            return DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable(typeof(T).Name,dt,null,false,this);
+                        
+            return db.CreateTable(typeof(T).Name,dt,null,false,this);
         }
-        protected DiscoveredTable CreateDataset<T>(int people, int rows,Random r) where T:IDataGenerator
+        protected DiscoveredTable CreateDataset<T>(DiscoveredDatabase db, int people, int rows,Random r) where T:IDataGenerator
         {
-            return CreateDataset<T>(people,rows,r,out _);
+            return CreateDataset<T>(db,people,rows,r,out _);
         }
     }
 }

@@ -34,11 +34,11 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
             Cleanup();
 
             Console.WriteLine("Setting up bulk test data");
-            _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
+            _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             _bulkData.SetupTestData();
             
             Console.WriteLine("Importing to Catalogue");
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(BulkTestsData.BulkDataTable);
+            var tbl = _bulkData.Table;
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, tbl);
 
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);

@@ -40,7 +40,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             bool hasPk = testCase != KVPAttacherTestCase.OneFileWithoutPrimaryKey;
 
             var attacher = new KVPAttacher();
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("KVPTestTable");
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("KVPTestTable");
 
             var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var parentDir = workingDir.CreateSubdirectory("KVPAttacherTestProjectDirectory");
@@ -132,7 +132,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 attacher.TargetDataTableKeyColumnName = "Test";
                 attacher.TargetDataTableValueColumnName = "Result";
                 
-                attacher.Initialize(projectDir,DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(projectDir,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
                 attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 

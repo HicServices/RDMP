@@ -169,7 +169,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
         private BulkTestsData SetupTestData(out ColumnInfo l2ColumnInfo)
         {
             //Setup test data
-            var testData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
+            var testData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             testData.SetupTestData();
             testData.ImportAsCatalogue();
 

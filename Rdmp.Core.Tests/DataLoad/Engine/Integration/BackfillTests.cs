@@ -193,7 +193,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             mutilator.Initialize(staging, LoadStage.AdjustStaging);
             mutilator.Check(new ThrowImmediatelyCheckNotifier());
-            mutilator.Mutilate(new ThrowImmediatelyDataLoadJob(DiscoveredDatabaseICanCreateRandomTablesIn.Server));
+            mutilator.Mutilate(new ThrowImmediatelyDataLoadJob(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server));
         }
 
         [Test]

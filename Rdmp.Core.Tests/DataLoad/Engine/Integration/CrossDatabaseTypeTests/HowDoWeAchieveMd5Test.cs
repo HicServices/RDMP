@@ -23,7 +23,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             dt.Columns.Add("F");
             dt.Rows.Add(new[] {"Fish"});
 
-            var db = GetCleanedServer(type,true);
+            var db = GetCleanedServer(type);
             var tbl = db.CreateTable("MD5Test", dt);
 
             var col = tbl.DiscoverColumn("F");
@@ -55,7 +55,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             dt.Columns.Add("F");
             dt.Rows.Add(new[] { "2001-01-01" });
 
-            var db = GetCleanedServer(type,true);
+            var db = GetCleanedServer(type);
             var tbl = db.CreateTable("MD5Test", dt);
 
             var col = tbl.DiscoverColumn("F");

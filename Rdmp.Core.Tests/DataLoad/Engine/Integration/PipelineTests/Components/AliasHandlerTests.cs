@@ -26,9 +26,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         public void SetupServer()
         {
             _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer",null);
-            _server.SetProperties(DiscoveredDatabaseICanCreateRandomTablesIn);
+            _server.SetProperties(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
-            var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var s = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -75,7 +75,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void ThrowBecause_NameAndAliasSameValue()
         {            
-            var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var s = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -94,7 +94,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void ThrowBecause_ThreeColumnAliasTable()
         {
-            var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var s = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -204,7 +204,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [TearDown]
         public void TearDown()
         {
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("AliasHandlerTests");
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("AliasHandlerTests");
             
             if(tbl.Exists())
                 tbl.Drop();

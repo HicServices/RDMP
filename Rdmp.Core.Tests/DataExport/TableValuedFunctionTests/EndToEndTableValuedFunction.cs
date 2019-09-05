@@ -92,8 +92,8 @@ namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests
             DataExportRepository.GetAllObjects<ExtractableCohort>().Single().DeleteInDatabase();
             _externalCohortTable.DeleteInDatabase();
 
-            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("NonTVFTable").Drop();
-            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTableValuedFunction("GetTopXRandom").Drop();
+            GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("NonTVFTable").Drop();
+            GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTableValuedFunction("GetTopXRandom").Drop();
 
             //delete global parameter
             ((AnyTableSqlParameter)_aggregate.GetAllParameters().Single()).DeleteInDatabase();
@@ -160,7 +160,7 @@ namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests
 
         private void CreateTvfCatalogue(string cohortDatabaseName)
         {
-            var svr = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var svr = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = svr.GetConnection())
             {
                 con.Open();
@@ -190,7 +190,7 @@ end
                 svr.GetCommand(sql, con).ExecuteNonQuery();
             }
 
-            var tblvf = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTableValuedFunction("GetTopXRandom");
+            var tblvf = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTableValuedFunction("GetTopXRandom");
 
             var importer = new TableValuedFunctionImporter(CatalogueRepository, tblvf);
 
@@ -216,7 +216,7 @@ end
 
         private void CreateANormalCatalogue()
         {
-            var svr = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var svr = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = svr.GetConnection())
             {
                 con.Open();
@@ -227,7 +227,7 @@ end
             }
 
             var importer = new TableInfoImporter(CatalogueRepository, svr.Name,
-                DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName(), "NonTVFTable",
+                GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).GetRuntimeName(), "NonTVFTable",
                 DatabaseType.MicrosoftSQLServer);
 
             TableInfo tbl;

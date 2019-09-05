@@ -32,11 +32,8 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         [SetUp]
         public void SetupExampleTable()
         {
-            var remnantTable = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ANOMigration");
-
-            if (remnantTable.Exists())
-                remnantTable.Drop();
-
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            
             DeleteANOEndpoint();
             
             ANOTable remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
@@ -78,14 +75,14 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
 INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Condition2], [Condition3], [Condition4], [CHI]) VALUES (CAST(0x0000088A00000000 AS DateTime), CAST(0x0000089300000000 AS DateTime), N'G009', NULL, NULL, NULL, N'0706013071')
 INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Condition2], [Condition3], [Condition4], [CHI]) VALUES (CAST(0x000008CA00000000 AS DateTime), CAST(0x000008D100000000 AS DateTime), N'T47', N'H311', N'O037', NULL, N'1204057592')";
 
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = db.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();
                 server.GetCommand(sql,con).ExecuteNonQuery();
             }
 
-            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(TableName);
+            var table = db.ExpectTable(TableName);
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, table);
             importer.DoImport(out _tableInfo,out _columnInfos);
 

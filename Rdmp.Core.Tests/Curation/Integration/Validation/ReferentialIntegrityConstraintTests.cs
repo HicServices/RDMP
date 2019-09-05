@@ -24,12 +24,12 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
         [OneTimeSetUp]
         public void Setup()
         {
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("ReferentialIntegrityConstraintTests");
 
             if(tbl.Exists())
                 tbl.Drop();
 
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             
             using (var con = server.GetConnection())
             {
@@ -96,7 +96,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
         [OneTimeTearDown]
         public void Drop()
         {
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("ReferentialIntegrityConstraintTests");
             
             if(tbl.Exists())
                 tbl.Drop();

@@ -29,6 +29,11 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         //C24D365B7C271E2C1BC884B5801C2961
         Regex reghex = new Regex(@"^HASHED: [A-F\d]{32}");
 
+        /// <summary>
+        /// Database created and populated by <see cref="SetupExtractDatasetCommand(string, string[], string[], bool, bool)"/>
+        /// </summary>
+        public DiscoveredDatabase Database { get; private set; }
+
         [SetUp]
         public void SetHash()
         {
@@ -100,8 +105,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
             Assert.IsTrue(reghex.IsMatch(firstvalue));
 
-            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
-            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleJoin").Drop();
+            Database.ExpectTable("SimpleLookup").Drop();
+            Database.ExpectTable("SimpleJoin").Drop();
         }
 
         [Test]
@@ -121,7 +126,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var firstvalue = chunk.Rows[0]["SynthesizedPk"].ToString();
             Assert.IsTrue(reghex.IsMatch(firstvalue));
 
-            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("SimpleLookup").Drop();
+            Database.ExpectTable("SimpleLookup").Drop();
         }
         
         private void SetupJoin()
@@ -133,7 +138,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             
             dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("SimpleJoin", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) { IsPrimaryKey = true } });
+            var tbl = Database.CreateTable("SimpleJoin", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) { IsPrimaryKey = true } });
 
             var lookupCata = Import(tbl);
 
@@ -159,7 +164,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             dt.Rows.Add(new object[] { "Dave", "Is a maniac" });
             
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("SimpleLookup", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
+            var tbl = Database.CreateTable("SimpleLookup", dt, new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50)) });
 
             var lookupCata = Import(tbl);
 
@@ -186,7 +191,9 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
             dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable(testTableName, 
+            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
+            var tbl = Database.CreateTable(testTableName, 
                 dt, 
                 new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50))});
 

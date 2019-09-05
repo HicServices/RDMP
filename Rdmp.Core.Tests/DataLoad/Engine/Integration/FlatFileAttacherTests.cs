@@ -47,7 +47,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
             
             // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
-            _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
+            _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
             using (var con = _database.Server.GetConnection())
             {

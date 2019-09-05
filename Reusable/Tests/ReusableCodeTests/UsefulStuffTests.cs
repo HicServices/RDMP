@@ -18,7 +18,7 @@ namespace ReusableCodeTests
         [OneTimeSetUp]
         public void BulkTestsSetUp()
         {
-            _bulkTests = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
+            _bulkTests = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             _bulkTests.SetupTestData();
         }
 
@@ -31,11 +31,11 @@ namespace ReusableCodeTests
         [Test]
         public void GetRowCountWhenNoIndexes()
         {
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
-            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("GetRowCountWhenNoIndexes");
+            var table = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("GetRowCountWhenNoIndexes");
             Assert.AreEqual("GetRowCountWhenNoIndexes",table.GetRuntimeName());
+            var server = table.Database.Server;
 
-            using(var con = server.GetConnection())
+            using (var con = server.GetConnection())
             {
                 con.Open();
 
@@ -53,25 +53,24 @@ namespace ReusableCodeTests
         [Test]
         public void GetRowCount_Views()
         {
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-            using (var con = server.GetConnection())
+            using (var con = db.Server.GetConnection())
             {
                 con.Open();
 
-                var cmd = server.GetCommand("CREATE TABLE GetRowCount_Views (age int, name varchar(5))", con);
+                var cmd = db.Server.GetCommand("CREATE TABLE GetRowCount_Views (age int, name varchar(5))", con);
                 cmd.ExecuteNonQuery();
 
-                var cmdInsert = server.GetCommand("INSERT INTO GetRowCount_Views VALUES (1,'Fish')", con);
+                var cmdInsert = db.Server.GetCommand("INSERT INTO GetRowCount_Views VALUES (1,'Fish')", con);
                 Assert.AreEqual(1, cmdInsert.ExecuteNonQuery());
 
 
-                var cmdView = server.GetCommand(
+                var cmdView = db.Server.GetCommand(
                     "CREATE VIEW v_GetRowCount_Views as select * from GetRowCount_Views", con);
                 cmdView.ExecuteNonQuery();
 
-                Assert.AreEqual(1,
-                    DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("v_GetRowCount_Views").GetRowCount());
+                Assert.AreEqual(1, db.ExpectTable("v_GetRowCount_Views").GetRowCount());
             }
         }
     }

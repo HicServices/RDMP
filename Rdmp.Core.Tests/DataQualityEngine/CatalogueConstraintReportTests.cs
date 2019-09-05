@@ -31,7 +31,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             int numberOfRecordsToGenerate = 10000;
             DateTime startTime = DateTime.Now;
 
-            BulkTestsData testData = new BulkTestsData(CatalogueRepository,DiscoveredDatabaseICanCreateRandomTablesIn,numberOfRecordsToGenerate); 
+            BulkTestsData testData = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),numberOfRecordsToGenerate); 
             testData.SetupTestData();
             testData.ImportAsCatalogue();
 

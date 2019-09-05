@@ -39,12 +39,12 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void TestPreExecutionChecker_TablesDontExist()
         {
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("Imaginary");
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("Imaginary");
 
             Assert.IsFalse(tbl.Exists());
 
             var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(tbl);
-            var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(DiscoveredDatabaseICanCreateRandomTablesIn.Server));
+            var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server));
             var ex = Assert.Throws<Exception>(()=>checker.Check(new ThrowImmediatelyCheckNotifier()));
 
             StringAssert.IsMatch("Table '.*Imaginary.*' does not exist", ex.Message);
@@ -53,13 +53,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
         public void TestPreExecutionChecker_TableIsTableValuedFunction()
         {
             TestableTableValuedFunction f = new TestableTableValuedFunction();
-            f.Create(DiscoveredDatabaseICanCreateRandomTablesIn,CatalogueRepository);
+            f.Create(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),CatalogueRepository);
 
             var tbl = f.TableInfoCreated.Discover(DataAccessContext.DataLoad);
             Assert.IsTrue(tbl.Exists());
 
             var lmd = RdmpMockFactory.Mock_LoadMetadataLoadingTable(f.TableInfoCreated);
-            var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(DiscoveredDatabaseICanCreateRandomTablesIn.Server));
+            var checker = new PreExecutionChecker(lmd, new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server));
             var ex = Assert.Throws<Exception>(() => checker.Check(new ThrowImmediatelyCheckNotifier()));
 
             StringAssert.IsMatch("Table '.*MyAwesomeFunction.*' is a TableValuedFunction", ex.Message);

@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -16,6 +17,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 {
     public class CohortIdentificationTests : DatabaseTests
     {
+        public DiscoveredDatabase Database { get; private set; }
 
         protected BulkTestsData testData;
         protected AggregateConfiguration aggregate1;
@@ -33,7 +35,9 @@ namespace Rdmp.Core.Tests.CohortCreation
 
         public void SetupTestData(ICatalogueRepository repository)
         {
-            testData = new BulkTestsData(repository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
+            testData = new BulkTestsData(repository, Database, 100);
             testData.SetupTestData();
 
             testData.ImportAsCatalogue();

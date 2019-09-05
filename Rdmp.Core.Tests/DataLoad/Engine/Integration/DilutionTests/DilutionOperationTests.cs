@@ -42,7 +42,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.DilutionTests
             o.ColumnToDilute = col;
             var sql = o.GetMutilationSql(null);
 
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = server.BeginNewTransactedConnection())
             {
                 try
@@ -95,7 +95,7 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
             o.ColumnToDilute = col;
             var sql = o.GetMutilationSql(null);
 
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = server.BeginNewTransactedConnection())
             {
                 try
@@ -140,7 +140,7 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
             o.ColumnToDilute = col;
             var sql = o.GetMutilationSql(null);
 
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             using (var con = server.BeginNewTransactedConnection())
             {
                 try

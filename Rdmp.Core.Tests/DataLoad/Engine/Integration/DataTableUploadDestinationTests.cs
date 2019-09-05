@@ -25,7 +25,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [SetUp]
         public void DropTables()
         {
-            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("DataTableUploadDestinationTests");
+            var table = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("DataTableUploadDestinationTests");
             
             if(table.Exists())
                 table.Drop();
@@ -35,7 +35,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void DataTableChangesLengths_NoReAlter()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -70,7 +70,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void DataTableChangesLengths_RandomColumnOrder(bool createIdentity,int numberOfRandomisations)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
             var tbl = db.ExpectTable("RandomOrderTable");
             var random = new Random();
@@ -167,7 +167,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void DataTableChangesLengths_DropColumns()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
             var tbl = db.ExpectTable("DroppedColumnsTable");
             if(tbl.Exists())
@@ -223,7 +223,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DataTableEmpty_ThrowHelpfulException()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -241,7 +241,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DataTableNoRows_ThrowHelpfulException()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -260,7 +260,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DataTableChangesLengths_AllowAlter()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -294,7 +294,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DoubleResizingBetweenIntAndDouble()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -325,7 +325,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void BatchResizing(string expectedDatatypeInDatabase,object batch1Value,object batch2Value)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -361,7 +361,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void BatchResizing_WithExplicitWriteTypes(string expectedDatatypeInDatabase, object batch1Value, object batch2Value, string batch1SqlType)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -398,7 +398,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void VeryLongStringIsVarcharMax()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -432,7 +432,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DecimalResizing(bool negative)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -486,7 +486,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DataTypeEstimation(string expectedDatatypeInDatabase, object[] rowValues, object[] expectedValuesReadFromDatabase)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -527,7 +527,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DecimalZeros(bool sendTheZero)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -561,7 +561,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         [TestCase(DatabaseType.Oracle)]
         public void TestResizing(DatabaseType dbType)
         {
-            var db = GetCleanedServer(dbType,true);
+            var db = GetCleanedServer(dbType);
             var server = db.Server;
 
             var table = db.CreateTable("TestResizing",
@@ -628,7 +628,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         [TestCase(DatabaseType.Oracle)]
         public void TestResizing_WithDetection(DatabaseType dbType)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             var table = db.CreateTable("TestResizing",
                 new DatabaseColumnRequest[]
@@ -689,7 +689,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         [TestCase(DatabaseType.Oracle, "didn't")]
         public void Test_SingleQuote_InText(DatabaseType dbType,string testValue)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             var dt = new DataTable("TestFreeText");
             dt.Columns.Add("MyFreeText");
@@ -710,7 +710,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void DodgyTypes()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
             DataTableUploadDestination destination = new DataTableUploadDestination();
@@ -752,7 +752,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void TypeAlteringlResizing()
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            DiscoveredDatabase db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -786,7 +786,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
             
-            var db = GetCleanedServer(DatabaseType.MySql,true);
+            var db = GetCleanedServer(DatabaseType.MySql);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
 
@@ -838,7 +838,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         {
             var token = new GracefulCancellationToken();
 
-            var db = GetCleanedServer(DatabaseType.MySql, true);
+            var db = GetCleanedServer(DatabaseType.MySql);
 
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
@@ -889,7 +889,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void TestDestinationAlreadyExistingIsOk(bool targetTableIsEmpty)
         {
             //create a table in the scratch database with a single column Name
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestDestinationAlreadyExistingIsOk",new[]{new DatabaseColumnRequest("Name","varchar(10)",false)});
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("TestDestinationAlreadyExistingIsOk",new[]{new DatabaseColumnRequest("Name","varchar(10)",false)});
             try
             {
                 if(!targetTableIsEmpty)
@@ -918,7 +918,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 var listener = new ThrowImmediatelyDataLoadEventListener();
 
                 //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
-                destinationComponent.PreInitialize(DiscoveredDatabaseICanCreateRandomTablesIn,listener);
+                destinationComponent.PreInitialize(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),listener);
 
                 //tell the destination component to process the data
                 destinationComponent.ProcessPipelineData(dt, listener,new GracefulCancellationToken());
@@ -936,7 +936,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void DataTableUploadDestinationTests_PrimaryKeyDataTableWithAlterSizeLater(DatabaseType dbtype)
         {
-            var db = GetCleanedServer(dbtype, true);
+            var db = GetCleanedServer(dbtype);
 
             var destination = new DataTableUploadDestination();
             
@@ -976,7 +976,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void TestDestinationAlreadyExisting_ColumnSubset()
         {
             //create a table in the scratch database with a single column Name
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestDestinationAlreadyExisting_ColumnSubset", new[]
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("TestDestinationAlreadyExisting_ColumnSubset", new[]
             {
                 new DatabaseColumnRequest("Name", "varchar(10)", false),
                 new DatabaseColumnRequest("Age","int"),
@@ -1011,7 +1011,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 var listener = new ThrowImmediatelyDataLoadEventListener();
 
                 //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
-                destinationComponent.PreInitialize(DiscoveredDatabaseICanCreateRandomTablesIn, listener);
+                destinationComponent.PreInitialize(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), listener);
 
                 //tell the destination component to process the data
                 destinationComponent.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
@@ -1067,7 +1067,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void TwoBatch_BooleanResizingTest(DatabaseType dbType, bool giveNullValuesOnly)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = GetCleanedServer(dbType, true);
+            DiscoveredDatabase db = GetCleanedServer(dbType);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
 
@@ -1135,7 +1135,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void TwoBatch_MiscellaneousTest(DatabaseType dbType, string v1,string v2,Type expectedTypeForBatch1,Type expectedTypeForBatch2)
         {
             var token = new GracefulCancellationToken();
-            DiscoveredDatabase db = GetCleanedServer(dbType, true);
+            DiscoveredDatabase db = GetCleanedServer(dbType);
             var toConsole = new ThrowImmediatelyDataLoadEventListener();
             var toMemory = new ToMemoryDataLoadEventListener(true);
 

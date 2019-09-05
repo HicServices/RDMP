@@ -65,7 +65,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             db.Create(true);
 
-            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
@@ -118,7 +118,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             db.Create(true);
 
-            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
@@ -157,7 +157,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             db.Create(true);
 
             //Create this table in the scratch database
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("MyTable", new[]
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("MyTable", new[]
             {
                 new DatabaseColumnRequest("id", "int identity(1,1)", false) {IsPrimaryKey = true},
                 new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 10), false)
@@ -350,12 +350,12 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             db.Create(true);
 
-            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
             //Create a lookup table on the server
-            var lookupTbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("z_sexLookup", new[]
+            var lookupTbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("z_sexLookup", new[]
             {
                 new DatabaseColumnRequest("Code", "varchar(1)"){IsPrimaryKey = true},
                 new DatabaseColumnRequest("hb_Code", "varchar(1)"){IsPrimaryKey = true},

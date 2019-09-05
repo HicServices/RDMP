@@ -60,11 +60,12 @@ namespace Tests.Common
         protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
         protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
         
-        protected DiscoveredDatabase DiscoveredDatabaseICanCreateRandomTablesIn;
+        
         protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
         private readonly DiscoveredServer _discoveredMySqlServer;
         private readonly DiscoveredServer _discoveredOracleServer;
+        private DiscoveredServer _discoveredSqlServer;
 
         static private Startup _startup;
 
@@ -131,8 +132,11 @@ namespace Tests.Common
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
-            CreateScratchArea();
-            
+            _discoveredSqlServer = new DiscoveredServer(
+                new SqlConnectionStringBuilder(){
+                DataSource = TestDatabaseSettings.ServerName,
+                IntegratedSecurity = true});
+
             if (TestDatabaseSettings.MySql != null)
             {
                 var builder = new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql);
@@ -251,16 +255,6 @@ namespace Tests.Common
             Assert.IsTrue(args.Status == MEFFileDownloadEventStatus.Success || args.Status == MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is " + args.Status + " for plugin " + args.FileBeingProcessed + Environment.NewLine + (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
         }
         
-        private void CreateScratchArea()
-        {
-            var scratchDatabaseName = TestDatabaseNames.GetConsistentName("ScratchArea");
-
-            DiscoveredDatabaseICanCreateRandomTablesIn = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(scratchDatabaseName);
-
-            //if scratch database doesn't exist create it
-            if(!DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
-                DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);
-        }
         
         public const string BlitzDatabases = @"
 --If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
@@ -367,48 +361,25 @@ delete from {1}..Project
         /// </summary>
         /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
         /// <param name="dbnName">null for default test database name (recommended unless you are testing moving data from one database to another on the same test server)</param>
-        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
         /// <returns></returns>
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null, bool justDropTablesIfPossible = false)
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null)
         {
-            DiscoveredServer wc1;
-            DiscoveredDatabase wc2;
-            var toReturn =  GetCleanedServer(type, dbnName ?? DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName()
-                , out wc1, out wc2,justDropTablesIfPossible || dbnName == null);
+            //the standard scratch area database
+            string standardName = TestDatabaseNames.GetConsistentName("ScratchArea");
 
-            //only drop databases if its not the scratch one
-            if(dbnName != null)
-                forCleanup.Add(toReturn);
+            //if user specified the standard name or no name
+            bool isStandardDb = dbnName == null || dbnName == standardName;
+            
+            //use the standard name if they haven't specified one
+            if(dbnName == null)
+                dbnName = standardName;
 
-            return toReturn;
-        }
+            DiscoveredServer server;
 
-        /// <summary>
-        /// Gets an empty database on the test server of the appropriate DBMS
-        /// </summary>
-        /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
-        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
-        /// <returns></returns>
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, bool justDropTablesIfPossible)
-        {
-            return GetCleanedServer(type, null, justDropTablesIfPossible);
-        }
-
-        /// <summary>
-        /// Gets an empty database on the test server of the appropriate DBMS
-        /// </summary>
-        /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
-        /// <param name="dbnName">null for default test database name (recommended unless you are testing moving data from one database to another on the same test server)</param>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
-        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
-        /// <returns></returns>
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName, out DiscoveredServer server, out DiscoveredDatabase database, bool justDropTablesIfPossible = false)
-        {
             switch (type)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    server = new DiscoveredServer(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder);
+                    server = _discoveredSqlServer == null ? null : new DiscoveredServer(_discoveredSqlServer.Builder);
                     break;
                 case DatabaseType.MySql:
                     server = _discoveredMySqlServer == null ? null : new DiscoveredServer(_discoveredMySqlServer.Builder);
@@ -429,9 +400,9 @@ delete from {1}..Project
 
             server.TestConnection();
 
-            database = server.ExpectDatabase(dbnName);
+            var database = server.ExpectDatabase(dbnName);
 
-            if (justDropTablesIfPossible && database.Exists())
+            if (database.Exists())
             {
                 DeleteTables(database);
             }
@@ -441,6 +412,10 @@ delete from {1}..Project
             server.ChangeDatabase(dbnName);
 
             Assert.IsTrue(database.Exists());
+
+            //if it had non standard naming mark it for deletion on cleanup
+            if (!isStandardDb)
+                forCleanup.Add(database);
 
             return database;
         }
