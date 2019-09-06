@@ -693,9 +693,16 @@ namespace Tests.Common
             for (int i = 0; i < memObjectsArr.Count(); i++)
                 UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
         }
+
+        /// <summary>
+        /// The number of seconds that have to differ between two DateTime objects in method <see cref="AreAboutTheSameTime"/> before
+        /// they are considered not the same time
+        /// </summary>
+        const double TimeThresholdInSeconds = 60;
+
         private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
         {
-            return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < 10;
+            return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < TimeThresholdInSeconds;
         }
     }
 }
