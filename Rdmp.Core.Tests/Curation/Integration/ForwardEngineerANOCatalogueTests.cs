@@ -33,6 +33,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
             base.SetUp();
 
             BlitzMainDataTables();
+
+            if(ANOStore_Database.Exists())
+                DeleteTables(ANOStore_Database);
         }
 
         [Test]
