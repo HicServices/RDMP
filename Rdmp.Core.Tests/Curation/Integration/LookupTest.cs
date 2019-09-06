@@ -255,13 +255,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(LookupTestCase.SingleKeySingleDescription)]
         public void TestLookupCommand(LookupTestCase testCase)
         {
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
             DataTable dt = new DataTable();
             dt.Columns.Add("ID");
             dt.Columns.Add("SendingLocation");
             dt.Columns.Add("DischargeLocation");
             dt.Columns.Add("Country");
 
-            var maintbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("MainDataset", dt);
+            var maintbl = db.CreateTable("MainDataset", dt);
 
             var mainCata = Import(maintbl);
 
@@ -272,7 +274,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             dtLookup.Columns.Add("Postcode");
             dtLookup.Columns.Add("Country");
 
-            var lookuptbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("Lookup", dtLookup);
+            var lookuptbl = db.CreateTable("Lookup", dtLookup);
 
             var lookupCata = Import(lookuptbl);
 

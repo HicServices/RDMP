@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Data;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -22,13 +23,16 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         private ExternalDatabaseServer _server;
         private AliasHandler _handler;
 
+        private DiscoveredDatabase _database;
+
         [SetUp]
         public void SetupServer()
         {
             _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer",null);
             _server.SetProperties(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
-            var s = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            var s = _database.Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -59,6 +63,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
         }
 
+        
+
         [Test]
         public void ThrowBecause_ColumnNotInInputDataTable()
         {
@@ -75,7 +81,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void ThrowBecause_NameAndAliasSameValue()
         {            
-            var s = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            var s = _database.Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -94,7 +100,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void ThrowBecause_ThreeColumnAliasTable()
         {
-            var s = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            var s = _database.Server;
             using (var con = s.GetConnection())
             {
                 con.Open();

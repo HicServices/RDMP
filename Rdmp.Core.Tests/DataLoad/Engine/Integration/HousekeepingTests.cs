@@ -21,11 +21,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             
             // set up a test database
             const string tableName = "TestTable";
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-            var databaseName = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).GetRuntimeName();
-            var table = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable(tableName,new[] {new DatabaseColumnRequest("Id", "int"),});
+            var databaseName = db.GetRuntimeName();
+            var table = db.CreateTable(tableName,new[] {new DatabaseColumnRequest("Id", "int"),});
 
-            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            var server = db.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();

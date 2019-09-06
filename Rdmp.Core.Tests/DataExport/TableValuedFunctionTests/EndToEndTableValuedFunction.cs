@@ -41,12 +41,24 @@ namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests
         private Catalogue _tvfCatalogue;
         private TableInfo _tvfTableInfo;
 
+        //the cohort database
         private DiscoveredDatabase _discoveredCohortDatabase;
+        //the data database (with the tvf in it)
+        private DiscoveredDatabase _database;
+
         private CohortIdentificationConfiguration _cic;
         private Project _project;
         private Pipeline _pipe;
         private AggregateConfiguration _aggregate;
         private AggregateConfiguration _cicAggregate;
+
+        [SetUp]
+        protected override void SetUp()
+        {
+            base.SetUp();
+
+            _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+        }
 
         [Test]
         public void EndToEndTest()
@@ -92,8 +104,8 @@ namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests
             DataExportRepository.GetAllObjects<ExtractableCohort>().Single().DeleteInDatabase();
             _externalCohortTable.DeleteInDatabase();
 
-            GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("NonTVFTable").Drop();
-            GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTableValuedFunction("GetTopXRandom").Drop();
+            _database.ExpectTable("NonTVFTable").Drop();
+            _database.ExpectTableValuedFunction("GetTopXRandom").Drop();
 
             //delete global parameter
             ((AnyTableSqlParameter)_aggregate.GetAllParameters().Single()).DeleteInDatabase();
@@ -160,7 +172,7 @@ namespace Rdmp.Core.Tests.DataExport.TableValuedFunctionTests
 
         private void CreateTvfCatalogue(string cohortDatabaseName)
         {
-            var svr = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            var svr = _database.Server;
             using (var con = svr.GetConnection())
             {
                 con.Open();
@@ -190,7 +202,7 @@ end
                 svr.GetCommand(sql, con).ExecuteNonQuery();
             }
 
-            var tblvf = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTableValuedFunction("GetTopXRandom");
+            var tblvf = _database.ExpectTableValuedFunction("GetTopXRandom");
 
             var importer = new TableValuedFunctionImporter(CatalogueRepository, tblvf);
 
@@ -216,7 +228,7 @@ end
 
         private void CreateANormalCatalogue()
         {
-            var svr = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            var svr = _database.Server;
             using (var con = svr.GetConnection())
             {
                 con.Open();
@@ -227,7 +239,7 @@ end
             }
 
             var importer = new TableInfoImporter(CatalogueRepository, svr.Name,
-                GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).GetRuntimeName(), "NonTVFTable",
+                _database.GetRuntimeName(), "NonTVFTable",
                 DatabaseType.MicrosoftSQLServer);
 
             TableInfo tbl;

@@ -22,15 +22,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
     public class DataTableUploadDestinationTests:DatabaseTests
     {
-        [SetUp]
-        public void DropTables()
-        {
-            var table = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("DataTableUploadDestinationTests");
-            
-            if(table.Exists())
-                table.Drop();
-        }
-
         [Test]
         public void DataTableChangesLengths_NoReAlter()
         {
@@ -889,7 +880,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void TestDestinationAlreadyExistingIsOk(bool targetTableIsEmpty)
         {
             //create a table in the scratch database with a single column Name
-            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("TestDestinationAlreadyExistingIsOk",new[]{new DatabaseColumnRequest("Name","varchar(10)",false)});
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            var tbl = db.CreateTable("TestDestinationAlreadyExistingIsOk",new[]{new DatabaseColumnRequest("Name","varchar(10)",false)});
             try
             {
                 if(!targetTableIsEmpty)
@@ -918,7 +910,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 var listener = new ThrowImmediatelyDataLoadEventListener();
 
                 //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
-                destinationComponent.PreInitialize(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),listener);
+                destinationComponent.PreInitialize(db ,listener);
 
                 //tell the destination component to process the data
                 destinationComponent.ProcessPipelineData(dt, listener,new GracefulCancellationToken());
@@ -976,7 +968,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         public void TestDestinationAlreadyExisting_ColumnSubset()
         {
             //create a table in the scratch database with a single column Name
-            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("TestDestinationAlreadyExisting_ColumnSubset", new[]
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            var tbl = db.CreateTable("TestDestinationAlreadyExisting_ColumnSubset", new[]
             {
                 new DatabaseColumnRequest("Name", "varchar(10)", false),
                 new DatabaseColumnRequest("Age","int"),
@@ -1011,7 +1004,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 var listener = new ThrowImmediatelyDataLoadEventListener();
 
                 //pre initialzie with the database (which must be part of any pipeline use case involving a DataTableUploadDestination)
-                destinationComponent.PreInitialize(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), listener);
+                destinationComponent.PreInitialize(db, listener);
 
                 //tell the destination component to process the data
                 destinationComponent.ProcessPipelineData(dt, listener, new GracefulCancellationToken());

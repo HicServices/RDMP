@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
         private void TruncateDataTable()
         {
-            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            var server = Database.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();

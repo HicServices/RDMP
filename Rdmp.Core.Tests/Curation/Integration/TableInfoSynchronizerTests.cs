@@ -22,13 +22,15 @@ namespace Rdmp.Core.Tests.Curation.Integration
         private DiscoveredServer _server;
         private TableInfo tableInfoCreated;
         private ColumnInfo[] columnInfosCreated;
+        private DiscoveredDatabase _database;
 
         private const string TABLE_NAME = "TableInfoSynchronizerTests";
 
         [SetUp]
         public void CreateDataset()
         {
-            _server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
+            _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            _server = _database.Server;
 
             using (var con = _server.GetConnection())
             {
@@ -36,7 +38,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 _server.GetCommand("CREATE TABLE " + TABLE_NAME + "(Name varchar(10), Address varchar(500))",con).ExecuteNonQuery();
             }
 
-            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("TableInfoSynchronizerTests");
+            var tbl = _database.ExpectTable("TableInfoSynchronizerTests");
             
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository,tbl);
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
@@ -58,7 +60,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             Assert.AreEqual(TABLE_NAME, tableInfoCreated.GetRuntimeName());
 
-            var table = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable(TABLE_NAME);
+            var table = _database.ExpectTable(TABLE_NAME);
             var colToDrop = table.DiscoverColumn("Address");
             table.DropColumn(colToDrop);
             
@@ -83,7 +85,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(false)]
         public void SynchronizationTests_ColumnAdded(bool acceptChanges)
         {
-            using (var con = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server.GetConnection())
+            
+            using (var con = _database.Server.GetConnection())
             {
                 con.Open();
                 _server.GetCommand("ALTER TABLE " + TABLE_NAME + " ADD Birthday datetime not null", con).ExecuteNonQuery();
@@ -124,7 +127,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 Assert.AreEqual(2, cataItems.Length);
                 Assert.AreEqual(2, extractionInformations.Length);
             
-                using (var con = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server.GetConnection())
+                using (var con = _server.GetConnection())
                 {
                     con.Open();
                     _server.GetCommand("ALTER TABLE " + TABLE_NAME + " ADD Birthday datetime not null", con).ExecuteNonQuery();
@@ -163,7 +166,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void Test_SynchronizeTable_BracketsInTableName()
         {
-            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            var db = _database;
 
             //FAnsi doesn't let you create tables with brackets in the names so we have to do it manually
             using(var con = db.Server.GetConnection())
@@ -203,7 +206,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             if(credentials != null)
                 credentials.DeleteInDatabase();
 
-            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable(TABLE_NAME);
+            var tbl = _database.ExpectTable(TABLE_NAME);
             if(tbl.Exists())
                 tbl.Drop();
         }
