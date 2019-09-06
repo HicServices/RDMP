@@ -81,29 +81,25 @@ namespace Rdmp.Core.Tests.CohortCreation
         public void Cleanup()
         {
 
-            container1.DeleteInDatabase();
+            if(container1.Exists())
+                container1.DeleteInDatabase();
 
-            if (aggregate1 != null)
+            if (aggregate1 != null && aggregate1.Exists())
                 aggregate1.DeleteInDatabase();
             
-            if (aggregate2 != null)
+            if (aggregate2 != null && aggregate2.Exists())
                 aggregate2.DeleteInDatabase();
 
-            if (aggregate3 != null)
+            if (aggregate3 != null && aggregate3.Exists())
                 aggregate3.DeleteInDatabase();
 
 
-            if (cohortIdentificationConfiguration != null)
+            if (cohortIdentificationConfiguration != null && cohortIdentificationConfiguration.Exists())
                 cohortIdentificationConfiguration.DeleteInDatabase();
             
             if (testData != null)
                 testData.DeleteCatalogue();
         }
 
-        [OneTimeTearDown]
-        public void AfterAllTests()
-        {
-            testData.Destroy();
-        }
     }
 }

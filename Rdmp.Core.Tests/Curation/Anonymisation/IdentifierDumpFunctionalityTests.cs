@@ -401,8 +401,6 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
                     }
             }
 
-            if (_bulkData != null)
-                _bulkData.Destroy();
         }
     }
 }

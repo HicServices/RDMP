@@ -23,13 +23,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
             _bulkTestData.SetupTestData();
 
         }
-
-        [OneTimeTearDown]
-        public void AfterAllTests()
-        {
-            _bulkTestData.Destroy();
-        }
-
+        
         [Test]
         public void BulkTestDataContainsExpectedNumberOfRows()
         {

@@ -41,7 +41,8 @@ namespace Rdmp.Core.Tests.CohortCreation
         [TearDown]
         public void DeleteFilter()
         {
-            _container.DeleteInDatabase();//cascades to filter
+            if(_container.Exists())
+                _container.DeleteInDatabase();//cascades to filter
         }
 
         [Test]

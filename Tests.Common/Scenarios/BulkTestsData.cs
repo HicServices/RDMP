@@ -86,7 +86,7 @@ namespace Tests.Common.Scenarios
         /// <param name="repository"></param>
         /// <param name="targetDatabase"></param>
         /// <param name="numberOfRows"></param>
-        public BulkTestsData(ICatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 100000)
+        public BulkTestsData(ICatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 10000)
         {
             _repository = repository;
             BulkDataDatabase = targetDatabase;
@@ -126,16 +126,7 @@ namespace Tests.Common.Scenarios
 
                 });
         }
-
-        /// <summary>
-        /// Drops the <see cref="BulkDataDatabase"/>
-        /// </summary>
-        public void Destroy()
-        {
-            foreach(var t in BulkDataDatabase.DiscoverTables(true))
-                t.Drop();
-        }
-        
+                
         /// <summary>
         /// Returns up to <paramref name="numberOfRows"/> rows from the table
         /// </summary>
@@ -171,7 +162,10 @@ namespace Tests.Common.Scenarios
         public void DeleteCatalogue()
         {
             var creds = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            tableInfo.DeleteInDatabase();
+
+            if(tableInfo.Exists())
+                tableInfo.DeleteInDatabase();
+
             if(creds != null)
                 try
                 {
@@ -182,7 +176,8 @@ namespace Tests.Common.Scenarios
                     Console.WriteLine("Ignored Potential Exception:" + e);
                 }
 
-            catalogue.DeleteInDatabase();
+            if(catalogue.Exists())
+                catalogue.DeleteInDatabase();
         }
 
         public void SetupValidationOnCatalogue()
