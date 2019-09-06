@@ -18,8 +18,10 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary
         private IPrimaryConstraint _alphanum;
 
         [SetUp]
-        public void SetUp()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _alphanum = (IPrimaryConstraint)Validator.CreateConstraint("alphanumeric", Consequence.Wrong);
         }
 

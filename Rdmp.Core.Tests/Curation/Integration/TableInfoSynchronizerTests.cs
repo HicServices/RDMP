@@ -27,8 +27,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
         private const string TABLE_NAME = "TableInfoSynchronizerTests";
 
         [SetUp]
-        public void CreateDataset()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             _server = _database.Server;
 

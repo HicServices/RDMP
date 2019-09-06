@@ -42,8 +42,10 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         private DiscoveredDatabase _destinationDatabase;
 
         [SetUp]
-        public void SetupExampleTables()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             string sql =
             @"CREATE TABLE [dbo].[Tests](
 	[chi] [varchar](10) NULL,
@@ -170,7 +172,7 @@ GO";
             var engine2 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator,plan2);
             engine2.Execute();
 
-            //Did it succesfully pick up the correct ANO column
+            //Did it succesfully pick SetUp the correct ANO column
             var plan2ExtractionInformationsAtDestination = engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
             var ei2 = plan2ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));

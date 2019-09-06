@@ -28,15 +28,12 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
     {
         //C24D365B7C271E2C1BC884B5801C2961
         Regex reghex = new Regex(@"^HASHED: [A-F\d]{32}");
-
-        /// <summary>
-        /// Database created and populated by <see cref="SetupExtractDatasetCommand(string, string[], string[], bool, bool)"/>
-        /// </summary>
-        public DiscoveredDatabase Database { get; private set; }
-
+        
         [SetUp]
-        public void SetHash()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             DataExportRepository.DataExportPropertyManager.SetValue(DataExportProperty.HashingAlgorithmPattern, "CONCAT('HASHED: ',{0})");
         }
 
@@ -190,9 +187,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                     dt.Columns.Cast<DataColumn>().Where(col => pkColumnInfos.Contains(col.ColumnName)).ToArray();
 
             dt.Rows.Add(new object[] { _cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01" });
-
-            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-
+            
             var tbl = Database.CreateTable(testTableName, 
                 dt, 
                 new[] { new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof(string), 50))});

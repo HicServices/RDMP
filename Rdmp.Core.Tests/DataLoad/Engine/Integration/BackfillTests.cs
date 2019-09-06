@@ -35,15 +35,19 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private const string DatabaseName = "BackfillTests";
 
         [OneTimeSetUp]
-        public void SetUpFixture()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             staging = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName + "_STAGING");
             live = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName);
         }
         
         [SetUp]
-        public void BeforeEachTest()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             DropDatabases();
 
             BlitzMainDataTables();
@@ -134,7 +138,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
 
-            // Set up catalogue entities
+            // Set SetUp catalogue entities
             ColumnInfo[] ciSamples;
             AddTableToCatalogue(DatabaseName, "Samples", "ID", out ciSamples, true);
 
@@ -296,7 +300,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             CreateTables("Samples", "ID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID");
             CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
-            // Set up catalogue entities
+            // Set SetUp catalogue entities
             ColumnInfo[] ciSamples;
             ColumnInfo[] ciResults; 
 
@@ -542,7 +546,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 "ID int NOT NULL, HeaderID int NOT NULL, SampleDate DATETIME, Description varchar(1024)", "ID",
                 "CONSTRAINT [FK_Headers_Samples] FOREIGN KEY (HeaderID) REFERENCES Headers (ID)");
 
-            // Set up catalogue entities
+            // Set SetUp catalogue entities
             ColumnInfo[] ciSamples;
             ColumnInfo[] ciHeaders;
 
@@ -907,7 +911,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [Test, Ignore("Restructuring tests")]
         public void DeleteNewerCollisionsFromTable()
         {
-            #region Set up databases
+            #region Set SetUp databases
             CreateTables("Header", "ID int NOT NULL, Discipline varchar(32) NOT NULL", "ID");
             
             CreateTables("Samples",
@@ -919,13 +923,13 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             #endregion  
 
-            #region Set up catalogue entities
+            #region Set SetUp catalogue entities
             ColumnInfo[] ciSamples;
             var tiSamples = AddSamplesTableToCatalogue(DatabaseName, out ciSamples);
             var tiResults = AddResultsTableToCatalogue(DatabaseName, ciSamples);
             var tiHeaders = AddHeaderTableToCatalogue(DatabaseName, ciSamples);
 
-            // should be all entities set up now
+            // should be all entities set SetUp now
             Assert.AreEqual(15, _catalogue.CatalogueItems.Count(), "Unexpected number of items in catalogue");
             #endregion
 

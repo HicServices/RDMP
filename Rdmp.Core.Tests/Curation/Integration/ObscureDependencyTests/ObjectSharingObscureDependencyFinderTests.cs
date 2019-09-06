@@ -19,8 +19,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
         private ShareManager _share;
 
         [SetUp]
-        public void StoreShareManager()
+        protected override void SetUp()
         {
+            base.SetUp();
             _share = new ShareManager(RepositoryLocator);
         }
 
@@ -103,7 +104,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
             //cascade should have deleted the import definition since the imported object version is gone
             Assert.IsFalse(importDefinition.Exists());
 
-            //clear up the exported version too 
+            //clear SetUp the exported version too 
             exportDefinition.DeleteInDatabase();
             p.DeleteInDatabase();
         }

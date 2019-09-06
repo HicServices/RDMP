@@ -28,13 +28,18 @@ namespace Rdmp.Core.Tests.CohortCreation
         protected CohortAggregateContainer container1;
 
         [SetUp]
-        public void SetupTestData()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             SetupTestData(CatalogueRepository);
         }
 
+        
         public void SetupTestData(ICatalogueRepository repository)
         {
+            BlitzMainDataTables();
+
             Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
             testData = new BulkTestsData(repository, Database, 100);

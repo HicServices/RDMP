@@ -18,8 +18,9 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary
         private IPrimaryConstraint _date;
 
         [SetUp]
-        public void SetUp()
+        protected override void SetUp()
         {
+            base.SetUp();
             _date = constraint_date();
         }
 

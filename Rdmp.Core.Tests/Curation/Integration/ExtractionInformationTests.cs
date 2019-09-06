@@ -20,8 +20,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
         ColumnInfo columnInfo;
 
         [SetUp]
-        public void SetupExtraction()
+        protected override void SetUp()
         {
+            base.SetUp();
 
             cata = new Catalogue(CatalogueRepository, "ExtractionInformationTestsCatalogue");
             cataItem = new CatalogueItem(CatalogueRepository, cata, "QuadlzorVelocity");

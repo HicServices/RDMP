@@ -28,9 +28,11 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         BulkTestsData _bulkData;
 
         [OneTimeSetUp]
-        public void SetupBulkTestData()
+        protected override void OneTimeSetUp()
         {
-            Console.WriteLine("Setting up bulk test data");
+            base.OneTimeSetUp();
+
+            Console.WriteLine("Setting SetUp bulk test data");
             _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             _bulkData.SetupTestData();
             

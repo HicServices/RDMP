@@ -35,8 +35,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private DiscoveredTable _table;
 
         [SetUp]
-        public void CreateTestDatabase()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 

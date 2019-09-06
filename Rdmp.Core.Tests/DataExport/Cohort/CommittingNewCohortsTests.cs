@@ -28,8 +28,10 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
         private string projName = "MyProj";
 
         [SetUp]
-        public void GenerateFileToLoad()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
 
             StreamWriter sw = new StreamWriter(filename);    

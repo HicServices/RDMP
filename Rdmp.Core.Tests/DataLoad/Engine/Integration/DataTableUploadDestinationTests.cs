@@ -1115,7 +1115,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         /// <param name="v1">The row value to send in batch 1</param>
         /// <param name="v2">The row value to send in batch 2 (after table creation)</param>
         /// <param name="expectedTypeForBatch1">The Type you expect to be used to store the v1</param>
-        /// <param name="expectedTypeForBatch2">The Type you expect after ALTER to support all values seen up till now (i.e. v1) AND v2</param>
+        /// <param name="expectedTypeForBatch2">The Type you expect after ALTER to support all values seen SetUp till now (i.e. v1) AND v2</param>
         [TestCase(DatabaseType.MySql,null,"235", typeof(bool),typeof(int))]
         [TestCase(DatabaseType.MySql, "123", "2001-01-01 12:00:00" ,typeof(int), typeof(string))] //123 cannot be converted to date so it becomes string
         [TestCase(DatabaseType.MySql, "2001-01-01", "2001-01-01 12:00:00" ,  typeof(DateTime), typeof(DateTime) )]

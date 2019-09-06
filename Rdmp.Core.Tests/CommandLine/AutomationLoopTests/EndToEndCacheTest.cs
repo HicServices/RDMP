@@ -38,8 +38,10 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
         const int NumDaysToCache = 5;
 
         [SetUp]
-        public void SetupDatabaseObjects()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
             

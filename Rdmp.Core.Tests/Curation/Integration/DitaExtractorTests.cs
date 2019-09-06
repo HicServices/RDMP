@@ -21,13 +21,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
         private TestDirectoryHelper _directoryHelper;
 
-        protected override void SetUp()
+        [OneTimeSetUp]
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             try
             {
                 _directoryHelper = new TestDirectoryHelper(GetType());
-
-                base.SetUp();
 
                 _directoryHelper.SetUp();
 
@@ -58,8 +59,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
         
         [SetUp]
-        protected void BeforeEachTest()
+        protected override void SetUp()
         {
+            base.SetUp();
             if (_setupException != null)
             {
                 Console.WriteLine("TestFixtureSetUp failed in {0} - {1}", GetType(), _setupException.Message);

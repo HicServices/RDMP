@@ -62,7 +62,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             if (tbl.Exists())
                 tbl.Drop();
             
-            //Create destination data table on server (where the data will ultimately end up)
+            //Create destination data table on server (where the data will ultimately end SetUp)
             using (var con = (SqlConnection) tbl.Database.Server.GetConnection())
             {
                 con.Open();

@@ -29,8 +29,9 @@ namespace Rdmp.Core.Tests.QueryCaching
         private ExtractionInformation _extractionInformation;
 
         [SetUp]
-        public void CreateEntities()
+        protected override void SetUp()
         {
+            base.SetUp();
 
             _cata =
                new Catalogue(CatalogueRepository,"ExtractableAggregateCachingTests");

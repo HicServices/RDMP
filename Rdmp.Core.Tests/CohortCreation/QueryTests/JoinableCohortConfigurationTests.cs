@@ -386,7 +386,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                 var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()//get all the aggregates
                     .Union(clone.GetAllJoinables().Select(j=>j.AggregateConfiguration))//including the joinables
                     .Where(a => a.RootFilterContainer_ID != null)//that have WHERE sql
-                    .Select(ag => ag.RootFilterContainer);//grab their containers so we can clean them up
+                    .Select(ag => ag.RootFilterContainer);//grab their containers so we can clean them SetUp
 
                 ((IDeleteable)clone.GetAllParameters()[0]).DeleteInDatabase();
                 clone.DeleteInDatabase();
@@ -439,7 +439,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
             queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
             
-            //make the builder use the query cache we just set up
+            //make the builder use the query cache we just set SetUp
             builder.CacheServer = queryCachingDatabaseServer;
             try
             {

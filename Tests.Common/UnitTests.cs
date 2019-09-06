@@ -63,16 +63,26 @@ namespace Tests.Common
         {
             RepositoryLocator = new RepositoryProvider(Repository);
         }
+
+
         /// <summary>
-        /// Loads FAnsi implementations for all supported DBMS platforms into memory
+        /// Override to do stuff before your first instance is constructed
         /// </summary>
-        [SetUp]
-        protected void SetUpDatabaseTypes()
+        [OneTimeSetUp]
+        protected virtual void OneTimeSetUp()
         {
             ImplementationManager.Load(
                 typeof(MicrosoftSQLImplementation).Assembly,
                 typeof(MySqlImplementation).Assembly,
                 typeof(OracleImplementation).Assembly);
+        }
+
+        /// <summary>
+        /// Loads FAnsi implementations for all supported DBMS platforms into memory
+        /// </summary>
+        [SetUp]
+        protected virtual void SetUp()
+        {
         }
 
         /// <summary>

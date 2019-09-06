@@ -22,8 +22,10 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
         private ReferentialIntegrityConstraint _constraint;
 
         [OneTimeSetUp]
-        public void Setup()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("ReferentialIntegrityConstraintTests");
 
             if(tbl.Exists())

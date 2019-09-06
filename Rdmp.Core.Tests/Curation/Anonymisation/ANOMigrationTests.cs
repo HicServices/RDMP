@@ -30,8 +30,10 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
 
         #region setup
         [SetUp]
-        public void SetupExampleTable()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             
             BlitzMainDataTables();

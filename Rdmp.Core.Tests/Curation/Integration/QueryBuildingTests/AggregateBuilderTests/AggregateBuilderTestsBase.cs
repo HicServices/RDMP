@@ -26,8 +26,10 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         protected AggregateDimension _dimension2;
 
         [SetUp]
-        public void CreateEntities()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _c = new Catalogue(CatalogueRepository, "AggregateBuilderTests");
             _cataItem1 = new CatalogueItem(CatalogueRepository, _c, "Col1");
             _cataItem2 = new CatalogueItem(CatalogueRepository, _c, "Col2");

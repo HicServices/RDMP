@@ -23,10 +23,12 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
         private DiscoveredDatabase queryCacheDatabase;
         private ExternalDatabaseServer externalDatabaseServer;
         private DatabaseColumnRequest _chiColumnSpecification = new DatabaseColumnRequest("chi","varchar(10)");
-        
+
         [OneTimeSetUp]
-        public void SetUpCache()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             queryCacheDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.Prefix + "QueryCache");
 
             if (queryCacheDatabase.Exists())

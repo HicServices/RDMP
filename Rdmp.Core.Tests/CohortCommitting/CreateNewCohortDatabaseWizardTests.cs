@@ -37,8 +37,10 @@ namespace Rdmp.Core.Tests.CohortCommitting
         private ExtractionInformation _extractionInfo2;
         
         [SetUp]
-        public void SetupCatalogues()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             RunBlitzDatabases(RepositoryLocator);
 
             _cata1 = new Catalogue(CatalogueRepository, "Dataset1");

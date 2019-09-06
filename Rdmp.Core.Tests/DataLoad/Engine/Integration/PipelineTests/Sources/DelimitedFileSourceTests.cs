@@ -27,7 +27,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
         private string filename;
 
         [SetUp]
-        public void CreateTestFile()
+        public void SetUp()
         {
             filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "DelimitedFileSourceTests.txt");
 

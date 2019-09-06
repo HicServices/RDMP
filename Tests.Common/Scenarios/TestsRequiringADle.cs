@@ -41,8 +41,10 @@ namespace Tests.Common.Scenarios
 
         [SetUp]
 
-        public void SetUpDle()
+        protected override void SetUp()
         {
+            base.SetUp();
+            
             Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
             var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);

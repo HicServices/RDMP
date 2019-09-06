@@ -52,14 +52,14 @@ namespace Tests.Common.Scenarios
         protected string ProjectDirectory { get; private set; }
 
         /// <summary>
-        /// The database in which the referenced data is stored, created during <see cref="SetUp"/>
+        /// The database in which the referenced data is stored, created during <see cref="OneTimeSetUp"/>
         /// </summary>
         public DiscoveredDatabase Database { get; private set; }
 
         [OneTimeSetUp]
-        protected override void SetUp()
+        protected override void OneTimeSetUp()
         {
-            base.SetUp();
+            base.OneTimeSetUp();
 
             ProjectDirectory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "TestProject");
 

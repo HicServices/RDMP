@@ -624,8 +624,7 @@ string.Format(
             var repo = memoryRepository ? (ICatalogueRepository)new MemoryCatalogueRepository() : CatalogueRepository;
 
             //create all the setup again but in the memory repository
-            if (memoryRepository)
-                SetupTestData(repo);
+            SetupTestData(repo);
 
             CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
 

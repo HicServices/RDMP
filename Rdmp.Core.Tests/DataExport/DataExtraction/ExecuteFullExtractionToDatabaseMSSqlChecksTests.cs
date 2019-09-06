@@ -22,8 +22,10 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         private IExtractCommand _commandStub;
 
         [SetUp]
-        public void CleanupOnStart()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _projectStub = Mock.Of<IProject>();
             _projectStub.ProjectNumber = -123;
 

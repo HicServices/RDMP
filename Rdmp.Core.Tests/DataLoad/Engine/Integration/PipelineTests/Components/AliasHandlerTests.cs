@@ -26,8 +26,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         private DiscoveredDatabase _database;
 
         [SetUp]
-        public void SetupServer()
+        protected override void SetUp()
         {
+            base.SetUp();
+            
             _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer",null);
             _server.SetProperties(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 

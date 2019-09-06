@@ -22,8 +22,10 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
         private DiscoveredDatabase _database;
 
         [SetUp]
-        public void CreateFunction()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             _function.Create(_database, CatalogueRepository);
         }

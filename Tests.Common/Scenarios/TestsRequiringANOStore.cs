@@ -24,8 +24,10 @@ namespace Tests.Common.Scenarios
         protected string ANOStore_DatabaseName = TestDatabaseNames.GetConsistentName("ANOStore");
 
         [OneTimeSetUp]
-        public void Setup()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             ANOStore_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(ANOStore_DatabaseName);
             
             CreateANODatabase();

@@ -156,7 +156,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.ObscureDependencyTests
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
             startup.DoStartup(new IgnoreAllErrorsCheckNotifier());
 
-            //there should not be any replication! and doubling up!
+            //there should not be any replication! and doubling SetUp!
             Assert.AreEqual(numberAfterFirstRun,
                 ((CatalogueObscureDependencyFinder) CatalogueRepository.ObscureDependencyFinder)
                     .OtherDependencyFinders.Count);

@@ -40,8 +40,10 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
 
 
         [SetUp]
-        public void Setup()
+        protected override void SetUp()
         {
+            base.SetUp();
+
            c = new Catalogue(CatalogueRepository, "MyCata");
            ci = new CatalogueItem(CatalogueRepository, c, "MyCataItem");
            ci2 = new CatalogueItem(CatalogueRepository, c, "YearColumn");

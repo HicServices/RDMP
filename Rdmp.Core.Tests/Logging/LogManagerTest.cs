@@ -28,15 +28,17 @@ namespace Rdmp.Core.Tests.Logging
         private string _dataLoadTaskName;
         private LogManager _logManager;
 
+        
         /// <summary>
         /// Add a bunch of data load runs for the tests in this fixture
         /// </summary>
-        protected override void SetUp()
+        [OneTimeSetUp]
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             try
             {
-                base.SetUp();
-
                 var lds = new DiscoveredServer(UnitTestLoggingConnectionString);
 
                 var manager = new LogManager(lds);
@@ -80,8 +82,10 @@ namespace Rdmp.Core.Tests.Logging
         }
 
         [SetUp]
-        protected void BeforeEachTest()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             if (_setupException != null)
                 Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(_setupException,true));
         }

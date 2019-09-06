@@ -165,7 +165,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 columnInfos[1],
                 ExtractionJoinType.Left,null);
 
-            //we need a CatalogueItem for the description in order to pick up the Lookup as associated with the Catalogue
+            //we need a CatalogueItem for the description in order to pick SetUp the Lookup as associated with the Catalogue
             var ci = new CatalogueItem(CatalogueRepository, _catalogue, "SomeDesc");
             ci.ColumnInfo_ID = columnInfos[1].ID;
             ci.SaveToDatabase();

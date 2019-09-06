@@ -80,7 +80,7 @@ INSERT INTO DateRoundingTests VALUES (" + insert + ")", con).ExecuteNonQuery();
         [TestCase("EC4V_2AU", "EC4V")] //underscore instead of space
         [TestCase("EC4V2AU   ", "EC4V")] //Trailing whitespace
         [TestCase("??", "??")] //It's short and it's complete garbage but this is the kind of thing research datasets have :)
-        [TestCase("???????", "????")] //Return type is varchar(4) so while we reject the original value we still end up truncating it
+        [TestCase("???????", "????")] //Return type is varchar(4) so while we reject the original value we still end SetUp truncating it
         [TestCase("I<3Coffee Yay", "I3Co")] //What can you do?!, got to return varchar(4)
         [TestCase("D3 9T", "D39T")]//39T isn't a valid suffix and the remainder (D) wouldn't be enough for a postcode prefix anyway so just return the original input minus dodgy characters
         [TestCase("G    9TA", "G")]//9TA is the correct suffix pattern (Numeric Alpha Alpha) so can be chopped off and the remainder returned (G)

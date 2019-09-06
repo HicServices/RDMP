@@ -19,7 +19,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void TestCheckUpdateTrigger()
         {
             
-            // set up a test database
+            // set SetUp a test database
             const string tableName = "TestTable";
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 

@@ -21,8 +21,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
     {
 
         [OneTimeSetUp]
-        public void SetupCommentStore()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             CatalogueRepository.CommentStore.ReadComments(TestContext.CurrentContext.TestDirectory);
         }
 

@@ -221,7 +221,7 @@ namespace Tests.Common
         }
 
         [OneTimeSetUp]
-        protected virtual void SetUp()
+        protected virtual void OneTimeSetUp()
         {
             //if it is the first time
             if (_startup == null)
@@ -237,6 +237,14 @@ namespace Tests.Common
             RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
         }
 
+        /// <summary>
+        /// override to specify setup behaviour
+        /// </summary>
+        [SetUp]
+        protected virtual void SetUp()
+        {
+
+        }
    
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 

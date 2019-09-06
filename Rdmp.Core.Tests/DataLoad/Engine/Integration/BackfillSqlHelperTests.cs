@@ -29,8 +29,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         #region Housekeeping
 
         [SetUp]
-        public void BeforeEachTest()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _catalogue = CatalogueRepository.GetAllObjects<Catalogue>("WHERE Name='BackfillSqlHelperTests'").SingleOrDefault();
             if (_catalogue != null)
             {
@@ -109,7 +111,7 @@ LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON Ti
             CreateTables("Samples", "ID int NOT NULL, HeaderID int NOT NULL, SampleType varchar(32)", "ID", "CONSTRAINT [FK_Headers_Samples] FOREIGN KEY (HeaderID) REFERENCES Headers (ID)");
             CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
-            // Set up catalogue entities
+            // Set SetUp catalogue entities
             ColumnInfo[] ciHeaders;
             ColumnInfo[] ciSamples;
             ColumnInfo[] ciResults;

@@ -24,8 +24,10 @@ namespace Tests.Common.Scenarios
         public DiscoveredDatabase IdentifierDump_Database { get; set; }
 
         [OneTimeSetUp]
-        public void Setup_IdentifierDump()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             IdentifierDump_Database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(IdentifierDump_DatabaseName);
 
             if (IdentifierDump_Database.Exists())

@@ -33,8 +33,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private JobDateGenerationStrategyFactory _factory;
 
         [SetUp]
-        public void up()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
