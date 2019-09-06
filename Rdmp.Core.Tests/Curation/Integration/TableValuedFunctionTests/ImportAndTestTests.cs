@@ -66,12 +66,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
             }
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            _function.Destroy();
-        }
-
+        
         [Test]
         public void ImportFunctionIntoCatalogue()
         {

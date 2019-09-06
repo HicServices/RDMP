@@ -90,22 +90,5 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
 
             Assert.Pass();
         }
-
-        
-
-        [OneTimeTearDown]
-        public void Drop()
-        {
-            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("ReferentialIntegrityConstraintTests");
-            
-            if(tbl.Exists())
-                tbl.Drop();
-
-            var credentials = (DataAccessCredentials)_tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            _tableInfo.DeleteInDatabase();
-
-            if(credentials != null)
-                credentials.DeleteInDatabase();
-        }
     }
 }

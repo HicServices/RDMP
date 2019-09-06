@@ -41,20 +41,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
             cataItem.SetColumnInfo(columnInfo);
                 
         }
-        [TearDown]
-        public void DeleteSetupObjects()
-        {
-            if(cataItem != null)
-                cataItem.DeleteInDatabase();
-
-            cata.DeleteInDatabase();
-
-            if(columnInfo != null)
-                columnInfo.DeleteInDatabase();
-
-            if(ti != null)
-                ti.DeleteInDatabase();
-        }
 
         [Test]
         public void BasicIDsAreCorrect()

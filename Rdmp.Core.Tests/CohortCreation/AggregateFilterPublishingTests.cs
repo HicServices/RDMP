@@ -37,14 +37,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 
             _filter = new AggregateFilter(CatalogueRepository,"folk", _container);
         }
-
-        [TearDown]
-        public void DeleteFilter()
-        {
-            if(_container.Exists())
-                _container.DeleteInDatabase();//cascades to filter
-        }
-
+        
         [Test]
         public void NotPopulated_Description()
         {

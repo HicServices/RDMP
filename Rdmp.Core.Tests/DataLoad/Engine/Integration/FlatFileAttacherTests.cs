@@ -433,12 +433,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             StringAssert.IsMatch("FlatFileAttacher TableToLoad was 'TableNotInLoad' \\(ID=\\d+\\) but that table was not one of the tables in the load:'TableInLoad'", ex.Message);
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            parentDir.Delete(true);
-        }
     }
 }
 

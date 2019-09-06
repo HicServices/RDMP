@@ -30,9 +30,6 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         [OneTimeSetUp]
         public void SetupBulkTestData()
         {
-            Console.WriteLine("Cleaning up remnants");
-            Cleanup();
-
             Console.WriteLine("Setting up bulk test data");
             _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             _bulkData.SetupTestData();
@@ -374,33 +371,5 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         }
 
         #endregion
-
-        [OneTimeTearDown]
-        public void Cleanup()
-        {
-            foreach (var cata in CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name.Equals(BulkTestsData.BulkDataTable)))
-                cata.DeleteInDatabase();
-            
-            foreach (TableInfo toCleanup in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(BulkTestsData.BulkDataTable)))
-            {
-                foreach (PreLoadDiscardedColumn column in toCleanup.PreLoadDiscardedColumns)
-                    column.DeleteInDatabase();
-
-
-                var credentials = (DataAccessCredentials)toCleanup.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-                toCleanup.DeleteInDatabase();
-
-                if(credentials != null)
-                    try
-                    {
-                        credentials.DeleteInDatabase();
-                    }
-                    catch (CredentialsInUseException e)
-                    {
-                        Console.WriteLine("Ignored credentials in use exception :" + e);
-                    }
-            }
-
-        }
     }
 }

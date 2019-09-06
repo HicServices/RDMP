@@ -40,13 +40,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            _config.DeleteInDatabase();
-            _cata.DeleteInDatabase();
-        }
-
+        
         [Test]
         public void CommitResults_CreatesTablessuccessfully()
         {

@@ -625,10 +625,7 @@ string.Format(
 
             //create all the setup again but in the memory repository
             if (memoryRepository)
-            {
-                Cleanup();
                 SetupTestData(repo);
-            }
 
             CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
 

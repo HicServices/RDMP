@@ -43,13 +43,5 @@ namespace Tests.Common.Scenarios
 
         }
 
-        [OneTimeTearDown]
-        public override void FixtureTearDown()
-        {
-            if (IdentifierDump_Database.Exists())
-                IdentifierDump_Database.Drop();
-
-            base.FixtureTearDown();
-        }
     }
 }

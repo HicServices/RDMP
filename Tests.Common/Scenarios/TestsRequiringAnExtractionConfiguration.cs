@@ -76,12 +76,6 @@ namespace Tests.Common.Scenarios
                 new ExtractionDirectory(ProjectDirectory, _configuration));
         }
 
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            RunBlitzDatabases(RepositoryLocator);
-        }
-
         private void SetupDataExport()
         {
             _extractableDataSet = new ExtractableDataSet(DataExportRepository, _catalogue);

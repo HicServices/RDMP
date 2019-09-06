@@ -146,12 +146,5 @@ SET @name_2='monkey';
                 
             }
         }
-
-        [TearDown]
-        public void Destroy()
-        {
-            _function.Destroy();
-        }
-
     }
 }

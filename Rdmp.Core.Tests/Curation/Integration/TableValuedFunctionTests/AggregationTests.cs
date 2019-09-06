@@ -122,10 +122,5 @@ count(*)>1", queryBuilder.SQL);
                 agg.DeleteInDatabase();
             }
         }
-        [TearDown]
-        public void Destroy()
-        {
-            _function.Destroy();
-        }
     }
 }

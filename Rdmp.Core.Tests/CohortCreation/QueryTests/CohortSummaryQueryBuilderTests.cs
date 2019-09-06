@@ -270,18 +270,5 @@ Year"), CollapseWhitespace(builder.SQL));
             parama2.SaveToDatabase();
             
         }
-
-        [TearDown]
-        public void TearDown()
-        {
-            cic.DeleteInDatabase();
-
-            acCohort.DeleteInDatabase();
-            acDataset.DeleteInDatabase();
-
-            t.DeleteInDatabase();
-            c.DeleteInDatabase();
-        }
-
     }
 }

@@ -71,14 +71,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 credentials.DeleteInDatabase();
         }
 
-        [TearDown]
-        public void AfterEachTest()
-        {
-            _stagingDatabase.Drop();
-            _liveDatabase.Drop();
-
-            CleanCatalogueDatabase();
-        }
         #endregion
 
         [Test]

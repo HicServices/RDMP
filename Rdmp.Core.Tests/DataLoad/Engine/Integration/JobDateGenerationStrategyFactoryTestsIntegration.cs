@@ -194,14 +194,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 projDir.RootPath.Delete(true);
             }
         }
-
-        [TearDown]
-        public void down()
-        {
-            _cp.DeleteInDatabase();
-            _lp.DeleteInDatabase();
-            _lmd.DeleteInDatabase();
-        }
     }
 }
 

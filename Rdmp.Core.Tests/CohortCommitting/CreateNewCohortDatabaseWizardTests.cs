@@ -39,6 +39,8 @@ namespace Rdmp.Core.Tests.CohortCommitting
         [SetUp]
         public void SetupCatalogues()
         {
+            RunBlitzDatabases(RepositoryLocator);
+
             _cata1 = new Catalogue(CatalogueRepository, "Dataset1");
             _cata2 = new Catalogue(CatalogueRepository, "Dataset2");
             
@@ -59,26 +61,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
 
         private string cohortDatabaseName;
 
-        [TearDown]
-        public void TearDownCatalogues()
-        {
-            if(_cata1.Exists())
-                _cata1.DeleteInDatabase();
-            if (_cata1.Exists())
-                _cata2.DeleteInDatabase();
-
-            if(_t1.Exists())
-                _t1.DeleteInDatabase();
-            if(_t2.Exists())
-                _t2.DeleteInDatabase();
-
-            foreach (
-                ExternalCohortTable source in
-                    DataExportRepository.GetAllObjects<ExternalCohortTable>()
-                        .Where(s => s.Name.Equals(cohortDatabaseName)))
-                source.DeleteInDatabase();
-        }
-
+        
         [Test]
         public void TestMissingColumnInfos()
         {

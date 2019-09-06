@@ -37,16 +37,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [OneTimeSetUp]
         public void SetUpFixture()
         {
-            _catalogue = CatalogueRepository.GetAllObjects<Catalogue>().SingleOrDefault(c => c.Name.Equals("BackfillTests"));
-            if (_catalogue != null)
-            {
-                // Previous test run has not exited cleanly
-                foreach (var ti in _catalogue.GetTableInfoList(false))
-                    ti.DeleteInDatabase();
-
-                _catalogue.DeleteInDatabase();
-            }
-
             staging = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName + "_STAGING");
             live = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName);
         }
@@ -55,6 +45,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void BeforeEachTest()
         {
             DropDatabases();
+
+            BlitzMainDataTables();
 
             // ensure the test staging and live databases are empty
             live.Server.CreateDatabase(live.GetRuntimeName());
@@ -90,36 +82,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
                 staging.Drop();
             }
-        }
-
-
-        [TearDown]
-        public void AfterEachTest()
-        {
-            foreach (TableInfo tableInfo in _catalogue.GetTableInfoList(true))
-            {
-                var joinInfos = tableInfo.CatalogueRepository.JoinManager.GetAllJoinInfosWhereTableContains(tableInfo, JoinInfoType.AnyKey);
-
-                foreach (JoinInfo j in joinInfos)
-                    j.DeleteInDatabase();
-
-                var credentials = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-                tableInfo.DeleteInDatabase();
-
-                try
-                {
-                    if(credentials != null)
-                        credentials.DeleteInDatabase();
-                }
-                catch (CredentialsInUseException e)
-                {
-                    Console.WriteLine("Ignored" + e);
-                }
-            }
-            
-            _catalogue.DeleteInDatabase();
-            
-            DropDatabases();
         }
 
         [Test]

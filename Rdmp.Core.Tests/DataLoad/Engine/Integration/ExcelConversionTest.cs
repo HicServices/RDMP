@@ -31,14 +31,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
             _dirsToCleanUp.Push(_parentDir);
         }
-
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            while (_dirsToCleanUp.Any())
-                _dirsToCleanUp.Pop().Delete(true);
-        }
-
+        
         private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
         {
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName,true);

@@ -50,13 +50,5 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
             _dimension2.SaveToDatabase();
         }
 
-
-        [TearDown]
-        public void DeleteEntities()
-        {
-            _configuration.DeleteInDatabase();
-            _c.DeleteInDatabase();
-            _ti.DeleteInDatabase();
-        }
     }
 }

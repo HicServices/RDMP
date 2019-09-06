@@ -37,15 +37,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 db.Drop();
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
-
-            if (db.Exists())
-                db.Drop();
-        }
-    
+        
         [Test]
         public void NoServer()
         {

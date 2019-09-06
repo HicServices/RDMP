@@ -187,29 +187,5 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var s = new TableInfoSynchronizer(ti);
             s.Synchronize(new ThrowImmediatelyCheckNotifier());
         }
-
-
-
-        [TearDown]
-        public void DropTables()
-        {
-            var credentials = (DataAccessCredentials)tableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-
-            //if credentials were created, we should only be one user
-            if(credentials != null)
-                Assert.AreEqual(1,credentials.GetAllTableInfosThatUseThis().Count());
-            
-            //delete the table
-            tableInfoCreated.DeleteInDatabase();
-
-            //also delete any credentials created as part of TableInfoImport
-            if(credentials != null)
-                credentials.DeleteInDatabase();
-
-            var tbl = _database.ExpectTable(TABLE_NAME);
-            if(tbl.Exists())
-                tbl.Drop();
-        }
-
     }
 }

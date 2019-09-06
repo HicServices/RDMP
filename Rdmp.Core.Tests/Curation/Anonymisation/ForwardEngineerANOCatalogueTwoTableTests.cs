@@ -195,11 +195,5 @@ GO";
             Assert.IsTrue(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),"ANO Catalogue did not respect the original CatalogueItem Name"); 
         }
 
-        [TearDown]
-        public void DropDatabases()
-        {
-            if(_destinationDatabase.Exists())
-                _destinationDatabase.Drop();
-        }
     }
 }

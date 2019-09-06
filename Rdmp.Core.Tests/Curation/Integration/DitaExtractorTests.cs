@@ -56,13 +56,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 _setupException = e;
             }
         }
-
-        [OneTimeTearDown]
-        protected void TearDown()
-        {
-            _directoryHelper.TearDown();
-        }
-
+        
         [SetUp]
         protected void BeforeEachTest()
         {

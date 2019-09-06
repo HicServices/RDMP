@@ -36,13 +36,5 @@ namespace Rdmp.Core.Tests.QueryCaching
             QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);
         }
 
-        [OneTimeTearDown]
-        public void Destroy()
-        {
-            QueryCachingDatabaseServer.DeleteInDatabase();
-
-            if (DiscoveredQueryCachingDatabase.Exists())
-                DiscoveredQueryCachingDatabase.Drop();
-        }
     }
 }

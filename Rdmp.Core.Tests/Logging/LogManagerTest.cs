@@ -86,18 +86,7 @@ namespace Rdmp.Core.Tests.Logging
                 Console.WriteLine(ExceptionHelper.ExceptionToListOfInnerMessages(_setupException,true));
         }
 
-        [OneTimeTearDown]
-        protected void TearDown()
-        {
-            using (var conn = new SqlConnection(UnitTestLoggingConnectionString.ConnectionString))
-            {
-                conn.Open();
-                new SqlCommand("DELETE FROM DataLoadRun", conn).ExecuteNonQuery();
-            }
-
-            _dataLoadTaskHelper.TearDown();  
-        }
-
+        
         [Test]
         public void TestLastLoadStatusassemblage()
         {

@@ -76,30 +76,5 @@ namespace Rdmp.Core.Tests.CohortCreation
             cohortIdentificationConfiguration.EnsureNamingConvention(aggregate2);
             cohortIdentificationConfiguration.EnsureNamingConvention(aggregate3);
         }
-
-        [TearDown]
-        public void Cleanup()
-        {
-
-            if(container1.Exists())
-                container1.DeleteInDatabase();
-
-            if (aggregate1 != null && aggregate1.Exists())
-                aggregate1.DeleteInDatabase();
-            
-            if (aggregate2 != null && aggregate2.Exists())
-                aggregate2.DeleteInDatabase();
-
-            if (aggregate3 != null && aggregate3.Exists())
-                aggregate3.DeleteInDatabase();
-
-
-            if (cohortIdentificationConfiguration != null && cohortIdentificationConfiguration.Exists())
-                cohortIdentificationConfiguration.DeleteInDatabase();
-            
-            if (testData != null)
-                testData.DeleteCatalogue();
-        }
-
     }
 }

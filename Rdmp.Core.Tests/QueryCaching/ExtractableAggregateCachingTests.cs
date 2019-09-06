@@ -52,15 +52,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            _config.DeleteInDatabase();
-            _extractionInformation.DeleteInDatabase();
-            _table.DeleteInDatabase();
-            _cata.DeleteInDatabase();
-        }
-
+        
         [Test]
         public void BasicCase()
         {

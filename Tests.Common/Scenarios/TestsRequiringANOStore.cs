@@ -39,14 +39,6 @@ namespace Tests.Common.Scenarios
                 ANOStore_Database.Drop();
         }
 
-        [OneTimeTearDown]
-        public virtual void FixtureTearDown()
-        {
-            RemovePreExistingReference();
-
-            // Remove the database from the server
-            DropANODatabase();
-        }
 
         private void CreateANODatabase()
         {

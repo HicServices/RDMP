@@ -40,12 +40,6 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
                 catalogue.DeleteInDatabase();
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            DatabaseCommandHelper.GlobalTimeout = _timeoutBefore;
-            DeleteRemants();
-        }
 
         [Test]
         [TestCase(true)]

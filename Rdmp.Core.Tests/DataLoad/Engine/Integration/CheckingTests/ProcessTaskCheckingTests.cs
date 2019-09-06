@@ -54,20 +54,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CheckingTests
             _task = new ProcessTask(CatalogueRepository, _lmd, LoadStage.GetFiles);
             _checker = new ProcessTaskChecks(_lmd);
         }
-
-        [TearDown]
-        public void DeleteTask()
-        {
-            _task.DeleteInDatabase();
-
-            _lmd.GetDistinctTableInfoList(true).ForEach(t => t.DeleteInDatabase());
-            _lmd.GetAllCatalogues().Cast<IDeleteable>().Single().DeleteInDatabase();
-            
-            _lmd.DeleteInDatabase();
-            
-            _dir.Delete(true);
-        }
-
+                
 
         [Test]
         [TestCase(null,ProcessTaskType.Executable)]

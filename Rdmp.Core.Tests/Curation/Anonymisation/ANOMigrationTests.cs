@@ -34,6 +34,8 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         {
             var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             
+            BlitzMainDataTables();
+            
             DeleteANOEndpoint();
             
             ANOTable remnantANO = CatalogueRepository.GetAllObjects<ANOTable>().SingleOrDefault(a => a.TableName.Equals("ANOCondition"));
@@ -106,30 +108,7 @@ INSERT [ANOMigration] ([AdmissionDate], [DischargeDate], [Condition1], [Conditio
 
         #endregion
 
-        [TearDown]
-        public void Cleanup()
-        {
-            DeleteANOEndpoint();
-
-            var credentials = (DataAccessCredentials)_tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            _tableInfo.DeleteInDatabase();
-
-            if(credentials != null)
-                credentials.DeleteInDatabase();
-
-            _anoConditionTable.DeleteInDatabase();
-
-        }
-
-        [OneTimeTearDown]
-        public void FinalTearDown()
-        {
-            //clear anostore default
-            CatalogueRepository.GetServerDefaults().ClearDefault(PermissableDefaults.ANOStore);
-            //delete the external server reference
-            ANOStore_ExternalDatabaseServer.DeleteInDatabase();
-        }
-
+        
         [Test]
         public void PKsAreCorrect()
         {

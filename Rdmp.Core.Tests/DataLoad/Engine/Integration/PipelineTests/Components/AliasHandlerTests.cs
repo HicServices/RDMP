@@ -206,17 +206,5 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             Assert.AreEqual(100, result.Rows[4][2]);//value should match the input array
         }
 
-
-        [TearDown]
-        public void TearDown()
-        {
-            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("AliasHandlerTests");
-            
-            if(tbl.Exists())
-                tbl.Drop();
-            
-            _server.DeleteInDatabase();
-        }
-
     }
 }
