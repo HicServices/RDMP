@@ -68,11 +68,11 @@ task :createtestdb, [:config] do |t, args|
 end
 
 task :run_unit_tests, [:config] do |t,args|
-	sh "dotnet test --no-build --filter TestCategory=Unit --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config}"
+	sh "dotnet test --no-build --filter TestCategory=Unit --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config} -p:ParallelizeTestCollections=false"
 end
 
 task :run_all_tests, [:config] do |t,args|
-	sh "dotnet test --no-build --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config}"
+	sh "dotnet test --no-build --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config} -p:ParallelizeTestCollections=false"
 end
 
 desc "Sets the version number from SharedAssemblyInfo file"    

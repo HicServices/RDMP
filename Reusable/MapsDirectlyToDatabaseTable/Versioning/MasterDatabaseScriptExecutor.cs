@@ -131,11 +131,12 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 {
                     con.Open();
 
-                    var cmd =  db.Server.GetCommand("CREATE SCHEMA " + RoundhouseSchemaName, con);
+                    var cmd =  db.Server.GetCommand($@"if not exists (select 1 from sys.schemas where name = '{RoundhouseSchemaName}')
+	EXEC('CREATE SCHEMA {RoundhouseSchemaName}')", con);
                     cmd.ExecuteNonQuery();
 
                     var sql = 
-                    @"CREATE TABLE [RoundhousE].[ScriptsRun](
+                    $@"CREATE TABLE [{RoundhouseSchemaName}].[ScriptsRun](
 	[id] [bigint] IDENTITY(1,1) NOT NULL,
 	[version_id] [bigint] NULL,
 	[script_name] [nvarchar](255) NULL,
@@ -151,7 +152,7 @@ PRIMARY KEY CLUSTERED
 )
 )
 
-CREATE TABLE [RoundhousE].[Version](
+CREATE TABLE [{RoundhouseSchemaName}].[Version](
 	[id] [bigint] IDENTITY(1,1) NOT NULL,
 	[repository_path] [nvarchar](255) NULL,
 	[version] [nvarchar](50) NULL,
@@ -194,8 +195,8 @@ PRIMARY KEY CLUSTERED
 
                 UsefulStuff.ExecuteBatchNonQuery(sql, con);
 
-                string insert = @"
-INSERT INTO [RoundhousE].[ScriptsRun]
+                string insert = $@"
+INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
            ([script_name],
            [text_of_script],
            [text_hash],
@@ -360,10 +361,10 @@ INSERT INTO [RoundhousE].[ScriptsRun]
                 using (SqlConnection con = new SqlConnection(_builder.ConnectionString))
                 {
                     con.Open();
-                    SqlCommand cmdClear = new SqlCommand("Delete from RoundhousE.Version", con);
+                    SqlCommand cmdClear = new SqlCommand($"Delete from {RoundhouseSchemaName}.Version", con);
                     cmdClear.ExecuteNonQuery();
                     con.Close();
-                    notifier.OnCheckPerformed(new CheckEventArgs("successfully deleted old Version number from RoundhousE.Version", CheckResult.Success, null));
+                    notifier.OnCheckPerformed(new CheckEventArgs($"successfully deleted old Version number from {RoundhouseSchemaName}.Version", CheckResult.Success, null));
                 }
             }
             catch (Exception e)
@@ -388,7 +389,7 @@ INSERT INTO [RoundhousE].[ScriptsRun]
                 
                 con.Open();
 
-                SqlCommand cmd = new SqlCommand("Select * from " +RoundhouseSchemaName +"."+ RoundhouseScriptsRunTable, con);
+                SqlCommand cmd = new SqlCommand($"Select * from {RoundhouseSchemaName}.{RoundhouseScriptsRunTable}", con);
                 var r = cmd.ExecuteReader();
 
                 while (r.Read())

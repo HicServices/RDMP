@@ -62,11 +62,15 @@ namespace Rdmp.Core.Tests.CohortCommitting
         [TearDown]
         public void TearDownCatalogues()
         {
-            _cata1.DeleteInDatabase();
-            _cata2.DeleteInDatabase();
+            if(_cata1.Exists())
+                _cata1.DeleteInDatabase();
+            if (_cata1.Exists())
+                _cata2.DeleteInDatabase();
 
-            _t1.DeleteInDatabase();
-            _t2.DeleteInDatabase();
+            if(_t1.Exists())
+                _t1.DeleteInDatabase();
+            if(_t2.Exists())
+                _t2.DeleteInDatabase();
 
             foreach (
                 ExternalCohortTable source in
