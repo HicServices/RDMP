@@ -189,138 +189,129 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(true,true)]
         public void CreateANOVersion_TestSkippingTables(bool tableInfoAlreadyExistsForSkippedTable,bool putPlanThroughSerialization)
         {
-            var dbFrom = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.GetConsistentName("CreateANOVersion_TestSkippingTables_From"));
-            var dbTo = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.GetConsistentName("CreateANOVersion_TestSkippingTables_To"));
+            var dbFrom = From;
+            var dbTo = To;
 
             dbFrom.Create(true);
             dbTo.Create(true);
 
-            try
+            var tblFromHeads = dbFrom.CreateTable("Heads", new[]
             {
-                var tblFromHeads = dbFrom.CreateTable("Heads", new[]
-                {
-                    new DatabaseColumnRequest("SkullColor", "varchar(10)"),
-                    new DatabaseColumnRequest("Vertebrae", "varchar(25)")
-                });
+                new DatabaseColumnRequest("SkullColor", "varchar(10)"),
+                new DatabaseColumnRequest("Vertebrae", "varchar(25)")
+            });
 
-                var cols = new[]
-                {
-                    new DatabaseColumnRequest("SpineColor", "varchar(10)"),
-                    new DatabaseColumnRequest("Vertebrae", "varchar(25)")
-                };
-
-                var tblFromNeck = dbFrom.CreateTable("Necks",cols);
-
-                //Necks table already exists in the destination so will be skipped for migration but still needs to be imported
-                var tblToNeck = dbTo.CreateTable("Necks", cols);
-
-
-                TableInfo fromHeadsTableInfo;
-                ColumnInfo[] fromHeadsColumnInfo;
-                TableInfo fromNeckTableInfo;
-                ColumnInfo[] fromNeckColumnInfo;
-                TableInfo toNecksTableInfo = null;
-                ColumnInfo[] toNecksColumnInfo = null;
-
-                TableInfoImporter i1 = new TableInfoImporter(CatalogueRepository, tblFromHeads);
-                i1.DoImport(out fromHeadsTableInfo,out fromHeadsColumnInfo);
-
-                TableInfoImporter i2 = new TableInfoImporter(CatalogueRepository, tblFromNeck);
-                i2.DoImport(out fromNeckTableInfo,out fromNeckColumnInfo);
-                
-                //Table already exists but does the in Catalogue reference exist?
-                if(tableInfoAlreadyExistsForSkippedTable)
-                {
-                    TableInfoImporter i3 = new TableInfoImporter(CatalogueRepository, tblToNeck);
-                    i3.DoImport(out toNecksTableInfo,out toNecksColumnInfo);
-                }
-
-                //Create a JoinInfo so the query builder knows how to connect the tables
-                new JoinInfo(CatalogueRepository,
-                    fromHeadsColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")),
-                    fromNeckColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")), ExtractionJoinType.Inner, null
-                    );
-
-                var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo, true);
-                Catalogue cata;
-                CatalogueItem[] cataItems;
-                ExtractionInformation[] extractionInformations;
-                cataEngineer.ExecuteForwardEngineering(out cata,out cataItems,out extractionInformations);
-
-                var cataEngineer2 = new ForwardEngineerCatalogue(fromNeckTableInfo, fromNeckColumnInfo, true);
-                cataEngineer2.ExecuteForwardEngineering(cata);
-
-                //4 extraction informations in from Catalogue (2 from Heads and 2 from Necks)
-                Assert.AreEqual(cata.GetAllExtractionInformation(ExtractionCategory.Any).Count(),4);
-
-                //setup ANOTable on head
-                var anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOSkullColor", "C");
-                anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 10;
-                anoTable.SaveToDatabase();
-                anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
-             
-                //////////////////The actual test!/////////////////
-                var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,cata);
-                
-                //ano the table SkullColor
-                var scPlan = planManager.GetPlanForColumnInfo(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")));
-                scPlan.ANOTable = anoTable;
-                scPlan.Plan = Plan.ANO;
-
-                if (putPlanThroughSerialization)
-                {
-                    var asString = JsonConvertExtensions.SerializeObject(planManager, RepositoryLocator);
-
-                    planManager = (ForwardEngineerANOCataloguePlanManager)JsonConvertExtensions.DeserializeObject( asString, typeof(ForwardEngineerANOCataloguePlanManager), RepositoryLocator);
-                }
-                
-                //not part of serialization
-                planManager.TargetDatabase = dbTo;
-                planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
-
-                var engine =  new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
-
-                if (!tableInfoAlreadyExistsForSkippedTable)
-                {
-                    var ex = Assert.Throws<Exception>(engine.Execute);
-                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
-                    Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
-                    
-                    return;
-                }
-                else
-                    engine.Execute();
-
-                var newCata = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Name.Equals("ANOHeads"));
-                Assert.IsTrue(newCata.Exists());
-
-                var newCataItems = newCata.CatalogueItems;
-                Assert.AreEqual(newCataItems.Count(),4);
-
-                //should be extraction informations
-                //all extraction informations should point to the new table location
-                Assert.IsTrue(newCataItems.All(ci => ci.ExtractionInformation.SelectSQL.Contains(dbTo.GetRuntimeName())));
-
-                //these columns should all exist
-                Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SkullColor")));
-                Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SpineColor")));
-                Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("Vertebrae"))); //actually there will be 2 copies of this one from Necks one from Heads
-
-                //new ColumnInfo should have a reference to the anotable
-                Assert.IsTrue(newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
-
-
-                var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo;
-
-                //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
-                Assert.IsTrue(newCataItems.Select(ci=>ci.ColumnInfo).Contains(newSpineColorColumnInfo));
-                
-            }
-            finally
+            var cols = new[]
             {
-                dbFrom.Drop();
-                dbTo.Drop();
+                new DatabaseColumnRequest("SpineColor", "varchar(10)"),
+                new DatabaseColumnRequest("Vertebrae", "varchar(25)")
+            };
+
+            var tblFromNeck = dbFrom.CreateTable("Necks",cols);
+
+            //Necks table already exists in the destination so will be skipped for migration but still needs to be imported
+            var tblToNeck = dbTo.CreateTable("Necks", cols);
+
+
+            TableInfo fromHeadsTableInfo;
+            ColumnInfo[] fromHeadsColumnInfo;
+            TableInfo fromNeckTableInfo;
+            ColumnInfo[] fromNeckColumnInfo;
+            TableInfo toNecksTableInfo = null;
+            ColumnInfo[] toNecksColumnInfo = null;
+
+            TableInfoImporter i1 = new TableInfoImporter(CatalogueRepository, tblFromHeads);
+            i1.DoImport(out fromHeadsTableInfo,out fromHeadsColumnInfo);
+
+            TableInfoImporter i2 = new TableInfoImporter(CatalogueRepository, tblFromNeck);
+            i2.DoImport(out fromNeckTableInfo,out fromNeckColumnInfo);
+            
+            //Table already exists but does the in Catalogue reference exist?
+            if(tableInfoAlreadyExistsForSkippedTable)
+            {
+                TableInfoImporter i3 = new TableInfoImporter(CatalogueRepository, tblToNeck);
+                i3.DoImport(out toNecksTableInfo,out toNecksColumnInfo);
             }
+
+            //Create a JoinInfo so the query builder knows how to connect the tables
+            new JoinInfo(CatalogueRepository,
+                fromHeadsColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")),
+                fromNeckColumnInfo.Single(c => c.GetRuntimeName().Equals("Vertebrae")), ExtractionJoinType.Inner, null
+                );
+
+            var cataEngineer = new ForwardEngineerCatalogue(fromHeadsTableInfo, fromHeadsColumnInfo, true);
+            Catalogue cata;
+            CatalogueItem[] cataItems;
+            ExtractionInformation[] extractionInformations;
+            cataEngineer.ExecuteForwardEngineering(out cata,out cataItems,out extractionInformations);
+
+            var cataEngineer2 = new ForwardEngineerCatalogue(fromNeckTableInfo, fromNeckColumnInfo, true);
+            cataEngineer2.ExecuteForwardEngineering(cata);
+
+            //4 extraction informations in from Catalogue (2 from Heads and 2 from Necks)
+            Assert.AreEqual(cata.GetAllExtractionInformation(ExtractionCategory.Any).Count(),4);
+
+            //setup ANOTable on head
+            var anoTable = new ANOTable(CatalogueRepository, ANOStore_ExternalDatabaseServer, "ANOSkullColor", "C");
+            anoTable.NumberOfCharactersToUseInAnonymousRepresentation = 10;
+            anoTable.SaveToDatabase();
+            anoTable.PushToANOServerAsNewTable("varchar(10)",new ThrowImmediatelyCheckNotifier());
+         
+            //////////////////The actual test!/////////////////
+            var planManager = new ForwardEngineerANOCataloguePlanManager(RepositoryLocator,cata);
+            
+            //ano the table SkullColor
+            var scPlan = planManager.GetPlanForColumnInfo(fromHeadsColumnInfo.Single(col => col.GetRuntimeName().Equals("SkullColor")));
+            scPlan.ANOTable = anoTable;
+            scPlan.Plan = Plan.ANO;
+
+            if (putPlanThroughSerialization)
+            {
+                var asString = JsonConvertExtensions.SerializeObject(planManager, RepositoryLocator);
+
+                planManager = (ForwardEngineerANOCataloguePlanManager)JsonConvertExtensions.DeserializeObject( asString, typeof(ForwardEngineerANOCataloguePlanManager), RepositoryLocator);
+            }
+            
+            //not part of serialization
+            planManager.TargetDatabase = dbTo;
+            planManager.SkippedTables.Add(fromNeckTableInfo);//skip the necks table because it already exists (ColumnInfos may or may not exist but physical table definetly does)
+
+            var engine =  new ForwardEngineerANOCatalogueEngine(RepositoryLocator, planManager);
+
+            if (!tableInfoAlreadyExistsForSkippedTable)
+            {
+                var ex = Assert.Throws<Exception>(engine.Execute);
+                Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "Found '0' ColumnInfos called"));
+                Assert.IsTrue(Regex.IsMatch(ex.InnerException.Message, "[Necks].[SpineColor]"));
+                
+                return;
+            }
+            else
+                engine.Execute();
+
+            var newCata = CatalogueRepository.GetAllObjects<Catalogue>().Single(c => c.Name.Equals("ANOHeads"));
+            Assert.IsTrue(newCata.Exists());
+
+            var newCataItems = newCata.CatalogueItems;
+            Assert.AreEqual(newCataItems.Count(),4);
+
+            //should be extraction informations
+            //all extraction informations should point to the new table location
+            Assert.IsTrue(newCataItems.All(ci => ci.ExtractionInformation.SelectSQL.Contains(dbTo.GetRuntimeName())));
+
+            //these columns should all exist
+            Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SkullColor")));
+            Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("SpineColor")));
+            Assert.IsTrue(newCataItems.Any(ci => ci.ExtractionInformation.SelectSQL.Contains("Vertebrae"))); //actually there will be 2 copies of this one from Necks one from Heads
+
+            //new ColumnInfo should have a reference to the anotable
+            Assert.IsTrue(newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo.ANOTable_ID == anoTable.ID);
+
+
+            var newSpineColorColumnInfo = newCataItems.Single(ci => ci.Name.Equals("ANOSkullColor")).ColumnInfo;
+
+            //table info already existed, make sure the new CatalogueItems point to the same columninfos / table infos
+            Assert.IsTrue(newCataItems.Select(ci=>ci.ColumnInfo).Contains(newSpineColorColumnInfo));
         }
         
         [Test]

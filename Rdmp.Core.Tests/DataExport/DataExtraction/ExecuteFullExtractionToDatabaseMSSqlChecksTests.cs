@@ -4,6 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi;
+using FAnsi.Discovery;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -13,6 +15,7 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataExport.DataExtraction
 {
@@ -20,6 +23,8 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
     {
         private IProject _projectStub;
         private IExtractCommand _commandStub;
+        
+        public DiscoveredDatabase Database { get; set; }
 
         [SetUp]
         protected override void SetUp()
@@ -33,13 +38,12 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             
             _commandStub = Mock.Of<IExtractCommand>(cmd => cmd.Configuration==cfg);
 
-            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
-
-            if(db.Exists())
-                db.Drop();
+            Database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
         }
 
         
+
+
         [Test]
         public void NoServer()
         {
@@ -79,10 +83,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
             //server.Database = "FictionalDatabase"; Ignored by the extractor!
-
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase("FictionalDatabase");
-            Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase").Exists());
-
+            
             try
             {
 
@@ -94,7 +95,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 destination.TableNamingPattern = "$d";
 
                 if (alreadyExists)
-                    destination.DatabaseNamingPattern = "FictionalDatabase"; //database that exists
+                    destination.DatabaseNamingPattern = Database.GetRuntimeName(); //database that exists
                 else
                     destination.DatabaseNamingPattern = "Fictional$nDatabase";  //database does not exist (but server does)
 
@@ -116,16 +117,12 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             var server = new ExternalDatabaseServer(CatalogueRepository, "Fiction",null);
             server.Server = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Name;
             //server.Database = "FictionalDatabase"; Ignored by the extractor!
-
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase("FictionalDatabase");
             
-            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
-
-            using (var con = db.Server.GetConnection())
+            using (var con = Database.Server.GetConnection())
             {
                 con.Open();
 
-                db.Server.GetCommand("CREATE TABLE Bob(name varchar(10))", con).ExecuteNonQuery();
+                Database.Server.GetCommand("CREATE TABLE Bob(name varchar(10))", con).ExecuteNonQuery();
             }
             
             try
@@ -142,7 +139,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
 
                 Assert.AreEqual(CheckResult.Warning, tomemory.GetWorst());
 
-                db.ExpectTable("Bob").Drop();
+                Database.ExpectTable("Bob").Drop();
             }
             finally
             {

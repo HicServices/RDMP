@@ -18,7 +18,7 @@ namespace Tests.Common.Scenarios
     /// <summary>
     /// Base class for all tests that need a lot of objects created for them (e.g. a <see cref="Catalogue"/> with a <see cref="LoadMetadata"/>
     /// </summary>
-    public abstract class TestsRequiringA : DatabaseTests, IDatabaseColumnRequestAdjuster
+    public abstract class TestsRequiringA : FromToDatabaseTests, IDatabaseColumnRequestAdjuster
     {
         public void AdjustColumns(List<DatabaseColumnRequest> columns)
         {

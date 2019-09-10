@@ -57,8 +57,6 @@ namespace Tests.Common.Scenarios
                 base.OneTimeSetUp();
                 
                 CreateCohortDatabase();
-
-                _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
                 
                 EmptyCohortTables();
                 SetupCohortDefinitionAndCustomTable();
@@ -92,22 +90,14 @@ namespace Tests.Common.Scenarios
 
         private void CreateCohortDatabase()
         {
-            //Where {0} is the name of the Cohort database
-            //Where {1} is either CHI or ANOCHI depending on whether anonymisation is enabled on the target Catalogue
-            //Where {2} is either 10 or 13 -- the column length of either CHI or ANOCHI
+            _cohortDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
 
-            var database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(CohortDatabaseName);
-            if (database.Exists())
-            {
-                database.DiscoverTables(false).ToList().ForEach(t => t.Drop());
-                database.Drop();
-            }
+            if(_cohortDatabase.Exists())
+                DeleteTables(_cohortDatabase);
+            else
+                _cohortDatabase.Create();
             
             string sql = string.Format(@"
-CREATE DATABASE {0} 
-GO
-
-USE {0}
 
 CREATE TABLE [dbo].[Cohort](
        [PrivateID] [varchar](10) NOT NULL,
@@ -141,11 +131,9 @@ REFERENCES [dbo].[CohortDefinition] ([id])
 GO
 ALTER TABLE [dbo].[Cohort] CHECK CONSTRAINT [FK_Cohort_CohortDefinition]
 GO
-",
-                //{0}
-CohortDatabaseName);
+");
 
-            using (var con = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.GetConnection())
+            using (var con = _cohortDatabase.Server.GetConnection())
             {
                 con.Open();
                 UsefulStuff.ExecuteBatchNonQuery(sql, con, timeout: 15);

@@ -417,7 +417,9 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
         [Test]
         public void JoinablesWithCache()
         {
-            const string queryCachingDatabaseName = "MyQueryCachingDatabase";
+            string queryCachingDatabaseName = To.GetRuntimeName();
+            _queryCachingDatabase = To;
+
             var builder = new CohortQueryBuilder(aggregate1, null);
 
             //make aggregate 2 a joinable
@@ -427,12 +429,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             //make aggregate 2 have an additional column (dtCreated)
             var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
             aggregate2.AddDimension(anotherCol);
-
-            _queryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName);
             
-            if (_queryCachingDatabase.Exists())
-                _queryCachingDatabase.Drop(); //make sure it doesn't exist
-
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
             scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
 
@@ -485,11 +482,15 @@ FROM
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
 LEFT Join (
 	/*Cached:cic_{2}_UnitTestAggregate2*/
-	select * from [MyQueryCachingDatabase]..[JoinableInceptionQuery_AggregateConfiguration{1}]
+	select * from [{3}]..[JoinableInceptionQuery_AggregateConfiguration{1}]
 
 ){0}
-on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi", expectedTableAlias,aggregate2.ID,cohortIdentificationConfiguration.ID)),
-     CollapseWhitespace(builder.SQL));
+on [" + TestDatabaseNames.Prefix + @"ScratchArea]..[BulkData].[chi] = {0}.chi",
+        expectedTableAlias,  //{0}
+        aggregate2.ID, //{1}
+        cohortIdentificationConfiguration.ID,//{2}
+        queryCachingDatabaseName) //{3}
+                         ),CollapseWhitespace(builder.SQL));
 
                 }
                 finally

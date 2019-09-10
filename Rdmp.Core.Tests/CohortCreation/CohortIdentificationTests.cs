@@ -15,7 +15,7 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {
-    public class CohortIdentificationTests : DatabaseTests
+    public class CohortIdentificationTests : FromToDatabaseTests
     {
         public DiscoveredDatabase Database { get; private set; }
 

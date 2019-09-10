@@ -76,16 +76,16 @@ GO
 ALTER TABLE [dbo].[Results]  WITH CHECK ADD  CONSTRAINT [FK_Results_Tests] FOREIGN KEY([TestId])
 REFERENCES [dbo].[Tests] ([TestId])
 GO";
-            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
-            var server = db.Server;
+            
+            var server = From.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();
                 UsefulStuff.ExecuteBatchNonQuery(sql,con);
             }
 
-            var importer1 = new TableInfoImporter(CatalogueRepository, db.ExpectTable("Tests"));
-            var importer2 = new TableInfoImporter(CatalogueRepository, db.ExpectTable("Results"));
+            var importer1 = new TableInfoImporter(CatalogueRepository, From.ExpectTable("Tests"));
+            var importer2 = new TableInfoImporter(CatalogueRepository, From.ExpectTable("Results"));
 
             importer1.DoImport(out t1,out c1);
             
@@ -131,10 +131,7 @@ GO";
             ciDate.SaveToDatabase();
             var eiDate = new ExtractionInformation(CatalogueRepository, ciDate, colDate, colDate.Name);
 
-            var destDatabaseName = TestDatabaseNames.GetConsistentName("ANOMigrationTwoTableTests");
-
-            _destinationDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(destDatabaseName);
-            _destinationDatabase.Create(true);
+            _destinationDatabase = To;
         }
 
 
