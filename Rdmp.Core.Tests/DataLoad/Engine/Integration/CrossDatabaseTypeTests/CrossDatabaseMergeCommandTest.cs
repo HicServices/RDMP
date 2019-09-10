@@ -71,8 +71,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             
             var fromTbl = From.CreateTable(DatabaseName + "_ToTable_STAGING", dt);
             
-            //TEST_ScratchArea_ToTable_STAGING
-
             //import the toTbl table as a TableInfo
             TableInfo ti;
             ColumnInfo[] cis;
