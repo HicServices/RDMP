@@ -17,6 +17,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 
@@ -326,7 +327,14 @@ namespace Rdmp.Core.CohortCreation.Execution
             try
             {
                 //the identifier column that we read from
-                ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
+                var identifiers = configuration.AggregateDimensions.Where(c => c.IsExtractionIdentifier).ToArray();
+
+                if (identifiers.Length != 1)
+                    throw new Exception(string.Format(
+                        "There were {0} columns in the configuration marked IsExtractionIdentifier:{1}",
+                        identifiers.Length, string.Join(",", identifiers.Select(i => i.GetRuntimeName()))));
+
+                ColumnInfo identifierColumnInfo = identifiers[0].ColumnInfo;
                 var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
                 
                 explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), destinationDataType));
@@ -351,7 +359,13 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <returns></returns>
         private string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
         {
-            var sourceSyntax = cacheableTask.GetDataAccessPoints().Single().GetQuerySyntaxHelper();
+            var accessPoints = cacheableTask.GetDataAccessPoints();
+
+            if (accessPoints.Length != 1)
+                throw new Exception(string.Format("Found {0} DataAccessPoints for cacheableTask '{1}':{2}",
+                    accessPoints.Length, cacheableTask, string.Join(",", accessPoints.Select(a => a.ToString()))));
+
+            var sourceSyntax = accessPoints[0].GetQuerySyntaxHelper();
             var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
             
             //if we have a change in syntax e.g. read from Oracle write to Sql Server
