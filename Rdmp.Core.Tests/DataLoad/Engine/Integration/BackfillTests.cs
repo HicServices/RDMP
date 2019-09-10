@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
-using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -17,76 +16,28 @@ using Rdmp.Core.Curation.Data.EntityNaming;
 using Rdmp.Core.DataLoad.Engine.Job;
 using Rdmp.Core.DataLoad.Modules.Mutilators;
 using Rdmp.Core.DataLoad.Triggers;
-using Rdmp.Core.Repositories.Managers;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
-    public class BackfillTests : DatabaseTests
+    public class BackfillTests : FromToDatabaseTests
     {
-        private DiscoveredDatabase staging;
-        private DiscoveredDatabase live;
-
-
-        private Catalogue _catalogue;
-
-        private const string DatabaseName = "BackfillTests";
-
-        [OneTimeSetUp]
-        protected override void OneTimeSetUp()
-        {
-            base.OneTimeSetUp();
-
-            staging = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName + "_STAGING");
-            live = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName);
-        }
         
+        private Catalogue _catalogue;
+        
+
         [SetUp]
         protected override void SetUp()
         {
             base.SetUp();
 
-            DropDatabases();
-
             BlitzMainDataTables();
-
-            // ensure the test staging and live databases are empty
-            live.Server.CreateDatabase(live.GetRuntimeName());
-            staging.Server.CreateDatabase(staging.GetRuntimeName());
+            
+            DeleteTables(From);
+            DeleteTables(To);
         }
 
-        private void DropDatabases()
-        {
-            if (live.Exists())
-            {
-                if (live.ExpectTable("Results").Exists())
-                    live.ExpectTable("Results").Drop();
-
-                if (live.ExpectTable("Samples").Exists())
-                    live.ExpectTable("Samples").Drop();
-
-                if (live.ExpectTable("Headers").Exists())
-                    live.ExpectTable("Headers").Drop();
-
-                live.Drop();
-            }
-
-            if (staging.Exists())
-            {
-                if (staging.ExpectTable("Results").Exists())
-                    staging.ExpectTable("Results").Drop();
-
-                if (staging.ExpectTable("Samples").Exists())
-                    staging.ExpectTable("Samples").Drop();
-
-                if (staging.ExpectTable("Headers").Exists())
-                    staging.ExpectTable("Headers").Drop();
-
-                staging.Drop();
-            }
-        }
 
         [Test]
         public void Backfill_SingleTable_LoadContainsNewerUpdate()
@@ -94,8 +45,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             SingleTableSetup();
 
             #region Insert test data
-            // add live data
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            // add To data
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -104,33 +55,33 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 cmd.ExecuteNonQuery();
             }
 
-            // add staging data
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // add From data
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
                 // newer update
                 var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description) VALUES " +
-                                            "(10, '2016-01-11T12:00:00', 'Newer than in live, should update live')", connection);
+                                            "(10, '2016-01-11T12:00:00', 'Newer than in To, should update To')", connection);
                 cmd.ExecuteNonQuery();
             }
             #endregion
 
-            // databases are now represent state after push to staging and before migration
+            // databases are now represent state after push to From and before migration
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // check that staging contains the correct data
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // check that From contains the correct data
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
                 var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
                 var numRows = cmd.ExecuteScalar();
-                Assert.AreEqual(1, numRows, "Should still be 1 record, this would be migrated to live");
+                Assert.AreEqual(1, numRows, "Should still be 1 record, this would be migrated to To");
 
                 cmd = new SqlCommand(@"SELECT Description FROM Samples", connection);
                 var description = cmd.ExecuteScalar().ToString();
-                Assert.AreEqual(description, "Newer than in live, should update live", "Description has been altered but is a valid update to live so should not have been touched.");
+                Assert.AreEqual(description, "Newer than in To, should update To", "Description has been altered but is a valid update to To so should not have been touched.");
             }
         }
 
@@ -157,9 +108,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 TableNamingScheme = new IdentityTableNamingScheme()
             };
 
-            mutilator.Initialize(staging, LoadStage.AdjustStaging);
+            mutilator.Initialize(From, LoadStage.AdjustStaging);
             mutilator.Check(new ThrowImmediatelyCheckNotifier());
-            mutilator.Mutilate(new ThrowImmediatelyDataLoadJob(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server));
+            mutilator.Mutilate(new ThrowImmediatelyDataLoadJob(To.Server));
         }
 
         [Test]
@@ -168,8 +119,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             SingleTableSetup();
 
             #region Insert test data
-            // add live data
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            // add To data
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -178,29 +129,29 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 cmd.ExecuteNonQuery();
             }
 
-            // add staging data
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // add From data
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
                 // newer update
                 var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description) VALUES " +
-                                            "(1, '2016-01-09T12:00:00', 'Older than in live, should be deleted by the mutilator')", connection);
+                                            "(1, '2016-01-09T12:00:00', 'Older than in To, should be deleted by the mutilator')", connection);
                 cmd.ExecuteNonQuery();
             }
             #endregion
 
-            // databases are now represent state after push to staging and before migration
+            // databases are now represent state after push to From and before migration
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // check that staging contains the correct data
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // check that From contains the correct data
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
                 var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
                 var numRows = cmd.ExecuteScalar();
-                Assert.AreEqual(0, numRows, "The record to be loaded is older than the corresponding record in live, should have been deleted");
+                Assert.AreEqual(0, numRows, "The record to be loaded is older than the corresponding record in To, should have been deleted");
             }
         }
 
@@ -210,8 +161,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             SingleTableSetup();
 
             #region Insert test data
-            // add live data
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            // add To data
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -220,23 +171,23 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 cmd.ExecuteNonQuery();
             }
 
-            // add staging data
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // add From data
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
                 // newer update
                 var cmd = new SqlCommand("INSERT INTO [Samples] (ID, SampleDate, Description) VALUES " +
-                                            "(2, '2016-01-09T12:00:00', 'Does not exist in live, should remain in staging after mutilation.')", connection);
+                                            "(2, '2016-01-09T12:00:00', 'Does not exist in To, should remain in From after mutilation.')", connection);
                 cmd.ExecuteNonQuery();
             }
             #endregion
 
-            // databases are now represent state after push to staging and before migration
+            // databases are now represent state after push to From and before migration
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // check that staging contains the correct data
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // check that From contains the correct data
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -246,7 +197,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
                 cmd = new SqlCommand(@"SELECT Description FROM Samples", connection);
                 var description = cmd.ExecuteScalar().ToString();
-                Assert.AreEqual(description, "Does not exist in live, should remain in staging after mutilation.", "Description has been altered but is a valid update to live so should not have been touched.");
+                Assert.AreEqual(description, "Does not exist in To, should remain in From after mutilation.", "Description has been altered but is a valid update to To so should not have been touched.");
 
             }
         }
@@ -257,8 +208,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             SingleTableSetup();
 
             #region Insert test data
-            // add live data
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            // add To data
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -268,8 +219,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 cmd.ExecuteNonQuery();
             }
 
-            // add staging data
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // add From data
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -284,7 +235,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
             // todo: asserts
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -326,7 +277,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             TwoTableSetupWhereTimePeriodIsParent();
 
-            #region Insert Live test data
+            #region Insert To test data
             const string liveSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                           "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
@@ -334,7 +285,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                           "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
                                           "(11, 1, 234, '2016-01-10T12:00:00', 1)";
 
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -346,17 +297,17 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            #region Add Staging test data
-            // add staging data
+            #region Add From test data
+            // add From data
             const string stagingSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description) VALUES " +
-                                             "(1, '2016-01-15T12:00:00', 'Sample is later than corresponding record in live, contains a child update (ID=11), child insert (ID=12) and this updated description')";
+                                             "(1, '2016-01-15T12:00:00', 'Sample is later than corresponding record in To, contains a child update (ID=11), child insert (ID=12) and this updated description')";
 
             const string stagingResultsSql = "INSERT INTO Results (ID, SampleID, Result) VALUES " +
                                              "(10, 1, 123), " +
                                              "(11, 1, 345), " +
                                              "(12, 1, 456)";
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -372,8 +323,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // Staging should be exactly the same as it was before mutilation as there is a single update
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // From should be exactly the same as it was before mutilation as there is a single update
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -392,7 +343,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             TwoTableSetupWhereTimePeriodIsParent();
 
-            #region Insert Live test data
+            #region Insert To test data
             const string liveSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                           "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
@@ -400,7 +351,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                           "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
                                           "(11, 1, 234, '2016-01-10T12:00:00', 1)";
 
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -412,17 +363,17 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            #region Add Staging test data
-            // add staging data
+            #region Add From test data
+            // add From data
             const string stagingSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description) VALUES " +
-                                             "(1, '2016-01-09T12:00:00', 'Sample is earlier than corresponding record in live (also contains an item which has apparently been deleted in the set used for a later load)')";
+                                             "(1, '2016-01-09T12:00:00', 'Sample is earlier than corresponding record in To (also contains an item which has apparently been deleted in the set used for a later load)')";
 
             const string stagingResultsSql = "INSERT INTO Results (ID, SampleID, Result) VALUES " +
                                              "(10, 1, 123), " +
                                              "(11, 1, 345), " +
                                              "(12, 1, 456)";
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -438,8 +389,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // Staging should be exactly the same as it was before mutilation as there is a single update
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // From should be exactly the same as it was before mutilation as there is a single update
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -456,7 +407,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                     Assert.AreEqual(12, reader["ID"]);
 
                     var hasMoreResults = reader.Read();
-                    Assert.IsFalse(hasMoreResults, "Should only be one Result row left in staging");
+                    Assert.IsFalse(hasMoreResults, "Should only be one Result row left in From");
                 }
 
                 cmd = new SqlCommand(@"SELECT * FROM Samples", connection);
@@ -465,10 +416,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                     Assert.IsTrue(reader.HasRows);
 
                     reader.Read();
-                    Assert.AreEqual("", reader["Description"].ToString(), "The live sample had a blank description which should have been copied in to the earlier staging record.");
+                    Assert.AreEqual("", reader["Description"].ToString(), "The To sample had a blank description which should have been copied in to the earlier From record.");
 
                     var hasMoreResults = reader.Read();
-                    Assert.IsFalse(hasMoreResults, "Should only be one Samples row in staging");
+                    Assert.IsFalse(hasMoreResults, "Should only be one Samples row in From");
                 }
             }
         }
@@ -478,7 +429,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             TwoTableSetupWhereTimePeriodIsParent();
 
-            #region Insert Live test data
+            #region Insert To test data
             const string liveSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                           "(1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
@@ -486,7 +437,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                           "(10, 1, 123, '2016-01-10T12:00:00', 1), " +
                                           "(11, 1, 234, '2016-01-10T12:00:00', 1)";
 
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -498,8 +449,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            #region Add Staging test data
-            // add staging data
+            #region Add From test data
+            // add From data
             const string stagingSamplesSql = "INSERT INTO Samples (ID, SampleDate, Description) VALUES " +
                                              "(2, '2016-01-15T12:00:00', 'New sample')";
 
@@ -508,7 +459,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                              "(14, 2, 555), " +
                                              "(15, 2, 666)";
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -524,8 +475,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // Staging should be exactly the same as it was before mutilation as there is a single update
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // From should be exactly the same as it was before mutilation as there is a single update
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -572,7 +523,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             TwoTableSetupWhereTimePeriodIsChild();
 
-            #region Insert Live test data
+            #region Insert To test data
             const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                           "(1, 'Biochemistry', '2016-01-10T12:00:00', 1)";
 
@@ -580,7 +531,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                           "(10, 1, '2016-01-10T12:00:00', '', '2016-01-10T12:00:00', 1)";
 
 
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -592,15 +543,15 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            #region Add Staging test data
-            // add staging data
+            #region Add From test data
+            // add From data
             const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                              "(1, 'Biochemistry')";
 
             const string stagingSamplesSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description) VALUES " +
                                              "(10, 1, '2016-01-05T12:00:00', '')";
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -616,32 +567,32 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // Staging should be exactly the same as it was before mutilation as there is a single update
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // From should be exactly the same as it was before mutilation as there is a single update
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
                 var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Samples", connection);
                 var numRows = cmd.ExecuteScalar();
-                Assert.AreEqual(0, numRows, "Sample should be deleted as it is older than corresponding row in live.");
+                Assert.AreEqual(0, numRows, "Sample should be deleted as it is older than corresponding row in To.");
 
                 cmd = new SqlCommand(@"SELECT COUNT(*) FROM Headers", connection);
                 numRows = cmd.ExecuteScalar();
-                Assert.AreEqual(0, numRows, "Header should have been pruned as it no longer has any children in staging.");
+                Assert.AreEqual(0, numRows, "Header should have been pruned as it no longer has any children in From.");
             }
         }
 
         /// <summary>
-        /// This test has an 'old' child insert, i.e. the date of the insert is before the newest child entry in live.
-        /// Also, the parent data in live is different from that in staging, so we need to ensure the entry in staging is updated before we migrate the data,
-        /// otherwise we will overwrite live with old data
+        /// This test has an 'old' child insert, i.e. the date of the insert is before the newest child entry in To.
+        /// Also, the parent data in To is different from that in From, so we need to ensure the entry in From is updated before we migrate the data,
+        /// otherwise we will overwrite To with old data
         /// </summary>
         [Test]
         public void Backfill_TwoTables_TimePeriodChild_LoadContainsOldInsert_WithOldParentData()
         {
             TwoTableSetupWhereTimePeriodIsChild();
 
-            #region Insert Live test data
+            #region Insert To test data
             const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                           "(1, 'Biochemistry', '2016-01-15T12:00:00', 1)";
 
@@ -649,7 +600,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                           "(11, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 1)";
 
 
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -661,15 +612,15 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            #region Add Staging test data
-            // add staging data
+            #region Add From test data
+            // add From data
             const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                              "(1, 'Haematology')"; // old and incorrect Discipline value
 
             const string stagingSamplesSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description) VALUES " +
                                              "(10, 1, '2016-01-05T12:00:00', '')"; // 'old' insert, missing from loaded data. Can only be added by including the parent, so need to make parent correct before migration
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -684,8 +635,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // Staging should be exactly the same as it was before mutilation as there is a single update
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // From should be exactly the same as it was before mutilation as there is a single update
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -699,7 +650,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
                 cmd = new SqlCommand(@"SELECT Discipline FROM Headers WHERE ID=1", connection);
                 var discipline = cmd.ExecuteScalar().ToString();
-                Assert.AreEqual("Biochemistry", discipline, "Header record in staging be updated to reflect what is in live: the live record is authoritative as it contains at least one child from a later date.");
+                Assert.AreEqual("Biochemistry", discipline, "Header record in From be updated to reflect what is in To: the To record is authoritative as it contains at least one child from a later date.");
             }
         }
 
@@ -708,7 +659,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             TwoTableSetupWhereTimePeriodIsChild();
 
-            #region Insert Live test data
+            #region Insert To test data
             const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                           "(1, 'Biochemistry', '2016-01-15T12:00:00', 1)";
 
@@ -717,7 +668,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                           "(11, 1, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 1)";
 
 
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -729,15 +680,15 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            #region Add Staging test data
-            // add staging data
+            #region Add From test data
+            // add From data
             const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                              "(1, 'Haematology')"; // old and incorrect Discipline value
 
             const string stagingSamplesSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description) VALUES " +
-                                             "(12, 1, '2016-01-16T12:00:00', '')"; // 'new' insert, missing from loaded data. SampleDate is newer than any in live so this means that the updated parent data is 'correct'
+                                             "(12, 1, '2016-01-16T12:00:00', '')"; // 'new' insert, missing from loaded data. SampleDate is newer than any in To so this means that the updated parent data is 'correct'
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -752,8 +703,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            // Staging should be exactly the same as it was before mutilation as there is a single update
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            // From should be exactly the same as it was before mutilation as there is a single update
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -767,7 +718,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
                 cmd = new SqlCommand(@"SELECT Discipline FROM Headers WHERE ID=1", connection);
                 var discipline = cmd.ExecuteScalar().ToString();
-                Assert.AreEqual("Haematology", discipline, "Header record in staging should not be updated as it is 'correct'.");
+                Assert.AreEqual("Haematology", discipline, "Header record in From should not be updated as it is 'correct'.");
             }
         }
 
@@ -776,7 +727,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             TwoTableSetupWhereTimePeriodIsChild();
 
-            #region Insert Live test data
+            #region Insert To test data
             const string liveHeaderSql = "INSERT INTO Headers (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
                                          "(1, 'Haematology', '2016-01-15T12:00:00', 2), " +
                                          "(2, 'Haematology', '2016-01-05T12:00:00', 1), " +
@@ -791,7 +742,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                           "(16, 4, '2016-01-15T12:00:00', '', '2016-01-15T12:00:00', 2)";
 
 
-            using (var connection = (SqlConnection)live.Server.GetConnection())
+            using (var connection = (SqlConnection)To.Server.GetConnection())
             {
                 connection.Open();
 
@@ -803,8 +754,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
             #endregion
 
-            #region Add Staging test data
-            // add staging data
+            #region Add From test data
+            // add From data
             const string stagingHeadersSql = "INSERT INTO Headers (ID, Discipline) VALUES " +
                                              "(1, 'Biochemistry'), " +
                                              "(2, 'Biochemistry'), " +
@@ -818,7 +769,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                              "(15, 3, '2016-01-05T12:00:00', ''), " +
                                              "(17, 5, '2016-01-05T12:00:00', '')";
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -833,7 +784,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             Mutilate("[" + DatabaseName + "]..[Samples].[SampleDate]");
 
-            using (var connection = (SqlConnection)staging.Server.GetConnection())
+            using (var connection = (SqlConnection)From.Server.GetConnection())
             {
                 connection.Open();
 
@@ -895,13 +846,13 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             }
 
 
-            using (var con = (SqlConnection) staging.Server.GetConnection())
+            using (var con = (SqlConnection) From.Server.GetConnection())
             {
                 con.Open();
                 new SqlCommand("CREATE TABLE " + tableName + " (" + stagingTableDefinition + ")",con).ExecuteNonQuery();
             }
 
-            using(var con = (SqlConnection)live.Server.GetConnection())
+            using(var con = (SqlConnection)To.Server.GetConnection())
             {
                 con.Open();
                 new SqlCommand("CREATE TABLE " + tableName + " (" + liveTableDefinition + ")",con).ExecuteNonQuery(); 
@@ -935,7 +886,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             // add data
             #region Populate Tables
-            var connection = (SqlConnection)live.Server.GetConnection();
+            var connection = (SqlConnection)To.Server.GetConnection();
             connection.Open();
 
             const string liveHeaderDataSql = "INSERT INTO Header (ID, Discipline, hic_validFrom, hic_dataLoadRunID) VALUES " +
@@ -961,7 +912,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             liveResultDataSqlCommand.ExecuteNonQuery();
             connection.Close();
 
-            connection = (SqlConnection)staging.Server.GetConnection();
+            connection = (SqlConnection)From.Server.GetConnection();
             connection.Open();
 
             const string stagingHeaderDataSql = "INSERT INTO Header (ID, Discipline) VALUES " +
@@ -972,10 +923,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             stagingHeaderDataSqlCommand.ExecuteNonQuery();
 
             const string stagingSampleDataSql = "INSERT INTO Samples (ID, HeaderID, SampleDate, Description) VALUES " +
-                                                "(10, 1, '2016-01-12T13:00:00', 'Later than live data, represents an update and should overwrite live'), " +
-                                                "(11, 1, '2016-01-12T13:00:00', 'Earlier than live data, should not overwrite live'), " +
+                                                "(10, 1, '2016-01-12T13:00:00', 'Later than To data, represents an update and should overwrite To'), " +
+                                                "(11, 1, '2016-01-12T13:00:00', 'Earlier than To data, should not overwrite To'), " +
                                                 "(12, 2, '2016-01-12T13:00:00', 'New data that we did not have before')," +
-                                                "(13, 3, '2016-01-14T12:00:00', 'New data that we did not have before, but parent header record is wrong and been corrected in an earlier load for a later timeperiod (is Biochemistry here but live value of Haematology is correct)')";
+                                                "(13, 3, '2016-01-14T12:00:00', 'New data that we did not have before, but parent header record is wrong and been corrected in an earlier load for a later timeperiod (is Biochemistry here but To value of Haematology is correct)')";
             var stagingSampleDataSqlCommand = new SqlCommand(stagingSampleDataSql, connection);
             stagingSampleDataSqlCommand.ExecuteNonQuery();
 
@@ -984,7 +935,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                                                 "(100, 10, 777), " + // changed 999 to 777
                                                 "(101, 10, 888), " + // unchanged
                                                 "(104, 10, 666), " + // added this
-                                                "(102, 11, 400), " + // earlier data (which is also wrong, 456 in live), live data is newer and corrected
+                                                "(102, 11, 400), " + // earlier data (which is also wrong, 456 in To), To data is newer and corrected
                                                 "(103, 11, 654), " +
                                                 "(105, 12, 123), " +  // new result (from new sample)
                                                 "(106, 13, 123)"; // new result (from new sample)
@@ -994,7 +945,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             connection.Close();
             #endregion
 
-            // databases are now represent state after push to staging and before migration
+            // databases are now represent state after push to From and before migration
             var mutilator = new StagingBackfillMutilator
             {
                 TimePeriodicityField = CatalogueRepository.GetAllObjectsWhere<ColumnInfo>("WHERE Name=@Name", new Dictionary<string, object>
@@ -1005,14 +956,14 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 TableNamingScheme = new IdentityTableNamingScheme()
             };
 
-            mutilator.Initialize(staging, LoadStage.AdjustStaging);
+            mutilator.Initialize(From, LoadStage.AdjustStaging);
             mutilator.Check(new ThrowImmediatelyCheckNotifier());
             mutilator.Mutilate(new ThrowImmediatelyDataLoadJob());
 
             #region Assert
-            // check that staging contains the correct data
+            // check that From contains the correct data
             // Sample ID=2 should have been deleted, along with corresponding results 102 and 103
-            connection = (SqlConnection)staging.Server.GetConnection();
+            connection = (SqlConnection)From.Server.GetConnection();
             connection.Open();
 
             var cmd = new SqlCommand(@"SELECT COUNT(*) FROM Header", connection);
@@ -1021,7 +972,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             cmd = new SqlCommand(@"SELECT Discipline FROM Header WHERE ID=1", connection);
             var discipline = cmd.ExecuteScalar();
-            Assert.AreEqual("Biochemistry", discipline, "The mutilator should **NOT** have updated record 1 from Biochemistry to Haematology. Although the load updates one of the live samples, the most recent live sample is later than the most recent loaded sample so the parent data in live takes precedence over the parent data in staging.");
+            Assert.AreEqual("Biochemistry", discipline, "The mutilator should **NOT** have updated record 1 from Biochemistry to Haematology. Although the load updates one of the To samples, the most recent To sample is later than the most recent loaded sample so the parent data in To takes precedence over the parent data in From.");
 
             // Not convinced about this test case
             //cmd = new SqlCommand(@"SELECT Discipline FROM Header WHERE ID=3", connection);
