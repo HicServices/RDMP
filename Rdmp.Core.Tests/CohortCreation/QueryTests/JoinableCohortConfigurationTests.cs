@@ -182,7 +182,8 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             Console.WriteLine(builder.SQL);
             try
             {
-                using (var con = (SqlConnection) DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                
+                using (var con = (SqlConnection)Database.Server.GetConnection())
                 {
                     con.Open();
 
@@ -259,7 +260,7 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi",expec
             
             try
             {
-                using (var con = (SqlConnection)DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                using (var con = (SqlConnection)Database.Server.GetConnection())
                 {
                     con.Open();
 
@@ -385,7 +386,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                 var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()//get all the aggregates
                     .Union(clone.GetAllJoinables().Select(j=>j.AggregateConfiguration))//including the joinables
                     .Where(a => a.RootFilterContainer_ID != null)//that have WHERE sql
-                    .Select(ag => ag.RootFilterContainer);//grab their containers so we can clean them up
+                    .Select(ag => ag.RootFilterContainer);//grab their containers so we can clean them SetUp
 
                 ((IDeleteable)clone.GetAllParameters()[0]).DeleteInDatabase();
                 clone.DeleteInDatabase();
@@ -438,7 +439,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
             queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
             
-            //make the builder use the query cache we just set up
+            //make the builder use the query cache we just set SetUp
             builder.CacheServer = queryCachingDatabaseServer;
             try
             {
@@ -446,7 +447,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                var builderForCaching = new CohortQueryBuilder(aggregate2, null, true);
 
                 var cacheDt = new DataTable();
-                using (SqlConnection con = (SqlConnection)DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                using (SqlConnection con = (SqlConnection)Database.Server.GetConnection())
                 {
                     con.Open();
                     SqlDataAdapter da = new SqlDataAdapter(new SqlCommand(builderForCaching.SQL, con));
@@ -460,7 +461,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                 {
                     Console.WriteLine(builder.SQL);
 
-                    using (var con = (SqlConnection)DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                    using (var con = (SqlConnection)Database.Server.GetConnection())
                     {
                         con.Open();
 

@@ -67,7 +67,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.QueryBuildingTests.AggregateBuild
         {
             var listener = new ThrowImmediatelyDataLoadEventListener();
             
-            var db = GetCleanedServer(type,true);
+            var db = GetCleanedServer(type);
 
             var data = GetTestDataTable();
 

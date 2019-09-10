@@ -225,26 +225,5 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 _database.Server.GetCommand(sql, con).ExecuteNonQuery();
             }
         }
-
-        
-
-        [TearDown]
-        public void DropTable()
-        {
-            //don't try to cleanup if there was Assert.Inconclusive because the server was inaccessible
-            if(_database == null)
-                return;
-            if(!_table.Exists())
-                return;
-
-            string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
-
-            GetImplementer().DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
-
-            if(_archiveTable.Exists())
-                _archiveTable.Drop();
-
-            _table.Drop();
-        }
     }
 }

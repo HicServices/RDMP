@@ -35,8 +35,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private DiscoveredTable _table;
 
         [SetUp]
-        public void CreateTestDatabase()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             parentDir = workingDir.CreateSubdirectory("FlatFileAttacherTests");
 
@@ -47,7 +49,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             LoadDirectory = LoadDirectory.CreateDirectoryStructure(parentDir, "Test_CSV_Attachment");
             
             // create a separate builder for setting an initial catalog on (need to figure out how best to stop child classes changing ServerICan... as this then causes TearDown to fail)
-            _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
+            _database = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
             using (var con = _database.Server.GetConnection())
             {
@@ -432,12 +434,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             var ex = Assert.Throws<Exception>(()=>source.Attach(job,new GracefulCancellationToken()));
 
             StringAssert.IsMatch("FlatFileAttacher TableToLoad was 'TableNotInLoad' \\(ID=\\d+\\) but that table was not one of the tables in the load:'TableInLoad'", ex.Message);
-        }
-
-        [TearDown]
-        public void TearDown()
-        {
-            parentDir.Delete(true);
         }
     }
 }

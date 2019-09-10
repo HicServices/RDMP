@@ -6,6 +6,7 @@
 
 using System.Collections.Generic;
 using System.Data;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
@@ -22,13 +23,18 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         private ExternalDatabaseServer _server;
         private AliasHandler _handler;
 
-        [SetUp]
-        public void SetupServer()
-        {
-            _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer",null);
-            _server.SetProperties(DiscoveredDatabaseICanCreateRandomTablesIn);
+        private DiscoveredDatabase _database;
 
-            var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+        [SetUp]
+        protected override void SetUp()
+        {
+            base.SetUp();
+            
+            _server = new ExternalDatabaseServer(CatalogueRepository, "AliasHandlerTestsServer",null);
+            _server.SetProperties(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+
+            _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            var s = _database.Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -59,6 +65,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
         }
 
+        
+
         [Test]
         public void ThrowBecause_ColumnNotInInputDataTable()
         {
@@ -75,7 +83,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void ThrowBecause_NameAndAliasSameValue()
         {            
-            var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var s = _database.Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -94,7 +102,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
         [Test]
         public void ThrowBecause_ThreeColumnAliasTable()
         {
-            var s = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var s = _database.Server;
             using (var con = s.GetConnection())
             {
                 con.Open();
@@ -198,18 +206,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
             Assert.AreEqual(99, result.Rows[4][0]);
             Assert.AreEqual("peter", result.Rows[4][1]);//The new row that should have appeared to resolve the  pepey=paul=peter alias
             Assert.AreEqual(100, result.Rows[4][2]);//value should match the input array
-        }
-
-
-        [TearDown]
-        public void TearDown()
-        {
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("AliasHandlerTests");
-            
-            if(tbl.Exists())
-                tbl.Drop();
-            
-            _server.DeleteInDatabase();
         }
 
     }

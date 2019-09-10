@@ -36,7 +36,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             try
             {
                 var attacher = new MDFAttacher();
-                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
                 Assert.Throws<FileNotFoundException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
             }
             finally
@@ -79,7 +79,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
                 var attacher = new MDFAttacher();
                 attacher.OverrideMDFFileCopyDestination = data.FullName;
 
-                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
                 
                 //should be a warning since overwritting is default behaviour
                 var ex = Assert.Throws<Exception>(()=>
@@ -314,7 +314,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             {
                 
                 var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
-                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
                 Assert.IsNotNull(attacher);
                 Assert.IsInstanceOf<MDFAttacher>(attacher);

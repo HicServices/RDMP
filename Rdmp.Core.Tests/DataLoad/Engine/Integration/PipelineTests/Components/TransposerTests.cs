@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Components
 
 
         [OneTimeSetUp]
-        public void Setup()
+        public virtual void OneTimeSetUp()
         {
             dt.Columns.Add("recipe");
             dt.Columns.Add("Fishcakes");

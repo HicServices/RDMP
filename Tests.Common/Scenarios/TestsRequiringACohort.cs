@@ -50,11 +50,11 @@ namespace Tests.Common.Scenarios
         
 
         [OneTimeSetUp]
-        protected override void SetUp()
+        protected override void OneTimeSetUp()
         {
             try
             {
-                base.SetUp();
+                base.OneTimeSetUp();
                 
                 CreateCohortDatabase();
 
@@ -82,8 +82,10 @@ namespace Tests.Common.Scenarios
         }
 
         [SetUp]
-        protected void BeforeEachTest()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             if (_setupException != null)
                 throw _setupException;
         }

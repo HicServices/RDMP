@@ -18,17 +18,6 @@ namespace Rdmp.Core.Tests.Logging
     
     class FatalErrorLoggingTest : DatabaseTests
     {
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            using (var conn = new SqlConnection(UnitTestLoggingConnectionString.ConnectionString))
-            {
-                conn.Open();
-
-                new SqlCommand("DELETE FROM DataLoadRun", conn).ExecuteNonQuery();
-            }
-        }
-
         [TestCase]
         public void CreateNewDataLoadTask()
         {

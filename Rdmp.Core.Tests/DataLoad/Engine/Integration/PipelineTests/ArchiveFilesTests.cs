@@ -88,7 +88,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
                 archiveFiles.Run(job, new GracefulCancellationToken());
 
                 foreach (FileInfo fileInfo in loadDirectory.ForArchiving.GetFiles("*.zip"))
-                    Console.WriteLine("About to throw up because of zip file:" + fileInfo.FullName);
+                    Console.WriteLine("About to throw SetUp because of zip file:" + fileInfo.FullName);
 
                 Assert.IsFalse(loadDirectory.ForArchiving.GetFiles("*.zip").Any(),"There should not be any zip files in the archive directory!");
             }

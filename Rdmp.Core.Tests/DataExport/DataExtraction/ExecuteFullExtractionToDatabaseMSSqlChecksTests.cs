@@ -22,8 +22,10 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
         private IExtractCommand _commandStub;
 
         [SetUp]
-        public void CleanupOnStart()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _projectStub = Mock.Of<IProject>();
             _projectStub.ProjectNumber = -123;
 
@@ -37,15 +39,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 db.Drop();
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            var db = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase("FictionalDatabase");
-
-            if (db.Exists())
-                db.Drop();
-        }
-    
+        
         [Test]
         public void NoServer()
         {

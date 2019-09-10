@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.Common;
 using System.Linq;
+using FAnsi;
 using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -15,70 +16,25 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Modules.Mutilators.QueryBuilders;
 using Rdmp.Core.DataLoad.Triggers;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 {
-    public class BackfillSqlHelperTests : DatabaseTests
+    public class BackfillSqlHelperTests : FromToDatabaseTests
     {
-        private DiscoveredDatabase _stagingDatabase;
-        private DiscoveredDatabase _liveDatabase;
         private Catalogue _catalogue;
-
-        private const string DatabaseName = "BackfillSqlHelperTests";
-
+        
         #region Housekeeping
 
         [SetUp]
-        public void BeforeEachTest()
+        protected override void SetUp()
         {
-            _catalogue = CatalogueRepository.GetAllObjects<Catalogue>("WHERE Name='BackfillSqlHelperTests'").SingleOrDefault();
-            if (_catalogue != null)
-            {
-                // Previous test run has not exited cleanly
-                foreach (var ti in _catalogue.GetTableInfoList(false))
-                    ti.DeleteInDatabase();
+            base.SetUp();
 
-                _catalogue.DeleteInDatabase();
-            }
-
-            _stagingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName + "_STAGING");
-            _liveDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(DatabaseName);
-            
-            // ensure the test staging and live databases are empty
-            _stagingDatabase.Create(true);
-            _liveDatabase.Create(true);
-            
-            CleanCatalogueDatabase();
+            DeleteTables(From);
+            DeleteTables(To);
         }
-
-        private void CleanCatalogueDatabase()
-        {
-            if (_catalogue != null)
-                _catalogue.DeleteInDatabase();
-
-            // ensure the database is cleared of test remnants
-            foreach (var ji in CatalogueRepository.GetAllObjects<JoinInfo>())
-                ji.DeleteInDatabase();
-
-            // column infos don't appear to delete
-            foreach (var ci in CatalogueRepository.GetAllObjects<ColumnInfo>())
-                ci.DeleteInDatabase();
-
-            foreach (var ti in CatalogueRepository.GetAllObjects<TableInfo>())
-                ti.DeleteInDatabase();
-
-            foreach (var credentials in CatalogueRepository.GetAllObjects<DataAccessCredentials>())
-                credentials.DeleteInDatabase();
-        }
-
-        [TearDown]
-        public void AfterEachTest()
-        {
-            _stagingDatabase.Drop();
-            _liveDatabase.Drop();
-
-            CleanCatalogueDatabase();
-        }
+        
         #endregion
 
         [Test]
@@ -90,7 +46,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             if (ciTimePeriodicity == null)
                 throw new InvalidOperationException("Could not find TimePeriodicity column");
 
-            var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, _stagingDatabase, _liveDatabase);
+            var sqlHelper = new BackfillSqlHelper(ciTimePeriodicity, From, To);
 
             var tiHeader = CatalogueRepository.GetAllObjects<TableInfo>().Single(t=>t.GetRuntimeName().Equals("Headers"));
             var tiSamples = CatalogueRepository.GetAllObjects<TableInfo>().Single(t => t.GetRuntimeName().Equals("Samples"));
@@ -103,12 +59,15 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 joinInfos.Single(info => info.PrimaryKey.TableInfo_ID == tiSamples.ID)
             };
 
-            var sql = sqlHelper.CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiResults, "TimePeriodicityTable", _stagingDatabase, joinPath);
+            var sql = sqlHelper.CreateSqlForJoinToTimePeriodicityTable("CurrentTable", tiResults, "TimePeriodicityTable", From, joinPath);
 
-            Assert.AreEqual(@"SELECT CurrentTable.*, TimePeriodicityTable.HeaderDate AS TimePeriodicityField 
-FROM [BackfillSqlHelperTests_STAGING]..[Results] CurrentTable
-LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Samples] j1 ON j1.ID = CurrentTable.SampleID
-LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.HeaderID", sql);
+
+
+            Assert.AreEqual(string.Format(@"SELECT CurrentTable.*, TimePeriodicityTable.HeaderDate AS TimePeriodicityField 
+FROM [{0}]..[Results] CurrentTable
+LEFT JOIN [{0}]..[Samples] j1 ON j1.ID = CurrentTable.SampleID
+LEFT JOIN [{0}]..[Headers] TimePeriodicityTable ON TimePeriodicityTable.ID = j1.HeaderID",
+                From.GetRuntimeName()), sql);
         }
 
         private void ThreeTableSetupWhereTimePeriodIsGrandparent()
@@ -117,7 +76,7 @@ LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON Ti
             CreateTables("Samples", "ID int NOT NULL, HeaderID int NOT NULL, SampleType varchar(32)", "ID", "CONSTRAINT [FK_Headers_Samples] FOREIGN KEY (HeaderID) REFERENCES Headers (ID)");
             CreateTables("Results", "ID int NOT NULL, SampleID int NOT NULL, Result int", "ID", "CONSTRAINT [FK_Samples_Results] FOREIGN KEY (SampleID) REFERENCES Samples (ID)");
 
-            // Set up catalogue entities
+            // Set SetUp catalogue entities
             ColumnInfo[] ciHeaders;
             ColumnInfo[] ciSamples;
             ColumnInfo[] ciResults;
@@ -162,8 +121,8 @@ LEFT JOIN [BackfillSqlHelperTests_STAGING]..[Headers] TimePeriodicityTable ON Ti
                 liveTableDefinition += ", " + fkConstraintString;
             }
 
-            CreateTableWithColumnDefinitions(_stagingDatabase,tableName, stagingTableDefinition);
-            CreateTableWithColumnDefinitions(_liveDatabase,tableName, liveTableDefinition);
+            CreateTableWithColumnDefinitions(From,tableName, stagingTableDefinition);
+            CreateTableWithColumnDefinitions(To,tableName, liveTableDefinition);
         }
 
         private TableInfo AddTableToCatalogue(string databaseName, string tableName, string pkName, out ColumnInfo[] ciList, bool createCatalogue = false)

@@ -26,7 +26,7 @@ namespace Rdmp.Core.Tests.Curation.Unit
         [TestCase("varchar(max)", int.MaxValue)]
         public void GetColumnLength(string type, int? expectedLength)
         {
-            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             var t = db.CreateTable("MyTable", new[]
             {
                 new DatabaseColumnRequest("MyCol", type)

@@ -67,7 +67,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 //confirm database appeared
                 Assert.IsTrue(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(testLiveDatabaseName + "_RAW").Exists());
 
-                //now create a catalogue and wire it up to the table TEST on the test database server 
+                //now create a catalogue and wire it SetUp to the table TEST on the test database server 
                 Catalogue cata = SetupATestCatalogue(builder, testLiveDatabaseName, "Table_1"); 
 
                 //now clone the catalogue data structures to MachineName
@@ -89,7 +89,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                     }
                     catch (Exception e)
                     {
-                        //always clean up everything 
+                        //always clean SetUp everything 
                         Console.WriteLine(e);
                     }
             }

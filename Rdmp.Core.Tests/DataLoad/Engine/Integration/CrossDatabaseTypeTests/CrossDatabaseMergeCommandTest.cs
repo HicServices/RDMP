@@ -23,17 +23,19 @@ using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 {
-    public class CrossDatabaseMergeCommandTest:DatabaseTests
+    public class CrossDatabaseMergeCommandTest:FromToDatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.MySql)]
         public void TestMerge(DatabaseType databaseType)
         {
-            var dbFrom = GetCleanedServer(databaseType, "CrossDatabaseMergeCommandFrom");
-            var dbTo = GetCleanedServer(databaseType, "CrossDatabaseMergeCommandTo");
+            //microsoft one gets called for free in test setup (see base class)
+            if (databaseType != DatabaseType.MicrosoftSQLServer)
+                SetupFromTo(databaseType);
 
             var dt = new DataTable();
             var colName = new DataColumn("Name",typeof(string));
@@ -42,7 +44,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             dt.Columns.Add(colAge);
             dt.Columns.Add("Postcode",typeof(string));
 
-            //Data in live awaiting to be updated
+            //Data in live awaiting toTbl be updated
             dt.Rows.Add(new object[]{"Dave",18,"DD3 1AB"});
             dt.Rows.Add(new object[] {"Dave", 25, "DD1 1XS" });
             dt.Rows.Add(new object[] {"Mango", 32, DBNull.Value});
@@ -51,43 +53,45 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 
             dt.PrimaryKey = new[]{colName,colAge};
 
-            var to = dbTo.CreateTable("ToTable", dt);
+            var toTbl = To.CreateTable("ToTable", dt);
 
-            Assert.IsTrue(to.DiscoverColumn("Name").IsPrimaryKey);
-            Assert.IsTrue(to.DiscoverColumn("Age").IsPrimaryKey);
-            Assert.IsFalse(to.DiscoverColumn("Postcode").IsPrimaryKey);
+            Assert.IsTrue(toTbl.DiscoverColumn("Name").IsPrimaryKey);
+            Assert.IsTrue(toTbl.DiscoverColumn("Age").IsPrimaryKey);
+            Assert.IsFalse(toTbl.DiscoverColumn("Postcode").IsPrimaryKey);
 
             dt.Rows.Clear();
             
             //new data being loaded
-            dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" }); //update to change postcode to "DD1 1PS"
+            dt.Rows.Add(new object[] { "Dave", 25, "DD1 1PS" }); //update toTbl change postcode toTbl "DD1 1PS"
             dt.Rows.Add(new object[] { "Chutney", 32, DBNull.Value }); //new insert Chutney
             dt.Rows.Add(new object[] { "Mango", 32, DBNull.Value }); //ignored because already present in dataset
             dt.Rows.Add(new object[] { "Filli", 32, DBNull.Value }); //update from "DD3 78L" null
-            dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null to "DD1 1PS"
+            dt.Rows.Add(new object[] { "Mandrake", 32, "DD1 1PS" }); //update from null toTbl "DD1 1PS"
             dt.Rows.Add(new object[] { "Mandrake", 31, "DD1 1PS" }); // insert because Age is unique (and part of pk)
             
-            var from = dbFrom.CreateTable("CrossDatabaseMergeCommandTo_ToTable_STAGING", dt);
+            var fromTbl = From.CreateTable(DatabaseName + "_ToTable_STAGING", dt);
             
+            //TEST_ScratchArea_ToTable_STAGING
 
-            //import the to table as a TableInfo
+            //import the toTbl table as a TableInfo
             TableInfo ti;
             ColumnInfo[] cis;
-            var cata = Import(to,out ti,out cis);
+            var cata = Import(toTbl,out ti,out cis);
 
             //put the backup trigger on the live table (this will also create the needed hic_ columns etc)
-            var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(to);
+            var triggerImplementer = new TriggerImplementerFactory(databaseType).Create(toTbl);
             triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
-            var configuration = new MigrationConfiguration(dbFrom, LoadBubble.Staging, LoadBubble.Live,new FixedStagingDatabaseNamer(to.Database.GetRuntimeName(),from.Database.GetRuntimeName()));
+            var configuration = new MigrationConfiguration(From, LoadBubble.Staging, LoadBubble.Live,
+                new FixedStagingDatabaseNamer(toTbl.Database.GetRuntimeName(), fromTbl.Database.GetRuntimeName()));
 
             var lmd = new LoadMetadata(CatalogueRepository);
             cata.LoadMetadata_ID = lmd.ID;
             cata.SaveToDatabase();
 
-            var migrationHost = new MigrationHost(dbFrom, dbTo, configuration, new HICDatabaseConfiguration(lmd));
+            var migrationHost = new MigrationHost(From, To, configuration, new HICDatabaseConfiguration(lmd));
 
-            //set up a logging task
+            //set SetUp a logging task
             var logServer = new ServerDefaults(CatalogueRepository).GetDefaultFor(PermissableDefaults.LiveLoggingServer_ID);
             var logManager = new LogManager(logServer);
             logManager.CreateNewLoggingTaskIfNotExists("CrossDatabaseMergeCommandTest");
@@ -99,7 +103,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
             
             migrationHost.Migrate(job, new GracefulCancellationToken());
             
-            var resultantDt = to.GetDataTable();
+            var resultantDt = toTbl.GetDataTable();
             Assert.AreEqual(7,resultantDt.Rows.Count);
 
             AssertRowEquals(resultantDt, "Dave", 25, "DD1 1PS");

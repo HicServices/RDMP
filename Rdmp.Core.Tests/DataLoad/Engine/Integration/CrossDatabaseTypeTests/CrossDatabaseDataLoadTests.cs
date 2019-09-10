@@ -165,7 +165,7 @@ MrMurder,2001-01-01,Yella");
             
             //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
-            //clean up RAW / STAGING etc and generally accept proposed cleanup operations
+            //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(),CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
 
@@ -352,7 +352,7 @@ MrMurder,2001-01-01,Yella");
 2,1,NewC1,2000-01-01,19,null");
             
             
-            //clean up RAW / STAGING etc and generally accept proposed cleanup operations
+            //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
 

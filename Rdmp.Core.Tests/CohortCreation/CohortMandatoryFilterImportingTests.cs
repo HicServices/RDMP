@@ -37,7 +37,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             filter.WhereSQL = "There Be Dragons";
             filter.SaveToDatabase();
 
-            //ensure that it is picked up
+            //ensure that it is picked SetUp
             var mandatoryFilters = testData.catalogue.GetAllMandatoryFilters();
             Assert.AreEqual(1, mandatoryFilters.Length);
             Assert.AreEqual(filter, mandatoryFilters[0]);
@@ -113,7 +113,7 @@ namespace Rdmp.Core.Tests.CohortCreation
                 global.SaveToDatabase();
             }
 
-            //ensure that it is picked up
+            //ensure that it is picked SetUp
             var mandatoryFilters = testData.catalogue.GetAllMandatoryFilters();
             Assert.AreEqual(1, mandatoryFilters.Length);
             Assert.AreEqual(filter, mandatoryFilters[0]);
@@ -192,7 +192,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             filter3.WhereSQL = "But Can Also Be Flies";
             filter3.SaveToDatabase();
 
-            //ensure that both are picked up as mandatory filters by catalogue
+            //ensure that both are picked SetUp as mandatory filters by catalogue
             var mandatoryFilters = testData.catalogue.GetAllMandatoryFilters();
             Assert.AreEqual(2, mandatoryFilters.Length);
 

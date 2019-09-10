@@ -42,8 +42,10 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         private DiscoveredDatabase _destinationDatabase;
 
         [SetUp]
-        public void SetupExampleTables()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             string sql =
             @"CREATE TABLE [dbo].[Tests](
 	[chi] [varchar](10) NULL,
@@ -74,15 +76,16 @@ GO
 ALTER TABLE [dbo].[Results]  WITH CHECK ADD  CONSTRAINT [FK_Results_Tests] FOREIGN KEY([TestId])
 REFERENCES [dbo].[Tests] ([TestId])
 GO";
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            var server = db.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();
                 UsefulStuff.ExecuteBatchNonQuery(sql,con);
             }
 
-            var importer1 = new TableInfoImporter(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("Tests"));
-            var importer2 = new TableInfoImporter(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("Results"));
+            var importer1 = new TableInfoImporter(CatalogueRepository, db.ExpectTable("Tests"));
+            var importer2 = new TableInfoImporter(CatalogueRepository, db.ExpectTable("Results"));
 
             importer1.DoImport(out t1,out c1);
             
@@ -169,7 +172,7 @@ GO";
             var engine2 = new ForwardEngineerANOCatalogueEngine(RepositoryLocator,plan2);
             engine2.Execute();
 
-            //Did it succesfully pick up the correct ANO column
+            //Did it succesfully pick SetUp the correct ANO column
             var plan2ExtractionInformationsAtDestination = engine2.NewCatalogue.GetAllExtractionInformation(ExtractionCategory.Any);
 
             var ei2 = plan2ExtractionInformationsAtDestination.Single(e => e.GetRuntimeName().Equals("ANOTestId"));
@@ -194,11 +197,5 @@ GO";
             Assert.IsTrue(engine2.NewCatalogue.CatalogueItems.Any(ci => ci.Name.Equals("Measuree")),"ANO Catalogue did not respect the original CatalogueItem Name"); 
         }
 
-        [TearDown]
-        public void DropDatabases()
-        {
-            if(_destinationDatabase.Exists())
-                _destinationDatabase.Drop();
-        }
     }
 }

@@ -15,8 +15,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.ArgumentTests
     public class ArgumentTypeTests:UnitTests
     {
         [OneTimeSetUp]
-        public void SetupMEFOnStartup()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
             base.SetupMEF();
         }
 

@@ -17,8 +17,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
     public class ComponentCompatibilityTests :UnitTests
     {
         [OneTimeSetUp]
-        public void Once()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             SetupMEF();
         }
 

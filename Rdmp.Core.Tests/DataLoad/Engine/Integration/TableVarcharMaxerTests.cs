@@ -30,7 +30,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer,false)]
         public void TestTableVarcharMaxer(DatabaseType dbType,bool allDataTypes)
         {
-            var db = GetCleanedServer(dbType,true);
+            var db = GetCleanedServer(dbType);
 
             var tbl = db.CreateTable("Fish",new[]
             {

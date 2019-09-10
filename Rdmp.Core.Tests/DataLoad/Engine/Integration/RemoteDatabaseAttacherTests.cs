@@ -32,7 +32,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer, Scenario.MissingPreLoadDiscardedColumnButSelectStar)]
         public void TestRemoteDatabaseAttach(DatabaseType dbType, Scenario scenario)
         {
-            var db = GetCleanedServer(dbType,true);
+            var db = GetCleanedServer(dbType);
 
             DataTable dt = new DataTable();
 

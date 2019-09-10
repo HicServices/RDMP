@@ -51,10 +51,15 @@ namespace Tests.Common.Scenarios
 
         protected string ProjectDirectory { get; private set; }
 
+        /// <summary>
+        /// The database in which the referenced data is stored, created during <see cref="OneTimeSetUp"/>
+        /// </summary>
+        public DiscoveredDatabase Database { get; private set; }
+
         [OneTimeSetUp]
-        protected override void SetUp()
+        protected override void OneTimeSetUp()
         {
-            base.SetUp();
+            base.OneTimeSetUp();
 
             ProjectDirectory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "TestProject");
 
@@ -69,12 +74,6 @@ namespace Tests.Common.Scenarios
             _request = new ExtractDatasetCommand(_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
                 _extractableColumns, new HICProjectSalt(_project),
                 new ExtractionDirectory(ProjectDirectory, _configuration));
-        }
-
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            RunBlitzDatabases(RepositoryLocator);
         }
 
         private void SetupDataExport()
@@ -110,6 +109,8 @@ namespace Tests.Common.Scenarios
 
         private void SetupCatalogueConfigurationEtc()
         {
+            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
             DataTable dt = new DataTable();
             dt.Columns.Add("PrivateID");
             dt.Columns.Add("Name");
@@ -117,7 +118,7 @@ namespace Tests.Common.Scenarios
 
             dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
+            var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
             
             CatalogueItem[] cataItems;
             _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);

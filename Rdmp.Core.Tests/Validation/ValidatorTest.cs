@@ -128,7 +128,7 @@ namespace Rdmp.Core.Tests.Validation
 
             Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong] , 1);
 
-            //additive --give it same row again, expect the count of wrong ones to go up by 1
+            //additive --give it same row again, expect the count of wrong ones to go SetUp by 1
             results = validator.ValidateVerboseAdditive(_domainObjectWithInvalidChi, results, out lastRowConsequence);
             
             Assert.AreEqual(results.DictionaryOfFailure["chi"][Consequence.Wrong], 2);
@@ -225,7 +225,7 @@ namespace Rdmp.Core.Tests.Validation
             Assert.AreEqual(((BoundDate)v.ItemValidators[0].SecondaryConstraints[0]).UpperFieldName, "NewCol3");
         }
 
-        // This code is typically how a client of the API would set up validation for a domain object:
+        // This code is typically how a client of the API would set SetUp validation for a domain object:
         //
         // A domain object contains a number of items, each of which we may wish to validate.
         // A Validator is responsible for validating a domain object.

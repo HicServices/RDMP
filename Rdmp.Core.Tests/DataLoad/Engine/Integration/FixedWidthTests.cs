@@ -167,7 +167,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             else
                 File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName , "file.txt"),@"12345
 67890");
-            var db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
             var attacher = new FixedWidthAttacher();
             attacher.Initialize(loadDirectory, db);

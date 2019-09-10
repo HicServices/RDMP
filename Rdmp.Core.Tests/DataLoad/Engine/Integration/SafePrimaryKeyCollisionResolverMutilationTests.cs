@@ -26,7 +26,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql, false)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_NoDifference_NoRecordsDeleted(DatabaseType dbType,bool bothNull)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -67,7 +67,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferNull_RecordsDeleted(DatabaseType dbType,bool preferNulls)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -113,7 +113,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_WithDatabaseNamer_RecordsDeleted(DatabaseType dbType)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -166,7 +166,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -219,7 +219,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_Dates_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK");
@@ -270,7 +270,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql, true)]
         public void SafePrimaryKeyCollisionResolverMutilationTests_PreferLarger_ComboKey_RecordsDeleted(DatabaseType dbType, bool preferLarger)
         {
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("PK1");

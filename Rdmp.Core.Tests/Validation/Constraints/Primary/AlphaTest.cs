@@ -18,8 +18,10 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary
         private IPrimaryConstraint _alpha;
 
         [SetUp]
-        public void SetUp()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _alpha = (IPrimaryConstraint)Validator.CreateConstraint("alpha", Consequence.Wrong);
         }
 

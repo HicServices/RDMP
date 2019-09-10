@@ -87,7 +87,7 @@ namespace Rdmp.Core.Tests.DataExport.CustomData
             //generate a new request (this will include the newly created column)
             _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
+            var tbl = Database.ExpectTable("TestTable");
             tbl.Truncate();
 
             using(var blk = tbl.BeginBulkInsert())
@@ -161,7 +161,7 @@ namespace Rdmp.Core.Tests.DataExport.CustomData
             //generate a new request (this will include the newly created column)
             _request = new ExtractDatasetCommand( _configuration, new ExtractableDatasetBundle(_extractableDataSet));
             
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TestTable");
+            var tbl = Database.ExpectTable("TestTable");
             tbl.Truncate();
 
             using (var blk = tbl.BeginBulkInsert())

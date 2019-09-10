@@ -18,8 +18,10 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary
         private IPrimaryConstraint _chi;
 
         [SetUp]
-        public void SetUp()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _chi = (IPrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         }
 

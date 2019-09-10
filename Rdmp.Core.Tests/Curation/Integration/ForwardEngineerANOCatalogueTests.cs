@@ -28,32 +28,14 @@ namespace Rdmp.Core.Tests.Curation.Integration
     public class ForwardEngineerANOCatalogueTests : TestsRequiringFullAnonymisationSuite
     {
         [SetUp]
-        public void ClearRemnants()
+        protected override void SetUp()
         {
-            foreach (var e in CatalogueRepository.GetAllObjects<ObjectExport>())
-                e.DeleteInDatabase();
+            base.SetUp();
 
-            foreach (var i in CatalogueRepository.GetAllObjects<ObjectImport>())
-                i.DeleteInDatabase();
+            BlitzMainDataTables();
 
-            foreach (var j in CatalogueRepository.GetAllObjects<JoinInfo>())
-                j.DeleteInDatabase();
-
-            foreach (var p in CatalogueRepository.GetAllObjects<PreLoadDiscardedColumn>())
-                p.DeleteInDatabase();
-
-            foreach (var l in CatalogueRepository.GetAllObjects<Lookup>())
-                l.DeleteInDatabase();
-
-            //cleanup
-            foreach (var t in CatalogueRepository.GetAllObjects<TableInfo>())
-                t.DeleteInDatabase();
-
-            foreach (var c in CatalogueRepository.GetAllObjects<Catalogue>())
-                c.DeleteInDatabase();
-
-            foreach (var a in CatalogueRepository.GetAllObjects<ANOTable>())
-                a.DeleteInDatabase();
+            if(ANOStore_Database.Exists())
+                DeleteTables(ANOStore_Database);
         }
 
         [Test]
@@ -65,7 +47,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             db.Create(true);
 
-            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
@@ -118,7 +100,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             db.Create(true);
 
-            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
@@ -157,7 +139,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             db.Create(true);
 
             //Create this table in the scratch database
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("MyTable", new[]
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("MyTable", new[]
             {
                 new DatabaseColumnRequest("id", "int identity(1,1)", false) {IsPrimaryKey = true},
                 new DatabaseColumnRequest("Name", new DatabaseTypeRequest(typeof (string), 10), false)
@@ -350,12 +332,12 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             db.Create(true);
 
-            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            BulkTestsData bulk = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), 100);
             bulk.SetupTestData();
             bulk.ImportAsCatalogue();
 
             //Create a lookup table on the server
-            var lookupTbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("z_sexLookup", new[]
+            var lookupTbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).CreateTable("z_sexLookup", new[]
             {
                 new DatabaseColumnRequest("Code", "varchar(1)"){IsPrimaryKey = true},
                 new DatabaseColumnRequest("hb_Code", "varchar(1)"){IsPrimaryKey = true},

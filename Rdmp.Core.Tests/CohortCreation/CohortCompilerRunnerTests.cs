@@ -93,7 +93,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             for (int i = 0; i < 100000; i++)
                 dt.Rows.Add(i);
 
-            db = GetCleanedServer(DatabaseType.MicrosoftSQLServer,true);
+            db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             var tbl = db.CreateTable("CohortCompilerRunnerTestsTable", dt);
 
             var cata = Import(tbl);

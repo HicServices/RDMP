@@ -126,7 +126,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             doc2.SaveToDatabase();
 
             //an supplemental table in the database (not linked against cohort)
-            var tbl = CreateDataset<Biochemistry>(500, 1000, new Random(50));
+            var tbl = CreateDataset<Biochemistry>(Database,500, 1000, new Random(50));
 
             var sql = new SupportingSQLTable(CatalogueRepository, _catalogue, "Biochem");
             var server = new ExternalDatabaseServer(CatalogueRepository, "myserver", null);
@@ -138,7 +138,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
             
             
             //an supplemental (global) table in the database (not linked against cohort)
-            var tbl2 = CreateDataset<HospitalAdmissions>(500, 1000, new Random(50));
+            var tbl2 = CreateDataset<HospitalAdmissions>(Database,500, 1000, new Random(50));
 
             var sql2 = new SupportingSQLTable(CatalogueRepository, _catalogue, "Hosp");
             sql2.ExternalDatabaseServer_ID = server.ID;
@@ -165,7 +165,7 @@ namespace Rdmp.Core.Tests.DataExport.DataExtraction
                 columnInfos[1],
                 ExtractionJoinType.Left,null);
 
-            //we need a CatalogueItem for the description in order to pick up the Lookup as associated with the Catalogue
+            //we need a CatalogueItem for the description in order to pick SetUp the Lookup as associated with the Catalogue
             var ci = new CatalogueItem(CatalogueRepository, _catalogue, "SomeDesc");
             ci.ColumnInfo_ID = columnInfos[1].ID;
             ci.SaveToDatabase();

@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
         private void CreateFunction(ICatalogueRepository repo)
         {
             _function = new TestableTableValuedFunction();
-            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, repo);
+            _function.Create(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer), repo);
         }
 
         [Test]
@@ -121,11 +121,6 @@ count(*)>1", queryBuilder.SQL);
             {
                 agg.DeleteInDatabase();
             }
-        }
-        [TearDown]
-        public void Destroy()
-        {
-            _function.Destroy();
         }
     }
 }
