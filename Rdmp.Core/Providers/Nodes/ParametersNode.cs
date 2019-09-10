@@ -15,18 +15,18 @@ namespace Rdmp.Core.Providers.Nodes
     /// </summary>
     public class ParametersNode:Node,IOrderable
     {
-        private readonly ISqlParameter[] _parameters;
+        public ISqlParameter[] Parameters { get; }
         public ICollectSqlParameters Collector { get; set; }
 
         public ParametersNode(ICollectSqlParameters collector, ISqlParameter[] parameters)
         {
-            _parameters = parameters;
+            Parameters = parameters;
             Collector = collector;
         }
 
         public override string ToString()
         {
-            return _parameters.Length + " parameters (" + string.Join(",", _parameters.Select(p=>p.ParameterName)) + ")";
+            return Parameters.Length + " parameters (" + string.Join(",", Parameters.Select(p=>p.ParameterName)) + ")";
         }
 
         public override int GetHashCode()
