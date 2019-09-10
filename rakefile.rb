@@ -72,7 +72,10 @@ task :run_unit_tests, [:config] do |t,args|
 end
 
 task :run_all_tests, [:config] do |t,args|
-	sh "dotnet test --no-build --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config} -p:ParallelizeTestCollections=false"
+
+	sh "dotnet test ./Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj --no-build --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config}"
+	sh "dotnet test ./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj --no-build --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config}"
+	sh "dotnet test ./Rdmp.UI.Tests/Rdmp.UI.Tests.csproj --no-build --logger:\"nunit;LogFilePath=test-result.xml\" --configuration #{args.config}"
 end
 
 desc "Sets the version number from SharedAssemblyInfo file"    
