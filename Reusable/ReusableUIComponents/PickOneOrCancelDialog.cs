@@ -41,6 +41,9 @@ namespace ReusableUIComponents
         {
             InitializeComponent();
 
+            //start at cancel so if they hit the X nothing is selected
+            DialogResult = DialogResult.Cancel;
+
             label1.Text = message;
             
             
