@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -361,11 +362,9 @@ namespace Rdmp.Core.CohortCreation.Execution
         {
             var accessPoints = cacheableTask.GetDataAccessPoints();
 
-            if (accessPoints.Length != 1)
-                throw new Exception(string.Format("Found {0} DataAccessPoints for cacheableTask '{1}':{2}",
-                    accessPoints.Length, cacheableTask, string.Join(",", accessPoints.Select(a => a.ToString()))));
-
-            var sourceSyntax = accessPoints[0].GetQuerySyntaxHelper();
+            var server = DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
+            
+            var sourceSyntax = server.GetQuerySyntaxHelper();
             var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
             
             //if we have a change in syntax e.g. read from Oracle write to Sql Server
