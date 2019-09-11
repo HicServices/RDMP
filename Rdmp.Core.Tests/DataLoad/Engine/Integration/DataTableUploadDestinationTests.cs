@@ -460,7 +460,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         }
 
         private static object[] _sourceLists = {
-                                            new object[] {"decimal(4,3)",new object[]{"0.001"}, new object[]{0.001}},  //case 1
+                                            new object[] {"decimal(3,3)",new object[]{"0.001"}, new object[]{0.001}},  //case 1
                                             new object[] {"decimal(6,3)",new object[]{"19","0.001","123.001",32.0f}, new object[]{19,0.001,123.001,32.0f}},  //case 2
 
                                             //Time tests
@@ -475,7 +475,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                                         };
 
         
-        [Test, TestCaseSource("_sourceLists")]
+        [Test, TestCaseSource(nameof(_sourceLists))]
         public void DataTypeEstimation(string expectedDatatypeInDatabase, object[] rowValues, object[] expectedValuesReadFromDatabase)
         {
             var token = new GracefulCancellationToken();
@@ -546,7 +546,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual(sendTheZero?2:1, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
             
             //should be decimal
-            Assert.AreEqual("decimal(19,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
+            Assert.AreEqual("decimal(18,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -732,8 +732,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual(1, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
 
             //should be decimal
-            Assert.AreEqual("decimal(4,3)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col1").DataType.SQLType);
-            Assert.AreEqual("decimal(4,3)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col2").DataType.SQLType);
+            Assert.AreEqual("decimal(3,3)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col1").DataType.SQLType);
+            Assert.AreEqual("decimal(3,3)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col2").DataType.SQLType);
             Assert.AreEqual("bit", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col3").DataType.SQLType);
             Assert.AreEqual("tinyint", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("col4").DataType.SQLType);
             
