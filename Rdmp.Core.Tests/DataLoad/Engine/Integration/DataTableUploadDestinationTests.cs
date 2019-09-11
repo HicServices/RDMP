@@ -10,6 +10,8 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.TableCreation;
+using Moq;
 using NUnit.Framework;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
@@ -1049,6 +1051,69 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             var dt2 = db.ExpectTable("ff").GetDataTable();
             
             Assert.IsTrue((decimal)dt2.Rows[0][0]  == (decimal)-0.0000410235746055587);
+
+        }
+
+        private class AdjustColumnDelegater : IDatabaseColumnRequestAdjuster
+        {
+            public static Action<List<DatabaseColumnRequest>> AdjusterDelegate;
+
+            public void AdjustColumns(List<DatabaseColumnRequest> columns)
+            {
+                AdjusterDelegate(columns);
+            }
+        }
+
+        /// <summary>
+        /// T and F are normally True and False, this test confirms that we can force T and F to go in
+        /// as strings instead
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MySql)]
+        public void Test_DataTableUploadDestination_ForceString(DatabaseType dbType)
+        {
+            var db = GetCleanedServer(dbType);
+
+            DataTable dt = new DataTable("ForceStringTable");
+            dt.Columns.Add("hb_extract");
+            dt.Columns.Add("Name");
+
+            dt.Rows.Add("T", "Abc");
+            dt.Rows.Add("F", "Def");
+
+            var dest = new DataTableUploadDestination();
+            dest.PreInitialize(db, new ThrowImmediatelyDataLoadEventListener());
+            dest.Adjuster = typeof(AdjustColumnDelegater);
+
+            AdjustColumnDelegater.AdjusterDelegate = (s) =>
+            {
+                var col = s.Single(c => c.ColumnName.Equals("hb_extract"));
+
+                Assert.AreEqual(typeof(bool), col.TypeRequested.CSharpType);
+                col.TypeRequested.CSharpType = typeof(string);
+            };
+
+            try
+            {
+                dest.ProcessPipelineData(dt, new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
+                dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), null);
+            }
+            catch (Exception ex)
+            {
+                dest.Dispose(new ThrowImmediatelyDataLoadEventListener(), ex);
+                throw;
+            }
+
+            var tbl = db.ExpectTable("ForceStringTable");
+
+            //in the database it should be typed as string
+            Assert.AreEqual(typeof(string), tbl.DiscoverColumn("hb_extract").DataType.GetCSharpDataType());
+
+            var dt2 = tbl.GetDataTable();
+            Assert.Contains("T",dt2.Rows.Cast<DataRow>().Select(r=>r[0]).ToArray());
+            Assert.Contains("F",dt2.Rows.Cast<DataRow>().Select(r =>r[0]).ToArray());
 
         }
 
