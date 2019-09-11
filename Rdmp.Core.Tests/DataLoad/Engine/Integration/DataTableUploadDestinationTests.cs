@@ -546,7 +546,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual(sendTheZero?2:1, db.ExpectTable("DataTableUploadDestinationTests").GetRowCount());
             
             //should be decimal
-            Assert.AreEqual("decimal(18,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
+
+            Assert.AreEqual(sendTheZero ?"decimal(19,18)":"decimal(18,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
         }
 
         [TestCase(DatabaseType.MicrosoftSQLServer)]
