@@ -12,6 +12,7 @@ using System.Linq;
 using System.Text;
 using CsvHelper;
 using FAnsi.Discovery;
+using FAnsi.Extensions;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
 using ReusableLibraryCode.Extensions;
@@ -205,7 +206,13 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents
                     //override type
                     if (_explicitlyTypedColumns != null &&
                         _explicitlyTypedColumns.ExplicitTypesCSharp.ContainsKey(h))
-                        dt.Columns.Add(h, _explicitlyTypedColumns.ExplicitTypesCSharp[h]);
+                    {
+                        var c = dt.Columns.Add(h, _explicitlyTypedColumns.ExplicitTypesCSharp[h]);
+
+                        //if the user wants a string don't let downstream components pick a different Type (by assuming it is is untyped)
+                        if(c.DataType == typeof(string))
+                            c.SetDoNotReType(true); 
+                    }
                     else
                         dt.Columns.Add(h);
             }

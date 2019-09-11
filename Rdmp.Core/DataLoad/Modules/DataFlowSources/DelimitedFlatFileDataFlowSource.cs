@@ -124,9 +124,13 @@ This will not help you avoid bad data as the full file structure must still be r
         [DemandsInitialization(DelimitedFlatFileDataFlowSource.IgnoreColumns_Description)]
         public string IgnoreColumns { get; set; }
 
+        private CultureInfo _culture;
         [DemandsInitialization("The culture to use for dates")]
-        public CultureInfo Culture{get;set;}
-
+        public CultureInfo Culture
+        {
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
+        }
 
         /// <summary>
         /// The database table we are trying to load

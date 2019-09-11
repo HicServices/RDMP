@@ -123,7 +123,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         /// When the user types one of these they get a filter on the full Type
         /// </summary>
         Dictionary<string, Type> ShortCodes =
-            new Dictionary<string, Type> {
+            new Dictionary<string, Type> (StringComparer.CurrentCultureIgnoreCase){
 
             {"c",typeof (Catalogue)},
             {"ci",typeof (CatalogueItem)},
@@ -145,7 +145,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         /// Key Type.
         /// </summary>
         Dictionary<string, Type[]> AlsoIncludes =
-            new Dictionary<string, Type[]> {
+            new Dictionary<string, Type[]> (StringComparer.CurrentCultureIgnoreCase){
 
             {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
 

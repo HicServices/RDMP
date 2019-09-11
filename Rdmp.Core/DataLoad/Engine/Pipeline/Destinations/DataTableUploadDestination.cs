@@ -60,8 +60,13 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         [DemandsInitialization("Optional - Change system behaviour when a new table is being created by the component", TypeOf = typeof(IDatabaseColumnRequestAdjuster))]
         public Type Adjuster { get; set; }
 
+        private CultureInfo _culture;
         [DemandsInitialization("The culture to use for uploading (determines date format etc)")]
-        public CultureInfo Culture{get;set;}
+        public CultureInfo Culture
+        {
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
+        }
 
         public string TargetTableName { get; private set; }
         
