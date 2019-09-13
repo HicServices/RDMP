@@ -7,13 +7,11 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
-using ReusableLibraryCode;
 
 namespace Rdmp.Core.Providers
 {
@@ -76,6 +74,9 @@ namespace Rdmp.Core.Providers
             if (o is AllCataloguesUsedByLoadMetadataNode)
                 return DescribeProblem((AllCataloguesUsedByLoadMetadataNode) o);
 
+            if (o is ParametersNode p)
+                return DescribeProblem(p);
+
             return null;
         }
 
@@ -84,6 +85,17 @@ namespace Rdmp.Core.Providers
             if (!allCataloguesUsedByLoadMetadataNode.UsedCatalogues.Any())
                 return "Load has no Catalogues therefore loads no tables";
             
+            return null;
+        }
+
+        public string DescribeProblem(ParametersNode parameterNode)
+        {
+            var emptyParams = parameterNode.Parameters.Where(p => string.IsNullOrWhiteSpace(p.Value)).ToArray();
+
+            if (emptyParams.Any())
+                return "The following parameters do not have values defined:" +
+                       string.Join(",", emptyParams.Select(p => p.ParameterName));
+
             return null;
         }
 

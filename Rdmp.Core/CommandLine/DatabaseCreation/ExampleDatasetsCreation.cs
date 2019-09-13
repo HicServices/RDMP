@@ -7,7 +7,6 @@
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
@@ -32,6 +31,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TypeGuesser;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {

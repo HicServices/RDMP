@@ -19,10 +19,12 @@ using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
+using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.Collections.Providers.Filtering;
@@ -117,8 +119,11 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
         });
 
+        /// <summary>
+        /// When the user types one of these they get a filter on the full Type
+        /// </summary>
         Dictionary<string, Type> ShortCodes =
-            new Dictionary<string, Type> {
+            new Dictionary<string, Type> (StringComparer.CurrentCultureIgnoreCase){
 
             {"c",typeof (Catalogue)},
             {"ci",typeof (CatalogueItem)},
@@ -129,7 +134,20 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             {"cic",typeof (CohortIdentificationConfiguration)},
             {"t",typeof (TableInfo)},
             {"col",typeof (ColumnInfo)},
-            {"lmd",typeof (LoadMetadata)}
+            {"lmd",typeof (LoadMetadata)},
+            {"pipe",typeof(Pipeline)}
+
+                };
+
+        /// <summary>
+        /// When the user types one of these Types (or a <see cref="ShortCodes"/> for one) they also get the value list for free.
+        /// This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs"/> objects as though they were the same as thier
+        /// Key Type.
+        /// </summary>
+        Dictionary<string, Type[]> AlsoIncludes =
+            new Dictionary<string, Type[]> (StringComparer.CurrentCultureIgnoreCase){
+
+            {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
 
                 };
 
@@ -391,6 +409,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
 
+            //do short code substitutions e.g. ti for TableInfo
             if(!string.IsNullOrWhiteSpace(text))
                 foreach(var kvp in ShortCodes)
                     text = Regex.Replace(text,$@"\b{kvp.Key}\b",kvp.Value.Name);
@@ -401,6 +420,13 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 foreach (var showOnlyType in showOnlyTypes)
                     text = text + " " + showOnlyType.Name;
 
+            //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
+            if (!string.IsNullOrWhiteSpace(text))
+                foreach(var s in text.Split(' ').ToArray())
+                    if (AlsoIncludes.ContainsKey(s))
+                        foreach(var v in AlsoIncludes[s])
+                            text += " " + v.Name;
+            
             var scores = scorer.ScoreMatches(_searchables, text, cancellationToken);
 
             if (scores == null)

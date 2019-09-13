@@ -16,8 +16,8 @@ using Rdmp.Core.DataLoad.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
 using Tests.Common;
-using FAnsi.Discovery.TypeTranslation;
 using System.Collections.Generic;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
@@ -224,27 +224,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 con.Open();
                 _database.Server.GetCommand(sql, con).ExecuteNonQuery();
             }
-        }
-
-        
-
-        [TearDown]
-        public void DropTable()
-        {
-            //don't try to cleanup if there was Assert.Inconclusive because the server was inaccessible
-            if(_database == null)
-                return;
-            if(!_table.Exists())
-                return;
-
-            string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
-
-            GetImplementer().DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
-
-            if(_archiveTable.Exists())
-                _archiveTable.Drop();
-
-            _table.Drop();
         }
     }
 }

@@ -11,7 +11,6 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.Refreshing;
 using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.Collections.Providers

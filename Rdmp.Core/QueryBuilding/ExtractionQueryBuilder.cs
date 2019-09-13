@@ -8,13 +8,13 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery.QuerySyntax;
-using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.DataExport;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
+using TypeGuesser;
 
 namespace Rdmp.Core.QueryBuilding
 {

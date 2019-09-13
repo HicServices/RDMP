@@ -23,8 +23,13 @@ namespace Rdmp.Core.DataLoad.Engine.Attachers
     {
         public const string Culture_DemandDescription = "Culture to use for bulk insert operations (determines date formats etc)";
 
+        private CultureInfo _culture;
         [DemandsInitialization(Culture_DemandDescription)]
-        public virtual CultureInfo Culture { get; set; }
+        public virtual CultureInfo Culture
+        {
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
+        }
 
         protected DiscoveredDatabase _dbInfo;
 

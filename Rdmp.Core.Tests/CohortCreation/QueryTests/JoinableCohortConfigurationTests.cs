@@ -182,7 +182,8 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             Console.WriteLine(builder.SQL);
             try
             {
-                using (var con = (SqlConnection) DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                
+                using (var con = (SqlConnection)Database.Server.GetConnection())
                 {
                     con.Open();
 
@@ -259,7 +260,7 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi",expec
             
             try
             {
-                using (var con = (SqlConnection)DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                using (var con = (SqlConnection)Database.Server.GetConnection())
                 {
                     con.Open();
 
@@ -385,7 +386,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                 var containerClone = clone.RootCohortAggregateContainer.GetAllAggregateConfigurationsRecursively()//get all the aggregates
                     .Union(clone.GetAllJoinables().Select(j=>j.AggregateConfiguration))//including the joinables
                     .Where(a => a.RootFilterContainer_ID != null)//that have WHERE sql
-                    .Select(ag => ag.RootFilterContainer);//grab their containers so we can clean them up
+                    .Select(ag => ag.RootFilterContainer);//grab their containers so we can clean them SetUp
 
                 ((IDeleteable)clone.GetAllParameters()[0]).DeleteInDatabase();
                 clone.DeleteInDatabase();
@@ -416,7 +417,9 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
         [Test]
         public void JoinablesWithCache()
         {
-            const string queryCachingDatabaseName = "MyQueryCachingDatabase";
+            string queryCachingDatabaseName = To.GetRuntimeName();
+            _queryCachingDatabase = To;
+
             var builder = new CohortQueryBuilder(aggregate1, null);
 
             //make aggregate 2 a joinable
@@ -426,19 +429,14 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             //make aggregate 2 have an additional column (dtCreated)
             var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
             aggregate2.AddDimension(anotherCol);
-
-            _queryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(queryCachingDatabaseName);
             
-            if (_queryCachingDatabase.Exists())
-                _queryCachingDatabase.Drop(); //make sure it doesn't exist
-
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
             scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
 
             var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
             queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
             
-            //make the builder use the query cache we just set up
+            //make the builder use the query cache we just set SetUp
             builder.CacheServer = queryCachingDatabaseServer;
             try
             {
@@ -446,7 +444,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                var builderForCaching = new CohortQueryBuilder(aggregate2, null, true);
 
                 var cacheDt = new DataTable();
-                using (SqlConnection con = (SqlConnection)DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                using (SqlConnection con = (SqlConnection)Database.Server.GetConnection())
                 {
                     con.Open();
                     SqlDataAdapter da = new SqlDataAdapter(new SqlCommand(builderForCaching.SQL, con));
@@ -460,7 +458,7 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
                 {
                     Console.WriteLine(builder.SQL);
 
-                    using (var con = (SqlConnection)DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                    using (var con = (SqlConnection)Database.Server.GetConnection())
                     {
                         con.Open();
 
@@ -484,11 +482,15 @@ FROM
 ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData]
 LEFT Join (
 	/*Cached:cic_{2}_UnitTestAggregate2*/
-	select * from [MyQueryCachingDatabase]..[JoinableInceptionQuery_AggregateConfiguration{1}]
+	select * from [{3}]..[JoinableInceptionQuery_AggregateConfiguration{1}]
 
 ){0}
-on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi", expectedTableAlias,aggregate2.ID,cohortIdentificationConfiguration.ID)),
-     CollapseWhitespace(builder.SQL));
+on [" + TestDatabaseNames.Prefix + @"ScratchArea]..[BulkData].[chi] = {0}.chi",
+        expectedTableAlias,  //{0}
+        aggregate2.ID, //{1}
+        cohortIdentificationConfiguration.ID,//{2}
+        queryCachingDatabaseName) //{3}
+                         ),CollapseWhitespace(builder.SQL));
 
                 }
                 finally

@@ -23,28 +23,26 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
         private DiscoveredDatabase queryCacheDatabase;
         private ExternalDatabaseServer externalDatabaseServer;
         private DatabaseColumnRequest _chiColumnSpecification = new DatabaseColumnRequest("chi","varchar(10)");
-        
+
         [OneTimeSetUp]
-        public void SetUpCache()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             queryCacheDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(TestDatabaseNames.Prefix + "QueryCache");
+
+            if (queryCacheDatabase.Exists())
+                base.DeleteTables(queryCacheDatabase);
 
             MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(queryCacheDatabase);
 
             var p = new QueryCachingPatcher();
-            executor.CreateAndPatchDatabase(p, new ThrowImmediatelyCheckNotifier());
+            executor.CreateAndPatchDatabase(p, new AcceptAllCheckNotifier());
             
             externalDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, "QueryCacheForUnitTests",p);
             externalDatabaseServer.SetProperties(queryCacheDatabase);
         }
-
-        [OneTimeTearDown]
-        public void DropDatabases()
-        {
-            queryCacheDatabase.Drop();
-            externalDatabaseServer.DeleteInDatabase();
-        }
-
+                
         [Test]
         public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
         {

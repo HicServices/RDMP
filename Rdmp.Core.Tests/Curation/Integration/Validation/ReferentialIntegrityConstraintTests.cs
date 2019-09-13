@@ -22,14 +22,16 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
         private ReferentialIntegrityConstraint _constraint;
 
         [OneTimeSetUp]
-        public void Setup()
+        protected override void OneTimeSetUp()
         {
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");
+            base.OneTimeSetUp();
+
+            var tbl = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).ExpectTable("ReferentialIntegrityConstraintTests");
 
             if(tbl.Exists())
                 tbl.Drop();
 
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server;
             
             using (var con = server.GetConnection())
             {
@@ -89,23 +91,6 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
                 Assert.Fail();
 
             Assert.Pass();
-        }
-
-        
-
-        [OneTimeTearDown]
-        public void Drop()
-        {
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("ReferentialIntegrityConstraintTests");
-            
-            if(tbl.Exists())
-                tbl.Drop();
-
-            var credentials = (DataAccessCredentials)_tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            _tableInfo.DeleteInDatabase();
-
-            if(credentials != null)
-                credentials.DeleteInDatabase();
         }
     }
 }

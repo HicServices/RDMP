@@ -18,6 +18,7 @@ namespace Rdmp.UI.Menus
         {
             Add(new ExecuteCommandCreateNewFilter(_activator,new ExtractionFilterFactory(extractionInformation)));
             Add(new ExecuteCommandCreateNewCohortFromCatalogue(_activator, extractionInformation));
+            Add(new ExecuteCommandChangeExtractionCategory(_activator,extractionInformation));
         }
     }
 }

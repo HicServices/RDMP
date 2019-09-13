@@ -18,8 +18,10 @@ namespace Rdmp.UI.Tests
     class PluginProcessTaskUITests : UITests
     {
         [OneTimeSetUp]
-        public void SetupMEFOneTimeSetUp()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             SetupMEF();
         }
 

@@ -75,7 +75,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             var updateInfo = new DataLoadProgressUpdateInfo();
             updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
             
-            var ex = Assert.Throws<Exception>(()=>updateInfo.AddAppropriateDisposeStep(_job, DiscoveredDatabaseICanCreateRandomTablesIn));
+            var ex = Assert.Throws<Exception>(()=>updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
             Assert.IsTrue(ex.Message.StartsWith("Strategy is ExecuteScalarSQLInRAW but there is no ExecuteScalarSQL"));
         }
@@ -87,7 +87,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
             
             updateInfo.ExecuteScalarSQL = "SELECT Top 1 BarrelORum from CaptainMorgansSpicedRumBarrel";
-            var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, DiscoveredDatabaseICanCreateRandomTablesIn));
+            var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
             Assert.IsTrue(ex.Message.StartsWith("Failed to execute the following SQL in the RAW database"));
             Assert.IsInstanceOf<SqlException>(ex.InnerException);
@@ -100,7 +100,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
             
             updateInfo.ExecuteScalarSQL = "SELECT null";
-            var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, DiscoveredDatabaseICanCreateRandomTablesIn));
+            var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
             Assert.IsTrue(ex.Message.Contains("ExecuteScalarSQL"));
             Assert.IsTrue(ex.Message.Contains("returned null"));
@@ -113,7 +113,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
             
             updateInfo.ExecuteScalarSQL = "SELECT 'fishfish'";
-            var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, DiscoveredDatabaseICanCreateRandomTablesIn));
+            var ex = Assert.Throws<DataLoadProgressUpdateException>(() => updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer)));
 
             Assert.AreEqual("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:fishfish",ex.Message);
             Assert.IsInstanceOf<FormatException>(ex.InnerException);
@@ -131,7 +131,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             updateInfo.Strategy = DataLoadProgressUpdateStrategy.ExecuteScalarSQLInRAW;
             updateInfo.ExecuteScalarSQL = "SELECT '2001-01-07'";
 
-            var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job, DiscoveredDatabaseICanCreateRandomTablesIn);
+            var added = (UpdateProgressIfLoadsuccessful)updateInfo.AddAppropriateDisposeStep(_job, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             
             Assert.AreEqual(new DateTime(2001, 1, 7), added.DateToSetProgressTo);
 

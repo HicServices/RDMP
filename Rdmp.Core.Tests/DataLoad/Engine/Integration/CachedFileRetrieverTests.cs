@@ -51,7 +51,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 File.WriteAllText(cachedFilePath, "");
                 File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
 
-                // Set up retriever
+                // Set SetUp retriever
                 var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
                 
                 var retriever = new TestCachedFileRetriever()
@@ -61,7 +61,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                     Layout = cacheLayout
                 };
                 
-                // Set up job
+                // Set SetUp job
                 var job = CreateTestJob(loadDirectory); 
                 job.DatesToRetrieve = new List<DateTime>
                 {
@@ -93,7 +93,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "2016-01-01.zip"), "");
 
 
-                // Set up retriever
+                // Set SetUp retriever
                 var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
                 var retriever = new TestCachedFileRetriever()
@@ -104,7 +104,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                     
                 };
                 
-                // Set up job
+                // Set SetUp job
                 var job = CreateTestJob(loadDirectory); 
                 job.DatesToRetrieve = new List<DateTime>
                 {
@@ -137,7 +137,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 File.WriteAllText(cachedFilePath, "");
 
 
-                // Set up retriever
+                // Set SetUp retriever
                 var cacheLayout = new ZipCacheLayoutOnePerDay(loadDirectory.Cache, new NoSubdirectoriesCachePathResolver());
 
                 var retriever = new TestCachedFileRetriever()
@@ -148,7 +148,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
                 };
 
-                // Set up job
+                // Set SetUp job
                 var job = CreateTestJob(loadDirectory);
                 job.DatesToRetrieve = new List<DateTime>
                 {

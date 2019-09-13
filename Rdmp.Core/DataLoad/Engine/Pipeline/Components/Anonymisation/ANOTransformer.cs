@@ -9,12 +9,12 @@ using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
 {

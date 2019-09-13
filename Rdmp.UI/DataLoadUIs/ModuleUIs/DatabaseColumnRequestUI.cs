@@ -7,7 +7,7 @@
 using System;
 using System.Windows.Forms;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
+using TypeGuesser;
 
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs
 {
@@ -31,14 +31,14 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs
                 if (request.CSharpType != null)
                     ddManagedType.SelectedItem = request.CSharpType;
 
-                if (request.DecimalPlacesBeforeAndAfter != null && request.DecimalPlacesBeforeAndAfter.NumbersBeforeDecimalPlace.HasValue)
-                    nBeforeDecimal.Value = request.DecimalPlacesBeforeAndAfter.NumbersBeforeDecimalPlace.Value;
+                if (request.Size != null)
+                    nBeforeDecimal.Value = request.Size.NumbersBeforeDecimalPlace;
 
-                if (request.DecimalPlacesBeforeAndAfter != null && request.DecimalPlacesBeforeAndAfter.NumbersAfterDecimalPlace.HasValue)
-                    nAfterDecimal.Value = request.DecimalPlacesBeforeAndAfter.NumbersAfterDecimalPlace.Value;
+                if (request.Size != null)
+                    nAfterDecimal.Value = request.Size.NumbersAfterDecimalPlace;
 
-                if (request.MaxWidthForStrings.HasValue)
-                    nLength.Value = request.MaxWidthForStrings.Value;
+                if (request.Width.HasValue)
+                    nLength.Value = request.Width.Value;
             }
 
             tbExplicitDbType.Text = column.ExplicitDbType;
@@ -79,13 +79,13 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs
             if (_column.TypeRequested != null)
             {
                 if(n == nLength)
-                    _column.TypeRequested.MaxWidthForStrings = (int)n.Value;
+                    _column.TypeRequested.Width = (int)n.Value;
 
-                if (n == nAfterDecimal && _column.TypeRequested.DecimalPlacesBeforeAndAfter != null)
-                    _column.TypeRequested.DecimalPlacesBeforeAndAfter.NumbersAfterDecimalPlace = (int)n.Value;
+                if (n == nAfterDecimal)
+                    _column.TypeRequested.Size.NumbersAfterDecimalPlace = (int)n.Value;
 
-                if (n == nBeforeDecimal && _column.TypeRequested.DecimalPlacesBeforeAndAfter != null)
-                    _column.TypeRequested.DecimalPlacesBeforeAndAfter.NumbersBeforeDecimalPlace = (int)n.Value;
+                if (n == nBeforeDecimal)
+                    _column.TypeRequested.Size.NumbersBeforeDecimalPlace = (int)n.Value;
             }
         }
     }

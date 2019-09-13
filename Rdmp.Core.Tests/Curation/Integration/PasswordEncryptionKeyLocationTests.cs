@@ -16,8 +16,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
     public class PasswordEncryptionKeyLocationTests:DatabaseTests
     {
         [SetUp]
-        public void ClearAnyRemnantKeys()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             var keyLocation = new PasswordEncryptionKeyLocation(CatalogueRepository);
             if(keyLocation.GetKeyFileLocation() != null)
                 keyLocation.DeleteKey();

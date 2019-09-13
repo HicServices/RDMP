@@ -16,12 +16,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occured previously)
 - Tab key now also works for autocomplete in SQL editor windows (previously only Enter worked)
 - Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
+- Extraction Category can now be changed directly from a CatalogueItem, ExtractionInformation 
+- Extraction Category can be changed for all columns in a Catalogue at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
 
 ### Changed
 
 - Help documentation for objects no longer uses NuDoq library (now faster and more maintainable)
 - Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
-- Updated to latest version of [FAnsiSql] (0.9.7) for better Oracle support (and table/database name validation)
+- Updated to latest version of [FAnsiSql] (0.10.4) for better Oracle, localization and type estimation
 - Dashboards now appear in tree view instead of application tool strip and are searchable
 - CatalogueItem descriptions pie chart has flags for including internal/project specific etc in it's counts
 - CatalogueItem descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
@@ -38,7 +40,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Adding new filters/containers (AND/OR) now correctly expand and highlight the created object in collections
 - Fixed AggregateEditorUI could incorrectly offer to save changes even when no changes had been made
 - Clonng a Cohort Identification Configuration now preserves custom set container names e.g. "UNION Inclusion Criteria"
- 
+- Fixed bug in DataTableUploadDestination where multiple root (DataLoadInfo) logging entries were created for a single large bulk insert 
+- Fixed bug in QueryBuilder when there are multiple IsPrimaryExtractionTable tables (Exception thrown was NullReferenceException instead of QueryBuilderException)
+- Fixed bug in generating FROM SQL when there are circular JoinInfo configured between tables used in the query
+- Fixed bug where closing the server/database selection dialog with the X instead of cancel could cause error messages (e.g. in Bulk Import TableInfos)
+- Fixed bug where searching for "Pipeline" or "Pipe" did not show all pipelines
+- Fixed bug caching patient index tables (cohort creation) when there are multiple tables being joined in the query.
+
 ### Removed
 - Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
 

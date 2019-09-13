@@ -8,7 +8,6 @@ using NUnit.Framework;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
-using Tests.Common;
 
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary
 {
@@ -19,8 +18,10 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary
         private IPrimaryConstraint _chi;
 
         [SetUp]
-        public void SetUp()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _chi = (IPrimaryConstraint)Validator.CreateConstraint("chi",Consequence.Wrong);
         }
 

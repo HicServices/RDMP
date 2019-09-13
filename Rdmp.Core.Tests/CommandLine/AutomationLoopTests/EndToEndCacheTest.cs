@@ -38,8 +38,10 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
         const int NumDaysToCache = 5;
 
         [SetUp]
-        public void SetupDatabaseObjects()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
             
@@ -47,6 +49,8 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
             _LoadDirectory = LoadDirectory.CreateDirectoryStructure(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), @"EndToEndCacheTest", true);
             _lmd.LocationOfFlatFiles = _LoadDirectory.RootPath.FullName;
             _lmd.SaveToDatabase();
+
+            Clear(_LoadDirectory);
 
             _cata = new Catalogue(CatalogueRepository, "EndToEndCacheTest");
             _cata.LoadMetadata_ID = _lmd.ID;
@@ -58,7 +62,7 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
             _lp.OriginDate = new DateTime(2001,1,1);
             _lp.SaveToDatabase();
 
-            _testPipeline = new TestDataPipelineAssembler("EndToEndCacheTestPipeline",CatalogueRepository);
+            _testPipeline = new TestDataPipelineAssembler("EndToEndCacheTestPipeline" + Guid.NewGuid(),CatalogueRepository);
             _testPipeline.ConfigureCacheProgressToUseThePipeline(_cp);
 
             _cp.CacheFillProgress = DateTime.Now.AddDays(-NumDaysToCache);
@@ -105,23 +109,5 @@ namespace Rdmp.Core.Tests.CommandLine.AutomationLoopTests
 
             Assert.True(t.Wait(60000));
         }
-
-        [TearDown]
-        public void DeleteDatabaseObjects()
-        {
-            _cata.DeleteInDatabase();
-            
-            _testPipeline.Destroy();
-
-            if (_cp != null)
-                _cp.DeleteInDatabase();
-
-            _lp.DeleteInDatabase();
-
-            _lmd.DeleteInDatabase();
-            
-            _LoadDirectory.RootPath.Delete(true);
-        }
-
     }
 }

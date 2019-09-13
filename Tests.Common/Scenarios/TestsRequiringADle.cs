@@ -37,16 +37,23 @@ namespace Tests.Common.Scenarios
         protected LoadDirectory LoadDirectory;
 
         public DiscoveredTable LiveTable { get; private set; }
+        public DiscoveredDatabase Database { get; private set; }
 
         [SetUp]
 
-        public void SetUpDle()
+        protected override void SetUp()
         {
+            base.SetUp();
+            
+            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
             var rootFolder = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var subdir = rootFolder.CreateSubdirectory("TestsRequiringADle");
             LoadDirectory = LoadDirectory.CreateDirectoryStructure(rootFolder,subdir.FullName,true);
-            
-            LiveTable = CreateDataset<Demography>(500,5000,new Random(190));
+
+            Clear(LoadDirectory);
+
+            LiveTable = CreateDataset<Demography>(Database,500, 5000,new Random(190));
             LiveTable.CreatePrimaryKey(new DiscoveredColumn[]{
                 LiveTable.DiscoverColumn("chi"),
                 LiveTable.DiscoverColumn("dtCreated"),
@@ -93,6 +100,7 @@ namespace Tests.Common.Scenarios
             runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
         }
 
+
         /// <summary>
         /// Creates a new demography file ready for loading in the ForLoading directory of the load with the specified number of <paramref name="rows"/>
         /// </summary>
@@ -116,15 +124,6 @@ namespace Tests.Common.Scenarios
         {
             var runner = new DleRunner(new DleOptions() { LoadMetadata = TestLoadMetadata.ID,Command = CommandLineActivity.run});
             runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
-        }
-        
-        [TearDown]
-
-        public void DestroyDle()
-        {
-            TestCatalogue.DeleteInDatabase();
-            TestLoadMetadata.DeleteInDatabase();
-            LoadDirectory.RootPath.Delete(true);
         }
     }
 }

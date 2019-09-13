@@ -107,11 +107,8 @@ namespace Rdmp.Core.DataLoad.Modules.Attachers
             {
                 DataTable dt = tableToLoad.GetDataTable(0);
 
-                using (var insert = tableToLoad.BeginBulkInsert())
+                using (var insert = tableToLoad.BeginBulkInsert(Culture))
                 {
-                    if(Culture != null)
-                        insert.DateTimeDecider.Culture = Culture;
-
                     // setup bulk insert it into destination
                     insert.Timeout = 500000;
 

@@ -28,17 +28,16 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         BulkTestsData _bulkData;
 
         [OneTimeSetUp]
-        public void SetupBulkTestData()
+        protected override void OneTimeSetUp()
         {
-            Console.WriteLine("Cleaning up remnants");
-            Cleanup();
+            base.OneTimeSetUp();
 
-            Console.WriteLine("Setting up bulk test data");
-            _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
+            Console.WriteLine("Setting SetUp bulk test data");
+            _bulkData = new BulkTestsData(RepositoryLocator.CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             _bulkData.SetupTestData();
             
             Console.WriteLine("Importing to Catalogue");
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(BulkTestsData.BulkDataTable);
+            var tbl = _bulkData.Table;
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository, tbl);
 
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
@@ -374,35 +373,5 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
         }
 
         #endregion
-
-        [OneTimeTearDown]
-        public void Cleanup()
-        {
-            foreach (var cata in CatalogueRepository.GetAllObjects<Catalogue>().Where(c => c.Name.Equals(BulkTestsData.BulkDataTable)))
-                cata.DeleteInDatabase();
-            
-            foreach (TableInfo toCleanup in CatalogueRepository.GetAllObjects<TableInfo>().Where(t => t.GetRuntimeName().Equals(BulkTestsData.BulkDataTable)))
-            {
-                foreach (PreLoadDiscardedColumn column in toCleanup.PreLoadDiscardedColumns)
-                    column.DeleteInDatabase();
-
-
-                var credentials = (DataAccessCredentials)toCleanup.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-                toCleanup.DeleteInDatabase();
-
-                if(credentials != null)
-                    try
-                    {
-                        credentials.DeleteInDatabase();
-                    }
-                    catch (CredentialsInUseException e)
-                    {
-                        Console.WriteLine("Ignored credentials in use exception :" + e);
-                    }
-            }
-
-            if (_bulkData != null)
-                _bulkData.Destroy();
-        }
     }
 }

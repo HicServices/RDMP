@@ -37,8 +37,12 @@ namespace Rdmp.Core.Tests.CohortCommitting
         private ExtractionInformation _extractionInfo2;
         
         [SetUp]
-        public void SetupCatalogues()
+        protected override void SetUp()
         {
+            base.SetUp();
+
+            RunBlitzDatabases(RepositoryLocator);
+
             _cata1 = new Catalogue(CatalogueRepository, "Dataset1");
             _cata2 = new Catalogue(CatalogueRepository, "Dataset2");
             
@@ -59,22 +63,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
 
         private string cohortDatabaseName;
 
-        [TearDown]
-        public void TearDownCatalogues()
-        {
-            _cata1.DeleteInDatabase();
-            _cata2.DeleteInDatabase();
-
-            _t1.DeleteInDatabase();
-            _t2.DeleteInDatabase();
-
-            foreach (
-                ExternalCohortTable source in
-                    DataExportRepository.GetAllObjects<ExternalCohortTable>()
-                        .Where(s => s.Name.Equals(cohortDatabaseName)))
-                source.DeleteInDatabase();
-        }
-
+        
         [Test]
         public void TestMissingColumnInfos()
         {
@@ -117,9 +106,6 @@ namespace Rdmp.Core.Tests.CohortCommitting
         public void TestActuallyCreatingIt(DatabaseType type)
         {
             var db = GetCleanedServer(type);
-
-            //drop it
-            db.Drop();
 
             CreateNewCohortDatabaseWizard wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository, DataExportRepository,false);
 

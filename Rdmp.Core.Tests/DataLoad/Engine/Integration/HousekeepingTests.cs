@@ -19,13 +19,14 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void TestCheckUpdateTrigger()
         {
             
-            // set up a test database
+            // set SetUp a test database
             const string tableName = "TestTable";
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
 
-            var databaseName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
-            var table = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable(tableName,new[] {new DatabaseColumnRequest("Id", "int"),});
+            var databaseName = db.GetRuntimeName();
+            var table = db.CreateTable(tableName,new[] {new DatabaseColumnRequest("Id", "int"),});
 
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = db.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();

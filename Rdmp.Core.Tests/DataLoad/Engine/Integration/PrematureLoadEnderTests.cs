@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestEndLoadBecause_NoTables(DatabaseType type)
         {
-            var database = GetCleanedServer(type,true);
+            var database = GetCleanedServer(type);
             
             Assert.AreEqual(0,database.DiscoverTables(false).Length);
 
@@ -38,7 +38,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestEndLoadBecause_NoRows(DatabaseType type)
         {
-            var database = GetCleanedServer(type, true);
+            var database = GetCleanedServer(type);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Fish");
@@ -57,7 +57,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         public void TestNoEnd_BecauseRows(DatabaseType type)
         {
-            var database = GetCleanedServer(type, true);
+            var database = GetCleanedServer(type);
 
             DataTable dt = new DataTable();
             dt.Columns.Add("Fish");

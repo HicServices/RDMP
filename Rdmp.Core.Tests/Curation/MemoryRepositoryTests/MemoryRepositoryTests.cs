@@ -21,7 +21,7 @@ namespace Rdmp.Core.Tests.Curation.MemoryRepositoryTests
         readonly MemoryCatalogueRepository _repo = new MemoryCatalogueRepository();
 
         [OneTimeSetUp]
-        public void Setup()
+        public virtual void OneTimeSetUp()
         {
             ImplementationManager.Load(
                 typeof(MicrosoftSQLImplementation).Assembly,

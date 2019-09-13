@@ -27,8 +27,10 @@ namespace Rdmp.Core.Tests.QueryCaching
 
 
         [SetUp]
-        public void CreateEntities()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _cata =
                new Catalogue(CatalogueRepository,"CachedAggregateConfigurationResultsManagerTests");
 
@@ -40,13 +42,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            _config.DeleteInDatabase();
-            _cata.DeleteInDatabase();
-        }
-
+        
         [Test]
         public void CommitResults_CreatesTablessuccessfully()
         {

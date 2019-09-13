@@ -22,14 +22,18 @@ namespace Rdmp.Core.Tests.Curation.ImportTests
     public class PluginClassTests:UnitTests
     {
         [OneTimeSetUp]
-        public void Once()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             SetupMEF();
         }
 
         [SetUp]
-        public void ClearImportExportDefinitions()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             Repository.Clear();
         }
 

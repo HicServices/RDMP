@@ -25,20 +25,13 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private DirectoryInfo _parentDir;
         
         [OneTimeSetUp]
-        public void SetUp()
+        protected virtual void OneTimeSetUp()
         {
             var testDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             _parentDir = testDir.CreateSubdirectory("ExcelConversionTest");
             _dirsToCleanUp.Push(_parentDir);
         }
-
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            while (_dirsToCleanUp.Any())
-                _dirsToCleanUp.Pop().Delete(true);
-        }
-
+        
         private LoadDirectory CreateLoadDirectoryForTest(string directoryName)
         {
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(_parentDir, directoryName,true);
@@ -51,7 +44,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_OnSimpleXlsx");
 
-            //clean up anything in the test project folders forloading directory
+            //clean SetUp anything in the test project folders forloading directory
             foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
                 fileInfo.Delete();
 
@@ -66,7 +59,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         {
             var LoadDirectory = CreateLoadDirectoryForTest("TestExcelFunctionality_DodgyFileExtension");
 
-            //clean up anything in the test project folders forloading directory
+            //clean SetUp anything in the test project folders forloading directory
             foreach (FileInfo fileInfo in LoadDirectory.ForLoading.GetFiles())
                 fileInfo.Delete();
 

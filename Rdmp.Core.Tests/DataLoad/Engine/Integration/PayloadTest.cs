@@ -32,7 +32,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [Test]
         public void TestPayloadInjection()
         {
-            BulkTestsData b = new BulkTestsData(CatalogueRepository,DiscoveredDatabaseICanCreateRandomTablesIn,10);
+            BulkTestsData b = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),10);
             b.SetupTestData();
             b.ImportAsCatalogue();
 
@@ -54,7 +54,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             pt.ProcessTaskType = ProcessTaskType.Attacher;
             pt.SaveToDatabase();
 
-            var config = new HICDatabaseConfiguration(DiscoveredDatabaseICanCreateRandomTablesIn.Server);
+            var config = new HICDatabaseConfiguration(GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer).Server);
             var factory = new HICDataLoadFactory(lmd, config, new HICLoadConfigurationFlags(), CatalogueRepository, lm);
             IDataLoadExecution execution = factory.Create(new ThrowImmediatelyDataLoadEventListener());
 

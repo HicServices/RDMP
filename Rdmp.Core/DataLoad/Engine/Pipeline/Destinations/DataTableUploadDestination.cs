@@ -10,10 +10,10 @@ using System.Data;
 using System.Diagnostics;
 using System.Globalization;
 using System.Linq;
+using System.Threading.Tasks;
 using FAnsi.Connections;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.DataFlowPipeline.Requirements;
@@ -24,6 +24,7 @@ using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 {
@@ -59,14 +60,21 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         [DemandsInitialization("Optional - Change system behaviour when a new table is being created by the component", TypeOf = typeof(IDatabaseColumnRequestAdjuster))]
         public Type Adjuster { get; set; }
 
+        private CultureInfo _culture;
         [DemandsInitialization("The culture to use for uploading (determines date format etc)")]
-        public CultureInfo Culture{get;set;}
+        public CultureInfo Culture
+        {
+            get => _culture ?? CultureInfo.CurrentCulture;
+            set => _culture = value;
+        }
 
         public string TargetTableName { get; private set; }
         
         private IBulkCopy _bulkcopy;
         private int _affectedRows = 0;
+        
         Stopwatch swTimeSpentWritting = new Stopwatch();
+        Stopwatch swMeasuringStrings = new Stopwatch();
 
         private DiscoveredServer _loggingDatabaseSettings;
 
@@ -85,7 +93,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
         private DiscoveredTable discoveredTable;
 
         //All column values sent to server so far
-        Dictionary<string, DataTypeComputer> _dataTypeDictionary;
+        Dictionary<string, Guesser> _dataTypeDictionary;
 
         public DataTableUploadDestination()
         {
@@ -110,7 +118,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 if (string.IsNullOrWhiteSpace(toProcess.TableName))
                     throw new Exception("Chunk did not have a TableName, did not know what to call the newly created table");
                 
-                TargetTableName = QuerySyntaxHelper.MakeHeaderNameSane(toProcess.TableName);
+                TargetTableName = QuerySyntaxHelper.MakeHeaderNameSensible(toProcess.TableName);
             }
 
             ClearPrimaryKeyFromDataTableAndExplicitWriteTypes(toProcess);
@@ -145,7 +153,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                             throw new Exception("There is already a table called " + TargetTableName + " at the destination " + _database);
                     
                     if (AllowResizingColumnsAtUploadTime)
-                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetDataTypeComputer(),StringComparer.CurrentCultureIgnoreCase);
+                        _dataTypeDictionary = discoveredTable.DiscoverColumns().ToDictionary(k => k.GetRuntimeName(), v => v.GetGuesser(),StringComparer.CurrentCultureIgnoreCase);
                 }
                 else
                     listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Determined that the table name " + TargetTableName + " is unique at destination " + _database));
@@ -164,11 +172,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 }
 
                 _managedConnection = _server.BeginNewTransactedConnection();
-                _bulkcopy = discoveredTable.BeginBulkInsert(_managedConnection.ManagedTransaction);
+                _bulkcopy = discoveredTable.BeginBulkInsert(Culture,_managedConnection.ManagedTransaction);
                 
-                if(Culture != null)
-                    _bulkcopy.DateTimeDecider.Culture = Culture;
-
                 _firstTime = false;
             }
 
@@ -230,28 +235,40 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
         private void ResizeColumnsIfRequired(DataTable toProcess, IDataLoadEventListener listener)
         {
+            swMeasuringStrings.Start();
+
             var tbl = _database.ExpectTable(TargetTableName);
             var typeTranslater = tbl.GetQuerySyntaxHelper().TypeTranslater;
             
             //Get the current estimates from the datatype computer
-            Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => v.Value.GetSqlDBType(typeTranslater),StringComparer.CurrentCultureIgnoreCase);
+            Dictionary<string, string> oldTypes = _dataTypeDictionary.ToDictionary(k => k.Key, v => typeTranslater.GetSQLDBTypeForCSharpType(v.Value.Guess),StringComparer.CurrentCultureIgnoreCase);
 
+            //columns in 
+            List<string> sharedColumns = new List<string>();
+
+            //for each destination column
+            foreach (string col in _dataTypeDictionary.Keys)
+                //if it appears in the toProcess DataTable
+                if (toProcess.Columns.Contains(col))
+                    sharedColumns.Add(col); //it is a shared column
+
+            
+            
             //adjust the computer to 
-            //work out the max sizes - expensive bit
-            foreach (DataRow row in toProcess.Rows)
-                //for each destination column
-                foreach (string col in _dataTypeDictionary.Keys)
-                    //if it appears in the toProcess DataTable
-                    if (toProcess.Columns.Contains(col))
-                        //run the datatype computer over it to compute max lengths
-                        _dataTypeDictionary[col].AdjustToCompensateForValue(row[col]);
+            //for each shared column adjust the corresponding computer for all rows
+            Parallel.ForEach(sharedColumns, col =>
+            {
+                var guesser = _dataTypeDictionary[col];
+                foreach (DataRow row in toProcess.Rows)
+                    guesser.AdjustToCompensateForValue(row[col]);
+            });            
 
             //see if any have changed
             foreach (DataColumn column in toProcess.Columns)
             {
                 //get what is required for the current batch and the current type that is configured in the live table
                 string oldSqlType = oldTypes[column.ColumnName];
-                string newSqlType = _dataTypeDictionary[column.ColumnName].GetSqlDBType(typeTranslater);
+                string newSqlType = typeTranslater.GetSQLDBTypeForCSharpType(_dataTypeDictionary[column.ColumnName].Guess);
 
                 bool changesMade = false;
 
@@ -271,6 +288,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
                 if(changesMade)
                     _bulkcopy.InvalidateTableSchema();
             }
+            
+            swMeasuringStrings.Stop();
+            listener.OnProgress(this,new ProgressEventArgs("Measuring DataType Sizes",new ProgressMeasurement(_affectedRows + toProcess.Rows.Count,ProgressType.Records),swMeasuringStrings.Elapsed));
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -358,7 +378,7 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Destinations
 
         private void StartAuditIfExists(string tableName)
         {
-            if (LoggingServer != null)
+            if (LoggingServer != null && _dataLoadInfo == null)
             {
                 _loggingDatabaseSettings = DataAccessPortal.GetInstance().ExpectServer(LoggingServer, DataAccessContext.Logging);
                 var logManager = new LogManager(_loggingDatabaseSettings);

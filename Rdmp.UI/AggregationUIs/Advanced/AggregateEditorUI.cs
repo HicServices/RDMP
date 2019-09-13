@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
@@ -31,7 +30,6 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 

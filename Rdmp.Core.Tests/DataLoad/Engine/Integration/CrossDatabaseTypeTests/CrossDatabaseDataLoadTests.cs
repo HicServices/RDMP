@@ -13,7 +13,6 @@ using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.TableCreation;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
@@ -34,6 +33,7 @@ using Rdmp.Core.Logging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.CrossDatabaseTypeTests
 {
@@ -165,7 +165,7 @@ MrMurder,2001-01-01,Yella");
             
             //the checks will probably need to be run as ddl admin because it involves creating _Archive table and trigger the first time
 
-            //clean up RAW / STAGING etc and generally accept proposed cleanup operations
+            //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(),CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
 
@@ -276,7 +276,7 @@ MrMurder,2001-01-01,Yella");
             var db = GetCleanedServer(databaseType);
 
             var dtParent = new DataTable();
-            dtParent.Columns.Add("ID");
+            dtParent.Columns.Add("ID",typeof(int));
             dtParent.Columns.Add("Name");
             dtParent.Columns.Add("Height");
             dtParent.PrimaryKey = new[] {dtParent.Columns[0]};
@@ -352,7 +352,7 @@ MrMurder,2001-01-01,Yella");
 2,1,NewC1,2000-01-01,19,null");
             
             
-            //clean up RAW / STAGING etc and generally accept proposed cleanup operations
+            //clean SetUp RAW / STAGING etc and generally accept proposed cleanup operations
             var checker = new CheckEntireDataLoadProcess(lmd, new HICDatabaseConfiguration(lmd), new HICLoadConfigurationFlags(), CatalogueRepository.MEF);
             checker.Check(new AcceptAllCheckNotifier());
 

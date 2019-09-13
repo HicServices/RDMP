@@ -73,7 +73,7 @@ namespace Rdmp.Core.Tests.Caching.Integration
 
             var dataFlowPipelineEngine = Mock.Of<IDataFlowPipelineEngine>();
 
-            // set up a factory stub to return our engine mock
+            // set SetUp a factory stub to return our engine mock
             var cacheHost = new CachingHost(Repository)
             {
                 CacheProgressList = new List<ICacheProgress> { cp }
