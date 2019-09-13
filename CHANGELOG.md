@@ -47,6 +47,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where closing the server/database selection dialog with the X instead of cancel could cause error messages (e.g. in Bulk Import TableInfos)
 - Fixed bug where searching for "Pipeline" or "Pipe" did not show all pipelines
 - Fixed bug caching patient index tables (cohort creation) when there are multiple tables being joined in the query.
+- Fixed error when logging very large (over 4000 characters) to the RDMP logging database
 
 ### Removed
 - Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
