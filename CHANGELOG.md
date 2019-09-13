@@ -162,8 +162,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/3.2.0-rc1...develop
-[3.2.0-rc1]: https://github.com/HicServices/RDMP/compare/3.1.0...3.2.0-rc1
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.2.0-rc1...develop
+[3.2.0-rc1]: https://github.com/HicServices/RDMP/compare/3.1.0...v3.2.0-rc1
 [3.1.0]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc2...3.1.0
 [3.0.16-rc2]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc...v3.0.16-rc2
 [3.0.16-rc]: https://github.com/HicServices/RDMP/compare/v3.0.15...v3.0.16-rc
