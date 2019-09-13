@@ -50,6 +50,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Removed
 - Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
+- Removed OnlyUseOldDateTimes option on DataTableUploadDestination as it didn't actually do anything (DBMS type decisions are handled in a standard way by FAnsiSql)
 
 ## [3.1.0] 2019-07-31
 
