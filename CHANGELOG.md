@@ -8,6 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ...
 
+
+## Added
+
+- Patient Index Tables now use the source column datatype for caching columns (as long as there is no transform declared).
+
 ## [3.2.0-rc1] - 2019-09-13
 
 ## Added
