@@ -49,6 +49,7 @@ namespace Rdmp.UI.Menus
         public const string Inspection = "Inspection";
         public const string Tree = "Tree";
         public const string GoTo = "Go To";
+        public const string Alter = "Alter";
 
         public RDMPContextMenuStrip(RDMPContextMenuStripArgs args, object o)
         {

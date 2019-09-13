@@ -19,6 +19,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
 - Extraction Category can now be changed directly from a CatalogueItem, ExtractionInformation 
 - Extraction Category can be changed for all columns in a Catalogue at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
+- Right clicking a column allows you to Alter it's type e.g. increase the size of a varchar field
 
 ### Changed
 

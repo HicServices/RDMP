@@ -44,9 +44,9 @@ namespace Rdmp.UI.Menus
             
             try
             {
-                Add(new ExecuteCommandAlterTableName(_activator,tableInfo),Keys.None,"Alter");
-                Add(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,tableInfo),Keys.None,"Alter");
-                Add(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,tableInfo),Keys.None,"Alter");
+                Add(new ExecuteCommandAlterTableName(_activator,tableInfo),Keys.None,Alter);
+                Add(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,tableInfo),Keys.None, Alter);
+                Add(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,tableInfo),Keys.None, Alter);
             }
             catch(Exception ex)
             {
