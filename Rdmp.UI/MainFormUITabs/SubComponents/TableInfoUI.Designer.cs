@@ -72,6 +72,7 @@
             // 
             // cbIsView
             // 
+            this.cbIsView.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Right)));
             this.cbIsView.AutoSize = true;
             this.cbIsView.Font = new System.Drawing.Font("Microsoft Sans Serif", 8.25F);
             this.cbIsView.Location = new System.Drawing.Point(358, 108);
