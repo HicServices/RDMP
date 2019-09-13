@@ -205,6 +205,18 @@ namespace Rdmp.UI.Tests
 
             throw new Exception("Did not expect to be asked a question but we were asked :" + text);
         }
+
+
+        /// <summary>
+        /// The answer to give when asked to <see cref="TypeText(string, string, int, string, out string, bool)"/>
+        /// </summary>
+        public string TypeTextResponse { get; set; }
+
+        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        {
+            text = TypeTextResponse;
+            return !string.IsNullOrWhiteSpace(TypeTextResponse);
+        }
     }
 
     public class TestActivateItemsResults:ICheckNotifier

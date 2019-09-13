@@ -209,13 +209,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText = false)
         {
-            var textTyper = new TypeTextOrCancelDialog(header,prompt, maxLength, initialText)
-            {
-                RequireSaneHeaderText = requireSaneHeaderText
-            };
-
-            text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
-            return !string.IsNullOrWhiteSpace(text);
+            return Activator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
         }
 
         /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>

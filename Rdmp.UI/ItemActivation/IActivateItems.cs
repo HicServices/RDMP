@@ -187,5 +187,7 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="caption"></param>
         /// <returns></returns>
         bool YesNo(string text, string caption);
+
+        bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
     }
 }

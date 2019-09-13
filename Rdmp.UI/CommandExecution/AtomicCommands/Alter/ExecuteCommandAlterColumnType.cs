@@ -14,16 +14,14 @@ using ReusableLibraryCode.DataAccess;
 using ReusableUIComponents.Dialogs;
 using System;
 
-namespace Rdmp.UI.Menus
+namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
 {
-    internal class ExecuteCommandAlterColumnType: BasicUICommandExecution,IAtomicCommand
+    internal class ExecuteCommandAlterColumnType : BasicUICommandExecution, IAtomicCommand
     {
-        private IActivateItems _activator;
         private ColumnInfo columnInfo;
 
-        public ExecuteCommandAlterColumnType(IActivateItems activator, ColumnInfo columnInfo):base(activator)
+        public ExecuteCommandAlterColumnType(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
         {
-            _activator = activator;
             this.columnInfo = columnInfo;
         }
 
@@ -36,13 +34,13 @@ namespace Rdmp.UI.Menus
             string oldSqlType = fansiType.SQLType;
 
 
-            if (TypeText("New Data Type","Type",50,oldSqlType,out string newSqlType,false))
+            if (TypeText("New Data Type", "Type", 50, oldSqlType, out string newSqlType, false))
             {
                 try
                 {
                     fansiType.AlterTypeTo(newSqlType);
                 }
-                catch(Exception ex)
+                catch (Exception ex)
                 {
                     ExceptionViewer.Show("Failed to Alter Type", ex);
                     return;
@@ -53,34 +51,34 @@ namespace Rdmp.UI.Menus
 
                 var archive = col.Table.Database.ExpectTable(col.Table + "_Archive");
 
-                if(archive.Exists())
+                if (archive.Exists())
                 {
                     try
                     {
                         var archiveCol = archive.DiscoverColumn(col.GetRuntimeName());
-                        if(archiveCol.DataType.SQLType.Equals(oldSqlType))
+                        if (archiveCol.DataType.SQLType.Equals(oldSqlType))
                         {
                             if (YesNo($"Alter Type in Archive '{ archive.GetFullyQualifiedName()}'?", "Alter Archive"))
                                 try
                                 {
                                     archiveCol.DataType.AlterTypeTo(newSqlType);
                                 }
-                                catch(Exception ex)
+                                catch (Exception ex)
                                 {
                                     ExceptionViewer.Show("Failed to Alter Archive Column", ex);
                                     return;
                                 }
                         }
                     }
-                    catch(Exception)
+                    catch (Exception)
                     {
                         //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
                         return;
                     }
-                    
+
                 }
 
-                
+
             }
 
             Publish(columnInfo.TableInfo);

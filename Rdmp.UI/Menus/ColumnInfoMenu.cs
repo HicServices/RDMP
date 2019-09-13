@@ -9,6 +9,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using Rdmp.UI.DataViewing;
 
 namespace Rdmp.UI.Menus

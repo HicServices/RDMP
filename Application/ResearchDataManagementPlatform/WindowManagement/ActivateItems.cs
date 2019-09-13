@@ -37,6 +37,7 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
+using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
@@ -534,6 +535,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public bool YesNo(string text,string caption)
         {
             return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
+        }
+
+        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        {
+            var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText)
+            {
+                RequireSaneHeaderText = requireSaneHeaderText
+            };
+
+            text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
+            return !string.IsNullOrWhiteSpace(text);
         }
     }
 }
