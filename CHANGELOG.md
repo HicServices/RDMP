@@ -6,8 +6,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
-
 ...
+
+## [3.2.0] (Unreleased)
 
 ## Added
 
@@ -50,7 +51,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Removed
 - Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
 
-## [3.1.0]
+## [3.1.0] 2019-07-31
 
 ### Added
 
