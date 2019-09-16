@@ -61,6 +61,7 @@ namespace Rdmp.Core.Startup
         public Startup(EnvironmentInfo environmentInfo)
         {
             _environmentInfo = environmentInfo;
+            TypeGuesser.GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
         }
         #endregion
 

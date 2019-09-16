@@ -33,6 +33,7 @@ namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources
                 {
                     typeof(string),
                     typeof(double),
+                    typeof(bool),
                     typeof(DateTime)
                 });
 

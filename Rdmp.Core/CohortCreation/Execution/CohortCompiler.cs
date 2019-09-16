@@ -335,10 +335,25 @@ namespace Rdmp.Core.CohortCreation.Execution
                         "There were {0} columns in the configuration marked IsExtractionIdentifier:{1}",
                         identifiers.Length, string.Join(",", identifiers.Select(i => i.GetRuntimeName()))));
 
-                ColumnInfo identifierColumnInfo = identifiers[0].ColumnInfo;
+                var identifierDimension = identifiers[0];
+                ColumnInfo identifierColumnInfo = identifierDimension.ColumnInfo;
                 var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
                 
-                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), destinationDataType));
+                explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
+
+                //make other non transform Types have explicit values
+                foreach(AggregateDimension d in configuration.AggregateDimensions)
+                {
+                    if(d != identifierDimension)
+                    {
+                        //if the user has not changed the SelectSQL and the SelectSQL of the original column is not a transform
+                        if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
+                        {
+                            //then use the origin datatype
+                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {

@@ -18,7 +18,7 @@ using System.Threading.Tasks;
 using Tests.Common;
 using TypeGuesser;
 
-namespace Rdmp.UI.Tests.CommandExecution
+namespace Rdmp.UI.Tests.CommandExecution.Alter
 {
     class ExecuteCommandAlterColumnTypeTests:DatabaseTests
     {

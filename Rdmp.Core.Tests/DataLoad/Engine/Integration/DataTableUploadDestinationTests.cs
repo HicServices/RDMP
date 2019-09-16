@@ -1066,8 +1066,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         }
 
         /// <summary>
-        /// T and F are normally True and False, this test confirms that we can force T and F to go in
-        /// as strings instead
+        /// T and F are NOT NORMALLY True and False, this test confirms that we can force T and F to go in
+        /// as boolean instead
         /// </summary>
         /// <param name="dbType"></param>
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -1092,8 +1092,8 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             {
                 var col = s.Single(c => c.ColumnName.Equals("hb_extract"));
 
-                Assert.AreEqual(typeof(bool), col.TypeRequested.CSharpType);
-                col.TypeRequested.CSharpType = typeof(string);
+                Assert.AreEqual(typeof(string), col.TypeRequested.CSharpType);
+                col.TypeRequested.CSharpType = typeof(bool);
             };
 
             try
@@ -1110,11 +1110,11 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             var tbl = db.ExpectTable("ForceStringTable");
 
             //in the database it should be typed as string
-            Assert.AreEqual(typeof(string), tbl.DiscoverColumn("hb_extract").DataType.GetCSharpDataType());
+            Assert.AreEqual(typeof(bool), tbl.DiscoverColumn("hb_extract").DataType.GetCSharpDataType());
 
             var dt2 = tbl.GetDataTable();
-            Assert.Contains("T",dt2.Rows.Cast<DataRow>().Select(r=>r[0]).ToArray());
-            Assert.Contains("F",dt2.Rows.Cast<DataRow>().Select(r =>r[0]).ToArray());
+            Assert.Contains(true,dt2.Rows.Cast<DataRow>().Select(r=>r[0]).ToArray());
+            Assert.Contains(false,dt2.Rows.Cast<DataRow>().Select(r =>r[0]).ToArray());
 
         }
 
