@@ -347,15 +347,13 @@ namespace Rdmp.Core.CohortCreation.Execution
                     if(d != identifierDimension)
                     {
                         //if the user has not changed the SelectSQL and the SelectSQL of the original column is not a transform
-                        if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && d.ExtractionInformation.IsProperTransform())
+                        if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
                         {
                             //then use the origin datatype
                             explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
                         }
                     }
-
                 }
-
             }
             catch (Exception e)
             {
