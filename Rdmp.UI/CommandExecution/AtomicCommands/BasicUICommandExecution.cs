@@ -102,7 +102,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <typeparam name="T"></typeparam>
         /// <param name="repository"></param>
         /// <param name="initialSearchText"></param>
-        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
         /// <returns></returns>
         protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
@@ -116,7 +116,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <param name="repository"></param>
         /// <param name="selected"></param>
         /// <param name="initialSearchText"></param>
-        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
@@ -130,6 +130,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <param name="availableObjects"></param>
         /// <param name="selected"></param>
         /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
         /// <returns></returns>
         protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
@@ -208,13 +209,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText = false)
         {
-            var textTyper = new TypeTextOrCancelDialog(header,prompt, maxLength, initialText)
-            {
-                RequireSaneHeaderText = requireSaneHeaderText
-            };
-
-            text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
-            return !string.IsNullOrWhiteSpace(text);
+            return Activator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
         }
 
         /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
@@ -235,6 +230,21 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         }
 
         /// <summary>
+        /// Reports a low visibility error to the <see cref="IActivateItems.GlobalErrorCheckNotifier"/>.  Throws <paramref name="ex"/>
+        /// with <paramref name="msg"/> if no global errors handler is registered
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="ex"></param>
+        protected void GlobalError(string msg, Exception ex)
+        {
+            if (Activator?.GlobalErrorCheckNotifier == null)
+                throw new Exception(msg,ex);
+
+            Activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Fail, ex));
+        }
+
+
+        /// <summary>
         /// Displays the given message to the user
         /// </summary>
         /// <param name="message"></param>
@@ -243,9 +253,18 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             MessageBox.Show(message);
         }
 
-
         /// <summary>
-        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible"/> if there are any failures
+        /// Displays the given message to the user, calling String.Format 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
+        protected void Show(string message, params object[] objects)
+        {
+            MessageBox.Show(string.Format(message,objects));
+        }
+        
+        /// <summary>
+        /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible(string)"/> if there are any failures
         /// </summary>
         /// <param name="checkable"></param>
         protected void SetImpossibleIfFailsChecks(ICheckable checkable)

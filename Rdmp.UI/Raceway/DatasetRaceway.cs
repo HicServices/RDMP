@@ -20,6 +20,7 @@ using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.Raceway
@@ -36,16 +37,29 @@ namespace Rdmp.UI.Raceway
     /// Row Counts' then full bars will appear only, this lets you identify which datasets are responsible for sparse errors (e.g. if 'Biochemistry' has 1,00,000,000 and some records have
     /// dates sprinkled between 1900-01-01 and 2000-01-01 then these will appear on the axis but won't be visible due to how sparse the number of error records are).</para>
     /// </summary>
-    public partial class DatasetRaceway : UserControl,IDashboardableControl
+    public partial class DatasetRaceway : RDMPUserControl, IDashboardableControl
     {
-
+        private ToolStripButton btnAddCatalogue = new ToolStripButton("Add Catalogue"){Name= "btnAddCatalogue" };
+        private ToolStripButton btnRemoveAll = new ToolStripButton("Clear",FamFamFamIcons.delete_multi) { Name = "btnRemoveAll" };
+        private ToolStripButton btnAddExtractableDatasetPackage = new ToolStripButton("Add Package") { Name = "btnAddExtractableDatasetPackage" };
+        private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Show Period") { Name = "toolStripLabel1" };
+        private ToolStripComboBox ddShowPeriod = new ToolStripComboBox() { Name = "ddShowPeriod", Size = new Size(121, 25) };
+        private ToolStripButton cbIgnoreRowCounts = new ToolStripButton() { Name = "cbIgnoreRowCounts" };
 
         public DatasetRaceway()
         {
             InitializeComponent();
+
+            this.btnAddCatalogue.Click += btnAddCatalogue_Click;
+            this.btnRemoveAll.Click += btnRemoveAll_Click;
+            this.ddShowPeriod.DropDownClosed += ddShowPeriod_DropDownClosed;
+
+            this.cbIgnoreRowCounts.CheckOnClick = true;
+            this.cbIgnoreRowCounts.CheckedChanged += this.cbIgnoreRowCounts_CheckedChanged;
+            this.btnAddExtractableDatasetPackage.Click += btnAddExtractableDatasetPackage_Click;
+            
             ddShowPeriod.ComboBox.DataSource = Enum.GetValues(typeof (RacewayShowPeriod));
-
-
+            
             btnRemoveAll.Image = FamFamFamIcons.delete_multi;
             _ignoreRowCounts = CatalogueIcons.RowCounts_Ignore;
             _respectRowCounts = CatalogueIcons.RowCounts_Respect;
@@ -62,8 +76,7 @@ namespace Rdmp.UI.Raceway
 
         public void GenerateChart()
         {
-            ragSmiley1.Reset();
-            ragSmiley1.SetVisible(false);
+            CommonFunctionality.ResetChecks();
             
             var allCatalogues = _collection.GetCatalogues();
 
@@ -77,8 +90,7 @@ namespace Rdmp.UI.Raceway
             }
             catch (NotSupportedException e)
             {
-                ragSmiley1.SetVisible(true);
-                ragSmiley1.Fatal(e);
+                CommonFunctionality.Fatal("Failed to get DQE Repository",e);
                 return;
             }
             
@@ -158,11 +170,11 @@ namespace Rdmp.UI.Raceway
             _activator = activator;
             _collection = (DatasetRacewayObjectCollection) collection;
 
+            SetItemActivator(activator);
 
             btnAddCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Import);
             btnAddExtractableDatasetPackage.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.ExtractableDataSetPackage, OverlayKind.Import);
             
-
             ddShowPeriod.ComboBox.SelectedItem = _collection.ShowPeriod;
             cbIgnoreRowCounts.Checked = _collection.IgnoreRows;
             UpdateIgnoreRowCountCheckBoxIconAndText();
@@ -177,10 +189,16 @@ namespace Rdmp.UI.Raceway
                 };
                 racewayRenderArea.NotifyEditModeChange(_isEditmodeOn);
             }
-                
+
+            CommonFunctionality.Add(btnAddCatalogue);
+            CommonFunctionality.Add(btnAddExtractableDatasetPackage);
+            CommonFunctionality.Add(btnRemoveAll);
+            CommonFunctionality.Add(toolStripLabel1);
+            CommonFunctionality.Add(ddShowPeriod);
+            CommonFunctionality.Add(cbIgnoreRowCounts);
+
             GenerateChart();
 
-            activator.Theme.ApplyTo(toolStrip1);
         }
 
         public IPersistableObjectCollection GetCollection()
@@ -206,10 +224,7 @@ namespace Rdmp.UI.Raceway
 
             racewayRenderArea.NotifyEditModeChange(isEditModeOn);
 
-            if (isEditModeOn)
-                Controls.Add(toolStrip1);
-            else
-                Controls.Remove(toolStrip1);
+            CommonFunctionality.ToolStrip.Visible = isEditModeOn;
         }
         
         private void btnAddCatalogue_Click(object sender, EventArgs e)

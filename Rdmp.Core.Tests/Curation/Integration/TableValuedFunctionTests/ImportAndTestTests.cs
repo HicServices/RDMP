@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Revertable;
 using NUnit.Framework;
 using Rdmp.Core.Curation;
@@ -18,16 +19,21 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
     public class ImportAndTestTests : DatabaseTests
     {
         private TestableTableValuedFunction _function = new TestableTableValuedFunction();
+        private DiscoveredDatabase _database;
+
         [SetUp]
-        public void CreateFunction()
+        protected override void SetUp()
         {
-            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, CatalogueRepository);
+            base.SetUp();
+
+            _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            _function.Create(_database, CatalogueRepository);
         }
 
         [Test]
         public void FunctionWorks()
         {
-            var server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            var server = _database.Server;
             using (var con = server.GetConnection())
             {
                 con.Open();
@@ -62,12 +68,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
             }
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            _function.Destroy();
-        }
-
+        
         [Test]
         public void ImportFunctionIntoCatalogue()
         {
@@ -78,7 +79,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.TableValuedFunctionTests
         [Test]
         public void TestDiscovery()
         {
-            var db = DiscoveredDatabaseICanCreateRandomTablesIn;
+            var db = _database;
             
             using (var con = db.Server.BeginNewTransactedConnection())
             {

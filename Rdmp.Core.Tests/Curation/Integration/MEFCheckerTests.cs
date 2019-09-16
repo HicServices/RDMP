@@ -19,8 +19,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
     public class MEFCheckerTests:UnitTests
     {
         [OneTimeSetUp]
-        public void Once()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             SetupMEF();
         }
 

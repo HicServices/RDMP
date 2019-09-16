@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.FilterImporting.Construction;
+using TypeGuesser;
 using IFilter = Rdmp.Core.Curation.Data.IFilter;
 
 namespace Rdmp.Core.Curation.FilterImporting

@@ -50,6 +50,9 @@ namespace Rdmp.Core.Curation
             if (!Directory.Exists(Path.Combine(directory.FullName, "SupportingDocuments")))
                 Directory.CreateDirectory(Path.Combine(directory.FullName, "SupportingDocuments"));
 
+            if(!toCopy.Exists)
+                throw new FileNotFoundException("Could not find supporting document '" + supportingDocument + "' which was expected to be at path:" + toCopy.FullName);
+
             //copy with overwritte
             File.Copy(toCopy.FullName, Path.Combine(directory.FullName, "SupportingDocuments", toCopy.Name), true);
             

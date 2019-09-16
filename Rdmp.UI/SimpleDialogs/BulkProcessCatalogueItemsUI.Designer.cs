@@ -187,6 +187,7 @@ namespace Rdmp.UI.SimpleDialogs
             // 
             this.olvName.AspectName = "ToString";
             this.olvName.FillsFreeSpace = true;
+            this.olvName.MinimumWidth = 100;
             // 
             // groupBox2
             // 

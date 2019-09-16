@@ -12,21 +12,17 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Providers;
-using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
-using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
-using Rdmp.UI.ExtractionUIs.FilterUIs;
-using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
@@ -35,12 +31,13 @@ using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
-using Rdmp.UI.SubComponents.Graphs;
+using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
+using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
 using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.Theme;
@@ -107,7 +104,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             RefreshBus.BeforePublish += (s, e) => UpdateChildProviders();
 
             //handle custom icons from plugin user interfaces in which
-            CoreIconProvider = new DataExportIconProvider(PluginUserInterfaces.ToArray());
+            CoreIconProvider = new DataExportIconProvider(repositoryLocator,PluginUserInterfaces.ToArray());
             
             SelectIMapsDirectlyToDatabaseTableDialog.ImageGetter = (model)=> CoreIconProvider.GetImage(model);
 
@@ -165,16 +162,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             CoreChildProvider.GetPluginChildren();
             RefreshBus.ChildProvider = CoreChildProvider;
         }
-
-        public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control,DatabaseEntity objectOfTypeT)
-        {
-            var content = WindowFactory.Create(this,control,objectOfTypeT);
-            content.Show(_mainDockPanel, DockState.Document);
-            control.SetDatabaseObject(this,objectOfTypeT);
-
-            return content;
-        }
-
+        
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
         {
@@ -308,6 +296,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             else
                 root = request.ObjectToEmphasise; //assume maybe o is a root object itself?
 
+            if (root is CohortIdentificationConfiguration cic)
+                Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(cic);
+            else
             if (root != null)
                 _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
 
@@ -318,51 +309,10 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 var args = new EmphasiseEventArgs(request);
                 h(this, args);
 
-                var content = args.FormRequestingActivation as DockContent;
-
-                if(content != null)
+                if(args.FormRequestingActivation is DockContent content)
                     content.Activate();
             }
         }
-
-        public void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null)
-        {
-            var t = Activate<LookupConfigurationUI, Catalogue>(catalogue);
-            
-            if(optionalLookupTableInfo != null)
-                t.SetLookupTableInfo(optionalLookupTableInfo);
-        }
-        
-        public void ViewFilterGraph(object sender,FilterGraphObjectCollection collection)
-        {
-            var aggFilter = collection.GetFilter() as AggregateFilter;
-
-            //if it's a cohort set
-            if(aggFilter != null && aggFilter.GetAggregate().IsCohortIdentificationAggregate)
-            {
-                var cohortAggregate = aggFilter.GetAggregate();
-                //use this instead
-                new ExecuteCommandViewCohortAggregateGraph(this, 
-                    new CohortSummaryAggregateGraphObjectCollection(cohortAggregate,collection.GetGraph(),CohortSummaryAdjustment.WhereRecordsIn,aggFilter))
-                    .Execute();
-
-                return;
-            }
-
-            Activate<FilterGraphUI>(collection);
-        }
-
-        public void ActivateViewLog(LoadMetadata loadMetadata)
-        {
-            new ExecuteCommandViewLoadMetadataLogs(this).SetTarget(loadMetadata).Execute();
-        }
-
-        public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
-        {
-            return Activate<LoadDiagramUI, LoadMetadata>(loadMetadata);
-        }
-
-
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
@@ -402,12 +352,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         /// <returns></returns>
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
         {
-            var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(objectToEmphasise);
-
-            if (descendancy != null && descendancy.Parents.Any())
-                return descendancy.Parents[0];
-
-            return objectToEmphasise;
+            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
         }
 
         public string GetDocumentation(Type type)
@@ -590,6 +535,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public bool YesNo(string text,string caption)
         {
             return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
+        }
+
+        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        {
+            var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText)
+            {
+                RequireSaneHeaderText = requireSaneHeaderText
+            };
+
+            text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
+            return !string.IsNullOrWhiteSpace(text);
         }
     }
 }

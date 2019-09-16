@@ -199,9 +199,6 @@
   <data name="AggregatesNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\AggregatesNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
-  <data name="CohortSetsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>..\..\Icons\cohortSetsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
-  </data>
   <data name="CatalogueItemsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\..\Icons\catalogueItemsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
@@ -717,5 +714,11 @@
   </data>
   <data name="WindowLayout" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\WindowLayout.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AllDashboardsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllDashboardsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="AllOrphanAggregateConfigurationsNode" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\AllOrphanAggregateConfigurationsNode.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
 </root>

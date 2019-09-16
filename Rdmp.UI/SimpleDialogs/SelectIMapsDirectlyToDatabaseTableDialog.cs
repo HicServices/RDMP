@@ -39,6 +39,9 @@ namespace Rdmp.UI.SimpleDialogs
         {
             _allowDeleting = allowDeleting;
             InitializeComponent();
+
+            //start at cancel so if they hit the X nothing is selected
+            DialogResult = DialogResult.Cancel;
             
             if (ImageGetter != null)
             {

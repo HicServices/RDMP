@@ -98,6 +98,7 @@ namespace Rdmp.UI.Wizard
             this.olvColumn1.FillsFreeSpace = true;
             this.olvColumn1.Groupable = false;
             this.olvColumn1.Text = "DataSets";
+            this.olvColumn1.MinimumWidth = 100;
             // 
             // label1
             // 

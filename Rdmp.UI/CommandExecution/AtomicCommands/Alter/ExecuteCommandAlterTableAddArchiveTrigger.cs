@@ -4,24 +4,19 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using FAnsi.Discovery;
-using Rdmp.Core.Curation;
+using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
-using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
-using System;
 using System.Linq;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
 {
     internal class ExecuteCommandAlterTableAddArchiveTrigger : AlterTableCommandExecution
     {
-        
-        private ITriggerImplementer _triggerImplementer;
+        private readonly ITriggerImplementer _triggerImplementer;
 
         public ExecuteCommandAlterTableAddArchiveTrigger(IActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
         {
@@ -30,7 +25,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
                 
             if (!Table.DiscoverColumns().Any(c => c.IsPrimaryKey))
             {
-                SetImpossible("Table has no Primary Key");
+                SetImpossible(GlobalStrings.TableHasNoPrimaryKey);
                 return;
             }
 
@@ -39,7 +34,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
             var currentStatus = _triggerImplementer.GetTriggerStatus();
 
             if (currentStatus != TriggerStatus.Missing)
-                SetImpossible("Trigger status is currently:" + currentStatus);
+                SetImpossible(GlobalStrings.TriggerStatusIsCurrently , currentStatus.S());
         }
 
         public override void Execute()
@@ -49,12 +44,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
             if (!Synchronize())
                 return;
            
-            if (YesNo("Are you sure you want to create a backup triggered _Archive table?", "Confirm Creating Archive?"))
+            if (YesNo(GlobalStrings.CreateArchiveTableYesNo, GlobalStrings.CreateArchiveTableCaption))
             {
                 _triggerImplementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
-                Show("Success, look for the new table " + TableInfo.GetRuntimeName() + "_Archive which will contain old records whenever there is an update");
+                Show(GlobalStrings.CreateArchiveTableSuccess , TableInfo.GetRuntimeName() + "_Archive ");
             }
-            
 
             Synchronize();
 

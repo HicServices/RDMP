@@ -101,6 +101,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             this.olvDescription.AspectName = "ToString";
             this.olvDescription.FillsFreeSpace = true;
             this.olvDescription.Text = "Description";
+            this.olvDescription.MinimumWidth = 100;
             // 
             // ragSmiley1
             // 

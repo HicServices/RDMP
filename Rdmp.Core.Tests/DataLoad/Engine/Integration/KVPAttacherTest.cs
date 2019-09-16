@@ -38,9 +38,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         public void KVPAttacherTest_Attach(KVPAttacherTestCase testCase)
         {
             bool hasPk = testCase != KVPAttacherTestCase.OneFileWithoutPrimaryKey;
-
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
             var attacher = new KVPAttacher();
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("KVPTestTable");
+            var tbl = db.ExpectTable("KVPTestTable");
 
             var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var parentDir = workingDir.CreateSubdirectory("KVPAttacherTestProjectDirectory");
@@ -62,7 +62,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             if (tbl.Exists())
                 tbl.Drop();
             
-            //Create destination data table on server (where the data will ultimately end up)
+            //Create destination data table on server (where the data will ultimately end SetUp)
             using (var con = (SqlConnection) tbl.Database.Server.GetConnection())
             {
                 con.Open();
@@ -132,7 +132,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 attacher.TargetDataTableKeyColumnName = "Test";
                 attacher.TargetDataTableValueColumnName = "Result";
                 
-                attacher.Initialize(projectDir,DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(projectDir,db);
 
                 attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken());
 

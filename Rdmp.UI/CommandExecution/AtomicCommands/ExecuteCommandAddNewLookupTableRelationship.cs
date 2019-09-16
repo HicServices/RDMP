@@ -6,8 +6,8 @@
 
 using System;
 using System.Drawing;
-using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
+using Rdmp.UI.ExtractionUIs.JoinsAndLookups;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
@@ -39,32 +39,40 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
         
-            if (_catalogueIfKnown == null)  
-                PickCatalogueAndLaunchForTableInfo(_lookupTableInfoIfKnown);
-            else
-                Activator.ActivateLookupConfiguration(this, _catalogueIfKnown, _lookupTableInfoIfKnown);
-        }
-
-        private void PickCatalogueAndLaunchForTableInfo(TableInfo tbl)
-        {
-            try
+            Catalogue cata = _catalogueIfKnown;
+            if (cata == null)
             {
-                var dr = MessageBox.Show(
-@"You have chosen to make '" + tbl + @"' a Lookup Table (e.g T = Tayside, F=Fife etc).  In order to do this you will need to pick which Catalogue the column
-provides a description for (a given TableInfo can be a Lookup for many columns in many datasets)."
-                    , "Create Lookup", MessageBoxButtons.OKCancel);
-
-                if (dr == DialogResult.OK)
+                try
                 {
-                    Catalogue cata;
-                    if(SelectOne(tbl.Repository,out cata))
-                        Activator.ActivateLookupConfiguration(this, cata, tbl);
+                    //make sure they really wanted to do this?
+                    if (YesNo( GetLookupConfirmationText(), "Create Lookup"))
+                    { 
+                        //get them to pick a Catalogue the table provides descriptions for
+                        if(!SelectOne(_lookupTableInfoIfKnown.Repository, out cata))
+                            return;
+                    }
+                    else
+                        return;
+                }
+                catch (Exception exception)
+                {
+                    ExceptionViewer.Show("Error creating Lookup", exception);
+                    return;
                 }
             }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show("Error creating Lookup", exception);
-            }
+
+            //they now deifnetly have a Catalogue!
+            var t = Activator.Activate<LookupConfigurationUI, Catalogue>(cata);
+
+            if (_lookupTableInfoIfKnown != null)
+                t.SetLookupTableInfo(_lookupTableInfoIfKnown);
+        }
+
+        private string GetLookupConfirmationText()
+        {
+            return 
+                $@"You have chosen to make '{_lookupTableInfoIfKnown }' a Lookup Table (e.g T = Tayside, F=Fife etc).  In order to do this you will need to pick which Catalogue the column
+provides a description for (a given TableInfo can be a Lookup for many columns in many datasets).";
         }
 
         public override Image GetImage(IIconProvider iconProvider)

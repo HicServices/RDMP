@@ -9,13 +9,13 @@ using System.Data;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.DataLoad.Triggers.Exceptions;
 using Rdmp.Core.DataLoad.Triggers.Implementations;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {

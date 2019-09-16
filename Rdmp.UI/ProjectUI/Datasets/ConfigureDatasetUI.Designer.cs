@@ -206,6 +206,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvAvailableColumnName.FillsFreeSpace = true;
             this.olvAvailableColumnName.Text = "Name";
             this.olvAvailableColumnName.Width = 200;
+            this.olvAvailableColumnName.MinimumWidth = 100;
             // 
             // olvAvailableColumnCategory
             // 
@@ -324,6 +325,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvJoinTableName.IsEditable = false;
             this.olvJoinTableName.Text = "Table Name";
             this.olvJoinTableName.Width = 163;
+            this.olvJoinTableName.MinimumWidth = 100;
             // 
             // olvJoinColumn
             // 
@@ -391,6 +393,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.olvSelectedColumnName.FillsFreeSpace = true;
             this.olvSelectedColumnName.Sortable = false;
             this.olvSelectedColumnName.Text = "Name";
+            this.olvSelectedColumnName.MinimumWidth = 100;
             // 
             // olvIssues
             // 

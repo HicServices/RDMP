@@ -61,6 +61,7 @@ namespace Rdmp.Core.Startup
         public Startup(EnvironmentInfo environmentInfo)
         {
             _environmentInfo = environmentInfo;
+            TypeGuesser.GuessSettingsFactory.Defaults.CharCanBeBoolean = false;
         }
         #endregion
 
@@ -69,6 +70,9 @@ namespace Rdmp.Core.Startup
         {
             bool foundCatalogue = false;
 
+            notifier.OnCheckPerformed(new CheckEventArgs("Environment TargetFramework:" + _environmentInfo.TargetFramework, CheckResult.Success));
+            notifier.OnCheckPerformed(new CheckEventArgs("Environment RuntimeIdentifier:" + _environmentInfo.RuntimeIdentifier, CheckResult.Success));
+            
             notifier.OnCheckPerformed(new CheckEventArgs("Loading core assemblies",CheckResult.Success));
 
             Assembly.Load(typeof(Catalogue).Assembly.FullName);

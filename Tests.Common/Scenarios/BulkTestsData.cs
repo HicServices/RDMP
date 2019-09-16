@@ -10,7 +10,6 @@ using System.Linq;
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
@@ -18,6 +17,7 @@ using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Primary;
 using ReusableLibraryCode.DataAccess;
+using TypeGuesser;
 
 namespace Tests.Common.Scenarios
 {
@@ -75,13 +75,18 @@ namespace Tests.Common.Scenarios
         private Random r = new Random();
 
         /// <summary>
+        /// the bulk test data created during <see cref="SetupTestData"/>
+        /// </summary>
+        public DiscoveredTable Table {get;private set; }
+
+        /// <summary>
         /// Prepares to create a new table in the <paramref name="targetDatabase"/> of test data using <see cref="Demography"/>. To actually generate the data
         /// call <see cref="SetupTestData"/>
         /// </summary>
         /// <param name="repository"></param>
         /// <param name="targetDatabase"></param>
         /// <param name="numberOfRows"></param>
-        public BulkTestsData(ICatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 100000)
+        public BulkTestsData(ICatalogueRepository repository, DiscoveredDatabase targetDatabase, int numberOfRows = 10000)
         {
             _repository = repository;
             BulkDataDatabase = targetDatabase;
@@ -114,22 +119,14 @@ namespace Tests.Common.Scenarios
                 tbl.Drop();
 
             //create the table but make sure the chi is a primary key and the correct data type and that we have a sensible primary key
-            BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{ 
+            Table = BulkDataDatabase.CreateTable(BulkDataTable,dt,new DatabaseColumnRequest[]{ 
                 new DatabaseColumnRequest("chi",new DatabaseTypeRequest(typeof(string),10)){IsPrimaryKey=true},
                 new DatabaseColumnRequest("dtCreated",new DatabaseTypeRequest(typeof(DateTime))){IsPrimaryKey=true},
                 new DatabaseColumnRequest("hb_extract",new DatabaseTypeRequest(typeof(string),1)){IsPrimaryKey=true}
 
                 });
         }
-
-        /// <summary>
-        /// Drops the <see cref="BulkDataDatabase"/>
-        /// </summary>
-        public void Destroy()
-        {
-            BulkDataDatabase.Drop();
-        }
-        
+                
         /// <summary>
         /// Returns up to <paramref name="numberOfRows"/> rows from the table
         /// </summary>
@@ -165,7 +162,10 @@ namespace Tests.Common.Scenarios
         public void DeleteCatalogue()
         {
             var creds = (DataAccessCredentials)tableInfo.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
-            tableInfo.DeleteInDatabase();
+
+            if(tableInfo.Exists())
+                tableInfo.DeleteInDatabase();
+
             if(creds != null)
                 try
                 {
@@ -176,7 +176,8 @@ namespace Tests.Common.Scenarios
                     Console.WriteLine("Ignored Potential Exception:" + e);
                 }
 
-            catalogue.DeleteInDatabase();
+            if(catalogue.Exists())
+                catalogue.DeleteInDatabase();
         }
 
         public void SetupValidationOnCatalogue()

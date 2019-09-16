@@ -10,11 +10,13 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Providers.Nodes;
+using Rdmp.Core.Providers.Nodes.CohortNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Providers.Nodes.SharingNodes;
 using Rdmp.Core.Repositories.Managers;
@@ -50,10 +52,23 @@ namespace Rdmp.Core.Providers
         ColumnInfo[] AllColumnInfos { get;}
         AllExternalServersNode AllExternalServersNode { get; }
         DescendancyList GetDescendancyListIfAnyFor(object model);
+
+        /// <summary>
+        /// Returns the root level object in the descendancy of <paramref name="model"/> or <paramref name="model"/>
+        /// if no descendancy is known.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable model);
+
         PermissionWindow[] AllPermissionWindows { get;}
         IEnumerable<CatalogueItem> AllCatalogueItems { get; }
         AggregateConfiguration[] AllAggregateConfigurations { get;}
         AllRDMPRemotesNode AllRDMPRemotesNode { get; }
+
+        AllDashboardsNode AllDashboardsNode { get; }
+        DashboardLayout[] AllDashboards { get;  }
+
         AllObjectSharingNode AllObjectSharingNode { get; }
         ObjectImport[] AllImports { get; }
         ObjectExport[] AllExports { get; }
@@ -92,7 +107,8 @@ namespace Rdmp.Core.Providers
         IEnumerable<IMasqueradeAs> GetMasqueradersOf(object o);
 
         DatabaseEntity GetLatestCopyOf(DatabaseEntity e);
-
+        
+        AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get; }
 
         /// <summary>
         /// All standard (i.e. not plugin) use cases for editting <see cref="IPipeline"/> under.

@@ -106,7 +106,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataProvider.FlatFileManipulation
                                 : sheet.SheetName;
 
                             //make it sensible
-                            newName = new MicrosoftQuerySyntaxHelper().GetSensibleTableNameFromString(newName) + ".csv";
+                            newName = new MicrosoftQuerySyntaxHelper().GetSensibleEntityNameFromString(newName) + ".csv";
 
                             string savePath = Path.Combine(job.LoadDirectory.ForLoading.FullName, newName);
                             var dt = source.GetAllData(sheet, job);

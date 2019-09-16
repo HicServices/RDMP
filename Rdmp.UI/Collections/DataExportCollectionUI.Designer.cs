@@ -69,6 +69,7 @@ namespace Rdmp.UI.Collections
             this.olvName.CellEditUseWholeCell = true;
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Data Export";
+            this.olvName.MinimumWidth = 100;
             // 
             // olvProjectNumber
             // 

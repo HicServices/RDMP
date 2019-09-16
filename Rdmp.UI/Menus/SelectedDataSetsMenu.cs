@@ -69,6 +69,7 @@ namespace Rdmp.UI.Menus
             _selectedDataSet.SaveToDatabase();
 
             Publish(_selectedDataSet);
+            Emphasise(container);
         }
 
         private void GenerateExtractionGraphs(params AggregateConfiguration[] graphsToExecute)

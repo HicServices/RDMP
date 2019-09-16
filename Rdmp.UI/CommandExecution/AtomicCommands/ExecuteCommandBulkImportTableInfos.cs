@@ -46,6 +46,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             var db = SelectDatabase("Import all Tables form Database...");
 
+            if(db == null)
+                return;
+
+
             ShareManager shareManager = new ShareManager(Activator.RepositoryLocator,LocalReferenceGetter);
 
             List<ICatalogue> catalogues = new List<ICatalogue>();

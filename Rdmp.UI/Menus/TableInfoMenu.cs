@@ -10,7 +10,6 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
-using Rdmp.Core.DataLoad.Triggers.Implementations;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using Rdmp.UI.Copying.Commands;
@@ -20,7 +19,6 @@ using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
@@ -37,7 +35,7 @@ namespace Rdmp.UI.Menus
             : base(args, tableInfo)
         {
 
-            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, false),Keys.None,"New");
+            Add(new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(_activator),Keys.None,"New");
             Add(new ExecuteCommandCreateNewCatalogueFromTableInfo(_activator, tableInfo),Keys.None,"New");
                         
             Add(new ExecuteCommandAddNewLookupTableRelationship(_activator, null, tableInfo),Keys.None,"New");
@@ -46,9 +44,9 @@ namespace Rdmp.UI.Menus
             
             try
             {
-                Add(new ExecuteCommandAlterTableName(_activator,tableInfo),Keys.None,"Alter");
-                Add(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,tableInfo),Keys.None,"Alter");
-                Add(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,tableInfo),Keys.None,"Alter");
+                Add(new ExecuteCommandAlterTableName(_activator,tableInfo),Keys.None,Alter);
+                Add(new ExecuteCommandAlterTableCreatePrimaryKey(_activator,tableInfo),Keys.None, Alter);
+                Add(new ExecuteCommandAlterTableAddArchiveTrigger(_activator,tableInfo),Keys.None, Alter);
             }
             catch(Exception ex)
             {

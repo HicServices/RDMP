@@ -4,8 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Data.Common;
 using System.IO;
+using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.DataExport.DataExtraction.FileOutputFormats;
 
@@ -30,11 +32,23 @@ namespace Rdmp.Core.DataExport.DataExtraction
 
         public ExtractTableVerbatim(DiscoveredServer server, string[] tableNames, DirectoryInfo outputDirectory, string separator, string dateTimeFormat)
         {
+            if(tableNames.Length == 0)
+                throw new ArgumentException("You must select at least one table to extract");
+
             _tableNames = tableNames;
             _outputDirectory = outputDirectory;
             _separator = separator;
             _dateTimeFormat = dateTimeFormat;
             _server = server;
+        }
+
+        public ExtractTableVerbatim(DirectoryInfo outputDirectory, string separator, string dateTimeFormat,params DiscoveredTable[] tables)
+            :this(tables.Select(t=>t.Database.Server).Distinct().Single(),
+                tables.Select(t=>t.GetFullyQualifiedName()).ToArray(),
+                outputDirectory,
+                separator,
+                dateTimeFormat)
+        {
         }
 
         /// <summary>

@@ -41,6 +41,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 _container.AddChild((IFilter)f);
             
             Publish(f);
+            Emphasise(f);
             Activate(f);
         }
     }

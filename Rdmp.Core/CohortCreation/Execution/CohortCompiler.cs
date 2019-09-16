@@ -17,8 +17,10 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution
 {
@@ -326,10 +328,32 @@ namespace Rdmp.Core.CohortCreation.Execution
             try
             {
                 //the identifier column that we read from
-                ColumnInfo identifierColumnInfo = configuration.AggregateDimensions.Single(c => c.IsExtractionIdentifier).ColumnInfo;
+                var identifiers = configuration.AggregateDimensions.Where(c => c.IsExtractionIdentifier).ToArray();
+
+                if (identifiers.Length != 1)
+                    throw new Exception(string.Format(
+                        "There were {0} columns in the configuration marked IsExtractionIdentifier:{1}",
+                        identifiers.Length, string.Join(",", identifiers.Select(i => i.GetRuntimeName()))));
+
+                var identifierDimension = identifiers[0];
+                ColumnInfo identifierColumnInfo = identifierDimension.ColumnInfo;
                 var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
                 
-                explicitTypes.Add(new DatabaseColumnRequest(identifierColumnInfo.GetRuntimeName(), destinationDataType));
+                explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
+
+                //make other non transform Types have explicit values
+                foreach(AggregateDimension d in configuration.AggregateDimensions)
+                {
+                    if(d != identifierDimension)
+                    {
+                        //if the user has not changed the SelectSQL and the SelectSQL of the original column is not a transform
+                        if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
+                        {
+                            //then use the origin datatype
+                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
+                        }
+                    }
+                }
             }
             catch (Exception e)
             {
@@ -351,7 +375,11 @@ namespace Rdmp.Core.CohortCreation.Execution
         /// <returns></returns>
         private string GetDestinationType(string data_type, ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
         {
-            var sourceSyntax = cacheableTask.GetDataAccessPoints().Single().GetQuerySyntaxHelper();
+            var accessPoints = cacheableTask.GetDataAccessPoints();
+
+            var server = DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.DataExport, false);
+            
+            var sourceSyntax = server.GetQuerySyntaxHelper();
             var destinationSyntax = queryCachingServer.GetQuerySyntaxHelper();
             
             //if we have a change in syntax e.g. read from Oracle write to Sql Server

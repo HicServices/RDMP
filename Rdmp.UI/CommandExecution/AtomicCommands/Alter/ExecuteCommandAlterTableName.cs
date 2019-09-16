@@ -4,12 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using FAnsi.Discovery;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Sharing.Refactoring;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
 {

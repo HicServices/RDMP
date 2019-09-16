@@ -54,7 +54,7 @@ namespace Rdmp.Core.Repositories
         MEF MEF { get; set; }
 
         /// <summary>
-        /// Stores class comments discovered at startup using NuDoq
+        /// Stores class comments discovered at startup
         /// </summary>
         CommentStore CommentStore { get; set; }
 

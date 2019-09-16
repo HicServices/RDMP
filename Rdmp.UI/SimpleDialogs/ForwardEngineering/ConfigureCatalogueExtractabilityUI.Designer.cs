@@ -100,6 +100,7 @@
             this.olvColumnInfoName.FillsFreeSpace = true;
             this.olvColumnInfoName.Groupable = false;
             this.olvColumnInfoName.Text = "Name";
+            this.olvColumnInfoName.MinimumWidth = 100;
             // 
             // olvExtractionCategory
             // 

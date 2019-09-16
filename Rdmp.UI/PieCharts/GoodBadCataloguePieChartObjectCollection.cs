@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Repositories;
 
 namespace Rdmp.UI.PieCharts
 {
@@ -19,8 +20,81 @@ namespace Rdmp.UI.PieCharts
     {
         public bool ShowLabels { get; set; }
 
+        //Catalogue filters
+        public bool IncludeNonExtractableCatalogues { get;set;}
+        public bool IncludeDeprecatedCatalogues { get; set; }
+        public bool IncludeInternalCatalogues { get; set; }
+        public bool IncludeColdStorageCatalogues { get; set; }
+        public bool IncludeProjectSpecificCatalogues { get; set; }
+
+        //Catalogue item filters
+
+        public bool IncludeNonExtractableCatalogueItems { get; set; }
+        public bool IncludeInternalCatalogueItems { get; set; }
+
+        public bool IncludeDeprecatedCatalogueItems { get; set; }
+
 
         public bool IsSingleCatalogueMode{get { return DatabaseObjects.Any(); }}
+
+
+        /// <summary>
+        /// Returns true if the Catalogue <paramref name="c"/> should be included in the good/bad counts
+        /// based on the flags e.g. <see cref="IncludeDeprecatedCatalogues"/>
+        /// </summary>
+        /// <param name="c"></param>
+        /// <param name="repo"></param>
+        /// <returns></returns>
+        public bool Include(Catalogue c, IDataExportRepository repo)
+        {
+            bool returnValue = true;
+
+            var status = c.GetExtractabilityStatus(repo);
+
+            if(!status.IsExtractable)
+                returnValue &= IncludeNonExtractableCatalogues;
+
+            if(status.IsProjectSpecific)
+                returnValue &= IncludeProjectSpecificCatalogues;           
+
+            if(c.IsColdStorageDataset)
+                returnValue &= IncludeColdStorageCatalogues;
+
+            if(c.IsDeprecated)
+                returnValue &= IncludeDeprecatedCatalogues;
+
+            if(c.IsInternalDataset)
+                returnValue &= IncludeInternalCatalogueItems;
+
+                       
+            return returnValue;
+        }
+
+        /// <summary>
+        /// Returns true if the <see cref="CatalogueItem"/> <paramref name="ci"/> should be included in the good/bad
+        /// counts based on the flags e.g. <see cref="IncludeDeprecatedCatalogueItems"/>
+        /// </summary>
+        /// <param name="ci"></param>
+        /// <returns></returns>
+        public bool Include(CatalogueItem ci)
+        {
+            bool returnValue = true;
+
+            var ei = ci.ExtractionInformation;
+
+            if(ei == null)
+                return IncludeNonExtractableCatalogueItems;
+
+            switch (ei.ExtractionCategory)
+            {
+                case ExtractionCategory.Internal:
+                    return IncludeInternalCatalogueItems;
+                case ExtractionCategory.Deprecated:
+                    return IncludeDeprecatedCatalogueItems;
+                default:
+                    return returnValue;
+            }            
+        }
 
         public Catalogue GetSingleCatalogueModeCatalogue()
         {
@@ -31,7 +105,18 @@ namespace Rdmp.UI.PieCharts
         {
             return Helper.SaveDictionaryToString(new Dictionary<string, string>()
             {
-                {"ShowLabels", ShowLabels.ToString()}
+                {nameof(ShowLabels), ShowLabels.ToString()},
+
+                {nameof(IncludeNonExtractableCatalogues), IncludeNonExtractableCatalogues.ToString()},
+                {nameof(IncludeDeprecatedCatalogues), IncludeDeprecatedCatalogues.ToString()},
+                {nameof(IncludeInternalCatalogues), IncludeInternalCatalogues.ToString()},
+                {nameof(IncludeColdStorageCatalogues), IncludeColdStorageCatalogues.ToString()},
+                {nameof(IncludeProjectSpecificCatalogues), IncludeProjectSpecificCatalogues.ToString()},
+
+                {nameof(IncludeNonExtractableCatalogueItems), IncludeNonExtractableCatalogueItems.ToString()},
+                {nameof(IncludeInternalCatalogueItems), IncludeInternalCatalogueItems.ToString()},
+                {nameof(IncludeDeprecatedCatalogueItems), IncludeDeprecatedCatalogueItems.ToString()},
+                
             });
         }
 
@@ -43,7 +128,17 @@ namespace Rdmp.UI.PieCharts
             if(dict == null || !dict.Any())
                 return;
 
-            ShowLabels = bool.Parse(dict["ShowLabels"]);
+            ShowLabels = Helper.GetBool(dict,nameof(ShowLabels),true);
+
+            IncludeNonExtractableCatalogues = Helper.GetBool(dict, nameof(IncludeNonExtractableCatalogues), true);
+            IncludeDeprecatedCatalogues = Helper.GetBool(dict, nameof(IncludeDeprecatedCatalogues), true);
+            IncludeInternalCatalogues = Helper.GetBool(dict, nameof(IncludeInternalCatalogues), true);
+            IncludeColdStorageCatalogues = Helper.GetBool(dict, nameof(IncludeColdStorageCatalogues), true);
+            IncludeProjectSpecificCatalogues = Helper.GetBool(dict, nameof(IncludeProjectSpecificCatalogues), true);
+
+            IncludeNonExtractableCatalogueItems = Helper.GetBool(dict, nameof(IncludeNonExtractableCatalogueItems), true);
+            IncludeInternalCatalogueItems = Helper.GetBool(dict, nameof(IncludeInternalCatalogueItems), true);
+            IncludeDeprecatedCatalogueItems = Helper.GetBool(dict, nameof(IncludeDeprecatedCatalogueItems), true);
         }
 
         public void SetAllCataloguesMode()

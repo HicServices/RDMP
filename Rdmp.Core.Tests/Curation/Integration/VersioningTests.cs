@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi;
 using MapsDirectlyToDatabaseTable.Versioning;
 using NUnit.Framework;
 using ReusableLibraryCode.Checks;
@@ -17,29 +18,21 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [Test]
         public void MasterDatabaseScriptExecutor_CreateDatabase()
         {
-            string dbName = "CreateANewCatalogueDatabaseWithMasterDatabaseScriptExecutor";
-
-            var database = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(dbName);
+            var db = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
             
-            if(database.Exists())
-                database.Drop();
-
-            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(database);
+            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
             executor.CreateDatabase(@"
 CREATE TABLE Bob
 (
 age int
 )
-GO", "1.0.0.0", new ThrowImmediatelyCheckNotifier());
+GO", "1.0.0.0", new AcceptAllCheckNotifier()); //database already exists so accept creating it into an existing (empty) db
 
-            var versionTable = database.ExpectTable("Version");
-            var bobTable = database.ExpectTable("Bob");
+            var versionTable = db.ExpectTable("Version");
+            var bobTable = db.ExpectTable("Bob");
 
             Assert.IsTrue(versionTable.Exists());
             Assert.IsTrue(bobTable.Exists());
-
-            database.Drop();
         }
-
     }
 }

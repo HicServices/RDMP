@@ -8,6 +8,7 @@ using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
@@ -63,6 +64,8 @@ namespace Rdmp.UI.Menus
 
                 if (cic != null)
                 {
+                    AddGoTo<CohortIdentificationConfiguration>(cic.ID);
+
                     //find other non cohort aggregates (graphs) 
                     var graphsAvailableInCatalogue = CohortSummaryQueryBuilder.GetAllCompatibleSummariesForCohort(aggregate);
 
@@ -139,6 +142,7 @@ namespace Rdmp.UI.Menus
             _aggregate.RootFilterContainer_ID = newContainer.ID;
             _aggregate.SaveToDatabase();
             Publish(_aggregate);
+            Emphasise(newContainer);
         }
     }
 }

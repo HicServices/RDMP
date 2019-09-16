@@ -59,7 +59,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.WindowArranging
                 SetImpossible("You must choose a LoadMetadata.");
 
             base.Execute();
-            Activator.WindowArranger.SetupEditLoadMetadata(this, LoadMetadata);
+            Activator.WindowArranger.SetupEditAnything(this, LoadMetadata);
         }
     }
 }

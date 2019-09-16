@@ -69,6 +69,7 @@ namespace ReusableUIComponents.Performance
             this.olvStackFrame.AspectName = "ToString";
             this.olvStackFrame.FillsFreeSpace = true;
             this.olvStackFrame.Text = "CurrentFrame";
+            this.olvStackFrame.MinimumWidth = 100;
             // 
             // olvQueryCount
             // 

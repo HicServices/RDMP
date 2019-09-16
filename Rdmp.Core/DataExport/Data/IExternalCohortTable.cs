@@ -69,6 +69,36 @@ namespace Rdmp.Core.DataExport.Data
         DiscoveredDatabase Discover();
         
         /// <summary>
+        /// Returns the cohort table (linkage table with the <see cref="PrivateIdentifierField"/> and <see cref="ReleaseIdentifierField"/>)
+        /// </summary>
+        /// <returns></returns>
+        DiscoveredTable DiscoverCohortTable();
+
+        /// <summary>
+        /// Returns the cohort inventory table (has 1 record per cohort which contains name, description, version etc).
+        /// </summary>
+        /// <returns></returns>
+        DiscoveredTable DiscoverDefinitionTable();
+
+        /// <summary>
+        /// Returns the column in the <see cref="DiscoverCohortTable"/> which matches the <see cref="PrivateIdentifierField"/>
+        /// </summary>
+        /// <returns></returns>
+        DiscoveredColumn DiscoverPrivateIdentifier();
+
+        /// <summary>
+        /// Returns the column in the <see cref="DiscoverCohortTable"/> which matches the <see cref="ReleaseIdentifierField"/>
+        /// </summary>
+        /// <returns></returns>
+        DiscoveredColumn DiscoverReleaseIdentifier();
+
+        /// <summary>
+        /// Returns the column in the <see cref="DiscoverCohortTable"/> which matches the <see cref="DefinitionTableForeignKeyField"/>
+        /// </summary>
+        /// <returns></returns>
+        DiscoveredColumn DiscoverDefinitionTableForeignKey();
+
+        /// <summary>
         /// Creates a new record in the <see cref="DefinitionTableName"/> table referenced by this object.
         /// </summary>
         /// <param name="newCohortDefinition"></param>

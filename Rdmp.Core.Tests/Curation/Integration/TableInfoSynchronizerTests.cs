@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.Curation.Integration
 {
@@ -21,13 +22,17 @@ namespace Rdmp.Core.Tests.Curation.Integration
         private DiscoveredServer _server;
         private TableInfo tableInfoCreated;
         private ColumnInfo[] columnInfosCreated;
+        private DiscoveredDatabase _database;
 
         private const string TABLE_NAME = "TableInfoSynchronizerTests";
 
         [SetUp]
-        public void CreateDataset()
+        protected override void SetUp()
         {
-            _server = DiscoveredDatabaseICanCreateRandomTablesIn.Server;
+            base.SetUp();
+
+            _database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+            _server = _database.Server;
 
             using (var con = _server.GetConnection())
             {
@@ -35,7 +40,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 _server.GetCommand("CREATE TABLE " + TABLE_NAME + "(Name varchar(10), Address varchar(500))",con).ExecuteNonQuery();
             }
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable("TableInfoSynchronizerTests");
+            var tbl = _database.ExpectTable("TableInfoSynchronizerTests");
             
             TableInfoImporter importer = new TableInfoImporter(CatalogueRepository,tbl);
             importer.DoImport(out tableInfoCreated,out columnInfosCreated);
@@ -57,7 +62,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
         {
             Assert.AreEqual(TABLE_NAME, tableInfoCreated.GetRuntimeName());
 
-            var table = DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(TABLE_NAME);
+            var table = _database.ExpectTable(TABLE_NAME);
             var colToDrop = table.DiscoverColumn("Address");
             table.DropColumn(colToDrop);
             
@@ -82,7 +87,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
         [TestCase(false)]
         public void SynchronizationTests_ColumnAdded(bool acceptChanges)
         {
-            using (var con = DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+            
+            using (var con = _database.Server.GetConnection())
             {
                 con.Open();
                 _server.GetCommand("ALTER TABLE " + TABLE_NAME + " ADD Birthday datetime not null", con).ExecuteNonQuery();
@@ -123,7 +129,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
                 Assert.AreEqual(2, cataItems.Length);
                 Assert.AreEqual(2, extractionInformations.Length);
             
-                using (var con = DiscoveredDatabaseICanCreateRandomTablesIn.Server.GetConnection())
+                using (var con = _server.GetConnection())
                 {
                     con.Open();
                     _server.GetCommand("ALTER TABLE " + TABLE_NAME + " ADD Birthday datetime not null", con).ExecuteNonQuery();
@@ -155,25 +161,33 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
 
 
-
-        [TearDown]
-        public void DropTables()
+        /// <summary>
+        /// RDMPDEV-1548 This test explores an issue in v3.1 RDMP where synchronization of a TableInfo would fail if there were other tables
+        /// in the database which contained brackets in the table name
+        /// </summary>
+        [Test]
+        public void Test_SynchronizeTable_BracketsInTableName()
         {
-            var credentials = (DataAccessCredentials)tableInfoCreated.GetCredentialsIfExists(DataAccessContext.InternalDataProcessing);
+            var db = _database;
 
-            //if credentials were created, we should only be one user
-            if(credentials != null)
-                Assert.AreEqual(1,credentials.GetAllTableInfosThatUseThis().Count());
-            
-            //delete the table
-            tableInfoCreated.DeleteInDatabase();
+            //FAnsi doesn't let you create tables with brackets in the names so we have to do it manually
+            using(var con = db.Server.GetConnection())
+            {
+                con.Open();
+                var cmd = db.Server.GetCommand("CREATE TABLE [BB (ff)] (A int not null)",con);
+                cmd.ExecuteNonQuery();
+            }
 
-            //also delete any credentials created as part of TableInfoImport
-            if(credentials != null)
-                credentials.DeleteInDatabase();
+            var tbl = db.CreateTable("FF",
+                new DatabaseColumnRequest[]
+                {
+                    new DatabaseColumnRequest("F",new DatabaseTypeRequest(typeof(int)))
+                });
 
-            DiscoveredDatabaseICanCreateRandomTablesIn.ExpectTable(TABLE_NAME).Drop();
+            Import(tbl,out TableInfo ti,out _);
+
+            var s = new TableInfoSynchronizer(ti);
+            s.Synchronize(new ThrowImmediatelyCheckNotifier());
         }
-
     }
 }

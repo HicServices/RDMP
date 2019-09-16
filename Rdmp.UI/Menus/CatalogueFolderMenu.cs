@@ -16,7 +16,7 @@ namespace Rdmp.UI.Menus
         {
             //Things that are always visible regardless
             Add(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator));
-            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true));
+            Add(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator));
             Add(new ExecuteCommandCreateNewEmptyCatalogue(_activator));
         }
     }

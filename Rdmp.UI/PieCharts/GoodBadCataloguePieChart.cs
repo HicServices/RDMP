@@ -5,21 +5,21 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DashboardTabs.Construction;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
-using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.SingleControlForms;
 
 namespace Rdmp.UI.PieCharts
 {
@@ -29,22 +29,59 @@ namespace Rdmp.UI.PieCharts
     /// <para>Each of these can either be displayed for a single catalogue or as a combined total across all active catalogues (not deprecated / internal etc)</para>
     /// 
     /// </summary>
-    public partial class GoodBadCataloguePieChart : UserControl,IDashboardableControl
+    public partial class GoodBadCataloguePieChart : RDMPUserControl, IDashboardableControl
     {
+        private ToolStripButton btnSingleCatalogue = new ToolStripButton("Single",CatalogueIcons.Catalogue) { Name = "btnSingleCatalogue" };
+        private ToolStripButton btnAllCatalogues = new ToolStripButton("All",CatalogueIcons.AllCataloguesUsedByLoadMetadataNode){Name= "btnAllCatalogues" };
+        private ToolStripButton btnRefresh = new ToolStripButton("Refresh",FamFamFamIcons.text_list_bullets) { Name = "btnRefresh" };
+        private ToolStripLabel toolStripLabel1 = new ToolStripLabel("Type:"){Name= "toolStripLabel1" };
+        private ToolStripButton btnShowLabels = new ToolStripButton("Labels",FamFamFamIcons.text_align_left) { Name = "btnShowLabels", CheckOnClick = true };
+
+        private List<ToolStripMenuItem> _flagOptions = new List<ToolStripMenuItem>();
+
         public GoodBadCataloguePieChart()
         {
             InitializeComponent();
-            
-            btnRefresh.Image = FamFamFamIcons.arrow_refresh;
-            btnShowLabels.Image = FamFamFamIcons.text_list_bullets;
+
+            btnViewDataTable.Image = CatalogueIcons.TableInfo;
+
+            this.btnAllCatalogues.Click += new System.EventHandler(this.btnAllCatalogues_Click);
+            this.btnSingleCatalogue.Click += new System.EventHandler(this.btnSingleCatalogue_Click);
+            this.btnShowLabels.CheckStateChanged += new System.EventHandler(this.btnShowLabels_CheckStateChanged);
+            this.btnRefresh.Click += new System.EventHandler(this.btnRefresh_Click);
             
             //put edit mode on for the designer
             NotifyEditModeChange(false);
         }
-        
+
+        private void SetupFlags()
+        {
+            if(!firstTime)
+                return;
+
+            AddFlag("Non Extractable Catalogues", c=> c.IncludeNonExtractableCatalogues, (c,r) => c.IncludeNonExtractableCatalogues= r);
+            AddFlag("Deprecated Catalogues", c => c.IncludeDeprecatedCatalogues, (c, r) => c.IncludeDeprecatedCatalogues = r);
+            AddFlag("Internal Catalogues", c => c.IncludeInternalCatalogues, (c, r) => c.IncludeInternalCatalogues = r);
+            AddFlag("Cold Storage Catalogues", c => c.IncludeColdStorageCatalogues, (c, r) => c.IncludeColdStorageCatalogues = r);
+            AddFlag("Project Specific Catalogues", c => c.IncludeProjectSpecificCatalogues, (c, r) => c.IncludeProjectSpecificCatalogues = r);
+
+            AddFlag("Non Extractable CatalogueItems", c => c.IncludeNonExtractableCatalogueItems, (c, r) => c.IncludeNonExtractableCatalogueItems = r);
+            AddFlag("Internal Catalogue Items", c => c.IncludeInternalCatalogueItems, (c, r) => c.IncludeInternalCatalogueItems = r);
+            AddFlag("Deprecated Catalogue Items", c => c.IncludeDeprecatedCatalogueItems, (c, r) => c.IncludeDeprecatedCatalogueItems = r);
+            firstTime = false;
+        }
+
+        private void AddFlag(string caption, Func<GoodBadCataloguePieChartObjectCollection,bool> getProp, Action<GoodBadCataloguePieChartObjectCollection,bool> setProp)
+        {
+            var btn = new ToolStripMenuItem(caption);
+            btn.Checked = getProp(_collection);
+            btn.CheckedChanged += (sender,e) =>{setProp(_collection,((ToolStripMenuItem)sender).Checked);};
+            btn.CheckedChanged += (s, e) => GenerateChart();
+            btn.CheckOnClick = true;
+            _flagOptions.Add(btn);
+        }
         private DashboardControl _dashboardControlDatabaseRecord;
         private GoodBadCataloguePieChartObjectCollection _collection;
-        private IActivateItems _activator;
         
         private void GenerateChart()
         {
@@ -63,23 +100,9 @@ namespace Rdmp.UI.PieCharts
         {
             try
             {
-                ExtractionInformation[] allExtractionInformation;
+                CatalogueItem[] catalogueItems = GetCatalogueItems();
 
-                if (!_collection.IsSingleCatalogueMode)
-                {
-                    //get the active (non depricated etc) Catalogues
-                    var activeCatalogues = _activator.CoreChildProvider.AllCatalogues.Where(ShouldHaveDescription).ToArray();
-                        
-                    //if there are some
-                    if(activeCatalogues.Any())
-                        allExtractionInformation = activeCatalogues.SelectMany(c=>c.GetAllExtractionInformation(ExtractionCategory.Any)).ToArray();//get the extractable columns
-                    else
-                        allExtractionInformation = new ExtractionInformation[0];//there weren't any so Catalogues so wont be any ExtractionInformationsEither
-                }
-                else
-                    allExtractionInformation = _collection.GetSingleCatalogueModeCatalogue().GetAllExtractionInformation(ExtractionCategory.Any);
-
-                if (!allExtractionInformation.Any())
+                if (!catalogueItems.Any())
                 {
                     chart1.DataSource = null;
                     chart1.Visible = false;
@@ -91,8 +114,8 @@ namespace Rdmp.UI.PieCharts
                 int countPopulated = 0;
                 int countNotPopulated = 0;
                     
-                foreach (ExtractionInformation information in allExtractionInformation)
-                    if (string.IsNullOrWhiteSpace(information.CatalogueItem.Description))
+                foreach (CatalogueItem ci in catalogueItems)
+                    if (string.IsNullOrWhiteSpace(ci.Description))
                         countNotPopulated++;
                     else
                         countPopulated++;
@@ -100,7 +123,6 @@ namespace Rdmp.UI.PieCharts
                 DataTable dt = new DataTable();
                 dt.Columns.Add("Count");
                 dt.Columns.Add("State");
-
 
                 dt.Rows.Add(new object[] { countNotPopulated, "Missing (" + countNotPopulated + ")" });
                 dt.Rows.Add(new object[] { countPopulated, "Populated (" + countPopulated + ")" });
@@ -119,9 +141,20 @@ namespace Rdmp.UI.PieCharts
             }
         }
 
-        public bool ShouldHaveDescription(Catalogue c)
+        private CatalogueItem[] GetCatalogueItems()
         {
-            return !c.IsColdStorageDataset && !c.IsInternalDataset && !c.IsDeprecated && !c.IsProjectSpecific(_activator.RepositoryLocator.DataExportRepository);
+            if (!_collection.IsSingleCatalogueMode)
+            {
+                var catalogues = Activator.CoreChildProvider.AllCatalogues.Where(c => _collection.Include(c, Activator.RepositoryLocator.DataExportRepository)).ToArray();
+
+                //if there are some
+                if (catalogues.Any())
+                    return catalogues.SelectMany(c => c.CatalogueItems).Where(ci => _collection.Include(ci)).ToArray();//get the extractable columns
+                else
+                    return new CatalogueItem[0];//there weren't any so Catalogues so wont be any ExtractionInformationsEither
+            }
+            else
+                return  _collection.GetSingleCatalogueModeCatalogue().CatalogueItems;
         }
 
         public void RefreshBus_RefreshObject(object sender, RefreshObjectEventArgs e)
@@ -130,20 +163,31 @@ namespace Rdmp.UI.PieCharts
         }
 
         bool _bLoading;
+        private bool firstTime = true;
+
         public void SetCollection(IActivateItems activator, IPersistableObjectCollection collection)
         {
             _bLoading = true;
-            _activator = activator;
+            SetItemActivator(activator);
+
             _collection = (GoodBadCataloguePieChartObjectCollection)collection;
 
-            btnAllCatalogues.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.CatalogueItemsNode);
-            btnSingleCatalogue.Image = _activator.CoreIconProvider.GetImage(RDMPConcept.Catalogue, OverlayKind.Link);
+            if(firstTime)
+                SetupFlags();
 
             btnAllCatalogues.Checked = !_collection.IsSingleCatalogueMode;
             btnSingleCatalogue.Checked = _collection.IsSingleCatalogueMode;
             btnShowLabels.Checked = _collection.ShowLabels;
 
-            activator.Theme.ApplyTo(toolStrip1);
+            CommonFunctionality.Add(btnAllCatalogues);
+            CommonFunctionality.Add(toolStripLabel1);
+            CommonFunctionality.Add(btnAllCatalogues);
+            CommonFunctionality.Add(btnSingleCatalogue);
+            CommonFunctionality.Add(btnShowLabels);
+            CommonFunctionality.Add(btnRefresh);
+
+            foreach(var mi in _flagOptions)
+                CommonFunctionality.AddToMenu(mi);
 
             GenerateChart();
             _bLoading = false;
@@ -172,15 +216,15 @@ namespace Rdmp.UI.PieCharts
             var l = new Point(Margin.Left,Margin.Right);
             var s = new Size(Width - Margin.Horizontal, Height - Margin.Vertical);
 
+            CommonFunctionality.ToolStrip.Visible = isEditModeOn;
+
             if (isEditModeOn)
             {
-                Controls.Add(toolStrip1);
                 gbWhatThisIs.Location = new Point(l.X, l.Y + 25);//move it down 25 to allow space for tool bar
                 gbWhatThisIs.Size = new Size(s.Width, s.Height - 25);//and adjust height accordingly
             }
             else
             {
-                Controls.Remove(toolStrip1);
                 gbWhatThisIs.Location = l;
                 gbWhatThisIs.Size = s;
             }
@@ -197,7 +241,7 @@ namespace Rdmp.UI.PieCharts
 
         private void btnSingleCatalogue_Click(object sender, EventArgs e)
         {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
+            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), false,false);
 
             if (dialog.ShowDialog() == DialogResult.OK)
             {
@@ -235,24 +279,8 @@ namespace Rdmp.UI.PieCharts
 
         private void btnViewDataTable_Click(object sender, EventArgs e)
         {
-            DataTable dt = new DataTable();
-            dt.Columns.Add("Catalogue");
-            dt.Columns.Add("Count Missing Descriptions");
-            dt.Columns.Add("Missing List");
-            
-            foreach (IGrouping<Catalogue, ExtractionInformation> g in _activator.CoreChildProvider.AllExtractionInformations.GroupBy(ei=>ei.CatalogueItem.Catalogue))
-            {
-                if (!ShouldHaveDescription(g.Key))
-                    continue;
-                
-                var missing = g.Where(ei => string.IsNullOrWhiteSpace(ei.CatalogueItem.Description)).ToArray();
-                dt.Rows.Add(g.Key.Name, missing.Count(), string.Join(",",missing.Select(m=>m.CatalogueItem.Name)));
-            }
-
-            DataTableViewerUI dtv = new DataTableViewerUI(dt,"Catalogue Items Missing Descriptions");
-
-            var form = new SingleControlForm(dtv, true);
-            form.Show();
+            var cmd = new ExecuteCommandShow(Activator, GetCatalogueItems(),1);
+            cmd.Execute();
         }
     }
 }

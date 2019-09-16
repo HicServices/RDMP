@@ -8,9 +8,9 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Windows.Forms;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -37,13 +37,26 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             {
                 if(YesNo("Delete " + _deletables.Count + " Items?","Delete Items"))
                 {
-                    foreach(IDeleteable d in _deletables)
-                        d.DeleteInDatabase();
-                    
                     var publishMe = _deletables.OfType<DatabaseEntity>().First();
 
-                    if(publishMe != null)
-                        Publish(publishMe);
+                    try
+                    {
+                        foreach (IDeleteable d in _deletables)
+                            if (!(d is DatabaseEntity exists) || exists.Exists()) //don't delete stuff that doesn't exist!
+                                d.DeleteInDatabase();
+                    }
+                    finally
+                    {
+                        if (publishMe != null)
+                            try
+                            {
+                                Publish(publishMe);
+                            }
+                            catch(Exception ex)
+                            {
+                                GlobalError("Failed to publish after delete", ex);
+                            }
+                    }
                 }
             }
         }

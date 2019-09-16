@@ -33,8 +33,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private JobDateGenerationStrategyFactory _factory;
 
         [SetUp]
-        public void up()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataWriter));
             RepositoryLocator.CatalogueRepository.MEF.AddTypeToCatalogForTesting(typeof(TestDataInventor));
 
@@ -193,14 +195,6 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 pipeAssembler.Destroy();
                 projDir.RootPath.Delete(true);
             }
-        }
-
-        [TearDown]
-        public void down()
-        {
-            _cp.DeleteInDatabase();
-            _lp.DeleteInDatabase();
-            _lmd.DeleteInDatabase();
         }
     }
 }

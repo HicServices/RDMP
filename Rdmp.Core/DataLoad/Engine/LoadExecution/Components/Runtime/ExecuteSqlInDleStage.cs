@@ -8,7 +8,6 @@ using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Engine.Job;
-using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Progress;
 using System;

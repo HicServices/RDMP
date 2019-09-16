@@ -10,7 +10,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
+using TypeGuesser;
 
 namespace ReusableLibraryCode
 {
@@ -27,14 +27,16 @@ namespace ReusableLibraryCode
                 writer.WriteLine(String.Join(",", headerValues));
             }
             
-            var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new DataTypeComputer(c));
-
+            var typeDictionary = sourceTable.Columns.Cast<DataColumn>().ToDictionary(c => c, c => new Guesser());
+            foreach (var kvp in typeDictionary)
+                kvp.Value.AdjustToCompensateForValues(kvp.Key);
+            
             foreach (DataRow row in sourceTable.Rows)
             {
                 var line = new List<string>();
                 
                 foreach (DataColumn col in sourceTable.Columns)
-                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].CurrentEstimate == typeof(DateTime), escaper)));
+                    line.Add(QuoteValue(GetStringRepresentation(row[col], typeDictionary[col].Guess.CSharpType == typeof(DateTime), escaper)));
                 
                 writer.WriteLine(String.Join(",", line));
             }

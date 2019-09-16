@@ -4,8 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
-using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi.Naming;
@@ -178,14 +176,12 @@ namespace Rdmp.Core.Sharing.Refactoring
 
         /// <summary>
         /// Changes the name of the <paramref name="tableInfo"/> to a new name (which must be fully qualified). This will also
-        /// update any <see cref="ColumnInfo"/> and <see cref="ExtractionInformation"/> objects declared against the <see cref="tableInfo"/>.
+        /// update any <see cref="ColumnInfo"/> and <see cref="ExtractionInformation"/> objects declared against the <paramref name="tableInfo"/>.
         /// 
-        /// <para>If you have transforms etc in <see cref="ExtractionInformation"/> then these may not be succesfully refactored and should
-        /// be returned in <paramref name="unchanged"/></para>
+        /// <para>If you have transforms etc in <see cref="ExtractionInformation"/> then these may not be successfully refactored</para>
         /// </summary>
         /// <param name="tableInfo"></param>
         /// <param name="newFullyQualifiedTableName"></param>
-        /// <param name="unchanged"></param>
         /// <returns>Total number of changes made in columns and table name</returns>
         public int RefactorTableName(ITableInfo tableInfo, string newFullyQualifiedTableName)
         {

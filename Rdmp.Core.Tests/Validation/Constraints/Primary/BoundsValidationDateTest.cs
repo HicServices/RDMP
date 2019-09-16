@@ -10,7 +10,6 @@ using NUnit.Framework;
 using Rdmp.Core.Validation;
 using Rdmp.Core.Validation.Constraints;
 using Rdmp.Core.Validation.Constraints.Secondary;
-using Tests.Common;
 
 namespace Rdmp.Core.Tests.Validation.Constraints.Primary
 {
@@ -21,8 +20,10 @@ namespace Rdmp.Core.Tests.Validation.Constraints.Primary
         private Dictionary<string, object> _d;
 
         [SetUp]
-        public void SetUp()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             _d = new Dictionary<string, object> {{"somedate", new DateTime(2013, 06, 13)}};
         }
 

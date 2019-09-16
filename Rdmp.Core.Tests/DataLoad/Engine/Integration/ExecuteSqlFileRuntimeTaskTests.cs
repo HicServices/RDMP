@@ -37,7 +37,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             dt.Columns.Add("Lawl");
             dt.Rows.Add(new object []{2});
 
-            var db = GetCleanedServer(dbType,true);
+            var db = GetCleanedServer(dbType);
 
             var tbl = db.CreateTable("Fish",dt);
             
@@ -70,7 +70,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             dt.Columns.Add("Lawl");
             dt.Rows.Add(new object[] { 2 });
 
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             var tbl = db.CreateTable("Fish", dt);
 
@@ -112,7 +112,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             dt.Columns.Add("Lawl");
             dt.Rows.Add(new object[] { 2 });
 
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             var tbl = db.CreateTable("Fish", dt);
 
@@ -166,7 +166,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
             dt.Columns.Add("Lawl");
             dt.Rows.Add(new object[] { 2 });
 
-            var db = GetCleanedServer(dbType, true);
+            var db = GetCleanedServer(dbType);
 
             var tbl = db.CreateTable("Fish", dt);
 

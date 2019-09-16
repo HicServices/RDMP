@@ -73,7 +73,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             Catalogue parent = new Catalogue(CatalogueRepository, "KONGOR");
             CatalogueItem child = new CatalogueItem(CatalogueRepository, parent, "KONGOR_SUPERKING")
             {
-                Agg_method = "Adding up",
+                Agg_method = "Adding SetUp",
                 Comments = "do not change amagad super secret!",
                 Limitations = "Extreme limitaitons",
                 Description =
@@ -111,7 +111,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             CatalogueItem child = new CatalogueItem(CatalogueRepository, parent, "KONGOR_SUPERKING")
             {
-                Agg_method = "Adding up",
+                Agg_method = "Adding SetUp",
                 Comments = "do not change amagad super secret!",
                 Limitations = "Extreme limitaitons",
                 Description =

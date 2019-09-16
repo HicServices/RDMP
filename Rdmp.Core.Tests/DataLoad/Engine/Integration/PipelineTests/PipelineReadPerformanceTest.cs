@@ -17,19 +17,15 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests
         private BulkTestsData _bulkTestData;
         
         [OneTimeSetUp]
-        public void SetupBulkTestData()
+        protected override void OneTimeSetUp()
         {
-            _bulkTestData = new BulkTestsData(CatalogueRepository, DiscoveredDatabaseICanCreateRandomTablesIn);
+            base.OneTimeSetUp();
+
+            _bulkTestData = new BulkTestsData(CatalogueRepository, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
             _bulkTestData.SetupTestData();
 
         }
-
-        [OneTimeTearDown]
-        public void AfterAllTests()
-        {
-            _bulkTestData.Destroy();
-        }
-
+        
         [Test]
         public void BulkTestDataContainsExpectedNumberOfRows()
         {

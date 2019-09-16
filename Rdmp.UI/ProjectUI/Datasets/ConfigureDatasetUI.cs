@@ -232,69 +232,103 @@ namespace Rdmp.UI.ProjectUI.Datasets
             //compare regular columns on their ID in the catalogue
             return selectedColumns.OfType<ExtractableColumn>().Any(ec => ec.CatalogueExtractionInformation_ID == info.ID);
         }
-
-
-        /// <summary>
-        /// The user has selected an extractable thing in the catalogue and opted to include it in the extraction
-        /// So we have to convert it to an ExtractableColumn (which has configuration specific stuff - and lets
-        /// data analyst override stuff for this extraction only)
-        /// 
-        /// <para>Then add it to the right hand list</para>
-        /// </summary>
-        /// <param name="item"></param>
-        private ExtractableColumn AddColumnToExtraction(IColumn item)
-        {
-            IRevertable r = item as IRevertable;
-            
-            //if the column is out of date
-            if(r != null && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
-                r.RevertToDatabaseState();//get a fresh copy
-
-            ExtractableColumn addMe = _config.AddColumnToExtraction(_dataSet,item);
-            olvSelected.AddObject(addMe);
-            
-            RefreshDisabledObjectStatus();
-            SortSelectedByOrder();
-
-            return addMe;
-        }
+                      
 
         private void btnInclude_Click(object sender, EventArgs e)
         {
-            foreach (IColumn item in olvAvailable.SelectedObjects)
-                AddColumnToExtraction(item);
-
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
+            Include(olvAvailable.SelectedObjects.Cast<IColumn>().ToArray());
         }
 
         private void btnExclude_Click(object sender, EventArgs e)
         {
-            foreach (ExtractableColumn item in olvSelected.SelectedObjects)
-                RemoveColumnFromExtraction(item);
-
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
+            if(olvSelected.SelectedObjects != null)
+                Exclude(olvSelected.SelectedObjects.Cast<ConcreteColumn>().ToArray());
         }
 
         private void btnExcludeAll_Click(object sender, EventArgs e)
         {
-            foreach (ConcreteColumn c in olvSelected.Objects.OfType<ConcreteColumn>().ToArray())
-                RemoveColumnFromExtraction(c);
-
-            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(_config));
+            ExcludeAll();
         }
 
-        private void RemoveColumnFromExtraction(ConcreteColumn concreteColumn)
+        /// <summary>
+        /// Removes all currently selected <see cref="ExtractableColumn"/> from the <see cref="SelectedDataSets"/> (leaving it empty)
+        /// </summary>
+        public void ExcludeAll()
         {
-            if (concreteColumn != null)
+            Exclude(olvSelected.Objects.OfType<ConcreteColumn>().ToArray());
+        }
+
+        /// <summary>
+        /// Adds all available source columns in the <see cref="Catalogue"/> into the extraction
+        /// </summary>
+        public void IncludeAll()
+        {
+            Include(olvAvailable.Objects.OfType<ConcreteColumn>().Where(o=> !olvAvailable.IsDisabled(o)).ToArray());
+        }
+        private void Exclude(params ConcreteColumn[] concreteColumn)
+        {
+            olvSelected.BeginUpdate();
+            try
             {
-                concreteColumn.DeleteInDatabase();
-                olvSelected.RemoveObject(concreteColumn);
+                foreach (ConcreteColumn c in concreteColumn)
+                    if(c != null)
+                    {
+                        c.DeleteInDatabase();
+                        olvSelected.RemoveObject(c);
+                    }
+            }
+            finally
+            {
+                olvSelected.EndUpdate();
             }
 
             RefreshDisabledObjectStatus();
             SortSelectedByOrder();
+
+            Publish(_config);
         }
 
+        /// <summary>
+        /// The user has selected an extractable thing in the catalogue and opted to include it in the extraction
+        /// So we have to convert it to an <see cref="ExtractableColumn"/> (which has configuration specific stuff - and lets
+        /// data analyst override stuff for this extraction only)
+        /// 
+        /// <para>Then add it to the right hand list</para>
+        /// </summary>
+        /// <param name="columns"></param>
+        private void Include(params IColumn[] columns)
+        {
+            olvSelected.BeginUpdate();
+            try
+            {
+                //for each column we are adding
+                foreach (IColumn c in columns)
+                {
+                    //make sure it is up to date with database
+
+                    IRevertable r = c as IRevertable;
+
+                    //if the column is out of date
+                    if (r != null && r.HasLocalChanges().Evaluation == ChangeDescription.DatabaseCopyDifferent)
+                        r.RevertToDatabaseState();//get a fresh copy
+
+                    //add to the config
+                    ExtractableColumn addMe = _config.AddColumnToExtraction(_dataSet, c);
+
+                    //update on the UI
+                    olvSelected.AddObject(addMe);
+                }
+            }
+            finally
+            {
+                olvSelected.EndUpdate();
+            }
+
+            RefreshDisabledObjectStatus();
+            SortSelectedByOrder();
+
+            Publish(_config);
+        }
         public override void SetDatabaseObject(IActivateItems activator, SelectedDataSets databaseObject)
         {
             base.SetDatabaseObject(activator,databaseObject);
@@ -376,14 +410,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
         private void HandleDropAdding(ModelDropEventArgs e)
         {
             if (e.SourceModels != null)
-                foreach (IColumn sourceModel in e.SourceModels.OfType<IColumn>())
-                    if (!IsAlreadySelected(sourceModel))
-                    {
-                        var added = AddColumnToExtraction(sourceModel);
-                        HandleReorder(added,e.TargetModel as IOrderable,e.DropTargetLocation);
-                    }
-            
-            RefreshDisabledObjectStatus();
+                Include(e.SourceModels.OfType<IColumn>().ToArray());
         }
 
         private void HandleReorder(ModelDropEventArgs e)
@@ -667,6 +694,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
 
             UpdateJoins();
         }
+
     }
 
     [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ConfigureDatasetUI_Design, UserControl>))]

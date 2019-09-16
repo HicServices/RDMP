@@ -8,6 +8,7 @@ using System;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
+using FAnsi.Extensions;
 using FAnsi.Naming;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -102,6 +103,9 @@ namespace Rdmp.Core.QueryCaching.Aggregation
             var operation = arguments.Operation;
 
             DeleteCacheEntryIfAny(configuration, operation);
+
+            //Do not change Types of source columns unless there is an explicit override
+            arguments.Results.SetDoNotReType(true);
 
             using (var con = _server.GetConnection())
             {

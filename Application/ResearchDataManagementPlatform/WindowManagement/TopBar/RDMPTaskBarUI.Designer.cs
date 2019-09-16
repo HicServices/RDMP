@@ -39,16 +39,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnTables = new System.Windows.Forms.ToolStripButton();
             this.btnLoad = new System.Windows.Forms.ToolStripButton();
             this.toolStripSeparator2 = new System.Windows.Forms.ToolStripSeparator();
-            this.toolStripLabel1 = new System.Windows.Forms.ToolStripLabel();
-            this.cbxDashboards = new System.Windows.Forms.ToolStripComboBox();
-            this.toolStripSeparator3 = new System.Windows.Forms.ToolStripSeparator();
             this.toolStripSeparator = new System.Windows.Forms.ToolStripSeparator();
             this.toolStrip1 = new System.Windows.Forms.ToolStrip();
             this.btnBack = new System.Windows.Forms.ToolStripSplitButton();
             this.btnForward = new System.Windows.Forms.ToolStripButton();
             this.btnFavourites = new System.Windows.Forms.ToolStripButton();
             this.btnSavedCohorts = new System.Windows.Forms.ToolStripButton();
-            this.btnDeleteDash = new System.Windows.Forms.ToolStripButton();
             this.toolStripLabel2 = new System.Windows.Forms.ToolStripLabel();
             this.cbxLayouts = new System.Windows.Forms.ToolStripComboBox();
             this.btnSaveWindowLayout = new System.Windows.Forms.ToolStripButton();
@@ -120,24 +116,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.toolStripSeparator2.Name = "toolStripSeparator2";
             this.toolStripSeparator2.Size = new System.Drawing.Size(6, 25);
             // 
-            // toolStripLabel1
-            // 
-            this.toolStripLabel1.Name = "toolStripLabel1";
-            this.toolStripLabel1.Size = new System.Drawing.Size(64, 22);
-            this.toolStripLabel1.Text = "Dashboard";
-            // 
-            // cbxDashboards
-            // 
-            this.cbxDashboards.Name = "cbxDashboards";
-            this.cbxDashboards.Size = new System.Drawing.Size(150, 25);
-            this.cbxDashboards.DropDownClosed += new System.EventHandler(this.cbx_DropDownClosed);
-            this.cbxDashboards.SelectedIndexChanged += new System.EventHandler(this.cbx_SelectedIndexChanged);
-            // 
-            // toolStripSeparator3
-            // 
-            this.toolStripSeparator3.Name = "toolStripSeparator3";
-            this.toolStripSeparator3.Size = new System.Drawing.Size(6, 25);
-            // 
             // toolStripSeparator
             // 
             this.toolStripSeparator.Name = "toolStripSeparator";
@@ -159,10 +137,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnTables,
             this.btnLoad,
             this.toolStripSeparator2,
-            this.toolStripLabel1,
-            this.cbxDashboards,
-            this.btnDeleteDash,
-            this.toolStripSeparator3,
             this.toolStripLabel2,
             this.cbxLayouts,
             this.btnSaveWindowLayout,
@@ -214,17 +188,6 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             this.btnSavedCohorts.Size = new System.Drawing.Size(103, 22);
             this.btnSavedCohorts.Text = "Saved Cohorts";
             this.btnSavedCohorts.Click += new System.EventHandler(this.ToolboxButtonClicked);
-            // 
-            // btnDeleteDash
-            // 
-            this.btnDeleteDash.DisplayStyle = System.Windows.Forms.ToolStripItemDisplayStyle.Image;
-            this.btnDeleteDash.Enabled = false;
-            this.btnDeleteDash.Image = ((System.Drawing.Image)(resources.GetObject("btnDeleteDash.Image")));
-            this.btnDeleteDash.ImageTransparentColor = System.Drawing.Color.Magenta;
-            this.btnDeleteDash.Name = "btnDeleteDash";
-            this.btnDeleteDash.Size = new System.Drawing.Size(23, 22);
-            this.btnDeleteDash.Text = "Delete Dashboard";
-            this.btnDeleteDash.Click += new System.EventHandler(this.btnDelete_Click);
             // 
             // toolStripLabel2
             // 
@@ -290,16 +253,12 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
         private System.Windows.Forms.ToolStripButton btnTables;
         private System.Windows.Forms.ToolStripButton btnLoad;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator2;
-        private System.Windows.Forms.ToolStripLabel toolStripLabel1;
-        private System.Windows.Forms.ToolStripComboBox cbxDashboards;
-        private System.Windows.Forms.ToolStripSeparator toolStripSeparator3;
         private System.Windows.Forms.ToolStripSeparator toolStripSeparator;
         private System.Windows.Forms.ToolStrip toolStrip1;
         private System.Windows.Forms.ToolStripButton btnSavedCohorts;
         private System.Windows.Forms.ToolStripButton btnFavourites;
         private System.Windows.Forms.ToolStripLabel toolStripLabel2;
         private System.Windows.Forms.ToolStripComboBox cbxLayouts;
-        private System.Windows.Forms.ToolStripButton btnDeleteDash;
         private System.Windows.Forms.ToolStripButton btnDeleteLayout;
         private System.Windows.Forms.ToolStripButton btnSaveWindowLayout;
         private System.Windows.Forms.ToolStripButton btnForward;

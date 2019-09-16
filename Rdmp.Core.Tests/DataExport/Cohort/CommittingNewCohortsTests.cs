@@ -28,8 +28,10 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
         private string projName = "MyProj";
 
         [SetUp]
-        public void GenerateFileToLoad()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             filename = Path.Combine(TestContext.CurrentContext.TestDirectory, "CommittingNewCohorts.csv");
 
             StreamWriter sw = new StreamWriter(filename);    
@@ -40,15 +42,6 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             sw.Close();
         }
 
-        [TearDown]
-        public void CleanupProjects()
-        {
-            foreach (var c in DataExportRepository.GetAllObjects<ExtractableCohort>().Where(c => c.GetExternalData().ExternalDescription.Equals("CommittingNewCohorts")))
-                c.DeleteInDatabase();
-
-            foreach (Project p in DataExportRepository.GetAllObjects<Project>().Where(p => p.Name.Equals(projName)))
-                p.DeleteInDatabase();
-        }
 
         [Test]
         public void CommittingNewCohortFile_IDPopulated_Throws()

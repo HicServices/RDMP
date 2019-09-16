@@ -81,7 +81,10 @@ namespace ReusableLibraryCode.VisualStudioSolutionFileProcessing
                     var thingHoldingIt = split[1].Trim();
 
                     var folderInside = Folders.SingleOrDefault(f => f.Guid.Equals(thingInside));
-                    var folderHoldingIt = Folders.Single(f => f.Guid.Equals(thingHoldingIt));
+                    var folderHoldingIt = Folders.SingleOrDefault(f => f.Guid.Equals(thingHoldingIt));
+
+                    if(folderHoldingIt == null)
+                        continue;
 
                     if (folderInside != null)
                         folderHoldingIt.ChildrenFolders.Add(folderInside);

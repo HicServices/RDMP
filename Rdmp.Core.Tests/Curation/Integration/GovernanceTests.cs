@@ -131,30 +131,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             
         }
 
-
-        [TearDown]
-        public void ClearTempObjects()
-        {
-            foreach (GovernancePeriod gov in toCleanup.ToArray())
-                try
-                {
-                    foreach (var governed in gov.GovernedCatalogues)
-                    {
-                        gov.DeleteGovernanceRelationshipTo(governed);
-                        governed.DeleteInDatabase();
-                    }
-                    
-
-                    gov.DeleteInDatabase();
-                    toCleanup.Remove(gov);
-                }
-                catch (Exception)
-                {
-                    Console.WriteLine("Could not delete object " + gov + " nevermind, unit test probably deleted it itself or something");
-                }
-
-            
-        }
+                
         List<GovernancePeriod> toCleanup = new List<GovernancePeriod>();
         private GovernancePeriod GetGov(ICatalogueRepository repo = null)
         {

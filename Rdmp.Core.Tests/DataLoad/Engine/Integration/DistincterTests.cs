@@ -29,7 +29,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql)]
         public void TestDistincter_Duplicates(DatabaseType type)
         {
-            var db = GetCleanedServer(type, "TestCoalescer",true);
+            var db = GetCleanedServer(type, "TestCoalescer");
 
             int batchCount = 1000;
 
@@ -84,7 +84,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [TestCase(DatabaseType.MySql)]
         public void TestDistincter_NoDuplicates(DatabaseType type)
         {
-            var db = GetCleanedServer(type, "TestCoalescer",true);
+            var db = GetCleanedServer(type, "TestCoalescer");
 
             int batchCount = 1000;
 

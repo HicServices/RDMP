@@ -23,8 +23,9 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
         int _timeoutBefore;
 
         [SetUp]
-        public void SetUpDeleteRemnants()
+        protected override void SetUp()
         {
+            base.SetUp();
             
             _timeoutBefore = DatabaseCommandHelper.GlobalTimeout;
             DatabaseCommandHelper.GlobalTimeout = 60;
@@ -40,12 +41,6 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
                 catalogue.DeleteInDatabase();
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            DatabaseCommandHelper.GlobalTimeout = _timeoutBefore;
-            DeleteRemants();
-        }
 
         [Test]
         [TestCase(true)]

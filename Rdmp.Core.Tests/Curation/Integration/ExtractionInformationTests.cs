@@ -20,8 +20,9 @@ namespace Rdmp.Core.Tests.Curation.Integration
         ColumnInfo columnInfo;
 
         [SetUp]
-        public void SetupExtraction()
+        protected override void SetUp()
         {
+            base.SetUp();
 
             cata = new Catalogue(CatalogueRepository, "ExtractionInformationTestsCatalogue");
             cataItem = new CatalogueItem(CatalogueRepository, cata, "QuadlzorVelocity");
@@ -40,20 +41,6 @@ namespace Rdmp.Core.Tests.Curation.Integration
             //create a link between catalogue item lazor and velocity column
             cataItem.SetColumnInfo(columnInfo);
                 
-        }
-        [TearDown]
-        public void DeleteSetupObjects()
-        {
-            if(cataItem != null)
-                cataItem.DeleteInDatabase();
-
-            cata.DeleteInDatabase();
-
-            if(columnInfo != null)
-                columnInfo.DeleteInDatabase();
-
-            if(ti != null)
-                ti.DeleteInDatabase();
         }
 
         [Test]

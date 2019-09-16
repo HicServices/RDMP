@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Refreshing;
@@ -74,23 +75,47 @@ namespace Rdmp.UI.Tests
         public T AndLaunch<T>(DatabaseEntity o,bool setDatabaseObject=true) where T : Control, IRDMPSingleDatabaseObjectControl, new()
         {
             Console.WriteLine("Launched " + typeof(T).Name);
-
-            //clear the old results
-            ClearResults();
-            
-            Form f = new Form();
+   
             T ui = new T();
-            f.Controls.Add(ui);
-            CreateControls(ui);
-
-            ui.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
-            ui.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
             
+            AndLaunch(ui);
+
             if(setDatabaseObject)
                 ui.SetDatabaseObject(ItemActivator, o);
 
-            LastUserInterfaceLaunched = ui;
             return ui;
+        }
+
+
+        public T AndLaunch<T>() where T : RDMPCollectionUI,new()
+        {
+            Console.WriteLine("Launched " + typeof(T).Name);
+
+            T ui = new T();
+
+            AndLaunch(ui);
+
+            ui.SetItemActivator(ItemActivator);
+
+            return ui;
+        }
+        public void AndLaunch(Control ui)
+        {
+            //clear the old results
+            ClearResults();
+
+            Form f = new Form();
+            
+            f.Controls.Add(ui);
+            CreateControls(ui);
+
+            if(ui is IRDMPControl rdmpUi)
+            {
+                rdmpUi.CommonFunctionality.BeforeChecking += CommonFunctionalityOnBeforeChecking;
+                rdmpUi.CommonFunctionality.OnFatal += CommonFunctionalityOnFatal;
+            }
+            
+            LastUserInterfaceLaunched = ui;
         }
 
 
@@ -180,15 +205,31 @@ namespace Rdmp.UI.Tests
                     Assert.IsEmpty(GetAllErrorProviderErrorsShown());
                     
                     break;
+                case ExpectedErrorType.GlobalErrorCheckNotifier:
+
+                    Assert.IsEmpty(((ToMemoryCheckNotifier)_itemActivator.GlobalErrorCheckNotifier).Messages);
+
+                    break;
+
                 case ExpectedErrorType.Any:
                     AssertNoErrors(ExpectedErrorType.KilledForm);
                     AssertNoErrors(ExpectedErrorType.Fatal);
                     AssertNoErrors(ExpectedErrorType.FailedCheck);
                     AssertNoErrors(ExpectedErrorType.ErrorProvider);
+                    AssertNoErrors(ExpectedErrorType.GlobalErrorCheckNotifier);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("expectedErrorLevel");
             }
+        }
+
+        /// <summary>
+        /// Checks the recorded errors up to this point in the test and fails the test if there are errors.  This is the same
+        /// as passing <see cref="ExpectedErrorType.Any"/> to the overload
+        /// </summary>
+        protected void AssertNoErrors()
+        {
+            AssertNoErrors(ExpectedErrorType.Any);
         }
 
         /// <summary>
@@ -213,12 +254,12 @@ namespace Rdmp.UI.Tests
                     if (_checkResults == null)
                         throw new Exception("Could not check for Checks error because control did not register an ICheckable");
 
-                    //there must have been something checked that failed with the provided message
-                    Assert.IsTrue(_checkResults.Messages.Any(m=>
-                        m.Message.Contains(expectedContainsText) || 
-                        (m.Ex != null && m.Ex.Message.Contains(expectedContainsText))
-                        && m.Result == CheckResult.Fail));
+                    AssertFailedCheck(_checkResults,expectedContainsText);
 
+                    break;
+                case ExpectedErrorType.GlobalErrorCheckNotifier:
+
+                    AssertFailedCheck((ToMemoryCheckNotifier)_itemActivator.GlobalErrorCheckNotifier, expectedContainsText);
                     break;
                 case ExpectedErrorType.ErrorProvider:
 
@@ -229,6 +270,16 @@ namespace Rdmp.UI.Tests
                     throw new ArgumentOutOfRangeException("expectedErrorLevel");
             }
         }
+
+        private void AssertFailedCheck(ToMemoryCheckNotifier checkResults,string expectedContainsText)
+        {
+            //there must have been something checked that failed with the provided message
+            Assert.IsTrue(checkResults.Messages.Any(m =>
+                m.Message.Contains(expectedContainsText) ||
+                (m.Ex != null && m.Ex.Message.Contains(expectedContainsText))
+                && m.Result == CheckResult.Fail));
+        }
+
         private List<string> GetAllErrorProviderErrorsShown()
         {
 
@@ -371,7 +422,7 @@ namespace Rdmp.UI.Tests
                 foreach (var uiType in uiTypes.Where(a=>a.BaseType.BaseType.GetGenericArguments()[0] == o.GetType()))
                 {
                     //todo
-                    var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch"));
+                    var methodAndLaunch = methods.Single(m => m.Name.Equals("AndLaunch") && m.GetParameters().Length >= 1 && m.GetParameters()[0].ParameterType == typeof(DatabaseEntity));
                 
                     //ensure that the method supports the Type
                     var genericAndLaunch = methodAndLaunch.MakeGenericMethod(uiType);
@@ -448,6 +499,11 @@ namespace Rdmp.UI.Tests
         /// An ErrorProvider icon was shown next to some control
         /// </summary>
         ErrorProvider,
+
+        /// <summary>
+        /// System wide errors reported to <see cref="Rdmp.UI.ItemActivation.IActivateItems.GlobalErrorCheckNotifier"/>
+        /// </summary>
+        GlobalErrorCheckNotifier,
 
         /// <summary>
         /// An error at any level

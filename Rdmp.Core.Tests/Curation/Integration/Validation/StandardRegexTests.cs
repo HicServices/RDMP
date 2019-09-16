@@ -18,7 +18,7 @@ namespace Rdmp.Core.Tests.Curation.Integration.Validation
         [Test]
         public void CreateNew_UseConstraint()
         {
-            // Clean up any existing regexes
+            // Clean SetUp any existing regexes
             CatalogueRepository.GetAllObjects<StandardRegex>("WHERE ConceptName = 'Fish'").ToList().ForEach(r => r.DeleteInDatabase());
 
             var regex = new StandardRegex(CatalogueRepository);

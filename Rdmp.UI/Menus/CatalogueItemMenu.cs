@@ -17,6 +17,7 @@ namespace Rdmp.UI.Menus
         {
             Add(new ExecuteCommandLinkCatalogueItemToColumnInfo(_activator, catalogueItem));
             Add(new ExecuteCommandMakeCatalogueItemExtractable(_activator, catalogueItem));
+            Add(new ExecuteCommandChangeExtractionCategory(_activator, catalogueItem.ExtractionInformation));
             Add(new ExecuteCommandImportCatalogueItemDescription(_activator, catalogueItem), Keys.Control | Keys.I);
         }
     }

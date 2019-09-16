@@ -148,6 +148,7 @@ namespace Rdmp.UI.ProjectUI
             // 
             this.olvColumn1.AspectName = "ToString";
             this.olvColumn1.FillsFreeSpace = true;
+            this.olvColumn1.MinimumWidth = 100;
             this.olvColumn1.Text = "Extractables";
             // 
             // timer1

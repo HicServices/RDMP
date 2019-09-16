@@ -4,10 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Drawing;
 using System.Linq;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.UI.Copying.Commands;
+using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -17,29 +21,53 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         private IExtractableDataSet[] _toadd;
 
+        /// <summary>
+        /// True if <see cref="_toadd"/> is a suggestion of available datasets from which the user must pick.
+        /// False if <see cref="_toadd"/> reflects an already made selection (e.g. a drag and drop operation).
+        /// </summary>
+        private bool _userMustPick;
+
         public ExecuteCommandAddDatasetsToConfiguration(IActivateItems activator,ExtractableDataSetCommand sourceExtractableDataSetCommand, ExtractionConfiguration targetExtractionConfiguration) 
             : this(activator,targetExtractionConfiguration)
         {
-            SetExtractableDataSets(sourceExtractableDataSetCommand.ExtractableDataSets);
-            
+            SetExtractableDataSets(false,sourceExtractableDataSetCommand.ExtractableDataSets);
         }
 
         public ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
             : this(itemActivator,targetExtractionConfiguration)
         {
-            SetExtractableDataSets(extractableDataSet);
+            SetExtractableDataSets(false, extractableDataSet);
         }
 
-        private ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractionConfiguration targetExtractionConfiguration) : base(itemActivator)
+        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractionConfiguration targetExtractionConfiguration):base(itemActivator)
         {
             _targetExtractionConfiguration = targetExtractionConfiguration;
 
             if (_targetExtractionConfiguration.IsReleased)
                 SetImpossible("Extraction is Frozen because it has been released and is readonly, try cloning it instead");
-        }
 
-        private void SetExtractableDataSets(params IExtractableDataSet[] toAdd)
+            //if we don't yet know what datasets to add (i.e. haven't called SetExtractableDataSets)
+            if (_toadd == null)
+                if (itemActivator.CoreChildProvider is DataExportChildProvider childProvider)
+                { 
+                    //use the ones that are not already in the ExtractionConfiguration
+                    var _datasets = childProvider.GetDatasets(targetExtractionConfiguration).Select(n => n.ExtractableDataSet).ToArray();
+                    var _importableDataSets = childProvider.ExtractableDataSets.Except(_datasets)
+                        
+                        //where it can be used in any Project OR this project only
+                        .Where(ds => ds.Project_ID == null || ds.Project_ID == targetExtractionConfiguration.Project_ID).ToArray();
+
+                    SetExtractableDataSets(true, _importableDataSets);
+                }
+                else
+                {
+                    SetImpossible("CoreChildProvider was not DataExportChildProvider");
+                }            
+        }
+        
+        private void SetExtractableDataSets(bool userMustPick,params IExtractableDataSet[] toAdd)
         {
+            _userMustPick = userMustPick;
             var alreadyInConfiguration = _targetExtractionConfiguration.GetAllExtractableDataSets().ToArray();
             _toadd = toAdd.Except(alreadyInConfiguration).ToArray();
 
@@ -50,11 +78,28 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+            
+            if (_userMustPick)
+            {
+                ExtractableDataSet[] selected;
+                if (!SelectMany(_toadd.Cast<ExtractableDataSet>().ToArray(),out selected))
+                    return;
 
-            foreach (var ds in _toadd)
-                _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
+                foreach (var ds in selected)
+                    _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
+            }
+            else
+            {
+                foreach (var ds in _toadd)
+                    _targetExtractionConfiguration.AddDatasetToConfiguration(ds);
+            }
 
             Publish(_targetExtractionConfiguration);
+        }
+
+        public override Image GetImage(IIconProvider iconProvider)
+        {
+            return iconProvider.GetImage(RDMPConcept.ExtractableDataSet,OverlayKind.Import);
         }
     }
 }

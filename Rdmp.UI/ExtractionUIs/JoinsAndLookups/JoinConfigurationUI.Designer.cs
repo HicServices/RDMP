@@ -111,6 +111,7 @@
             this.olvLeftColumnNames.FillsFreeSpace = true;
             this.olvLeftColumnNames.Groupable = false;
             this.olvLeftColumnNames.Text = "ColumnInfos";
+            this.olvLeftColumnNames.MinimumWidth = 100;
             // 
             // label10
             // 
@@ -170,6 +171,7 @@
             this.olvRightColumnNames.FillsFreeSpace = true;
             this.olvRightColumnNames.Groupable = false;
             this.olvRightColumnNames.Text = "ColumnInfos";
+            this.olvRightColumnNames.MinimumWidth = 100;
             // 
             // ragSmiley1
             // 

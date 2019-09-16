@@ -23,11 +23,12 @@ namespace Rdmp.Core.Tests.CohortCreation
         private AggregateFilterContainer _container;
 
         private ExtractionInformation _chiExtractionInformation;
-        
-
+                       
         [SetUp]
-        public void CreateAFilter()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             aggregate1.RootFilterContainer_ID = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND).ID;
             aggregate1.SaveToDatabase();
 
@@ -37,13 +38,7 @@ namespace Rdmp.Core.Tests.CohortCreation
 
             _filter = new AggregateFilter(CatalogueRepository,"folk", _container);
         }
-
-        [TearDown]
-        public void DeleteFilter()
-        {
-            _container.DeleteInDatabase();//cascades to filter
-        }
-
+        
         [Test]
         public void NotPopulated_Description()
         {

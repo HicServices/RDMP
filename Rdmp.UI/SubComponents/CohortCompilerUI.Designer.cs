@@ -91,6 +91,7 @@ namespace Rdmp.UI.SubComponents
             this.olvAggregate.FillsFreeSpace = true;
             this.olvAggregate.Sortable = false;
             this.olvAggregate.Text = "Aggregate";
+            this.olvAggregate.MinimumWidth = 100;
             // 
             // olvCatalogue
             // 

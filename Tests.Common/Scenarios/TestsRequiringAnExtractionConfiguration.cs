@@ -10,8 +10,9 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
+using Rdmp.Core.CommandLine.Options;
+using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
@@ -21,9 +22,12 @@ using Rdmp.Core.DataExport.DataExtraction.Pipeline;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations;
 using Rdmp.Core.DataExport.DataExtraction.Pipeline.Sources;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
+using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Tests.Common.Scenarios
 {
@@ -45,10 +49,19 @@ namespace Tests.Common.Scenarios
         protected SelectedDataSets _selectedDataSet;
         protected ColumnInfo[] _columnInfos;
 
+        protected string ProjectDirectory { get; private set; }
+
+        /// <summary>
+        /// The database in which the referenced data is stored, created during <see cref="OneTimeSetUp"/>
+        /// </summary>
+        public DiscoveredDatabase Database { get; private set; }
+
         [OneTimeSetUp]
-        protected override void SetUp()
+        protected override void OneTimeSetUp()
         {
-            base.SetUp();
+            base.OneTimeSetUp();
+
+            ProjectDirectory = Path.Combine(TestContext.CurrentContext.WorkDirectory, "TestProject");
 
             SetupCatalogueConfigurationEtc();
 
@@ -60,13 +73,7 @@ namespace Tests.Common.Scenarios
 
             _request = new ExtractDatasetCommand(_configuration, _extractableCohort, new ExtractableDatasetBundle(_extractableDataSet),
                 _extractableColumns, new HICProjectSalt(_project),
-                new ExtractionDirectory(@"C:\temp\", _configuration));
-        }
-
-        [OneTimeTearDown]
-        public void TearDown()
-        {
-            RunBlitzDatabases(RepositoryLocator);
+                new ExtractionDirectory(ProjectDirectory, _configuration));
         }
 
         private void SetupDataExport()
@@ -76,8 +83,8 @@ namespace Tests.Common.Scenarios
             _project = new Project(DataExportRepository, _testDatabaseName);
             _project.ProjectNumber = 1;
 
-            Directory.CreateDirectory(@"C:\temp\");
-            _project.ExtractionDirectory = @"C:\temp\";
+            Directory.CreateDirectory(ProjectDirectory);
+            _project.ExtractionDirectory = ProjectDirectory;
             
             _project.SaveToDatabase();
 
@@ -102,6 +109,8 @@ namespace Tests.Common.Scenarios
 
         private void SetupCatalogueConfigurationEtc()
         {
+            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
             DataTable dt = new DataTable();
             dt.Columns.Add("PrivateID");
             dt.Columns.Add("Name");
@@ -109,7 +118,7 @@ namespace Tests.Common.Scenarios
 
             dt.Rows.Add(new object[] {_cohortKeysGenerated.Keys.First(), "Dave", "2001-01-01"});
 
-            var tbl = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
+            var tbl = Database.CreateTable("TestTable", dt, new[] { new DatabaseColumnRequest("Name",new DatabaseTypeRequest(typeof(string),50))});
             
             CatalogueItem[] cataItems;
             _catalogue = Import(tbl, out _tableInfo, out _columnInfos, out cataItems,out _extractionInformations);
@@ -120,13 +129,34 @@ namespace Tests.Common.Scenarios
             
         }
 
+        protected void ExecuteRunner()
+        {
+            var pipeline = SetupPipeline();
+
+            var runner = new ExtractionRunner(new ExtractionOptions()
+            {
+                Command = CommandLineActivity.run, ExtractionConfiguration = _configuration.ID,
+                ExtractGlobals = true, Pipeline = pipeline.ID
+            });
+
+            var returnCode = runner.Run(
+                RepositoryLocator,
+                new ThrowImmediatelyDataLoadEventListener(),
+                new ThrowImmediatelyCheckNotifier(),
+                new GracefulCancellationToken());
+
+            Assert.AreEqual(0,returnCode,"Return code from runner was non zero");
+        }
+
         protected void Execute(out ExtractionPipelineUseCase pipelineUseCase, out IExecuteDatasetExtractionDestination results)
         {
-
             DataLoadInfo d = new DataLoadInfo("Internal", _testDatabaseName, "IgnoreMe", "", true, new DiscoveredServer(UnitTestLoggingConnectionString));
 
             Pipeline pipeline = null;
             
+            //because extractable columns is likely to include chi column, it will be removed from the collection (for a substitution identifier)
+            var before = _extractableColumns.ToArray();
+
             try
             {
                 pipeline = SetupPipeline();
@@ -145,6 +175,7 @@ namespace Tests.Common.Scenarios
             }
 
             results =  pipelineUseCase.Destination;
+            _extractableColumns = new List<IColumn>(before);
         }
 
         protected virtual Pipeline SetupPipeline()

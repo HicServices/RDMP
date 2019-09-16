@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
+using Rdmp.Core;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs.SubComponents;
@@ -15,16 +16,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandCreateNewCatalogueByImportingExistingDataTable:BasicUICommandExecution,IAtomicCommand
     {
-        private readonly bool _allowImportAsCatalogue;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="activator"></param>
-        /// <param name="allowImportAsCatalogue">true to automatically create the catalogue without showing the UI</param>
-        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator,bool allowImportAsCatalogue=true) : base(activator)
+        public ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(IActivateItems activator) : base(activator)
         {
-            this._allowImportAsCatalogue = allowImportAsCatalogue;
             UseTripleDotSuffix = true;
         }
 
@@ -32,7 +25,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var importTable = new ImportSQLTableUI(Activator,_allowImportAsCatalogue);
+            var importTable = new ImportSQLTableUI(Activator,true);
             importTable.ShowDialog();
         }
 
@@ -43,17 +36,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override string GetCommandHelp()
         {
-            return "Creates a New Catalogue by associating it " +
-                   "\r\n" +
-                   "with an existing Dataset Table in your database";
+            return GlobalStrings.CreateNewCatalogueByImportingExistingDataTableHelp;
         }
 
         public override string GetCommandName()
         {
-            if (!_allowImportAsCatalogue)
-                return "Create New TableInfo By Importing Existing Data Table...";
-
-            return base.GetCommandName();
+            return GlobalStrings.CreateNewCatalogueByImportingExistingDataTable;
         }
     }
 }

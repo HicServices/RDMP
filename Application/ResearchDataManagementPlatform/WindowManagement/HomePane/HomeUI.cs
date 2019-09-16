@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -46,14 +47,13 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
             tlpCohortCreation.Controls.Clear();
             tlpDataExport.Controls.Clear();
             tlpDataLoad.Controls.Clear();
-            tlpAdvanced.Controls.Clear();
 
             /////////////////////////////////////Data Management/////////////////////////////////
             //AddLabel("New Catalogue", tlpDataManagement);
 
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator) { OverrideCommandName = "New Catalogue From File" }, tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingFile(_activator), tlpDataManagement);
 
-            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator, true) { OverrideCommandName = "New Catalogue From Existing Database Table" }, tlpDataManagement);
+            AddCommand(new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(_activator), tlpDataManagement);
 
             AddCommand(new ExecuteCommandEditExistingCatalogue(_activator),
                 _activator.CoreChildProvider.AllCatalogues,
@@ -71,7 +71,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.HomePane
 
             AddCommand(new ExecuteCommandCreateNewCohortIdentificationConfiguration(_activator)
             {
-                OverrideCommandName = "Create New Cohort Identification Query"
+                OverrideCommandName = GlobalStrings.CreateNewCohortIdentificationQuery
             },tlpCohortCreation);
 
             AddCommand(new ExecuteCommandCreateNewCohortByExecutingACohortIdentificationConfiguration(_activator)

@@ -7,7 +7,6 @@
 using BadMedicine;
 using BadMedicine.Datasets;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.CohortCommitting.Pipeline.Sources;
@@ -32,6 +31,7 @@ using System.Data;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
+using TypeGuesser;
 
 namespace Rdmp.Core.CommandLine.DatabaseCreation
 {
@@ -180,13 +180,12 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
             
             var cohort = CommitCohortToNewProject(cic,externalCohortTable,cohortCreationPipeline,"Lung Cancer Project","P1 Lung Cancer Patients",123,out Project project);
             
-            var cohortDb = cohort.ExternalCohortTable.Discover();
-            var cohortTable = cohortDb.ExpectTable(cohort.ExternalCohortTable.TableName);
-            using (var con = cohortDb.Server.GetConnection())
+            var cohortTable = cohort.ExternalCohortTable.DiscoverCohortTable();
+            using (var con = cohortTable.Database.Server.GetConnection())
             {
                 con.Open();
                 //delete half the records (so we can simulate cohort refresh)
-                var cmd = cohortDb.Server.GetCommand(string.Format("DELETE TOP (10) PERCENT from {0}",cohortTable.GetFullyQualifiedName()), con);
+                var cmd = cohortTable.Database.Server.GetCommand(string.Format("DELETE TOP (10) PERCENT from {0}",cohortTable.GetFullyQualifiedName()), con);
                 cmd.ExecuteNonQuery();
             }
             

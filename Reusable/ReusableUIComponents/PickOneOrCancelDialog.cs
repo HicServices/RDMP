@@ -6,13 +6,8 @@
 
 using BrightIdeasSoftware;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
-using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 
 namespace ReusableUIComponents
@@ -45,6 +40,9 @@ namespace ReusableUIComponents
         public PickOneOrCancelDialog(T[] options,string message, Func<T,Image> imageGetter, Func<T,string> nameGetter)
         {
             InitializeComponent();
+
+            //start at cancel so if they hit the X nothing is selected
+            DialogResult = DialogResult.Cancel;
 
             label1.Text = message;
             

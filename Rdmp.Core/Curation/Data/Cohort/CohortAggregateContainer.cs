@@ -151,6 +151,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="order"></param>
         public void AddChild(AggregateConfiguration configuration, int order)
         {
+            CreateInsertionPointAtOrder(configuration,configuration.Order,true);
             _manager.Add(this, configuration, order);
             configuration.ReFetchOrder();
         }
@@ -184,6 +185,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="child"></param>
         public void AddChild(CohortAggregateContainer child)
         {
+            CreateInsertionPointAtOrder(child,child.Order,true);
             _manager.Add(this,child);
         }
 
@@ -287,6 +289,7 @@ namespace Rdmp.Core.Curation.Data.Cohort
 
             //clone us with same order (in parents)
             var cloneContainer = new CohortAggregateContainer((ICatalogueRepository)Repository, Operation);
+            cloneContainer.Name = Name;
             cloneContainer.Order = Order;
             cloneContainer.SaveToDatabase();
 
@@ -392,7 +395,13 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="incrementOrderOfCollisions"></param>
         public void CreateInsertionPointAtOrder(IOrderable makeRoomFor, int order, bool incrementOrderOfCollisions)
         {
-            foreach (var orderable in GetOrderedContents().ToArray())
+            var contents = GetOrderedContents().ToArray();
+
+            //if there is nobody at that order then we are good
+            if (contents.All(c => c.Order != order))
+                return;
+
+            foreach (var orderable in contents)
             {
                 if (orderable.Order < order)
                     orderable.Order--;

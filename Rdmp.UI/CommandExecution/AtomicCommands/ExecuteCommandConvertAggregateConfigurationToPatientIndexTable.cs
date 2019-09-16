@@ -43,7 +43,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             //create a new patient index table usage allowance for this aggregate
             new JoinableCohortAggregateConfiguration(Activator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
+            
             Publish(_cohortIdentificationConfiguration);
+            Emphasise(sourceAggregate);
         }
     }
 }

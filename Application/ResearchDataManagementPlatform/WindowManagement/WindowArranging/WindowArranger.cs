@@ -14,6 +14,7 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.ItemActivation.Emphasis;
@@ -57,15 +58,20 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
             _windowManager.CloseAllToolboxes();
             _windowManager.CloseAllWindows();
             
-            _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, int.MaxValue));
-
-            var activate = new ExecuteCommandActivate(_activator,o);
-
-            //activate it if possible
-            if (!activate.IsImpossible)
-                activate.Execute();
+            if(o is LoadMetadata lmd)
+                SetupEditLoadMetadata(sender,lmd);
             else
-                _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1)); //otherwise just show it
+            {
+                _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, int.MaxValue));
+
+                var activate = new ExecuteCommandActivate(_activator, o);
+
+                //activate it if possible
+                if (!activate.IsImpossible)
+                    activate.Execute();
+                else
+                    _activator.RequestItemEmphasis(this, new EmphasiseRequest(o, 1)); //otherwise just show it
+            }
         }
 
         public void Setup(WindowLayout target)
@@ -119,8 +125,8 @@ namespace ResearchDataManagementPlatform.WindowManagement.WindowArranging
         {
             if(!_windowManager.IsVisible(RDMPCollection.DataLoad))
                 _windowManager.Create(RDMPCollection.DataLoad, DockState.DockLeft);
-
-            var diagram = (Control)_activator.ActivateViewLoadMetadataDiagram(this, loadMetadata);
+            
+            var diagram = (Control)_activator.Activate<LoadDiagramUI, LoadMetadata>(loadMetadata);
             ((DockContent)diagram.Parent).DockTo(_mainDockPanel,DockStyle.Right);
 
             _activator.Activate<ExecuteLoadMetadataUI, LoadMetadata>(loadMetadata);

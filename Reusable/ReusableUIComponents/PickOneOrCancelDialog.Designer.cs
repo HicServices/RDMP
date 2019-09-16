@@ -73,6 +73,7 @@
             // 
             this.olvOptions.FillsFreeSpace = true;
             this.olvOptions.Text = "Options";
+            this.olvOptions.MinimumWidth = 100;
             // 
             // btnOk
             // 

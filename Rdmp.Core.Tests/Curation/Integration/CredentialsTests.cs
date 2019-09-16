@@ -17,9 +17,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
     public class CredentialsTests : DatabaseTests
     {
         [OneTimeSetUp]
-        public void TestSetup()
+        protected override void OneTimeSetUp()
         {
-            
+            base.OneTimeSetUp();
+
             foreach (TableInfo table in CatalogueRepository.GetAllObjects<TableInfo>())
             {
                 if (table.Name.Equals("GetCredentialsFromATableInfo")

@@ -7,9 +7,7 @@
 using System;
 using System.Data;
 using System.Drawing;
-using System.Globalization;
 using System.Linq;
-using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Rdmp.Core.DataQualityEngine.Data;

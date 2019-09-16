@@ -238,7 +238,7 @@ namespace Rdmp.Core.QueryBuilding
                             primaryExtractionTable = table;
                         else
                             throw new QueryBuildingException("There are multiple tables marked as IsPrimaryExtractionTable:" +
-                                                qb.PrimaryExtractionTable.Name + "(ID=" + qb.PrimaryExtractionTable.ID +
+                                                primaryExtractionTable.Name + "(ID=" + primaryExtractionTable.ID +
                                                 ") and " + table.Name + "(ID=" + table.ID + ")");
                 }
             }
@@ -310,6 +310,13 @@ namespace Rdmp.Core.QueryBuilding
 
             if(qb.TablesUsedInQuery.Count == 0)
                 throw new QueryBuildingException("There are no tables involved in the query: We were asked to compute the FROM SQL but qb.TablesUsedInQuery was of length 0");
+            
+            //IDs of tables we already have in our FROM section
+            var tablesAddedSoFar = new HashSet<int>();
+            
+            //sometimes we find joins between tables that turn out not to be needed e.g. if there are multiple
+            //routes through the system e.g. Test_FourTables_MultipleRoutes
+            var unneededJoins = new HashSet<JoinInfo>();
 
             if (qb.JoinsUsedInQuery.Count == 0)
             {
@@ -351,23 +358,33 @@ namespace Rdmp.Core.QueryBuilding
                 {
                     //user has specified which table to start from 
                     toReturn += qb.PrimaryExtractionTable.Name;
-
-                    List<int> tablesAddedSoFar = new List<int>();
-
+                
                     //now find any joins which involve the primary extraction table
                     for (int i = 0; i < qb.JoinsUsedInQuery.Count; i++)
                         if (qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                         {
-                            //we are joining to a table where the PrimaryExtractionTable is the PK in the relationship so join into the foreign key side
-                            toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;
-                            tablesAddedSoFar.Add(qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID);
+                            var fkTableId = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
+
+                            //don't double JOIN to the same table twice even using different routes (see Test_FourTables_MultipleRoutes)
+                            if (!tablesAddedSoFar.Contains(fkTableId))
+                            {
+                                //we are joining to a table where the PrimaryExtractionTable is the PK in the relationship so join into the foreign key side
+                                toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;
+                                tablesAddedSoFar.Add(fkTableId);
+                            }
                         }
                         else
                             if (qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID == qb.PrimaryExtractionTable.ID)
                             {
-                                //we are joining to a table where the PrimaryExtractionTable is the FK in the relationship so join into the primary key side
-                                toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;
-                                tablesAddedSoFar.Add(qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID);
+                                var pkTableId = qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID;
+        
+                                //don't double JOIN to the same table twice even using different routes (see Test_FourTables_MultipleRoutes)
+                                if (!tablesAddedSoFar.Contains(pkTableId))
+                                {
+                                    //we are joining to a table where the PrimaryExtractionTable is the FK in the relationship so join into the primary key side
+                                    toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;
+                                    tablesAddedSoFar.Add(pkTableId);
+                                }
                             }
 
                     //now add any joins which don't involve the primary table
@@ -376,17 +393,34 @@ namespace Rdmp.Core.QueryBuilding
                             qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID != qb.PrimaryExtractionTable.ID)
                         {
 
+                            var pkTableID = qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID;
+                            var fkTableID = qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID;
+
+
                             //if we have already seen foreign key table before 
-                            if (tablesAddedSoFar.Contains(qb.JoinsUsedInQuery[i].ForeignKey.TableInfo_ID))
-                                toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;  //add primary
+                            //if we already have 
+                            if (tablesAddedSoFar.Contains(fkTableID) && tablesAddedSoFar.Contains(pkTableID))
+                                unneededJoins.Add(qb.JoinsUsedInQuery[i]);
+                            else if (tablesAddedSoFar.Contains(fkTableID))
+                            {
+                                toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                                            Environment.NewLine; //add primary
+                                tablesAddedSoFar.Add(pkTableID);
+                            }
                             else
                                 //else if we have already seen primary key table before
-                                if (tablesAddedSoFar.Contains(qb.JoinsUsedInQuery[i].PrimaryKey.TableInfo_ID))
-                                    toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) + Environment.NewLine;  //add foreign instead
-                                else
-                                    throw new NotImplementedException("We are having to add a Join for a table that is not 1 level down from the PrimaryExtractionTable");
-                        }
+                            if (tablesAddedSoFar.Contains(pkTableID))
+                            {
 
+                                toReturn += JoinHelper.GetJoinSQLForeignKeySideOnly(qb.JoinsUsedInQuery[i]) +
+                                            Environment.NewLine; //add foreign instead
+                                tablesAddedSoFar.Add(fkTableID);
+                            }
+                                
+                            else
+                                throw new NotImplementedException(
+                                    "We are having to add a Join for a table that is not 1 level down from the PrimaryExtractionTable");
+                        }
                 }
                 else
                 {
@@ -410,6 +444,9 @@ namespace Rdmp.Core.QueryBuilding
                     toReturn += JoinHelper.GetJoinSQLPrimaryKeySideOnly(column.LookupTable, column.LookupTableAlias) + Environment.NewLine;
             }
 
+            //remove any joins that didn't turn out to be needed when joining the tables
+            foreach (var j in unneededJoins)
+                qb.JoinsUsedInQuery.Remove(j);
 
             return toReturn;
         }

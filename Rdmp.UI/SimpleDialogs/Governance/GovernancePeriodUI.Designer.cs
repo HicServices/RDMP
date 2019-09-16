@@ -164,6 +164,7 @@ namespace Rdmp.UI.SimpleDialogs.Governance
             this.olvName.AspectName = "Name";
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Name";
+            this.olvName.MinimumWidth = 100;
             // 
             // tbDescription
             // 

@@ -9,10 +9,9 @@ using System.Data;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FAnsi.Discovery;
-using FAnsi.Discovery.TypeTranslation;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataExtraction.Commands;
@@ -20,22 +19,21 @@ using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.Core.DataExport.DataRelease.Pipeline;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Destinations;
-using Rdmp.Core.Logging;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
+using TypeGuesser;
 
 namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
 {
     /// <summary>
     /// Alternate extraction pipeline destination in which the DataTable containing the extracted dataset is written to an Sql Server database
     /// </summary>
-    public class ExecuteFullExtractionToDatabaseMSSql : IExecuteDatasetExtractionDestination, IPipelineRequirement<IProject>
+    public class ExecuteFullExtractionToDatabaseMSSql : ExtractionDestination
     {
         [DemandsInitialization("External server to create the extraction into, a new database will be created for the project based on the naming pattern provided",Mandatory = true)]
         public IExternalDatabaseServer TargetDatabaseServer { get; set; }
@@ -62,103 +60,52 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         
         [DemandsInitialization(@"If the extraction fails half way through AND the destination table was created during the extraction then the table will be dropped from the destination rather than being left in a half loaded state ",defaultValue:true)]
         public bool DropTableIfLoadFails { get; set; }
-
-        [DemandsInitialization("If this is true, the dataset/globals extraction folder will be wiped clean before extracting the dataset. Useful if you suspect there are spurious files in the folder", defaultValue: true)]
-        public bool CleanExtractionFolderBeforeExtraction { get; set; }
-
+        
         [DemandsInitialization(DataTableUploadDestination.AlterTimeout_Description, DefaultValue = 300)]
         public int AlterTimeout { get; set; }
 
         [DemandsInitialization("True to copy the column collations from the source database when creating the destination database.  Only works if both the source and destination have the same DatabaseType.  Excludes columns which feature a transform as part of extraction.",DefaultValue=false)]
         public bool CopyCollations { get; set; }
 
-        public TableLoadInfo TableLoadInfo { get; private set; }
-        public DirectoryInfo DirectoryPopulated { get; private set; }
-        public bool GeneratesFiles { get { return false; } }
-        public string OutputFile { get { return String.Empty; } }
-        public int SeparatorsStrippedOut { get { return 0; } }
-        public string DateFormat { get { return String.Empty; } }
-
         private DiscoveredDatabase _destinationDatabase;
         private DataTableUploadDestination _destination;
 
-        private DataLoadInfo _dataLoadInfo;
-        private bool haveExtractedBundledContent = false;
-
         private bool _tableDidNotExistAtStartOfLoad;
-        private IExtractCommand _request;
-        private IProject _project;
         private bool _isTableAlreadyNamed;
-        private DataTable _toProcess;
-
-        public DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
+        DataTable _toProcess;
+        
+        public ExecuteFullExtractionToDatabaseMSSql():base(false)
         {
-            _request.ElevateState(ExtractCommandState.WritingToFile);
-            _toProcess = toProcess;
 
-            _destinationDatabase = GetDestinationDatabase(listener);
+        }
+
+        public override DataTable ProcessPipelineData(DataTable toProcess, IDataLoadEventListener job,
+            GracefulCancellationToken cancellationToken)
+        {
+            _destinationDatabase = GetDestinationDatabase(job);
+            return base.ProcessPipelineData(toProcess, job, cancellationToken);
+        }
+
+        protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
+        {
+            _toProcess = toProcess;
+            _destination = PrepareDestination(job, toProcess);
+            OutputFile = toProcess.TableName;
+        }
+                
+        protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
+        {
+            toProcess.TableName = GetTableName();
 
             //give the data table the correct name
             if (toProcess.ExtendedProperties.ContainsKey("ProperlyNamed") && toProcess.ExtendedProperties["ProperlyNamed"].Equals(true))
                 _isTableAlreadyNamed = true;
+            
+            _destination.ProcessPipelineData(toProcess, job, cancellationToken);
 
-            _toProcess.TableName = GetTableName();
-
-            if (_destination == null)
-                _destination = PrepareDestination(listener, toProcess);
-
-            if (TableLoadInfo == null)
-                TableLoadInfo = new TableLoadInfo(_dataLoadInfo, "", _toProcess.TableName, new[] { new DataSource(_request.DescribeExtractionImplementation(), DateTime.Now) }, -1);
-
-            if (TableLoadInfo.IsClosed) // Maybe it was open and it creashed?
-                throw new Exception("TableLoadInfo was closed so could not write number of rows (" + toProcess.Rows.Count + ") to audit object - most likely the extraction crashed?");
-
-            if (_request is ExtractDatasetCommand && !haveExtractedBundledContent)
-                WriteBundleContents(((ExtractDatasetCommand) _request).DatasetBundle, listener, cancellationToken);
-
-            if (_request is ExtractGlobalsCommand)
-            {
-                ExtractGlobals((ExtractGlobalsCommand)_request, listener, _dataLoadInfo);
-                return null;
-            }
-
-            _destination.ProcessPipelineData(toProcess, listener, cancellationToken);
-            TableLoadInfo.Inserts += toProcess.Rows.Count;
-
-            return null;
+            LinesWritten += toProcess.Rows.Count;
         }
-
-        private void WriteBundleContents(IExtractableDatasetBundle datasetBundle, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            var bundle = ((ExtractDatasetCommand)_request).DatasetBundle;
-            foreach (var sql in bundle.SupportingSQL)
-                bundle.States[sql] = ExtractSupportingSql(sql, listener, _dataLoadInfo);
-
-            foreach (var document in ((ExtractDatasetCommand)_request).DatasetBundle.Documents)
-                bundle.States[document] = ExtractSupportingDocument(_request.GetExtractionDirectory(), document, listener);
-
-            //extract lookups
-            foreach (BundledLookupTable lookup in datasetBundle.LookupTables)
-            {
-                try
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to extract lookup " + lookup));
-
-                    ExtractLookupTableSql(lookup, listener, _dataLoadInfo);
-                    
-                    datasetBundle.States[lookup] = ExtractCommandState.Completed;
-                }
-                catch (Exception e)
-                {
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Error occurred trying to extract lookup " + lookup + " on server " + lookup.TableInfo.Server, e));
-
-                    datasetBundle.States[lookup] = ExtractCommandState.Crashed;
-                }
-            }
-
-            haveExtractedBundledContent = true;
-        }
-
+        
         private DataTableUploadDestination PrepareDestination(IDataLoadEventListener listener, DataTable toProcess)
         {
             //see if the user has entered an extraction server/database 
@@ -309,8 +256,14 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             if (_destinationDatabase == null)
                 throw new Exception("Cannot pick a TableName until we know what type of server it is going to, _server is null");
 
+            //get rid of brackets and dots
+            tblName = Regex.Replace(tblName,"[.()]", "_");
+
+            var syntax = _destinationDatabase.Server.GetQuerySyntaxHelper();
+            syntax.ValidateTableName(tblName);
+
             //otherwise, fetch and cache answer
-            string cachedGetTableNameAnswer = _destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(tblName);
+            string cachedGetTableNameAnswer = syntax.GetSensibleEntityNameFromString(tblName);
 
             if (String.IsNullOrWhiteSpace(cachedGetTableNameAnswer))
                 throw new Exception("TableNamingPattern '" + TableNamingPattern + "' resulted in an empty string for request '" + _request + "'");
@@ -318,7 +271,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             return cachedGetTableNameAnswer;
         }
 
-        public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
+        public override void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             if(_destination != null)
             {
@@ -341,53 +294,41 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 }
             }
 
-            if (TableLoadInfo != null)
-                TableLoadInfo.CloseAndArchive();
+            TableLoadInfo?.CloseAndArchive();
+
             // also close off the cumulative extraction result
             if (_request is ExtractDatasetCommand)
             {
                 var result = ((IExtractDatasetCommand)_request).CumulativeExtractionResults;
-                if (result != null)
+                if (result != null && _toProcess != null)
                     result.CompleteAudit(this.GetType(), GetDestinationDescription(), TableLoadInfo.Inserts);
             }
         }
 
-        public void Abort(IDataLoadEventListener listener)
+        public override void Abort(IDataLoadEventListener listener)
         {
             if(_destination != null)
                 _destination.Abort(listener);
         }
-
-        public void PreInitialize(IExtractCommand value, IDataLoadEventListener listener)
+        protected override void PreInitializeImpl(IExtractCommand value, IDataLoadEventListener listener)
         {
-            _request = value;
-
-            DirectoryPopulated = _request.GetExtractionDirectory();
-
-            if (CleanExtractionFolderBeforeExtraction && value is ExtractDatasetCommand)
-            {
-                DirectoryPopulated.Delete(true);
-                DirectoryPopulated.Create();
-            }
+            
         }
 
-        public void PreInitialize(DataLoadInfo value, IDataLoadEventListener listener)
-        {
-            _dataLoadInfo = value;
-        }
 
-        public string GetFilename()
-        {
-            return _request.ToString();
-        }
-
-        public string GetDestinationDescription()
+        public override string GetDestinationDescription()
         {
             return GetDestinationDescription(suffix: "");
         }
 
         private string GetDestinationDescription(string suffix = "")
         {
+            if (_toProcess == null)
+                if (_request is ExtractGlobalsCommand)
+                    return "Globals";
+                else
+                    throw new Exception("Could not describe destination because _toProcess was null");
+
             var tblName = _toProcess.TableName;
             var dbName = GetDatabaseName();
             return TargetDatabaseServer.ID + "|" + dbName + "|" + tblName;
@@ -398,192 +339,73 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             return DestinationType.Database;
         }
         
-        public void ExtractGlobals(ExtractGlobalsCommand request, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
-        {
-            var globalsToExtract = request.Globals;
-            if (globalsToExtract.Any())
-            {
-                var globalsDirectory = request.GetExtractionDirectory();
-                if (CleanExtractionFolderBeforeExtraction)
-                {
-                    globalsDirectory.Delete(true);
-                    globalsDirectory.Create();
-                }
-
-                foreach (var sql in globalsToExtract.SupportingSQL)
-                    ExtractSupportingSql(sql, listener, dataLoadInfo);
-
-                foreach (var doc in globalsToExtract.Documents)
-                    ExtractSupportingDocument(globalsDirectory, doc, listener);
-            }
-        }
-
-        public ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
+        public override ReleasePotential GetReleasePotential(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISelectedDataSets selectedDataSet)
         {
             return new MsSqlExtractionReleasePotential(repositoryLocator, selectedDataSet);
         }
-
-        public FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
+        public override FixedReleaseSource<ReleaseAudit> GetReleaseSource(ICatalogueRepository catalogueRepository)
         {
             return new MsSqlReleaseSource<ReleaseAudit>(catalogueRepository);
         }
-
-        public GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
+        public override GlobalReleasePotential GetGlobalReleasabilityEvaluator(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ISupplementalExtractionResults globalResult, IMapsDirectlyToDatabaseTable globalToCheck)
         {
             return new MsSqlGlobalsReleasePotential(repositoryLocator, globalResult, globalToCheck);
         }
-
-        private ExtractCommandState ExtractSupportingSql(SupportingSQLTable sql, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        
+        protected override void TryExtractSupportingSQLTableImpl(SupportingSQLTable sqlTable, DirectoryInfo directory, IExtractionConfiguration configuration,IDataLoadEventListener listener, out int linesWritten,
+            out string destinationDescription)
         {
-            try
+            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download SQL for global SupportingSQL " + sqlTable.SQL));
+            using (var con = sqlTable.GetServer().GetConnection())
             {
-                var tempDestination = new DataTableUploadDestination();
+                con.Open();
+                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened successfully, about to send SQL command " + sqlTable.SQL));
+                var cmd = DatabaseCommandHelper.GetCommand(sqlTable.SQL, con);
+                var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+
+                var sw = new Stopwatch();
+
+                sw.Start();
+                DataTable dt = new DataTable();
+                da.Fill(dt);
+
+                dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(sqlTable.Name));
+                linesWritten = dt.Rows.Count;
+
+                var destinationDb = GetDestinationDatabase(listener);
+                var tbl = destinationDb.ExpectTable(dt.TableName);
                 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download SQL for global SupportingSQL " + sql.Name));
-                using (var con = sql.GetServer().GetConnection())
-                {
-                    con.Open();
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened successfully, about to send SQL command " + sql.SQL));
-                    var cmd = DatabaseCommandHelper.GetCommand(sql.SQL, con);
-                    var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+                if(tbl.Exists())
+                    tbl.Drop();
 
-                    var sw = new Stopwatch();
-
-                    sw.Start();
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(sql.Name));
-
-                    var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", dt.TableName, new[] { new DataSource(sql.SQL, DateTime.Now) }, -1);
-                    tableLoadInfo.Inserts = dt.Rows.Count;
-
-                    listener.OnProgress(this, new ProgressEventArgs("Reading from SupportingSQL " + sql.Name, new ProgressMeasurement(dt.Rows.Count, ProgressType.Records), sw.Elapsed));
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Decided on the following destination table name for SupportingSQL: " + dt.TableName));
-
-                    tempDestination.AllowResizingColumnsAtUploadTime = true;
-                    tempDestination.PreInitialize(GetDestinationDatabase(listener), listener);
-                    tempDestination.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
-                    tempDestination.Dispose(listener, null);
-
-                    //end auditing it
-                    tableLoadInfo.CloseAndArchive();
-
-                    if (_request is ExtractDatasetCommand)
-                    {
-                        var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
-                        var supplementalResult = result.AddSupplementalExtractionResult(sql.SQL, sql);
-                        supplementalResult.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
-                    }
-                    else
-                    {
-                        var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
-                        Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
-                        var result =
-                            new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
-                                                              extractGlobalsCommand.Configuration,
-                                                              sql.SQL,
-                                                              sql);
-                        result.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
-                        extractGlobalsCommand.ExtractionResults.Add(result);
-                    }
-                }
-            }
-            catch (Exception e)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Extraction of SupportingSQL " + sql + " failed ",e));
-                return ExtractCommandState.Crashed;
-            }
-
-            return ExtractCommandState.Completed;
-        }
-
-        private ExtractCommandState ExtractSupportingDocument(DirectoryInfo directory, SupportingDocument doc, IDataLoadEventListener listener)
-        {
-            SupportingDocumentsFetcher fetcher = new SupportingDocumentsFetcher(doc);
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Preparing to copy " + doc + " to directory " + directory.FullName));
-            try
-            {
-                var outputPath = fetcher.ExtractToDirectory(directory);
-                if (_request is ExtractDatasetCommand)
-                {
-                    var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
-                    var supplementalResult = result.AddSupplementalExtractionResult(null, doc);
-                    supplementalResult.CompleteAudit(this.GetType(), outputPath, 0);
-                }
-                else
-                {
-                    var extractGlobalsCommand = (_request as ExtractGlobalsCommand);
-                    Debug.Assert(extractGlobalsCommand != null, "extractGlobalsCommand != null");
-                    var result = new SupplementalExtractionResults(extractGlobalsCommand.RepositoryLocator.DataExportRepository,
-                                                                   extractGlobalsCommand.Configuration,
-                                                                   null,
-                                                                   doc);
-                    result.CompleteAudit(this.GetType(), outputPath, 0);
-                    extractGlobalsCommand.ExtractionResults.Add(result);
-                }
-                return ExtractCommandState.Completed;
-            }
-            catch (Exception e)
-            {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Failed to copy file " + doc + " to directory " + directory.FullName, e));
-                return ExtractCommandState.Crashed;
+                destinationDb.CreateTable(dt.TableName,dt);
+                destinationDescription = TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName;
             }
         }
 
-        private void ExtractLookupTableSql(BundledLookupTable lookup, IDataLoadEventListener listener, DataLoadInfo dataLoadInfo)
+        
+        protected override void TryExtractLookupTableImpl(BundledLookupTable lookup, DirectoryInfo lookupDir,
+            IExtractionConfiguration requestConfiguration,IDataLoadEventListener listener, out int linesWritten, out string destinationDescription)
         {
-            try
-            {
-                var tempDestination = new DataTableUploadDestination();
+            var tbl = lookup.TableInfo.Discover(DataAccessContext.DataExport);
+            var dt = tbl.GetDataTable();
                 
-                var server = DataAccessPortal.GetInstance().ExpectServer(lookup.TableInfo, DataAccessContext.DataExport);
+            dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleEntityNameFromString(lookup.TableInfo.Name));
+
+            //describe the destination for the abstract base
+            destinationDescription = TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName;
+            linesWritten = dt.Rows.Count;
+
+            var destinationDb = GetDestinationDatabase(listener);
+            var existing = destinationDb.ExpectTable(dt.TableName);
                 
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to download SQL for lookup " + lookup.TableInfo.Name));
-                using (var con = server.GetConnection())
-                {
-                    con.Open();
-                    var sqlString = "SELECT * FROM " + lookup.TableInfo.Name;
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Connection opened successfully, about to send SQL command: " + sqlString));
-                    var cmd = DatabaseCommandHelper.GetCommand(sqlString, con);
-                    var da = DatabaseCommandHelper.GetDataAdapter(cmd);
-
-                    var sw = new Stopwatch();
-
-                    sw.Start();
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-
-                    dt.TableName = GetTableName(_destinationDatabase.Server.GetQuerySyntaxHelper().GetSensibleTableNameFromString(lookup.TableInfo.Name));
-
-                    var tableLoadInfo = dataLoadInfo.CreateTableLoadInfo("", dt.TableName, new[] { new DataSource(sqlString, DateTime.Now) }, -1);
-                    tableLoadInfo.Inserts = dt.Rows.Count;
-
-                    listener.OnProgress(this, new ProgressEventArgs("Reading from Lookup " + lookup.TableInfo.Name, new ProgressMeasurement(dt.Rows.Count, ProgressType.Records), sw.Elapsed));
-                    listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Decided on the following destination table name for Lookup: " + dt.TableName));
-
-                    tempDestination.AllowResizingColumnsAtUploadTime = true;
-                    tempDestination.PreInitialize(GetDestinationDatabase(listener), listener);
-                    tempDestination.ProcessPipelineData(dt, listener, new GracefulCancellationToken());
-                    tempDestination.Dispose(listener, null);
-
-                    //end auditing it
-                    tableLoadInfo.CloseAndArchive();
-
-                    if (_request is ExtractDatasetCommand)
-                    {
-                        var result = (_request as ExtractDatasetCommand).CumulativeExtractionResults;
-                        var supplementalResult = result.AddSupplementalExtractionResult("SELECT * FROM " + lookup.TableInfo.Name, lookup.TableInfo);
-                        supplementalResult.CompleteAudit(this.GetType(), TargetDatabaseServer.ID + "|" + GetDatabaseName() + "|" + dt.TableName, dt.Rows.Count);
-                    }
-                }
-            }
-            catch (Exception e)
+            if(existing.Exists())
             {
-                listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Error, "Extraction of Lookup " + lookup.TableInfo.Name + " failed ", e));
-                throw;
+                listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Warning,"Dropping existing Lookup table '" + existing.GetFullyQualifiedName() +"'"));
+                existing.Drop();
             }
+
+            destinationDb.CreateTable(dt.TableName, dt);
         }
 
         private DiscoveredDatabase GetDestinationDatabase(IDataLoadEventListener listener)
@@ -594,8 +416,12 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             var databaseName = GetDatabaseName();
 
             var discoveredServer = DataAccessPortal.GetInstance().ExpectServer(TargetDatabaseServer, DataAccessContext.DataExport, setInitialDatabase: false);
-            
-            return discoveredServer.ExpectDatabase(databaseName);
+
+            var db = discoveredServer.ExpectDatabase(databaseName);
+            if(!db.Exists())
+                db.Create();
+
+            return db;
         }
 
         private string GetDatabaseName()
@@ -620,7 +446,7 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
             return dbName;
         }
 
-        public void Check(ICheckNotifier notifier)
+        public override void Check(ICheckNotifier notifier)
         {
             if (TargetDatabaseServer == null)
             {
@@ -704,11 +530,6 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
                 notifier.OnCheckPerformed(new CheckEventArgs(
                     "Could not connect to TargetDatabaseServer '" + TargetDatabaseServer  +"'", CheckResult.Fail, e));
             }
-        }
-
-        public void PreInitialize(IProject value, IDataLoadEventListener listener)
-        {
-            this._project = value;
         }
     }
 }

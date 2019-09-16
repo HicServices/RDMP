@@ -265,6 +265,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             this.olvJoinTableName.IsEditable = false;
             this.olvJoinTableName.Text = "Table Name";
             this.olvJoinTableName.Width = 163;
+            this.olvJoinTableName.MinimumWidth = 100;
             // 
             // olvJoinDirection
             // 

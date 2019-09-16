@@ -22,7 +22,7 @@ namespace Rdmp.Core.Tests.Caching.Unit
         [Test]
         public void TestSerialPipelineExecution()
         {
-            // set up two engines, one with a locked cache progress/load schedule
+            // set SetUp two engines, one with a locked cache progress/load schedule
             // run the serial execution and ensure that only one engine had its 'ExecutePipeline' method called
             var engine1 = new Mock<IDataFlowPipelineEngine>();
             
@@ -32,11 +32,11 @@ namespace Rdmp.Core.Tests.Caching.Unit
             var tokenSource = new GracefulCancellationTokenSource();
             var listener = new ThrowImmediatelyDataLoadEventListener();
 
-            // set up the engine map
+            // set SetUp the engine map
             var loadProgress1 = Mock.Of<ILoadProgress>();
             var loadProgress2 = Mock.Of<ILoadProgress>();
             
-            // set up the lock provider
+            // set SetUp the lock provider
             var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
             {
                 {engine1.Object, loadProgress1},
@@ -59,7 +59,7 @@ namespace Rdmp.Core.Tests.Caching.Unit
         [Test]
         public void TestRoundRobinPipelineExecution()
         {
-            // set up two engines, one with a locked cache progress/load schedule
+            // set SetUp two engines, one with a locked cache progress/load schedule
             // run the serial execution and ensure that only one engine had its 'ExecutePipeline' method called
             var engine1 = new Mock<IDataFlowPipelineEngine>();
             var engine2 = new Mock<IDataFlowPipelineEngine>();
@@ -77,11 +77,11 @@ namespace Rdmp.Core.Tests.Caching.Unit
                 .Returns(false)
                 .Throws<InvalidOperationException>();
 
-            // set up the engine map
+            // set SetUp the engine map
             var loadProgress1 = Mock.Of<ILoadProgress>();
             var loadProgress2 = Mock.Of<ILoadProgress>();
             
-            // set up the lock provider
+            // set SetUp the lock provider
             var engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>
             {
                 {engine1.Object, loadProgress1},

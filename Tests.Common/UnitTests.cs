@@ -63,16 +63,26 @@ namespace Tests.Common
         {
             RepositoryLocator = new RepositoryProvider(Repository);
         }
+
+
         /// <summary>
-        /// Loads FAnsi implementations for all supported DBMS platforms into memory
+        /// Override to do stuff before your first instance is constructed
         /// </summary>
-        [SetUp]
-        protected void SetUpDatabaseTypes()
+        [OneTimeSetUp]
+        protected virtual void OneTimeSetUp()
         {
             ImplementationManager.Load(
                 typeof(MicrosoftSQLImplementation).Assembly,
                 typeof(MySqlImplementation).Assembly,
                 typeof(OracleImplementation).Assembly);
+        }
+
+        /// <summary>
+        /// Loads FAnsi implementations for all supported DBMS platforms into memory
+        /// </summary>
+        [SetUp]
+        protected virtual void SetUp()
+        {
         }
 
         /// <summary>
@@ -404,9 +414,16 @@ namespace Tests.Common
             
             if (typeof (T) == typeof(ExtractableDataSet))
             {
+                //To make an extractable dataset we need an extraction identifier (e.g. chi) that will be linked in the cohort
                 var ei = WhenIHaveA<ExtractionInformation>();
                 ei.IsExtractionIdentifier = true;
                 ei.SaveToDatabase();
+
+                //And we need another column too just for sanity sakes (in the same table)
+                var ci2 = new CatalogueItem(Repository,ei.CatalogueItem.Catalogue,"ci2");
+                var col2 = new ColumnInfo(Repository, "My_Col2", "varchar(10)", ei.ColumnInfo.TableInfo);
+                var ei2 = new ExtractionInformation(Repository,ci2,col2,col2.GetFullyQualifiedName());
+
                 return (T)(object)new ExtractableDataSet(Repository,ei.CatalogueItem.Catalogue);
             }
             
@@ -414,7 +431,18 @@ namespace Tests.Common
                 return (T)(object)new CumulativeExtractionResults(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),"SELECT * FROM Anywhere");
             
             if (typeof (T) == typeof(SelectedDataSets))
-                return (T)(object)new SelectedDataSets(Repository,WhenIHaveA<ExtractionConfiguration>(),WhenIHaveA<ExtractableDataSet>(),null);
+            {
+                var eds = WhenIHaveA<ExtractableDataSet>();
+                var config = WhenIHaveA<ExtractionConfiguration>();
+                               
+                foreach(var ei in eds.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any))
+                {
+                    var ec = new ExtractableColumn(Repository, eds, config,ei,ei.Order,ei.SelectSQL);
+                }
+
+                return (T)(object)new SelectedDataSets(Repository,config,eds, null);
+            }
+                
 
             if (typeof (T) == typeof(ReleaseLog))
             {
@@ -675,9 +703,16 @@ namespace Tests.Common
             for (int i = 0; i < memObjectsArr.Count(); i++)
                 UnitTests.AssertAreEqual(memObjectsArr[i], dbObjectsArr[i],firstIteration);
         }
+
+        /// <summary>
+        /// The number of seconds that have to differ between two DateTime objects in method <see cref="AreAboutTheSameTime"/> before
+        /// they are considered not the same time
+        /// </summary>
+        const double TimeThresholdInSeconds = 60;
+
         private static bool AreAboutTheSameTime(DateTime memValue, DateTime dbValue)
         {
-            return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < 10;
+            return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < TimeThresholdInSeconds;
         }
     }
 }

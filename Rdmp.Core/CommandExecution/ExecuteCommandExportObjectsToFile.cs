@@ -83,7 +83,7 @@ namespace Rdmp.Core.CommandExecution
             foreach (var o in _toExport)
             {
                 var d = _gatherer.GatherDependencies(o);
-                var filename = QuerySyntaxHelper.MakeHeaderNameSane(o.ToString()) + ".sd";
+                var filename = QuerySyntaxHelper.MakeHeaderNameSensible(o.ToString()) + ".sd";
 
                 var shareDefinitions = d.ToShareDefinitionWithChildren(_shareManager);
                 string serial = JsonConvertExtensions.SerializeObject(shareDefinitions, _repositoryLocator);

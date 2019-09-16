@@ -66,23 +66,21 @@ namespace Rdmp.Core.QueryBuilding
             var syntaxHelper = extractableCohort.GetQuerySyntaxHelper();
 
             //the externally referenced Cohort table
-            var externalCohortTable = extractableCohort.ExternalCohortTable;
-            
-            var privateIdentifierFieldDiscovered = externalCohortTable.Discover().ExpectTable(externalCohortTable.TableName).DiscoverColumn(externalCohortTable.PrivateIdentifierField);
+            var privateCol = extractableCohort.ExternalCohortTable.DiscoverPrivateIdentifier();
 
             string collateStatement = "";
             
             //the release identifier join might require collation
 
             //if the private has a collation
-            if (!string.IsNullOrWhiteSpace(privateIdentifierFieldDiscovered.Collation))
+            if (!string.IsNullOrWhiteSpace(privateCol.Collation))
             {
-                var cohortCollation = privateIdentifierFieldDiscovered.Collation;
+                var cohortCollation = privateCol.Collation;
                 var otherTableCollation = OriginalDatasetColumn.ColumnInfo.Collation;
 
 
                 //only collate if the server types match and if the collations differ
-                if(privateIdentifierFieldDiscovered.Table.Database.Server.DatabaseType == OriginalDatasetColumn.ColumnInfo.TableInfo.DatabaseType)
+                if(privateCol.Table.Database.Server.DatabaseType == OriginalDatasetColumn.ColumnInfo.TableInfo.DatabaseType)
                     if (!string.IsNullOrWhiteSpace(otherTableCollation) && !string.Equals(cohortCollation, otherTableCollation))
                         collateStatement = " collate " + cohortCollation;
             }
@@ -98,7 +96,7 @@ namespace Rdmp.Core.QueryBuilding
                 SelectSQL = "(SELECT DISTINCT " +
                     extractableCohort.GetReleaseIdentifier() + 
                     " FROM " +
-                    externalCohortTable.TableName + " WHERE " + extractableCohort.WhereSQL() + " AND " + externalCohortTable.PrivateIdentifierField + "=" + OriginalDatasetColumn.SelectSQL + collateStatement +")";
+                    privateCol.Table.GetFullyQualifiedName() + " WHERE " + extractableCohort.WhereSQL() + " AND " + privateCol.GetFullyQualifiedName() + "=" + OriginalDatasetColumn.SelectSQL + collateStatement +")";
                 
                 if(!string.IsNullOrWhiteSpace(OriginalDatasetColumn.Alias))
                 {
@@ -120,7 +118,7 @@ namespace Rdmp.Core.QueryBuilding
                     throw new Exception("In cases where you have multiple columns marked IsExtractionIdentifier, they must all have Aliases, the column " + OriginalDatasetColumn.SelectSQL + " does not have one");
             }
 
-            JoinSQL = OriginalDatasetColumn.SelectSQL + "=" + externalCohortTable.PrivateIdentifierField + collateStatement;
+            JoinSQL = OriginalDatasetColumn.SelectSQL + "=" + privateCol.GetFullyQualifiedName() + collateStatement;
 
         }
 

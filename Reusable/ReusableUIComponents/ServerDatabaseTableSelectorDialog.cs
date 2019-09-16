@@ -18,6 +18,9 @@ namespace ReusableUIComponents
     {
         public ServerDatabaseTableSelectorDialog(string taskDescription, bool includeTable, bool tableShouldBeNovel)
         {
+            //start at cancel so if they hit the X nothing is selected
+            DialogResult = DialogResult.Cancel;
+            
             InitializeComponent();
 
             lblTaskDescription.Text = taskDescription;

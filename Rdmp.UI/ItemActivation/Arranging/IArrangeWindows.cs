@@ -6,7 +6,6 @@
 
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.UI.ItemActivation.Arranging
@@ -20,8 +19,6 @@ namespace Rdmp.UI.ItemActivation.Arranging
         //Advanced cases where you want to show multiple windows at once
         void SetupEditCatalogue(object sender, Catalogue catalogue);
         void SetupEditDataExtractionProject(object sender, Project project);
-        void SetupEditLoadMetadata(object sender, LoadMetadata loadMetadata);
-
 
         //basic case where you only want to Emphasise and Activate it (after closing all other windows)
         void SetupEditAnything(object sender, IMapsDirectlyToDatabaseTable o);

@@ -28,6 +28,7 @@ using Rdmp.UI.PipelineUIs.Pipelines;
 using Rdmp.UI.PipelineUIs.Pipelines.PluginPipelineUsers;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
 using ReusableUIComponents.TransparentHelpSystem;
@@ -88,6 +89,13 @@ namespace Rdmp.UI.ProjectUI
             checkAndExecuteUI1.BackColor = Color.FromArgb(240, 240, 240);
 
             tlvDatasets.CellClick += tlvDatasets_CellClick;
+
+            _coreDatasetsFolder.CommandGetter = () =>
+                new IAtomicCommand[]
+                {
+                    new ExecuteCommandAddDatasetsToConfiguration(Activator,_extractionConfiguration),
+                    new ExecuteCommandAddPackageToConfiguration(Activator,_extractionConfiguration),
+                };
         }
 
         void tlvDatasets_CellClick(object sender, CellClickEventArgs e)

@@ -106,13 +106,14 @@ namespace Rdmp.UI.Collections
 
             CommonTreeFunctionality.WhitespaceRightClickMenuCommandsGetter = (a)=> new IAtomicCommand[]
             {
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(a, false),
+                new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(a),
                 new ExecuteCommandBulkImportTableInfos(a)
             };
             
             _activator.RefreshBus.EstablishLifetimeSubscription(this);
 
 
+            tlvTableInfos.AddObject(_activator.CoreChildProvider.AllDashboardsNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllRDMPRemotesNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllObjectSharingNode);
             tlvTableInfos.AddObject(_activator.CoreChildProvider.AllPipelinesNode);
@@ -150,7 +151,8 @@ namespace Rdmp.UI.Collections
                 root is AllANOTablesNode ||
                 root is AllServersNode ||
                 root is AllConnectionStringKeywordsNode || 
-                root is AllStandardRegexesNode;
+                root is AllStandardRegexesNode ||
+                root is AllDashboardsNode;
 
         }
     }

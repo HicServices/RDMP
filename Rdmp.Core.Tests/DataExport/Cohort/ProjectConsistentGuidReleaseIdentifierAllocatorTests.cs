@@ -7,7 +7,6 @@
 using System;
 using System.Collections.Generic;
 using FAnsi;
-using FAnsi.Discovery.TypeTranslation;
 using NUnit.Framework;
 using Rdmp.Core.CohortCommitting;
 using Rdmp.Core.CohortCommitting.Pipeline;
@@ -15,6 +14,7 @@ using Rdmp.Core.CohortCommitting.Pipeline.Destinations.IdentifierAllocation;
 using Rdmp.Core.DataExport.Data;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.DataExport.Cohort
 {
@@ -31,8 +31,8 @@ namespace Rdmp.Core.Tests.DataExport.Cohort
             var wizard = new CreateNewCohortDatabaseWizard(db,CatalogueRepository,DataExportRepository,false);
             var ect = wizard.CreateDatabase(new PrivateIdentifierPrototype("chi", privateIdentifierDataType),new AcceptAllCheckNotifier());
             
-            var defTable = db.ExpectTable(ect.DefinitionTableName);
-            var cohortTable = db.ExpectTable(ect.TableName);
+            var defTable = ect.DiscoverDefinitionTable();
+            var cohortTable = ect.DiscoverCohortTable();
 
             Project p = new Project(DataExportRepository,"MyProject");
             p.ProjectNumber = 10;

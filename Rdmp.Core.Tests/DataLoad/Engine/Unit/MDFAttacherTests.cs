@@ -36,8 +36,59 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             try
             {
                 var attacher = new MDFAttacher();
-                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
                 Assert.Throws<FileNotFoundException>(() => attacher.Attach(new ThrowImmediatelyDataLoadJob(), new GracefulCancellationToken()));
+            }
+            finally
+            {
+                try
+                {
+                    testDir.Delete(true);
+                }
+                catch (IOException e)
+                {
+                    Console.WriteLine(e);
+                }
+            }
+        }
+
+        /// <summary>
+        /// RDMPDEV-1550 tests system behaviour of <see cref="MDFAttacher"/> when the MDF file in ForLoading already exists
+        /// in the data path of the server to be loaded
+        /// </summary>
+        [Test]
+        public void Test_MDFFile_AlreadyExists()
+        {
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
+
+            var data = workingDir.CreateSubdirectory("data");
+
+            var testDir = workingDir.CreateSubdirectory("MDFAttacherTests");
+            var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestNoMDFFileFoundException", true);
+            
+            try
+            {
+                // create mdf and ldf files (in ForLoading
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "MyFile.mdf"), "fish");
+                File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "MyFile_log.ldf"), "fish");
+
+                //create an already existing file in the 'data' directory (immitates the copy to location)
+                File.WriteAllText(Path.Combine(data.FullName, "MyFile.mdf"), "fish");
+                
+
+                var attacher = new MDFAttacher();
+                attacher.OverrideMDFFileCopyDestination = data.FullName;
+
+                attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
+                
+                //should be a warning since overwritting is default behaviour
+                var ex = Assert.Throws<Exception>(()=>
+                    attacher.Attach(
+                        new ThrowImmediatelyDataLoadJob(new ThrowImmediatelyDataLoadEventListener(){ThrowOnWarning=true})
+                        , new GracefulCancellationToken())
+                );
+
+                StringAssert.Contains("mdf already exists",ex.Message);
             }
             finally
             {
@@ -109,7 +160,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
                 File.WriteAllText(ldf1, "fish");
                 File.WriteAllText(ldf2, "fish");
 
-                string serverDatabasePath = @"c:\temp\";
+                string serverDatabasePath = TestContext.CurrentContext.WorkDirectory;
                 Assert.Throws<MultipleMatchingFilesException>(()=>new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null));
                 
             }
@@ -255,7 +306,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
         [Test]
         public void TestFactory()
         {
-            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);;
+            var workingDir = new DirectoryInfo(TestContext.CurrentContext.TestDirectory);
             var testDir = workingDir.CreateSubdirectory("MDFAttacherTests_TestFactory");
             var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestFactory", true);
 
@@ -263,7 +314,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             {
                 
                 var attacher = CatalogueRepository.MEF.CreateA<IAttacher>(typeof(MDFAttacher).FullName);
-                attacher.Initialize(loadDirectory, DiscoveredDatabaseICanCreateRandomTablesIn);
+                attacher.Initialize(loadDirectory, GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer));
 
                 Assert.IsNotNull(attacher);
                 Assert.IsInstanceOf<MDFAttacher>(attacher);

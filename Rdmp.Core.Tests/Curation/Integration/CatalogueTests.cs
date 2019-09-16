@@ -257,7 +257,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             ColumnInfo t3_c1 = new ColumnInfo(Repository, "Description", "varchar(10)", t3);
             ColumnInfo t3_c2 = new ColumnInfo(Repository, "Code", "int", t3);
 
-            //wire up virtual columns to underlying columns
+            //wire SetUp virtual columns to underlying columns
             ci1.SetColumnInfo(t1_c1);
             ci2.SetColumnInfo( t1_c2);
             ci3.SetColumnInfo( t2_c1);

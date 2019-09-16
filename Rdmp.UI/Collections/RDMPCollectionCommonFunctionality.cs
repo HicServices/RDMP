@@ -26,6 +26,7 @@ using Rdmp.UI.Menus;
 using Rdmp.UI.Menus.MenuItems;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Theme;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableLibraryCode.Settings;
@@ -250,6 +251,9 @@ namespace Rdmp.UI.Collections
 
         private void CreateColorIndicator(TreeListView tree, RDMPCollection collection)
         {
+            if(Tree.Parent == null || collection == RDMPCollection.None)
+                return;
+
             var indicatorHeight = BackColorProvider.IndiciatorBarSuggestedHeight;
 
             BackColorProvider p = new BackColorProvider();
@@ -434,90 +438,105 @@ namespace Rdmp.UI.Collections
             
             return CoreIconProvider.GetImage(rowObject,hasProblems?OverlayKind.Problem:OverlayKind.None);
         }
-        
 
-        private ContextMenuStrip GetMenuIfExists(object o)
+        /// <summary>
+        /// Creates a menu compatible with object <paramref name="o"/>.  Returns null if no compatible menu exists.
+        /// Errors are reported to <see cref="IActivateItems.GlobalErrorCheckNotifier"/> (if set up).
+        /// 
+        /// </summary>
+        /// <param name="o"></param>
+        /// <returns></returns>
+        public ContextMenuStrip GetMenuIfExists(object o)
         {
-            var many = o as ICollection;
-
-            if(many != null)
+            try
             {
-                var menu = new ContextMenuStrip();
+                var many = o as ICollection;
 
-                var factory = new AtomicCommandUIFactory(_activator);
-
-                if(many.Cast<object>().All(d=>d is IDeleteable))
+                if (many != null)
                 {
-                    var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator,many.Cast<IDeleteable>().ToList()));
-                    mi.ShortcutKeys = Keys.Delete;
-                    menu.Items.Add(mi);
-                }           
-                
-                return menu;
-            }
+                    var menu = new ContextMenuStrip();
 
-            if (o != null)
-            {
-                //is o masquerading as someone else?
-                IMasqueradeAs masquerader = o as IMasqueradeAs;
+                    var factory = new AtomicCommandUIFactory(_activator);
 
-                //if so this is who he is pretending to be
-                object masqueradingAs = null;
-
-                if (masquerader != null)
-                    masqueradingAs = masquerader.MasqueradingAs(); //yes he is masquerading!
-
-                var menu = GetMenuWithCompatibleConstructorIfExists(o);
-
-                //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
-                if (menu == null && masqueradingAs != null)
-                    menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, masquerader);
-
-                //found a menu with compatible constructor arguments
-                if (menu != null)
-                {
-                    if (!Settings.AllowPinning)
+                    if (many.Cast<object>().All(d => d is IDeleteable))
                     {
-                        var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
-
-                        if (miPin != null)
-                        {
-                            miPin.Enabled = false;
-                            miPin.ToolTipText = "Pinning is disabled in this collection";
-                        }
+                        var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToList()));
+                        mi.ShortcutKeys = Keys.Delete;
+                        menu.Items.Add(mi);
                     }
 
                     return menu;
                 }
 
-                //no compatible menus so just return default menu
-                var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
-                defaultMenu.AddCommonMenuItems(this);
-                return defaultMenu;
-            }
-            else
-            {
-                //it's a right click in whitespace (nothing right clicked)
-
-                AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator);
-
-                if (WhitespaceRightClickMenuCommandsGetter != null)
+                if (o != null)
                 {
-                    var menu = factory.CreateMenu(_activator,Tree,_collection,WhitespaceRightClickMenuCommandsGetter(_activator));
-                    menu.AddCommonMenuItems(this);
-                    return menu;
+                    //is o masquerading as someone else?
+                    IMasqueradeAs masquerader = o as IMasqueradeAs;
 
+                    //if so this is who he is pretending to be
+                    object masqueradingAs = null;
+
+                    if (masquerader != null)
+                        masqueradingAs = masquerader.MasqueradingAs(); //yes he is masquerading!
+
+                    var menu = GetMenuWithCompatibleConstructorIfExists(o);
+
+                    //If no menu takes the object o try checking the object it is masquerading as as a secondary preference
+                    if (menu == null && masqueradingAs != null)
+                        menu = GetMenuWithCompatibleConstructorIfExists(masqueradingAs, masquerader);
+
+                    //found a menu with compatible constructor arguments
+                    if (menu != null)
+                    {
+                        if (!Settings.AllowPinning)
+                        {
+                            var miPin = menu.Items.OfType<AtomicCommandMenuItem>().SingleOrDefault(mi => mi.Tag is ExecuteCommandPin);
+
+                            if (miPin != null)
+                            {
+                                miPin.Enabled = false;
+                                miPin.ToolTipText = "Pinning is disabled in this collection";
+                            }
+                        }
+
+                        return menu;
+                    }
+
+                    //no compatible menus so just return default menu
+                    var defaultMenu = new RDMPContextMenuStrip(new RDMPContextMenuStripArgs(_activator, Tree, o), o);
+                    defaultMenu.AddCommonMenuItems(this);
+                    return defaultMenu;
                 }
-            }
+                else
+                {
+                    //it's a right click in whitespace (nothing right clicked)
 
-            return null;
+                    AtomicCommandUIFactory factory = new AtomicCommandUIFactory(_activator);
+
+                    if (WhitespaceRightClickMenuCommandsGetter != null)
+                    {
+                        var menu = factory.CreateMenu(_activator, Tree, _collection, WhitespaceRightClickMenuCommandsGetter(_activator));
+                        menu.AddCommonMenuItems(this);
+                        return menu;
+
+                    }
+                }
+
+                return null;
+            }
+            catch(Exception ex)
+            {
+                if(_activator?.GlobalErrorCheckNotifier == null)
+                    throw;
+
+                _activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs($"Failed to build menu for {o} of Type {o?.GetType()}",CheckResult.Fail,ex));
+                return null;
+            }           
         }
 
         //once we find the best menu for object of Type x then we want to cache that knowledge and go directly to that menu every time
         Dictionary<Type,Type> _cachedMenuCompatibility = new Dictionary<Type, Type>();
         
-
-
         private ContextMenuStrip GetMenuWithCompatibleConstructorIfExists(object o, IMasqueradeAs oMasquerader = null)
         {
             RDMPContextMenuStripArgs args = new RDMPContextMenuStripArgs(_activator,Tree,o);
@@ -631,9 +650,23 @@ namespace Rdmp.UI.Collections
                     Tree.AddObject(o); //add it
                     return;
                 }
-             if (!exists)
-                //remove it
+
+            if(ShouldClearPinFilterOnRefresh(o,exists))
+                _pinFilter.UnApplyToTree();
+
+            if (!exists)
+            {
+                //clear the current selection (if the object to be deleted is selected)
+                if(Tree.IsSelected(o))
+                {
+                    Tree.SelectedObject = null;
+                    Tree.SelectedObjects = null;
+                }                   
+
+                //remove it from tree
                 Tree.RemoveObject(o);
+            }
+                
 
             if(!IsHiddenByFilter(o))
                 //By preference refresh the parent that way we deal with hierarchy changes
@@ -653,6 +686,23 @@ namespace Rdmp.UI.Collections
                 //if we have the object
                     if (Tree.IndexOf(o) != -1 && exists)
                         Tree.RefreshObject(o); //it exists so refresh it!
+        }
+
+        private bool ShouldClearPinFilterOnRefresh(object o, bool exists)
+        {
+            //there is no current pin
+            if(_pinFilter == null)
+                return false;
+
+            //the current pin is the object being deleted
+            if(!exists && Equals(CurrentlyPinned, o))
+                return true;
+
+            //the current pin does not exist anymore (e.g. if you pinned something low down and deleted something above it)
+            if (CurrentlyPinned is DatabaseEntity e && !e.Exists())
+                return true;
+
+            return false;
         }
 
         private bool IsHiddenByFilter(object o)

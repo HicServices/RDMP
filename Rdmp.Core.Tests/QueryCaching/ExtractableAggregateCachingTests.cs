@@ -29,8 +29,9 @@ namespace Rdmp.Core.Tests.QueryCaching
         private ExtractionInformation _extractionInformation;
 
         [SetUp]
-        public void CreateEntities()
+        protected override void SetUp()
         {
+            base.SetUp();
 
             _cata =
                new Catalogue(CatalogueRepository,"ExtractableAggregateCachingTests");
@@ -52,15 +53,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         }
 
-        [TearDown]
-        public void TearDown()
-        {
-            _config.DeleteInDatabase();
-            _extractionInformation.DeleteInDatabase();
-            _table.DeleteInDatabase();
-            _cata.DeleteInDatabase();
-        }
-
+        
         [Test]
         public void BasicCase()
         {

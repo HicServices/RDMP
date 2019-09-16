@@ -14,7 +14,7 @@
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
 			      <dependency id="HIC.BadMedicine" version="0.1.5" />
-            <dependency id="HIC.FAnsiSql" version="0.9.4" />
+            <dependency id="HIC.FAnsiSql" version="0.10.6" />
             <dependency id="CsvHelper" version="12.1.2" />
             <dependency id="Newtonsoft.Json" version="12.0.2"/>
             <dependency id="CommandLineParser" version="2.5.0" />
@@ -26,7 +26,6 @@
             <dependency id="Microsoft.NET.Test.Sdk" version="16.2.0" />
             <dependency id="ExcelNumberFormat" version="1.0.7" />
             <dependency id="NPOI" version="2.4.1" />
-            <dependency id="NuDoc" version="0.5.0" />
             <dependency id="Xam.Plugins.Settings" version="3.1.1" />
             <dependency id="System.Runtime.Loader" version="4.3.0" />
             <dependency id="System.Drawing.Common" version="4.5.1" />
@@ -36,6 +35,7 @@
             <dependency id="System.IO.FileSystem" version="4.3.0" />
             <dependency id="System.Runtime.Extensions" version="4.3.0" />
             <dependency id="System.Threading" version="4.3.0" />
+            <dependency id="System.Threading.ThreadPool" version="4.3.0" />
             <dependency id="System.Globalization" version="4.3.0" />
             <dependency id="System.Net.NameResolution" version="4.3.0" />
             <dependency id="System.Net.Primitives" version="4.3.0" /> 

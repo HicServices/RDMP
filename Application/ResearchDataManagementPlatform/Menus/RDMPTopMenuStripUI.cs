@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -223,7 +222,8 @@ namespace ResearchDataManagementPlatform.Menus
             return new IAtomicCommand[]
             {
                 new ExecuteCommandCreateNewCatalogueByImportingFile(Activator),
-                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator, false),
+                new ExecuteCommandCreateNewCatalogueByImportingExistingDataTable(Activator),
+                new ExecuteCommandCreateNewTableInfoByImportingExistingDataTable(Activator),
                 new ExecuteCommandCreateNewCohortIdentificationConfiguration(Activator),
                 new ExecuteCommandCreateNewLoadMetadata(Activator),
                 new ExecuteCommandCreateNewStandardRegex(Activator),

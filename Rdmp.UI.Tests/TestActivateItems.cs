@@ -12,13 +12,11 @@ using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
-using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
@@ -59,6 +57,7 @@ namespace Rdmp.UI.Tests
         {
             _uiTests = uiTests;
             Results = new TestActivateItemsResults();
+            GlobalErrorCheckNotifier = new ToMemoryCheckNotifier();
 
             RepositoryLocator = new RepositoryProvider(repo);
             RefreshBus = new RefreshBus();
@@ -73,7 +72,7 @@ namespace Rdmp.UI.Tests
             CommentStore = _commentStore;
 
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,Results);
-            CoreIconProvider = new DataExportIconProvider(null);
+            CoreIconProvider = new DataExportIconProvider(RepositoryLocator,null);
             FavouritesProvider = new FavouritesProvider(this,repo.CatalogueRepository);
 
             _problemProviders = new List<IProblemProvider>(new IProblemProvider[]
@@ -87,13 +86,10 @@ namespace Rdmp.UI.Tests
 
         public Form ShowWindow(Control singleControlForm, bool asDocument = false)
         {
-            throw new NotImplementedException();
+            _uiTests.AndLaunch(singleControlForm);
+            return singleControlForm.FindForm();
         }
 
-        public Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity objectOfTypeT)
-        {
-            throw new NotImplementedException();
-        }
 
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         public ICoreIconProvider CoreIconProvider { get; private set; }
@@ -109,12 +105,20 @@ namespace Rdmp.UI.Tests
 
         public T Activate<T>(IPersistableObjectCollection collection) where T : Control, IObjectCollectionControl, new()
         {
-            throw new NotImplementedException();
+            T t = new T();
+            _uiTests.AndLaunch(t);
+            t.SetCollection(this, collection);
+            return t;
         }
 
         public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
         {
-            throw new NotImplementedException();
+            if(deleteable is DatabaseEntity d && !d.Exists())
+                throw new Exception("Attempt made to delete an object which didn't exist");
+
+            deleteable.DeleteInDatabase();
+            RefreshBus.Publish(sender, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
+            return true;
         }
 
         public event EmphasiseItemHandler Emphasise;
@@ -122,27 +126,7 @@ namespace Rdmp.UI.Tests
         {
             Emphasise?.Invoke(sender, new EmphasiseEventArgs(request));
         }
-
-        public void ActivateLookupConfiguration(object sender, Catalogue catalogue, TableInfo optionalLookupTableInfo = null)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ViewFilterGraph(object sender, FilterGraphObjectCollection collection)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void ActivateViewLog(LoadMetadata loadMetadata)
-        {
-            throw new NotImplementedException();
-        }
-
-        public IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata)
-        {
-            throw new NotImplementedException();
-        }
-
+                
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             throw new NotImplementedException();
@@ -160,12 +144,12 @@ namespace Rdmp.UI.Tests
 
         public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
         {
-            throw new NotImplementedException();
+            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
         }
 
         public string GetDocumentation(Type type)
         {
-            throw new NotImplementedException();
+            return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
         }
 
         public string CurrentDirectory { get { return TestContext.CurrentContext.TestDirectory; }}
@@ -209,9 +193,29 @@ namespace Rdmp.UI.Tests
         public bool ApplyThemeToMenus { get; set; }
 
         
+        /// <summary>
+        /// The answer to give when asked <see cref="YesNo(string, string)"/>
+        /// </summary>
+        public bool? YesNoResponse { get;set;}
+
         public bool YesNo(string text, string caption)
         {
+            if(YesNoResponse.HasValue)
+                return YesNoResponse.Value;
+
             throw new Exception("Did not expect to be asked a question but we were asked :" + text);
+        }
+
+
+        /// <summary>
+        /// The answer to give when asked to <see cref="TypeText(string, string, int, string, out string, bool)"/>
+        /// </summary>
+        public string TypeTextResponse { get; set; }
+
+        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        {
+            text = TypeTextResponse;
+            return !string.IsNullOrWhiteSpace(TypeTextResponse);
         }
     }
 

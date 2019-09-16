@@ -21,8 +21,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         [Test]
         public void OverwriteMigrationStrategy_NoPrimaryKey()
         {
-            var from = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("Bob",new[] {new DatabaseColumnRequest("Field", "int")});
-            var to = DiscoveredDatabaseICanCreateRandomTablesIn.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
+            var db = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
+            var from = db.CreateTable("Bob",new[] {new DatabaseColumnRequest("Field", "int")});
+            var to = db.CreateTable("Frank", new[] { new DatabaseColumnRequest("Field", "int") });
 
             var connection = Mock.Of<IManagedConnection>();
             var job = Mock.Of<IDataLoadJob>();

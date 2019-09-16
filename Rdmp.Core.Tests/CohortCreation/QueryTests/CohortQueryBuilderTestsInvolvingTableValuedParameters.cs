@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -15,15 +16,17 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
     public class CohortQueryBuilderTestsInvolvingTableValuedParameters:DatabaseTests
     {
         private TestableTableValuedFunction _function = new TestableTableValuedFunction();
-        [SetUp]
+        
         public void CreateFunction()
         {
-            _function.Create(DiscoveredDatabaseICanCreateRandomTablesIn, CatalogueRepository);
+            _function.Create(GetCleanedServer(DatabaseType.MicrosoftSQLServer), CatalogueRepository);
         }
 
         [Test]
         public void CohortGenerationDifferingTableValuedParametersTest()
         {
+            CreateFunction();
+
             //In this example we have 2 configurations which both target the same table valued function but which must have different parameter values
             var config1 = new AggregateConfiguration(CatalogueRepository,_function.Cata, "CohortGenerationDifferingTableValuedParametersTest_1");
             config1.CountSQL = null;
@@ -143,12 +146,5 @@ SET @name_2='monkey';
                 
             }
         }
-
-        [TearDown]
-        public void Destroy()
-        {
-            _function.Destroy();
-        }
-
     }
 }

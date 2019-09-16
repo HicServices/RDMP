@@ -11,13 +11,14 @@ using System.IO;
 using System.Linq;
 using System.IO.Compression;
 using System.Text.RegularExpressions;
-using NuDoq;
 using System.Reflection;
+using System.Text;
+using System.Xml;
 
 namespace ReusableLibraryCode.Comments
 {
     /// <summary>
-    /// Records documentation for classes and keywords (e.g. foreign key names).  This is pwered by NuDoq
+    /// Records documentation for classes and keywords (e.g. foreign key names).
     /// </summary>
     public class CommentStore : IEnumerable<KeyValuePair<string, string>>
     {
@@ -104,10 +105,116 @@ namespace ReusableLibraryCode.Comments
         {
             if (File.Exists(filename))
             {
-                var doc = DocReader.Read(assembly, filename);
-                doc.Accept(new CommentsVisitor(this));
+                var doc = new XmlDocument();
+                doc.Load(filename);
+
+                doc.IterateThroughAllNodes(AddXmlDoc);
             }
             
+        }
+        
+        /// <summary>
+        /// Adds the given member xml doc to the <see cref="CommentStore"/>
+        /// </summary>
+        /// <param name="obj"></param>
+        public void AddXmlDoc(XmlNode obj)
+        {
+            if(obj == null)
+                return;
+
+            if (obj.Name == "member" && obj.Attributes != null)
+            {
+                string memberName = obj.Attributes["name"]?.Value;
+                var summary = GetSummaryAsText(obj["summary"]);
+
+                if(memberName == null || string.IsNullOrWhiteSpace(summary))
+                    return;
+                
+                //it's a Property get Type.Property (not fully specified)
+                if (memberName.StartsWith("P:") || memberName.StartsWith("T:"))
+                    Add(GetLastTokens(memberName),summary.Trim());
+            }
+        }
+
+        private string GetSummaryAsText(XmlElement summaryTag)
+        {
+            if (summaryTag == null)
+                return null;
+            
+            StringBuilder sb = new StringBuilder();
+            
+            summaryTag.IterateThroughAllNodes(
+                    n =>
+                    {
+                        if (n.Name == "see" && n.Attributes != null)
+                            sb.Append(GetLastTokens(n.Attributes["cref"]?.Value) + " "); // a <see cref="omg"> tag
+                        else if (n.Name == "para")
+                            TrimEndSpace(sb).Append(Environment.NewLine + Environment.NewLine);  //open para tag (next tag is probably #text)
+                        else if (n.Value != null) //e.g. #text
+                            sb.Append(TrimSummary(n.Value) + " ");
+                    });
+
+            return sb.ToString();
+        }
+
+        private string TrimSummary(string value)
+        {
+            if (value == null)
+                return null;
+
+            return Regex.Replace(value,@"\s{2,}", " ").Trim();
+        }
+
+        /// <summary>
+        /// Returns the last x parts from a string like M:Abc.Def.Geh.AAA(fff,mm).  In this case it would return AAA for 1, Geh.AAA for 2 etc.
+        /// </summary>
+        /// <param name="memberName"></param>
+        /// <param name="partsToGet"></param>
+        /// <returns></returns>
+        private string GetLastTokens(string memberName, int partsToGet)
+        {
+            //throw away any preceding "T:", "M:" etc
+            memberName = memberName.Substring(memberName.IndexOf(':') + 1);
+
+            var idxBracket = memberName.LastIndexOf('(');
+            if (idxBracket != -1)
+                memberName = memberName.Substring(0, idxBracket);
+
+            var matches = memberName.Split('.');
+
+            if (matches.Length < partsToGet)
+                return memberName;
+
+            return string.Join(".", matches.Reverse().Take(partsToGet).Reverse());
+        }
+
+        private string GetLastTokens(string memberName)
+        {
+            if (memberName.StartsWith("P:"))
+                return GetLastTokens(memberName, 2);
+
+            if (memberName.StartsWith("T:"))
+                return GetLastTokens(memberName, 1);
+
+            if (memberName.StartsWith("M:"))
+                return GetLastTokens(memberName, 2);
+            
+            return memberName;
+        }
+
+        public static StringBuilder TrimEndSpace(StringBuilder sb)
+        {
+            if (sb == null || sb.Length == 0) return sb;
+
+            int i = sb.Length - 1;
+            for (; i >= 0; i--)
+                if (sb[i] != ' ')
+                    break;
+
+            if (i < sb.Length - 1)
+                sb.Length = i + 1;
+
+            return sb;
         }
 
         public void Add(string name, string summary)

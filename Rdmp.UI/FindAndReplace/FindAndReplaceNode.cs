@@ -9,7 +9,7 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
-using ReusableLibraryCode.Extensions;
+using FAnsi.Extensions;
 
 namespace Rdmp.UI.FindAndReplace
 {

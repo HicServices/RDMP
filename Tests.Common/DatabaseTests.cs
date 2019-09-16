@@ -13,6 +13,7 @@ using System.Linq;
 using System.Text.RegularExpressions;
 using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Discovery.Constraints;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
@@ -59,11 +60,12 @@ namespace Tests.Common
         protected SqlConnectionStringBuilder UnitTestLoggingConnectionString;
         protected SqlConnectionStringBuilder DataQualityEngineConnectionString;
         
-        protected DiscoveredDatabase DiscoveredDatabaseICanCreateRandomTablesIn;
+        
         protected DiscoveredServer DiscoveredServerICanCreateRandomDatabasesAndTablesOn;
 
         private readonly DiscoveredServer _discoveredMySqlServer;
         private readonly DiscoveredServer _discoveredOracleServer;
+        private DiscoveredServer _discoveredSqlServer;
 
         static private Startup _startup;
 
@@ -130,8 +132,11 @@ namespace Tests.Common
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
-            CreateScratchArea();
-            
+            _discoveredSqlServer = new DiscoveredServer(
+                new SqlConnectionStringBuilder(){
+                DataSource = TestDatabaseSettings.ServerName,
+                IntegratedSecurity = true});
+
             if (TestDatabaseSettings.MySql != null)
             {
                 var builder = new MySqlConnectionStringBuilder(TestDatabaseSettings.MySql);
@@ -195,8 +200,28 @@ namespace Tests.Common
             }
         }
 
+        /// <summary>
+        /// Deletes all data tables except <see cref="ServerDefaults"/>, <see cref="ExternalDatabaseServer"/> and some other core tables which are required for access to
+        /// DQE, logging etc
+        /// </summary>
+        protected void BlitzMainDataTables()
+        {
+            using (var con = CatalogueRepository.GetConnection())
+            {
+                var catalogueDatabaseName = ((TableRepository)RepositoryLocator.CatalogueRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+                var dataExportDatabaseName = ((TableRepository)RepositoryLocator.DataExportRepository).DiscoveredServer.GetCurrentDatabase().GetRuntimeName();
+
+                UsefulStuff.ExecuteBatchNonQuery(string.Format(BlitzDatabasesLite, catalogueDatabaseName, dataExportDatabaseName), con.Connection);
+            }
+        }
+
+        protected void RunBlitzDatabases()
+        {
+            RunBlitzDatabases(RepositoryLocator);
+        }
+
         [OneTimeSetUp]
-        protected virtual void SetUp()
+        protected virtual void OneTimeSetUp()
         {
             //if it is the first time
             if (_startup == null)
@@ -212,13 +237,15 @@ namespace Tests.Common
             RepositoryLocator.CatalogueRepository.MEF.Setup(_startup.MEFSafeDirectoryCatalog);
         }
 
-        [OneTimeTearDown]
-        void DropCreatedDatabases()
+        /// <summary>
+        /// override to specify setup behaviour
+        /// </summary>
+        [SetUp]
+        protected virtual void SetUp()
         {
-            foreach (DiscoveredDatabase db in forCleanup)
-                if (db.Exists())
-                    db.Drop();
+
         }
+   
         private void StartupOnDatabaseFound(object sender, PlatformDatabaseFoundEventArgs args)
         { 
             //its a healthy message, jolly good
@@ -250,19 +277,6 @@ namespace Tests.Common
             Assert.IsTrue(args.Status == MEFFileDownloadEventStatus.Success || args.Status == MEFFileDownloadEventStatus.FailedDueToFileLock, "MEFFileDownloadEventStatus is " + args.Status + " for plugin " + args.FileBeingProcessed + Environment.NewLine + (args.Exception == null ? "No exception" : ExceptionHelper.ExceptionToListOfInnerMessages(args.Exception)));
         }
         
-        private void CreateScratchArea()
-        {
-            var scratchDatabaseName = TestDatabaseNames.GetConsistentName("ScratchArea");
-
-            DiscoveredDatabaseICanCreateRandomTablesIn = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(scratchDatabaseName);
-
-            //if it already exists drop it
-            if(DiscoveredDatabaseICanCreateRandomTablesIn.Exists())
-                DiscoveredDatabaseICanCreateRandomTablesIn.Drop();
-
-            //create it
-            DiscoveredServerICanCreateRandomDatabasesAndTablesOn.CreateDatabase(scratchDatabaseName);
-        }
         
         public const string BlitzDatabases = @"
 --If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
@@ -350,6 +364,92 @@ delete from {1}..ExtractableDataSet
 delete from {1}..Project
 ";
 
+
+
+        public const string BlitzDatabasesLite = @"
+--If you want to blitz everything out of your test catalogue and data export database(s) then run the following SQL (adjusting for database names):
+
+delete from {0}..ConnectionStringKeyword
+delete from {0}..JoinableCohortAggregateConfigurationUse
+delete from {0}..JoinableCohortAggregateConfiguration
+delete from {0}..CohortIdentificationConfiguration
+delete from {0}..CohortAggregateContainer
+
+delete from {0}..AggregateConfiguration
+delete from {0}..AggregateFilter
+delete from {0}..AggregateFilterContainer
+delete from {0}..AggregateFilterParameter
+
+delete from {0}..AnyTableSqlParameter
+
+delete from {0}..ColumnInfo
+delete from {0}..ANOTable
+
+delete from {0}..PreLoadDiscardedColumn
+delete from {0}..TableInfo
+delete from {0}..DataAccessCredentials
+
+update {0}..Catalogue set PivotCategory_ExtractionInformation_ID = null
+update {0}..Catalogue set TimeCoverage_ExtractionInformation_ID = null
+GO
+
+delete from {0}..ExtractionFilterParameterSetValue
+delete from {0}..ExtractionFilterParameterSet
+
+delete from {0}..ExtractionInformation
+
+delete from {0}..CatalogueItemIssue
+delete from {0}..IssueSystemUser
+
+delete from {0}..SupportingDocument
+delete from {0}..SupportingSQLTable
+
+delete from {0}..GovernanceDocument
+delete from {0}..GovernancePeriod_Catalogue
+delete from {0}..GovernancePeriod
+
+delete from {0}..Catalogue
+
+delete from {0}..CacheProgress
+delete from {0}..LoadProgress
+delete from {0}..LoadMetadata
+
+delete from {0}..Favourite
+
+delete from {0}..PipelineComponentArgument
+delete from {0}..Pipeline
+delete from {0}..PipelineComponent
+
+delete from {0}..ObjectExport
+delete from {0}..ObjectImport
+
+delete from {0}..LoadModuleAssembly
+delete from {0}..Plugin
+
+delete from {1}..ReleaseLog
+delete from {1}..SupplementalExtractionResults
+delete from {1}..CumulativeExtractionResults
+delete from {1}..ExtractableColumn
+delete from {1}..SelectedDataSets
+
+delete from {1}..GlobalExtractionFilterParameter
+delete from {1}..ExtractionConfiguration
+
+delete from {1}..ConfigurationProperties
+
+delete from {1}..DeployedExtractionFilterParameter
+delete from {1}..DeployedExtractionFilter
+delete from {1}..FilterContainer
+
+delete from {1}..ExtractableCohort
+delete from {1}..ExternalCohortTable
+
+delete from {1}..ExtractableDataSetPackage
+
+delete from {1}..ExtractableDataSet
+delete from {1}..Project
+";
+
         /// <summary>
         /// returns a Trimmed string in which all whitespace including newlines have been replaced by single spaces.  Useful for checking the exact values of expected
         /// queries built by query builders without having to worry about individual lines having leading/trailing whitespace etc.
@@ -369,46 +469,25 @@ delete from {1}..Project
         /// </summary>
         /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
         /// <param name="dbnName">null for default test database name (recommended unless you are testing moving data from one database to another on the same test server)</param>
-        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
         /// <returns></returns>
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null, bool justDropTablesIfPossible = false)
+        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName = null)
         {
-            if (dbnName == null)
-                dbnName = DiscoveredDatabaseICanCreateRandomTablesIn.GetRuntimeName();
+            //the standard scratch area database
+            string standardName = TestDatabaseNames.GetConsistentName("ScratchArea");
 
-            DiscoveredServer wc1;
-            DiscoveredDatabase wc2;
-            var toReturn =  GetCleanedServer(type, dbnName, out wc1, out wc2,justDropTablesIfPossible);
-            forCleanup.Add(toReturn);
-            return toReturn;
-        }
+            //if user specified the standard name or no name
+            bool isStandardDb = dbnName == null || dbnName == standardName;
+            
+            //use the standard name if they haven't specified one
+            if(dbnName == null)
+                dbnName = standardName;
 
-        /// <summary>
-        /// Gets an empty database on the test server of the appropriate DBMS
-        /// </summary>
-        /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
-        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
-        /// <returns></returns>
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, bool justDropTablesIfPossible)
-        {
-            return GetCleanedServer(type, null, justDropTablesIfPossible);
-        }
+            DiscoveredServer server;
 
-        /// <summary>
-        /// Gets an empty database on the test server of the appropriate DBMS
-        /// </summary>
-        /// <param name="type">The DBMS you want a server of (a valid connection string must exist in TestDatabases.txt)</param>
-        /// <param name="dbnName">null for default test database name (recommended unless you are testing moving data from one database to another on the same test server)</param>
-        /// <param name="server"></param>
-        /// <param name="database"></param>
-        /// <param name="justDropTablesIfPossible">Determines behaviour when the test database already exists.  False to drop and recreate it. True to just drop tables (faster)</param>
-        /// <returns></returns>
-        protected DiscoveredDatabase GetCleanedServer(DatabaseType type, string dbnName, out DiscoveredServer server, out DiscoveredDatabase database, bool justDropTablesIfPossible = false)
-        {
             switch (type)
             {
                 case DatabaseType.MicrosoftSQLServer:
-                    server = new DiscoveredServer(DiscoveredServerICanCreateRandomDatabasesAndTablesOn.Builder);
+                    server = _discoveredSqlServer == null ? null : new DiscoveredServer(_discoveredSqlServer.Builder);
                     break;
                 case DatabaseType.MySql:
                     server = _discoveredMySqlServer == null ? null : new DiscoveredServer(_discoveredMySqlServer.Builder);
@@ -429,14 +508,11 @@ delete from {1}..Project
 
             server.TestConnection();
 
-            database = server.ExpectDatabase(dbnName);
+            var database = server.ExpectDatabase(dbnName);
 
-            if (justDropTablesIfPossible && database.Exists())
+            if (database.Exists())
             {
-                foreach (var t in database.DiscoverTables(true))
-                    t.Drop();
-                foreach (var t in database.DiscoverTableValuedFunctions())
-                    t.Drop();
+                DeleteTables(database);
             }
             else
                 database.Create(true);
@@ -445,7 +521,38 @@ delete from {1}..Project
 
             Assert.IsTrue(database.Exists());
 
+            //if it had non standard naming mark it for deletion on cleanup
+            if (!isStandardDb)
+                forCleanup.Add(database);
+
             return database;
+        }
+
+        protected void DeleteTables(DiscoveredDatabase database)
+        {
+            var tables = new RelationshipTopologicalSort(database.DiscoverTables(true));
+
+            foreach (var t in tables.Order.Reverse())
+                try
+                {
+                    t.Drop();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception( $"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup",ex);
+                }
+            
+            foreach (var t in database.DiscoverTableValuedFunctions())
+                try
+                {
+                    
+                    t.Drop();
+                }
+                catch (Exception ex)
+                {
+                    throw new Exception( $"Failed to drop table '{t.GetFullyQualifiedName()} during cleanup",ex);
+                }
+
         }
 
         protected Catalogue Import(DiscoveredTable tbl, out TableInfo tableInfoCreated, out ColumnInfo[] columnInfosCreated, out CatalogueItem[] catalogueItems, out ExtractionInformation[] extractionInformations)
@@ -603,9 +710,25 @@ GO
 
             throw new NotImplementedException();
         }
+
+        protected void Clear(LoadDirectory loadDirectory)
+        {
+            DeleteFilesIn(loadDirectory.ForLoading);
+            DeleteFilesIn(loadDirectory.ForArchiving);
+            DeleteFilesIn(loadDirectory.Cache);
+        }
+
+        protected void DeleteFilesIn(DirectoryInfo dir)
+        {
+            foreach (var f in dir.GetFiles())
+                f.Delete();
+
+            foreach (var d in dir.GetDirectories())
+                d.Delete(true);
+        }
+
     }
-    
-        
+
 
     public static class TestDatabaseNames
     {

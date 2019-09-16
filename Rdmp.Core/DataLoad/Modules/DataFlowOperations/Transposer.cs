@@ -77,7 +77,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowOperations
                 string newColName = inRow[0].ToString();
 
                 if (MakeHeaderNamesSane)
-                    newColName = QuerySyntaxHelper.MakeHeaderNameSane(newColName);
+                    newColName = QuerySyntaxHelper.MakeHeaderNameSensible(newColName);
 
                 outputTable.Columns.Add(newColName);
             }

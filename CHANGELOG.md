@@ -6,10 +6,61 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
-
 ...
 
-## [3.1.0]
+## [3.2.0] - 2019-09-16
+
+## Added
+
+- Patient Index Tables now use the source column datatype for caching columns (as long as there is no transform declared).
+
+## [3.2.0-rc1] - 2019-09-13
+
+## Added
+
+- Right clicking a mispelled word now offers spelling suggestions
+- You can now add new datasets to an extraction configuration directly from the "Core" folder in Execute Extraction window (rather than having to go back to the DataExport tree view)
+- MDFAttacher now checks for existing mdf/ldf files in the RAW server data directory.  Existing files will trigger a warning.  After the warning an attempt is still made to overwrite the file(s) (as occured previously)
+- Tab key now also works for autocomplete in SQL editor windows (previously only Enter worked)
+- Orphan cohort sets (do not belong to any Cohort Identification Configuration) now appear under a top level folder in 'Cohort Builder' collection
+- Extraction Category can now be changed directly from a CatalogueItem, ExtractionInformation 
+- Extraction Category can be changed for all columns in a Catalogue at once by right clicking the or the CatalogueItemsNode (folder under a Catalogue)
+- Right clicking a column allows you to Alter it's type e.g. increase the size of a varchar field
+
+### Changed
+
+- Help documentation for objects no longer uses NuDoq library (now faster and more maintainable)
+- Extraction source component `ExecuteCrossServerDatasetExtractionSource` now never drops the temporary cohort database (previously it would drop it if it created it and CreateTemporaryDatabaseIfNotExists was true)
+- Updated to latest version of [FAnsiSql] (0.10.4) for better Oracle, localization and type estimation
+- Dashboards now appear in tree view instead of application tool strip and are searchable
+- CatalogueItem descriptions pie chart has flags for including internal/project specific etc in it's counts
+- CatalogueItem descriptions pie chart now lets you navigate directly to problem objects rather than showing a data table
+
+### Fixed 
+- Deleting an object now clears the selection in tree views (previously selection would become an arbitrary object).
+- Fixed bug where adding/moving cohort sets between containers (INTERSECT/UNION/EXCEPT) could result in 2 objects with the same Order in the same container (resulting in ambiguous order of execution).
+- Fixed UI bug where selecting an extractable Catalogue would hide it's extractable (small green e) icon overlay
+- Fixed bug where deleting a Pinned object would not unpin the object
+- Fixed bug where database tables with brackets in the name could break synchronization (these tables are now ignored by RDMP and cannot be imported).
+- Fixed bug deleting multiple objects at once when some objects are parents of others (and cause implicit delete).
+- Fixed bug with low resolution monitors and the Create New Cohort Wizard
+- Fixed bug with low resolution monitors and collections where leading columns could shrink to be no longer visible
+- Adding new filters/containers (AND/OR) now correctly expand and highlight the created object in collections
+- Fixed AggregateEditorUI could incorrectly offer to save changes even when no changes had been made
+- Clonng a Cohort Identification Configuration now preserves custom set container names e.g. "UNION Inclusion Criteria"
+- Fixed bug in DataTableUploadDestination where multiple root (DataLoadInfo) logging entries were created for a single large bulk insert 
+- Fixed bug in QueryBuilder when there are multiple IsPrimaryExtractionTable tables (Exception thrown was NullReferenceException instead of QueryBuilderException)
+- Fixed bug in generating FROM SQL when there are circular JoinInfo configured between tables used in the query
+- Fixed bug where closing the server/database selection dialog with the X instead of cancel could cause error messages (e.g. in Bulk Import TableInfos)
+- Fixed bug where searching for "Pipeline" or "Pipe" did not show all pipelines
+- Fixed bug caching patient index tables (cohort creation) when there are multiple tables being joined in the query.
+- Fixed error when logging very large (over 4000 characters) to the RDMP logging database
+
+### Removed
+- Cohort sets no longer appear under Catalogues (Find / GoTo now open the parent cohort identification configuration)
+- Removed OnlyUseOldDateTimes option on DataTableUploadDestination as it didn't actually do anything (DBMS type decisions are handled in a standard way by FAnsiSql)
+
+## [3.1.0] - 2019-07-31
 
 ### Added
 
@@ -117,7 +168,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/3.1.0...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.2.0-rc1...develop
+[3.2.0-rc1]: https://github.com/HicServices/RDMP/compare/3.1.0...v3.2.0-rc1
 [3.1.0]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc2...3.1.0
 [3.0.16-rc2]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc...v3.0.16-rc2
 [3.0.16-rc]: https://github.com/HicServices/RDMP/compare/v3.0.15...v3.0.16-rc

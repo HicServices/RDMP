@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
@@ -84,6 +85,9 @@ namespace Rdmp.Core.Providers
         
         public AllRDMPRemotesNode AllRDMPRemotesNode { get; private set; }
         public RemoteRDMP[] AllRemoteRDMPs { get; set; }
+
+        public AllDashboardsNode AllDashboardsNode { get;set;}
+        public DashboardLayout[] AllDashboards { get;set;}
 
         public AllObjectSharingNode AllObjectSharingNode { get; private set; }
         public ObjectImport[] AllImports { get; set; }
@@ -181,6 +185,9 @@ namespace Rdmp.Core.Providers
 
         public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
             
+        public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
+
+        public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 
         public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
@@ -268,6 +275,9 @@ namespace Rdmp.Core.Providers
             AllAggregateConfigurations = GetAllObjects<AggregateConfiguration>(repository);
             AllAggregateDimensions = GetAllObjects<AggregateDimension>(repository);
 
+            //to start with all aggregates are orphans (we prune this as we determine descendency in AddChildren methods
+            OrphanAggregateConfigurations = new HashSet<AggregateConfiguration>(AllAggregateConfigurations.Where(ac=>ac.IsCohortIdentificationAggregate));
+
             foreach (AggregateConfiguration configuration in AllAggregateConfigurations)
             {
                 configuration.InjectKnown(AllCataloguesDictionary[configuration.Catalogue_ID]);
@@ -313,6 +323,10 @@ namespace Rdmp.Core.Providers
             AllRDMPRemotesNode = new AllRDMPRemotesNode();
             AddChildren(AllRDMPRemotesNode);
 
+            AllDashboardsNode = new AllDashboardsNode();
+            AllDashboards = GetAllObjects<DashboardLayout>(repository);
+            AddChildren(AllDashboardsNode);
+
             AllObjectSharingNode = new AllObjectSharingNode();
             AllExports = GetAllObjects<ObjectExport>(repository);
             AllImports = GetAllObjects<ObjectImport>(repository);
@@ -345,6 +359,9 @@ namespace Rdmp.Core.Providers
 
             foreach (CohortIdentificationConfiguration cic in AllCohortIdentificationConfigurations)
                 AddChildren(cic);
+
+            //add the orphans under the orphan folder
+            AddToDictionaries(new HashSet<object>(OrphanAggregateConfigurations),new DescendancyList(OrphanAggregateConfigurationsNode));
 
             //Some AggregateConfigurations are 'Patient Index Tables', this happens when there is an existing JoinableCohortAggregateConfiguration declared where
             //the AggregateConfiguration_ID is the AggregateConfiguration.ID.  We can inject this knowledge now so to avoid database lookups later (e.g. at icon provision time)
@@ -490,7 +507,12 @@ namespace Rdmp.Core.Providers
         {
             AddToDictionaries(new HashSet<object>(AllRemoteRDMPs), new DescendancyList(allRDMPRemotesNode));
         }
-        
+
+        private void AddChildren(AllDashboardsNode allDashboardsNode)
+        {
+            AddToDictionaries(new HashSet<object>(AllDashboards), new DescendancyList(allDashboardsNode));
+        }
+
         private void AddChildren(AllObjectSharingNode allObjectSharingNode)
         {
             var descendancy = new DescendancyList(allObjectSharingNode);
@@ -823,21 +845,6 @@ namespace Rdmp.Core.Providers
                 AddToDictionaries(new HashSet<object>(lookups), descendancy.Add(lookupsNode));
             }
 
-            if(cohortAggregates.Any())
-            {
-                //the cohort node is our child
-                var cohortNode = new CohortSetsNode(c,cohortAggregates);
-
-                childObjects.Add(cohortNode);
-
-                //we also record all the Aggregates that are cohorts under us - but since these are also under Cohort Aggregates we will ignore it for descendancy purposes
-                var nodeDescendancy = descendancy.Add(cohortNode);
-
-                AddToDictionaries(new HashSet<object>(cohortAggregates),nodeDescendancy);
-                foreach (AggregateConfiguration cohortAggregate in cohortAggregates)
-                    AddChildren(cohortAggregate, nodeDescendancy.Add(cohortAggregate));
-            }
-
             if (regularAggregates.Any())
             {
                 var aggregatesNode = new AggregatesNode(c, regularAggregates);
@@ -1011,6 +1018,10 @@ namespace Rdmp.Core.Providers
                     var agg = AllAggregateConfigurations.Single(ac => ac.ID == joinable.AggregateConfiguration_ID);
                     ForceAggregateNaming(agg,descendancy);
                     children.Add(agg);
+
+                    //it's no longer an orphan because it's in a known cic (as a patient index table)
+                    OrphanAggregateConfigurations.Remove(agg);
+
                     AddChildren(agg,descendancy.Add(agg));
                 }
                 catch (Exception e)
@@ -1042,6 +1053,9 @@ namespace Rdmp.Core.Providers
             {
                 ForceAggregateNaming(configuration, descendancy);
                 AddChildren(configuration, descendancy.Add(configuration));
+
+                //it's no longer an orphan because it's in a known cic
+                OrphanAggregateConfigurations.Remove(configuration);
             }
 
             //children are all aggregates and containers at the current hierarchy level in order
@@ -1207,6 +1221,18 @@ namespace Rdmp.Core.Providers
 
             return null;
         }
+        
+        
+        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
+        {
+            var descendancy = GetDescendancyListIfAnyFor(objectToEmphasise);
+
+            if (descendancy != null && descendancy.Parents.Any())
+                return descendancy.Parents[0];
+
+            return objectToEmphasise;
+        }
+
 
         public virtual Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> GetAllSearchables()
         {

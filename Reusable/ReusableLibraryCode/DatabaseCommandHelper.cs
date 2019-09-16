@@ -12,7 +12,6 @@ using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using FAnsi.Discovery.TypeTranslation.TypeDeciders;
 using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
@@ -20,6 +19,7 @@ using FAnsi.Implementations.Oracle;
 using Oracle.ManagedDataAccess.Client;
 using MySql.Data.MySqlClient;
 using ReusableLibraryCode.Performance;
+using TypeGuesser;
 
 namespace ReusableLibraryCode
 {
@@ -119,36 +119,6 @@ namespace ReusableLibraryCode
             DbParameter dbParameter = GetParameter(parameterName, command);
             dbParameter.Value = valueForParameter;
             command.Parameters.Add(dbParameter);
-        }
-                
-        static TypeDeciderFactory typeDeciderFactory = new TypeDeciderFactory();
-                
-        public static DbParameter GetParameter(string paramName, IQuerySyntaxHelper syntaxHelper, DiscoveredColumn discoveredColumn, object value)
-        {
-            var p = GetParameter(paramName, syntaxHelper.DatabaseType);
-
-            var tt = syntaxHelper.TypeTranslater;
-            p.DbType = tt.GetDbTypeForSQLDBType(discoveredColumn.DataType.SQLType);
-            var cSharpType = tt.GetCSharpTypeForSQLDBType(discoveredColumn.DataType.SQLType);
-
-            if (syntaxHelper.IsBasicallyNull(value))
-                p.Value = DBNull.Value;
-            else  
-                if (value is string && typeDeciderFactory.IsSupported(cSharpType)) //if the input is a string and it's for a hard type e.g. TimeSpan 
-                {
-                    var o = typeDeciderFactory.Create(cSharpType).Parse((string)value);
-
-                    //Apparently everyone in Microsoft hates TimeSpans - see test MicrosoftHatesDbTypeTime
-                    if (o is TimeSpan && syntaxHelper.DatabaseType == DatabaseType.MicrosoftSQLServer)
-                        o = Convert.ToDateTime(o.ToString());
-
-                    p.Value = o;
-
-                }
-                else
-                    p.Value = value;
-
-            return p;
         }
     }
 }

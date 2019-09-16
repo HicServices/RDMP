@@ -241,7 +241,7 @@ namespace Rdmp.Core.DataExport.Data
             
             try
             {
-                return ((DataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
+                return ((IDataExportRepository)Repository).CatalogueRepository.GetObjectByID<ExtractionInformation>(CatalogueExtractionInformation_ID.Value);
             }
             catch (KeyNotFoundException)
             {

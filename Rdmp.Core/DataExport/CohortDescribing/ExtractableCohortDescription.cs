@@ -181,7 +181,7 @@ namespace Rdmp.Core.DataExport.CohortDescribing
                 }
 
                 ProjectNumber = Convert.ToInt32(row["ProjectNumber"]);
-                Version = Convert.ToInt32(row["Version"]); ;
+                Version = Convert.ToInt32(row["Version"]);
                 Description =  row["Description"] as string;
                 CreationDate = ObjectToNullableDateTime(row["dtCreated"]);
             }

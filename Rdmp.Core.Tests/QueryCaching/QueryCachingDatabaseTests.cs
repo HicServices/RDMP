@@ -21,8 +21,10 @@ namespace Rdmp.Core.Tests.QueryCaching
         public ExternalDatabaseServer QueryCachingDatabaseServer;
 
         [OneTimeSetUp]
-        public void Setup()
+        protected override void OneTimeSetUp()
         {
+            base.OneTimeSetUp();
+
             DiscoveredQueryCachingDatabase = DiscoveredServerICanCreateRandomDatabasesAndTablesOn.ExpectDatabase(QueryCachingDatabaseName);
 
             if(DiscoveredQueryCachingDatabase.Exists())
@@ -36,13 +38,5 @@ namespace Rdmp.Core.Tests.QueryCaching
             QueryCachingDatabaseServer.SetProperties(DiscoveredQueryCachingDatabase);
         }
 
-        [OneTimeTearDown]
-        public void Destroy()
-        {
-            QueryCachingDatabaseServer.DeleteInDatabase();
-
-            if (DiscoveredQueryCachingDatabase.Exists())
-                DiscoveredQueryCachingDatabase.Drop();
-        }
     }
 }

@@ -59,7 +59,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 catch (Exception exception)
                 {
                     //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
-                    problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine; ;
+                    problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
                 }
 
                 var cmdDropArchiveIndex = _server.GetCommand("DROP INDEX PKsIndex ON " + _archiveTable.GetRuntimeName(), con);
@@ -267,7 +267,7 @@ END
             sqlToRun += string.Format("\tSELECT "+archiveCols+" FROM {0} WHERE @index BETWEEN ISNULL(" + SpecialFieldNames.ValidFrom + ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
             sqlToRun += Environment.NewLine;
 
-            sqlToRun += "\tINSERT @returntable" + Environment.NewLine; ;
+            sqlToRun += "\tINSERT @returntable" + Environment.NewLine;
             sqlToRun += "\tSELECT " + cDotArchiveCols + ",NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status" + Environment.NewLine; //c is for current
             sqlToRun += string.Format("\tFROM {0} c" + Environment.NewLine, _table.GetRuntimeName());
             sqlToRun += "\tLEFT OUTER JOIN @returntable a ON " + Environment.NewLine;

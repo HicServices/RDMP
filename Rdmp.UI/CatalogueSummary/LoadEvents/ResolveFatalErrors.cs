@@ -6,7 +6,6 @@
 
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.UI.Copying;

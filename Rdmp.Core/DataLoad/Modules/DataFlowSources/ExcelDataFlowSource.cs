@@ -94,7 +94,7 @@ namespace Rdmp.Core.DataLoad.Modules.DataFlowSources
                     toReturn = GetAllData(worksheet, listener);
 
                     //set the table name the file name
-                    toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSane(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
+                    toReturn.TableName = QuerySyntaxHelper.MakeHeaderNameSensible(Path.GetFileNameWithoutExtension(_fileToLoad.File.Name));
 
                     if (toReturn.Columns.Count == 0)
                         throw new FlatFileLoadException(string.Format("The Excel sheet '{0}' in workbook '{1}' is empty", worksheet.SheetName, _fileToLoad.File.Name));

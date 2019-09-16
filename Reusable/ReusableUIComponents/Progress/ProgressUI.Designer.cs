@@ -238,6 +238,7 @@ namespace ReusableUIComponents.Progress
             this.olvMessage.FillsFreeSpace = true;
             this.olvMessage.Groupable = false;
             this.olvMessage.Text = "Message";
+            this.olvMessage.MinimumWidth = 100;
             // 
             // Result
             // 

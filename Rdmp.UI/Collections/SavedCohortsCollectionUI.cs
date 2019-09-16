@@ -42,7 +42,7 @@ namespace Rdmp.UI.Collections
             var c = rowObject as ExtractableCohort;
 
             if (c != null)
-                return c.ExternalProjectNumber;;
+                return c.ExternalProjectNumber;
 
             return null;
         }

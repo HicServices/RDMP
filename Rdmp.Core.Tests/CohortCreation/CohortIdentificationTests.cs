@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using FAnsi.Discovery;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -14,8 +15,9 @@ using Tests.Common.Scenarios;
 
 namespace Rdmp.Core.Tests.CohortCreation
 {
-    public class CohortIdentificationTests : DatabaseTests
+    public class CohortIdentificationTests : FromToDatabaseTests
     {
+        public DiscoveredDatabase Database { get; private set; }
 
         protected BulkTestsData testData;
         protected AggregateConfiguration aggregate1;
@@ -26,14 +28,21 @@ namespace Rdmp.Core.Tests.CohortCreation
         protected CohortAggregateContainer container1;
 
         [SetUp]
-        public void SetupTestData()
+        protected override void SetUp()
         {
+            base.SetUp();
+
             SetupTestData(CatalogueRepository);
         }
 
+        
         public void SetupTestData(ICatalogueRepository repository)
         {
-            testData = new BulkTestsData(repository, DiscoveredDatabaseICanCreateRandomTablesIn, 100);
+            BlitzMainDataTables();
+
+            Database = GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer);
+
+            testData = new BulkTestsData(repository, Database, 100);
             testData.SetupTestData();
 
             testData.ImportAsCatalogue();
@@ -71,35 +80,6 @@ namespace Rdmp.Core.Tests.CohortCreation
             cohortIdentificationConfiguration.EnsureNamingConvention(aggregate1);
             cohortIdentificationConfiguration.EnsureNamingConvention(aggregate2);
             cohortIdentificationConfiguration.EnsureNamingConvention(aggregate3);
-        }
-
-        [TearDown]
-        public void Cleanup()
-        {
-
-            container1.DeleteInDatabase();
-
-            if (aggregate1 != null)
-                aggregate1.DeleteInDatabase();
-            
-            if (aggregate2 != null)
-                aggregate2.DeleteInDatabase();
-
-            if (aggregate3 != null)
-                aggregate3.DeleteInDatabase();
-
-
-            if (cohortIdentificationConfiguration != null)
-                cohortIdentificationConfiguration.DeleteInDatabase();
-            
-            if (testData != null)
-                testData.DeleteCatalogue();
-        }
-
-        [OneTimeTearDown]
-        public void AfterAllTests()
-        {
-            testData.Destroy();
         }
     }
 }

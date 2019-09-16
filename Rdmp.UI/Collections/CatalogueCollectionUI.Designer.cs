@@ -69,6 +69,7 @@ namespace Rdmp.UI.Collections
             this.olvColumn1.HeaderTextAlign = System.Windows.Forms.HorizontalAlignment.Center;
             this.olvColumn1.Text = "Catalogues";
             this.olvColumn1.TextAlign = System.Windows.Forms.HorizontalAlignment.Center;
+            this.olvColumn1.MinimumWidth = 100;
             // 
             // olvFilters
             // 

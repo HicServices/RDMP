@@ -12,7 +12,6 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
-using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core;
 using Rdmp.Core.Curation.Data;
@@ -31,7 +30,6 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
 using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
@@ -511,6 +509,9 @@ namespace Rdmp.UI.AggregationUIs.Advanced
 
             CommonFunctionality.AddChecks(databaseObject);
             CommonFunctionality.StartChecking();
+
+            //enforcing the naming convention on cic aggregates can result in ObjectSaverButton incorrectly getting enabled
+            GetObjectSaverButton()?.Enable(false);
 
             isRefreshing = false;
         }

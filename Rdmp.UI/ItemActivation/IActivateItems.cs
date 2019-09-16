@@ -10,13 +10,11 @@ using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
-using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.ItemActivation.Emphasis;
@@ -70,8 +68,6 @@ namespace Rdmp.UI.ItemActivation
         IArrangeWindows WindowArranger { get;}
 
         Form ShowWindow(Control singleControlForm, bool asDocument = false);
-
-        Form ShowRDMPSingleDatabaseObjectControl(IRDMPSingleDatabaseObjectControl control, DatabaseEntity objectOfTypeT);
 
         /// <summary>
         /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
@@ -129,14 +125,6 @@ namespace Rdmp.UI.ItemActivation
         /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
         /// </summary>
         void RequestItemEmphasis(object sender, EmphasiseRequest request);
-
-        void ActivateLookupConfiguration(object sender, Catalogue catalogue,TableInfo optionalLookupTableInfo=null);
-
-        void ViewFilterGraph(object sender,FilterGraphObjectCollection collection);
-
-        void ActivateViewLog(LoadMetadata loadMetadata);
-
-        IRDMPSingleDatabaseObjectControl ActivateViewLoadMetadataDiagram(object sender, LoadMetadata loadMetadata);
 
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
@@ -199,5 +187,7 @@ namespace Rdmp.UI.ItemActivation
         /// <param name="caption"></param>
         /// <returns></returns>
         bool YesNo(string text, string caption);
+
+        bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
     }
 }

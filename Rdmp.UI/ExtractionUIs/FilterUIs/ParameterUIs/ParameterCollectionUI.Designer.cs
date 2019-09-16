@@ -106,6 +106,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             this.olvValue.Groupable = false;
             this.olvValue.Text = "Value";
             this.olvValue.Width = 238;
+            this.olvValue.MinimumWidth = 100;
             // 
             // olvComment
             // 

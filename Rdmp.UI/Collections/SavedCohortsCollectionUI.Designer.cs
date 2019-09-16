@@ -65,6 +65,7 @@
             this.olvName.CellEditUseWholeCell = true;
             this.olvName.FillsFreeSpace = true;
             this.olvName.Text = "Saved Cohorts";
+            this.olvName.MinimumWidth = 100;
             // 
             // olvProjectNumber
             // 

@@ -118,6 +118,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                     typeof (IRDMPPlatformRepositoryServiceLocator).IsAssignableFrom(p.ParameterType) ||
                     typeof (IActivateItems).IsAssignableFrom(p.ParameterType) ||
                     typeof(DirectoryInfo).IsAssignableFrom(p.ParameterType) ||
+                    p.ParameterType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(p.ParameterType.GetElementType()) ||
                     typeof(DatabaseEntity).IsAssignableFrom(p.ParameterType) ||
                     typeof(ICheckable).IsAssignableFrom(p.ParameterType) ||
                     typeof(IMightBeDeprecated).IsAssignableFrom(p.ParameterType)||
@@ -201,18 +202,17 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 return null;
             }
 
+            //it's an array of DatabaseEntities
+            if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
+            {
+                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType.GetElementType());
+                return PickMany(parameterInfo,paramType.GetElementType(), available);
+            }
+
             if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
             {
-                IMapsDirectlyToDatabaseTable[] availableObjects;
-                if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(paramType))
-                    availableObjects = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(paramType).ToArray();
-                else if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(paramType))
-                    availableObjects = Activator.RepositoryLocator.DataExportRepository.GetAllObjects(paramType).ToArray();
-                else
-                    return null;
-
-
-                return PickOne(parameterInfo,paramType,availableObjects);
+                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType);
+                return PickOne(parameterInfo,paramType, available);
             }
 
             if (typeof (IMightBeDeprecated).IsAssignableFrom(paramType))
@@ -245,6 +245,16 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             return null;
         }
 
+        private IMapsDirectlyToDatabaseTable[] GetAllObjectsOfType(Type type)
+        {
+            if (Activator.RepositoryLocator.CatalogueRepository.SupportsObjectType(type))
+                return  Activator.RepositoryLocator.CatalogueRepository.GetAllObjects(type).ToArray();
+            if (Activator.RepositoryLocator.DataExportRepository.SupportsObjectType(type))
+                return Activator.RepositoryLocator.DataExportRepository.GetAllObjects(type).ToArray();
+            
+            return null;
+        }
+
         private object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
             if (!availableObjects.Any())
@@ -261,5 +271,33 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
+        private object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        {
+            if (!availableObjects.Any())
+            {
+                MessageBox.Show("There are no '" + arrayElementType.Name + "' objects in your RMDP");
+                return null;
+            }
+
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            selectDialog.Text = parameterInfo.Name;
+            selectDialog.AllowMultiSelect = true;
+                                   
+            
+            if (selectDialog.ShowDialog() == DialogResult.OK)
+            {
+                var ms = selectDialog.MultiSelected.ToList();
+                var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
+
+                for(int i = 0;i<ms.Count;i++)
+                    toReturn.SetValue(ms[i],i);
+                
+                return toReturn;
+            }
+                 
+
+            return null;
+        }
+
     }
 }

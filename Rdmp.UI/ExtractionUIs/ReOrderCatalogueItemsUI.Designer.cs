@@ -92,6 +92,7 @@ namespace Rdmp.UI.ExtractionUIs
             this.olvColumns.Groupable = false;
             this.olvColumns.Sortable = false;
             this.olvColumns.Text = "Columns";
+            this.olvColumns.MinimumWidth = 100;
             // 
             // olvOrder
             // 

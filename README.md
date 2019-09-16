@@ -1,4 +1,11 @@
-# ![logo](/Application/ResearchDataManagementPlatform/Icon/mainsmall.png)Research Data Management Platform
+# ![logo](./Application/ResearchDataManagementPlatform/Icon/mainsmall.png)Research Data Management Platform
+
+- [Releases](https://github.com/HicServices/RDMP/releases)
+- [FAQ](Documentation/CodeTutorials/FAQ.md)
+- [User Manual](https://github.com/HicServices/RDMP/raw/master/Documentation/UserManual.docx)
+- [Changelog](./CHANGELOG.md)
+- [Libraries](./Documentation/CodeTutorials/Packages.md)
+
 RDMP is a free, open source software application for the loading,linking,anonymisation and extraction of datasets stored in SQL databases (Sql Server, MySql and Oracle).  It is designed to assist with data provenance, preserving domain knowledge and configuration management of linkage/cohort generation workflows.
 
 RDMP does not require your data be moved or transformed prior to processing and is integrates into existing SQL based extraction practices.
@@ -7,15 +14,7 @@ RDMP does not require your data be moved or transformed prior to processing and 
 
 ## Install
 
-Signed release binaries for the RDMP client and Command Line Interface (CLI) are in the available in the releases section (https://github.com/HicServices/RDMP/releases).
-
-## Documentation
-
-The UserManual can be downloaded at <https://github.com/HicServices/RDMP/raw/master/Documentation/UserManual.docx>.  Additionally there is a comprehensive [Frequently Asked Questions List](Documentation/CodeTutorials/FAQ.md)
-
-## Changelog
-
-A history of all additions, changes and bugfixes is kept in [CHANGELOG.md](./CHANGELOG.md)
+Signed release binaries for the RDMP client and Command Line Interface (CLI) are in the available in the [GitHub releases section](https://github.com/HicServices/RDMP/releases).
 
 ## Build
 

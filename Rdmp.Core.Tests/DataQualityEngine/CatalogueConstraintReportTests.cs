@@ -31,7 +31,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             int numberOfRecordsToGenerate = 10000;
             DateTime startTime = DateTime.Now;
 
-            BulkTestsData testData = new BulkTestsData(CatalogueRepository,DiscoveredDatabaseICanCreateRandomTablesIn,numberOfRecordsToGenerate); 
+            BulkTestsData testData = new BulkTestsData(CatalogueRepository,GetCleanedServer(FAnsi.DatabaseType.MicrosoftSQLServer),numberOfRecordsToGenerate); 
             testData.SetupTestData();
             testData.ImportAsCatalogue();
 
@@ -62,7 +62,6 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             if(testCancellingValiationEarly)
             {
                 Assert.IsTrue(listener.EventsReceivedBySender[report].Count(m=>m.Exception is OperationCanceledException) == 1);
-                testData.Destroy();
                 testData.DeleteCatalogue();
                 return;
             }
@@ -91,9 +90,7 @@ namespace Rdmp.Core.Tests.DataQualityEngine
             Assert.GreaterOrEqual(log.StartTime, startTime);
             Assert.AreEqual(0,log.Errors.Count);
             Assert.AreEqual(numberOfRecordsToGenerate,log.TableLoadInfos.Single().Inserts);
-
-            testData.Destroy();
-            
+                        
             testData.DeleteCatalogue();
 
         }

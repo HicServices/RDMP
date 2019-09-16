@@ -229,7 +229,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
 
             try
             {
-                // Set up the dataset's project directory and add the CSV file to ForLoading
+                // Set SetUp the dataset's project directory and add the CSV file to ForLoading
                 var loadDirectory = LoadDirectory.CreateDirectoryStructure(testDir, "TestDataset");
                 File.WriteAllText(Path.Combine(loadDirectory.ForLoading.FullName, "1.csv"),
                     "Col1\r\n1\r\n2\r\n3\r\n4");
