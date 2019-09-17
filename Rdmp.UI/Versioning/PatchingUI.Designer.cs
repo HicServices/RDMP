@@ -28,103 +28,84 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.label1 = new System.Windows.Forms.Label();
             this.label4 = new System.Windows.Forms.Label();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.btnAttemptPatching = new System.Windows.Forms.Button();
             this.lblDatabase = new System.Windows.Forms.Label();
-            this.label2 = new System.Windows.Forms.Label();
-            this.lblPatchingAssembly = new System.Windows.Forms.Label();
-            this.lblDatabaseVersion = new System.Windows.Forms.Label();
+            this.tbPatch = new System.Windows.Forms.TextBox();
+            this.tbDatabase = new System.Windows.Forms.TextBox();
+            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
             this.SuspendLayout();
-            // 
-            // label1
-            // 
-            this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(13, 4);
-            this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(339, 13);
-            this.label1.TabIndex = 0;
-            this.label1.Text = "The following Patch related problems  were detected in your database:";
             // 
             // label4
             // 
             this.label4.AutoSize = true;
-            this.label4.Location = new System.Drawing.Point(12, 74);
+            this.label4.Location = new System.Drawing.Point(12, 9);
             this.label4.Name = "label4";
-            this.label4.Size = new System.Drawing.Size(99, 13);
+            this.label4.Size = new System.Drawing.Size(47, 13);
             this.label4.TabIndex = 2;
-            this.label4.Text = "Patching Assembly:";
-            // 
-            // checksUI1
-            // 
-            this.checksUI1.AllowsYesNoToAll = true;
-            this.checksUI1.Location = new System.Drawing.Point(12, 168);
-            this.checksUI1.Name = "checksUI1";
-            this.checksUI1.Size = new System.Drawing.Size(1271, 442);
-            this.checksUI1.TabIndex = 4;
+            this.label4.Text = "Patcher:";
             // 
             // btnAttemptPatching
             // 
-            this.btnAttemptPatching.Location = new System.Drawing.Point(15, 139);
+            this.btnAttemptPatching.Location = new System.Drawing.Point(74, 55);
             this.btnAttemptPatching.Name = "btnAttemptPatching";
             this.btnAttemptPatching.Size = new System.Drawing.Size(96, 23);
             this.btnAttemptPatching.TabIndex = 5;
-            this.btnAttemptPatching.Text = "Apply Patch";
+            this.btnAttemptPatching.Text = "Apply";
             this.btnAttemptPatching.UseVisualStyleBackColor = true;
             this.btnAttemptPatching.Click += new System.EventHandler(this.btnAttemptPatching_Click);
             // 
             // lblDatabase
             // 
             this.lblDatabase.AutoSize = true;
-            this.lblDatabase.Location = new System.Drawing.Point(13, 97);
+            this.lblDatabase.Location = new System.Drawing.Point(13, 32);
             this.lblDatabase.Name = "lblDatabase";
-            this.lblDatabase.Size = new System.Drawing.Size(93, 13);
+            this.lblDatabase.Size = new System.Drawing.Size(56, 13);
             this.lblDatabase.TabIndex = 2;
-            this.lblDatabase.Text = "Current Database:";
+            this.lblDatabase.Text = "Database:";
             // 
-            // label2
+            // tbPatch
             // 
-            this.label2.AutoSize = true;
-            this.label2.Location = new System.Drawing.Point(13, 50);
-            this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(93, 13);
-            this.label2.TabIndex = 2;
-            this.label2.Text = "Hosting Assembly:";
+            this.tbPatch.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbPatch.Location = new System.Drawing.Point(74, 6);
+            this.tbPatch.Name = "tbPatch";
+            this.tbPatch.ReadOnly = true;
+            this.tbPatch.Size = new System.Drawing.Size(1209, 20);
+            this.tbPatch.TabIndex = 6;
             // 
-            // lblPatchingAssembly
+            // tbDatabase
             // 
-            this.lblPatchingAssembly.AutoSize = true;
-            this.lblPatchingAssembly.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblPatchingAssembly.Location = new System.Drawing.Point(112, 74);
-            this.lblPatchingAssembly.Name = "lblPatchingAssembly";
-            this.lblPatchingAssembly.Size = new System.Drawing.Size(98, 15);
-            this.lblPatchingAssembly.TabIndex = 2;
-            this.lblPatchingAssembly.Text = "Patching Assembly";
+            this.tbDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.tbDatabase.Location = new System.Drawing.Point(75, 29);
+            this.tbDatabase.Name = "tbDatabase";
+            this.tbDatabase.ReadOnly = true;
+            this.tbDatabase.Size = new System.Drawing.Size(1210, 20);
+            this.tbDatabase.TabIndex = 6;
             // 
-            // lblDatabaseVersion
+            // checksUI1
             // 
-            this.lblDatabaseVersion.AutoSize = true;
-            this.lblDatabaseVersion.BorderStyle = System.Windows.Forms.BorderStyle.FixedSingle;
-            this.lblDatabaseVersion.Location = new System.Drawing.Point(111, 97);
-            this.lblDatabaseVersion.Name = "lblDatabaseVersion";
-            this.lblDatabaseVersion.Size = new System.Drawing.Size(93, 15);
-            this.lblDatabaseVersion.TabIndex = 2;
-            this.lblDatabaseVersion.Text = "Database Version";
+            this.checksUI1.AllowsYesNoToAll = true;
+            this.checksUI1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
+            | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.checksUI1.Location = new System.Drawing.Point(12, 84);
+            this.checksUI1.Name = "checksUI1";
+            this.checksUI1.Size = new System.Drawing.Size(1271, 526);
+            this.checksUI1.TabIndex = 4;
             // 
             // PatchingUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(1297, 622);
+            this.Controls.Add(this.tbDatabase);
+            this.Controls.Add(this.tbPatch);
             this.Controls.Add(this.btnAttemptPatching);
             this.Controls.Add(this.checksUI1);
             this.Controls.Add(this.lblDatabase);
             this.Controls.Add(this.label4);
-            this.Controls.Add(this.label2);
-            this.Controls.Add(this.lblDatabaseVersion);
-            this.Controls.Add(this.lblPatchingAssembly);
-            this.Controls.Add(this.label1);
             this.Name = "PatchingUI";
             this.Text = "Patching";
             this.ResumeLayout(false);
@@ -133,14 +114,11 @@
         }
 
         #endregion
-
-        private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label4;
         private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnAttemptPatching;
         private System.Windows.Forms.Label lblDatabase;
-        private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.Label lblPatchingAssembly;
-        private System.Windows.Forms.Label lblDatabaseVersion;
+        private System.Windows.Forms.TextBox tbPatch;
+        private System.Windows.Forms.TextBox tbDatabase;
     }
 }

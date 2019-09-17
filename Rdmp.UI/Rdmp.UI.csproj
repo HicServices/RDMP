@@ -170,8 +170,14 @@
       <Compile Update="SimpleDialogs\Reports\MetadataReportUI.cs">
       <SubType>Form</SubType>
     </Compile>
-          <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs">
+    <Compile Update="MainFormUITabs\SubComponents\TableInfoUI.cs">
       <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Versioning/PatchingUI.cs">
+      <SubType>Form</SubType>
+    </Compile>
+    <Compile Update="Versioning/PatchingUI.Designer.cs">
+      <DependentUpon>PatchingUI.cs</DependentUpon>
     </Compile>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Data.SqlClient;
 using System.Diagnostics;
 using System.Drawing;
@@ -13,6 +14,7 @@ using System.Linq;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents.SqlDialogs;
 
@@ -49,27 +51,28 @@ namespace Rdmp.UI.Versioning
             
             InitializeComponent();
 
-            if (_patcher == null)
+            if (LicenseManager.UsageMode == LicenseUsageMode.Designtime)
                 return;
 
             _hostAssemblyVersion = new Version(FileVersionInfo.GetVersionInfo(_patcher.GetDbAssembly().Location).FileVersion);
             _patchesInDatabase = patchesInDatabase;
             _allPatchesInAssembly = allPatchesInAssembly;
-            
-            lblPatchingAssembly.Text = patcher.GetDbAssembly().FullName;
+
+            string name = patcher.Name + " v" + patcher.GetDbAssembly().GetName().Version.ToString(3);
+
+            int numberOfPatchesToApply = _allPatchesInAssembly.Values.Except(_patchesInDatabase).Count();
+
+            tbPatch.Text =  $"{name} ({numberOfPatchesToApply} Patch{(numberOfPatchesToApply > 1 ? "es":"")})";
 
             if (builder == null || string.IsNullOrWhiteSpace(builder.InitialCatalog))
             {
-                lblDatabaseVersion.Text = "Form loaded without a specific database to target!";
-                lblDatabaseVersion.ForeColor = Color.Red;
+                tbDatabase.Text = "Form loaded without a specific database to target!";
+                tbDatabase.ForeColor = Color.Red;
             }
             else
             {
-                lblDatabaseVersion.Text = string.Format("{0}, Version:{1}", builder.InitialCatalog,repository.GetVersion());
+                tbDatabase.Text = string.Format("{0}, Version:{1}", builder.InitialCatalog,repository.GetVersion());
             }
-
-            
-
         }
 
         public static void ShowIfRequired(SqlConnectionStringBuilder builder, ITableRepository repository, IPatcher patcher)
@@ -92,6 +95,7 @@ namespace Rdmp.UI.Versioning
             foreach (Patch potentialInstallable in _allPatchesInAssembly.Values.Except(_patchesInDatabase))
                 toApply.Add(potentialInstallable.locationInAssembly, potentialInstallable);
 
+            var listener = new ToMemoryCheckNotifier(checksUI1);
 
             checksUI1.BeginUpdate();
             try
@@ -101,14 +105,14 @@ namespace Rdmp.UI.Versioning
                     //if patch is not in database assembly
                     if (!_allPatchesInAssembly.Any(a => a.Value.Equals(patch)))
                     {
-                        checksUI1.OnCheckPerformed(new CheckEventArgs(
+                        listener.OnCheckPerformed(new CheckEventArgs(
                             "The database contains an unexplained patch called " + patch.locationInAssembly +
                             " (it is not in " + _patcher.GetDbAssembly().FullName + " ) so how did it get there?", CheckResult.Warning,
                             null));
                     }
                     else if (!_allPatchesInAssembly[patch.locationInAssembly].EntireScript.Equals(patch.EntireScript))
                     {
-                        checksUI1.OnCheckPerformed(new CheckEventArgs(
+                        listener.OnCheckPerformed(new CheckEventArgs(
                             "The contents of patch " + patch.locationInAssembly +
                             " are different between live database and the database patching assembly", CheckResult.Warning,
                             null));
@@ -119,7 +123,7 @@ namespace Rdmp.UI.Versioning
                     else
                     {
                         //we found it and it was intact
-                        checksUI1.OnCheckPerformed(new CheckEventArgs("Patch " + patch.locationInAssembly + " was previously installed successfully so no need to touch it",CheckResult.Success, null));
+                        listener.OnCheckPerformed(new CheckEventArgs("Patch " + patch.locationInAssembly + " was previously installed successfully so no need to touch it",CheckResult.Success, null));
                     
                         //do not apply this patch
                         toApply.Remove(patch.locationInAssembly);
@@ -128,7 +132,7 @@ namespace Rdmp.UI.Versioning
             }
             catch (Exception exception)
             {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Patch evaluation failed", CheckResult.Fail, exception));
+                listener.OnCheckPerformed(new CheckEventArgs("Patch evaluation failed", CheckResult.Fail, exception));
                 stop = true;
             }
             finally
@@ -142,7 +146,7 @@ namespace Rdmp.UI.Versioning
             foreach (Patch missedOppertunity in missedOppertunities)
             {
                 stop = true;
-                checksUI1.OnCheckPerformed(new CheckEventArgs(
+                listener.OnCheckPerformed(new CheckEventArgs(
                     "Patch " + missedOppertunity.locationInAssembly +
                     " cannot be applied because it's version number is " + missedOppertunity.DatabaseVersionNumber +
                     " but the current database is at version " + _databaseVersion
@@ -154,7 +158,7 @@ namespace Rdmp.UI.Versioning
             //if the patches to be applied would bring the version number above that of the host Library
             foreach (Patch futurePatch in toApply.Values.Where(patch => patch.DatabaseVersionNumber > _hostAssemblyVersion))
             {
-                checksUI1.OnCheckPerformed(new CheckEventArgs(
+                listener.OnCheckPerformed(new CheckEventArgs(
                     "Cannot apply patch "+futurePatch.locationInAssembly+" because it's database version number is "+futurePatch.DatabaseVersionNumber+" which is higher than the currently loaded host assembly (" +_patcher.GetDbAssembly().FullName+ "). ", CheckResult.Fail, null));
                 stop = true;
                 
@@ -163,15 +167,22 @@ namespace Rdmp.UI.Versioning
 
             if (stop)
             {
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Abandonning patching process (no patches have been applied) because of one or more previous errors",CheckResult.Fail, null));
+                listener.OnCheckPerformed(new CheckEventArgs("Abandonning patching process (no patches have been applied) because of one or more previous errors",CheckResult.Fail, null));
                 return;
             }
             try
             {
                 MasterDatabaseScriptExecutor  executor = new MasterDatabaseScriptExecutor(_builder.ConnectionString);
-                executor.PatchDatabase(toApply,checksUI1,PreviewPatch, MessageBox.Show("Backup Database First","Backup",MessageBoxButtons.YesNo) == DialogResult.Yes);
+                executor.PatchDatabase(toApply, listener, PreviewPatch, MessageBox.Show("Backup Database First","Backup",MessageBoxButtons.YesNo) == DialogResult.Yes);
 
-                checksUI1.OnCheckPerformed(new CheckEventArgs("Patching completed without exception, disabling the patching button", CheckResult.Success, null));
+                //if it crashed during patching
+                if(listener.GetWorst() == CheckResult.Fail)
+                {
+                    btnAttemptPatching.Enabled = true;
+                    return;
+                }
+
+                listener.OnCheckPerformed(new CheckEventArgs("Patching completed without exception, disabling the patching button", CheckResult.Success, null));
                 //patching worked so prevent them doing it again!
                 btnAttemptPatching.Enabled = false;
 
@@ -180,7 +191,7 @@ namespace Rdmp.UI.Versioning
                     _repository.ClearUpdateCommandCache();
                     checksUI1.OnCheckPerformed(new CheckEventArgs("Cleared UPDATE commands cache", CheckResult.Success, null));
                 }
-
+                
                 checksUI1.OnCheckPerformed(new CheckEventArgs("Patching Succesful", CheckResult.Success, null));
 
                 if (MessageBox.Show("Application will now restart", "Close?", MessageBoxButtons.YesNo) == DialogResult.Yes)
