@@ -16,6 +16,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Database patching user interface no longer suggests restarting if the patching process has failed
 
+## Removed
+
+- Generate test data window no longer shows the output folder in Windows Explorer when done
+
 ## [3.2.0] - 2019-09-16
 
 ## Added
