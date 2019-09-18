@@ -6,6 +6,8 @@
 
 using System;
 using System.Collections.Generic;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
@@ -189,5 +191,14 @@ namespace Rdmp.UI.ItemActivation
         bool YesNo(string text, string caption);
 
         bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
+
+        /// <summary>
+        /// Block until the <paramref name="task"/> is completed with optionally showing the user some kind of ongoing operation
+        /// indication (ui) and letting them cancel the task with the <paramref name="cts"/>.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="task"></param>
+        /// <param name="cts"></param>
+        void Wait(string title, Task task, CancellationTokenSource cts);
     }
 }

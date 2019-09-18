@@ -151,7 +151,6 @@
             this.serverDatabaseTableSelector1.Server = "";
             this.serverDatabaseTableSelector1.Size = new System.Drawing.Size(581, 146);
             this.serverDatabaseTableSelector1.TabIndex = 0;
-            this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
             // 
             // gbPickPipeline

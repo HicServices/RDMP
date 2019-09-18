@@ -8,27 +8,31 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 ...
 
-## Changed
+### Added
+
+- Long running processes that previously blocked the UI (e.g. create primary key) now have a small dialog describing task and allowing cancellation.
+
+### Changed
  
 - Database patching user interface presents clearer information about what version upgrade is occuring and the patches that will be applied.
 
-## Fixed
+### Fixed
 
 - Database patching user interface no longer suggests restarting if the patching process has failed
 
-## Removed
+### Removed
 
 - Generate test data window no longer shows the output folder in Windows Explorer when done
 
 ## [3.2.0] - 2019-09-16
 
-## Added
+### Added
 
 - Patient Index Tables now use the source column datatype for caching columns (as long as there is no transform declared).
 
 ## [3.2.0-rc1] - 2019-09-13
 
-## Added
+### Added
 
 - Right clicking a mispelled word now offers spelling suggestions
 - You can now add new datasets to an extraction configuration directly from the "Core" folder in Execute Extraction window (rather than having to go back to the DataExport tree view)
