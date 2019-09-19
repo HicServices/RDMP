@@ -23,31 +23,31 @@ namespace Rdmp.UI.Icons.IconProvision
             StateBasedIconProviders.Add(new ExtractionConfigurationStateBasedIconProvider(this));
         }
 
-        public override Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
+        protected override Bitmap GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
         {
             if (concept is LinkedCohortNode)
-                return base.GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Link);
+                return base.GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Link);
 
             if (concept as Type == typeof(SelectedDataSets))
-                return base.GetImage(RDMPConcept.Catalogue, OverlayKind.Link);
+                return base.GetImageImpl(RDMPConcept.Catalogue, OverlayKind.Link);
 
             if (concept is SelectedDataSets)
-                return base.GetImage(((SelectedDataSets)concept).ExtractableDataSet.Catalogue, OverlayKind.Link);
+                return base.GetImageImpl(((SelectedDataSets)concept).ExtractableDataSet.Catalogue, OverlayKind.Link);
 
             if (concept is PackageContentNode)
-                return base.GetImage(RDMPConcept.ExtractableDataSet, OverlayKind.Link);
+                return base.GetImageImpl(RDMPConcept.ExtractableDataSet, OverlayKind.Link);
             
             if (concept is ProjectCohortIdentificationConfigurationAssociation)
             {
                 var cic = ((ProjectCohortIdentificationConfigurationAssociation) concept).CohortIdentificationConfiguration;
                 //return image based on cic (will include frozen graphic if frozen)
-                return cic != null ? GetImage(cic,OverlayKind.Link):
+                return cic != null ? GetImageImpl(cic,OverlayKind.Link):
                     //it's an orphan or user cannot fetch the cic for some reason
-                    GetImage(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
+                    GetImageImpl(RDMPConcept.CohortIdentificationConfiguration, OverlayKind.Link);
             }
 
             //fallback on parent implementation if none of the above unique snowflake cases are met
-            return base.GetImage(concept, kind);
+            return base.GetImageImpl(concept, kind);
         }
     }
 }

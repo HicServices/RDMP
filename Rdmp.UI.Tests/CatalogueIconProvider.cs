@@ -1,0 +1,114 @@
+// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
+
+using System;
+using System.Drawing;
+using MapsDirectlyToDatabaseTable;
+using NUnit.Framework;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.UI.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
+
+namespace Rdmp.UI.Tests
+{
+    class CatalogueIconProviderTests: UITests
+    {
+
+        [Test]
+        public void CatalogueIconProvider_HasImage_NoImage()
+        {
+            var provider = new CatalogueIconProvider(RepositoryLocator,null);
+
+            var img = provider.GetImage(new System.Object(), OverlayKind.None);
+
+            Assert.IsFalse(provider.HasIcon(new object()));
+        }
+
+        [Test]
+        public void CatalogueIconProvider_HasImage_AllObjectsHave()
+        {
+            int objectCount = 0;
+            var provider = new DataExportIconProvider(RepositoryLocator,null);
+            
+            foreach (DatabaseEntity obj in WhenIHaveAll())
+            {
+                var img = provider.GetImage(obj, OverlayKind.None);
+
+                if (obj is IDisableable d)
+                {
+                    d.IsDisabled = true;
+
+                    Assert.IsTrue(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Grayscaling failed for Object of Type '{obj.GetType().Name}' did not have an image");
+                    
+                    d.IsDisabled = false;
+                    Assert.IsFalse(IsBlackAndWhite(provider.GetImage(obj,OverlayKind.Add)),$"Enabled Object of Type '{obj.GetType().Name}' was unexpectedly Grayscale");
+                }
+                    
+                Assert.IsTrue(provider.HasIcon(obj),$"Object of Type '{obj.GetType().Name}' did not have an image");
+                objectCount++;
+            }
+
+            Console.WriteLine($"Generated images for {objectCount} objects");
+        }
+
+
+        [Test]
+        public void TestGrayscale()
+        {
+            var provider = new CatalogueIconProvider(RepositoryLocator,null);
+
+            var ac = WhenIHaveA<AggregateConfiguration>();
+
+            Assert.IsFalse(IsBlackAndWhite(provider.GetImage(ac, OverlayKind.None)),"Image was unexpectedly Grayscale");
+
+            ac.IsDisabled = true;
+            Assert.IsTrue(IsBlackAndWhite(provider.GetImage(ac, OverlayKind.None)),"Image was expected to be Grayscale but wasn't'");
+        }
+
+        
+        /// <summary>
+        /// Exposes a potential infinite loop / stack overflow where an object is masquerading as an IMasquerade
+        /// </summary>
+        [Test]
+        public void Test_ObjectMasqueradingAsSelf()
+        {
+            var me = new IAmMe();
+
+            var provider = new CatalogueIconProvider(RepositoryLocator,null);
+            provider.GetImage(me, OverlayKind.Add);
+
+            Assert.IsFalse(provider.HasIcon(me));
+        }
+        private class IAmMe : IMasqueradeAs
+        {
+            public object MasqueradingAs()
+            {
+                return this;
+            }
+        }
+
+
+        private bool IsBlackAndWhite(Bitmap img)
+        {
+            bool foundColoured = false;
+
+            for (int x = 0; x < img.Width; x++)
+            {
+                for (int y = 0; y < img.Height; y++)
+                {
+                    var pixel = img.GetPixel(x, y);
+
+                    foundColoured = foundColoured || (pixel.R != pixel.G || pixel.G != pixel.B || pixel.R != pixel.B);
+                }
+            }
+
+            return !foundColoured;
+        }
+
+
+    }
+}

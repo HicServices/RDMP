@@ -27,6 +27,7 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Curation.Data.Remoting;
+using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.Databases;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease;
@@ -714,5 +715,51 @@ namespace Tests.Common
         {
             return Math.Abs(memValue.Subtract(dbValue).TotalSeconds) < TimeThresholdInSeconds;
         }
+
+
+        /// <summary>
+        /// Returns instances of all Types supported by <see cref="WhenIHaveA{T}()"/>
+        /// </summary>
+        /// <returns></returns>
+        public IEnumerable<DatabaseEntity> WhenIHaveAll()
+        {
+            var types = typeof(Catalogue).Assembly.GetTypes()
+                .Where(t => t != null && typeof (DatabaseEntity).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface).ToArray();
+
+            var methodWhenIHaveA = GetWhenIHaveAMethod();
+            
+            foreach (Type t in types)
+            {
+                //ignore these types too
+                if (SkipTheseTypes.Contains(t.Name) || t.Name.StartsWith("Spontaneous") ||
+                    typeof (SpontaneousObject).IsAssignableFrom(t))
+                    continue;
+
+                //ensure that the method supports the Type
+                var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
+                yield return (DatabaseEntity) genericWhenIHaveA.Invoke(this, null);
+            }
+        }
+
+        /// <summary>
+        /// Returns a properly initialized object of Type <paramref name="t"/> which must be a <see cref="DatabaseEntity"/> that
+        /// is supported by <see cref="UnitTests"/>
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        public IMapsDirectlyToDatabaseTable WhenIHaveA(Type t)
+        {
+            var methodWhenIHaveA = GetWhenIHaveAMethod();
+            //ensure that the method supports the Type
+            var genericWhenIHaveA = methodWhenIHaveA.MakeGenericMethod(t);
+            return (DatabaseEntity) genericWhenIHaveA.Invoke(this, null);
+        }
+
+        private MethodInfo GetWhenIHaveAMethod()
+        {
+            var methods = typeof (UnitTests).GetMethods(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+            return methods.Single(m => m.Name.Equals(nameof(WhenIHaveA)) && !m.GetParameters().Any());
+        }
+
     }
 }

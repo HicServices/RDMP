@@ -10,6 +10,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCommitting.Pipeline;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
@@ -66,6 +67,14 @@ namespace Rdmp.UI.Icons.IconProvision
 
         public virtual Bitmap GetImage(object concept, OverlayKind kind = OverlayKind.None)
         {
+            if (concept is IDisableable d && d.IsDisabled)
+                return OverlayProvider.GetGrayscale(GetImageImpl(concept, kind));
+
+            return GetImageImpl(concept, kind);
+        }
+
+        protected virtual Bitmap GetImageImpl(object concept, OverlayKind kind = OverlayKind.None)
+        {
             if (concept == null)
                 return null;
 
@@ -93,71 +102,71 @@ namespace Rdmp.UI.Icons.IconProvision
                 }
 
             if (concept is RDMPCollection)
-                return GetImage(GetConceptForCollection((RDMPCollection)concept),kind);
+                return GetImageImpl(GetConceptForCollection((RDMPCollection)concept),kind);
 
             if (concept is RDMPConcept)
-                return GetImage(ImagesCollection[(RDMPConcept) concept], kind);
+                return GetImageImpl(ImagesCollection[(RDMPConcept) concept], kind);
 
             if (concept is LinkedColumnInfoNode)
-                return GetImage(ImagesCollection[RDMPConcept.ColumnInfo], OverlayKind.Link);
+                return GetImageImpl(ImagesCollection[RDMPConcept.ColumnInfo], OverlayKind.Link);
 
             if (concept is CatalogueUsedByLoadMetadataNode)
-                return GetImage(ImagesCollection[RDMPConcept.Catalogue], OverlayKind.Link);
+                return GetImageImpl(ImagesCollection[RDMPConcept.Catalogue], OverlayKind.Link);
 
             if (concept is DataAccessCredentialUsageNode)
-                return GetImage(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
+                return GetImageImpl(ImagesCollection[RDMPConcept.DataAccessCredentials], OverlayKind.Link);
 
             if (ConceptIs(typeof(IFilter),concept))
-                return GetImage(RDMPConcept.Filter, kind);
+                return GetImageImpl(RDMPConcept.Filter, kind);
 
             if (ConceptIs(typeof(ISqlParameter), concept))
-                return GetImage(RDMPConcept.ParametersNode,kind);
+                return GetImageImpl(RDMPConcept.ParametersNode,kind);
 
             if (ConceptIs(typeof(IContainer), concept))
-                return GetImage(RDMPConcept.FilterContainer, kind);
+                return GetImageImpl(RDMPConcept.FilterContainer, kind);
 
             if (ConceptIs(typeof (JoinableCohortAggregateConfiguration), concept))
-                return GetImage(RDMPConcept.PatientIndexTable);
+                return GetImageImpl(RDMPConcept.PatientIndexTable);
 
             if (ConceptIs(typeof(JoinableCohortAggregateConfigurationUse), concept))
-                return GetImage(RDMPConcept.PatientIndexTable,OverlayKind.Link);
+                return GetImageImpl(RDMPConcept.PatientIndexTable,OverlayKind.Link);
 
             if (concept is PermissionWindowUsedByCacheProgressNode)
-                return GetImage(((PermissionWindowUsedByCacheProgressNode)concept).GetImageObject(), OverlayKind.Link);
+                return GetImageImpl(((PermissionWindowUsedByCacheProgressNode)concept).GetImageObject(), OverlayKind.Link);
 
             if (ConceptIs(typeof (DashboardObjectUse),concept))
-                return GetImage(RDMPConcept.DashboardControl, OverlayKind.Link);
+                return GetImageImpl(RDMPConcept.DashboardControl, OverlayKind.Link);
 
             if (concept is DatabaseType)
                 return _databaseTypeIconProvider.GetImage((DatabaseType)concept);
 
             if (concept is ArbitraryFolderNode)
-                return GetImage(RDMPConcept.CatalogueFolder, kind);
+                return GetImageImpl(RDMPConcept.CatalogueFolder, kind);
 
             if (concept is DiscoveredDatabase)
-                return GetImage(RDMPConcept.Database);
+                return GetImageImpl(RDMPConcept.Database);
             
             if (concept is DiscoveredTable)
-                return GetImage(RDMPConcept.TableInfo);
+                return GetImageImpl(RDMPConcept.TableInfo);
             
             if (concept is DiscoveredColumn)
-                return GetImage(RDMPConcept.ColumnInfo);
+                return GetImageImpl(RDMPConcept.ColumnInfo);
 
             if (concept is FlatFileToLoad)
-                return GetImage(RDMPConcept.File);
+                return GetImageImpl(RDMPConcept.File);
 
             if (concept is CohortCreationRequest)
-                return GetImage(RDMPConcept.ExtractableCohort, OverlayKind.Add);
+                return GetImageImpl(RDMPConcept.ExtractableCohort, OverlayKind.Add);
 
             //This is special case when asking for icon for the Type, since the node itself is an IMasqueradeAs
             if (ReferenceEquals(concept, typeof(PipelineCompatibleWithUseCaseNode)))
-                return GetImage(RDMPConcept.Pipeline);
+                return GetImageImpl(RDMPConcept.Pipeline);
 
             foreach (var stateBasedIconProvider in StateBasedIconProviders)
             {
                 var bmp = stateBasedIconProvider.GetImageIfSupportedObject(concept);
                 if (bmp != null)
-                    return GetImage(bmp,kind);
+                    return GetImageImpl(bmp,kind);
             }
             
             string conceptTypeName = concept.GetType().Name;
@@ -167,15 +176,23 @@ namespace Rdmp.UI.Icons.IconProvision
             //It is a System.Type, get the name and see if theres a corresponding image
             if (concept is Type)
                 if (Enum.TryParse(((Type)concept).Name, out t))
-                    return GetImage(ImagesCollection[t], kind);
+                    return GetImageImpl(ImagesCollection[t], kind);
 
             //It is an instance of something, get the System.Type and see if theres a corresponding image
             if(Enum.TryParse(conceptTypeName,out t))
-                return GetImage(ImagesCollection[t],kind);
+                return GetImageImpl(ImagesCollection[t],kind);
 
+            //if the object is masquerading as something else
             if (concept is IMasqueradeAs)
-                return GetImage(((IMasqueradeAs)concept).MasqueradingAs(), kind);
-            
+            {
+                //get what it's masquerading as
+                var masqueradingAs = ((IMasqueradeAs) concept).MasqueradingAs();
+
+                //provided we don't have a circular reference here!
+                if(!(masqueradingAs is IMasqueradeAs))
+                    return GetImageImpl(masqueradingAs, kind); //get an image for what your pretending to be
+            }
+                
             return ImagesCollection[RDMPConcept.NoIconAvailable];
             
         }
