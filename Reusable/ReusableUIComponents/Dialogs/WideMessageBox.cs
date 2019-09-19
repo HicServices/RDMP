@@ -83,7 +83,7 @@ namespace ReusableUIComponents.Dialogs
         }
 
 
-        private void Setup(WideMessageBoxArgs args)
+        protected void Setup(WideMessageBoxArgs args)
         {
             Args = args;
 

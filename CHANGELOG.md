@@ -11,7 +11,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Long running processes that previously blocked the UI (e.g. create primary key) now have a small dialog describing task and allowing cancellation.
-
+- Proposed Fix dialog now has standard look and feel of RDMP message boxes (including keywords etc)
+ 
 ### Changed
  
 - Database patching user interface presents clearer information about what version upgrade is occuring and the patches that will be applied.
