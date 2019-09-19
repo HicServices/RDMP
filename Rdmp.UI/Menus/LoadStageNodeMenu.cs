@@ -58,7 +58,12 @@ namespace Rdmp.UI.Menus
             foreach (Type type in types)
             {
                 Type toAdd = type;
-                menu.DropDownItems.Add(type.Name, null, (s, e) => AddTypeIntoStage(toAdd, taskType));
+                var mi = menu.DropDownItems.Add(type.Name, null, (s, e) => AddTypeIntoStage(toAdd, taskType));
+
+                var help = _activator.CommentStore.GetTypeDocumentationIfExists(type);
+
+                if (help != null)
+                    mi.ToolTipText = help;
             }
 
             menu.Enabled = ProcessTask.IsCompatibleStage(taskType, _loadStageNode.LoadStage) && types.Any();
