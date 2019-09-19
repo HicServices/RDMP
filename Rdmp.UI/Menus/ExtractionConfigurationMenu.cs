@@ -16,18 +16,9 @@ namespace Rdmp.UI.Menus
     [System.ComponentModel.DesignerCategory("")]
     class ExtractionConfigurationMenu:RDMPContextMenuStrip
     {
-        private readonly ExtractionConfiguration _extractionConfiguration;
-        private readonly DataExportChildProvider _childProvider;
-        private IExtractableDataSet[] _datasets;
-        
         public ExtractionConfigurationMenu(RDMPContextMenuStripArgs args, ExtractionConfiguration extractionConfiguration)
             : base( args,extractionConfiguration)
         {
-            _extractionConfiguration = extractionConfiguration;
-            _childProvider = (DataExportChildProvider) _activator.CoreChildProvider;
-            
-            
-
             Items.Add("Edit", null, (s, e) => _activator.Activate<ExtractionConfigurationUI, ExtractionConfiguration>(extractionConfiguration));
                                     
             ///////////////////Change Cohorts//////////////
