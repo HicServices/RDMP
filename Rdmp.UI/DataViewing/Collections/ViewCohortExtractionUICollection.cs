@@ -72,7 +72,7 @@ namespace Rdmp.UI.DataViewing.Collections
                 return;
 
             var ect = Cohort.ExternalCohortTable;
-            var table = ect.Discover().ExpectTable(ect.TableName);
+            var table = ect.DiscoverCohortTable();
             autoComplete.Add(table);
         }
 
