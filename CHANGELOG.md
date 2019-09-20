@@ -16,7 +16,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Changed
  
 - Database patching user interface presents clearer information about what version upgrade is occuring and the patches that will be applied.
-
+- Updated to latest version of [FAnsiSql] (0.10.7) for task cancellation
+- 
 ### Fixed
 
 - Database patching user interface no longer suggests restarting if the patching process has failed
