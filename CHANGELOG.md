@@ -21,6 +21,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Database patching user interface no longer suggests restarting if the patching process has failed
 - Improved usability of StartupUI when no repository connection strings are not set (previously would report status as 'Broken')
+- Fixed bug where `DropTableIfLoadFails` of `ExecuteFullExtractionToDatabaseMSSql` would (under fail conditions) drop the destination table even if the table was created by a previous execution of the same pipeline.
 
 ### Removed
 
