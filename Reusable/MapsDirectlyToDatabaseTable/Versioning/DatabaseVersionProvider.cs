@@ -5,7 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Data;
 using System.Data.Common;
+using System.Linq;
+using FAnsi.Discovery;
 using ReusableLibraryCode;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
@@ -19,21 +22,20 @@ namespace MapsDirectlyToDatabaseTable.Versioning
     /// </summary>
     public class DatabaseVersionProvider
     {
-        public static Version GetVersionFromDatabase(DbConnectionStringBuilder builder)
+        public static Version GetVersionFromDatabase(DiscoveredDatabase database)
         {
-            using (var con = DatabaseCommandHelper.GetConnection(builder))
-            {
-                con.Open();
-                
-                var cmd = DatabaseCommandHelper.GetCommand(@"SELECT top 1 version from RoundhousE.Version order by version desc", con);
+            var tbl = database.ExpectTable(MasterDatabaseScriptExecutor.RoundhouseVersionTable,
+                MasterDatabaseScriptExecutor.GetRoundhouseSchemaName(database));
 
-                var o = cmd.ExecuteScalar();
+            //versions in the database (should only be 1)
+            var versions = tbl.GetDataTable().Rows.Cast<DataRow>().Select(r =>
+                r["version"] == DBNull.Value ? new Version(0, 0, 0, 0) : new Version(r["version"].ToString()))
+                .ToArray();
 
-                if(o == DBNull.Value)
-                    return new Version(0,0,0,0);
+            if (versions.Length == 0)
+                return new Version(0, 0, 0, 0);
 
-                return new Version(o.ToString());
-            }
+            return versions.Max();
         }
     }
 }

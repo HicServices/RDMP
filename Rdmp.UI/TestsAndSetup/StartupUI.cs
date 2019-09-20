@@ -257,7 +257,7 @@ namespace Rdmp.UI.TestsAndSetup
                             MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         PatchingUI.ShowIfRequired(
-                            (SqlConnectionStringBuilder) eventArgs.Repository.ConnectionStringBuilder,
+                            eventArgs.Repository.DiscoveredServer.GetCurrentDatabase(),
                             eventArgs.Repository, eventArgs.Patcher);
                         DoNotContinue = true;
                     }

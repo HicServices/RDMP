@@ -188,7 +188,7 @@ namespace Rdmp.Core.Startup
                 Patch[] patchesInDatabase;
                 SortedDictionary<string, Patch> allPatchesInAssembly;
                 
-                patchingRequired = Patch.IsPatchingRequired((SqlConnectionStringBuilder) tableRepository.ConnectionStringBuilder, patcher, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
+                patchingRequired = Patch.IsPatchingRequired(tableRepository.DiscoveredServer.GetCurrentDatabase(), patcher, out databaseVersion, out patchesInDatabase,out allPatchesInAssembly);
             }
             catch (Exception e)
             {

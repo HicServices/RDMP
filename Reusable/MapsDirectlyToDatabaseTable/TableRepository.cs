@@ -389,7 +389,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public Version GetVersion()
         {
-            return DatabaseVersionProvider.GetVersionFromDatabase(ConnectionStringBuilder);
+            return DatabaseVersionProvider.GetVersionFromDatabase(DiscoveredServer.GetCurrentDatabase());
         }
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable

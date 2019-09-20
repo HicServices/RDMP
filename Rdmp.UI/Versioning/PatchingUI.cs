@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -31,7 +32,7 @@ namespace Rdmp.UI.Versioning
     /// </summary>
     public partial class PatchingUI : Form
     {
-        private readonly SqlConnectionStringBuilder _builder;
+        private readonly DiscoveredDatabase _database;
         private readonly ITableRepository _repository;
         private readonly Version _databaseVersion;
         private readonly Version _hostAssemblyVersion;
@@ -42,9 +43,9 @@ namespace Rdmp.UI.Versioning
         private bool _yesToAll = false;
         private IPatcher _patcher;
 
-        private PatchingUI(SqlConnectionStringBuilder builder, ITableRepository repository, Version databaseVersion, IPatcher patcher, Patch[] patchesInDatabase, SortedDictionary<string, Patch> allPatchesInAssembly)
+        private PatchingUI(DiscoveredDatabase database, ITableRepository repository, Version databaseVersion, IPatcher patcher, Patch[] patchesInDatabase, SortedDictionary<string, Patch> allPatchesInAssembly)
         {
-            _builder = builder;
+            _database = database;
             _repository = repository;
             _databaseVersion = databaseVersion;
             _patcher = patcher;
@@ -64,25 +65,25 @@ namespace Rdmp.UI.Versioning
 
             tbPatch.Text =  $"{name} ({numberOfPatchesToApply} Patch{(numberOfPatchesToApply > 1 ? "es":"")})";
 
-            if (builder == null || string.IsNullOrWhiteSpace(builder.InitialCatalog))
+            if (_database == null)
             {
                 tbDatabase.Text = "Form loaded without a specific database to target!";
                 tbDatabase.ForeColor = Color.Red;
             }
             else
             {
-                tbDatabase.Text = string.Format("{0}, Version:{1}", builder.InitialCatalog,repository.GetVersion());
+                tbDatabase.Text = string.Format("{0}, Version:{1}", _database.GetRuntimeName(),repository.GetVersion());
             }
         }
 
-        public static void ShowIfRequired(SqlConnectionStringBuilder builder, ITableRepository repository, IPatcher patcher)
+        public static void ShowIfRequired(DiscoveredDatabase database, ITableRepository repository, IPatcher patcher)
         {
             Version databaseVersion;
             Patch[] patchesInDatabase;
             SortedDictionary<string, Patch> allPatchesInAssembly;
 
-            if (Patch.IsPatchingRequired(builder, patcher, out databaseVersion, out patchesInDatabase, out allPatchesInAssembly) == Patch.PatchingState.Required)
-                new PatchingUI(builder, repository, databaseVersion, patcher, patchesInDatabase, allPatchesInAssembly).ShowDialog();
+            if (Patch.IsPatchingRequired(database, patcher, out databaseVersion, out patchesInDatabase, out allPatchesInAssembly) == Patch.PatchingState.Required)
+                new PatchingUI(database, repository, databaseVersion, patcher, patchesInDatabase, allPatchesInAssembly).ShowDialog();
         }
 
         private void btnAttemptPatching_Click(object sender, EventArgs e)
@@ -172,7 +173,7 @@ namespace Rdmp.UI.Versioning
             }
             try
             {
-                MasterDatabaseScriptExecutor  executor = new MasterDatabaseScriptExecutor(_builder.ConnectionString);
+                MasterDatabaseScriptExecutor  executor = new MasterDatabaseScriptExecutor(_database);
                 executor.PatchDatabase(toApply, listener, PreviewPatch, MessageBox.Show("Backup Database First","Backup",MessageBoxButtons.YesNo) == DialogResult.Yes);
 
                 //if it crashed during patching

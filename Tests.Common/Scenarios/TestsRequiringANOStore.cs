@@ -34,17 +34,11 @@ namespace Tests.Common.Scenarios
 
             CreateReferenceInCatalogueToANODatabase();
         }
-
-        private void DropANODatabase()
-        {
-            if(ANOStore_Database.Exists())
-                ANOStore_Database.Drop();
-        }
-
-
+        
         private void CreateANODatabase()
         {
-            DropANODatabase();
+            if (ANOStore_Database.Exists())
+                ANOStore_Database.Drop();
 
             var scriptCreate = new MasterDatabaseScriptExecutor(ANOStore_Database);
             

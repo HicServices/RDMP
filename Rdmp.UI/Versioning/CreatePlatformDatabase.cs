@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading;
 using System.Windows.Forms;
+using FAnsi;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -39,6 +41,11 @@ namespace Rdmp.UI.Versioning
 
         private Thread _tCreateDatabase;
         private bool _programaticClose;
+
+        /// <summary>
+        /// Currently the only supported type is DatabaseType.MicrosoftSQLServer
+        /// </summary>
+        public DatabaseType DatabaseType = DatabaseType.MicrosoftSQLServer;
 
         public string DatabaseConnectionString { get ; private set; }
 
@@ -82,7 +89,7 @@ namespace Rdmp.UI.Versioning
                 return;
             }
             else
-                executor = new MasterDatabaseScriptExecutor(tbServer.Text, tbDatabase.Text, tbUsername.Text, tbPassword.Text);
+                executor = new MasterDatabaseScriptExecutor(new DiscoveredServer(tbServer.Text, tbDatabase.Text, DatabaseType, tbUsername.Text, tbPassword.Text).GetCurrentDatabase());
 
             if (_completed)
             {
@@ -123,6 +130,8 @@ namespace Rdmp.UI.Versioning
                 _tCreateDatabase.Start();
             }
         }
+
+        
 
         private bool silentlyApplyPatchCallback(Patch p)
         {

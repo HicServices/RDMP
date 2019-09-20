@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
@@ -191,11 +192,11 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             SoftwareBehindDatabase
         }
 
-        public static PatchingState IsPatchingRequired(SqlConnectionStringBuilder builder, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
+        public static PatchingState IsPatchingRequired(DiscoveredDatabase database, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
         {
-            databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(builder);
+            databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(database);
 
-            MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(builder.DataSource, builder.InitialCatalog, builder.UserID, builder.Password);
+            MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(database);
             patchesInDatabase = scriptExecutor.GetPatchesRun();
 
             allPatchesInAssembly = GetAllPatchesInAssembly(patcher);
