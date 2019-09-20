@@ -78,13 +78,12 @@ namespace Rdmp.UI.Versioning
                 MessageBox.Show("Setup already underaway");
                 return;
             }
-
-            var createSql = Patch.GetInitialCreateScriptContents(_patcher,db.Server.DatabaseType);
-            var initialVersionNumber = "1.0.0.0";
+            
+            var createSql = _patcher.GetInitialCreateScriptContents(db.Server.DatabaseType);
             var patches = _patcher.GetAllPatchesInAssembly(db.Server.DatabaseType);
 
             var preview = new SQLPreviewWindow("Confirm happiness with SQL",
-                "The following SQL is about to be executed:", createSql);
+                "The following SQL is about to be executed:", createSql.EntireScript);
 
             var executor = new MasterDatabaseScriptExecutor(db);
             
@@ -95,7 +94,7 @@ namespace Rdmp.UI.Versioning
                     {
                         var memory = new ToMemoryCheckNotifier(checksUI1);
 
-                        if (executor.CreateDatabase(createSql, initialVersionNumber, memory))
+                        if (executor.CreateDatabase(createSql.EntireScript, createSql.DatabaseVersionNumber.ToString(), memory))
                         {
                             _completed = executor.PatchDatabase(patches, memory, silentlyApplyPatchCallback);
 

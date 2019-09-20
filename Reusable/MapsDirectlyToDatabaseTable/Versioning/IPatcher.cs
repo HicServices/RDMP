@@ -44,6 +44,14 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         /// </summary>
         string LegacyName { get; }
 
+
+        /// <summary>
+        /// Returns the initial Sql to create 
+        /// </summary>
+        /// <param name="dbType"></param>
+        /// <returns></returns>
+        Patch GetInitialCreateScriptContents(DatabaseType dbType);
+
         /// <summary>
         /// Returns all patches defined in the <see cref="Patcher"/> assembly.  This is probably a superset of the ones that have been
         /// run on the live database on which you want to patch

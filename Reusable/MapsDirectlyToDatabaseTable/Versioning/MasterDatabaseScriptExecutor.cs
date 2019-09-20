@@ -307,12 +307,11 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
         public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
-            string sql = Patch.GetInitialCreateScriptContents(patcher,Database.Server.DatabaseType);
+            var initialPatch = patcher.GetInitialCreateScriptContents(Database.Server.DatabaseType);
+            CreateDatabase(initialPatch.EntireScript, initialPatch.DatabaseVersionNumber.ToString(), notifier);
 
             //get everything in the /up/ folder that are .sql
             var patches = patcher.GetAllPatchesInAssembly(Database.Server.DatabaseType);
-
-            CreateDatabase(sql, "1.0.0.0", notifier);
             PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
         }
     }

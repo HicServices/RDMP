@@ -80,32 +80,6 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             } 
         }
 
-
-        public static string GetInitialCreateScriptContents(IPatcher patcher,DatabaseType dbType)
-        {
-            var assembly = patcher.GetDbAssembly();
-            var subdirectory = patcher.ResourceSubdirectory;
-            Regex initialCreationRegex;
-
-            if(string.IsNullOrWhiteSpace(subdirectory))
-                initialCreationRegex = new Regex(@".*\.runAfterCreateDatabase\..*\.sql");
-            else
-                initialCreationRegex = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.runAfterCreateDatabase\..*\.sql");
-            
-            var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
-
-            if (candidates.Length == 1)
-            {
-                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
-                return sr.ReadToEnd();
-            }
-
-            if(candidates.Length == 0)
-                throw new FileNotFoundException("Could not find an initial create database script in dll "+assembly.FullName + ".  Make sure it is marked as an Embedded Resource and that it is in a folder called 'runAfterCreateDatabase' (and matches regex "+initialCreationRegex +"). And make sure that it is marked as 'Embedded Resource' in the .csproj build action");
-
-            throw new Exception("There are too many create scripts in the assembly " + assembly.FullName + " only 1 create database script is allowed, all other scripts must go into the up folder");
-
-        }
         
         public override int GetHashCode()
         {
