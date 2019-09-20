@@ -156,6 +156,14 @@ namespace Rdmp.Core.Startup
 
         private bool Find(ITableRepository tableRepository, IPatcher patcher,ICheckNotifier notifier)
         {
+            //if it's not configured
+            if (tableRepository == null)
+            {
+                DatabaseFound(this, new PlatformDatabaseFoundEventArgs(null, patcher, RDMPPlatformDatabaseStatus.Unreachable));
+                return false;
+            }
+                
+            //check we can reach it
             var db = tableRepository.DiscoveredServer.GetCurrentDatabase();
             notifier.OnCheckPerformed(new CheckEventArgs(string.Format("Connecting to {0} on {1}",db.GetRuntimeName(),db.Server.Name) ,CheckResult.Success));
 

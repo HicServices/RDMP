@@ -73,6 +73,13 @@ namespace ReusableUIComponents.Dialogs
                 longMessage = string.Join(Environment.NewLine,split.Skip(1)) + Environment.NewLine + Environment.NewLine + longMessage;
             }
 
+            //if there's still no body to the error make the title the body and put a generic title in
+            if (string.IsNullOrWhiteSpace(longMessage))
+            {
+                longMessage = message;
+                message = "Error";
+            }
+
             ExceptionViewer ev = new ExceptionViewer(message,longMessage,exception);
 
             if(isModalDialog)

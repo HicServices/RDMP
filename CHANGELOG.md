@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Database patching user interface no longer suggests restarting if the patching process has failed
+- Improved usability of StartupUI when no repository connection strings are not set (previously would report status as 'Broken')
 
 ### Removed
 

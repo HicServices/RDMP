@@ -230,8 +230,14 @@ namespace Rdmp.UI.TestsAndSetup
                     if (eventArgs.Patcher.Tier == 1)
                     {
                         pbDisconnected.Visible = true;
-                        lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
+
+                        if (eventArgs.Repository == null)
+                            lblProgress.Text = "RDMP Platform Databases are not set";
+                        else
+                            lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
+
                         _couldNotReachTier1Database = true;
+
                         ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name)));
                     }
                     else
