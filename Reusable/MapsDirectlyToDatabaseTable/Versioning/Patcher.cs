@@ -5,7 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
+using System.IO;
 using System.Reflection;
+using System.Text.RegularExpressions;
+using FAnsi;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
@@ -33,9 +36,32 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             ResourceSubdirectory = resourceSubdirectory;
         }
         
-        public SortedDictionary<string, Patch> GetAllPatchesInAssembly()
+        /// <inheritdoc/>
+        public SortedDictionary<string, Patch> GetAllPatchesInAssembly(DatabaseType dbType)
         {
-            return Patch.GetAllPatchesInAssembly(this);
+            var assembly = GetDbAssembly();
+            var subdirectory = ResourceSubdirectory;
+            Regex upgradePatchesRegexPattern;
+
+            if (string.IsNullOrWhiteSpace(subdirectory))
+                upgradePatchesRegexPattern = new Regex(@".*\.up\.(.*\.sql)");
+            else
+                upgradePatchesRegexPattern = new Regex(@".*\." + Regex.Escape(subdirectory) + @"\.up\.(.*\.sql)");
+
+            var files = new SortedDictionary<string, Patch>();
+
+            //get all resources out of 
+            foreach (string manifestResourceName in assembly.GetManifestResourceNames())
+            {
+                var match = upgradePatchesRegexPattern.Match(manifestResourceName);
+                if (match.Success)
+                {
+                    string fileContents = new StreamReader(assembly.GetManifestResourceStream(manifestResourceName)).ReadToEnd();
+                    files.Add(match.Groups[1].Value, new Patch(match.Groups[1].Value, fileContents));
+                }
+            }
+
+            return files;
         }
     }
 

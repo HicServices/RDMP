@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi;
 using NUnit.Framework;
 using Rdmp.Core.Databases;
 using Tests.Common;
@@ -26,7 +27,7 @@ namespace Rdmp.Core.Tests.Databases
         {
             CataloguePatcher p = new CataloguePatcher();
 
-            var patch = p.GetAllPatchesInAssembly().Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
+            var patch = p.GetAllPatchesInAssembly(DatabaseType.MicrosoftSQLServer).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
 
             Regex findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
             

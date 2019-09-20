@@ -4,7 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Reflection;
+using FAnsi;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
@@ -41,5 +43,13 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         /// The legacy name (if any) that this patcher might have been known by in the past
         /// </summary>
         string LegacyName { get; }
+
+        /// <summary>
+        /// Returns all patches defined in the <see cref="Patcher"/> assembly.  This is probably a superset of the ones that have been
+        /// run on the live database on which you want to patch
+        /// </summary>
+        /// <param name="dbType"></param>
+        /// <returns></returns>
+        SortedDictionary<string, Patch> GetAllPatchesInAssembly(DatabaseType dbType);
     }
 }

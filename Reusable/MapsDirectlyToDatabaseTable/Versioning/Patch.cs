@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using FAnsi;
 using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
@@ -80,7 +81,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         }
 
 
-        public static string GetInitialCreateScriptContents(IPatcher patcher)
+        public static string GetInitialCreateScriptContents(IPatcher patcher,DatabaseType dbType)
         {
             var assembly = patcher.GetDbAssembly();
             var subdirectory = patcher.ResourceSubdirectory;
@@ -105,34 +106,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             throw new Exception("There are too many create scripts in the assembly " + assembly.FullName + " only 1 create database script is allowed, all other scripts must go into the up folder");
 
         }
-
-        public static SortedDictionary<string, Patch> GetAllPatchesInAssembly(IPatcher patcher)
-        {
-            var assembly = patcher.GetDbAssembly();
-            var subdirectory = patcher.ResourceSubdirectory;
-            Regex upgradePatchesRegexPattern;
-
-            if(string.IsNullOrWhiteSpace(subdirectory))
-                upgradePatchesRegexPattern =  new Regex(@".*\.up\.(.*\.sql)");
-            else
-                upgradePatchesRegexPattern = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.up\.(.*\.sql)");
-
-            var files = new SortedDictionary<string, Patch>();
-            
-            //get all resources out of 
-            foreach (string manifestResourceName in assembly.GetManifestResourceNames())
-            {
-                var match = upgradePatchesRegexPattern.Match(manifestResourceName);
-                if (match.Success)
-                {
-                    string fileContents = new StreamReader(assembly.GetManifestResourceStream(manifestResourceName)).ReadToEnd();
-                    files.Add(match.Groups[1].Value, new Patch(match.Groups[1].Value, fileContents));
-                }
-            }
-
-            return files;
-        }
-
+        
         public override int GetHashCode()
         {
             return locationInAssembly.GetHashCode();
@@ -199,7 +173,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(database);
             patchesInDatabase = scriptExecutor.GetPatchesRun();
 
-            allPatchesInAssembly = GetAllPatchesInAssembly(patcher);
+            allPatchesInAssembly = patcher.GetAllPatchesInAssembly(database.Server.DatabaseType);
 
             AssemblyName databaseAssemblyName = patcher.GetDbAssembly().GetName();
             

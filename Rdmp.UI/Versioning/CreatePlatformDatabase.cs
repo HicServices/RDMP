@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
@@ -34,62 +35,37 @@ namespace Rdmp.UI.Versioning
     /// </summary>
     public partial class CreatePlatformDatabase : Form
     {
-        private readonly string _createSql;
-        private readonly string _initialVersionNumber;
-        private readonly SortedDictionary<string, Patch> _patches;
         private bool _completed = false;
 
-        private Thread _tCreateDatabase;
         private bool _programaticClose;
-
-        /// <summary>
-        /// Currently the only supported type is DatabaseType.MicrosoftSQLServer
-        /// </summary>
-        public DatabaseType DatabaseType = DatabaseType.MicrosoftSQLServer;
-
-        public string DatabaseConnectionString { get ; private set; }
-
-        /// <summary>
-        /// You should probably be using the other constructor
-        /// </summary>
-        /// <param name="createSql"></param>
-        /// <param name="initialVersionNumber"></param>
-        /// <param name="patches"></param>
-        public CreatePlatformDatabase(string createSql, string initialVersionNumber, SortedDictionary<string, Patch> patches)
-        {
-            _createSql = createSql;
-            _initialVersionNumber = initialVersionNumber;
-            _patches = patches;
-            InitializeComponent();
-
-            new RecentHistoryOfControls(tbServer, new Guid("8c32e04c-f3c4-465d-8dbb-f180264b87f8"));
-            new RecentHistoryOfControls(tbDatabase, new Guid("dee8d99f-625b-4e20-b63c-63613302e1bc"));
-        }
+        private IPatcher _patcher;
         
+        private Task _tCreateDatabase;
+        public DiscoveredDatabase DatabaseCreatedIfAny { get; private set; } = null;
+
         /// <summary>
         /// Calls the main constructor but passing control of what scripts to extract to the Patch class
         /// </summary>
         public CreatePlatformDatabase(IPatcher patcher)
-            : this(Patch.GetInitialCreateScriptContents(patcher),
-            "1.0.0.0", Patch.GetAllPatchesInAssembly(patcher))
         {
+            _patcher = patcher;
+            InitializeComponent();
+
+            //show only Database section
+            serverDatabaseTableSelector1.HideTableComponents();
         }
 
         
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            var preview = new SQLPreviewWindow("Confirm happiness with SQL",
-                "The following SQL is about to be executed:", _createSql);
+            var db = serverDatabaseTableSelector1.GetDiscoveredDatabase();
 
-            MasterDatabaseScriptExecutor executor = null;
-
-            if (string.IsNullOrWhiteSpace(tbDatabase.Text) || string.IsNullOrWhiteSpace(tbServer.Text))
+            if (db == null)
             {
-                MessageBox.Show("You must specify both a Server and a Database");
+                MessageBox.Show(
+                    "You must pick an empty database or enter the name of a new one (that doesn't exist yet)");
                 return;
             }
-            else
-                executor = new MasterDatabaseScriptExecutor(new DiscoveredServer(tbServer.Text, tbDatabase.Text, DatabaseType, tbUsername.Text, tbPassword.Text).GetCurrentDatabase());
 
             if (_completed)
             {
@@ -97,23 +73,33 @@ namespace Rdmp.UI.Versioning
                 return;
             }
 
-            if (_tCreateDatabase != null && _tCreateDatabase.IsAlive)
+            if (_tCreateDatabase != null && !_tCreateDatabase.IsCompleted)
             {
-                MessageBox.Show("Setup already underaway, Thread State is:" + _tCreateDatabase.ThreadState);
+                MessageBox.Show("Setup already underaway");
                 return;
             }
 
+            var createSql = Patch.GetInitialCreateScriptContents(_patcher,db.Server.DatabaseType);
+            var initialVersionNumber = "1.0.0.0";
+            var patches = _patcher.GetAllPatchesInAssembly(db.Server.DatabaseType);
+
+            var preview = new SQLPreviewWindow("Confirm happiness with SQL",
+                "The following SQL is about to be executed:", createSql);
+
+            var executor = new MasterDatabaseScriptExecutor(db);
+            
             if (preview.ShowDialog() == DialogResult.OK)
             {
-                _tCreateDatabase = new Thread(
-                    () =>
+                _tCreateDatabase = Task.Run(()=>
+                    
                     {
                         var memory = new ToMemoryCheckNotifier(checksUI1);
 
-                        if (executor.CreateDatabase(_createSql, _initialVersionNumber, memory))
+                        if (executor.CreateDatabase(createSql, initialVersionNumber, memory))
                         {
-                            _completed = executor.PatchDatabase(_patches, memory, silentlyApplyPatchCallback);
-                            GenerateConnectionStringThenCopy();
+                            _completed = executor.PatchDatabase(patches, memory, silentlyApplyPatchCallback);
+
+                            DatabaseCreatedIfAny = db;
 
                             var worst = memory.GetWorst();
                             if(worst == CheckResult.Success || worst == CheckResult.Warning)
@@ -127,7 +113,6 @@ namespace Rdmp.UI.Versioning
                             _completed = false;//failed to create database
                     }
                     );
-                _tCreateDatabase.Start();
             }
         }
 
@@ -143,64 +128,27 @@ namespace Rdmp.UI.Versioning
         {
             if(_tCreateDatabase != null)
             {
-                if (_tCreateDatabase.ThreadState != ThreadState.Stopped && !_programaticClose)
+                if (!_tCreateDatabase.IsCompleted && !_programaticClose)
                 {
                     if(
-                        MessageBox.Show("Thread state is " + _tCreateDatabase.ThreadState +
-                                    ".  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.","Really Close?",MessageBoxButtons.YesNoCancel) 
+                        MessageBox.Show("CreateDatabase Task is still running.  Are you sure you want to close the form? If you close the form your database may be left in a half finished state.","Really Close?",MessageBoxButtons.YesNoCancel) 
                         != DialogResult.Yes)
-                            e.Cancel = true;
+                        e.Cancel = true;
                 }
             }
         }
-
-       private void GenerateConnectionStringThenCopy()
-        {
-            SqlConnectionStringBuilder builder;
-            if (!string.IsNullOrWhiteSpace(tbUsername.Text) || !string.IsNullOrWhiteSpace(tbPassword.Text))
-            {
-                builder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = tbServer.Text,
-                    InitialCatalog = tbDatabase.Text,
-                    UserID = tbUsername.Text,
-                    Password = tbPassword.Text
-                };
-            }
-            else
-            {
-                builder = new SqlConnectionStringBuilder()
-                {
-                    DataSource = tbServer.Text,
-                    InitialCatalog = tbDatabase.Text,
-                    IntegratedSecurity = true
-                };
-            }
-            DatabaseConnectionString = builder.ConnectionString;
-            
-        }
-
+        
         public static ExternalDatabaseServer CreateNewExternalServer(ICatalogueRepository repository,PermissableDefaults defaultToSet, IPatcher patcher)
         {
-
             CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(patcher);
             createPlatform.ShowDialog();
 
-            if (!string.IsNullOrWhiteSpace(createPlatform.DatabaseConnectionString))
+            var db = createPlatform.DatabaseCreatedIfAny;
+
+            if (db != null)
             {
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(createPlatform.DatabaseConnectionString);
-                var newServer = new ExternalDatabaseServer(repository, builder.InitialCatalog, patcher);
-
-                newServer.Server = builder.DataSource;
-                newServer.Database = builder.InitialCatalog;
-
-                //if there is a username/password
-                if (!builder.IntegratedSecurity)
-                {
-                    newServer.Password = builder.Password;
-                    newServer.Username = builder.UserID;
-                }
-                newServer.SaveToDatabase();
+                var newServer = new ExternalDatabaseServer(repository, db.GetRuntimeName(), patcher);
+                newServer.SetProperties(db);
                 
                 if(defaultToSet != PermissableDefaults.None)
                     repository.GetServerDefaults().SetDefault(defaultToSet, newServer);
