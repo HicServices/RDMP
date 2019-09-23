@@ -37,25 +37,106 @@ namespace Rdmp.Core.Tests.QueryCaching
         public void Create_QueryCache(DatabaseType dbType,Type patcherType)
         {
             var db = GetCleanedServer(dbType);
-
+            
             var patcher = (Patcher)Activator.CreateInstance(patcherType);
 
             var mds = new MasterDatabaseScriptExecutor(db);
             mds.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
         }
 
+        /// <summary>
+        /// Tests running a cic in which there are 2 aggregates both hospitalizations with 1 EXCEPT the other.  The expected result is 0
+        /// patients
+        /// </summary>
+        /// <param name="dbType"></param>
         [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
-        public void Join_PatientIndexTable_WithCache(DatabaseType dbType)
+        public void Test_EXCEPT_TwoAggregates(DatabaseType dbType)
+        {
+
+            /*
+             *           Server1
+             *       _____________________
+             *        |HospitalAdmissions x2|
+             *         ↓ both run into    ↓
+             *       ___________________
+             *       |       Cache     |
+             *
+             *
+             *      HospitalAdmissions
+             *          EXCEPT
+             *      HospitalAdmissions (copy)
+             *         = 0
+             */
+
+            var db = GetCleanedServer(dbType);
+            var cache = CreateCache(db);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var ac1 = SetupAggregateConfiguration(db, people, r, cic);
+            var ac2 = SetupAggregateConfiguration(db, people, r, cic);
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache.ID;
+            cic.SaveToDatabase();
+
+            var root = cic.RootCohortAggregateContainer;
+            root.Operation = SetOperation.EXCEPT;
+            root.Name = "EXCEPT";
+            root.SaveToDatabase();
+            root.AddChild(ac1,0);
+            root.AddChild(ac2,1);
+            
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+
+            if(dbType == DatabaseType.MySql)
+            {
+                var ex = Assert.Throws<NotSupportedException>(() => runner.Run(new CancellationToken()));
+                StringAssert.Contains("INTERSECT / UNION / EXCEPT are not supported by MySql",ex.Message);
+                return;
+            }
+            else
+                runner.Run(new CancellationToken());
+            
+            AssertNoErrors(compiler);
+
+            Assert.AreEqual(compiler.Tasks.First().Key.FinalRowCount,0);
+            Assert.Greater(compiler.Tasks.Skip(1).First().Key.FinalRowCount, 0); //both ac should have the same total
+            Assert.Greater(compiler.Tasks.Skip(2).First().Key.FinalRowCount, 0); // that is not 0
+            Assert.AreEqual(compiler.Tasks.Skip(1).First().Key.FinalRowCount,compiler.Tasks.Skip(2).First().Key.FinalRowCount);
+            
+        }
+
+        /// <summary>
+        /// Tests the ability to run a cic in which there are 2 tables, one patient index table with the dates of biochemistry test codes
+        /// and another which joins and filters on the results of that table to produce a count of patients hospitalised after an NA test.
+        ///
+        /// <para>The <paramref name="createQueryCache"/> specifies whether a cache should be used</para>
+        /// </summary>
+        /// <param name="dbType"></param>
+        /// <param name="createQueryCache"></param>
+        [TestCase(DatabaseType.Oracle,true)]
+        [TestCase(DatabaseType.MySql,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+        [TestCase(DatabaseType.Oracle, false)]
+        [TestCase(DatabaseType.MySql, false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer, false)]
+        public void Join_PatientIndexTable_OptionalCacheOnSameServer(DatabaseType dbType,bool createQueryCache)
         {
             /*
              *           Server1
                        _____________
              *        |Biochemistry|
              *               ↓
-             *       _______________
-             *       |     Cache    |
+             *       ___________________
+             *       | Cache (optional) |
              *            ↓ join ↓
              *    _____________________
              *    | Hospital Admissions|
@@ -63,7 +144,10 @@ namespace Rdmp.Core.Tests.QueryCaching
              */
 
             var db = GetCleanedServer(dbType);
+            ExternalDatabaseServer cache = null;
 
+            if (createQueryCache)
+                cache = CreateCache(db);
 
             var r = new Random(500);
             var people = new PersonCollection();
@@ -74,6 +158,8 @@ namespace Rdmp.Core.Tests.QueryCaching
             var joinable = SetupPatientIndexTable(db,people,r,cic);
             
             cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
 
             var hospitalAdmissions = SetupPatientIndexTableUser(db, people, r, cic, joinable);
             cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions,0);
@@ -86,6 +172,17 @@ namespace Rdmp.Core.Tests.QueryCaching
             AssertNoErrors(compiler);
         }
 
+        private ExternalDatabaseServer CreateCache(DiscoveredDatabase db)
+        {
+            var patcher = new QueryCachingPatcher();
+            var mds = new MasterDatabaseScriptExecutor(db);
+            mds.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
+
+            var server = new ExternalDatabaseServer(CatalogueRepository, "Cache", patcher);
+            server.SetProperties(db);
+
+            return server;
+        }
 
         /// <summary>
         /// Creates a new patient index table based on Biochemistry which selects the distinct dates of "NA" test results
@@ -138,18 +235,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <param name="joinable"></param>
         private AggregateConfiguration SetupPatientIndexTableUser(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable)
         {
-            var tbl = CreateDataset<HospitalAdmissions>(db, people, 10000, r);
-            var cata = Import(tbl, out _, out _, out _, out ExtractionInformation[] eis);
-
-            var chi = eis.Single(ei => ei.GetRuntimeName().Equals("chi", StringComparison.CurrentCultureIgnoreCase));
-            chi.IsExtractionIdentifier = true;
-            chi.SaveToDatabase();
-
-            var ac = new AggregateConfiguration(CatalogueRepository, cata, "Hospitalised after NA");
-            ac.AddDimension(chi);
-
-            ac.CountSQL = null;
-            cic.EnsureNamingConvention(ac);
+            var ac = SetupAggregateConfiguration(db,people,r,cic);
             
             var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
             var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and);
@@ -164,6 +250,33 @@ namespace Rdmp.Core.Tests.QueryCaching
 
             return ac;
 
+        }
+
+        /// <summary>
+        /// Creates a table HospitalAdmissions with no filters 
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="people"></param>
+        /// <param name="r"></param>
+        /// <param name="cic"></param>
+        /// <returns></returns>
+        private AggregateConfiguration SetupAggregateConfiguration(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic)
+        {
+            var existingTbl = db.ExpectTable("HospitalAdmissions");
+            var tbl = existingTbl.Exists() ? existingTbl : CreateDataset<HospitalAdmissions>(db, people, 10000, r);
+            var cata = Import(tbl, out _, out _, out _, out ExtractionInformation[] eis);
+
+            var chi = eis.Single(ei => ei.GetRuntimeName().Equals("chi", StringComparison.CurrentCultureIgnoreCase));
+            chi.IsExtractionIdentifier = true;
+            chi.SaveToDatabase();
+
+            var ac = new AggregateConfiguration(CatalogueRepository, cata, "Hospitalised after NA");
+            ac.AddDimension(chi);
+
+            ac.CountSQL = null;
+            cic.EnsureNamingConvention(ac);
+
+            return ac;
         }
 
 

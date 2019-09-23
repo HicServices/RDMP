@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FAnsi;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -222,7 +223,7 @@ namespace Rdmp.Core.QueryBuilding
             foreach (IOrderable toWrite in toWriteOut)
             {
                 if (firstEntityWritten)
-                    _sql += Environment.NewLine + Environment.NewLine + tabplusOne + currentContainer.Operation + Environment.NewLine + Environment.NewLine;
+                    _sql += Environment.NewLine + Environment.NewLine + tabplusOne + GetSETOperationSql(currentContainer.Operation) + Environment.NewLine + Environment.NewLine;
 
                 if(toWrite is AggregateConfiguration)
                     AddAggregate((AggregateConfiguration)toWrite, tabDepth);
@@ -250,6 +251,31 @@ namespace Rdmp.Core.QueryBuilding
             //if we outputted anything
             if (toWriteOut.Any())
                 _sql += Environment.NewLine + tabs + ")" + Environment.NewLine ;
+        }
+
+        /// <summary>
+        /// Returns the SQL keyword for the <paramref name="currentContainerOperation"/>
+        /// </summary>
+        /// <param name="currentContainerOperation"></param>
+        /// <returns></returns>
+        protected virtual string GetSETOperationSql(SetOperation currentContainerOperation)
+        {
+            if (CacheServer != null && CacheServer.DatabaseType == DatabaseType.MySql)
+                throw new NotSupportedException("INTERSECT / UNION / EXCEPT are not supported by MySql caches");
+
+            switch (currentContainerOperation)
+            {
+                case SetOperation.UNION:
+                    return "UNION";
+                case SetOperation.INTERSECT:
+                    return "INTERSECT";
+                case SetOperation.EXCEPT:
+                    if (CacheServer != null && CacheServer.DatabaseType == DatabaseType.Oracle)
+                        return "MINUS";
+                    return "EXCEPT";
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(currentContainerOperation), currentContainerOperation, null);
+            }
         }
 
         /// <summary>

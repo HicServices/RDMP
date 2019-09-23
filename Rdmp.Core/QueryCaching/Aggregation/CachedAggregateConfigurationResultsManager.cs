@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Data.Common;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
@@ -38,6 +39,11 @@ namespace Rdmp.Core.QueryCaching.Aggregation
         private readonly DiscoveredServer _server;
         private DiscoveredDatabase _database;
 
+        /// <summary>
+        /// The name of the table in the query cache which tracks the SQL executed and the resulting tables generated when caching
+        /// </summary>
+        public const string ResultsManagerTable = "CachedAggregateConfigurationResults";
+
         public CachedAggregateConfigurationResultsManager(IExternalDatabaseServer server)
         {
             _server = DataAccessPortal.GetInstance().ExpectServer(server, DataAccessContext.InternalDataProcessing);
@@ -48,11 +54,13 @@ namespace Rdmp.Core.QueryCaching.Aggregation
 
         public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,AggregateOperation operation)
         {
+            var mgrTable = _database.ExpectTable(ResultsManagerTable);
+
             using (var con = _server.GetConnection())
             {
                 con.Open();
 
-                var r = DatabaseCommandHelper.GetCommand("Select TableName from CachedAggregateConfigurationResults WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" +operation + "'" , con).ExecuteReader();
+                var r = DatabaseCommandHelper.GetCommand($"Select TableName from {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" +operation + "'" , con).ExecuteReader();
                 
                 if (r.Read())
                 {
@@ -66,11 +74,13 @@ namespace Rdmp.Core.QueryCaching.Aggregation
 
         public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql)
         {
+            var mgrTable = _database.ExpectTable(ResultsManagerTable);
+
             using (var con = _server.GetConnection())
             {
                 con.Open();
 
-                var cmd = DatabaseCommandHelper.GetCommand("Select TableName,SqlExecuted from CachedAggregateConfigurationResults WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" + operation + "'", con);
+                var cmd = DatabaseCommandHelper.GetCommand($"Select TableName,SqlExecuted from {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" + operation + "'", con);
                 var r = cmd.ExecuteReader();
 
                 if (r.Read())
@@ -126,26 +136,16 @@ namespace Rdmp.Core.QueryCaching.Aggregation
                 if (!tbl.Exists())
                     throw new Exception("Cache table did not exist even after CreateTable completed without error!");
 
-                var cmdCreateNew =
-                    DatabaseCommandHelper.GetCommand(
-                        "INSERT INTO CachedAggregateConfigurationResults (Committer,AggregateConfiguration_ID,SqlExecuted,Operation,TableName) Values (@Committer,@AggregateConfiguration_ID,@SqlExecuted,@Operation,@TableName)",con);
+                var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
-                cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@Committer", cmdCreateNew));
-                cmdCreateNew.Parameters["@Committer"].Value = Environment.UserName;
-
-                cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmdCreateNew));
-                cmdCreateNew.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
-
-                cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@SqlExecuted", cmdCreateNew));
-                cmdCreateNew.Parameters["@SqlExecuted"].Value = arguments.SQL.Trim();
-
-                cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@Operation", cmdCreateNew));
-                cmdCreateNew.Parameters["@Operation"].Value = operation.ToString();
-
-                cmdCreateNew.Parameters.Add(DatabaseCommandHelper.GetParameter("@TableName", cmdCreateNew));
-                cmdCreateNew.Parameters["@TableName"].Value = tbl.GetRuntimeName();
-
-                cmdCreateNew.ExecuteNonQuery();
+                mgrTable.Insert(new Dictionary<string, object>()
+                {
+                    { "Committer", Environment.UserName},
+                    { "AggregateConfiguration_ID", configuration.ID},
+                    { "SqlExecuted", arguments.SQL.Trim()},
+                    { "Operation", operation.ToString()},
+                    { "TableName", tbl.GetRuntimeName()},
+                });
 
                 arguments.CommitTableDataCompleted(tbl);
             }
@@ -154,8 +154,9 @@ namespace Rdmp.Core.QueryCaching.Aggregation
         public void DeleteCacheEntryIfAny(AggregateConfiguration configuration, AggregateOperation operation)
         {
             var table = GetLatestResultsTableUnsafe(configuration, operation);
+            var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
-            if(table != null)
+            if (table != null)
 
             using (var con = _server.GetConnection())
             {
@@ -165,7 +166,7 @@ namespace Rdmp.Core.QueryCaching.Aggregation
                 _database.ExpectTable(table.GetRuntimeName()).Drop();
                 
                 //delete the record!
-                int deletedRows = DatabaseCommandHelper.GetCommand("DELETE FROM CachedAggregateConfigurationResults WHERE AggregateConfiguration_ID = "+configuration.ID+" AND Operation = '"+operation+"'", con).ExecuteNonQuery();
+                int deletedRows = DatabaseCommandHelper.GetCommand($"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID+" AND Operation = '"+operation+"'", con).ExecuteNonQuery();
 
                 if(deletedRows != 1)
                     throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");
