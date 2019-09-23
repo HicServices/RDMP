@@ -108,8 +108,11 @@ namespace Rdmp.Core.CohortCreation.Execution
         {
             var toReturn = new List<ICompileable>();
 
+            if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
+                throw new QueryBuildingException($"CohortIdentificationConfiguration '{CohortIdentificationConfiguration}' had not root SET container (UNION / INERSECT / EXCEPT)");
+
             //if it is the root container or we are adding tasks for all containers including subcontainers
-            if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
+            if (CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
                 toReturn.Add(AddTask(container,globals));
 
             foreach (IOrderable c in container.GetOrderedContents())
