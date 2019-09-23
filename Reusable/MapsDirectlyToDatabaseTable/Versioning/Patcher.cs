@@ -11,12 +11,18 @@ using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
 using FAnsi;
+using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
     /// <inheritdoc/>
     public abstract class Patcher:IPatcher
     {
+        public const string InitialScriptName = "Initial Create";
+
+        /// <inheritdoc/>
+        public bool SqlServerOnly { get; protected set; }= true;
+
         /// <inheritdoc/>
         public virtual Assembly GetDbAssembly()
         {
@@ -37,8 +43,21 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             Tier = tier;
             ResourceSubdirectory = resourceSubdirectory;
         }
+        
+        /// <summary>
+        /// Generates a properly formatted header for <see cref="Patch"/> creation when you only know the SQL you want to execute
+        /// </summary>
+        /// <param name="description"></param>
+        /// <param name="version"></param>
+        /// <returns></returns>
+        protected string GetHeader(string description,Version version)
+        {
+            string header = Patch.VersionKey + version.ToString() + Environment.NewLine;
+            header += Patch.DescriptionKey + description + Environment.NewLine;
 
-        public Patch GetInitialCreateScriptContents(DatabaseType dbType)
+            return header;
+        }
+        public virtual Patch GetInitialCreateScriptContents(DiscoveredDatabase db)
         {
             var assembly = GetDbAssembly();
             var subdirectory = ResourceSubdirectory;
@@ -58,15 +77,10 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 string sql = sr.ReadToEnd();
 
                 if (!sql.StartsWith(Patch.VersionKey))
-                {
-                    string header = Patch.VersionKey + "1.0.0" + Environment.NewLine;
-                    header += Patch.DescriptionKey + "Initial Creation Script" + Environment.NewLine;
-                    
-                    sql = header + sql;
-                }
+                    sql = GetHeader(InitialScriptName, new Version(1, 0, 0)) + sql;
 
 
-                 return new Patch("Initial Create",  sql);
+                return new Patch(InitialScriptName,  sql);
             }
 
             if (candidates.Length == 0)
@@ -77,7 +91,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         }
 
         /// <inheritdoc/>
-        public virtual SortedDictionary<string, Patch> GetAllPatchesInAssembly(DatabaseType dbType)
+        public virtual SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db)
         {
             var assembly = GetDbAssembly();
             var subdirectory = ResourceSubdirectory;

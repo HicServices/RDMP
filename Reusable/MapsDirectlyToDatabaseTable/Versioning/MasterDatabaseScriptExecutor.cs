@@ -89,7 +89,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                 Database.CreateTable("ScriptsRun",new []
                     {
                         new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, IsPrimaryKey = true},
-                        new DatabaseColumnRequest("version_id",new DatabaseTypeRequest(typeof(long))),
+                        new DatabaseColumnRequest("version_id",new DatabaseTypeRequest(typeof(int))),
                         new DatabaseColumnRequest("script_name",new DatabaseTypeRequest(typeof(string),255)),
                         new DatabaseColumnRequest("text_of_script",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
                         new DatabaseColumnRequest("text_hash",new DatabaseTypeRequest(typeof(string),512){Unicode = true}),
@@ -209,7 +209,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
             Version maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
 
-            if (backupDatabase)
+            if (backupDatabase && Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer) //todo: Only ms has a backup implementation in FAnsi currently
             {
                 try
                 {
@@ -244,7 +244,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
                         try
                         {
-                            RunSQL(patch.Value.EntireScript, patch.Key);
+                            RunSQL(patch.Value.GetScriptBody(), patch.Key);
                         }
                         catch(Exception e)
                         {
@@ -307,11 +307,11 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
         public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
-            var initialPatch = patcher.GetInitialCreateScriptContents(Database.Server.DatabaseType);
-            CreateDatabase(initialPatch.EntireScript, initialPatch.DatabaseVersionNumber.ToString(), notifier);
+            var initialPatch = patcher.GetInitialCreateScriptContents(Database);
+            CreateDatabase(initialPatch.GetScriptBody(), initialPatch.DatabaseVersionNumber.ToString(), notifier);
 
             //get everything in the /up/ folder that are .sql
-            var patches = patcher.GetAllPatchesInAssembly(Database.Server.DatabaseType);
+            var patches = patcher.GetAllPatchesInAssembly(Database);
             PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
         }
     }

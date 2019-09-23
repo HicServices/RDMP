@@ -7,6 +7,7 @@
 using System.Collections.Generic;
 using System.Reflection;
 using FAnsi;
+using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
@@ -44,20 +45,24 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         /// </summary>
         string LegacyName { get; }
 
+        /// <summary>
+        /// True if the <see cref="Patcher"/> contains SQL implementations only for <see cref="DatabaseType.MicrosoftSQLServer"/> or false
+        /// if it can create tailored schemas for other <see cref="DatabaseType"/>.
+        /// </summary>
+        bool SqlServerOnly { get; }
+
 
         /// <summary>
-        /// Returns the initial Sql to create 
+        /// Returns the initial Sql to create <paramref name="db"/> with the appropriate SQL code
         /// </summary>
-        /// <param name="dbType"></param>
         /// <returns></returns>
-        Patch GetInitialCreateScriptContents(DatabaseType dbType);
+        Patch GetInitialCreateScriptContents(DiscoveredDatabase db);
 
         /// <summary>
         /// Returns all patches defined in the <see cref="Patcher"/> assembly.  This is probably a superset of the ones that have been
         /// run on the live database on which you want to patch
         /// </summary>
-        /// <param name="dbType"></param>
         /// <returns></returns>
-        SortedDictionary<string, Patch> GetAllPatchesInAssembly(DatabaseType dbType);
+        SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db);
     }
 }

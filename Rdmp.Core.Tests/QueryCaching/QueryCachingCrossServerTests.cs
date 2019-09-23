@@ -19,8 +19,8 @@ namespace Rdmp.Core.Tests.QueryCaching
     class QueryCachingCrossServerTests:DatabaseTests
     {
         [TestCase(DatabaseType.MicrosoftSQLServer,typeof(QueryCachingPatcher))]
-        //[TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))] (todo:not yet supported)
-        //[TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))] 
+        [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]
+        [TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))] 
 
         [TestCase(DatabaseType.MicrosoftSQLServer, typeof(DataQualityEnginePatcher))]
         public void Create_QueryCache(DatabaseType dbType,Type patcherType)

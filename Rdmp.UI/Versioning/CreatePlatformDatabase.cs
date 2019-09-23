@@ -53,6 +53,9 @@ namespace Rdmp.UI.Versioning
 
             //show only Database section
             serverDatabaseTableSelector1.HideTableComponents();
+
+            if(patcher.SqlServerOnly)
+                serverDatabaseTableSelector1.LockDatabaseType(DatabaseType.MicrosoftSQLServer);
         }
 
         
@@ -79,8 +82,8 @@ namespace Rdmp.UI.Versioning
                 return;
             }
             
-            var createSql = _patcher.GetInitialCreateScriptContents(db.Server.DatabaseType);
-            var patches = _patcher.GetAllPatchesInAssembly(db.Server.DatabaseType);
+            var createSql = _patcher.GetInitialCreateScriptContents(db);
+            var patches = _patcher.GetAllPatchesInAssembly(db);
 
             var preview = new SQLPreviewWindow("Confirm happiness with SQL",
                 "The following SQL is about to be executed:", createSql.EntireScript);
@@ -94,7 +97,7 @@ namespace Rdmp.UI.Versioning
                     {
                         var memory = new ToMemoryCheckNotifier(checksUI1);
 
-                        if (executor.CreateDatabase(createSql.EntireScript, createSql.DatabaseVersionNumber.ToString(), memory))
+                        if (executor.CreateDatabase(createSql.GetScriptBody(), createSql.DatabaseVersionNumber.ToString(), memory))
                         {
                             _completed = executor.PatchDatabase(patches, memory, silentlyApplyPatchCallback);
 

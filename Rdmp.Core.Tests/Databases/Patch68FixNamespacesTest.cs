@@ -27,7 +27,7 @@ namespace Rdmp.Core.Tests.Databases
         {
             CataloguePatcher p = new CataloguePatcher();
 
-            var patch = p.GetAllPatchesInAssembly(DatabaseType.MicrosoftSQLServer).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
+            var patch = p.GetAllPatchesInAssembly(null).Single(kvp=>kvp.Key == "068_FixNamespaces.sql").Value;
 
             Regex findSubsRegex = new Regex(@"REPLACE\(.*,'(.*)','(.*)'\)");
             

@@ -12,6 +12,7 @@ using System.Diagnostics;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using FAnsi;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
@@ -111,7 +112,7 @@ namespace Rdmp.UI.Versioning
                             " (it is not in " + _patcher.GetDbAssembly().FullName + " ) so how did it get there?", CheckResult.Warning,
                             null));
                     }
-                    else if (!_allPatchesInAssembly[patch.locationInAssembly].EntireScript.Equals(patch.EntireScript))
+                    else if (!_allPatchesInAssembly[patch.locationInAssembly].GetScriptBody().Equals(patch.GetScriptBody()))
                     {
                         listener.OnCheckPerformed(new CheckEventArgs(
                             "The contents of patch " + patch.locationInAssembly +
@@ -174,7 +175,13 @@ namespace Rdmp.UI.Versioning
             try
             {
                 MasterDatabaseScriptExecutor  executor = new MasterDatabaseScriptExecutor(_database);
-                executor.PatchDatabase(toApply, listener, PreviewPatch, MessageBox.Show("Backup Database First","Backup",MessageBoxButtons.YesNo) == DialogResult.Yes);
+
+                //todo: Only ms has a backup implementation in FAnsi currently
+                bool backupDatabase = _database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer &&
+                              MessageBox.Show("Backup Database First", "Backup", MessageBoxButtons.YesNo) ==
+                              DialogResult.Yes;
+
+                executor.PatchDatabase(toApply, listener, PreviewPatch, backupDatabase);
 
                 //if it crashed during patching
                 if(listener.GetWorst() == CheckResult.Fail)
@@ -211,7 +218,7 @@ namespace Rdmp.UI.Versioning
             if (_yesToAll)
                 return true;
 
-            var preview = new SQLPreviewWindow(patch.locationInAssembly,"The following SQL Patch will be run:", patch.EntireScript);
+            var preview = new SQLPreviewWindow(patch.locationInAssembly,"The following SQL Patch will be run:", patch.GetScriptBody());
             try
             {
                 return preview.ShowDialog()==DialogResult.OK;

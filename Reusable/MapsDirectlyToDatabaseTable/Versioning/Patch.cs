@@ -80,6 +80,15 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             } 
         }
 
+        /// <summary>
+        /// Returns the body without the header text "--Version:1.2.0 etc".
+        /// </summary>
+        /// <returns></returns>
+        public string GetScriptBody()
+        {
+            return string.Join(Environment.NewLine,
+            EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(2));
+        }
         
         public override int GetHashCode()
         {
@@ -147,7 +156,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(database);
             patchesInDatabase = scriptExecutor.GetPatchesRun();
 
-            allPatchesInAssembly = patcher.GetAllPatchesInAssembly(database.Server.DatabaseType);
+            allPatchesInAssembly = patcher.GetAllPatchesInAssembly(database);
 
             AssemblyName databaseAssemblyName = patcher.GetDbAssembly().GetName();
             
