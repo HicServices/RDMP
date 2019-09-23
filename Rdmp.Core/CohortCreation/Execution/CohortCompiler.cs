@@ -52,9 +52,8 @@ namespace Rdmp.Core.CohortCreation.Execution
             {
                 task.Timeout = timeout;
                 task.State = CompilationState.Executing;
-                var accessPoints = task.GetDataAccessPoints();
                 
-                execution.GetCohortAsync(accessPoints, timeout);
+                execution.GetCohortAsync( timeout);
 
                 task.FinalRowCount = execution.Identifiers.Rows.Count;
 
@@ -267,8 +266,9 @@ namespace Rdmp.Core.CohortCreation.Execution
 
             var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
                 queryBuilder.CountOfSubQueries,
-                queryBuilder.CountOfCachedSubQueries, 
-                isResultsForRootContainer);
+                queryBuilder.CountOfCachedSubQueries,
+                isResultsForRootContainer,
+                queryBuilder.Targets);
 
             //create a new task 
             Tasks.Add(task, taskExecution);

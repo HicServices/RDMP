@@ -29,6 +29,8 @@ namespace Rdmp.Core.QueryBuilding
         private readonly ISqlParameter[] _globals;
         public ParameterManager ParameterManager { get; set; }
         public ExternalDatabaseServer CacheServer { get; set; }
+        
+        
 
         public int CountOfSubQueries = 0;
         public int CountOfCachedSubQueries = 0;
@@ -40,7 +42,7 @@ namespace Rdmp.Core.QueryBuilding
             CacheServer = cacheServer;
         }
 
-        public string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null, int topX = -1)
+        public string GetSQLForAggregate(DataAccessPointCollection targets,AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null, int topX = -1)
         {
             string toReturn ="";
 
@@ -52,6 +54,10 @@ namespace Rdmp.Core.QueryBuilding
             if (tabDepth != -1)
                 GetTabs(tabDepth, out tabs, out tabplusOne);
 
+            //we want to connect to this aggregate database server so record that.  But if we can't connect to it then it's not necessarily
+            //a deal breaker, we could still access it from the cache
+            bool aggregateServerIsValid = targets.TryAddRange(aggregate.Catalogue.GetTableInfoList(false));
+            
             //make sure it is a valid configuration
             string reason;
             if (!aggregate.IsAcceptableAsCohortGenerationSource(out reason))
@@ -126,21 +132,30 @@ namespace Rdmp.Core.QueryBuilding
             //if we have caching 
             if (CacheServer != null)
             {
-                CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(CacheServer);
-                var existingTable = manager.GetLatestResultsTable(aggregate, isJoinAggregate? AggregateOperation.JoinableInceptionQuery: AggregateOperation.IndexedExtractionIdentifierList, builderSqlVerbatimForCheckingAgainstCache);
-
-                //if we have the answer already 
-                if (existingTable != null)
+                //if cache is on the same server as our query
+                if (targets.TryAdd(CacheServer))
                 {
-                    //reference the answer table
-                    CountOfCachedSubQueries++;
-                    toReturn += tabplusOne +  CachedAggregateConfigurationResultsManager.CachingPrefix + aggregate.Name + @"*/"+Environment.NewLine;
-                    toReturn += tabplusOne + "select * from " + existingTable.GetFullyQualifiedName() + Environment.NewLine;
-                    return toReturn;
+                    CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(CacheServer);
+                    var existingTable = manager.GetLatestResultsTable(aggregate, isJoinAggregate ? AggregateOperation.JoinableInceptionQuery : AggregateOperation.IndexedExtractionIdentifierList, builderSqlVerbatimForCheckingAgainstCache);
+
+                    //if we have the answer already 
+                    if (existingTable != null)
+                    {
+                        //reference the answer table
+                        CountOfCachedSubQueries++;
+                        toReturn += tabplusOne + CachedAggregateConfigurationResultsManager.CachingPrefix + aggregate.Name + @"*/" + Environment.NewLine;
+                        toReturn += tabplusOne + "select * from " + existingTable.GetFullyQualifiedName() + Environment.NewLine;
+                        return toReturn;
+                    }
                 }
 
-                //we do not have an uptodate answer available in the cache :(
+                //we do not have an up-to-date answer available in the cache :(
             }
+
+            //if we determined that the aggregate is not on the same server as other tables/caches that we need for the query
+            if (!aggregateServerIsValid)
+                throw new QueryBuildingException(
+                    $"Unable to query AggregateConfiguration {aggregate} because it is not on the same server as the other Targets ({targets}) and the Cache (if any) could not be used ");
 
             //get the SQL from the builder (for the current configuration) - without parameters
             string currentBlock = builderSqlWithoutParameters;
@@ -157,7 +172,7 @@ namespace Rdmp.Core.QueryBuilding
             toReturn += tabplusOne + currentBlock.Replace("\r\n", "\r\n" + tabplusOne);
             return toReturn;
         }
-
+        
         public void AddJoinablesToBuilder(AggregateBuilder builder, AggregateConfiguration aggregate, int tabDepth)
         {
             var users = aggregate.Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(aggregate);
@@ -175,7 +190,7 @@ namespace Rdmp.Core.QueryBuilding
                 if (identifierColInJoinAggregate == null)
                     throw new QueryBuildingException("AggregateConfiguration " + aggregate + " uses a join aggregate (patient index aggregate) of " + joinAggregate + " but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
 
-                var joinSQL = GetSQLForAggregate(joinAggregate, tabDepth + 1, true);
+                var joinSQL = GetSQLForAggregate(new DataAccessPointCollection(true), joinAggregate, tabDepth + 1, true);
 
                 string joinDirection = use.GetJoinDirectionSQL();
 

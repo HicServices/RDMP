@@ -100,7 +100,7 @@ namespace Rdmp.Core.Tests.QueryCaching
             dt.Rows.Add("0101010101");
 
             var ex = Assert.Throws<Exception>(() => _manager.CommitResults(new CacheCommitIdentifierList(_config, "select * from fish", dt, _myColSpecification, 30)));
-            Assert.IsTrue(ex.Message.Contains("Failed to create unique primary key on the results of AggregateConfiguration CachedAggregateConfigurationResultsManagerTests."));
+            Assert.IsTrue(ex.Message.Contains("primary key"));
         }
 
         [Test]

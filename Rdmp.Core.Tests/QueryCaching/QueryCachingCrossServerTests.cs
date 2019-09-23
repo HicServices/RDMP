@@ -21,6 +21,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Databases;
+using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
@@ -111,7 +112,8 @@ namespace Rdmp.Core.Tests.QueryCaching
             Assert.Greater(compiler.Tasks.Skip(1).First().Key.FinalRowCount, 0); //both ac should have the same total
             Assert.Greater(compiler.Tasks.Skip(2).First().Key.FinalRowCount, 0); // that is not 0
             Assert.AreEqual(compiler.Tasks.Skip(1).First().Key.FinalRowCount,compiler.Tasks.Skip(2).First().Key.FinalRowCount);
-            
+
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected EXCEPT container to use the cache");
         }
 
         /// <summary>
@@ -170,7 +172,134 @@ namespace Rdmp.Core.Tests.QueryCaching
             runner.Run(new CancellationToken());
 
             AssertNoErrors(compiler);
+
+            if(createQueryCache)
+                Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/2")), "Expected cache to be used for the joinable");
+            else
+                Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("0/2")), "Did not create cache so expected cache usage to be 0");
         }
+        /// <summary>
+        /// Tests the ability to run a cic in which there are 2 tables, one patient index table with the dates of biochemistry test codes
+        /// and another which joins and filters on the results of that table to produce a count of patients hospitalised after an NA test.
+        ///
+        /// <para>In this case the cache is on another server so we cannot use the cached result for a join and should not try</para>
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void Join_PatientIndexTable_DoNotUseCacheOnDifferentServer(DatabaseType dbType)
+        {
+            /*
+             *           Server1                    Server 2
+             *         _____________                _________
+             *        |Biochemistry|    →          | Cache  | (cache is still populated but not used in the resulting join).
+             *               
+             *            ↓ join ↓    (do not use cache)
+             *    _____________________
+             *    | Hospital Admissions|
+             *
+             */
+
+            //get the data database
+            var db = GetCleanedServer(dbType);
+
+            //create the cache on the other server type (doesn't matter what type just as long as it's different).
+            var dbCache =
+                GetCleanedServer(Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().First(t => t != dbType));
+
+            ExternalDatabaseServer cache = CreateCache(dbCache);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var joinable = SetupPatientIndexTable(db, people, r, cic);
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var hospitalAdmissions = SetupPatientIndexTableUser(db, people, r, cic, joinable);
+            cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
+
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            
+            runner.Run(new CancellationToken());
+
+            AssertNoErrors(compiler);
+            
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/2")),"Expected cache to be used only for the final UNION");
+        }
+
+        [TestCase(DatabaseType.Oracle)]
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void Join_PatientIndexTable_ThenShipToCacheForSets(DatabaseType dbType)
+        {
+            /*
+            *           Server1                    Server 2
+            *         _____________                _________
+            *        |Biochemistry|    →          | Cache  | (cache is still populated but not used in the resulting join).
+            *               
+            *            ↓ join ↓    (do not use cache)
+            *    _______________________
+            *    | Hospital Admissions 1|        →       results1
+            *
+            *            EXCEPT
+            *    _______________________
+            *    | Hospital Admissions 2|        →        results 2
+             *                                          ↓ result = 0 records
+            */
+
+            //get the data database
+            var db = GetCleanedServer(dbType);
+
+            //create the cache on the other server type (either Sql Server or Oracle) since  MySql can't do EXCEPT or UNION etc)
+            var dbCache =
+                GetCleanedServer(Enum.GetValues(typeof(DatabaseType)).Cast<DatabaseType>().First(t =>
+                    t != dbType && t!= DatabaseType.MySql));
+
+            ExternalDatabaseServer cache = CreateCache(dbCache);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var joinable = SetupPatientIndexTable(db, people, r, cic);
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var hospitalAdmissions = SetupPatientIndexTableUser(db, people, r, cic, joinable);
+            var hospitalAdmissions2 = SetupAggregateConfiguration(db, people,r, cic);
+
+            var root = cic.RootCohortAggregateContainer;
+            root.AddChild(hospitalAdmissions, 0);
+            root.AddChild(hospitalAdmissions2, 1);
+
+            root.Name = "EXCEPT";
+            root.Operation = SetOperation.EXCEPT;
+            root.SaveToDatabase();
+
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+
+            runner.Run(new CancellationToken());
+
+            AssertNoErrors(compiler);
+
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/3")), "Expected cache to be used for both top level operations in the EXCEPT");
+        }
+
+
+        #region helper methods
 
         private ExternalDatabaseServer CreateCache(DiscoveredDatabase db)
         {
@@ -288,16 +417,15 @@ namespace Rdmp.Core.Tests.QueryCaching
         {
             Assert.IsNotEmpty(compiler.Tasks);
 
-            TestContext.WriteLine($"| Task | Type | State | Error | RowCount |");
+            TestContext.WriteLine($"| Task | Type | State | Error | RowCount | CacheUse |");
 
 
             int i = 0;
             foreach (var kvp in compiler.Tasks)
-                TestContext.WriteLine($"{i++} - {kvp.Key.ToString()} | {kvp.Key.GetType()} | {kvp.Key.State} | {kvp.Key?.CrashMessage} | {kvp.Key.FinalRowCount}");
+                TestContext.WriteLine($"{i++} - {kvp.Key.ToString()} | {kvp.Key.GetType()} | {kvp.Key.State} | {kvp.Key?.CrashMessage} | {kvp.Key.FinalRowCount} | {kvp.Key.GetCachedQueryUseCount()}");
             
             Assert.IsTrue(compiler.Tasks.All(t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
         }
-
-        
+        #endregion
     }
 }

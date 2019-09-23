@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
+using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -40,11 +41,12 @@ namespace Rdmp.Core.CohortCreation.Execution
         public string CountSQL { get; set; }
 
         private CancellationTokenSource _cancellationTokenSource;
+        private readonly DataAccessPointCollection _targets;
         private DbCommand _cmdCount;
         private DbDataReader _rIds;
         private DbDataReader _rCumulative;
         
-        public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer)
+        public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DataAccessPointCollection targets)
         {
             _cacheServerIfAny = cacheServerIfAny;
             SubQueries = subQueries;
@@ -52,6 +54,7 @@ namespace Rdmp.Core.CohortCreation.Execution
             CountSQL = countSQL;
             CumulativeSQL = cumulativeSQL;
             _cancellationTokenSource = cancellationTokenSource;
+            _targets = targets;
             IsResultsForRootContainer = isResultsForRootContainer;
         }
 
@@ -88,7 +91,7 @@ namespace Rdmp.Core.CohortCreation.Execution
         }
 
         
-        public void GetCohortAsync(IDataAccessPoint[] accessPoints, int commandTimeout)
+        public void GetCohortAsync(int commandTimeout)
         {
             if(Identifiers != null)
                 throw new Exception("GetCohortAsync has already been called for this object");
@@ -97,7 +100,7 @@ namespace Rdmp.Core.CohortCreation.Execution
             
             IsExecuting = true;
 
-            var server = GetServerToExecuteQueryOn(accessPoints);
+            var server = _targets.GetDistinctServer();
             
             server.EnableAsync();
 
@@ -138,22 +141,6 @@ namespace Rdmp.Core.CohortCreation.Execution
 
                 IsExecuting = false;
             }
-        }
-
-        private DiscoveredServer GetServerToExecuteQueryOn(IDataAccessPoint[] accessPoints)
-        {
-            //if all queries are cached then we should just execute against the cache
-            if (SubQueries > 0 && SubQueries == SubqueriesCached && _cacheServerIfAny != null)
-                return DataAccessPortal.GetInstance().ExpectServer(_cacheServerIfAny,DataAccessContext.InternalDataProcessing,false); 
-
-            //if there are some cached but not all queries are cached
-            if(SubqueriesCached > 0 && _cacheServerIfAny != null)
-                return DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints.Union(new []{_cacheServerIfAny}).ToArray(), DataAccessContext.InternalDataProcessing, false);
-
-            if (accessPoints.Length == 1)
-                return DataAccessPortal.GetInstance().ExpectServer(accessPoints[0], DataAccessContext.InternalDataProcessing);
-
-            return DataAccessPortal.GetInstance().ExpectDistinctServer(accessPoints, DataAccessContext.InternalDataProcessing, false);
         }
 
         public void Dispose()

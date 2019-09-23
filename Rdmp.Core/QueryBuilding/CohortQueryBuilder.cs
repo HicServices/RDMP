@@ -13,6 +13,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryBuilding.Parameters;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -56,6 +57,12 @@ namespace Rdmp.Core.QueryBuilding
         private CohortAggregateContainer container;
         private AggregateConfiguration configuration;
         private readonly bool _isExplicitRequestForJoinableInceptionAggregateQuery;
+        
+        /// <summary>
+        /// The server on which the query must run.  This is used to accumulate all sub-queries and ensures
+        /// that they don't stray into other servers (but they can be into different databases within the same server / server type). 
+        /// </summary>
+        public DataAccessPointCollection Targets { get; } = new DataAccessPointCollection(true);
 
         public ExternalDatabaseServer CacheServer
         {
@@ -213,6 +220,10 @@ namespace Rdmp.Core.QueryBuilding
             string tabplusOne;
             helper.GetTabs(tabDepth, out tabs, out tabplusOne);
 
+            //if we have a cache and are running a SET container then everything must be cached
+            if(CacheServer != null)
+                Targets.Add(CacheServer);
+
             //Things we need to output
             var toWriteOut = currentContainer.GetOrderedContents().Where(IsEnabled).ToArray();
 
@@ -223,7 +234,7 @@ namespace Rdmp.Core.QueryBuilding
             foreach (IOrderable toWrite in toWriteOut)
             {
                 if (firstEntityWritten)
-                    _sql += Environment.NewLine + Environment.NewLine + tabplusOne + GetSETOperationSql(currentContainer.Operation) + Environment.NewLine + Environment.NewLine;
+                    _sql += Environment.NewLine + Environment.NewLine + tabplusOne + GetSetOperationSql(currentContainer.Operation) + Environment.NewLine + Environment.NewLine;
 
                 if(toWrite is AggregateConfiguration)
                     AddAggregate((AggregateConfiguration)toWrite, tabDepth);
@@ -258,9 +269,11 @@ namespace Rdmp.Core.QueryBuilding
         /// </summary>
         /// <param name="currentContainerOperation"></param>
         /// <returns></returns>
-        protected virtual string GetSETOperationSql(SetOperation currentContainerOperation)
+        protected virtual string GetSetOperationSql(SetOperation currentContainerOperation)
         {
-            if (CacheServer != null && CacheServer.DatabaseType == DatabaseType.MySql)
+            var targetServer = Targets.GetDistinctServer();
+
+            if (targetServer.DatabaseType == DatabaseType.MySql)
                 throw new NotSupportedException("INTERSECT / UNION / EXCEPT are not supported by MySql caches");
 
             switch (currentContainerOperation)
@@ -270,8 +283,9 @@ namespace Rdmp.Core.QueryBuilding
                 case SetOperation.INTERSECT:
                     return "INTERSECT";
                 case SetOperation.EXCEPT:
-                    if (CacheServer != null && CacheServer.DatabaseType == DatabaseType.Oracle)
+                    if (targetServer.DatabaseType == DatabaseType.Oracle)
                         return "MINUS";
+
                     return "EXCEPT";
                 default:
                     throw new ArgumentOutOfRangeException(nameof(currentContainerOperation), currentContainerOperation, null);
@@ -296,7 +310,7 @@ namespace Rdmp.Core.QueryBuilding
 
         private string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null)
         {
-            return helper.GetSQLForAggregate(aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL,TopX);
+            return helper.GetSQLForAggregate(Targets,aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL,TopX);
         }
 
         public bool SQLOutOfDate { get; set; }

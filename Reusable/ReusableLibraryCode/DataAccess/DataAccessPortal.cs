@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Configuration;
 using System.Linq;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Exceptions;
@@ -84,6 +85,9 @@ namespace ReusableLibraryCode.DataAccess
                 if (!first.Server.Equals(accessPoint.Server))
                     throw new ExpectedIdenticalStringsException("There was a mismatch in server names for data access points " + first + " and " + accessPoint + " server names must match exactly", first.Server, accessPoint.Server);
                 
+                if(first.DatabaseType != accessPoint.DatabaseType)
+                    throw new ExpectedIdenticalStringsException("There was a mismatch on DatabaseType for data access points " + first + " and " + accessPoint, first.DatabaseType.ToString(),accessPoint.DatabaseType.ToString());
+
                 if(setInitialDatabase)
                 {
                     if(string.IsNullOrWhiteSpace(first.Database))
