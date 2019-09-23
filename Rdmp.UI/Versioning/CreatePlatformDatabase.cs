@@ -97,7 +97,7 @@ namespace Rdmp.UI.Versioning
                     {
                         var memory = new ToMemoryCheckNotifier(checksUI1);
 
-                        if (executor.CreateDatabase(createSql.GetScriptBody(), createSql.DatabaseVersionNumber.ToString(), memory))
+                        if (executor.CreateDatabase(createSql, memory))
                         {
                             _completed = executor.PatchDatabase(patches, memory, silentlyApplyPatchCallback);
 

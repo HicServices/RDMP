@@ -50,7 +50,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         
         public bool BinaryCollation { get; set; }
         
-        public bool CreateDatabase(string createTablesAndFunctionsSql, string initialVersionNumber, ICheckNotifier notifier)
+        public bool CreateDatabase(Patch initialCreationPatch, ICheckNotifier notifier)
         {
             try
             {
@@ -112,10 +112,9 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
                     }, RoundhouseSchemaName);
                 
-                RunSQL(createTablesAndFunctionsSql, InitialDatabaseScriptName);
-
-                SetVersion("Initial Setup", initialVersionNumber);
-
+                
+                RunSQL(new KeyValuePair<string, Patch>(InitialDatabaseScriptName, initialCreationPatch));
+                
                 notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
@@ -129,12 +128,12 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             }
         }
 
-        private void RunSQL(string sql, string filename)
+        private void RunSQL(KeyValuePair<string,Patch> kvp)
         {
             using (var con = Database.Server.GetConnection())
             {
                 con.Open();
-                UsefulStuff.ExecuteBatchNonQuery(sql, con);  
+                UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con);  
             }
             
             var now = DateTime.Now;
@@ -142,9 +141,9 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
                     .Insert(new Dictionary<string, object>()
                     {
-                        {"script_name", filename},
-                        {"text_of_script", sql},
-                        {"text_hash", CalculateHash(sql)},
+                        {"script_name", kvp.Key},
+                        {"text_of_script", kvp.Value.EntireScript},
+                        {"text_hash", CalculateHash(kvp.Value.EntireScript)},
 
                         {"entry_date", now},
                         {"modified_date", now},
@@ -244,7 +243,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
 
                         try
                         {
-                            RunSQL(patch.Value.GetScriptBody(), patch.Key);
+                            RunSQL(patch);
                         }
                         catch(Exception e)
                         {
@@ -308,7 +307,7 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
             var initialPatch = patcher.GetInitialCreateScriptContents(Database);
-            CreateDatabase(initialPatch.GetScriptBody(), initialPatch.DatabaseVersionNumber.ToString(), notifier);
+            CreateDatabase(initialPatch, notifier);
 
             //get everything in the /up/ folder that are .sql
             var patches = patcher.GetAllPatchesInAssembly(Database);

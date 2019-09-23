@@ -255,6 +255,8 @@ namespace Rdmp.UI.LocationsMenu
                 opts.NumberOfPeople = _peopleCount;
                 opts.NumberOfRowsPerDataset = _rowCount;
 
+                bool failed = false;
+
                 var task = new Task(() =>
                 {
                     try
@@ -267,6 +269,7 @@ namespace Rdmp.UI.LocationsMenu
                         checksUI1.OnCheckPerformed(
                             new CheckEventArgs("Database creation failed, check exception for details", CheckResult.Fail,
                                 ex));
+                        failed = true;
                     }
                 });
                 task.Start();
@@ -296,7 +299,9 @@ namespace Rdmp.UI.LocationsMenu
                 
                 UserSettings.CatalogueConnectionString = cata.ConnectionString;
                 UserSettings.DataExportConnectionString = export.ConnectionString;
-                RestartApplication();
+                
+                if(!failed)
+                    RestartApplication();
 
             }
             catch (Exception exception)
