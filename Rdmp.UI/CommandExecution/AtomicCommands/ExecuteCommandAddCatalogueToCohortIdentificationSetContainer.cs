@@ -48,7 +48,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             var cmd = _catalogueCommand.GenerateAggregateConfigurationFor(_targetCohortAggregateContainer,!SkipMandatoryFilterCreation);
             if(cmd != null)
             {
-                _postImportCommand = new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(Activator,cmd, _targetCohortAggregateContainer);
+                _postImportCommand = 
+                    new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(Activator,cmd, _targetCohortAggregateContainer)
+                        {DoNotClone = true};
                 _postImportCommand.Execute();
             }
         }
