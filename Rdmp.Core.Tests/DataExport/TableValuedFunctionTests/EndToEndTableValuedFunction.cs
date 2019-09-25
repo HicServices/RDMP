@@ -397,7 +397,7 @@ end
                 //People in _tvfCatalogue (with @numberOfRecords = 1) (1)
 
             //result should be 2
-            var qb = new CohortQueryBuilder(_cic);
+            var qb = new CohortQueryBuilder(_cic,null);
 
             var sql = qb.SQL;
 

@@ -8,11 +8,14 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using FAnsi;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
@@ -35,6 +38,7 @@ namespace Rdmp.Core.QueryBuilding
     /// </summary>
     public class CohortQueryBuilder
     {
+        private ICoreChildProvider _childProvider;
         private readonly ISqlParameter[] _globals;
         object oSQLLock = new object();
         private string _sql;
@@ -62,7 +66,7 @@ namespace Rdmp.Core.QueryBuilding
         /// The server on which the query must run.  This is used to accumulate all sub-queries and ensures
         /// that they don't stray into other servers (but they can be into different databases within the same server / server type). 
         /// </summary>
-        public DataAccessPointCollection Targets { get; } = new DataAccessPointCollection(true);
+        public DiscoveredServer TargetServer => results.TargetServer;
 
         public ExternalDatabaseServer CacheServer
         {
@@ -79,13 +83,17 @@ namespace Rdmp.Core.QueryBuilding
 
         public ParameterManager ParameterManager = new ParameterManager();
 
-        public int CountOfSubQueries { get { return helper != null? helper.CountOfSubQueries:- 1; } }
-        public int CountOfCachedSubQueries { get { return helper != null ? helper.CountOfCachedSubQueries : -1; } }
+        public int CountOfSubQueries { get { return results != null? results.Dependencies.Count:- 1; } }
+        public int CountOfCachedSubQueries { get { return results != null ? results.Dependencies.Count(d=>d.SqlFullyCached != null) : -1; } }
+
+        private CohortQueryBuilderHelper helper;
+        private CohortQueryBuilderResult results;
 
         #region constructors
         //Constructors - This one is the base one called by all others
-        private CohortQueryBuilder(IEnumerable<ISqlParameter> globals)
+        private CohortQueryBuilder(IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider)
         {
+            _childProvider = childProvider;
             globals = globals ?? new ISqlParameter[] {};
             _globals = globals.ToArray();
             TopX = -1;
@@ -95,10 +103,10 @@ namespace Rdmp.Core.QueryBuilding
             foreach (ISqlParameter parameter in _globals)
                 ParameterManager.AddGlobalParameter(parameter);
 
-            RecreateHelper();
+            RecreateHelpers();
         }
 
-        public CohortQueryBuilder(CohortIdentificationConfiguration configuration):this(configuration.GetAllParameters())
+        public CohortQueryBuilder(CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider):this(configuration.GetAllParameters(),childProvider)
         {
             if (configuration == null)
                 throw new QueryBuildingException("Configuration has not been set yet");
@@ -111,18 +119,33 @@ namespace Rdmp.Core.QueryBuilding
 
             //set ourselves up to run with the root container
             container = configuration.RootCohortAggregateContainer;
+
+            SetChildProviderIfNull();
+            
         }
-        public CohortQueryBuilder(CohortAggregateContainer c,IEnumerable<ISqlParameter> globals): this(globals)
+
+        public CohortQueryBuilder(CohortAggregateContainer c,IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider): this(globals,childProvider)
         {
             //set ourselves up to run with the root container
             container = c;
+
+            SetChildProviderIfNull();
         }
-        public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals, bool isExplicitRequestForJoinableInceptionAggregateQuery = false): this(globals)
+        public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider, bool isExplicitRequestForJoinableInceptionAggregateQuery = false): this(globals,childProvider)
         {
             //set ourselves up to run with the root container
             configuration = config;
             _isExplicitRequestForJoinableInceptionAggregateQuery = isExplicitRequestForJoinableInceptionAggregateQuery;
+
+            SetChildProviderIfNull();
         }
+        private void SetChildProviderIfNull()
+        {
+            if (_childProvider == null)
+                _childProvider = new CatalogueChildProvider(
+                    configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null);
+        }
+
 
         #endregion
 
@@ -132,7 +155,7 @@ namespace Rdmp.Core.QueryBuilding
                 throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
 
             //create a clone of ourselves so we don't mess up the ParameterManager of this instance
-            var cloneBuilder = new CohortQueryBuilder(configuration, _globals);
+            var cloneBuilder = new CohortQueryBuilder(configuration, _globals,_childProvider);
             cloneBuilder.TopX = topX;
             cloneBuilder.CacheServer = CacheServer;
 
@@ -165,21 +188,20 @@ namespace Rdmp.Core.QueryBuilding
             
             return sampleSQL;
         }
-
         
-
-        private CohortQueryBuilderHelper helper;
         public void RegenerateSQL()
         {
-            RecreateHelper();
-            
-            _sql = "";
+            RecreateHelpers();
+
+            results.StopContainerWhenYouReach = _stopContainerWhenYouReach;
 
             if (container != null)
-                AddContainerRecursively(container, 0);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
+                results.BuildFor(container);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
             else
-                AddAggregate(configuration, -1);//user constructed us without a container, he only cares about 1 aggregate
-            
+                results.BuildFor(configuration);//user constructed us without a container, he only cares about 1 aggregate
+
+            _sql = results.Sql;
+  
             //Still finalise the ParameterManager even if we are not writting out the parameters so that it is in the Finalized state
             var finalParameters = ParameterManager.GetFinalResolvedParametersList();
 
@@ -196,9 +218,10 @@ namespace Rdmp.Core.QueryBuilding
             SQLOutOfDate = false;
         }
 
-        private void RecreateHelper()
+        private void RecreateHelpers()
         {
             helper = new CohortQueryBuilderHelper(_globals, ParameterManager, CacheServer);
+            results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper);
         }
 
         /// <summary>
@@ -214,103 +237,9 @@ namespace Rdmp.Core.QueryBuilding
             }
         }
         
-        private void AddContainerRecursively(CohortAggregateContainer currentContainer, int tabDepth)
-        {
-            string tabs;
-            string tabplusOne;
-            helper.GetTabs(tabDepth, out tabs, out tabplusOne);
-
-            //if we have a cache and are running a SET container then everything must be cached
-            if(CacheServer != null)
-                Targets.Add(CacheServer);
-
-            //Things we need to output
-            var toWriteOut = currentContainer.GetOrderedContents().Where(IsEnabled).ToArray();
-
-            if (toWriteOut.Any())
-                _sql += Environment.NewLine + tabs + "(" + Environment.NewLine;
-
-            bool firstEntityWritten = false;
-            foreach (IOrderable toWrite in toWriteOut)
-            {
-                if (firstEntityWritten)
-                    _sql += Environment.NewLine + Environment.NewLine + tabplusOne + GetSetOperationSql(currentContainer.Operation) + Environment.NewLine + Environment.NewLine;
-
-                if(toWrite is AggregateConfiguration)
-                    AddAggregate((AggregateConfiguration)toWrite, tabDepth);
-
-                if (toWrite is CohortAggregateContainer)
-                {
-                    if(_isExplicitRequestForJoinableInceptionAggregateQuery)
-                        throw new NotSupportedException("Flag _isExplicitRequestForJoinableInceptionAggregateQuery is not supported when outputing an entire container, how did you even manage to set this private flag?");
-
-                    AddContainerRecursively((CohortAggregateContainer) toWrite, tabDepth + 1);
-
-                }
-
-
-                //we have now written the first thing at this level of recursion - all others will need to be separated by the OPERATION e.g. UNION
-                firstEntityWritten = true;
-
-                if (StopContainerWhenYouReach != null && StopContainerWhenYouReach.Equals(toWrite))
-                    if (tabDepth != 0)
-                        throw new NotSupportedException("Stopping prematurely only works when the aggregate to stop at is in the top level container");
-                    else
-                        break;
-            }
-
-            //if we outputted anything
-            if (toWriteOut.Any())
-                _sql += Environment.NewLine + tabs + ")" + Environment.NewLine ;
-        }
-
-        /// <summary>
-        /// Returns the SQL keyword for the <paramref name="currentContainerOperation"/>
-        /// </summary>
-        /// <param name="currentContainerOperation"></param>
-        /// <returns></returns>
-        protected virtual string GetSetOperationSql(SetOperation currentContainerOperation)
-        {
-            var targetServer = Targets.GetDistinctServer();
-
-            if (targetServer.DatabaseType == DatabaseType.MySql)
-                throw new NotSupportedException("INTERSECT / UNION / EXCEPT are not supported by MySql caches");
-
-            switch (currentContainerOperation)
-            {
-                case SetOperation.UNION:
-                    return "UNION";
-                case SetOperation.INTERSECT:
-                    return "INTERSECT";
-                case SetOperation.EXCEPT:
-                    if (targetServer.DatabaseType == DatabaseType.Oracle)
-                        return "MINUS";
-
-                    return "EXCEPT";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(currentContainerOperation), currentContainerOperation, null);
-            }
-        }
-
-        /// <summary>
-        /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
-        /// </summary>
-        /// <returns></returns>
-        private bool IsEnabled(IOrderable arg)
-        {
-            //skip disabled things
-            var dis = arg as IDisableable;
-            return dis == null || !dis.IsDisabled;
-        }
-
-        private void AddAggregate(AggregateConfiguration aggregate, int tabDepth)
-        {
-            _sql += GetSQLForAggregate(aggregate, tabDepth, _isExplicitRequestForJoinableInceptionAggregateQuery);
-        }
-
         private string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null)
         {
-            return helper.GetSQLForAggregate(Targets,aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL,TopX);
+            return helper.GetSQLForAggregate(aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL,TopX);
         }
 
         public bool SQLOutOfDate { get; set; }
@@ -318,6 +247,7 @@ namespace Rdmp.Core.QueryBuilding
         private IOrderable _stopContainerWhenYouReach;
         private bool _doNotWriteOutParameters;
         private ExternalDatabaseServer _cacheServer;
+        
 
         public IOrderable StopContainerWhenYouReach
         {

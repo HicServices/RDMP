@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
 using ReusableLibraryCode.DataAccess;
@@ -36,7 +37,8 @@ namespace Rdmp.Core.CohortCreation.Execution
     {
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
         public bool IncludeCumulativeTotals { get; set; }
-        
+        public ICoreChildProvider CoreChildProvider { get; set; }
+
         public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new Dictionary<ICompileable, CohortIdentificationTaskExecution>();
         
         public List<Thread> Threads = new List<Thread>();
@@ -161,20 +163,20 @@ namespace Rdmp.Core.CohortCreation.Execution
             {
                 //which has a parent
                 task = new AggregationTask(aggregate, this);
-                queryBuilder = new CohortQueryBuilder(aggregate, globals);
+                queryBuilder = new CohortQueryBuilder(aggregate, globals,CoreChildProvider);
 
                 parent = aggregate.GetCohortAggregateContainerIfAny();
             }
             else if (joinable != null)
             {
                 task = new JoinableTask(joinable,this);
-                queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,true);
+                queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,CoreChildProvider,true);
                 parent = null;
             }
             else
             {
                 task = new AggregationContainerTask(container, this);
-                queryBuilder = new CohortQueryBuilder(container, globals);
+                queryBuilder = new CohortQueryBuilder(container, globals,CoreChildProvider);
                 parent = container.GetParentContainerIfAny();
             }
 
@@ -189,7 +191,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 //if the container/aggregate being processed isn't the first component in the container
                 if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
                 {
-                    cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals);
+                    cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider);
                     cumulativeQueryBuilder.StopContainerWhenYouReach = (IOrderable) runnable;
                 }
                 
@@ -219,7 +221,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 if (cumulativeQueryBuilder != null)
                     cumulativeSql = cumulativeQueryBuilder.SQL;
             }
-            catch (QueryBuildingException e)
+            catch (Exception e)
             {
                 //it was not possible to generate valid SQL for the task
                 task.CrashMessage = e;
@@ -268,7 +270,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 queryBuilder.CountOfSubQueries,
                 queryBuilder.CountOfCachedSubQueries,
                 isResultsForRootContainer,
-                queryBuilder.Targets);
+                queryBuilder.TargetServer);
 
             //create a new task 
             Tasks.Add(task, taskExecution);
@@ -282,7 +284,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
 
             if(compileable.State != CompilationState.NotScheduled)
-                throw new ArgumentException("Task must be in state NotScheduled, try clicking Reset");
+                throw new ArgumentException("Task must be in state NotScheduled, try clicking refreshing");
 
             KickOff(compileable, Tasks[compileable], timeout, cacheOnCompletion);
         }

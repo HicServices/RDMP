@@ -134,7 +134,7 @@ namespace Rdmp.Core.Tests.CohortCreation
                 Assert.AreNotEqual(cloneParameter.ID, param.ID);
 
                 //it has a different ID and is part of an aggregate filter container (It is presumed to be involved with cohort identification cohortIdentificationConfiguration) which means it will be called cic_X_
-                string cohortAggregateSql = new CohortQueryBuilder(clone,null).SQL;
+                string cohortAggregateSql = new CohortQueryBuilder(clone,null,null).SQL;
 
 
 //the basic aggregate has the filter, parameter and group by
@@ -232,8 +232,8 @@ sex=@sex
                 Assert.AreNotEqual(clone.RootCohortAggregateContainer_ID, cohortIdentificationConfiguration.RootCohortAggregateContainer_ID);
                 Assert.IsNotNull(clone.RootCohortAggregateContainer_ID);
 
-                var beforeSQL = new CohortQueryBuilder(cohortIdentificationConfiguration).SQL;
-                var cloneSQL = new CohortQueryBuilder(clone).SQL;
+                var beforeSQL = new CohortQueryBuilder(cohortIdentificationConfiguration,null).SQL;
+                var cloneSQL = new CohortQueryBuilder(clone,null).SQL;
 
                 beforeSQL = Regex.Replace(beforeSQL, "cic_[0-9]+_", "");
                 cloneSQL = Regex.Replace(cloneSQL, "cic_[0-9]+_", "");

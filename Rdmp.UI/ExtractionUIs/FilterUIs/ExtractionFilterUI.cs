@@ -190,7 +190,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             try
             {
                 factory = new ParameterCollectionUIOptionsFactory();
-                options = factory.Create(databaseObject);
+                options = factory.Create(databaseObject,activator.CoreChildProvider);
             }
             catch (Exception e)
             {

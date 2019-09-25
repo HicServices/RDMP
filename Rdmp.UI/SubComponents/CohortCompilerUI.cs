@@ -297,6 +297,7 @@ namespace Rdmp.UI.SubComponents
 
             _queryCachingServer = _cic.QueryCachingServer;
             Compiler.CohortIdentificationConfiguration = _cic;
+            Compiler.CoreChildProvider = activator.CoreChildProvider;
             CoreIconProvider = activator.CoreIconProvider;
             RecreateAllTasks();
         }

@@ -60,7 +60,7 @@ namespace Rdmp.UI.SubComponents
             QueryEditor.ReadOnly = false;
 
             var cic = (CohortIdentificationConfiguration)DatabaseObject;
-            var builder = new CohortQueryBuilder(cic);
+            var builder = new CohortQueryBuilder(cic,null);
 
             if(!btnUseCache.Checked && cic.QueryCachingServer_ID.HasValue)
                 builder.CacheServer = null;

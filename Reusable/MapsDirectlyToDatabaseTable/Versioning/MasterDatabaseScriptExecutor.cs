@@ -150,6 +150,8 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                         {"entered_by", Environment.UserName},
 
                     });
+
+            SetVersion(kvp.Key,kvp.Value.DatabaseVersionNumber.ToString());
             
         }
         

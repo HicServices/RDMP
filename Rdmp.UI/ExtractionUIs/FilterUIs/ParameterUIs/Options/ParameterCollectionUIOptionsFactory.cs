@@ -12,6 +12,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.ExtractionUIs.FilterUIs.Options;
 using ReusableUIComponents.Dialogs;
@@ -68,7 +69,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
             
             return new ParameterCollectionUIOptions(UseCaseParameterValueSet, parameterSet, ParameterLevel.TableInfo, pm);
         }
-        public ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration)
+        public ParameterCollectionUIOptions Create(AggregateConfiguration aggregateConfiguration, ICoreChildProvider coreChildProvider)
         {
             ParameterManager pm;
 
@@ -80,7 +81,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 
                 var globals = cic != null ? cic.GetAllParameters(): new ISqlParameter[0];
 
-                var builder = new CohortQueryBuilder(aggregateConfiguration, globals);
+                var builder = new CohortQueryBuilder(aggregateConfiguration,globals,coreChildProvider);
                 pm = builder.ParameterManager;
 
                 try
@@ -115,7 +116,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
 
         
 
-        public ParameterCollectionUIOptions Create(ICollectSqlParameters host)
+        public ParameterCollectionUIOptions Create(ICollectSqlParameters host, ICoreChildProvider coreChildProvider)
         {
             if (host is TableInfo)
                 return Create((TableInfo) host);
@@ -124,7 +125,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 return Create((ExtractionFilterParameterSet)host);
             
             if (host is AggregateConfiguration)
-                return Create((AggregateConfiguration)host);
+                return Create((AggregateConfiguration)host,coreChildProvider);
             
             if (host is IFilter)
             {
@@ -132,11 +133,10 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
                 var globals = factory.Create((IFilter) host).GetGlobalParametersInFilterScope();
 
                 return Create((IFilter) host, globals);
-
             }
             
             if (host is CohortIdentificationConfiguration)
-                return Create((CohortIdentificationConfiguration)host);
+                return Create((CohortIdentificationConfiguration)host,coreChildProvider);
 
             if (host is ExtractionConfiguration)
                 return Create((ExtractionConfiguration) host);
@@ -144,9 +144,9 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options
             throw new ArgumentException("Host Type was not recognised as one of the Types we know how to deal with", "host");
         }
 
-        private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration)
+        private ParameterCollectionUIOptions Create(CohortIdentificationConfiguration cohortIdentificationConfiguration,ICoreChildProvider coreChildProvider)
         {
-            var builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
+            var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,coreChildProvider);
 
             try
             {

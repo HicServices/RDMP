@@ -172,13 +172,11 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
         [Test]
         public void QueryBuilderTest()
         {
-            var builder = new CohortQueryBuilder(aggregate1, null);
-            
             //make aggregate 2 a joinable
             var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository,cohortIdentificationConfiguration, aggregate2);
             joinable2.AddUser(aggregate1);
 
-
+            var builder = new CohortQueryBuilder(aggregate1, null,null);
             Console.WriteLine(builder.SQL);
             try
             {
@@ -252,7 +250,7 @@ on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[chi] = {0}.chi",expec
             aggregate2.RootFilterContainer_ID = filterContainer2.ID;
             aggregate2.SaveToDatabase();
 
-            var builder = new CohortQueryBuilder(aggregate1, null);
+            var builder = new CohortQueryBuilder(aggregate1, null,null);
 
 
             Console.WriteLine(builder.SQL);
@@ -354,13 +352,13 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             globalParameter.Value = "'fishes'";
             globalParameter.SaveToDatabase();
 
-            var builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
+            var builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
             try
             {
                 var clone = cohortIdentificationConfiguration.CreateClone(new ThrowImmediatelyCheckNotifier());
 
-                var cloneBuilder = new CohortQueryBuilder(clone);
+                var cloneBuilder = new CohortQueryBuilder(clone,null);
 
                 string origSql = builder.SQL;
                 string cloneOrigSql = cloneBuilder.SQL;
@@ -420,8 +418,6 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             string queryCachingDatabaseName = To.GetRuntimeName();
             _queryCachingDatabase = To;
 
-            var builder = new CohortQueryBuilder(aggregate1, null);
-
             //make aggregate 2 a joinable
             var joinable2 = new JoinableCohortAggregateConfiguration(CatalogueRepository, cohortIdentificationConfiguration, aggregate2);
             joinable2.AddUser(aggregate1);
@@ -436,12 +432,14 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
             queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
             
+            var builder = new CohortQueryBuilder(aggregate1, null,null);
+
             //make the builder use the query cache we just set SetUp
             builder.CacheServer = queryCachingDatabaseServer;
             try
             {
                 
-               var builderForCaching = new CohortQueryBuilder(aggregate2, null, true);
+               var builderForCaching = new CohortQueryBuilder(aggregate2, null,null, true);
 
                 var cacheDt = new DataTable();
                 using (SqlConnection con = (SqlConnection)Database.Server.GetConnection())

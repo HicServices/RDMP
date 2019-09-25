@@ -53,9 +53,10 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
             cohortIdentificationConfiguration.SaveToDatabase();
             
 
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
             cohortIdentificationConfiguration.CreateRootContainerIfNotExists();
             cohortIdentificationConfiguration.RootCohortAggregateContainer.AddChild(aggregate1,0);
+
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
             try
             {
                 Assert.AreEqual(
@@ -92,7 +93,7 @@ FROM
                 }
 
 
-                CohortQueryBuilder builderCached = new CohortQueryBuilder(cohortIdentificationConfiguration);
+                CohortQueryBuilder builderCached = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
                 Assert.AreEqual(
                     CollapseWhitespace(

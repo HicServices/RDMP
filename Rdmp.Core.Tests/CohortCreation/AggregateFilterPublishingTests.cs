@@ -98,7 +98,7 @@ namespace Rdmp.Core.Tests.CohortCreation
             _filter.WhereSQL = "folk=1";
             _filter.SaveToDatabase();
 
-            string sql = new CohortQueryBuilder(aggregate1, null).SQL;
+            string sql = new CohortQueryBuilder(aggregate1, null,null).SQL;
 
             Console.WriteLine(sql);
             Assert.IsTrue(sql.Contains("folk=1"));

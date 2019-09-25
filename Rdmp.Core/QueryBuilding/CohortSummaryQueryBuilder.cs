@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.Repositories;
 
@@ -28,6 +29,7 @@ namespace Rdmp.Core.QueryBuilding
         private IColumn _extractionIdentifierColumn;
 
         private AggregateConfiguration _cohort;
+        private readonly ICoreChildProvider _childProvider;
         private CohortAggregateContainer _cohortContainer;
 
         /// <summary>
@@ -36,7 +38,8 @@ namespace Rdmp.Core.QueryBuilding
         /// </summary>
         /// <param name="summary">A basic aggregate that you want to restrict by cohort e.g. a pivot on drugs prescribed over time with an axis interval of year</param>
         /// <param name="cohort">A cohort aggregate that has a single AggregateDimension which must be an IsExtractionIdentifier and must follow the correct cohort aggregate naming conventions (See IsCohortIdentificationAggregate)</param>
-        public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort)
+        /// <param name="childProvider"></param>
+        public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort, ICoreChildProvider childProvider)
         {
             if (cohort == null)
                 throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor","cohort");
@@ -60,6 +63,7 @@ namespace Rdmp.Core.QueryBuilding
 
             _summary = summary;
             _cohort = cohort;
+            _childProvider = childProvider;
 
             //here we take the identifier from the cohort because the dataset might have multiple identifiers e.g. birth record could have patient Id, parent Id, child Id etc.  The Aggregate will already have one of those selected and only one of them selected
             _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d=>d.IsExtractionIdentifier);
@@ -227,10 +231,10 @@ namespace Rdmp.Core.QueryBuilding
         private CohortQueryBuilder GetBuilder()
         {
             if(_cohort != null)
-             return new CohortQueryBuilder(_cohort, _globals);
+             return new CohortQueryBuilder(_cohort, _globals,_childProvider);
             
             if(_cohortContainer != null)
-                return new CohortQueryBuilder(_cohortContainer,_globals);
+                return new CohortQueryBuilder(_cohortContainer,_globals,_childProvider);
 
             throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
         }

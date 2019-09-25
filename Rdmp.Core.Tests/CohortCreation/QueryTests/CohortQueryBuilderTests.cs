@@ -24,7 +24,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
         [Test]
         public void TestGettingAggregateJustFromConfig_DistinctCHISelect()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1,null);
+            CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1,null,null);
 
             Assert.AreEqual(CollapseWhitespace(string.Format(@"/*cic_{0}_UnitTestAggregate1*/
 SELECT 
@@ -37,7 +37,7 @@ FROM
         [Test]
         public void TestGettingAggregateJustFromConfig_SelectStar()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null);
+            CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null,null);
 
             Assert.AreEqual(CollapseWhitespace(
                 string.Format(@"/*cic_{0}_UnitTestAggregate1*/
@@ -59,7 +59,7 @@ FROM
         {
             aggregate1.HavingSQL = "count(*)>1";
 
-            CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null);
+            CohortQueryBuilder builder = new CohortQueryBuilder(aggregate1, null,null);
 
             Assert.AreEqual(CollapseWhitespace(
                 string.Format(@"/*cic_{0}_UnitTestAggregate1*/
@@ -79,14 +79,13 @@ FROM
         [Test]
         public void TestGettingAggregateSQLFromEntirity()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
-
-
             Assert.AreEqual(null, aggregate1.GetCohortAggregateContainerIfAny());
 
             //set the order so that 2 comes before 1
             rootcontainer.AddChild(aggregate2, 1);
             rootcontainer.AddChild(aggregate1, 5);
+
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
             Assert.AreEqual(rootcontainer,aggregate1.GetCohortAggregateContainerIfAny());
             try
@@ -125,8 +124,6 @@ FROM
         [Test]
         public void TestOrdering_AggregateThenContainer()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
-
             //set the order so that a configuration is in position 1 
             rootcontainer.AddChild(aggregate1, 1);
 
@@ -139,7 +136,7 @@ FROM
             container1.AddChild(aggregate2, 1);
             container1.AddChild(aggregate3, 2);
 
-            
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
             try
             {
@@ -194,8 +191,6 @@ FROM
         [Test]
         public void TestOrdering_ContainerThenAggregate()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
-
             //set the order so that a configuration is in position 1 
             rootcontainer.AddChild(aggregate1, 2);
 
@@ -208,6 +203,8 @@ FROM
             container1.AddChild(aggregate2, 1);
             container1.AddChild(aggregate3, 2);
             
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+
             try
             {
                 Assert.AreEqual(
@@ -256,9 +253,6 @@ FROM
         [Test]
         public void TestGettingAggregateSQLFromEntirity_IncludingParametersAtTop()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
-
-            
             //setup a filter (all filters must be in a container so the container is a default AND container)
             var AND = new AggregateFilterContainer(CatalogueRepository,FilterContainerOperation.AND);
             var filter = new AggregateFilter(CatalogueRepository,"hithere",AND);
@@ -287,6 +281,8 @@ FROM
             rootcontainer.AddChild(aggregate2, 1);
             rootcontainer.AddChild(aggregate1, 5);
             
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
+
             try
             {
                 Assert.AreEqual(
@@ -321,7 +317,7 @@ SET @abracadabra=1;
  ,CollapseWhitespace(builder.SQL));
 
 
-                CohortQueryBuilder builder2 = new CohortQueryBuilder(aggregate1, null);
+                CohortQueryBuilder builder2 = new CohortQueryBuilder(aggregate1, null,null);
                 Assert.AreEqual(
 
 CollapseWhitespace(
@@ -342,7 +338,7 @@ WHERE
   CollapseWhitespace(builder2.SQL));
 
 
-                string selectStar = new CohortQueryBuilder(aggregate1,null).GetDatasetSampleSQL();
+                string selectStar = new CohortQueryBuilder(aggregate1,null,null).GetDatasetSampleSQL();
 
                 Assert.AreEqual(
                     CollapseWhitespace(
@@ -384,7 +380,7 @@ SET @abracadabra=1;
             rootcontainer.AddChild(aggregate2,2);
             rootcontainer.AddChild(aggregate3,3);
             
-            CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null);
+            CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null,null);
             
             builder.StopContainerWhenYouReach = aggregate2;
             try
@@ -415,7 +411,7 @@ SET @abracadabra=1;
  CollapseWhitespace(builder.SQL));
 
 
-                CohortQueryBuilder builder2 = new CohortQueryBuilder(rootcontainer, null);
+                CohortQueryBuilder builder2 = new CohortQueryBuilder(rootcontainer, null,null);
             builder2.StopContainerWhenYouReach = null;
             Assert.AreEqual(
 CollapseWhitespace(
@@ -473,7 +469,7 @@ string.Format(
             new AggregateDimension(CatalogueRepository, testData.extractionInformations.Single(e => e.GetRuntimeName().Equals("chi")), aggregate4);
 
             rootcontainer.AddChild(aggregate4,5);
-            CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null);
+            CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null,null);
 
             //Looks like:
             /*
@@ -553,7 +549,7 @@ string.Format(
 
                 rootcontainer.AddChild(container1);
 
-                CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null);
+                CohortQueryBuilder builder = new CohortQueryBuilder(rootcontainer, null,null);
                 Assert.AreEqual(
 CollapseWhitespace(
 string.Format(
@@ -625,9 +621,7 @@ string.Format(
 
             //create all the setup again but in the memory repository
             SetupTestData(repo);
-
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
-
+            
             //setup a filter (all filters must be in a container so the container is a default AND container)
             var AND1 = new AggregateFilterContainer(repo,FilterContainerOperation.AND);
             var filter1_1 = new AggregateFilter(repo,"filter1_1",AND1);
@@ -670,6 +664,7 @@ string.Format(
                 param.SaveToDatabase();
             }
             
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
              Console.WriteLine( builder.SQL);
 
              try
@@ -785,9 +780,6 @@ SET @bob_2='Boom!';
         [Test]
         public void TestGettingAggregateSQL_Aggregate_IsDisabled()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
-
-
             Assert.AreEqual(null, aggregate1.GetCohortAggregateContainerIfAny());
 
             //set the order so that 2 comes before 1
@@ -799,6 +791,8 @@ SET @bob_2='Boom!';
             aggregate1.SaveToDatabase();
 
             Assert.AreEqual(rootcontainer, aggregate1.GetCohortAggregateContainerIfAny());
+
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
             try
             {
                 Assert.AreEqual(
@@ -830,8 +824,6 @@ SET @bob_2='Boom!';
         [Test]
         public void TestGettingAggregateSQLFromEntirity_Filter_IsDisabled()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration);
-
             //setup a filter (all filters must be in a container so the container is a default AND container)
             var AND1 = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
             var filter1_1 = new AggregateFilter(CatalogueRepository, "filter1_1", AND1);
@@ -876,6 +868,8 @@ SET @bob_2='Boom!';
 
                 param.SaveToDatabase();
             }
+            
+            CohortQueryBuilder builder = new CohortQueryBuilder(cohortIdentificationConfiguration,null);
 
             Console.WriteLine(builder.SQL);
 

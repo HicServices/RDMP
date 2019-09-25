@@ -9,7 +9,6 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi;
 using FAnsi.Discovery;
-using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
@@ -95,6 +94,10 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="points"></param>
         public void AddRange(IDataAccessPoint[] points)
         {
+            //if we already have all the points then don't bother checking
+            if(points.All(p=>_points.Contains(p)))
+                return;
+
             if (SingleServer)
             {
                 var tempList = new HashSet<IDataAccessPoint>(_points);
@@ -155,6 +158,18 @@ namespace Rdmp.Core.QueryBuilding
             
             return DataAccessPortal.GetInstance().ExpectDistinctServer(Points.ToArray(),
                 DataAccessContext, false);
+        }
+
+        /// <summary>
+        /// Returns a new collection with a new set of <see cref="Points"/> matching the old set (but not instance).
+        /// </summary>
+        /// <returns></returns>
+        public DataAccessPointCollection Clone()
+        {
+            var col = new DataAccessPointCollection(SingleServer,DataAccessContext);
+            col._points = new HashSet<IDataAccessPoint>(_points);
+            return col;
+
         }
     }
 }

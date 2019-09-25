@@ -153,7 +153,8 @@ namespace Rdmp.Core.Curation.Data
         private readonly ICatalogueRepository _catalogueRepository;
         private Lazy<ColumnInfo[]> _knownColumnInfos;
         private Lazy<bool> _knownIsLookup;
-        
+        private Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>> _knownCredentials = new Dictionary<DataAccessContext, Lazy<IDataAccessCredentials>>();
+
 
         #region Relationships
         /// <inheritdoc/>
@@ -317,7 +318,7 @@ namespace Rdmp.Core.Curation.Data
             if (context == DataAccessContext.Any)
                 throw new Exception("You cannot ask for any credentials, you must supply a usage context.");
 
-            return _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this, context);
+            return _knownCredentials[context].Value;
         }
 
         /// <summary>
@@ -456,6 +457,20 @@ namespace Rdmp.Core.Curation.Data
         {
             _knownColumnInfos = new Lazy<ColumnInfo[]>(FetchColumnInfos);
             _knownIsLookup = new Lazy<bool>(FetchIsLookup);
+            _knownCredentials.Clear();
+
+            foreach (DataAccessContext context in Enum.GetValues(typeof(DataAccessContext)))
+            {
+                if (context == DataAccessContext.Any)
+                    continue;
+
+                //avoid access to 
+                var context1 = context;
+                _knownCredentials.Add(context1,
+                    new Lazy<IDataAccessCredentials>(() =>
+                        _catalogueRepository.TableInfoCredentialsManager.GetCredentialsIfExistsFor(this,
+                            context1)));
+            }
         }
 
         private ColumnInfo[] FetchColumnInfos()

@@ -7,7 +7,7 @@
     <Position X="3.073" Y="4.802" Height="0.76" Width="4.012" />
   </Comment>
   <Comment CommentText="A WHERE AND/OR Operator which acts as a container of 1 or more IFilters in which each filter is separated by the Operation&#xD;&#xA;e.g.&#xD;&#xA;(&#xD;&#xA;	--Filter1&#xD;&#xA;	AND&#xD;&#xA;	--Filter2&#xD;&#xA;)">
-    <Position X="6.719" Y="5.99" Height="1.469" Width="3.887" />
+    <Position X="6.729" Y="6.438" Height="1.469" Width="3.887" />
   </Comment>
   <Comment CommentText="A WHERE boolean expression&#xD;&#xA;e.g. &#xD;&#xA;[test]..[biochemistry].[Test_code] = 'CHOL'">
     <Position X="10.76" Y="5.844" Height="0.708" Width="3.887" />
@@ -18,64 +18,61 @@
   <Comment CommentText="Sql Query Building in RDMP is achieved by combining classes which implement these interfaces.  The main class responsible for calculating/combining the actual final lines of SQL is QueryBuilder and SqlQueryBuilderHelper">
     <Position X="0.5" Y="0.5" Height="0.875" Width="4.356" />
   </Comment>
-  <Class Name="Rdmp.Core.Curation.QueryBuilding.SqlQueryBuilderHelper" Collapsed="true">
+  <Class Name="Rdmp.Core.QueryBuilding.SqlQueryBuilderHelper" Collapsed="true">
     <Position X="7" Y="0.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAQAABFBACwgAKAAAKAAAAQAAAAAAAAAAIA=</HashCode>
+      <HashCode>AAIAAAAAAAQAABFBAA0gAKAAAKAAAAQAAAAAAAAAAIA=</HashCode>
       <FileName>QueryBuilding\SqlQueryBuilderHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="Rdmp.Core.Curation.QueryBuilding.QueryBuilder" Collapsed="true">
-    <Position X="5.25" Y="0.5" Width="1.5" />
-    <Compartments>
-      <Compartment Name="Fields" Collapsed="true" />
-    </Compartments>
+  <Class Name="Rdmp.Core.QueryBuilding.QueryBuilder" Collapsed="true">
+    <Position X="5" Y="0.5" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>QCAAAEGEEBEiBJABAKExggUEQARgIAAETBUYEEAA6Ag=</HashCode>
+      <HashCode>QCAAAAEAEBEiBJAAAIAhAAEEAAJAAAAATBQAAEAA6Ag=</HashCode>
       <FileName>QueryBuilding\QueryBuilder.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="Rdmp.Core.Curation.Data.IColumn">
-    <Position X="3.25" Y="2" Width="2" />
-    <TypeIdentifier>
-      <HashCode>BAEAAAAAAAJAgAAAAAAAAAACABAAAAAAAAAAQAAAAAA=</HashCode>
-      <FileName>Data\IColumn.cs</FileName>
-    </TypeIdentifier>
-  </Interface>
   <Interface Name="Rdmp.Core.Curation.Data.IFilter">
     <Position X="11" Y="2" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AIAAAAAAAAAgACAIACEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
-      <FileName>Data\IFilter.cs</FileName>
+      <HashCode>AIAAAAAAAAAgACAIAAEAAAAAAIIAAAAAAAAAASAAAAA=</HashCode>
+      <FileName>Curation\Data\IFilter.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.Curation.Data.IContainer">
     <Position X="7" Y="2" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AgACAAgAAQACEAAAAAAAQAAAIQAAAAAAAAEAAAAAAAA=</HashCode>
-      <FileName>Data\IContainer.cs</FileName>
+      <FileName>Curation\Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.Curation.Data.ISqlParameter">
     <Position X="0.5" Y="2" Width="1.75" />
     <TypeIdentifier>
       <HashCode>AAgAAAAEAAAAAAAAAAAAAAAAAAAAABAAAAAgEAAAAAA=</HashCode>
-      <FileName>Data\ISqlParameter.cs</FileName>
+      <FileName>Curation\Data\ISqlParameter.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Interface Name="Rdmp.Core.Curation.Data.IJoin">
     <Position X="1.5" Y="6.5" Width="2.25" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAgAAAACIAAAAAAAAAIAACgAA=</HashCode>
-      <FileName>Data\IJoin.cs</FileName>
+      <FileName>Curation\Data\IJoin.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.QueryBuilding.IColumn" Collapsed="true">
+    <Position X="3.25" Y="2.25" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>BAAAAAAAAAJAAAAAAAAAAAACABAAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>QueryBuilding\IColumn.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="Rdmp.Core.Curation.Data.FilterContainerOperation">
-    <Position X="7.75" Y="4.75" Width="2" />
+    <Position X="7.75" Y="5.25" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAgIAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Data\IContainer.cs</FileName>
+      <FileName>Curation\Data\IContainer.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

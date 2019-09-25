@@ -41,12 +41,12 @@ namespace Rdmp.Core.CohortCreation.Execution
         public string CountSQL { get; set; }
 
         private CancellationTokenSource _cancellationTokenSource;
-        private readonly DataAccessPointCollection _targets;
+        private readonly DiscoveredServer _target;
         private DbCommand _cmdCount;
         private DbDataReader _rIds;
         private DbDataReader _rCumulative;
         
-        public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DataAccessPointCollection targets)
+        public CohortIdentificationTaskExecution(IDataAccessPoint cacheServerIfAny, string countSQL, string cumulativeSQL, CancellationTokenSource cancellationTokenSource, int subQueries, int subqueriesCached, bool isResultsForRootContainer,DiscoveredServer target)
         {
             _cacheServerIfAny = cacheServerIfAny;
             SubQueries = subQueries;
@@ -54,7 +54,7 @@ namespace Rdmp.Core.CohortCreation.Execution
             CountSQL = countSQL;
             CumulativeSQL = cumulativeSQL;
             _cancellationTokenSource = cancellationTokenSource;
-            _targets = targets;
+            _target = target;
             IsResultsForRootContainer = isResultsForRootContainer;
         }
 
@@ -100,7 +100,7 @@ namespace Rdmp.Core.CohortCreation.Execution
             
             IsExecuting = true;
 
-            var server = _targets.GetDistinctServer();
+            var server = _target;
             
             server.EnableAsync();
 
