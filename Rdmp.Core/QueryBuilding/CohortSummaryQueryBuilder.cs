@@ -220,8 +220,8 @@ namespace Rdmp.Core.QueryBuilding
             //the basic cohort SQL select chi from dataset where ....
             var cohortSql = cohortQueryBuilder.SQL;
 
-            if (cohortQueryBuilder.CountOfCachedSubQueries == 0 || cohortQueryBuilder.CountOfSubQueries != cohortQueryBuilder.CountOfCachedSubQueries)
-                throw new NotSupportedException("Only works for 100% Cached queries, your query has " + cohortQueryBuilder.CountOfCachedSubQueries + "/" + cohortQueryBuilder.CountOfSubQueries + " queries cached");
+            if (cohortQueryBuilder.Results.CountOfCachedSubQueries == 0 || cohortQueryBuilder.Results.CountOfSubQueries != cohortQueryBuilder.Results.CountOfCachedSubQueries)
+                throw new NotSupportedException("Only works for 100% Cached queries, your query has " + cohortQueryBuilder.Results.CountOfCachedSubQueries + "/" + cohortQueryBuilder.Results.CountOfSubQueries + " queries cached");
 
             //there will be a single dimension on the cohort aggregate so this translates to "MyTable.MyDataset.CHI in Select(
             var filterSql = _extractionIdentifierColumn.SelectSQL + " IN (" + cohortSql + ")";

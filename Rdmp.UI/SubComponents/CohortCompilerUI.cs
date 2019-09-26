@@ -511,10 +511,11 @@ namespace Rdmp.UI.SubComponents
         private void tlvConfiguration_ItemActivate(object sender, EventArgs e)
         {
             var o = tlvConfiguration.SelectedObject as ICompileable;
-            if (o != null && o.CrashMessage != null)
-            {
-                ExceptionViewer.Show(o.CrashMessage);
-            }
+            if (o != null)
+                if(o.CrashMessage != null)
+                    WideMessageBox.Show($"Task '{o}' Failed.","  Build Log:" + Environment.NewLine + o.Log + Environment.NewLine + o.CrashMessage,WideMessageBoxTheme.Exception);
+                else
+                    WideMessageBox.Show("Build Log", o.Log,WideMessageBoxTheme.Help);
         }
 
         private void tlvConfiguration_SelectedIndexChanged(object sender, EventArgs e)

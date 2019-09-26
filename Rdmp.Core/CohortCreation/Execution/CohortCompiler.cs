@@ -228,6 +228,8 @@ namespace Rdmp.Core.CohortCreation.Execution
                 task.State = CompilationState.Crashed;
             }
 
+            task.Log = queryBuilder?.Results?.Log;
+
             //we have seen this entity before (by ID & entity type)
             KeyValuePair<ICompileable, CohortIdentificationTaskExecution> existingTask;
 
@@ -267,10 +269,10 @@ namespace Rdmp.Core.CohortCreation.Execution
 
 
             var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
-                queryBuilder.CountOfSubQueries,
-                queryBuilder.CountOfCachedSubQueries,
+                queryBuilder?.Results?.CountOfSubQueries ?? -1,
+                queryBuilder?.Results?.CountOfCachedSubQueries ??-1,
                 isResultsForRootContainer,
-                queryBuilder.TargetServer);
+                queryBuilder?.Results?.TargetServer);
 
             //create a new task 
             Tasks.Add(task, taskExecution);

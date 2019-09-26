@@ -61,12 +61,6 @@ namespace Rdmp.Core.QueryBuilding
         private CohortAggregateContainer container;
         private AggregateConfiguration configuration;
         
-        /// <summary>
-        /// The server on which the query must run.  This is used to accumulate all sub-queries and ensures
-        /// that they don't stray into other servers (but they can be into different databases within the same server / server type). 
-        /// </summary>
-        public DiscoveredServer TargetServer => results.TargetServer;
-
         public ExternalDatabaseServer CacheServer
         {
             get { return _cacheServer; }
@@ -79,11 +73,9 @@ namespace Rdmp.Core.QueryBuilding
 
         public ParameterManager ParameterManager = new ParameterManager();
 
-        public int CountOfSubQueries { get { return results != null? results.CountOfSubQueries:- 1; } }
-        public int CountOfCachedSubQueries { get { return results != null ? results.CountOfCachedSubQueries : -1; } }
-
+        
         private CohortQueryBuilderHelper helper;
-        private CohortQueryBuilderResult results;
+        public CohortQueryBuilderResult Results { get; private set; }
 
         #region constructors
         //Constructors - This one is the base one called by all others
@@ -149,10 +141,9 @@ namespace Rdmp.Core.QueryBuilding
 
             RecreateHelpers(new QueryBuilderCustomArgs("*", "" /*removes distinct*/, topX));
 
-            results.BuildFor(configuration);
+            Results.BuildFor(configuration);
             
-            
-            string sampleSQL = results.Sql;
+            string sampleSQL = Results.Sql;
 
             string parameterSql = "";
 
@@ -174,14 +165,14 @@ namespace Rdmp.Core.QueryBuilding
         {
             RecreateHelpers(null);
 
-            results.StopContainerWhenYouReach = _stopContainerWhenYouReach;
+            Results.StopContainerWhenYouReach = _stopContainerWhenYouReach;
 
             if (container != null)
-                results.BuildFor(container);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
+                Results.BuildFor(container);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
             else
-                results.BuildFor(configuration);//user constructed us without a container, he only cares about 1 aggregate
+                Results.BuildFor(configuration);//user constructed us without a container, he only cares about 1 aggregate
 
-            _sql = results.Sql;
+            _sql = Results.Sql;
   
             //Still finalise the ParameterManager even if we are not writting out the parameters so that it is in the Finalized state
             var finalParameters = ParameterManager.GetFinalResolvedParametersList();
@@ -202,7 +193,7 @@ namespace Rdmp.Core.QueryBuilding
         private void RecreateHelpers(QueryBuilderCustomArgs customizations)
         {
             helper = new CohortQueryBuilderHelper(ParameterManager);
-            results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations);
+            Results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations);
         }
 
         /// <summary>

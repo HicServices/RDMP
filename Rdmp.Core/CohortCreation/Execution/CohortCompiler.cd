@@ -105,13 +105,12 @@
   <Class Name="Rdmp.Core.QueryBuilding.CohortQueryBuilder">
     <Position X="13.75" Y="4.75" Width="4.25" />
     <TypeIdentifier>
-      <HashCode>BAAAAAgASFIAAAAAAAEBAAIAAIDAAAgAQCQAAAQBLAg=</HashCode>
+      <HashCode>BAAAAAAASFIAAAAAAAABAAIACIDAAAAAQCQAAAQBLAg=</HashCode>
       <FileName>QueryBuilding\CohortQueryBuilder.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="_childProvider" />
       <Field Name="helper" />
-      <Field Name="results" />
       <Property Name="CacheServer" />
     </ShowAsAssociation>
   </Class>

@@ -22,6 +22,8 @@ namespace Rdmp.Core.CohortCreation
         public CohortAggregateContainer ParentContainerIfAny { get; set; }
         public bool? IsFirstInContainer { get; set; }
 
+        public string Log { get; set; }
+
         protected Compileable(CohortCompiler compiler)
         {
             _compiler = compiler;

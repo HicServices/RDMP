@@ -12,7 +12,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Long running processes that previously blocked the UI (e.g. create primary key) now have a small dialog describing task and allowing cancellation.
 - Proposed Fix dialog now has standard look and feel of RDMP message boxes (including keywords etc)
- 
+- Double clicking an executing task in Cohort Builder now shows cohort build log as well as Exception (if any)
+
 ### Changed
  
 - Database patching user interface presents clearer information about what version upgrade is occuring and the patches that will be applied.
@@ -24,6 +25,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Improved usability of StartupUI when no repository connection strings are not set (previously would report status as 'Broken')
 - Fixed bug where `DropTableIfLoadFails` of `ExecuteFullExtractionToDatabaseMSSql` would (under fail conditions) drop the destination table even if the table was created by a previous execution of the same pipeline.
 - Fixed bug where adding a Catalogue to a cohort set container would create an extra duplicate copy (which would appear under orphans)
+- Improved cross server cohort query building (e.g. combining cohort sets on seperate servers / server types)
 
 ### Removed
 
