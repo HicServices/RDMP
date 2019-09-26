@@ -79,8 +79,8 @@ namespace Rdmp.Core.QueryBuilding
 
         public ParameterManager ParameterManager = new ParameterManager();
 
-        public int CountOfSubQueries { get { return results != null? results.Dependencies.Count:- 1; } }
-        public int CountOfCachedSubQueries { get { return results != null ? results.Dependencies.Count(d=>d.SqlFullyCached != null) : -1; } }
+        public int CountOfSubQueries { get { return results != null? results.CountOfSubQueries:- 1; } }
+        public int CountOfCachedSubQueries { get { return results != null ? results.CountOfCachedSubQueries : -1; } }
 
         private CohortQueryBuilderHelper helper;
         private CohortQueryBuilderResult results;

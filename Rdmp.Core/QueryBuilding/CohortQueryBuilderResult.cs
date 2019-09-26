@@ -1,5 +1,10 @@
-﻿using System;
+﻿// Copyright (c) The University of Dundee 2018-2019
+// This file is part of the Research Data Management Platform (RDMP).
+// RDMP is free software: you can redistribute it and/or modify it under the terms of the GNU General Public License as published by the Free Software Foundation, either version 3 of the License, or (at your option) any later version.
+// RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
+// You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -10,7 +15,6 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode;
@@ -18,6 +22,12 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
 {
+    /// <summary>
+    /// Builds a subset of a <see cref="CohortIdentificationConfiguration"/> e.g. a single <see cref="CohortAggregateContainer"/> (UNION / INTERSECT / EXCEPT) or a
+    /// cohort set.  This includes identifying all <see cref="Dependencies"/> and resolving the dependencies servers / the <see cref="CacheServer"/> to determine
+    /// whether a valid query can be assembled from the sub-components and deciding where it can be run (e.g. should the query run on the cache server or the data server
+    /// or are they both the same server so query sections can be mixed depending on cache hit/miss for each bit).
+    /// </summary>
     public class CohortQueryBuilderResult
     {
         public ExternalDatabaseServer CacheServer { get; }
@@ -63,6 +73,8 @@ namespace Rdmp.Core.QueryBuilding
         public DiscoveredServer TargetServer { get; set; }
 
         public IOrderable StopContainerWhenYouReach { get;set; }
+        public int CountOfSubQueries => Dependencies.Count;
+        public int CountOfCachedSubQueries { get; private set; }
 
         /// <summary>
         /// Creates a new result for a single <see cref="AggregateConfiguration"/> or <see cref="CohortAggregateContainer"/>
@@ -126,11 +138,15 @@ namespace Rdmp.Core.QueryBuilding
         private string BuildSql(CohortAggregateContainer container)
         {
             Dictionary<CohortQueryBuilderDependency, string> sqlDictionary;
-
+            
             //if we are fully cached on everything
             if (Dependencies.All(d => d.SqlFullyCached != null))
             {
                 SetTargetServer(GetCacheServer(),"all dependencies are fully cached"); //run on the cache server
+                
+                //all are cached
+                CountOfCachedSubQueries = CountOfSubQueries;
+
                 sqlDictionary = Dependencies.ToDictionary(k => k, v => v.SqlFullyCached); //run the fully cached sql
             }
             else
@@ -149,17 +165,25 @@ namespace Rdmp.Core.QueryBuilding
 
                         //The cache and dataset are on the same server so run it
                         SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"not all dependencies are cached while " + uncached);
+                        
+                        CountOfCachedSubQueries = Dependencies.Count(d=>d.SqlFullyCached != null);
+                        
                         sqlDictionary =
                             Dependencies.ToDictionary(k => k,
-                                v => v.SqlPartiallyCached ?? v.SqlCacheless); //run the fully cached sql
+                                v =>  v.SqlFullyCached ??
+                                    v.SqlPartiallyCached ??
+                                    v.SqlCacheless); //run the fully cached sql
                         break;
 
                     case CacheUsage.AllOrNothing:
 
                         //It's not fully cached so we have to run it entirely uncached
                         SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"not all dependencies are cached while " + uncached);
+
+                        //cannot use any of the caches because it's all or nothing
+                        CountOfCachedSubQueries = 0;
                         sqlDictionary =
-                            Dependencies.ToDictionary(k => k, v => v.SqlCacheless); //run the fully cached sql
+                            Dependencies.ToDictionary(k => k, v => v.SqlCacheless); //run the fully uncached sql
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -200,7 +224,7 @@ namespace Rdmp.Core.QueryBuilding
                     sql += TabIn(sqlDictionary.Single(kvp => Equals(kvp.Key.CohortSet, toWrite)).Value, tabs);
                 
                 if (toWrite is CohortAggregateContainer sub)
-                    sql += WriteContainers(sub, syntaxHelper, sqlDictionary, tabs++);
+                    sql += WriteContainers(sub, syntaxHelper, sqlDictionary, tabs + 1);
 
                 //we have now written the first thing at this level of recursion - all others will need to be separated by the OPERATION e.g. UNION
                 firstEntityWritten = true;
@@ -263,6 +287,7 @@ namespace Rdmp.Core.QueryBuilding
             if (dependency.SqlFullyCached != null)
             {
                 SetTargetServer(GetCacheServer()," dependency is cached"); //run on the cache server
+                CountOfCachedSubQueries++; //it is cached
                 return dependency.SqlFullyCached; //run the fully cached sql
             }
 
@@ -351,8 +376,17 @@ namespace Rdmp.Core.QueryBuilding
                         SetCacheUsage(CacheUsage.MustUse,$"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies.  Therefore the QueryCache MUST be used for all dependencies");
                 }
 
-            if(DependenciesSingleServer != null && CacheServer != null && CacheUsageDecision == CacheUsage.Opportunistic)
-                SetCacheUsage(CacheUsage.AllOrNothing,"All datasets are on one server/access credentials while Cache is on a seperate one");
+            if (DependenciesSingleServer != null &&
+                CacheServer != null &&
+                CacheUsageDecision == CacheUsage.Opportunistic)
+            {
+                //We can only do opportunistic joins if the Cache and Data server are on the same server
+                bool canCombine = DependenciesSingleServer.Clone().TryAdd(CacheServer);
+
+                if(!canCombine)
+                    SetCacheUsage(CacheUsage.AllOrNothing,"All datasets are on one server/access credentials while Cache is on a separate one");
+            }
+                
         }
         private void LogDependencies()
         {
@@ -385,156 +419,5 @@ namespace Rdmp.Core.QueryBuilding
         }
 
 
-    }
-
-    public class CohortQueryBuilderDependency
-    {
-        private readonly ICoreChildProvider _childProvider;
-        
-        /// <summary>
-        /// The primary table being queried
-        /// </summary>
-        public AggregateConfiguration CohortSet { get; }
-
-        /// <summary>
-        /// The relationship object describing the JOIN relationship between <see cref="CohortSet"/> and another optional table
-        /// </summary>
-        public JoinableCohortAggregateConfigurationUse PatientIndexTableIfAny { get; }
-
-        /// <summary>
-        /// The aggregate (query) referenced by <see cref="PatientIndexTableIfAny"/>
-        /// </summary>
-        public AggregateConfiguration JoinedTo { get; }
-
-        /// <summary>
-        /// The raw SQL that can be used to join the <see cref="CohortSet"/> and <see cref="PatientIndexTableIfAny"/> (if there is one).  Null if they exist
-        /// on different servers (this is allowed only if the <see cref="CohortSet"/> is on the same server as the cache while the <see cref="PatientIndexTableIfAny"/>
-        /// is remote).
-        /// </summary>
-        public string SqlCacheless { get; private set; }
-        
-        /// <summary>
-        /// The raw SQL for the <see cref="CohortSet"/> with a join against the cached artifact for the <see cref="PatientIndexTableIfAny"/>
-        /// </summary>
-        public string SqlPartiallyCached { get;  private set;}
-        
-        /// <summary>
-        /// Sql for a single cache fetch  that pulls the cached result of the <see cref="CohortSet"/> joined to <see cref="PatientIndexTableIfAny"/> (if there was any)
-        /// </summary>
-        public string SqlFullyCached { get;  private set;}
-
-        public string SqlJoinableCacheless { get; private set; }
-        
-        public string SqlJoinableCached { get; private set; }
-
-        public CohortQueryBuilderDependency(AggregateConfiguration cohortSet,
-            JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider)
-        {
-            _childProvider = childProvider;
-            CohortSet = cohortSet;
-            PatientIndexTableIfAny = patientIndexTableIfAny;
-
-            if (PatientIndexTableIfAny != null)
-            {
-                var join = _childProvider.AllJoinables.SingleOrDefault(j =>
-                    j.ID == PatientIndexTableIfAny.JoinableCohortAggregateConfiguration_ID);
-
-                if(join == null)
-                    throw new Exception("ICoreChildProvider did not know about the provided patient index table");
-
-                JoinedTo = _childProvider.AllAggregateConfigurations.SingleOrDefault(ac =>
-                    ac.ID == join.AggregateConfiguration_ID);
-
-                if(JoinedTo == null)
-                    throw new Exception("ICoreChildProvider did not know about the provided patient index table AggregateConfiguration");
-            }
-        }
-
-        public override string ToString()
-        {
-            return CohortSet.Name + (JoinedTo != null ? PatientIndexTableIfAny.JoinType + " JOIN " + JoinedTo.Name : "");
-        }
-
-        public void Build(CohortQueryBuilderResult parent)
-        {
-            bool isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
-
-            if (JoinedTo != null)
-            {
-                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,new QueryBuilderArgs(parent.Customise));
-                SqlJoinableCached = GetCachFetchSqlIfPossible(parent,JoinedTo,SqlJoinableCacheless,true);
-            }
-
-
-            if (isSolitaryPatientIndexTable)
-            {
-                //explicit execution of a patient index table on it's own
-                //the full uncached SQL for the query
-                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise));
-
-                if(SqlJoinableCached != null)
-                    throw new QueryBuildingException("Patient index tables can't use other patient index tables!");
-            }
-            else
-            {
-                //the full uncached SQL for the query
-                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,
-                    new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
-                        parent.TabIn(SqlJoinableCacheless, 1),parent.Customise));
-
-                
-                //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join
-                if (SqlJoinableCached != null)
-                    SqlPartiallyCached = parent.Helper.GetSQLForAggregate(CohortSet,
-                        new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
-                            SqlJoinableCached,parent.Customise));
-            }
-            
-            //We would prefer a cache hit on the exact uncached SQL
-            SqlFullyCached = GetCachFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable);
-
-            //but if that misses we would take a cache hit of an execution of the SqlPartiallyCached
-            if(SqlFullyCached == null && SqlPartiallyCached != null)
-                SqlFullyCached = GetCachFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable);
-        }
-
-        private string GetCachFetchSqlIfPossible(CohortQueryBuilderResult parent,AggregateConfiguration aggregate, string sql, bool isPatientIndexTable)
-        {
-            if (parent.CacheManager == null)
-                return null;
-
-            var existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, isPatientIndexTable
-            ?AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList , sql);
-                
-            //if there is a cached entry matching the cacheless SQL then we can just do a select from it (in theory)
-            if(existingTable != null)
-                return
-                    CachedAggregateConfigurationResultsManager.CachingPrefix + aggregate.Name + @"*/" + Environment.NewLine +
-                    "select * from " + existingTable.GetFullyQualifiedName() + Environment.NewLine;
-
-            return null;
-        }
-    }
-
-
-    public enum CacheUsage
-    {
-        /// <summary>
-        /// The cache must be used and all Dependencies must be cached.  This happens if dependencies are on different servers / data access
-        /// credentials.  Or the query being built involves SET operations which are not supported by the DBMS of the dependencies (e.g. MySql UNION / INTERSECT etc).
-        /// </summary>
-        MustUse,
-
-        /// <summary>
-        /// All dependencies are on the same server as the cache.  Therefore we can mix and match where we fetch tables from
-        /// (live table or cache) depending on whether the cache contains an entry for it or not.
-        /// </summary>
-        Opportunistic,
-
-        /// <summary>
-        /// All dependencies are on the same server but the cache is on a different server.  Therefore we can either
-        /// run a fully cached set of queries or we cannot run any cached queries
-        /// </summary>
-        AllOrNothing
     }
 }

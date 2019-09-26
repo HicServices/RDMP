@@ -174,9 +174,9 @@ namespace Rdmp.Core.Tests.QueryCaching
             AssertNoErrors(compiler);
 
             if(createQueryCache)
-                Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/2")), "Expected cache to be used for the joinable");
+                Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected cache to be used for the joinable");
             else
-                Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("0/2")), "Did not create cache so expected cache usage to be 0");
+                Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("0/1")), "Did not create cache so expected cache usage to be 0");
         }
         /// <summary>
         /// Tests the ability to run a cic in which there are 2 tables, one patient index table with the dates of biochemistry test codes
@@ -232,7 +232,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
             AssertNoErrors(compiler);
             
-            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/2")),"Expected cache to be used only for the final UNION");
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
         }
 
         [TestCase(DatabaseType.Oracle)]
@@ -295,7 +295,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
             AssertNoErrors(compiler);
 
-            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/3")), "Expected cache to be used for both top level operations in the EXCEPT");
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected cache to be used for both top level operations in the EXCEPT");
         }
 
 
