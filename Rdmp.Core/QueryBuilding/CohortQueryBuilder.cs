@@ -139,7 +139,10 @@ namespace Rdmp.Core.QueryBuilding
             if(configuration == null)
                 throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
 
-            RecreateHelpers(new QueryBuilderCustomArgs("*", "" /*removes distinct*/, topX));
+            //Show the user all the fields (*) unless there is a HAVING statement on the aggregate in which case we can only show the chi.
+            string selectList = string.IsNullOrWhiteSpace(configuration.HavingSQL) ? "*" : null;
+
+            RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX));
 
             Results.BuildFor(configuration);
             
