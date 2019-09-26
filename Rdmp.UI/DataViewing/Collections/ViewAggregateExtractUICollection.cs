@@ -84,7 +84,7 @@ namespace Rdmp.UI.DataViewing.Collections
                 var isJoinable = ac.IsJoinablePatientIndexTable();
                 var globals = cic.GetAllParameters();
 
-                var builder = new CohortQueryBuilder(ac, globals,null,isJoinable);
+                var builder = new CohortQueryBuilder(ac, globals,null);
                 
                 if(UseQueryCache)
                     builder.CacheServer = GetCacheServer();

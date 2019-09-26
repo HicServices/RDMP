@@ -11,11 +11,9 @@ using FAnsi.Discovery.QuerySyntax;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.Curation.FilterImporting;
 using Rdmp.Core.QueryBuilding.Parameters;
-using Rdmp.Core.QueryCaching.Aggregation;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -26,26 +24,17 @@ namespace Rdmp.Core.QueryBuilding
     /// </summary>
     public class CohortQueryBuilderHelper
     {
-        private readonly ISqlParameter[] _globals;
         public ParameterManager ParameterManager { get; set; }
-        public ExternalDatabaseServer CacheServer { get; set; }
         
-        public CohortQueryBuilderHelper(ISqlParameter[] globals,ParameterManager parameterManager, ExternalDatabaseServer cacheServer)
+        public CohortQueryBuilderHelper(ParameterManager parameterManager)
         {
-            _globals = globals;
             ParameterManager = parameterManager;
-            CacheServer = cacheServer;
         }
 
-        public string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null, int topX = -1)
+        public string GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
         {
-            string toReturn ="";
-            string tabs = "";
-            string tabplusOne = "";
+            bool isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
-            if (tabDepth != -1)
-                GetTabs(tabDepth, out tabs, out tabplusOne);
-            
             //make sure it is a valid configuration
             string reason;
             if (!aggregate.IsAcceptableAsCohortGenerationSource(out reason))
@@ -67,13 +56,13 @@ namespace Rdmp.Core.QueryBuilding
                     selectList = extractionIdentifier.SelectSQL +  (extractionIdentifier.Alias != null ? " " + extractionIdentifier.Alias: "");
                 else
                     //unless we are also including other columns because this is a patient index joinable inception query
-                    selectList = string.Join("," + Environment.NewLine + tabs,
+                    selectList = string.Join("," + Environment.NewLine,
                         aggregate.AggregateDimensions.Select(e => e.SelectSQL + (e.Alias != null ? " " + e.Alias : ""))); //joinable patient index tables have patientIdentifier + 1 or more other columns
 
-                if (overrideSelectList != null)
-                    selectList = overrideSelectList;
+                if (args?.OverrideSelectList != null)
+                    selectList = args.OverrideSelectList;
 
-                string limitationSQL = overrideLimitationSQL ?? "distinct";
+                string limitationSQL = args?.OverrideLimitationSQL ?? "distinct";
 
                 //select list is either [chi] or [chi],[mycolumn],[myexcitingcol] (in the case of a patient index table)
                 builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
@@ -86,7 +75,7 @@ namespace Rdmp.Core.QueryBuilding
             }
             else
             {
-                if (overrideSelectList != null)
+                if (args?.OverrideSelectList != null)
                     throw new NotSupportedException("Cannot override Select list on aggregates that have HAVING / Count SQL configured in them");
 
                 builder = new AggregateBuilder("distinct", aggregate.CountSQL, aggregate, aggregate.ForcedJoins);
@@ -100,178 +89,15 @@ namespace Rdmp.Core.QueryBuilding
                 builder.DoNotWriteOutOrderBy = true;
             }
 
-            if (topX != -1)
-                builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), topX, AggregateTopXOrderByDirection.Descending, null);
+            if (args != null &&  args.TopX != -1)
+                builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), args.TopX, AggregateTopXOrderByDirection.Descending, null);
 
-            AddJoinablesToBuilder(builder, aggregate,tabDepth);
-
-            //set the where container
-            builder.RootFilterContainer = aggregate.RootFilterContainer;
-
-            string builderSqlVerbatimForCheckingAgainstCache = null;
-
-            if (CacheServer != null)
-                builderSqlVerbatimForCheckingAgainstCache = GetSqlForBuilderForCheckingAgainstCache(builder);
-
-            //we will be harnessing the parameters via ImportAndElevate so do not add them to the SQL directly
-            builder.DoNotWriteOutParameters = true;
-            var builderSqlWithoutParameters = builder.SQL;
-
-            //if we have caching 
-            if (CacheServer != null)
-            {
-                CachedAggregateConfigurationResultsManager manager = new CachedAggregateConfigurationResultsManager(CacheServer);
-                var existingTable = manager.GetLatestResultsTable(aggregate, isJoinAggregate ? AggregateOperation.JoinableInceptionQuery : AggregateOperation.IndexedExtractionIdentifierList, builderSqlVerbatimForCheckingAgainstCache);
-
-                //if we have the answer already 
-                if (existingTable != null)
-                {
-                    //reference the answer table
-                    toReturn += tabplusOne + CachedAggregateConfigurationResultsManager.CachingPrefix + aggregate.Name + @"*/" + Environment.NewLine;
-                    toReturn += tabplusOne + "select * from " + existingTable.GetFullyQualifiedName() + Environment.NewLine;
-                    
-                    return toReturn;
-                }
             
-                //we do not have an up-to-date answer available in the cache :(
-            }
-
-            //get the SQL from the builder (for the current configuration) - without parameters
-            string currentBlock = builderSqlWithoutParameters;
-
-            //import parameters unless caching was used
-            Dictionary<string, string> renameOperations;
-            ParameterManager.ImportAndElevateResolvedParametersFromSubquery(builder.ParameterManager, out renameOperations);
-
-            //rename in the SQL too!
-            foreach (KeyValuePair<string, string> kvp in renameOperations)
-                currentBlock = ParameterCreator.RenameParameterInSQL(currentBlock, kvp.Key, kvp.Value);
-
-            //tab in the current block
-            toReturn += tabplusOne + currentBlock.Replace("\r\n", "\r\n" + tabplusOne);
-            return toReturn;
-        }
-        
-        /// <summary>
-        /// Returns the inception join table (patient index table).
-        /// </summary>
-        /// <param name="aggregate">The patient index table (not the owner who is joining to it)</param>
-        /// <returns></returns>
-        public string GetCachelessSQLForJoinAggregate(AggregateConfiguration aggregate)
-        {
-            if(!aggregate.IsJoinablePatientIndexTable())
-                throw new ArgumentException($"Expected aggregate {aggregate} to be a Patient Index Table");
-            
-            //make sure it is a valid configuration
-            string reason;
-            if (!aggregate.IsAcceptableAsCohortGenerationSource(out reason))
-                throw new QueryBuildingException("Cannot generate a cohort using AggregateConfiguration " + aggregate + " because:" + reason);
-            
-            //create a builder but do it manually, we care about group bys etc or count(*) even 
-            AggregateBuilder builder;
-
-            //we are getting SQL for a cohort identification aggregate without a HAVING/count statement so it is actually just 'select patientIdentifier from tableX'
-            if (string.IsNullOrWhiteSpace(aggregate.HavingSQL) && string.IsNullOrWhiteSpace(aggregate.CountSQL))
-            {
-                //select list is the extraction identifier
-                string selectList;
-
-                //unless we are also including other columns because this is a patient index joinable inception query
-                selectList = string.Join("," + Environment.NewLine,
-                    aggregate.AggregateDimensions.Select(e => e.SelectSQL + (e.Alias != null ? " " + e.Alias : ""))); //joinable patient index tables have patientIdentifier + 1 or more other columns
-                
-                //select list is either [chi] or [chi],[mycolumn],[myexcitingcol] (in the case of a patient index table)
-                builder = new AggregateBuilder("distinct", selectList, aggregate, aggregate.ForcedJoins);
-
-                //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select 
-                builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(), false);
-            }
-            else
-            {
-                builder = new AggregateBuilder("distinct", aggregate.CountSQL, aggregate, aggregate.ForcedJoins);
-                builder.AddColumnRange(aggregate.AggregateDimensions.ToArray(), true);//it's a joinable inception query (See JoinableCohortAggregateConfiguration) - these are allowed additional columnsbuilder.DoNotWriteOutOrderBy = true;
-            }
-            
-            //set the where container
-            builder.RootFilterContainer = aggregate.RootFilterContainer;
-
-            //we will be harnessing the parameters via ImportAndElevate so do not add them to the SQL directly
-            builder.DoNotWriteOutParameters = true;
-            var builderSqlWithoutParameters = builder.SQL;
-
-            //get the SQL from the builder (for the current configuration) - without parameters
-            string currentBlock = builderSqlWithoutParameters;
-
-            //import parameters unless caching was used
-            Dictionary<string, string> renameOperations;
-            ParameterManager.ImportAndElevateResolvedParametersFromSubquery(builder.ParameterManager, out renameOperations);
-
-            //rename in the SQL too!
-            foreach (KeyValuePair<string, string> kvp in renameOperations)
-                currentBlock = ParameterCreator.RenameParameterInSQL(currentBlock, kvp.Key, kvp.Value);
-
-            return currentBlock;
-        }
-
-        /// <summary>
-        /// Returns a cohort aggregate (e.g. select distinct chi from X)  with an optional inception join to the given <paramref name="joinIfAny"/>
-        /// </summary>
-        /// <param name="aggregate"></param>
-        /// <returns></returns>
-        public string GetCachelessSQLForAggregate(AggregateConfiguration aggregate, JoinableCohortAggregateConfigurationUse joinIfAny,AggregateConfiguration joinedTo,string joinSql)
-        {
-            //make sure it is a valid configuration
-            string reason;
-            if (!aggregate.IsAcceptableAsCohortGenerationSource(out reason))
-                throw new QueryBuildingException("Cannot generate a cohort using AggregateConfiguration " + aggregate + " because:" + reason);
-
-            //get the extraction identifier (method IsAcceptableAsCohortGenerationSource will ensure this linq returns 1 so no need to check again)
-            AggregateDimension extractionIdentifier = aggregate.AggregateDimensions.Single(d => d.IsExtractionIdentifier);
-
-            //create a builder but do it manually, we care about group bys etc or count(*) even 
-            AggregateBuilder builder;
-
-            //we are getting SQL for a cohort identification aggregate without a HAVING/count statement so it is actually just 'select patientIdentifier from tableX'
-            if (string.IsNullOrWhiteSpace(aggregate.HavingSQL) && string.IsNullOrWhiteSpace(aggregate.CountSQL))
-            {
-                //select list is the extraction identifier
-                var selectList = extractionIdentifier.SelectSQL +  (extractionIdentifier.Alias != null ? " " + extractionIdentifier.Alias: "");
-      
-                string limitationSQL = "distinct";
-
-                //select list is either [chi] or [chi],[mycolumn],[myexcitingcol] (in the case of a patient index table)
-                builder = new AggregateBuilder(limitationSQL, selectList, aggregate, aggregate.ForcedJoins);
-
-                //false makes it skip them in the SQL it generates (it uses them only in determining JOIN requirements etc but since we passed in the select SQL explicitly it should be the equivellent of telling the query builder to generate a regular select 
-                builder.AddColumn(extractionIdentifier, false);
-            }
-            else
-            {
-                builder = new AggregateBuilder("distinct", aggregate.CountSQL, aggregate, aggregate.ForcedJoins);
-
-                //add the extraction information and do group by it
-                builder.AddColumn(extractionIdentifier, true);                
-                builder.DoNotWriteOutOrderBy = true;
-            }
-
-
             //Add the inception join
-            if (joinIfAny != null)
-            {
-                var joinableTableAlias = joinIfAny.GetJoinTableAlias();
-                string joinDirection = joinIfAny.GetJoinDirectionSQL();
-                
-                var joinOn = joinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
-
-                if (joinOn == null)
-                    throw new QueryBuildingException("AggregateConfiguration " + aggregate + " uses a join aggregate (patient index aggregate) of " + joinedTo + " but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
-
-                // will end up with something like this where 51 is the ID of the joinTable:
-                // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
-
-                builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + joinSql + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + extractionIdentifier.SelectSQL + " = " + joinableTableAlias + "." + joinOn.GetRuntimeName(),QueryComponent.JoinInfoJoin);
-            }
+            if (args?.JoinIfAny != null)
+                AddJoinToBuilder(aggregate,extractionIdentifier,builder, args);
             
+
             //set the where container
             builder.RootFilterContainer = aggregate.RootFilterContainer;
 
@@ -293,63 +119,20 @@ namespace Rdmp.Core.QueryBuilding
             return currentBlock;
         }
 
-        public void AddJoinablesToBuilder(AggregateBuilder builder, AggregateConfiguration aggregate, int tabDepth)
+        public void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
         {
-            var users = aggregate.Repository.GetAllObjectsWithParent<JoinableCohortAggregateConfigurationUse>(aggregate);
+            var joinableTableAlias = args.JoinIfAny.GetJoinTableAlias();
+            string joinDirection = args.JoinIfAny.GetJoinDirectionSQL();
+                
+            var joinOn = args.JoinedTo.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
 
-            foreach (var use in users)
-            {
+            if (joinOn == null)
+                throw new QueryBuildingException("AggregateConfiguration " + user + " uses a join aggregate (patient index aggregate) of " + args.JoinedTo + " but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
 
-                var joinableTableAlias = use.GetJoinTableAlias();
+            // will end up with something like this where 51 is the ID of the joinTable:
+            // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
 
-                var joinAggregate = use.JoinableCohortAggregateConfiguration.AggregateConfiguration;
-
-                var identifierCol = aggregate.AggregateDimensions.Single();
-                var identifierColInJoinAggregate = joinAggregate.AggregateDimensions.SingleOrDefault(d => d.IsExtractionIdentifier);
-
-                if (identifierColInJoinAggregate == null)
-                    throw new QueryBuildingException("AggregateConfiguration " + aggregate + " uses a join aggregate (patient index aggregate) of " + joinAggregate + " but that AggregateConfiguration does not have an IsExtractionIdentifier dimension so how are we supposed to join these tables on the patient identifier?");
-
-                var joinSQL = GetSQLForAggregate( joinAggregate, tabDepth + 1, true);
-
-                string joinDirection = use.GetJoinDirectionSQL();
-
-                // will end up with something like this where 51 is the ID of the joinTable:
-                // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
-
-                builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + joinSQL + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + identifierCol.SelectSQL + " = " + joinableTableAlias + "." + identifierColInJoinAggregate.GetRuntimeName(),QueryComponent.JoinInfoJoin);
-            }
+            builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + args.JoinSql + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + usersExtractionIdentifier.SelectSQL + " = " + joinableTableAlias + "." + joinOn.GetRuntimeName(),QueryComponent.JoinInfoJoin);
         }
-
-        private string GetSqlForBuilderForCheckingAgainstCache(AggregateBuilder builder)
-        {
-            string toReturn;
-
-            if (builder.ParameterManager.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].Any())
-                throw new NotSupportedException("Why did builder already have globals?");
-
-            //make sure the builder has the globals since it did have globals when it was committed to the cache
-            foreach (var g in _globals)
-                builder.ParameterManager.AddGlobalParameter(g);
-
-            //the result of the aggregate only (verbatim so that we can check vs the cache for this exact SQL being run in the recent past)
-            toReturn = builder.SQL;
-
-            //now that we have the verbatim SQL we should clear the globals since we will be processing all the aggregates into the CompositeQueryLevel together we don't want globals sneaking in there - caller might reuse the builder you see and we should leave it in the same state we found it
-            builder.ParameterManager.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].Clear();
-
-            return toReturn;
-        }
-
-
-        public void GetTabs(int tabDepth, out string tabs, out string tabplusOne)
-        {
-            tabs = "";
-            for (int i = 0; i < tabDepth; i++)
-                tabs += "\t";
-
-            tabplusOne = tabs + "\t";
-        }
-   
     }
 }

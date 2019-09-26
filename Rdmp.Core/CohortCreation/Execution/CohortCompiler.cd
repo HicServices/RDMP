@@ -15,10 +15,13 @@
   <Comment CommentText="Builds and executes SQL for subqueries">
     <Position X="13.776" Y="4.278" Height="0.291" Width="2.742" />
   </Comment>
+  <Comment CommentText="Provides fast access to cached objects with populated Lazy relationships">
+    <Position X="19.828" Y="3.924" Height="0.728" Width="2.294" />
+  </Comment>
   <Class Name="Rdmp.Core.CohortCreation.Execution.CohortCompiler">
     <Position X="7.75" Y="4.75" Width="5.25" />
     <TypeIdentifier>
-      <HashCode>gAAAACAAIAAKAAAAgEAAAAAAAAAAAAAEgEEIJCAEABA=</HashCode>
+      <HashCode>gAAAACAAIAAKAAAAgEAAAAAAAAAgAAAEgEEIJCAEABA=</HashCode>
       <FileName>CohortCreation\Execution\CohortCompiler.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -51,7 +54,7 @@
   <Class Name="Rdmp.Core.CohortCreation.Execution.CohortIdentificationTaskExecution">
     <Position X="11" Y="10.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>EAAAAIAAQCEAwAAAAAAAQAAAiAAAIBAABAABAAIAIAA=</HashCode>
+      <HashCode>EAAAAIAAQCEAwAAAAAAAQAAAyAAAABAABAABAAIAIAA=</HashCode>
       <FileName>CohortCreation\Execution\CohortIdentificationTaskExecution.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -85,16 +88,22 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.QueryBuilding.CohortQueryBuilder">
-    <Position X="13.75" Y="8.5" Width="4.25" />
+    <Position X="13.75" Y="4.75" Width="4.25" />
     <TypeIdentifier>
-      <HashCode>BAAAAAgASFIAAAAAgAMBAAAAAIDAAAAAQCQAAAQBLAk=</HashCode>
+      <HashCode>BAAAAAgASFIAAAAAAAEBAAIAAIDAAAgAQCQAAAQBLAg=</HashCode>
       <FileName>QueryBuilding\CohortQueryBuilder.cs</FileName>
     </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_childProvider" />
+      <Field Name="results" />
+      <Field Name="helper" />
+      <Property Name="CacheServer" />
+    </ShowAsAssociation>
   </Class>
   <Class Name="Rdmp.Core.QueryBuilding.CohortQueryBuilderHelper">
-    <Position X="13.75" Y="4.75" Width="2.75" />
+    <Position X="19.75" Y="5.75" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AAAAAAgAQAAAAAAAAAABAAgEAACAAAAAACAAAAABCAA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAAACABAAAAAAAAAAAAACAAAAAAAAA=</HashCode>
       <FileName>QueryBuilding\CohortQueryBuilderHelper.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -105,6 +114,58 @@
       <FileName>CohortCreation\Execution\Joinables\JoinableTask.cs</FileName>
     </TypeIdentifier>
   </Class>
+  <Class Name="Rdmp.Core.Curation.Data.ExternalDatabaseServer" Collapsed="true">
+    <Position X="17.5" Y="1.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAMQIIgAgEAAAAAUASIAAAUAAAAAAAACAAEAkgAAAAA=</HashCode>
+      <FileName>Curation\Data\ExternalDatabaseServer.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.CohortQueryBuilderResult">
+    <Position X="19.25" Y="8.25" Width="2.75" />
+    <Members>
+      <Field Name="_dependencies" Hidden="true" />
+    </Members>
+    <AssociationLine Name="CacheServer" Type="Rdmp.Core.Curation.Data.ExternalDatabaseServer" FixedFromPoint="true" FixedToPoint="true">
+      <Path>
+        <Point X="19.25" Y="13.017" />
+        <Point X="18.875" Y="13.017" />
+        <Point X="18.875" Y="2.441" />
+      </Path>
+    </AssociationLine>
+    <TypeIdentifier>
+      <HashCode>EABAAAAADACAIGCAUBMBQEAAIAhAAUAEAAACAAAgCGA=</HashCode>
+      <FileName>QueryBuilding\CohortQueryBuilderResult.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_dependencies" />
+      <Property Name="CacheUsageDecision" />
+      <Property Name="CacheServer" />
+      <Property Name="Helper" />
+    </ShowAsAssociation>
+    <ShowAsCollectionAssociation>
+      <Property Name="Dependencies" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.CohortQueryBuilderDependency">
+    <Position X="23.5" Y="9.5" Width="3" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>gAAAAABAAAAAQAAEAAAAAAIgCAAAgAAAAAggAIABAAA=</HashCode>
+      <FileName>QueryBuilding\CohortQueryBuilderResult.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.QueryBuilding.AggregateBuilder" Collapsed="true">
+    <Position X="23" Y="5.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>wCAAAAEAEBAihBhAQKAhQAAMAAJkAAAQTDQEQIAAbCQ=</HashCode>
+      <FileName>QueryBuilding\AggregateBuilder.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
   <Interface Name="Rdmp.Core.CohortCreation.ICompileable">
     <Position X="0.5" Y="4.75" Width="2.25" />
     <Compartments>
@@ -113,6 +174,13 @@
     <TypeIdentifier>
       <HashCode>AAABAAAAAAAAAIAAAAE0AAEAAAAAAAIEAAAABAAGACA=</HashCode>
       <FileName>CohortCreation\ICompileable.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.Providers.ICoreChildProvider" Collapsed="true">
+    <Position X="19.75" Y="4.75" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>E0QAggAAAUsABgAEkIA4AAQASISCIIBggFAlBSkABAI=</HashCode>
+      <FileName>Providers\ICoreChildProvider.cs</FileName>
     </TypeIdentifier>
   </Interface>
   <Enum Name="Rdmp.Core.CohortCreation.Execution.CompilationState">
@@ -127,6 +195,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAABAAAAAAAAAAAAABAAAAAAAAAABAAAAAAAAAAA=</HashCode>
       <FileName>Curation\Data\Cohort\SetOperation.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
+  <Enum Name="Rdmp.Core.QueryBuilding.CacheUsage">
+    <Position X="23.5" Y="7.75" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAgAAAAAAAAAAABAA=</HashCode>
+      <FileName>QueryBuilding\CohortQueryBuilderResult.cs</FileName>
     </TypeIdentifier>
   </Enum>
   <Font Name="Segoe UI" Size="9" />

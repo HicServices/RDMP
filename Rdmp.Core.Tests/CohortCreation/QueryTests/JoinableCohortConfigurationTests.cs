@@ -426,20 +426,17 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
             var anotherCol = aggregate2.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Single(e => e.GetRuntimeName().Equals("dtCreated"));
             aggregate2.AddDimension(anotherCol);
             
+            //create a caching server
             MasterDatabaseScriptExecutor scripter = new MasterDatabaseScriptExecutor(_queryCachingDatabase);
             scripter.CreateAndPatchDatabase(new QueryCachingPatcher(), new AcceptAllCheckNotifier());
 
             var queryCachingDatabaseServer = new ExternalDatabaseServer(CatalogueRepository, queryCachingDatabaseName,null);
             queryCachingDatabaseServer.SetProperties(_queryCachingDatabase);
             
-            var builder = new CohortQueryBuilder(aggregate1, null,null);
-
-            //make the builder use the query cache we just set SetUp
-            builder.CacheServer = queryCachingDatabaseServer;
             try
             {
                 
-               var builderForCaching = new CohortQueryBuilder(aggregate2, null,null, true);
+               var builderForCaching = new CohortQueryBuilder(aggregate2, null,null);
 
                 var cacheDt = new DataTable();
                 using (SqlConnection con = (SqlConnection)Database.Server.GetConnection())
@@ -454,6 +451,11 @@ ABS(DATEDIFF(year, {0}.dtCreated, ["+TestDatabaseNames.Prefix+@"ScratchArea]..[B
 
                 try
                 {
+                    var builder = new CohortQueryBuilder(aggregate1, null,null);
+
+                    //make the builder use the query cache we just set SetUp
+                    builder.CacheServer = queryCachingDatabaseServer;
+
                     Console.WriteLine(builder.SQL);
 
                     using (var con = (SqlConnection)Database.Server.GetConnection())

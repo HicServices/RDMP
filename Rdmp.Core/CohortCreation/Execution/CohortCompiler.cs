@@ -170,7 +170,7 @@ namespace Rdmp.Core.CohortCreation.Execution
             else if (joinable != null)
             {
                 task = new JoinableTask(joinable,this);
-                queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,CoreChildProvider,true);
+                queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,CoreChildProvider);
                 parent = null;
             }
             else

@@ -9,6 +9,7 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
@@ -148,10 +149,26 @@ namespace Rdmp.Core.QueryBuilding
             if (singleFilterOnly != null)
                 cohortRootContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, new [] { singleFilterOnly }, FilterContainerOperation.AND);
 
-            //so hacky, we pass in the summary builder (a blatant lie!) and tell the CohortQueryBuilderHelper it belongs to AggregateConfiguration _cohort (when it doesn't).  This
-            //will result in any PatientIndex tables associated with _cohort being propagated into the _summary builder
-            var cohortHelper = new CohortQueryBuilderHelper(_globals, new ParameterManager(_globals),_cohort.GetCohortIdentificationConfigurationIfAny().QueryCachingServer);
-            cohortHelper.AddJoinablesToBuilder(summaryBuilder,_cohort,1);
+            var joinUse = _cohort.PatientIndexJoinablesUsed.SingleOrDefault();
+            var joinTo = joinUse?.JoinableCohortAggregateConfiguration?.AggregateConfiguration;
+            
+            //if there is a patient index table we must join to it
+            if (joinUse != null)
+            {
+                //get sql for the join table
+                var builder = new CohortQueryBuilder(joinTo, _globals, null);
+                string joinableSql = builder.SQL;
+
+                var helper = new CohortQueryBuilderHelper( new ParameterManager(_globals));
+
+                var extractionIdentifierColumn = _summary.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+                    .Where(ei => ei.IsExtractionIdentifier).ToArray();
+
+                if(extractionIdentifierColumn.Length != 1)
+                    throw new Exception($"Catalogue behind {_summary} must have exactly 1 IsExtractionIdentifier column but it had " + extractionIdentifierColumn.Length);
+                
+                helper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null));
+            }
 
             //if the cohort has no WHERE SQL
             if (cohortRootContainer == null)

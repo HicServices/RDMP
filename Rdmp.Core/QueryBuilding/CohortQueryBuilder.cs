@@ -60,7 +60,6 @@ namespace Rdmp.Core.QueryBuilding
 
         private CohortAggregateContainer container;
         private AggregateConfiguration configuration;
-        private readonly bool _isExplicitRequestForJoinableInceptionAggregateQuery;
         
         /// <summary>
         /// The server on which the query must run.  This is used to accumulate all sub-queries and ensures
@@ -74,9 +73,6 @@ namespace Rdmp.Core.QueryBuilding
             set
             {
                 _cacheServer = value;
-                if(helper != null)
-                    helper.CacheServer = value;
-
                 SQLOutOfDate = true;
             }
         }
@@ -102,8 +98,6 @@ namespace Rdmp.Core.QueryBuilding
 
             foreach (ISqlParameter parameter in _globals)
                 ParameterManager.AddGlobalParameter(parameter);
-
-            RecreateHelpers();
         }
 
         public CohortQueryBuilder(CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider):this(configuration.GetAllParameters(),childProvider)
@@ -131,11 +125,10 @@ namespace Rdmp.Core.QueryBuilding
 
             SetChildProviderIfNull();
         }
-        public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider, bool isExplicitRequestForJoinableInceptionAggregateQuery = false): this(globals,childProvider)
+        public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider): this(globals,childProvider)
         {
             //set ourselves up to run with the root container
             configuration = config;
-            _isExplicitRequestForJoinableInceptionAggregateQuery = isExplicitRequestForJoinableInceptionAggregateQuery;
 
             SetChildProviderIfNull();
         }
@@ -149,34 +142,22 @@ namespace Rdmp.Core.QueryBuilding
 
         #endregion
 
-        public string GetDatasetSampleSQL(int topX = 1000)
+        public string GetDatasetSampleSQL(int topX = 1000,ICoreChildProvider childProvider = null)
         {
             if(configuration == null)
                 throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
 
-            //create a clone of ourselves so we don't mess up the ParameterManager of this instance
-            var cloneBuilder = new CohortQueryBuilder(configuration, _globals,_childProvider);
-            cloneBuilder.TopX = topX;
-            cloneBuilder.CacheServer = CacheServer;
+            RecreateHelpers(new QueryBuilderCustomArgs("*", "" /*removes distinct*/, topX));
 
-            //preview means we override the select columns with *
-            var overrideSelectList = "*";
-
-            // unless its a patient index table or has HAVING sql
-            if (!string.IsNullOrWhiteSpace(configuration.HavingSQL) || _isExplicitRequestForJoinableInceptionAggregateQuery)
-                overrideSelectList = null;
+            results.BuildFor(configuration);
             
-            string sampleSQL = 
-                cloneBuilder.GetSQLForAggregate(configuration,
-                0, 
-                _isExplicitRequestForJoinableInceptionAggregateQuery,
-                overrideSelectList,
-                ""); //gets rid of the distinct keyword
+            
+            string sampleSQL = results.Sql;
 
             string parameterSql = "";
 
-            //get resolved parameters for the select * query (via the clone builder
-            var finalParams = cloneBuilder.ParameterManager.GetFinalResolvedParametersList().ToArray();
+            //get resolved parameters for the select * query
+            var finalParams = ParameterManager.GetFinalResolvedParametersList().ToArray();
 
             if(finalParams.Any())
             {
@@ -191,7 +172,7 @@ namespace Rdmp.Core.QueryBuilding
         
         public void RegenerateSQL()
         {
-            RecreateHelpers();
+            RecreateHelpers(null);
 
             results.StopContainerWhenYouReach = _stopContainerWhenYouReach;
 
@@ -218,10 +199,10 @@ namespace Rdmp.Core.QueryBuilding
             SQLOutOfDate = false;
         }
 
-        private void RecreateHelpers()
+        private void RecreateHelpers(QueryBuilderCustomArgs customizations)
         {
-            helper = new CohortQueryBuilderHelper(_globals, ParameterManager, CacheServer);
-            results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper);
+            helper = new CohortQueryBuilderHelper(ParameterManager);
+            results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations);
         }
 
         /// <summary>
@@ -237,11 +218,6 @@ namespace Rdmp.Core.QueryBuilding
             }
         }
         
-        private string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null)
-        {
-            return helper.GetSQLForAggregate(aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL,TopX);
-        }
-
         public bool SQLOutOfDate { get; set; }
 
         private IOrderable _stopContainerWhenYouReach;

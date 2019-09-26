@@ -20,12 +20,13 @@ namespace Rdmp.Core.QueryBuilding
 {
     public class CohortQueryBuilderResult
     {
-        public ExternalDatabaseServer CacheServer { get;}
+        public ExternalDatabaseServer CacheServer { get; }
         public CachedAggregateConfigurationResultsManager CacheManager { get; }
 
         public bool IsForContainer { get; private set; }
         public ICoreChildProvider ChildProvider { get; }
         public CohortQueryBuilderHelper Helper { get; }
+        public QueryBuilderCustomArgs Customise { get; }
 
         private readonly StringBuilder _log = new StringBuilder();
 
@@ -69,11 +70,12 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="cacheServer"></param>
         /// <param name="childProvider"></param>
         /// <param name="helper"></param>
-        public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper)
+        public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise)
         {
             CacheServer = cacheServer;
             ChildProvider = childProvider;
             Helper = helper;
+            Customise = customise;
 
             if(cacheServer != null)
                 CacheManager = new CachedAggregateConfigurationResultsManager(CacheServer);
@@ -459,7 +461,7 @@ namespace Rdmp.Core.QueryBuilding
 
             if (JoinedTo != null)
             {
-                SqlJoinableCacheless = parent.Helper.GetCachelessSQLForJoinAggregate(JoinedTo);
+                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,new QueryBuilderArgs(parent.Customise));
                 SqlJoinableCached = GetCachFetchSqlIfPossible(parent,JoinedTo,SqlJoinableCacheless,true);
             }
 
@@ -468,7 +470,7 @@ namespace Rdmp.Core.QueryBuilding
             {
                 //explicit execution of a patient index table on it's own
                 //the full uncached SQL for the query
-                SqlCacheless = parent.Helper.GetCachelessSQLForJoinAggregate(CohortSet);
+                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise));
 
                 if(SqlJoinableCached != null)
                     throw new QueryBuildingException("Patient index tables can't use other patient index tables!");
@@ -476,15 +478,18 @@ namespace Rdmp.Core.QueryBuilding
             else
             {
                 //the full uncached SQL for the query
-                SqlCacheless = parent.Helper.GetCachelessSQLForAggregate(CohortSet,PatientIndexTableIfAny,JoinedTo,parent.TabIn(SqlJoinableCacheless,1));
+                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,
+                    new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
+                        parent.TabIn(SqlJoinableCacheless, 1),parent.Customise));
 
                 
                 //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join
                 if (SqlJoinableCached != null)
-                    SqlPartiallyCached = parent.Helper.GetCachelessSQLForAggregate(CohortSet, PatientIndexTableIfAny,JoinedTo, SqlJoinableCached);
+                    SqlPartiallyCached = parent.Helper.GetSQLForAggregate(CohortSet,
+                        new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
+                            SqlJoinableCached,parent.Customise));
             }
             
-
             //We would prefer a cache hit on the exact uncached SQL
             SqlFullyCached = GetCachFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable);
 
