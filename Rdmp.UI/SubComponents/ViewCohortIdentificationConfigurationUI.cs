@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.ComponentModel;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -59,13 +60,21 @@ namespace Rdmp.UI.SubComponents
         {
             QueryEditor.ReadOnly = false;
 
-            var cic = (CohortIdentificationConfiguration)DatabaseObject;
-            var builder = new CohortQueryBuilder(cic,null);
+            try
+            {
+                var cic = (CohortIdentificationConfiguration)DatabaseObject;
+                var builder = new CohortQueryBuilder(cic, null);
 
-            if(!btnUseCache.Checked && cic.QueryCachingServer_ID.HasValue)
-                builder.CacheServer = null;
+                if (!btnUseCache.Checked && cic.QueryCachingServer_ID.HasValue)
+                    builder.CacheServer = null;
 
-            QueryEditor.Text = builder.SQL;
+                QueryEditor.Text = builder.SQL;
+            }
+            catch (Exception ex)
+            {
+                QueryEditor.Text = ex.ToString();
+            }
+            
             
             QueryEditor.ReadOnly = true;
         }

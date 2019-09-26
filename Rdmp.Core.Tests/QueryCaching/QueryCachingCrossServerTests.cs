@@ -97,14 +97,14 @@ namespace Rdmp.Core.Tests.QueryCaching
             var compiler = new CohortCompiler(cic);
             var runner = new CohortCompilerRunner(compiler, 50000);
 
-            if(dbType == DatabaseType.MySql)
+            runner.Run(new CancellationToken());
+
+            if (dbType == DatabaseType.MySql)
             {
-                var ex = Assert.Throws<NotSupportedException>(() => runner.Run(new CancellationToken()));
-                StringAssert.Contains("INTERSECT / UNION / EXCEPT are not supported by MySql",ex.Message);
+                var crashed = compiler.Tasks.Single(t => t.Key.State == CompilationState.Crashed);    
+                StringAssert.Contains("INTERSECT / UNION / EXCEPT are not supported by MySql", crashed.Key.CrashMessage.Message);
                 return;
             }
-            else
-                runner.Run(new CancellationToken());
             
             AssertNoErrors(compiler);
 
