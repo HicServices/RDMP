@@ -47,7 +47,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
         public bool HasAtLeastOneColumnToStoreInDump { get; private set; }
 
         private const string IdentifierDumpCreatorStoredprocedure = "sp_createIdentifierDump";
-
+        
+        public bool HaveDumpedRecords { get; private set; }
 
         public IdentifierDumper(TableInfo tableInfo)
         {
@@ -119,8 +120,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
                         throw new Exception("IdentifierDumper STAGING insert (" + bulkCopy.DestinationTableName + ") failed, make sure you have called CreateSTAGINGTable() before trying to Dump identifiers (also you should call DropStagging() when you are done)",e);
                     }
                     MergeStagingWithLive(pks.Select(col => col.GetRuntimeName(LoadStage.AdjustRaw)).ToArray());
-                    
                 }
+
+                HaveDumpedRecords = true;
             }
             
             //now drop the columns
@@ -129,6 +131,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
                 {
                     if (preLoadDiscardedColumn.Destination != DiscardedColumnDestination.Dilute)
                         inDataTable.Columns.Remove(preLoadDiscardedColumn.RuntimeColumnName);
+
+                    HaveDumpedRecords = true;
                 }
                 else
                     throw new Exception("Could not find " + preLoadDiscardedColumn.RuntimeColumnName + " in pipeline column collection");
