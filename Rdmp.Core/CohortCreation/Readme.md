@@ -20,7 +20,7 @@ Consider the following cohort
   - People in Biochemistry with an HBA1C
   - People in Biochemistry with an NA
 
-![Simple Cohort Identification Configuration showing intersect of two datasets](./images/cic_simple.png)
+![Simple Cohort Identification Configuration showing intersect of two datasets](./Images/cic_simple.png)
 
 If we have no cache then the following SQL would be executed:
 
@@ -61,7 +61,7 @@ Caching provides the following benefits:
 
 The following flow chart describes the process RDMP uses to build a SET container (and determine where to execute the query):
 
-![Flowchart showing when/if RDMP will use a cache fetch in an SQL query](./images/flowchart.png)
+![Flowchart showing when/if RDMP will use a cache fetch in an SQL query](./Images/flowchart.png)
 
 _* If you are using credentials to access a table (e.g. username and password rather than integrated security) then differing credentials is treated as different servers (since a connection cannot be openned to both objects)_
 
@@ -108,4 +108,4 @@ The following classes play a role in building and executing cohort building quer
 
 ## Class Diagram
 
-![Class Diagram of cohort building](./images/classdiagram.png)
+![Class Diagram of cohort building](./Images/classdiagram.png)
