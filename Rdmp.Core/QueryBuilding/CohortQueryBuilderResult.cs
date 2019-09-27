@@ -213,6 +213,10 @@ namespace Rdmp.Core.QueryBuilding
 
             if (toWriteOut.Any())
                 sql += Environment.NewLine + TabIn( "(",tabs) + Environment.NewLine;
+            else
+            {
+                throw new QueryBuildingException($"Container '{container}' is empty, Disable it if you don't want it run'");
+            }
 
             bool firstEntityWritten = false;
             foreach (IOrderable toWrite in toWriteOut)

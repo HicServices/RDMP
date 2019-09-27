@@ -16,6 +16,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 using ReusableUIComponents.ChecksUI;
+using ScintillaNET;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {
@@ -415,6 +416,32 @@ namespace Rdmp.UI.TestsAndSetup.ServicePropogation
             catch (Exception)
             {
                 tb.ForeColor = Color.Red;
+            }
+        }
+
+        Dictionary<Scintilla,Color> _oldColours = new Dictionary<Scintilla, Color>();
+        /// <summary>
+        /// Sets the text color in the <paramref name="queryEditor"/> to red (or back to normal if <paramref name="red"/> is false).
+        /// </summary>
+        /// <param name="queryEditor"></param>
+        /// <param name="red"></param>
+        public void ScintillaGoRed(Scintilla queryEditor, bool red)
+        {
+            if(!_oldColours.ContainsKey(queryEditor))
+                _oldColours.Add(queryEditor, queryEditor.Styles[1].ForeColor);
+
+            if (red)
+            {
+                queryEditor.Styles[1].ForeColor = Color.Red;
+
+                queryEditor.StartStyling(0);
+                queryEditor.SetStyling(queryEditor.TextLength, 1);
+            }
+            else
+            {
+                queryEditor.Styles[1].ForeColor = _oldColours[queryEditor];
+                //resets styling
+                queryEditor.Text = queryEditor.Text;
             }
         }
     }

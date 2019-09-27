@@ -6,6 +6,7 @@
 
 using System;
 using System.ComponentModel;
+using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.QueryBuilding;
@@ -69,10 +70,12 @@ namespace Rdmp.UI.SubComponents
                     builder.CacheServer = null;
 
                 QueryEditor.Text = builder.SQL;
+                CommonFunctionality.ScintillaGoRed(QueryEditor, false);
             }
             catch (Exception ex)
             {
-                QueryEditor.Text = ex.ToString();
+                QueryEditor.Text = "Could not build Sql:" + ex.Message;
+                CommonFunctionality.ScintillaGoRed(QueryEditor, true);
             }
             
             
