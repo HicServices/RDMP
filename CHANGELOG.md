@@ -26,6 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed bug where `DropTableIfLoadFails` of `ExecuteFullExtractionToDatabaseMSSql` would (under fail conditions) drop the destination table even if the table was created by a previous execution of the same pipeline.
 - Fixed bug where adding a Catalogue to a cohort set container would create an extra duplicate copy (which would appear under orphans)
 - Improved cross server cohort query building (e.g. combining cohort sets on seperate servers / server types)
+- Fixed bug in checks dual reporting some errors when clicking on red angry face icons
 
 ### Removed
 

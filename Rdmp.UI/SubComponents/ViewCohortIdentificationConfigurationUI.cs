@@ -60,6 +60,7 @@ namespace Rdmp.UI.SubComponents
         private void GenerateQuery()
         {
             QueryEditor.ReadOnly = false;
+            CommonFunctionality.ResetChecks();
 
             try
             {
@@ -76,6 +77,7 @@ namespace Rdmp.UI.SubComponents
             {
                 QueryEditor.Text = "Could not build Sql:" + ex.Message;
                 CommonFunctionality.ScintillaGoRed(QueryEditor, true);
+                CommonFunctionality.Fatal("Failed to build query" ,ex);
             }
             
             

@@ -174,7 +174,8 @@ namespace ReusableUIComponents.ChecksUI
                 var popup = new PopupChecksUI("Record of events", false);
                 new ReplayCheckable(memoryCheckNotifier).Check(popup);
 
-                if (tag != null)
+                //if we have a tagged Exception that isn't included in the ToMemoryCheckNotifier we should show the user that one too
+                if (tag != null && memoryCheckNotifier.Messages.All(m=>m.Ex != tag))
                     popup.OnCheckPerformed(new CheckEventArgs(tag.Message, CheckResult.Fail, tag));
 
                 return true;
