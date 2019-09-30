@@ -360,7 +360,11 @@ namespace Rdmp.UI.SubComponents
         public void StartThisTaskOnly(IMapsDirectlyToDatabaseTable configOrContainer)
         {
             var task = Compiler.AddTask(configOrContainer, _globals);
-
+            if (task.State == CompilationState.Crashed)
+            {
+                ExceptionViewer.Show("Task failed to build",task.CrashMessage);
+                return;
+            }
             //Cancel the task and remove it from the Compilers task list - so it no longer knows about it
             Compiler.CancelTask(task, true);
             
