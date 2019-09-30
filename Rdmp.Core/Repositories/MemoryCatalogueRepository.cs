@@ -526,6 +526,11 @@ namespace Rdmp.Core.Repositories
         {
             return new SimpleStringValueEncryption(null);
         }
+        public void ClearAllInjections()
+        {
+
+        }
         #endregion
+
     }
 }

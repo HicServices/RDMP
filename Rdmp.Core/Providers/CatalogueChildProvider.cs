@@ -199,6 +199,8 @@ namespace Rdmp.Core.Providers
         {
             _commentStore = repository.CommentStore;
             _catalogueRepository = repository;
+            _catalogueRepository?.EncryptionManager?.ClearAllInjections();
+
             _errorsCheckNotifier = errorsCheckNotifier ?? new IgnoreAllErrorsCheckNotifier();
 
             // all the objects which are 

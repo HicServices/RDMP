@@ -9,6 +9,7 @@ using System.Data.Common;
 using System.IO;
 using System.Security.Cryptography;
 using System.Xml.Serialization;
+using MapsDirectlyToDatabaseTable.Injection;
 using Rdmp.Core.Curation;
 using ReusableLibraryCode;
 
@@ -21,7 +22,7 @@ namespace Rdmp.Core.Repositories.Managers
     /// 
     /// <para>See PasswordEncryptionKeyLocationUI for more information.</para>
     /// </summary>
-    public class PasswordEncryptionKeyLocation : IEncryptionManager
+    public class PasswordEncryptionKeyLocation : IEncryptionManager, IInjectKnown
     {
         private readonly CatalogueRepository _catalogueRepository;
 
@@ -32,6 +33,8 @@ namespace Rdmp.Core.Repositories.Managers
         public PasswordEncryptionKeyLocation(CatalogueRepository catalogueRepository)
         {
             _catalogueRepository = catalogueRepository;
+
+            ClearAllInjections();
         }
 
         public IEncryptStrings GetEncrypter()
@@ -40,14 +43,21 @@ namespace Rdmp.Core.Repositories.Managers
         }
 
 
+        Lazy<string> _knownKeyFileLocation;
+
         /// <summary>
         /// Gets the physical file path to the currently configured RSA private key for encrypting/decrypting passwords or null if no
-        /// custom keyfile has been created yet.
+        /// custom keyfile has been created yet.  The answer to this question is cached, call <see cref="ClearAllInjections"/> to reset
+        /// the cache
         /// </summary>
         /// <returns></returns>
         public string GetKeyFileLocation()
         {
+            return _knownKeyFileLocation.Value;
+        }
 
+        private string GetKeyFileLocationImpl()
+        {
             using (var con = _catalogueRepository.DiscoveredServer.GetConnection())
             {
                 con.Open();
@@ -104,6 +114,8 @@ namespace Rdmp.Core.Repositories.Managers
         /// <returns></returns>
         public FileInfo CreateNewKeyFile(string path)
         {
+            ClearAllInjections();
+
             string existingKey = GetKeyFileLocation();
             if (existingKey != null)
                 throw new NotSupportedException("There is already a key file at location:" + existingKey);
@@ -131,6 +143,8 @@ namespace Rdmp.Core.Repositories.Managers
                 cmd.ExecuteNonQuery();
             }
 
+            ClearAllInjections();
+            
             return fileInfo;
         }
 
@@ -140,6 +154,8 @@ namespace Rdmp.Core.Repositories.Managers
         /// <param name="newLocation"></param>
         public void ChangeLocation(string newLocation)
         {
+            ClearAllInjections();
+
             if (!File.Exists(newLocation))
                 throw new FileNotFoundException("Could not find key file at:" + newLocation);
 
@@ -157,6 +173,8 @@ namespace Rdmp.Core.Repositories.Managers
                 DatabaseCommandHelper.AddParameterWithValueToCommand("@Path", cmd, newLocation);
                 cmd.ExecuteNonQuery();
             }
+
+            ClearAllInjections();
         }
 
         /// <summary>
@@ -165,6 +183,8 @@ namespace Rdmp.Core.Repositories.Managers
         /// </summary>
         public void DeleteKey()
         {
+            ClearAllInjections();
+
             string existingKey = GetKeyFileLocation();
 
             if (existingKey == null)
@@ -179,6 +199,13 @@ namespace Rdmp.Core.Repositories.Managers
                 if (affectedRows != 1)
                     throw new Exception("Delete from PasswordEncryptionKeyLocation resulted in " + affectedRows + ", expected 1");
             }
+
+            ClearAllInjections();
+        }
+
+        public void ClearAllInjections()
+        {
+            _knownKeyFileLocation = new Lazy<string>(GetKeyFileLocationImpl);
         }
     }
 }

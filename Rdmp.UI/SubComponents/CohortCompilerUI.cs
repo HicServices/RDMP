@@ -517,7 +517,7 @@ namespace Rdmp.UI.SubComponents
             var o = tlvConfiguration.SelectedObject as ICompileable;
             if (o != null)
                 if(o.CrashMessage != null)
-                    WideMessageBox.Show($"Task '{o}' Failed.","  Build Log:" + Environment.NewLine + o.Log + Environment.NewLine + o.CrashMessage,WideMessageBoxTheme.Exception);
+                    WideMessageBox.Show($"Task '{o}' Failed.", o.CrashMessage.Message + Environment.NewLine + Environment.NewLine + "Build Log:" + Environment.NewLine + o.Log,o.CrashMessage.StackTrace);
                 else
                     WideMessageBox.Show("Build Log", o.Log,WideMessageBoxTheme.Help);
         }

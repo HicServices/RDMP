@@ -21,6 +21,7 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -37,11 +38,20 @@ namespace Rdmp.Core.CohortCreation.Execution
     {
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
         public bool IncludeCumulativeTotals { get; set; }
-        public ICoreChildProvider CoreChildProvider { get; set; }
+
+        /// <summary>
+        /// Returns the current child provider (creating it if none has been injected yet).
+        /// </summary>
+        public ICoreChildProvider CoreChildProvider
+        {
+            get => _coreChildProvider = _coreChildProvider ?? new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier());
+            set => _coreChildProvider = value;
+        }
 
         public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new Dictionary<ICompileable, CohortIdentificationTaskExecution>();
         
         public List<Thread> Threads = new List<Thread>();
+        private ICoreChildProvider _coreChildProvider;
 
         public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
         {

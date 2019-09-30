@@ -101,7 +101,7 @@ namespace Rdmp.Core.QueryBuilding
 
             _log.AppendLine("Starting Build for " + container);
             //gather dependencies
-            foreach(var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>().OrderBy(ac=>ac.Order))
+            foreach(var cohortSet in ChildProvider.GetAllChildrenRecursively(container).OfType<AggregateConfiguration>().Where(IsEnabled).OrderBy(ac=>ac.Order))
                 AddDependency(cohortSet);
             
             if(!Dependencies.Any())
@@ -255,7 +255,13 @@ namespace Rdmp.Core.QueryBuilding
         /// <returns></returns>
         private bool IsEnabled(IOrderable arg)
         {
-            //skip disabled things
+            var parentDisabled = ChildProvider.GetDescendancyListIfAnyFor(arg)?.Parents.Any(p => p is IDisableable d && d.IsDisabled);
+
+            //if a parent is disabled
+            if (parentDisabled.HasValue && parentDisabled.Value)
+                return false;
+
+            //or you yourself are disabled
             var dis = arg as IDisableable;
             return dis == null || !dis.IsDisabled;
         }

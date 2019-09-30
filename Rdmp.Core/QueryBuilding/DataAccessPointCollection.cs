@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode.DataAccess;
@@ -116,6 +117,9 @@ namespace Rdmp.Core.QueryBuilding
                 }
                 catch (Exception e)
                 {
+                    if (e is CryptographicException)
+                        throw;
+
                     throw new InvalidOperationException(
                         $"Could not identify single set of server/credentials to use with points:" +
                         string.Join(Environment.NewLine, tempList), e);
