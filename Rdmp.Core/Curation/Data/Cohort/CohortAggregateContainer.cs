@@ -185,6 +185,9 @@ namespace Rdmp.Core.Curation.Data.Cohort
         /// <param name="child"></param>
         public void AddChild(CohortAggregateContainer child)
         {
+            if(child.IsRootContainer())
+                throw new InvalidOperationException("Root containers cannot be added as subcontainers");
+
             CreateInsertionPointAtOrder(child,child.Order,true);
             _manager.Add(this,child);
         }
