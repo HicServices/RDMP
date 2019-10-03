@@ -16,7 +16,7 @@ using FAnsi.Discovery;
 using Rdmp.UI;
 using ReusableLibraryCode;
 
-namespace ReusableUIComponents
+namespace Rdmp.UI.SimpleControls
 {
     public delegate void IntegratedSecurityUseChangedHandler(bool use);
 

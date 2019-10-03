@@ -15,7 +15,7 @@ using BrightIdeasSoftware;
 using Rdmp.UI.Performance.StackTraceProcessing;
 using ReusableLibraryCode.Performance;
 
-namespace ReusableUIComponents.Performance
+namespace Rdmp.UI.Performance
 {
     /// <summary>
     /// Displays detailed breakdown of database queries sent by the RDMP during Performance Logging (See PerformanceCounterUI).  The colour of the row indicates the number of times a database

@@ -1,5 +1,5 @@
 ﻿using Rdmp.UI.ChecksUI;
-using Rdmp.UI.Heatmapping;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.AggregationUIs
 {

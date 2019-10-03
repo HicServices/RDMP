@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace ReusableUIComponents.Icons {
+namespace Rdmp.UI.Icons {
     using System;
     
     

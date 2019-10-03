@@ -1,4 +1,4 @@
-﻿namespace ReusableUIComponents.Settings
+﻿namespace Rdmp.UI.SimpleDialogs
 {
     partial class UserSettingsFileUI
     {

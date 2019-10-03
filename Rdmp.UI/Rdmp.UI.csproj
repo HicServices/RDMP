@@ -143,10 +143,10 @@
     <Compile Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.Designer.cs">
       <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
     </Compile>
-    <Compile Update="Heatmapping\HeatmapUI.cs">
+    <Compile Update="SimpleControls\HeatmapUI.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="Heatmapping\HeatmapUI.Designer.cs">
+    <Compile Update="SimpleControls\HeatmapUI.Designer.cs">
       <DependentUpon>HeatmapUI.cs</DependentUpon>
     </Compile>
     <Compile Update="Icons\ChecksAndProgressIcons.Designer.cs">
@@ -200,10 +200,10 @@
     <Compile Update="RichTextBoxEx.cs">
       <SubType>Component</SubType>
     </Compile>
-    <Compile Update="ServerDatabaseTableSelector.cs">
+    <Compile Update="SimpleControls\ServerDatabaseTableSelector.cs">
       <SubType>UserControl</SubType>
     </Compile>
-    <Compile Update="ServerDatabaseTableSelector.Designer.cs">
+    <Compile Update="SimpleControls\ServerDatabaseTableSelector.Designer.cs">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </Compile>
     <Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.cs">
@@ -212,10 +212,10 @@
     <Compile Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.Designer.cs">
       <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
     </Compile>
-    <Compile Update="Settings\UserSettingsUI.cs">
+    <Compile Update="SimpleDialogs\UserSettingsUI.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Update="Settings\UserSettingsUI.Designer.cs">
+    <Compile Update="SimpleDialogs\UserSettingsUI.Designer.cs">
       <DependentUpon>UserSettingsUI.cs</DependentUpon>
     </Compile>
     <Compile Update="SimpleControls\HelpIcon.cs">
@@ -424,7 +424,7 @@
     <EmbeddedResource Update="SimpleDialogs\ExceptionViewerStackTraceWithHyperlinks.resx">
       <DependentUpon>ExceptionViewerStackTraceWithHyperlinks.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Heatmapping\HeatmapUI.resx">
+    <EmbeddedResource Update="SimpleControls\HeatmapUI.resx">
       <DependentUpon>HeatmapUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
@@ -454,13 +454,13 @@
     <EmbeddedResource Update="ProjectUI\ExecuteExtractionUI.resx">
       <SubType>Designer</SubType>
     </EmbeddedResource>
-    <EmbeddedResource Update="ServerDatabaseTableSelector.resx">
+    <EmbeddedResource Update="SimpleControls\ServerDatabaseTableSelector.resx">
       <DependentUpon>ServerDatabaseTableSelector.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="SimpleDialogs\ServerDatabaseTableSelectorDialog.resx">
       <DependentUpon>ServerDatabaseTableSelectorDialog.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Update="Settings\UserSettingsUI.resx">
+    <EmbeddedResource Update="SimpleDialogs\UserSettingsUI.resx">
       <DependentUpon>UserSettingsUI.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Update="SimpleControls\HelpIcon.resx">

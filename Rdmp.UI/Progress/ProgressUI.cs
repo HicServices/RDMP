@@ -11,15 +11,13 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.UI.Icons;
 using Rdmp.UI.Progress;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Progress;
 
-using ReusableUIComponents.Icons;
-using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
-
-namespace ReusableUIComponents.Progress
+namespace Rdmp.UI.Progress
 {
     /// <summary>
     /// There are two main event systems in play in the RDMP.  There is Checking and Progress.  Checking activities are tasks that should be supervised and can block asking the user

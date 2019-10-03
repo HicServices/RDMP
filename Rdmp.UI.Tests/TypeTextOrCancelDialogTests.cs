@@ -5,13 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
-using ReusableUIComponents;
+
 
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
 using Rdmp.UI.SimpleDialogs;
-using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.Tests
 {

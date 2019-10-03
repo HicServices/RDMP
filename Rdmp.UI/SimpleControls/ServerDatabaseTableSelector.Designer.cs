@@ -1,7 +1,7 @@
 ﻿using Rdmp.UI.SimpleControls;
 using Rdmp.UI.ChecksUI;
 
-namespace ReusableUIComponents
+namespace Rdmp.UI.SimpleControls
 {
     partial class ServerDatabaseTableSelector
     {
@@ -66,7 +66,7 @@ namespace ReusableUIComponents
             // 
             // cbxTable
             // 
-            this.cbxTable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbxTable.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxTable.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.cbxTable.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
@@ -90,7 +90,7 @@ namespace ReusableUIComponents
             // 
             // cbxDatabase
             // 
-            this.cbxDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbxDatabase.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxDatabase.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cbxDatabase.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
@@ -116,7 +116,7 @@ namespace ReusableUIComponents
             // 
             // cbxServer
             // 
-            this.cbxServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbxServer.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxServer.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Suggest;
             this.cbxServer.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;
@@ -150,7 +150,7 @@ namespace ReusableUIComponents
             // 
             // cbxTableValueFunctions
             // 
-            this.cbxTableValueFunctions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left) 
+            this.cbxTableValueFunctions.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.cbxTableValueFunctions.AutoCompleteMode = System.Windows.Forms.AutoCompleteMode.Append;
             this.cbxTableValueFunctions.AutoCompleteSource = System.Windows.Forms.AutoCompleteSource.ListItems;

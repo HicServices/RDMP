@@ -15,7 +15,7 @@ using ReusableLibraryCode;
 
 
 
-namespace ReusableUIComponents
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Displays an in-depth technical report about an error that occurred during a task.  The error messages and the location in each class file in the stack is displayed including line 

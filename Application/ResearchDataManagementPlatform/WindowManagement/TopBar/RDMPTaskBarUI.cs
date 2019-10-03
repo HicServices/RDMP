@@ -16,7 +16,7 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar

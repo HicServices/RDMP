@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using ReusableLibraryCode.Settings;
 using ScintillaNET;
 
-namespace ReusableUIComponents.Settings
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Allows you to change settings in the application that are optional e.g. whether to load the Home screen on startup or to load the state of the application when you last closed it.

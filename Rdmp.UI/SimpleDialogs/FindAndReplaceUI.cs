@@ -20,7 +20,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 
-namespace Rdmp.UI.FindAndReplace
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Allows you to perform database wide find and replace operations.  This is a useful but very dangerous feature, it is possible to very easily break your Catalogue.  The 

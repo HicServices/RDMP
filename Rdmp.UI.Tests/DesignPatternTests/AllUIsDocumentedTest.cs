@@ -62,7 +62,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
         {
             "System.ComponentModel.Design",
             "System.Windows.Forms",
-            "ReusableUIComponents.ScintillaHelper"
         };
 
         private IEnumerable<string> EnforceTypeBelongsInNamespace(Type InterfaceType, params string[] legalNamespaces)

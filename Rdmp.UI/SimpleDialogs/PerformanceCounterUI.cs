@@ -7,9 +7,10 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.UI.Performance;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Performance;
-using ReusableUIComponents.Performance;
+
 
 namespace Rdmp.UI.SimpleDialogs
 {

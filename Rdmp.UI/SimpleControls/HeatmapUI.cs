@@ -11,10 +11,11 @@ using System.Drawing.Imaging;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Settings;
 
-namespace Rdmp.UI.Heatmapping
+namespace Rdmp.UI.SimpleControls
 {
     /// <summary>
     /// Displays complicated many dimension pivot Aggregate graphs in an understandable format.  Requires a result data table that contains an axis in the first column of hte data table

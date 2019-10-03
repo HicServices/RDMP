@@ -9,9 +9,10 @@ using System.Drawing;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.UI.Icons;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.Icons;
+
 
 namespace Rdmp.UI.ChecksUI
 {

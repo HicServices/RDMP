@@ -8,8 +8,10 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Performance;
-using ReusableUIComponents;
+
+
 
 namespace Rdmp.UI.Performance.StackTraceProcessing
 {

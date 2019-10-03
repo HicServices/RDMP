@@ -16,7 +16,7 @@ using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
+
 using Enum = System.Enum;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs

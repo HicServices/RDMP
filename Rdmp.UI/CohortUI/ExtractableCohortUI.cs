@@ -21,7 +21,7 @@ using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableUIComponents;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.CohortUI

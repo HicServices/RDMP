@@ -15,7 +15,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups

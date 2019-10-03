@@ -26,7 +26,7 @@ using ResearchDataManagementPlatform.WindowManagement.ExtenderFunctionality;
 using ResearchDataManagementPlatform.WindowManagement.Licenses;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
+
 
 using WeifenLuo.WinFormsUI.Docking;
 

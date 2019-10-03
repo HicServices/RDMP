@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
 
-namespace ReusableUIComponents
+namespace Rdmp.UI.SimpleDialogs
 {
     /// <summary>
     /// Modal dialog that prompts you to pick a database or table (<see cref="ServerDatabaseTableSelector"/>)

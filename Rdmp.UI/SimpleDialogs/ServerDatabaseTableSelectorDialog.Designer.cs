@@ -1,4 +1,6 @@
-﻿namespace ReusableUIComponents
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.SimpleDialogs
 {
     partial class ServerDatabaseTableSelectorDialog
     {
@@ -28,7 +30,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.btnCreate = new System.Windows.Forms.Button();
             this.btnOk = new System.Windows.Forms.Button();
             this.btnCancel = new System.Windows.Forms.Button();

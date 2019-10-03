@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.CohortUI.CohortSourceManagement
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.CohortUI.CohortSourceManagement
 {
     partial class ExternalCohortTableUI
     {
@@ -48,7 +50,7 @@
             this.groupBox3 = new System.Windows.Forms.GroupBox();
             this.tbDefinitionTableName = new System.Windows.Forms.TextBox();
             this.label14 = new System.Windows.Forms.Label();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.panel1 = new System.Windows.Forms.Panel();
             this.groupBox1.SuspendLayout();
             this.groupBox3.SuspendLayout();
@@ -316,7 +318,7 @@
         private System.Windows.Forms.GroupBox groupBox3;
         private System.Windows.Forms.TextBox tbDefinitionTableName;
         private System.Windows.Forms.Label label14;
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.Panel panel1;
     }
 }

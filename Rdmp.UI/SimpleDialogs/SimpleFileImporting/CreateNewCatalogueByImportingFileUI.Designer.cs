@@ -1,4 +1,5 @@
-﻿using Rdmp.UI.ChecksUI;
+﻿using Rdmp.UI.SimpleControls;
+using Rdmp.UI.ChecksUI;
 
 namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 {
@@ -38,7 +39,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             this.btnBrowse = new System.Windows.Forms.Button();
             this.gbPickDatabase = new System.Windows.Forms.GroupBox();
             this.btnConfirmDatabase = new System.Windows.Forms.Button();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.gbPickPipeline = new System.Windows.Forms.GroupBox();
             this.ddPipeline = new System.Windows.Forms.ComboBox();
             this.gbExecute = new System.Windows.Forms.GroupBox();
@@ -289,7 +290,7 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
         private System.Windows.Forms.Button btnClearFile;
         private System.Windows.Forms.Label lblFile;
         private System.Windows.Forms.GroupBox gbPickDatabase;
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.Button btnConfirmDatabase;
         private System.Windows.Forms.GroupBox gbPickPipeline;
         private System.Windows.Forms.ComboBox ddPipeline;

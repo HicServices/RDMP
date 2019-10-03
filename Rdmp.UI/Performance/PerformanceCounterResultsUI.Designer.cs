@@ -1,6 +1,6 @@
 ﻿using BrightIdeasSoftware;
 
-namespace ReusableUIComponents.Performance
+namespace Rdmp.UI.Performance
 {
     partial class PerformanceCounterResultsUI
     {
@@ -45,8 +45,8 @@ namespace ReusableUIComponents.Performance
             // 
             this.tlvLocations.AllColumns.Add(this.olvStackFrame);
             this.tlvLocations.AllColumns.Add(this.olvQueryCount);
-            this.tlvLocations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
-            | System.Windows.Forms.AnchorStyles.Left) 
+            this.tlvLocations.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom)
+            | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tlvLocations.CellEditUseWholeCell = false;
             this.tlvLocations.Columns.AddRange(new System.Windows.Forms.ColumnHeader[] {
@@ -101,7 +101,7 @@ namespace ReusableUIComponents.Performance
             // 
             // tbFilter
             // 
-            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            this.tbFilter.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)
             | System.Windows.Forms.AnchorStyles.Right)));
             this.tbFilter.Location = new System.Drawing.Point(44, 667);
             this.tbFilter.Name = "tbFilter";

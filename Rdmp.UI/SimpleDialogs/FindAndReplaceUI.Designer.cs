@@ -1,4 +1,4 @@
-﻿namespace Rdmp.UI.FindAndReplace
+﻿namespace Rdmp.UI.SimpleDialogs
 {
     partial class FindAndReplaceUI
     {

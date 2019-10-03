@@ -27,7 +27,7 @@ using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
+
 
 using ScintillaNET;
 using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;

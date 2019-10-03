@@ -37,7 +37,7 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
             this.olvNumberOfTimesSeen = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.btnDiscoverExtractionIdentifiers = new System.Windows.Forms.Button();
             this.btnNext = new System.Windows.Forms.Button();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.label2 = new System.Windows.Forms.Label();
             this.cbAllowNullReleaseIdentifiers = new System.Windows.Forms.CheckBox();
             this.helpIcon1 = new HelpIcon();
@@ -189,7 +189,7 @@ namespace Rdmp.UI.CohortUI.CohortSourceManagement
         private BrightIdeasSoftware.OLVColumn olvNumberOfTimesSeen;
         private System.Windows.Forms.Button btnDiscoverExtractionIdentifiers;
         public System.Windows.Forms.Button btnNext;
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox cbAllowNullReleaseIdentifiers;
         private HelpIcon helpIcon1;

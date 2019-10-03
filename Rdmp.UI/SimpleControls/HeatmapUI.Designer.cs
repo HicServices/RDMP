@@ -1,4 +1,4 @@
-﻿namespace Rdmp.UI.Heatmapping
+﻿namespace Rdmp.UI.SimpleControls
 {
     partial class HeatmapUI
     {

@@ -9,7 +9,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 
-namespace Rdmp.UI.Heatmapping
+namespace Rdmp.UI.SimpleControls
 {
     /// <summary>
     /// Generates colours on the visual spectrum between blue and red using interoplation.

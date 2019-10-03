@@ -17,9 +17,10 @@ using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
 using Rdmp.UI.ChecksUI;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
+
 
 
 namespace Rdmp.UI.LocationsMenu

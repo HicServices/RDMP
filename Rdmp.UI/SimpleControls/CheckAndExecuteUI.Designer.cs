@@ -1,4 +1,5 @@
 ﻿using Rdmp.UI.ChecksUI;
+using Rdmp.UI.Progress;
 
 namespace Rdmp.UI.SimpleControls
 {
@@ -41,7 +42,7 @@ namespace Rdmp.UI.SimpleControls
             this.btnRunChecks = new System.Windows.Forms.Button();
             this.gbLoad = new System.Windows.Forms.GroupBox();
             this.checksUI1 = new ChecksUI.ChecksUI();
-            this.loadProgressUI1 = new ReusableUIComponents.Progress.ProgressUI();
+            this.loadProgressUI1 = new ProgressUI();
             this.gbControls.SuspendLayout();
             this.gbLoad.SuspendLayout();
             this.SuspendLayout();
@@ -187,6 +188,6 @@ namespace Rdmp.UI.SimpleControls
         private System.Windows.Forms.Button btnRunChecks;
         private System.Windows.Forms.GroupBox gbLoad;
         private ChecksUI.ChecksUI checksUI1;
-        private ReusableUIComponents.Progress.ProgressUI loadProgressUI1;
+        private ProgressUI loadProgressUI1;
     }
 }

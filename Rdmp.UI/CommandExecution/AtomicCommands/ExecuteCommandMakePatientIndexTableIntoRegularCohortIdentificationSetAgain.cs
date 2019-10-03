@@ -10,7 +10,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
-using ReusableUIComponents;
+
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

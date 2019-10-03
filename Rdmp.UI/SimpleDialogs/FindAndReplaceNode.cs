@@ -7,11 +7,11 @@
 using System.Globalization;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using FAnsi.Extensions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
-using FAnsi.Extensions;
 
-namespace Rdmp.UI.FindAndReplace
+namespace Rdmp.UI.SimpleDialogs
 {
     internal class FindAndReplaceNode:IMasqueradeAs
     {

@@ -1,4 +1,4 @@
-﻿namespace ReusableUIComponents
+﻿namespace Rdmp.UI.SimpleDialogs
 {
     partial class ExceptionViewerStackTraceWithHyperlinks
     {

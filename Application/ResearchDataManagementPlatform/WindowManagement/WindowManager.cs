@@ -22,7 +22,7 @@ using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Pers
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
+
 
 using WeifenLuo.WinFormsUI.Docking;
 
