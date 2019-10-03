@@ -7,7 +7,10 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Moq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
@@ -28,8 +31,6 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 typeof(ExecuteCommandSetDataAccessContextForCredentials),
                 typeof(ExecuteCommandActivate),
                 typeof(ExecuteCommandCreateNewExternalDatabaseServer),
-                typeof(ExecuteCommandDelete),
-                typeof(ExecuteCommandRename),
                 typeof(ExecuteCommandShowKeywordHelp),
                 typeof(ExecuteCommandCollapseChildNodes),
                 typeof(ExecuteCommandExpandAllNodes),
@@ -83,18 +84,27 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
             Console.WriteLine("Looking in" + typeof (ExecuteCommandCreateNewExtractableDataSetPackage).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandViewCohortAggregateGraph).Assembly);
             Console.WriteLine("Looking in" + typeof(ExecuteCommandUnpin).Assembly);
+
+            var uiTests = new UITests();
+            var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());
+            activator.RepositoryLocator.CatalogueRepository.MEF = CatalogueRepository.MEF;
+
+            var run = new RunUI(activator);
+            allowedToBeIncompatible.AddRange(run.GetIgnoredCommands());
+
+            var commandCaller = new CommandCaller(run,RepositoryLocator);
             
-            allowedToBeIncompatible.AddRange(RunUI.GetIgnoredCommands());
+            Assert.IsTrue(commandCaller.IsSupported(typeof(ExecuteCommandDelete)));
 
             var notSupported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
                 .Where(t=>typeof(IAtomicCommand).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface) //must be something we would normally expect to be a supported Type
-                .Where(t => !RunUI.IsSupported(t)) //but for some reason isn't
+                .Where(t => !commandCaller.IsSupported(t)) //but for some reason isn't
                 .Except(allowedToBeIncompatible) //and isn't a permissable one
                 .ToArray();
             
             Assert.AreEqual(0,notSupported.Length,"The following commands were not compatible with RunUI:" + Environment.NewLine + string.Join(Environment.NewLine,notSupported.Select(t=>t.Name)));
 
-            var supported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(RunUI.IsSupported).ToArray();
+            var supported = RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(commandCaller.IsSupported).ToArray();
 
             Console.WriteLine("The following commands are supported:" + Environment.NewLine + string.Join(Environment.NewLine,supported.Select(cmd=>cmd.Name)));
 

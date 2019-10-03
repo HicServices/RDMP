@@ -80,6 +80,7 @@ namespace rdmp
                             ReleaseOptions,
                             CohortCreationOptions,
                             PackOptions,
+                            ExecuteCommandOptions,
                             PlatformDatabaseCreationOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
@@ -92,6 +93,7 @@ namespace rdmp
                             (CohortCreationOptions opts) => Run(opts),
                             (PackOptions opts) => Run(opts),
                             (PlatformDatabaseCreationOptions opts) => Run(opts),
+                            (ExecuteCommandOptions opts) => Run(opts),
                             errs => 1);
 
                 NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
