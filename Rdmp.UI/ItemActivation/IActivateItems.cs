@@ -38,7 +38,7 @@ namespace Rdmp.UI.ItemActivation
     /// 
     /// <para>Also exposes the location of the Catalogue / Data Export repository databases via RepositoryLocator</para>
     /// </summary>
-    public interface IActivateItems:ICommandInvokerArgProvider
+    public interface IActivateItems:IBasicActivateItems
     {
         ITheme Theme { get; }
 
@@ -53,11 +53,6 @@ namespace Rdmp.UI.ItemActivation
         /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
         /// </summary>
         FavouritesProvider FavouritesProvider { get;}
-        
-        /// <summary>
-        /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
-        /// </summary>
-        ICoreChildProvider CoreChildProvider { get; }
 
         /// <summary>
         /// List of the currently loaded IPluginUserInterface classes (these allow injection of additional tree items, tailoring context menus etc).  This list will
@@ -82,10 +77,6 @@ namespace Rdmp.UI.ItemActivation
         /// </summary>
         ICoreIconProvider CoreIconProvider { get; }
 
-        /// <summary>
-        /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
-        /// </summary>
-        ICheckNotifier GlobalErrorCheckNotifier { get; }
         
         /// <summary>
         /// Component for starting drag or copy operations
@@ -120,7 +111,6 @@ namespace Rdmp.UI.ItemActivation
         /// <returns></returns>
         T Activate<T>(IPersistableObjectCollection collection) where T : Control,IObjectCollectionControl, new();
 
-        bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
 
         event EmphasiseItemHandler Emphasise;
 
@@ -183,13 +173,6 @@ namespace Rdmp.UI.ItemActivation
         /// <returns></returns>
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
         
-        /// <summary>
-        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
-        /// </summary>
-        /// <param name="text">The question to pose</param>
-        /// <param name="caption"></param>
-        /// <returns></returns>
-        bool YesNo(string text, string caption);
 
         bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
 

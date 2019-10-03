@@ -85,7 +85,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 
             if(d != null)
             {
-                Activator.DeleteWithConfirmation(this, d);
+                Activator.DeleteWithConfirmation(d);
                 UpdateTreeViews();
             }
         }

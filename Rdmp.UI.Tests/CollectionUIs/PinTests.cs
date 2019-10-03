@@ -33,7 +33,7 @@ namespace Rdmp.UI.Tests.CollectionUIs
             Assert.AreEqual(ti,collection.CommonTreeFunctionality.CurrentlyPinned);
 
             //delete the object
-            ItemActivator.DeleteWithConfirmation(this,ti);
+            ItemActivator.DeleteWithConfirmation(ti);
 
             //selection should now be cleared
             Assert.IsNull(collection.CommonTreeFunctionality.Tree.SelectedObject);

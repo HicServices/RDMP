@@ -197,7 +197,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
+        public bool DeleteWithConfirmation(IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
                         

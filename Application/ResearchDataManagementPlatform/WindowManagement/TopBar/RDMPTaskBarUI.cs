@@ -248,7 +248,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             var d = cbx.SelectedItem as IDeleteable;
             if (d != null)
             {
-                _manager.ActivateItems.DeleteWithConfirmation(this, d);
+                _manager.ActivateItems.DeleteWithConfirmation(d);
                 ReCreateDropDowns();
             }
         }

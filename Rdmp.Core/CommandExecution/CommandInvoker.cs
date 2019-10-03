@@ -14,7 +14,7 @@ namespace Rdmp.Core.CommandExecution
 {
     public class CommandInvoker
     {
-        private readonly ICommandInvokerArgProvider _argumentProvider;
+        private readonly IBasicActivateItems _argumentProvider;
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         
         /// <summary>
@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         public event EventHandler<CommandEventArgs> CommandCompleted;
 
-        public CommandInvoker(ICommandInvokerArgProvider argumentProvider, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public CommandInvoker(IBasicActivateItems argumentProvider, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _argumentProvider = argumentProvider;
             _repositoryLocator = repositoryLocator;
@@ -86,6 +86,9 @@ namespace Rdmp.Core.CommandExecution
 
             if (typeof(ICatalogueRepository).IsAssignableFrom(paramType))
                 return _repositoryLocator.CatalogueRepository;
+
+            if (typeof(IBasicActivateItems).IsAssignableFrom(paramType))
+                return _argumentProvider;
 
             if (typeof(IDataExportRepository).IsAssignableFrom(paramType))
                 return _repositoryLocator.DataExportRepository;
@@ -144,6 +147,7 @@ namespace Rdmp.Core.CommandExecution
                 p =>
                     typeof (ICatalogueRepository).IsAssignableFrom(p.ParameterType) ||
                     typeof (IDataExportRepository).IsAssignableFrom(p.ParameterType) ||
+                    typeof(IBasicActivateItems).IsAssignableFrom(p.ParameterType) ||
                     typeof (IRDMPPlatformRepositoryServiceLocator).IsAssignableFrom(p.ParameterType) ||
                     _argumentDelegates.Keys.Any(k=>k.IsAssignableFrom(p.ParameterType)) ||
                     typeof(DirectoryInfo).IsAssignableFrom(p.ParameterType) ||

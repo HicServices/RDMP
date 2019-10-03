@@ -5,8 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Drawing;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
+using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -18,8 +23,10 @@ namespace Rdmp.Core.CommandExecution
     /// 
     /// <para>Override GetCommandHelp and GetCommandName to change the persentation layer of the command (if applicable).</para>
     /// </summary>
-    public abstract class BasicCommandExecution : ICommandExecution
+    public abstract class BasicCommandExecution : ICommandExecution,IAtomicCommand
     {
+        public IBasicActivateItems BasicActivator { get; }
+
         public bool IsImpossible { get; private set; }
         public string ReasonCommandImpossible { get; private set; }
         public string OverrideCommandName { get; set; }
@@ -30,6 +37,15 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         protected bool UseTripleDotSuffix { get; set; }
 
+        public BasicCommandExecution()
+        {
+
+        }
+
+        public BasicCommandExecution(IBasicActivateItems basicActivator)
+        {
+            this.BasicActivator = basicActivator;
+        }
 
         public virtual void Execute()
         {
@@ -56,6 +72,11 @@ namespace Rdmp.Core.CommandExecution
         public virtual string GetCommandHelp()
         {
             return String.Empty;
+        }
+
+        public virtual Image GetImage(IIconProvider iconProvider)
+        {
+            return null;
         }
 
         /// <summary>
@@ -86,6 +107,36 @@ namespace Rdmp.Core.CommandExecution
         {
             IsImpossible = false;
             ReasonCommandImpossible = null;
+        }
+        
+        /// <summary>
+        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
+        /// </summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        protected bool YesNo(string text,string caption)
+        {
+            return BasicActivator.YesNo(text,caption);
+        }
+
+        protected virtual void Publish(DatabaseEntity o)
+        {
+
+        }
+        
+        /// <summary>
+        /// Reports a low visibility error to the <see cref="IActivateItems.GlobalErrorCheckNotifier"/>.  Throws <paramref name="ex"/>
+        /// with <paramref name="msg"/> if no global errors handler is registered
+        /// </summary>
+        /// <param name="msg"></param>
+        /// <param name="ex"></param>
+        protected void GlobalError(string msg, Exception ex)
+        {
+            if (BasicActivator?.GlobalErrorCheckNotifier == null)
+                throw new Exception(msg,ex);
+
+            BasicActivator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Fail, ex));
         }
     }
 }

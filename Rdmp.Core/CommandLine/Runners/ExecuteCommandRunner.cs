@@ -26,16 +26,19 @@ namespace Rdmp.Core.CommandLine.Runners
         {
             const string cmdPrefix = "ExecuteCommand";
 
-            var input = new ConsoleInputManager();
+            var input = new ConsoleInputManager(repositoryLocator,checkNotifier);
 
-            var caller = new CommandInvoker(input, repositoryLocator);
-
-            var commands = caller.GetSupportedCommands(repositoryLocator.CatalogueRepository.MEF).ToDictionary(k=>
-                k.Name.StartsWith(cmdPrefix) ? k.Name.Substring(cmdPrefix.Length): k.Name,v=>v);
+            var invoker = new CommandInvoker(input, repositoryLocator);
+            
+            var commands = invoker.GetSupportedCommands(repositoryLocator.CatalogueRepository.MEF).ToDictionary(k=>
+                k.Name.StartsWith(cmdPrefix) ? k.Name.Substring(cmdPrefix.Length): k.Name,v=>v,StringComparer.CurrentCultureIgnoreCase);
 
             if (string.IsNullOrWhiteSpace(_options.CommandText))
             {
-                input.GetString("Command",commands.Keys.ToList());
+                string commandName = input.GetString("Command",commands.Keys.ToList());
+
+                if (!string.IsNullOrWhiteSpace(commandName) && commands.ContainsKey(commandName))
+                    invoker.ExecuteCommand(commands[commandName]);
             }
 
             return 0;

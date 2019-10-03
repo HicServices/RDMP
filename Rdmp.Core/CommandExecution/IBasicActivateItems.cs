@@ -3,14 +3,22 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Providers;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandExecution
 {
-    public interface ICommandInvokerArgProvider
+    public interface IBasicActivateItems
     {
+                
+        /// <summary>
+        /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
+        /// </summary>
+        ICoreChildProvider CoreChildProvider { get; }
+
         /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type
-        /// exists for the parameter Type then the constructor will not be supported by the <see cref="ICommandInvokerArgProvider"/>
+        /// exists for the parameter Type then the constructor will not be supported by the <see cref="IBasicActivateItems"/>
         /// </summary>
         /// <returns></returns>
         Dictionary<Type, Func<object>> GetDelegates();
@@ -42,6 +50,25 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="paramType"></param>
         /// <returns></returns>
         object PickValueType(ParameterInfo parameterInfo, Type paramType);
-    }
 
+        /// <summary>
+        /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)
+        /// </summary>
+        /// <param name="deleteable"></param>
+        /// <returns></returns>
+        bool DeleteWithConfirmation(IDeleteable deleteable);
+
+        /// <summary>
+        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
+        /// </summary>
+        /// <param name="text">The question to pose</param>
+        /// <param name="caption"></param>
+        /// <returns></returns>
+        bool YesNo(string text, string caption);
+
+        /// <summary>
+        /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
+        /// </summary>
+        ICheckNotifier GlobalErrorCheckNotifier { get; }
+    }
 }

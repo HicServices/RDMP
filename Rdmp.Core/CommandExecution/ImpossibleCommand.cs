@@ -20,10 +20,5 @@ namespace Rdmp.Core.CommandExecution
         {
             SetImpossible(reasonImpossible);   
         }
-
-        public Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
-        }
     }
 }

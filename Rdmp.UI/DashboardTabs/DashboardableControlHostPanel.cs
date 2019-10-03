@@ -100,7 +100,7 @@ namespace Rdmp.UI.DashboardTabs
             if(_editMode)
             {
                 var layout = _databaseRecord.ParentLayout;
-                Activator.DeleteWithConfirmation(this, _databaseRecord);
+                Activator.DeleteWithConfirmation(_databaseRecord);
                 Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(layout));
             }
         }

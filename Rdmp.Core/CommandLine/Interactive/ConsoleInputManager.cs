@@ -6,11 +6,38 @@ using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Providers;
+using Rdmp.Core.Repositories;
+using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
-    class ConsoleInputManager : ICommandInvokerArgProvider
+    class ConsoleInputManager : IBasicActivateItems
     {
+        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+        
+        /// <inheritdoc/>
+        public ICoreChildProvider CoreChildProvider { get; }
+
+        public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
+
+
+        public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
+        {
+            _repositoryLocator = repositoryLocator;
+            GlobalErrorCheckNotifier = globalErrorCheckNotifier;
+
+
+            //todo pass the plugin child providers
+            if(repositoryLocator.DataExportRepository != null)
+                CoreChildProvider = new DataExportChildProvider(repositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+            else
+                CoreChildProvider = new CatalogueChildProvider(repositoryLocator.CatalogueRepository,null,new ThrowImmediatelyCheckNotifier());
+
+        }
+
+        
+
         public Dictionary<Type, Func<object>> GetDelegates()
         {
             return new Dictionary<Type, Func<object>>();
@@ -28,7 +55,27 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null,bool allowAutoSelect = false)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Available Objects:");
+            foreach (var o in availableObjects)
+            {
+                Console.WriteLine(o.GetType().Name + "|" + o.ID + "|" + o.ToString());
+            }
+            Console.WriteLine(prompt);
+            Console.WriteLine("Format \"{Type}:{ID}\" e.g. \"Catalogue:123\"");
+
+            var args = Console.ReadLine().Split(':');
+
+            if (args.Length != 2)
+            {
+                Console.WriteLine("Invalid format");
+                return null;
+            }
+
+            var id = int.Parse(args[1]);
+
+            return availableObjects.Single(o =>
+                o.ID == id &&
+                o.GetType().Name.Equals(args[0].Trim(), StringComparison.CurrentCultureIgnoreCase));
         }
 
         public DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType)
@@ -53,12 +100,28 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
         {
-            throw new NotImplementedException();
+            //todo abstract base class!
+            return CoreChildProvider.GetAllSearchables()
+                .Keys.OfType<T>()
+                .Cast<IMapsDirectlyToDatabaseTable>();
         }
 
         public object PickValueType(ParameterInfo parameterInfo, Type paramType)
         {
             throw new NotImplementedException();
+        }
+
+        public bool DeleteWithConfirmation(IDeleteable deleteable)
+        {
+            deleteable.DeleteInDatabase();
+
+            return true;
+        }
+
+        public bool YesNo(string text, string caption)
+        {
+            Console.WriteLine(text + "(y/n)");
+            return string.Equals(Console.ReadLine(), "y", StringComparison.CurrentCultureIgnoreCase);
         }
 
         public string GetString(string prompt, List<string> options)

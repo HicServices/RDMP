@@ -31,12 +31,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     {
         protected readonly IActivateItems Activator;
 
-        protected BasicUICommandExecution(IActivateItems activator)
+        protected BasicUICommandExecution(IActivateItems activator):base(activator)
         {
             Activator = activator;
         }
 
-        protected void Publish(DatabaseEntity o)
+        protected sealed override void Publish(DatabaseEntity o)
         {
             Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(o));
         }
@@ -200,32 +200,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return TypeText(header, prompt, 500, null, out text);
         }
 
-        /// <summary>
-        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
-        /// </summary>
-        /// <param name="text">The question to pose</param>
-        /// <param name="caption"></param>
-        /// <returns></returns>
-        protected bool YesNo(string text,string caption)
-        {
-            return Activator.YesNo(text,caption);
-        }
-
-        /// <summary>
-        /// Reports a low visibility error to the <see cref="IActivateItems.GlobalErrorCheckNotifier"/>.  Throws <paramref name="ex"/>
-        /// with <paramref name="msg"/> if no global errors handler is registered
-        /// </summary>
-        /// <param name="msg"></param>
-        /// <param name="ex"></param>
-        protected void GlobalError(string msg, Exception ex)
-        {
-            if (Activator?.GlobalErrorCheckNotifier == null)
-                throw new Exception(msg,ex);
-
-            Activator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Fail, ex));
-        }
-
-
+        
         /// <summary>
         /// Displays the given message to the user
         /// </summary>
@@ -260,11 +235,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
                 SetImpossible(ExceptionHelper.ExceptionToListOfInnerMessages(e));
             }
-        }
-
-        public virtual Image GetImage(IIconProvider iconProvider)
-        {
-            return null;
         }
     }
 }

@@ -4,26 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
+using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandDelete : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandDelete : BasicCommandExecution
     {
         private readonly IList<IDeleteable> _deletables;
 
-        public ExecuteCommandDelete(IActivateItems activator, IDeleteable deletable) : base(activator)
+        public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable deletable) : base(activator)
         {
             _deletables = new []{ deletable};
         }
-        public ExecuteCommandDelete(IActivateItems activator, IList<IDeleteable> deletables) : base(activator)
+        public ExecuteCommandDelete(IBasicActivateItems activator, IList<IDeleteable> deletables) : base(activator)
         {
             _deletables = deletables;
         }
@@ -32,7 +29,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
             
             if(_deletables.Count == 1)
-                Activator.DeleteWithConfirmation(this, _deletables[0]);
+                BasicActivator.DeleteWithConfirmation(_deletables[0]);
             else
             if(_deletables.Count>1)
             {

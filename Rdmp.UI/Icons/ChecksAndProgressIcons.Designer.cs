@@ -39,7 +39,7 @@ namespace Rdmp.UI.Icons {
         internal static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ReusableUIComponents.Icons.ChecksAndProgressIcons", typeof(ChecksAndProgressIcons).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.UI.Icons.ChecksAndProgressIcons", typeof(ChecksAndProgressIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
