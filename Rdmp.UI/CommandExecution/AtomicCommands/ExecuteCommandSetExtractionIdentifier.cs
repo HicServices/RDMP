@@ -7,10 +7,10 @@
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using System.Drawing;
 using System.Linq;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

@@ -19,10 +19,11 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.ProcessTasks
 {

@@ -10,7 +10,8 @@ using ReusableLibraryCode.DataAccess;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.SimpleDialogs;
+
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
 {

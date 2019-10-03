@@ -7,14 +7,14 @@
 using System;
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.DataExport.DataRelease.Potential;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.SqlDialogs;
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

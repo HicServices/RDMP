@@ -49,7 +49,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dlg = new PickOneOrCancelDialog<ExtractionCategory>(
+            var dlg = new SimpleDialogs.PickOneOrCancelDialog<ExtractionCategory>(
                 Enum.GetValues(typeof(ExtractionCategory))
                     .OfType<ExtractionCategory>()
                     .Where(v=>v!= ExtractionCategory.Any).ToArray(),

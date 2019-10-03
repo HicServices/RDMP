@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             this.btnCreate = new System.Windows.Forms.Button();
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
             this.SuspendLayout();
@@ -85,7 +85,7 @@
         }
 
         #endregion
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnCreate;
         private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
     }

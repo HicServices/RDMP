@@ -40,7 +40,7 @@ namespace Rdmp.UI.Wizard
             this.pbFilters = new System.Windows.Forms.PictureBox();
             this.tableLayoutPanel1 = new System.Windows.Forms.TableLayoutPanel();
             this.label2 = new System.Windows.Forms.Label();
-            this.cbxColumns = new ReusableUIComponents.SuggestComboBox();
+            this.cbxColumns = new SuggestComboBox();
             this.btnLockExtractionIdentifier = new System.Windows.Forms.Button();
             this.pbCatalogue = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -249,7 +249,7 @@ namespace Rdmp.UI.Wizard
         private System.Windows.Forms.GroupBox gbFilters;
         private System.Windows.Forms.TableLayoutPanel tableLayoutPanel1;
         private System.Windows.Forms.Label label2;
-        private ReusableUIComponents.SuggestComboBox cbxColumns;
+        private SuggestComboBox cbxColumns;
         private System.Windows.Forms.Button btnLockExtractionIdentifier;
         private System.Windows.Forms.PictureBox pbCatalogue;
         private System.Windows.Forms.Label label1;

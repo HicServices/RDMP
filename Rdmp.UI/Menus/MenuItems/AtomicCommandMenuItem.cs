@@ -8,11 +8,13 @@ using System;
 using System.Data.SqlClient;
 using System.Text.RegularExpressions;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Exceptions;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.Menus.MenuItems
 {

@@ -18,10 +18,11 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.UI.DataViewing;
 using Rdmp.UI.DataViewing.Collections;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.ProjectUI
 {

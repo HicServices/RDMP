@@ -10,11 +10,11 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Forms;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.Proposals;
 using Rdmp.UI.ProjectUI;
 using Rdmp.UI.Raceway;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents.CommandExecution.Proposals;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests

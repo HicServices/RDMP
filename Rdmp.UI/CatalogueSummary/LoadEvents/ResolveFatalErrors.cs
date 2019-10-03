@@ -10,8 +10,8 @@ using Rdmp.Core.Logging;
 using Rdmp.Core.Logging.PastEvents;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents

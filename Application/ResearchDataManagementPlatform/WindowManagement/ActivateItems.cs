@@ -22,6 +22,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
+using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
@@ -37,15 +38,13 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Comments;
 using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.Theme;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -571,16 +570,29 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         
-        public object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        public object SelectOne(string prompt,IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
         {
             if (!availableObjects.Any())
             {
-                MessageBox.Show("There are no '" + paramType.Name + "' objects in your RMDP");
+                MessageBox.Show("There are no compatible objects in your RMDP for '"+ prompt +"''");
                 return null;
             }
 
+            //if there is only one object available to select
+            if (availableObjects.Length == 1)
+                if(allowAutoSelect || YesNo("You only have one compatible object, use '"+availableObjects[0]+"'","Select '" + availableObjects[0] + "'?"))
+                {
+                    return availableObjects[0];
+                }
+                else
+                {
+                    return null;
+                }
+
             SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-            selectDialog.Text = parameterInfo.Name;
+            selectDialog.Text = prompt;
+            selectDialog.SetInitialFilter(initialSearchText);
+
 
             if (selectDialog.ShowDialog() == DialogResult.OK)
                 return selectDialog.Selected;

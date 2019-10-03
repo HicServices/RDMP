@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 {
     partial class CreateNewCatalogueByImportingFileUI
     {
@@ -29,7 +31,7 @@
         private void InitializeComponent()
         {
             this.gbPickFile = new System.Windows.Forms.GroupBox();
-            this.ragSmileyFile = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmileyFile = new RAGSmiley();
             this.btnClearFile = new System.Windows.Forms.Button();
             this.lblFile = new System.Windows.Forms.Label();
             this.pbFile = new System.Windows.Forms.PictureBox();
@@ -40,7 +42,7 @@
             this.gbPickPipeline = new System.Windows.Forms.GroupBox();
             this.ddPipeline = new System.Windows.Forms.ComboBox();
             this.gbExecute = new System.Windows.Forms.GroupBox();
-            this.ragSmileyExecute = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmileyExecute = new RAGSmiley();
             this.btnExecute = new System.Windows.Forms.Button();
             this.btnPreview = new System.Windows.Forms.Button();
             this.btnAdvanced = new System.Windows.Forms.Button();
@@ -291,12 +293,12 @@
         private System.Windows.Forms.Button btnConfirmDatabase;
         private System.Windows.Forms.GroupBox gbPickPipeline;
         private System.Windows.Forms.ComboBox ddPipeline;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyFile;
+        private RAGSmiley ragSmileyFile;
         private System.Windows.Forms.Button btnAdvanced;
         private System.Windows.Forms.GroupBox gbExecute;
         private System.Windows.Forms.Button btnPreview;
         private System.Windows.Forms.Button btnExecute;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyExecute;
+        private RAGSmiley ragSmileyExecute;
         private System.Windows.Forms.PictureBox pbHelp;
         private System.Windows.Forms.CheckBox cbAutoClose;
     }

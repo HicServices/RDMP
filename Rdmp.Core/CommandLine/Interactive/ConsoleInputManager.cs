@@ -5,7 +5,7 @@ using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
@@ -26,7 +26,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             throw new NotImplementedException();
         }
 
-        public object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null,bool allowAutoSelect = false)
         {
             throw new NotImplementedException();
         }

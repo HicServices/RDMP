@@ -25,9 +25,10 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.SqlDialogs;
+
 
 namespace Rdmp.UI.AggregationUIs.Advanced
 {

@@ -6,6 +6,7 @@
 
 using System.Drawing;
 using System.Linq;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryBuilding;
@@ -13,7 +14,6 @@ using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SubComponents.Graphs;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands

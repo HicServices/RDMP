@@ -13,9 +13,9 @@ using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
 namespace Rdmp.UI.SubComponents

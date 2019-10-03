@@ -13,7 +13,8 @@ using Rdmp.Core.Repositories.Construction;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.ChecksUI;
+
+using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

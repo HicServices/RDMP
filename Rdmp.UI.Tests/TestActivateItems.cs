@@ -21,6 +21,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
@@ -29,10 +30,9 @@ using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Theme;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Theme;
 
 namespace Rdmp.UI.Tests
 {
@@ -242,7 +242,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
         {
             throw new NotImplementedException();
         }

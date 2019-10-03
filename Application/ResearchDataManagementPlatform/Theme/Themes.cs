@@ -6,7 +6,7 @@
 
 using System.Globalization;
 using System.Windows.Forms;
-using ReusableUIComponents.Theme;
+using Rdmp.UI.Theme;
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.Theme

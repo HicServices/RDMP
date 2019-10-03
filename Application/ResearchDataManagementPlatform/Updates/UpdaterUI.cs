@@ -10,11 +10,12 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Squirrel;
-using ReusableUIComponents.Dialogs;
+
 using ReusableLibraryCode;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using Rdmp.UI.SimpleDialogs;
 
 namespace ResearchDataManagementPlatform.Updates
 {

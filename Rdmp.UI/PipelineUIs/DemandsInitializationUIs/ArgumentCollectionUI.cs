@@ -15,7 +15,10 @@ using Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
+
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
+using RAGSmiley = Rdmp.UI.ChecksUI.RAGSmiley;
+using ViewSourceCodeDialog = Rdmp.UI.SimpleDialogs.ViewSourceCodeDialog;
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
 {

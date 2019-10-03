@@ -12,9 +12,9 @@ using Rdmp.Core.DataExport.DataExtraction.Commands;
 using Rdmp.Core.DataExport.DataExtraction.UserPicks;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
 
 namespace Rdmp.UI.ProjectUI
 {

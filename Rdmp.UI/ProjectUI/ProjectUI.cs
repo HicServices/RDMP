@@ -16,10 +16,11 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.ProjectUI
 {

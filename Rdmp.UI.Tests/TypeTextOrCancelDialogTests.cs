@@ -6,10 +6,12 @@
 
 using NUnit.Framework;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Rdmp.UI.SimpleDialogs;
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.Tests
 {

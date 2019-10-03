@@ -11,8 +11,9 @@ using Rdmp.Core.Databases;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.Menus.MenuItems
 {

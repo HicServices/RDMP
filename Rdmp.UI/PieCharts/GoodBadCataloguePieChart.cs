@@ -19,7 +19,7 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.PieCharts
 {

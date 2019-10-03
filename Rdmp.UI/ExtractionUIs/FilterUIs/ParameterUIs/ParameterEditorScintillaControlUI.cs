@@ -15,9 +15,9 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs

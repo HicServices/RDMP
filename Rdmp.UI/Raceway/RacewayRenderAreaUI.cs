@@ -13,11 +13,10 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.UI.DashboardTabs.Construction;
+using Rdmp.UI.Heatmapping;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
-using ReusableUIComponents;
-using ReusableUIComponents.Heatmapping;
 
 namespace Rdmp.UI.Raceway
 {

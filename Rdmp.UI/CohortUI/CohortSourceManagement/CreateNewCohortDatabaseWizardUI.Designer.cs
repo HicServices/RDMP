@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.CohortUI.CohortSourceManagement
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.CohortUI.CohortSourceManagement
 {
     partial class CreateNewCohortDatabaseWizardUI
     {
@@ -38,8 +40,8 @@
             this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
             this.label2 = new System.Windows.Forms.Label();
             this.cbAllowNullReleaseIdentifiers = new System.Windows.Forms.CheckBox();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
-            this.helpIcon2 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
+            this.helpIcon2 = new HelpIcon();
             ((System.ComponentModel.ISupportInitialize)(this.listView1)).BeginInit();
             this.SuspendLayout();
             // 
@@ -190,7 +192,7 @@
         private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.Label label2;
         private System.Windows.Forms.CheckBox cbAllowNullReleaseIdentifiers;
-        private ReusableUIComponents.HelpIcon helpIcon1;
-        private ReusableUIComponents.HelpIcon helpIcon2;
+        private HelpIcon helpIcon1;
+        private HelpIcon helpIcon2;
     }
 }

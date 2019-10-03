@@ -18,7 +18,8 @@ using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
+
+using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.Menus
 {

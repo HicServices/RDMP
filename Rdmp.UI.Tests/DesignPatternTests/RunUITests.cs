@@ -10,13 +10,12 @@ using System.Linq;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests

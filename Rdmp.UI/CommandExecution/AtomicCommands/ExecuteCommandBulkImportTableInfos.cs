@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable.Attributes;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -20,9 +21,9 @@ using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents.Dialogs;
+
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {

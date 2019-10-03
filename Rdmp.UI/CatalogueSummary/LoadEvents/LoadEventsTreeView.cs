@@ -21,10 +21,12 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus.MenuItems;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
 using ReusableLibraryCode;
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {

@@ -10,7 +10,8 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.SimpleDialogs;
+
 
 namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs
 {

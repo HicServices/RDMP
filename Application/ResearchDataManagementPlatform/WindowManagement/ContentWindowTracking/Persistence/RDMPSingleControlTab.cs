@@ -7,10 +7,12 @@
 using System;
 using System.Text;
 using System.Windows.Forms;
+using Rdmp.UI;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence

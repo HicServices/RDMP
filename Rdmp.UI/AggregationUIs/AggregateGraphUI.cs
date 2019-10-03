@@ -28,14 +28,15 @@ using Rdmp.Core.Reports;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ScintillaHelper;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Extensions;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.AggregationUIs

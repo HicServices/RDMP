@@ -9,10 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.SimpleDialogs.NavigateTo
 {

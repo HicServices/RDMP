@@ -12,6 +12,7 @@ using System.Windows.Forms;
 using System.Windows.Forms.DataVisualization.Charting;
 using Rdmp.Core.DataQualityEngine.Data;
 using Rdmp.UI.CatalogueSummary.DataQualityReporting.SubComponents;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableUIComponents;
 

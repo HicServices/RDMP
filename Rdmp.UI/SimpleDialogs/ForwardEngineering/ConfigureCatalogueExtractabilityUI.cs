@@ -24,8 +24,8 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.TransparentHelpSystem;
 using Rdmp.UI.Tutorials;
-using ReusableUIComponents.TransparentHelpSystem;
 
 namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
 {

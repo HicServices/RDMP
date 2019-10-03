@@ -16,10 +16,11 @@ using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation.Checks;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
+using Rdmp.UI.ChecksUI;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
+
 
 namespace Rdmp.UI.LocationsMenu
 {
@@ -233,7 +234,7 @@ namespace Rdmp.UI.LocationsMenu
 
         private void ShowNextStageOnChecksComplete(object sender, AllChecksCompleteHandlerArgs args)
         {
-            ((ChecksUI) sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
+            ((ChecksUI.ChecksUI) sender).AllChecksComplete -= ShowNextStageOnChecksComplete;
         }
 
         private void btnCreateSuite_Click(object sender, EventArgs e)

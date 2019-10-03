@@ -13,10 +13,12 @@ using Rdmp.Core.DataExport.CohortDescribing;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CohortUI
 {

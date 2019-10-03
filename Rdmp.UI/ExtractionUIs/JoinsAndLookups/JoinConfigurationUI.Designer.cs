@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
 {
     partial class JoinConfigurationUI
     {
@@ -36,7 +38,7 @@
             this.label4 = new System.Windows.Forms.Label();
             this.olvRightColumns = new BrightIdeasSoftware.ObjectListView();
             this.olvRightColumnNames = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.btnCreateJoinInfo = new System.Windows.Forms.Button();
             this.tbCollation = new System.Windows.Forms.TextBox();
             this.label13 = new System.Windows.Forms.Label();
@@ -529,7 +531,7 @@
         private System.Windows.Forms.Label label4;
         private BrightIdeasSoftware.ObjectListView olvRightColumns;
         private BrightIdeasSoftware.OLVColumn olvRightColumnNames;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnCreateJoinInfo;
         private System.Windows.Forms.TextBox tbCollation;
         private System.Windows.Forms.Label label13;

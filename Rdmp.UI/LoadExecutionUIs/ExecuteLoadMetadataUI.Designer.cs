@@ -37,8 +37,8 @@ namespace Rdmp.UI.LoadExecutionUIs
             this.label3 = new System.Windows.Forms.Label();
             this.gbLoadProgresses = new System.Windows.Forms.GroupBox();
             this.btnRefreshLoadProgresses = new System.Windows.Forms.Button();
-            this.helpIconAbortShouldCancel = new ReusableUIComponents.HelpIcon();
-            this.helpIconRunRepeatedly = new ReusableUIComponents.HelpIcon();
+            this.helpIconAbortShouldCancel = new HelpIcon();
+            this.helpIconRunRepeatedly = new HelpIcon();
             this.cbRunIteratively = new System.Windows.Forms.CheckBox();
             this.cbAbortShouldActuallyCancelInstead = new System.Windows.Forms.CheckBox();
             this.flpControls = new System.Windows.Forms.FlowLayoutPanel();
@@ -220,10 +220,10 @@ namespace Rdmp.UI.LoadExecutionUIs
         private System.Windows.Forms.NumericUpDown udDaysPerJob;
         private System.Windows.Forms.Label label3;
         private System.Windows.Forms.GroupBox gbLoadProgresses;
-        private ReusableUIComponents.HelpIcon helpIconRunRepeatedly;
+        private HelpIcon helpIconRunRepeatedly;
         private System.Windows.Forms.CheckBox cbRunIteratively;
         private System.Windows.Forms.CheckBox cbAbortShouldActuallyCancelInstead;
-        private ReusableUIComponents.HelpIcon helpIconAbortShouldCancel;
+        private HelpIcon helpIconAbortShouldCancel;
         private System.Windows.Forms.Button btnRefreshLoadProgresses;
         private CheckAndExecuteUI checkAndExecuteUI1;
         private System.Windows.Forms.FlowLayoutPanel flpControls;

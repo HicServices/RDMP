@@ -12,6 +12,8 @@ using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.UI.ItemActivation;
@@ -20,8 +22,6 @@ using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
 
@@ -134,25 +134,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// <returns></returns>
         protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
         {
-            //if theres only one object available to select
-            if (availableObjects.Count == 1)
-                if(allowAutoSelect || YesNo("You only have one compatible object, use '"+availableObjects[0]+"'","Select '" + availableObjects[0] + "'?"))
-                {
-                    selected = availableObjects[0];
-                    return true;
-                }
-                else
-                {
-                    selected = null;
-                    return false;
-                }
-                    
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-            dialog.SetInitialFilter(initialSearchText);
-
-            selected = dialog.ShowDialog() == DialogResult.OK? (T) dialog.Selected:null;
-
+            selected = (T)Activator.SelectOne("Select One",availableObjects.ToArray(), initialSearchText, allowAutoSelect);
             return selected != null;
         }
 

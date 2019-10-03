@@ -9,6 +9,7 @@ using System.Text;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.UI;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;

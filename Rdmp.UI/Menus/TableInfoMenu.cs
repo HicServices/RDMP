@@ -10,6 +10,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
+using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Alter;
 using Rdmp.UI.Copying.Commands;
@@ -21,8 +22,8 @@ using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
-using ReusableUIComponents.Dialogs;
+
+
 
 namespace Rdmp.UI.Menus
 {

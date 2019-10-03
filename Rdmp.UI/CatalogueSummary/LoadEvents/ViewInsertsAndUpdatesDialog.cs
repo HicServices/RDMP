@@ -13,10 +13,12 @@ using FAnsi.Implementations.MicrosoftSQL;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Triggers;
 using Rdmp.Core.Logging.PastEvents;
+using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.SqlDialogs;
+
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.CatalogueSummary.LoadEvents
 {

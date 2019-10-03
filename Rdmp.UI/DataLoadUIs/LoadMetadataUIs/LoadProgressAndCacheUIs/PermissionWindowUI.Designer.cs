@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadProgressAndCacheUIs
 {
     partial class PermissionWindowUI
     {
@@ -48,7 +50,7 @@
             this.tbDescription = new System.Windows.Forms.TextBox();
             this.label10 = new System.Windows.Forms.Label();
             this.label11 = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.panel1 = new System.Windows.Forms.Panel();
             this.label12 = new System.Windows.Forms.Label();
             this.tbID = new System.Windows.Forms.TextBox();
@@ -322,7 +324,7 @@
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label11;
         
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Panel panel1;
         private System.Windows.Forms.Label label12;
         private System.Windows.Forms.TextBox tbID;

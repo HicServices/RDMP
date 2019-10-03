@@ -6,6 +6,7 @@
 
 using NUnit.Framework;
 using ReusableUIComponents;
+using HelpIcon = Rdmp.UI.SimpleControls.HelpIcon;
 
 namespace Rdmp.UI.Tests
 {

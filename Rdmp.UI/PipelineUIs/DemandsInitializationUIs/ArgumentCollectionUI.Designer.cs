@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
+﻿using Rdmp.UI.SimpleControls;
+
+namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs
 {
     partial class ArgumentCollectionUI
     {
@@ -32,7 +34,7 @@
             this.lblClassName = new System.Windows.Forms.Label();
             this.pictureBox1 = new System.Windows.Forms.PictureBox();
             this.btnViewSourceCode = new System.Windows.Forms.Button();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
             this.lblNoArguments = new System.Windows.Forms.Label();
             this.pArguments = new System.Windows.Forms.Panel();
             this.lblTypeUnloadable = new System.Windows.Forms.Label();
@@ -133,7 +135,7 @@
         private System.Windows.Forms.Label lblClassName;
         private System.Windows.Forms.PictureBox pictureBox1;
         private System.Windows.Forms.Button btnViewSourceCode;
-        private ReusableUIComponents.HelpIcon helpIcon1;
+        private HelpIcon helpIcon1;
         private System.Windows.Forms.Label lblNoArguments;
         private System.Windows.Forms.Panel pArguments;
         private System.Windows.Forms.Label lblTypeUnloadable;

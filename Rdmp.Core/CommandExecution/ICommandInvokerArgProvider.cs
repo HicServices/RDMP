@@ -3,8 +3,6 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
-using ReusableLibraryCode.CommandExecution;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -25,7 +23,7 @@ namespace Rdmp.Core.CommandExecution
 
         object PickMany(ParameterInfo parameterInfo, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects);
 
-        object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects);
+        object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
         DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType);
 

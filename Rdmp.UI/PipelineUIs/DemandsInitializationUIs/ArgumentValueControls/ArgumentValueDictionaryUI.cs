@@ -10,8 +10,9 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.UI.SimpleDialogs;
 using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.PipelineUIs.DemandsInitializationUIs.ArgumentValueControls
 {

@@ -26,7 +26,7 @@ using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Progress;
 using ReusableUIComponents;
-using ReusableUIComponents.SqlDialogs;
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 namespace Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement
 {

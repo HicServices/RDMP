@@ -1,10 +1,8 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28307.757
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.29311.281
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReusableUIComponents", "Reusable\ReusableUIComponents\ReusableUIComponents.csproj", "{B3351D78-ABB9-4FED-88BF-C688D5F267B6}"
-EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ReusableLibraryCode", "Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj", "{5AD03B2F-232A-4E0B-86FF-DC7F49146962}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{E42F0D5F-79D5-4322-BE3F-F52DCAAED2C3}"
@@ -84,32 +82,6 @@ Global
 		Test|x86 = Test|x86
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Debug|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Debug|x64.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Debug|x86.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Development|Any CPU.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Development|Any CPU.Build.0 = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Development|Mixed Platforms.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Development|Mixed Platforms.Build.0 = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Development|x64.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Development|x86.ActiveCfg = Debug|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Release|Any CPU.Build.0 = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Release|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Release|Mixed Platforms.Build.0 = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Release|x64.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Release|x86.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|Any CPU.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|Any CPU.Build.0 = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|Mixed Platforms.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|Mixed Platforms.Build.0 = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|x64.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|x64.Build.0 = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|x86.ActiveCfg = Release|Any CPU
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6}.Test|x86.Build.0 = Release|Any CPU
 		{5AD03B2F-232A-4E0B-86FF-DC7F49146962}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{5AD03B2F-232A-4E0B-86FF-DC7F49146962}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5AD03B2F-232A-4E0B-86FF-DC7F49146962}.Debug|Mixed Platforms.ActiveCfg = Debug|Any CPU
@@ -493,7 +465,6 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B3351D78-ABB9-4FED-88BF-C688D5F267B6} = {9336B43C-AC6E-4ADF-AB8D-F78B0AA92B97}
 		{5AD03B2F-232A-4E0B-86FF-DC7F49146962} = {9336B43C-AC6E-4ADF-AB8D-F78B0AA92B97}
 		{7F56D629-DC24-43A5-A338-073687433E55} = {9336B43C-AC6E-4ADF-AB8D-F78B0AA92B97}
 		{C4EEDBD1-ACCE-47AF-83FA-99C5E5C33D0A} = {9336B43C-AC6E-4ADF-AB8D-F78B0AA92B97}

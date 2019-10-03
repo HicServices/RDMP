@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.ChecksUI;
 
 namespace Rdmp.UI.ANOEngineeringUIs
 {
@@ -59,7 +60,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
             this.btnSavePlan = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnExecute = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.btnRefreshChecks = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -504,7 +505,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
         private System.Windows.Forms.ImageList imageList1;
         private OLVColumn olvDilution;
         private OLVColumn olvDestinationType;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnRefreshChecks;
         private OLVColumn olvNumberOfDigits;
         private OLVColumn olvNumberOfCharacters;

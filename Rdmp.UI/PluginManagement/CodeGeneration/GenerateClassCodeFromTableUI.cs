@@ -6,8 +6,9 @@
 
 using System;
 using System.Windows.Forms;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.ScintillaHelper;
+using Rdmp.UI.ScintillaHelper;
+using Rdmp.UI.SimpleDialogs;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.PluginManagement.CodeGeneration

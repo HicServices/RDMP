@@ -54,10 +54,10 @@
     <Compile Update="Menus\RDMPTopMenuStripUI.Designer.cs">
       <DependentUpon>RDMPTopMenuStripUI.cs</DependentUpon>
     </Compile>
-    <Content Include="..\..\Reusable\ReusableUIComponents\Hunspellx64.dll">
+    <Content Include="..\..\Rdmp.UI\Hunspellx64.dll">
       <Link>Hunspellx64.dll</Link>
     </Content>
-    <Content Include="..\..\Reusable\ReusableUIComponents\Hunspellx86.dll">
+    <Content Include="..\..\Rdmp.UI\Hunspellx86.dll">
       <Link>Hunspellx86.dll</Link>
     </Content>
     <Content Include="Icon\main.png">
@@ -98,15 +98,15 @@
     <EmbeddedResource Include="..\..\LIBRARYLICENSES">
       <Link>WindowManagement\Licenses\LIBRARYLICENSES</Link>
     </EmbeddedResource>
-    <Content Include="..\..\Reusable\ReusableUIComponents\en_US.aff">
+    <Content Include="..\..\Rdmp.UI\en_US.aff">
       <Link>en_US.aff</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\Reusable\ReusableUIComponents\en_US.dic">
+    <Content Include="..\..\Rdmp.UI\en_US.dic">
       <Link>en_US.dic</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
-    <Content Include="..\..\Reusable\ReusableUIComponents\hyph_en_US.dic">
+    <Content Include="..\..\Rdmp.UI\hyph_en_US.dic">
       <Link>hyph_en_US.dic</Link>
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -126,6 +126,5 @@
     <ProjectReference Include="..\..\Rdmp.UI\Rdmp.UI.csproj" />
     <ProjectReference Include="..\..\Reusable\MapsDirectlyToDatabaseTable\MapsDirectlyToDatabaseTable.csproj" />
     <ProjectReference Include="..\..\Reusable\ReusableLibraryCode\ReusableLibraryCode.csproj" />
-    <ProjectReference Include="..\..\Reusable\ReusableUIComponents\ReusableUIComponents.csproj" />
   </ItemGroup>
 </Project>

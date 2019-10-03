@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.CohortUI
 {
@@ -38,7 +39,7 @@ namespace Rdmp.UI.CohortUI
             label1 = new System.Windows.Forms.Label();
             tbOverrideReleaseIdentifierSQL = new System.Windows.Forms.TextBox();
             pDescription = new System.Windows.Forms.Panel();
-            helpIcon1 = new ReusableUIComponents.HelpIcon();
+            helpIcon1 = new HelpIcon();
             tlvCohortUsage = new BrightIdeasSoftware.TreeListView();
             olvUsedIn = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             tlvPreviousVersions = new BrightIdeasSoftware.TreeListView();
@@ -308,7 +309,7 @@ namespace Rdmp.UI.CohortUI
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.TextBox tbOverrideReleaseIdentifierSQL;
         private System.Windows.Forms.Panel pDescription;
-        private ReusableUIComponents.HelpIcon helpIcon1;
+        private HelpIcon helpIcon1;
         private TreeListView tlvCohortUsage;
         private OLVColumn olvUsedIn;
         private TreeListView tlvPreviousVersions;

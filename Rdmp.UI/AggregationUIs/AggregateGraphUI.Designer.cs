@@ -1,4 +1,5 @@
-﻿using ReusableUIComponents.Heatmapping;
+﻿using Rdmp.UI.ChecksUI;
+using Rdmp.UI.Heatmapping;
 
 namespace Rdmp.UI.AggregationUIs
 {
@@ -39,7 +40,7 @@ namespace Rdmp.UI.AggregationUIs
             this.pbLoading = new System.Windows.Forms.PictureBox();
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpGraph = new System.Windows.Forms.TabPage();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.lblLoadStage = new System.Windows.Forms.Label();
             this.llCancel = new System.Windows.Forms.LinkLabel();
             this.tpCode = new System.Windows.Forms.TabPage();
@@ -48,7 +49,7 @@ namespace Rdmp.UI.AggregationUIs
             this.lblCannotLoadData = new System.Windows.Forms.Label();
             this.dataGridView1 = new System.Windows.Forms.DataGridView();
             this.tpHeatmap = new System.Windows.Forms.TabPage();
-            this.heatmapUI = new ReusableUIComponents.Heatmapping.HeatmapUI();
+            this.heatmapUI = new HeatmapUI();
             ((System.ComponentModel.ISupportInitialize)(this.chart1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -288,6 +289,6 @@ namespace Rdmp.UI.AggregationUIs
         private System.Windows.Forms.Label lblLoadStage;
         private System.Windows.Forms.TabPage tpHeatmap;
         public HeatmapUI heatmapUI;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
     }
 }

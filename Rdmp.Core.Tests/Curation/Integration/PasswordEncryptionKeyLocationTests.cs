@@ -6,6 +6,7 @@
 
 using System;
 using System.IO;
+using System.Security.Cryptography;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories.Managers;
@@ -77,8 +78,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
             keyLocation.CreateNewKeyFile(Path.Combine(TestContext.CurrentContext.TestDirectory, "my.key"));
             var p = keyLocation.OpenKeyFile();
 
+            CatalogueRepository.EncryptionManager.ClearAllInjections();
+
             var s = CatalogueRepository.EncryptionManager.GetEncrypter();
-            var exception = Assert.Throws<Exception>(()=>s.Decrypt(encrypter.Value));
+            var exception = Assert.Throws<CryptographicException>(()=>s.Decrypt(encrypter.Value));
             Assert.IsTrue(exception.Message.StartsWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 
             string encrypted = s.Encrypt(value);

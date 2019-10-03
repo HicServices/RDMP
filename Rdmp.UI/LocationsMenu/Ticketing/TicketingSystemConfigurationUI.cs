@@ -9,9 +9,10 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Ticketing;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.LocationsMenu.Ticketing
 {

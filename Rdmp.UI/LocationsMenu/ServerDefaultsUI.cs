@@ -12,9 +12,10 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Databases;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Versioning;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.LocationsMenu
 {

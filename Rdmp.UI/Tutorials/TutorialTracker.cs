@@ -9,9 +9,9 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.TransparentHelpSystem;
+using Rdmp.UI.TransparentHelpSystem.ProgressTracking;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents.TransparentHelpSystem;
-using ReusableUIComponents.TransparentHelpSystem.ProgressTracking;
 
 namespace Rdmp.UI.Tutorials
 {

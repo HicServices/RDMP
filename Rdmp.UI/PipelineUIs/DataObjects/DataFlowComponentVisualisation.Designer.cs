@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.PipelineUIs.DataObjects
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.PipelineUIs.DataObjects
 {
     partial class DataFlowComponentVisualisation 
     {
@@ -31,7 +33,7 @@
             this.components = new System.ComponentModel.Container();
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataFlowComponentVisualisation));
             this.pComponent = new System.Windows.Forms.Panel();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.lblText = new System.Windows.Forms.Label();
             this.prongRight1 = new System.Windows.Forms.Panel();
             this.prongRight2 = new System.Windows.Forms.Panel();
@@ -177,6 +179,6 @@
         protected System.Windows.Forms.Label lblText;
         private System.Windows.Forms.ImageList imageList1;
         private System.Windows.Forms.PictureBox pbInsertHere;
-        protected ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        protected RAGSmiley ragSmiley1;
     }
 }

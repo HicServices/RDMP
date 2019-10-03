@@ -10,10 +10,11 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Cohort;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.CommandExecution;
+using Rdmp.UI.SimpleDialogs;
+
 
 namespace Rdmp.UI.Collections.Providers.Copying
 {

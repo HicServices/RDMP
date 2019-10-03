@@ -14,7 +14,7 @@ using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.UI.Collections;
-using ReusableUIComponents.Dialogs;
+
 
 
 namespace Rdmp.UI.SimpleDialogs
