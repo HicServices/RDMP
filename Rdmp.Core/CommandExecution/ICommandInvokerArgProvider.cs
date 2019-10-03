@@ -8,17 +8,17 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Rdmp.Core.CommandExecution
 {
-    public interface ICommandCallerArgProvider
+    public interface ICommandInvokerArgProvider
     {
         /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type
-        /// exists for the parameter Type then the constructor will not be supported by the <see cref="ICommandCallerArgProvider"/>
+        /// exists for the parameter Type then the constructor will not be supported by the <see cref="ICommandInvokerArgProvider"/>
         /// </summary>
         /// <returns></returns>
         Dictionary<Type, Func<object>> GetDelegates();
 
         /// <summary>
-        /// Commands that should not be returned in the list of supported commands by a <see cref="CommandCaller"/>
+        /// Commands that should not be returned in the list of supported commands by a <see cref="CommandInvoker"/>
         /// </summary>
         /// <returns></returns>
         IEnumerable<Type> GetIgnoredCommands();
@@ -29,25 +29,7 @@ namespace Rdmp.Core.CommandExecution
 
         DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType);
 
-        /// <summary>
-        /// Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible"/>
-        /// </summary>
-        /// <param name="instance"></param>
-        void OnCommandImpossible(IAtomicCommand instance);
-
-        /// <summary>
-        /// Called when a command completes successfully
-        /// </summary>
-        /// <param name="instance"></param>
-        void OnCommandFinished(IAtomicCommand instance);
-
-        /// <summary>
-        /// Called when a command execute call completes with exception
-        /// </summary>
-        /// <param name="instance"></param>
-        /// <param name="exception"></param>
-        void OnCommandExecutionException(IAtomicCommand instance, Exception exception);
-
+        
         /// <summary>
         /// Return all Types of the given {T} which also implement 
         /// </summary>

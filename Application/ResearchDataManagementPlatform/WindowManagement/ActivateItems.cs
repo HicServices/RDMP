@@ -7,7 +7,9 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -38,6 +40,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using ReusableLibraryCode.Comments;
 using ReusableUIComponents;
 using ReusableUIComponents.CommandExecution;
@@ -554,6 +557,94 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             var ui = new WaitUI(title,task,cts);
             ui.ShowDialog();
+        }
+
+
+        public IEnumerable<Type> GetIgnoredCommands()
+        {
+            yield return typeof(ExecuteCommandPin);
+            yield return typeof(ExecuteCommandUnpin);
+            yield return typeof(ExecuteCommandRefreshObject);
+            yield return typeof(ExecuteCommandChangeExtractability);
+            yield return typeof (ExecuteCommandOpenInExplorer);
+            yield return typeof (ExecuteCommandCreateNewProcessTask);
+        }
+
+        
+        public object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        {
+            if (!availableObjects.Any())
+            {
+                MessageBox.Show("There are no '" + paramType.Name + "' objects in your RMDP");
+                return null;
+            }
+
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            selectDialog.Text = parameterInfo.Name;
+
+            if (selectDialog.ShowDialog() == DialogResult.OK)
+                return selectDialog.Selected;
+
+            return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
+        }
+
+        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType)
+        {
+            var fb = new FolderBrowserDialog();
+            if (fb.ShowDialog() == DialogResult.OK)
+                return new DirectoryInfo(fb.SelectedPath);
+            
+            return null;
+        
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
+        {
+            return CoreChildProvider.GetAllSearchables()
+                .Keys.OfType<T>()
+                .Cast<IMapsDirectlyToDatabaseTable>();
+        }
+
+        public object PickValueType(ParameterInfo parameterInfo, Type paramType)
+        {
+            var typeTextDialog = new TypeTextOrCancelDialog("Enter Value","Enter value for '" + parameterInfo.Name + "' (" + paramType.Name + ")",1000);
+
+            if (typeTextDialog.ShowDialog() == DialogResult.OK)
+                return Convert.ChangeType(typeTextDialog.ResultText, paramType);
+            
+            return null;
+        }
+
+        public object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        {
+            if (!availableObjects.Any())
+            {
+                MessageBox.Show("There are no '" + arrayElementType.Name + "' objects in your RMDP");
+                return null;
+            }
+
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            selectDialog.Text = parameterInfo.Name;
+            selectDialog.AllowMultiSelect = true;
+                                   
+            
+            if (selectDialog.ShowDialog() == DialogResult.OK)
+            {
+                var ms = selectDialog.MultiSelected.ToList();
+                var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
+
+                for(int i = 0;i<ms.Count;i++)
+                    toReturn.SetValue(ms[i],i);
+                
+                return toReturn;
+            }
+
+            return null;
+        }
+
+        public Dictionary<Type, Func<object>> GetDelegates()
+        {
+            return new Dictionary<Type, Func<object>>(){{typeof(IActivateItems),()=>this}};
         }
     }
 }

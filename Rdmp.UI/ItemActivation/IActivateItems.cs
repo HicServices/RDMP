@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -37,7 +38,7 @@ namespace Rdmp.UI.ItemActivation
     /// 
     /// <para>Also exposes the location of the Catalogue / Data Export repository databases via RepositoryLocator</para>
     /// </summary>
-    public interface IActivateItems
+    public interface IActivateItems:ICommandInvokerArgProvider
     {
         ITheme Theme { get; }
 

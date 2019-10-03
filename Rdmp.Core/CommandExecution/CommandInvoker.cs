@@ -8,13 +8,14 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.Checks;
+using ReusableLibraryCode.CommandExecution;
 using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Rdmp.Core.CommandExecution
 {
-    public class CommandCaller
+    public class CommandInvoker
     {
-        private readonly ICommandCallerArgProvider _argumentProvider;
+        private readonly ICommandInvokerArgProvider _argumentProvider;
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         
         /// <summary>
@@ -22,7 +23,17 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         private Dictionary<Type, Func<object>> _argumentDelegates;
 
-        public CommandCaller(ICommandCallerArgProvider argumentProvider, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        /// <summary>
+        /// Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible"/>
+        /// </summary>
+        public event EventHandler<CommandEventArgs> CommandImpossible;
+        
+        /// <summary>
+        /// Called when a command completes successfully
+        /// </summary>
+        public event EventHandler<CommandEventArgs> CommandCompleted;
+
+        public CommandInvoker(ICommandInvokerArgProvider argumentProvider, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _argumentProvider = argumentProvider;
             _repositoryLocator = repositoryLocator;
@@ -57,21 +68,15 @@ namespace Rdmp.Core.CommandExecution
             }
 
             var instance = (IAtomicCommand)constructorInfo.Invoke(parameterValues.ToArray());
-            try
+        
+            if (instance.IsImpossible)
             {
-                if (instance.IsImpossible)
-                {
-                    _argumentProvider.OnCommandImpossible(instance);
-                    return;
-                }
+                CommandImpossible?.Invoke(this,new CommandEventArgs(instance));
+                return;
+            }
 
-                instance.Execute();
-                _argumentProvider.OnCommandFinished(instance);
-            }
-            catch (Exception e)
-            {
-                _argumentProvider.OnCommandExecutionException(instance, e);
-            }
+            instance.Execute();
+            CommandCompleted?.Invoke(this,new CommandEventArgs(instance));
         }
         private object GetValueForParameterOfType(ParameterInfo parameterInfo, Type paramType)
         {

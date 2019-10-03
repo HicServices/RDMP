@@ -6,7 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -223,6 +225,41 @@ namespace Rdmp.UI.Tests
         public void Wait(string title, Task task, CancellationTokenSource cts)
         {
             task.Wait(cts.Token);
+        }
+
+        public Dictionary<Type, Func<object>> GetDelegates()
+        {
+            return new Dictionary<Type, Func<object>>(){ {typeof(IActivateItems),()=>this}};
+        }
+
+        public IEnumerable<Type> GetIgnoredCommands()
+        {
+            return new List<Type>();
+        }
+
+        public object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object PickOne(ParameterInfo parameterInfo, Type paramType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public object PickValueType(ParameterInfo parameterInfo, Type paramType)
+        {
+            throw new NotImplementedException();
         }
     }
 

@@ -74,8 +74,6 @@ typeof(ExecuteCommandReOrderAggregate),
 typeof(ExecuteCommandReOrderAggregateContainer),
 typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
 
-
-
             });
 
         [Test]
@@ -89,10 +87,9 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
             var activator = new TestActivateItems(uiTests, new MemoryDataExportRepository());
             activator.RepositoryLocator.CatalogueRepository.MEF = CatalogueRepository.MEF;
 
-            var run = new RunUI(activator);
-            allowedToBeIncompatible.AddRange(run.GetIgnoredCommands());
+            allowedToBeIncompatible.AddRange(activator.GetIgnoredCommands());
 
-            var commandCaller = new CommandCaller(run,RepositoryLocator);
+            var commandCaller = new CommandInvoker(activator,RepositoryLocator);
             
             Assert.IsTrue(commandCaller.IsSupported(typeof(ExecuteCommandDelete)));
 

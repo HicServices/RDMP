@@ -28,7 +28,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             var input = new ConsoleInputManager();
 
-            var caller = new CommandCaller(input, repositoryLocator);
+            var caller = new CommandInvoker(input, repositoryLocator);
 
             var commands = caller.GetSupportedCommands(repositoryLocator.CatalogueRepository.MEF).ToDictionary(k=>
                 k.Name.StartsWith(cmdPrefix) ? k.Name.Substring(cmdPrefix.Length): k.Name,v=>v);

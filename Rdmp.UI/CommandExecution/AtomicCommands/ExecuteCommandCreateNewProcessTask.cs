@@ -20,7 +20,7 @@ using ReusableUIComponents;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCreateNewProcessTask : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewProcessTask : BasicUICommandExecution, IAtomicCommand
     {
         private readonly ProcessTaskType _taskType;
         private readonly LoadMetadata _loadMetadata;

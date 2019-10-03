@@ -9,7 +9,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
-    class ConsoleInputManager : ICommandCallerArgProvider
+    class ConsoleInputManager : ICommandInvokerArgProvider
     {
         public Dictionary<Type, Func<object>> GetDelegates()
         {
