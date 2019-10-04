@@ -27,10 +27,7 @@ namespace Rdmp.Core.CommandLine.Runners
 
             if(command is CacheOptions cacheOpts )
                 return new CacheRunner(cacheOpts);
-
-            if(command is ListOptions listOpts)
-                return new ListRunner(listOpts);
-
+            
             if (command is ExtractionOptions extractionOpts )
                 return new ExtractionRunner(extractionOpts);
 

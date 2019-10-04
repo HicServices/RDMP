@@ -5,6 +5,7 @@ using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandExecution
@@ -22,6 +23,11 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <returns></returns>
         Dictionary<Type, Func<object>> GetDelegates();
+        
+        /// <summary>
+        /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
+        /// </summary>
+        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
         /// <summary>
         /// Commands that should not be returned in the list of supported commands by a <see cref="CommandInvoker"/>
@@ -83,5 +89,18 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="message"></param>
         void Show(string message);
+
+        
+        /// <summary>
+        /// Prompts user to provide some textual input
+        /// </summary>
+        /// <param name="header"></param>
+        /// <param name="prompt"></param>
+        /// <param name="maxLength"></param>
+        /// <param name="initialText"></param>
+        /// <param name="text"></param>
+        /// <param name="requireSaneHeaderText"></param>
+        /// <returns></returns>
+        bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
     }
 }

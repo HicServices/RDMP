@@ -76,12 +76,14 @@
     <AssociationLine Name="Activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="20.594" Y="4.213" />
-        <Point X="20.594" Y="4.938" />
-        <Point X="12.083" Y="4.938" Type="JumpStart" />
-        <Point X="11.917" Y="4.938" Type="JumpEnd" />
-        <Point X="6.583" Y="4.938" Type="JumpStart" />
-        <Point X="6.417" Y="4.938" Type="JumpEnd" />
-        <Point X="3.5" Y="4.938" />
+        <Point X="20.594" Y="5.079" />
+        <Point X="12.083" Y="5.079" Type="JumpStart" />
+        <Point X="11.917" Y="5.079" Type="JumpEnd" />
+        <Point X="6.583" Y="5.079" Type="JumpStart" />
+        <Point X="6.417" Y="5.079" Type="JumpEnd" />
+        <Point X="3.875" Y="5.079" />
+        <Point X="3.875" Y="4.728" />
+        <Point X="3.5" Y="4.728" />
       </Path>
     </AssociationLine>
     <AssociationLine Name="CommonFunctionality" Type="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPControlCommonFunctionality">
@@ -104,12 +106,10 @@
     <AssociationLine Name="_activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
       <Path>
         <Point X="15.125" Y="5.812" />
-        <Point X="15.125" Y="6.438" />
-        <Point X="10.333" Y="6.438" Type="JumpStart" />
-        <Point X="10.167" Y="6.438" Type="JumpEnd" />
-        <Point X="7.458" Y="6.438" Type="JumpStart" />
-        <Point X="7.292" Y="6.438" Type="JumpEnd" />
-        <Point X="3.5" Y="6.438" />
+        <Point X="15.125" Y="6.142" />
+        <Point X="10.333" Y="6.142" Type="JumpStart" />
+        <Point X="10.167" Y="6.142" Type="JumpEnd" />
+        <Point X="3.5" Y="6.142" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -126,12 +126,12 @@
       <Path>
         <Point X="22.75" Y="7.5" />
         <Point X="22.375" Y="7.5" />
-        <Point X="22.375" Y="7.187" />
-        <Point X="10.333" Y="7.187" Type="JumpStart" />
-        <Point X="10.167" Y="7.187" Type="JumpEnd" />
-        <Point X="7.458" Y="7.187" Type="JumpStart" />
-        <Point X="7.292" Y="7.187" Type="JumpEnd" />
-        <Point X="3.5" Y="7.187" />
+        <Point X="22.375" Y="6.849" />
+        <Point X="10.333" Y="6.849" Type="JumpStart" />
+        <Point X="10.167" Y="6.849" Type="JumpEnd" />
+        <Point X="7.458" Y="6.849" Type="JumpStart" />
+        <Point X="7.292" Y="6.849" Type="JumpEnd" />
+        <Point X="3.5" Y="6.849" />
       </Path>
     </AssociationLine>
     <TypeIdentifier>
@@ -185,7 +185,7 @@
   <Interface Name="Rdmp.UI.ItemActivation.IActivateItems">
     <Position X="0.75" Y="1.25" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AIQAACAgAAEAABBUBAAAoCEBAAQAAAJgABQQAABAAAA=</HashCode>
+      <HashCode>AIQAACAgAAAAABBUBAAAoCEAAAQAAAJgABQQAABAAAA=</HashCode>
       <FileName>ItemActivation\IActivateItems.cs</FileName>
     </TypeIdentifier>
   </Interface>

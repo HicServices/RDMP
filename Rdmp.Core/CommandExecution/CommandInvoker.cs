@@ -99,6 +99,9 @@ namespace Rdmp.Core.CommandExecution
             if (typeof(DirectoryInfo).IsAssignableFrom(paramType))
                 return _argumentProvider.PickDirectory(parameterInfo, paramType);
 
+            if(typeof(string) == paramType)
+                return _argumentProvider.
+
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
             {
@@ -161,6 +164,7 @@ namespace Rdmp.Core.CommandExecution
                     typeof(IDeleteable).IsAssignableFrom(p.ParameterType)||
                     typeof(INamed).IsAssignableFrom(p.ParameterType)||
                     p.HasDefaultValue ||
+                    p.ParameterType == typeof(string) ||
                     (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType))
                 );
         }

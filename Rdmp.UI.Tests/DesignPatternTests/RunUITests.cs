@@ -11,11 +11,13 @@ using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
+using ReusableLibraryCode.Checks;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests.DesignPatternTests
@@ -103,6 +105,17 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
 
             Console.WriteLine("The following commands are supported:" + Environment.NewLine + string.Join(Environment.NewLine,supported.Select(cmd=>cmd.Name)));
 
+        }
+
+        [TestCase(typeof(ExecuteCommandDelete))]
+        [TestCase(typeof(ExecuteCommandList))]
+        public void Test_IsSupported_BasicActivator(Type t)
+        {
+            IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+
+            var commandCaller = new CommandInvoker(basic,RepositoryLocator);
+            
+            Assert.IsTrue(commandCaller.IsSupported(t));
         }
     }
 }

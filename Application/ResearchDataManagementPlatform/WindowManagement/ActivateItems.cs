@@ -86,7 +86,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public void Show(string message)
         {
-            MessageBox.Show(message);
+            WideMessageBox.Show("Message",message);
         }
 
         public ICommandFactory CommandFactory { get; private set; }

@@ -68,11 +68,6 @@ namespace Rdmp.UI.ItemActivation
         Form ShowWindow(Control singleControlForm, bool asDocument = false);
 
         /// <summary>
-        /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
-        /// </summary>
-        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
-
-        /// <summary>
         /// Component for providing access to RDMPConcept icon images, these are 19x19 pixel icons representing specific objects/concepts in RDMP
         /// </summary>
         ICoreIconProvider CoreIconProvider { get; }
@@ -173,8 +168,6 @@ namespace Rdmp.UI.ItemActivation
         /// <returns></returns>
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
         
-
-        bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
 
         /// <summary>
         /// Block until the <paramref name="task"/> is completed with optionally showing the user some kind of ongoing operation

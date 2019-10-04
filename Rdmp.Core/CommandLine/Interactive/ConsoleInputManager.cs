@@ -20,17 +20,17 @@ namespace Rdmp.Core.CommandLine.Interactive
     {
         public Queue<string> ScriptedInput { get; } = new Queue<string>();
 
-        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
-        
         /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; private set; }
 
         public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
         
 
+        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
+
         public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
-            _repositoryLocator = repositoryLocator;
+            RepositoryLocator = repositoryLocator;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
             RefreshChildProvider();
@@ -46,13 +46,19 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(message);
         }
 
+        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
+            bool requireSaneHeaderText)
+        {
+            throw new NotImplementedException();
+        }
+
         private void RefreshChildProvider()
         {
             //todo pass the plugin child providers
-            if(_repositoryLocator.DataExportRepository != null)
-                CoreChildProvider = new DataExportChildProvider(_repositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+            if(RepositoryLocator.DataExportRepository != null)
+                CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,new ThrowImmediatelyCheckNotifier());
             else
-                CoreChildProvider = new CatalogueChildProvider(_repositoryLocator.CatalogueRepository,null,new ThrowImmediatelyCheckNotifier());
+                CoreChildProvider = new CatalogueChildProvider(RepositoryLocator.CatalogueRepository,null,new ThrowImmediatelyCheckNotifier());
         }
 
 
@@ -128,6 +134,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public object PickValueType(ParameterInfo parameterInfo, Type paramType)
         {
+            if (paramType == typeof(string))
+                return ReadLine();
+
             throw new NotImplementedException();
         }
 
