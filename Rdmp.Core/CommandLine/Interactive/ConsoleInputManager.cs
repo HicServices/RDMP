@@ -13,7 +13,7 @@ using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
-    class ConsoleInputManager : IBasicActivateItems
+    public class ConsoleInputManager : IBasicActivateItems
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         

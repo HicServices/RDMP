@@ -6,58 +6,6 @@
   <Comment CommentText="Testing implementation of API IActivateItems">
     <Position X="3.99" Y="4.802" Height="0.365" Width="6.398" />
   </Comment>
-  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.TestActivateItems" Collapsed="true">
-    <Position X="5" Y="5.75" Width="2.25" />
-    <Compartments>
-      <Compartment Name="Properties" Collapsed="true" />
-    </Compartments>
-    <TypeIdentifier>
-      <HashCode>AAQAACAgAAECAhDUBAAAoCEAKQQgggJhEBQAYABAAAE=</HashCode>
-      <FileName>UserInterfaceTests\TestActivateItems.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Property Name="Results" />
-    </ShowAsAssociation>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.TestActivateItemsResults">
-    <Position X="8.5" Y="5.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAABAAAAAAAgAAAAAAAAAAAA=</HashCode>
-      <FileName>UserInterfaceTests\TestActivateItems.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.UITests" Collapsed="true">
-    <Position X="5.5" Y="6.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAQAAIIACAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
-      <FileName>UserInterfaceTests\UITests.cs</FileName>
-    </TypeIdentifier>
-    <ShowAsAssociation>
-      <Field Name="ItemActivator" />
-    </ShowAsAssociation>
-  </Class>
-  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.AggregateEditorUITests" Collapsed="true">
-    <Position X="3.75" Y="7.75" Width="2" />
-    <TypeIdentifier>
-      <HashCode>ACAAAAAAAAAAAAAAAABAEAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>UserInterfaceTests\AggregateEditorUITests.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.CatalogueItemUITests" Collapsed="true">
-    <Position X="6" Y="7.75" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAEAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>UserInterfaceTests\CatalogueItemUITests.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.Core.Curation.ests.UserInterfaceTests.CatalogueUITests" Collapsed="true">
-    <Position X="8.25" Y="7.75" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQ=</HashCode>
-      <FileName>UserInterfaceTests\CatalogueUITests.cs</FileName>
-    </TypeIdentifier>
-  </Class>
   <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPForm" Collapsed="true">
     <Position X="6" Y="2.25" Width="1.5" />
     <AssociationLine Name="Activator" Type="Rdmp.UI.ItemActivation.IActivateItems" FixedFromPoint="true" FixedToPoint="true">
@@ -97,6 +45,38 @@
     <TypeIdentifier />
     <Lollipop Position="0.2" />
   </Class>
+  <Class Name="Rdmp.UI.Tests.TestActivateItems">
+    <Position X="4.75" Y="5.75" Width="2.25" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AISgACAhAAEIABDVREAAoCUBCAQkAgJgChQQIgBAAgE=</HashCode>
+      <FileName>TestActivateItems.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Property Name="Results" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.Tests.TestActivateItemsResults">
+    <Position X="11.5" Y="5.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>AAAAEAAAAAAAAAAAAAAAgABAAAAAAAgAAAAAAABAQAA=</HashCode>
+      <FileName>TestActivateItems.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.Tests.UITests">
+    <Position X="8.5" Y="8.75" Width="2.75" />
+    <TypeIdentifier>
+      <HashCode>EAAAgAgASAAQQAABIEAEAgAARCUQAAACAAAAFAAAAAI=</HashCode>
+      <FileName>UITests.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_itemActivator" />
+    </ShowAsAssociation>
+  </Class>
   <Interface Name="Rdmp.UI.ItemActivation.IActivateItems">
     <Position X="0.5" Y="0.5" Width="2.75" />
     <TypeIdentifier />
@@ -109,5 +89,12 @@
       <Property Name="Activator" />
     </ShowAsAssociation>
   </Interface>
+  <Enum Name="Rdmp.UI.Tests.ExpectedErrorType">
+    <Position X="9.25" Y="6.5" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>IAAAAgAAAAAAAACAAAAAAAAAAACAABAAAAAAAAAEAAA=</HashCode>
+      <FileName>UITests.cs</FileName>
+    </TypeIdentifier>
+  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

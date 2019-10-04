@@ -1,0 +1,62 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Commands that do not require a UI to run (e.g. can be run in non UI tests and from console)">
+    <Position X="0.604" Y="0.5" Height="0.344" Width="5.94" />
+  </Comment>
+  <Comment CommentText="Commands that require UI to run (can still be tested using TestItemActivator in Rdmp.UI.Tests)">
+    <Position X="0.5" Y="3.781" Height="0.344" Width="5.94" />
+  </Comment>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.ConsoleInputManager" Collapsed="true">
+    <Position X="0.75" Y="1.75" Width="2" />
+    <TypeIdentifier />
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="ResearchDataManagementPlatform.WindowManagement.ActivateItems" Collapsed="true">
+    <Position X="0.75" Y="6.25" Width="1.75" />
+    <Compartments>
+      <Compartment Name="Fields" Collapsed="true" />
+      <Compartment Name="Properties" Collapsed="true" />
+    </Compartments>
+    <TypeIdentifier>
+      <HashCode>AIQgACAgAAEAgBDUREAAoCUhAAQkAwNgDlQQAEFAAwA=</HashCode>
+      <FileName>WindowManagement\ActivateItems.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.UI.CommandExecution.AtomicCommands.BasicUICommandExecution" Collapsed="true">
+    <Position X="6.25" Y="4.75" Width="2" />
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Field Name="Activator" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.Core.CommandExecution.BasicCommandExecution" Collapsed="true">
+    <Position X="6.25" Y="2.5" Width="2" />
+    <TypeIdentifier />
+    <ShowAsAssociation>
+      <Property Name="BasicActivator" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CommandExecution.CommandInvoker">
+    <Position X="6.25" Y="5.75" Width="2.5" />
+    <TypeIdentifier />
+  </Class>
+  <Interface Name="Rdmp.UI.ItemActivation.IActivateItems" Collapsed="true">
+    <Position X="0.75" Y="4.75" Width="1.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.CommandExecution.IBasicActivateItems" Collapsed="true">
+    <Position X="2.5" Y="1" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.CommandExecution.AtomicCommands.IAtomicCommand" Collapsed="true">
+    <Position X="6.25" Y="1" Width="2" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.CommandExecution.AtomicCommands.IAtomicCommandWithTarget" Collapsed="true">
+    <Position X="9.25" Y="1" Width="2.25" />
+    <TypeIdentifier />
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>

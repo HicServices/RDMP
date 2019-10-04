@@ -21,7 +21,7 @@
   <Class Name="Rdmp.UI.Collections.TableInfoCollectionUI" Collapsed="true">
     <Position X="3.5" Y="7.25" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AgAAAAAIACQAAQAYAgCAAAACAAAAEAEAAAAAAAgAUAA=</HashCode>
+      <HashCode>AgAAAAAIACQAAAAYAgCAAAACAAAAEAEQAAAAAAgAQAA=</HashCode>
       <FileName>Collections\TableInfoCollectionUI.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -29,7 +29,7 @@
   <Class Name="Rdmp.UI.Collections.LoadMetadataCollectionUI" Collapsed="true">
     <Position X="6" Y="7.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AgAAAAQAACQABgAAAgKAACADAAAAAAEAAAgAAAgAAAA=</HashCode>
+      <HashCode>AgAAAAQAACQAAgAAAgCAAAACAAAAAAEAAAAAAAgAAAA=</HashCode>
       <FileName>Collections\LoadMetadataCollectionUI.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -37,7 +37,7 @@
   <Class Name="Rdmp.UI.Collections.RDMPCollectionUI" Collapsed="true">
     <Position X="4" Y="5.75" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAACAAAgAAAAAAgAAAA=</HashCode>
+      <HashCode>AAABAAAAAAAAAAAAAAAAAAAAAAACAAAAAAAAAAAAAAA=</HashCode>
       <FileName>Collections\RDMPCollectionUI.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -45,7 +45,7 @@
   <Class Name="Rdmp.UI.Collections.CatalogueCollectionUI" Collapsed="true">
     <Position X="1.25" Y="7.25" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAADEHAQAGQAAAAwAkCARAASIIAgDoEIBAAgAAgAABA=</HashCode>
+      <HashCode>AAABEFAAAGQAAAAwAgCCRAACAIAgAoEsBAAAAQgAAAA=</HashCode>
       <FileName>Collections\CatalogueCollectionUI.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -53,14 +53,14 @@
   <Class Name="Rdmp.UI.Refreshing.RefreshBus">
     <Position X="0.5" Y="1.5" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAgEEAEAAQAAAACAAUBQAAAAAAAAEA=</HashCode>
+      <HashCode>AAAAAAAAAAAAAAAgAEAEAAQAAAACAAUBQAAAAAAgAFA=</HashCode>
       <FileName>Refreshing\RefreshBus.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.TestsAndSetup.ServicePropogation.RDMPSingleDatabaseObjectControl&lt;T&gt;" Collapsed="true">
     <Position X="8.75" Y="6" Width="3" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAACQAAAAAAEAAAAgAAAAAAAAAAAAAAIAAAAA=</HashCode>
+      <HashCode>AAIgsBwAACAAAAAAAEgAAghEAAgiAEAAAAAAAIAAEAA=</HashCode>
       <FileName>TestsAndSetup\ServicePropogation\RDMPSingleDatabaseObjectControl.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -77,14 +77,14 @@
     <Position X="0.5" Y="8.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AggregationUIs\Advanced\AggregateEditor.cs</FileName>
+      <FileName>AggregationUIs\Advanced\AggregateEditorUI.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.AggregationUIs.AggregateGraph_Design" Collapsed="true">
     <Position X="7.25" Y="8.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>AggregationUIs\AggregateGraph.cs</FileName>
+      <FileName>AggregationUIs\AggregateGraphUI.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.CredentialsUIs.DataAccessCredentialsUI_Design" Collapsed="true">
@@ -92,13 +92,6 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>CredentialsUIs\DataAccessCredentialsUI.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.UI.DataLoadUIs.ANOUIs.ANOTableManagement.ConvertColumnInfoIntoANOColumnInfo_Design" Collapsed="true">
-    <Position X="0.5" Y="9.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>DataLoadUIs\ANOUIs\ANOTableManagement\ConvertColumnInfoIntoANOColumnInfo.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadMetadataUI_Design" Collapsed="true">
@@ -133,28 +126,7 @@
     <Position X="11.75" Y="9.5" Width="2" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>ExtractionUIs\ViewExtractionSql.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.UI.Issues.IssueUI_Design" Collapsed="true">
-    <Position X="0.5" Y="10.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>Issues\IssueUI.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.UI.MainFormUITabs.CatalogueItemTab_Design" Collapsed="true">
-    <Position X="2.75" Y="10.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>MainFormUITabs\CatalogueItemTab.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.UI.MainFormUITabs.CatalogueTab_Design" Collapsed="true">
-    <Position X="5" Y="10.5" Width="2" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>MainFormUITabs\CatalogueTab.cs</FileName>
+      <FileName>ExtractionUIs\ViewExtractionSqlUI.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.UI.SimpleDialogs.SupportingDocumentUI_Design" Collapsed="true">

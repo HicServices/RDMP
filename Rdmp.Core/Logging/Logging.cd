@@ -12,150 +12,122 @@
   <Comment CommentText="These classes are for retrieval of previous (closed) logging records.  They are readonly.  When you call LogManager.GetArchivalLoadInfoFor then you get the root (ArchivalDataLoadInfo) and all the child audit objects.">
     <Position X="5.146" Y="4.767" Height="0.681" Width="5.213" />
   </Comment>
-  <Class Name="HIC.Logging.DataLoadInfo">
+  <Class Name="Rdmp.Core.Logging.DataLoadInfo">
     <Position X="5.5" Y="1.25" Width="2.5" />
     <Compartments>
       <Compartment Name="Fields" Collapsed="true" />
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
+    <NestedTypes>
+      <Enum Name="Rdmp.Core.Logging.DataLoadInfo.FatalErrorStates" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Logging\DataLoadInfo.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+      <Enum Name="Rdmp.Core.Logging.DataLoadInfo.ProgressEventType" Collapsed="true">
+        <TypeIdentifier>
+          <NewMemberFileName>Logging\DataLoadInfo.cs</NewMemberFileName>
+        </TypeIdentifier>
+      </Enum>
+    </NestedTypes>
     <TypeIdentifier>
-      <HashCode>AAEgAAAAIAgiohBEQgJAAgAIIEAwAEAAAAIAIACgAAA=</HashCode>
-      <FileName>DataLoadInfo.cs</FileName>
+      <HashCode>AAEgAAAAIAgiohBGQgJAAgAIIEAwAEAAAAJAIACgAAA=</HashCode>
+      <FileName>Logging\DataLoadInfo.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="TableLoads" />
-    </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.FatalErrorLogging" Collapsed="true">
-    <Position X="9.75" Y="2.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AACEAAAAAAAAAAAAAAAAAQAABAAAACEAAAIAAAAgAAA=</HashCode>
-      <FileName>FatalErrorLogging.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="HIC.Logging.LogManager">
+  <Class Name="Rdmp.Core.Logging.LogManager">
     <Position X="0.5" Y="3.75" Width="3.75" />
     <TypeIdentifier>
-      <HashCode>AAAEAAAAgggACABABIQAAcEAACAQBAKgKAJADhAAgGQ=</HashCode>
-      <FileName>LogManager.cs</FileName>
+      <HashCode>AEAAAAACAAwAAAAAAAAAAAAAAAAQAAKgCAAABhAAgCA=</HashCode>
+      <FileName>Logging\LogManager.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.ProgressLogging" Collapsed="true">
-    <Position X="9.75" Y="3.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAEAAAAAAAAAAAAAAAAAAAABAAAACEAAAJAAAAgAAA=</HashCode>
-      <FileName>ProgressLogging.cs</FileName>
-    </TypeIdentifier>
-    <Lollipop Position="0.2" />
-  </Class>
-  <Class Name="HIC.Logging.RowErrorLogging" Collapsed="true">
-    <Position X="11.5" Y="2.25" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AABEAAAAAAAAAAAAAAQAAAAABAAAACEAAAIAAAAgAAA=</HashCode>
-      <FileName>RowErrorLogging.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="HIC.Logging.DataSource" Collapsed="true">
+  <Class Name="Rdmp.Core.Logging.DataSource" Collapsed="true">
     <Position X="12.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAIAAAAAAgAAgAgAAAAAgAAAAAAAAAASAAAAAAAAAAA=</HashCode>
-      <FileName>DataSource.cs</FileName>
+      <FileName>Logging\DataSource.cs</FileName>
     </TypeIdentifier>
   </Class>
-  <Class Name="HIC.Logging.TableLoadInfo" Collapsed="true">
+  <Class Name="Rdmp.Core.Logging.TableLoadInfo" Collapsed="true">
     <Position X="9.75" Y="1.25" Width="1.5" />
     <TypeIdentifier>
       <HashCode>AAE4AAAAIAgGgCYAIADAAAACIAwgAGAQIAIAIkAAAIA=</HashCode>
-      <FileName>TableLoadInfo.cs</FileName>
+      <FileName>Logging\TableLoadInfo.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
       <Property Name="DataSources" />
     </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.PastEvents.ArchivalDataLoadInfo" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Logging.PastEvents.ArchivalDataLoadInfo" BaseTypeListCollapsed="true">
     <Position X="5.75" Y="6.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAQAAAAAAAggQ0EAAAgCAAAIAAgAAAAAAAICBCAAAA=</HashCode>
-      <FileName>PastEvents\ArchivalDataLoadInfo.cs</FileName>
+      <HashCode>AgASAAAAAAAggYUFAAAACAAAIAAgAAAIAAAIMCCAAAA=</HashCode>
+      <FileName>Logging\PastEvents\ArchivalDataLoadInfo.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Field Name="TableLoadInfos" />
-      <Field Name="Errors" />
-      <Field Name="Progress" />
-    </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.PastEvents.ArchivalDataSource" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Logging.PastEvents.ArchivalDataSource" BaseTypeListCollapsed="true">
     <Position X="12.75" Y="9.25" Width="2" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
       <HashCode>AAAAAAAAAgAAgAwEAAAAgAAAAAAAAAACAAAIAAAAAAA=</HashCode>
-      <FileName>PastEvents\ArchivalDataSource.cs</FileName>
+      <FileName>Logging\PastEvents\ArchivalDataSource.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.PastEvents.ArchivalFatalError" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Logging.PastEvents.ArchivalFatalError" BaseTypeListCollapsed="true">
     <Position X="11" Y="5.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAgAggAQEAAAAAAAAAAAAAAABAQAIAAAAAAA=</HashCode>
-      <FileName>PastEvents\ArchivalFatalError.cs</FileName>
+      <HashCode>AAAAAAAAAgAggAQEAACAAAAAAAAAAAABAQAIAAAAAAA=</HashCode>
+      <FileName>Logging\PastEvents\ArchivalFatalError.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.PastEvents.ArchivalProgressLog" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Logging.PastEvents.ArchivalProgressLog" BaseTypeListCollapsed="true">
     <Position X="14" Y="5.5" Width="1.5" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAggAQEAAAAAAAEAAAAAAABAAAIAAAAAAA=</HashCode>
-      <FileName>PastEvents\ArchivalProgressLog.cs</FileName>
+      <HashCode>AAAAAAAAAAAggAQEAACAAAAEAAAAAAABAAAAAAAAAAA=</HashCode>
+      <FileName>Logging\PastEvents\ArchivalProgressLog.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.PastEvents.ArchivalTableLoadInfo" BaseTypeListCollapsed="true">
+  <Class Name="Rdmp.Core.Logging.PastEvents.ArchivalTableLoadInfo" BaseTypeListCollapsed="true">
     <Position X="9.75" Y="9" Width="2" />
     <Compartments>
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAIgAAAAACAEgAQEIACAQAAAAAAAAAAAAAAoAgAAAAI=</HashCode>
-      <FileName>PastEvents\ArchivalTableLoadInfo.cs</FileName>
+      <HashCode>AgIgAAAAQCAEgAQEIACAQAAAAAAAAAAAAAAgAgAAAAI=</HashCode>
+      <FileName>Logging\PastEvents\ArchivalTableLoadInfo.cs</FileName>
     </TypeIdentifier>
-    <ShowAsCollectionAssociation>
-      <Property Name="DataSources" />
-    </ShowAsCollectionAssociation>
     <Lollipop Position="0.2" />
   </Class>
-  <Class Name="HIC.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener" Collapsed="true">
+  <Class Name="Rdmp.Core.Logging.Listeners.ToLoggingDatabaseDataLoadEventListener" Collapsed="true">
     <Position X="0.5" Y="2" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>AAAIAAACAAAAAAQAAgEAAABQAEAAAAAAAAAAgAAAAEA=</HashCode>
-      <FileName>Listeners\ToLoggingDatabaseDataLoadEventListener.cs</FileName>
+      <HashCode>AAAIAAACAIAAAAQAAgEAAAAQAEACAAAAAAAAgAAAAEA=</HashCode>
+      <FileName>Logging\Listeners\ToLoggingDatabaseDataLoadEventListener.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
   </Class>
-  <Interface Name="HIC.Logging.PastEvents.IArchivalLoggingRecordOfPastEvent" Collapsed="true">
+  <Interface Name="Rdmp.Core.Logging.PastEvents.IArchivalLoggingRecordOfPastEvent" Collapsed="true">
     <Position X="5.25" Y="5.5" Width="2.75" />
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>PastEvents\IArchivalLoggingRecordOfPastEvent.cs</FileName>
+      <FileName>Logging\PastEvents\IArchivalLoggingRecordOfPastEvent.cs</FileName>
     </TypeIdentifier>
   </Interface>
-  <Enum Name="HIC.Logging.PastEvents.PastEventType">
-    <Position X="6" Y="11" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAACAAA=</HashCode>
-      <FileName>PastEvents\ArchivalDataLoadInfo.cs</FileName>
-    </TypeIdentifier>
-  </Enum>
   <Font Name="Segoe UI" Size="9" />
 </ClassDiagram>

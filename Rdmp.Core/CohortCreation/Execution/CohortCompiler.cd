@@ -36,7 +36,7 @@
   <Class Name="Rdmp.Core.CohortCreation.Execution.CohortCompiler">
     <Position X="7.75" Y="4.75" Width="5.25" />
     <TypeIdentifier>
-      <HashCode>gAAAACAAIAAKAAAAgEAAAAAAAAAgAAAEgEEIJCAEABA=</HashCode>
+      <HashCode>gAAAACAAIAAKAAAAgEAAAAAAAAAwAAAEgEEIJCAEABA=</HashCode>
       <FileName>CohortCreation\Execution\CohortCompiler.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -59,7 +59,7 @@
     <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.Core.CohortCreation.Execution.AggregationContainerTask">
-    <Position X="6" Y="10" Width="2.5" />
+    <Position X="6" Y="10.5" Width="2.5" />
     <TypeIdentifier>
       <HashCode>AAQAAAQAAABAAIAgAAEQAAAAIAAAAIAAAAAAAAAAAAA=</HashCode>
       <FileName>CohortCreation\Execution\AggregationContainerTask.cs</FileName>
@@ -89,7 +89,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAEBAAAAAAAAAIAEAAE0CAEAAAQAAIIEAEAAFAAGACQ=</HashCode>
+      <HashCode>AAEBAAAAAAAAAIAEAAE0CAEAAAwAAIIEAEAAFAAGACQ=</HashCode>
       <FileName>CohortCreation\Compileable.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -198,7 +198,7 @@
       <Compartment Name="Methods" Collapsed="true" />
     </Compartments>
     <TypeIdentifier>
-      <HashCode>AAABAAAAAAAAAIAAAAE0AAEAAAAAAAIEAAAABAAGACA=</HashCode>
+      <HashCode>AAABAAAAAAAAAIAAAAE0AAEAAAgAAAIEAAAABAAGACA=</HashCode>
       <FileName>CohortCreation\ICompileable.cs</FileName>
     </TypeIdentifier>
   </Interface>

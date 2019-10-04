@@ -77,9 +77,9 @@
       <Path>
         <Point X="20.594" Y="4.213" />
         <Point X="20.594" Y="4.938" />
-        <Point X="12.083" Y="4.937" Type="JumpStart" />
+        <Point X="12.083" Y="4.938" Type="JumpStart" />
         <Point X="11.917" Y="4.938" Type="JumpEnd" />
-        <Point X="6.583" Y="4.937" Type="JumpStart" />
+        <Point X="6.583" Y="4.938" Type="JumpStart" />
         <Point X="6.417" Y="4.938" Type="JumpEnd" />
         <Point X="3.5" Y="4.938" />
       </Path>
@@ -113,7 +113,7 @@
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>BAIYAAAAAAQCAAAABhAAACgggQEAAABAAgAAAAxEIQA=</HashCode>
+      <HashCode>BAIYAAAAAAQCAACABhAAACgggQEAAABAAgCAAAxEIQA=</HashCode>
       <FileName>TestsAndSetup\ServicePropogation\RDMPControlCommonFunctionality.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -135,13 +135,12 @@
       </Path>
     </AssociationLine>
     <TypeIdentifier>
-      <HashCode>AIAAAABAAAAAQEBAAkAAIAAREEAEQAAgCAAAAAAAAAA=</HashCode>
+      <HashCode>AIAAAABAAAAAQEBAAgAAIAABEEAAQAAgAAAAAAAAAAA=</HashCode>
       <FileName>CommandExecution\AtomicCommands\BasicUICommandExecution.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
       <Field Name="Activator" />
     </ShowAsAssociation>
-    <Lollipop Position="0.2" />
   </Class>
   <Class Name="Rdmp.UI.DashboardTabs.DashboardableControlHostPanel" Collapsed="true">
     <Position X="16.5" Y="4" Width="3" />
@@ -186,7 +185,7 @@
   <Interface Name="Rdmp.UI.ItemActivation.IActivateItems">
     <Position X="0.75" Y="1.25" Width="2.75" />
     <TypeIdentifier>
-      <HashCode>AIQAACAgAAEAABDUBAAAoCEAAAQgAgJgCBQQAABAAAA=</HashCode>
+      <HashCode>AIQAACAgAAEAABBUBAAAoCEBAAQAAAJgABQQAABAAAA=</HashCode>
       <FileName>ItemActivation\IActivateItems.cs</FileName>
     </TypeIdentifier>
   </Interface>
@@ -196,14 +195,6 @@
       <HashCode>AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAEAAAAA=</HashCode>
       <FileName>TestsAndSetup\ServicePropogation\IObjectCollectionControl.cs</FileName>
     </TypeIdentifier>
-  </Interface>
-  <Interface Name="ReusableLibraryCode.CommandExecution.AtomicCommands.IAtomicCommand" Collapsed="true">
-    <Position X="22.75" Y="4" Width="3.5" />
-    <TypeIdentifier />
-  </Interface>
-  <Interface Name="ReusableLibraryCode.CommandExecution.ICommandExecution">
-    <Position X="22.75" Y="1.5" Width="3.5" />
-    <TypeIdentifier />
   </Interface>
   <Interface Name="Rdmp.UI.DashboardTabs.Construction.IDashboardableControl" Collapsed="true">
     <Position X="16.5" Y="2.75" Width="3" />
@@ -218,6 +209,14 @@
       <HashCode>AAAAAAAAAAAAABAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
       <FileName>DashboardTabs\Construction\INotifyMeOfEditState.cs</FileName>
     </TypeIdentifier>
+  </Interface>
+  <Interface Name="Rdmp.Core.CommandExecution.ICommandExecution">
+    <Position X="22.75" Y="1.5" Width="3.5" />
+    <TypeIdentifier />
+  </Interface>
+  <Interface Name="Rdmp.Core.CommandExecution.AtomicCommands.IAtomicCommand" Collapsed="true">
+    <Position X="22.75" Y="4" Width="3.5" />
+    <TypeIdentifier />
   </Interface>
   <Enum Name="Rdmp.UI.Collections.RDMPCollection">
     <Position X="6.75" Y="7.5" Width="1.5" />
