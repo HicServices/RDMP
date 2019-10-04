@@ -18,6 +18,8 @@ namespace Rdmp.Core.CommandLine.Interactive
     /// </summary>
     public class ConsoleInputManager : IBasicActivateItems
     {
+        public Queue<string> ScriptedInput { get; } = new Queue<string>();
+
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         
         /// <inheritdoc/>
@@ -71,15 +73,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null,bool allowAutoSelect = false)
         {
-            Console.WriteLine("Available Objects:");
-            foreach (var o in availableObjects)
-            {
-                Console.WriteLine(o.GetType().Name + "|" + o.ID + "|" + o.ToString());
-            }
-            Console.WriteLine(prompt);
             Console.WriteLine("Format \"{Type}:{ID}\" e.g. \"Catalogue:123\"");
 
-            var args = Console.ReadLine().Split(':');
+            var args = ReadLine().Split(':');
 
             if (args.Length != 2)
             {
@@ -92,6 +88,14 @@ namespace Rdmp.Core.CommandLine.Interactive
             return availableObjects.Single(o =>
                 o.ID == id &&
                 o.GetType().Name.Equals(args[0].Trim(), StringComparison.CurrentCultureIgnoreCase));
+        }
+
+        private string ReadLine()
+        {
+            if(ScriptedInput.Any())
+                return ScriptedInput.Dequeue();
+
+            return Console.ReadLine();
         }
 
         public DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType)

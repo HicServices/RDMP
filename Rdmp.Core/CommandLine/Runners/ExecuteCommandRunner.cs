@@ -33,14 +33,22 @@ namespace Rdmp.Core.CommandLine.Runners
             var commands = invoker.GetSupportedCommands(repositoryLocator.CatalogueRepository.MEF).ToDictionary(k=>
                 k.Name.StartsWith(cmdPrefix) ? k.Name.Substring(cmdPrefix.Length): k.Name,v=>v,StringComparer.CurrentCultureIgnoreCase);
 
-            if (string.IsNullOrWhiteSpace(_options.CommandText))
-            {
-                string commandName = input.GetString("Command",commands.Keys.ToList());
+            foreach (var args in _options.CommandArgs)
+                input.ScriptedInput.Enqueue(args);
 
-                if (!string.IsNullOrWhiteSpace(commandName) && commands.ContainsKey(commandName))
-                    invoker.ExecuteCommand(commands[commandName]);
-            }
+            string command;
 
+            if (string.IsNullOrWhiteSpace(_options.CommandName))
+                command = input.GetString("Command", commands.Keys.ToList()); //get command name from user
+            else
+                command = _options.CommandName;
+            
+            
+            if (!string.IsNullOrWhiteSpace(command) && commands.ContainsKey(command))
+                invoker.ExecuteCommand(commands[command]);
+            else
+                Console.WriteLine($"Unknown Command '{command}'");
+            
             return 0;
         }
     }
