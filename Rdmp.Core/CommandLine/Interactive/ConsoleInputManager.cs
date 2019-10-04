@@ -13,6 +13,9 @@ using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
+    /// <summary>
+    /// Implementation of <see cref="IBasicActivateItems"/> that handles object selection and message notification via the console
+    /// </summary>
     public class ConsoleInputManager : IBasicActivateItems
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
@@ -164,7 +167,7 @@ namespace Rdmp.Core.CommandLine.Interactive
                         var cyclingDirection = shiftPressed ? CyclingDirections.Backward : CyclingDirections.Forward;
                         var autoCompletedLine =
                             cyclingAutoComplete.AutoComplete(result.LineBeforeKeyPress.LineBeforeCursor,
-                                options, cyclingDirection);
+                                options, cyclingDirection,true);
                         ConsoleExt.SetLine(autoCompletedLine);
                         break;
                 }

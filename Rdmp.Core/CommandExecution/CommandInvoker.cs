@@ -109,20 +109,20 @@ namespace Rdmp.Core.CommandExecution
             if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
             {
                 IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType);
-                return _argumentProvider.SelectOne(parameterInfo+"("+paramType+")", available);
+                return _argumentProvider.SelectOne(parameterInfo.Name, available);
             }
 
             if (typeof(IMightBeDeprecated).IsAssignableFrom(paramType))
-                return SelectOne<IMightBeDeprecated>(parameterInfo, paramType);
+                return SelectOne<IMightBeDeprecated>(parameterInfo);
 
             if (typeof (IDeleteable).IsAssignableFrom(paramType))
-                return SelectOne<IDeleteable>(parameterInfo, paramType);
+                return SelectOne<IDeleteable>(parameterInfo);
             
             if (typeof (INamed).IsAssignableFrom(paramType))
-                return SelectOne<INamed>(parameterInfo, paramType);
+                return SelectOne<INamed>(parameterInfo);
 
             if (typeof(ICheckable).IsAssignableFrom(paramType))
-                return _argumentProvider.SelectOne(parameterInfo +"("+ paramType+")", 
+                return _argumentProvider.SelectOne(parameterInfo.Name, 
                     _argumentProvider.GetAll<ICheckable>()
                     .Where(paramType.IsInstanceOfType)
                     .ToArray());
@@ -136,9 +136,9 @@ namespace Rdmp.Core.CommandExecution
             return null;
         }
 
-        private object SelectOne<T>(ParameterInfo parameterInfo, Type paramType)
+        private object SelectOne<T>(ParameterInfo parameterInfo)
         {
-            return _argumentProvider.SelectOne(parameterInfo + "("+ paramType +")",_argumentProvider.GetAll<T>().ToArray());
+            return _argumentProvider.SelectOne(parameterInfo.Name,_argumentProvider.GetAll<T>().ToArray());
         }
 
         public bool IsSupported(ConstructorInfo c)

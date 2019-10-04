@@ -2,27 +2,16 @@
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
+
+    /// <summary>
+    /// Records forward/backward 'tabbing' through a list of commands
+    /// </summary>
     public class CyclingAutoComplete
     {
         private List<string> _autoCompleteList;
         private string _previousAutoComplete = string.Empty;
         private int _autoCompleteIndex;
-
-        public string AutoComplete(string line, List<string> strings)
-        {
-            return AutoComplete(line, strings, CyclingDirections.Forward, true);
-        }
-
-        public string AutoComplete(string line, List<string> strings, CyclingDirections cyclingDirection)
-        {
-            return AutoComplete(line, strings, cyclingDirection, true);
-        }
-
-        public string AutoComplete(string line, List<string> strings, bool ignoreCase)
-        {
-            return AutoComplete(line, strings, CyclingDirections.Forward, ignoreCase);
-        }
-
+        
         public string AutoComplete(string line, List<string> strings, CyclingDirections cyclingDirection, bool ignoreCase)
         {
             if (IsPreviousCycle(line))
