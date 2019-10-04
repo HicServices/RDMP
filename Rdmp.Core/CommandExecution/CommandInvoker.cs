@@ -115,13 +115,16 @@ namespace Rdmp.Core.CommandExecution
             if (typeof(IMightBeDeprecated).IsAssignableFrom(paramType))
                 return SelectOne<IMightBeDeprecated>(parameterInfo);
 
-            if (typeof (IDeleteable).IsAssignableFrom(paramType))
+            if (typeof (IDisableable) == paramType)
+                return SelectOne<IDisableable>(parameterInfo);
+
+            if (typeof (INamed) == paramType)
+                return SelectOne<INamed>(parameterInfo);
+            
+            if (typeof (IDeleteable) == paramType)
                 return SelectOne<IDeleteable>(parameterInfo);
             
-            if (typeof (INamed).IsAssignableFrom(paramType))
-                return SelectOne<INamed>(parameterInfo);
-
-            if (typeof(ICheckable).IsAssignableFrom(paramType))
+            if (typeof(ICheckable) == paramType)
                 return _argumentProvider.SelectOne(parameterInfo.Name, 
                     _argumentProvider.GetAll<ICheckable>()
                     .Where(paramType.IsInstanceOfType)
