@@ -12,6 +12,8 @@
   <ItemGroup>
     <None Remove="en_US.aff" />
     <None Remove="en_US.dic" />
+    <None Remove="Hunspellx64.dll" />
+    <None Remove="Hunspellx86.dll" />
     <None Remove="hyph_en_US.dic" />
     <None Remove="Images\DependencyGraphInformation.png" />
     <None Remove="Images\DependencyGraphToolbarInformation.png" />
@@ -26,6 +28,12 @@
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="en_US.dic">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Hunspellx64.dll">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Hunspellx86.dll">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
     <Content Include="hyph_en_US.dic">
