@@ -98,6 +98,16 @@ namespace Rdmp.UI.Tests
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         public ICoreIconProvider CoreIconProvider { get; private set; }
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
+        public void Publish(DatabaseEntity databaseEntity)
+        {
+            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+        }
+
+        public void Show(string message)
+        {
+            Assert.Fail("Did not expect a MessageBox to be shown");
+        }
+
         public ICommandFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; set; }
         public CommentStore CommentStore { get; private set; }

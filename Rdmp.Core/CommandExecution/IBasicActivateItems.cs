@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using ReusableLibraryCode.Checks;
 
@@ -10,7 +11,6 @@ namespace Rdmp.Core.CommandExecution
 {
     public interface IBasicActivateItems
     {
-                
         /// <summary>
         /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
         /// </summary>
@@ -70,5 +70,18 @@ namespace Rdmp.Core.CommandExecution
         /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
         /// </summary>
         ICheckNotifier GlobalErrorCheckNotifier { get; }
+
+        /// <summary>
+        /// Called when <see cref="BasicCommandExecution.Publish"/> is invoked.  Allows you to respond to publish events outside of UI code.  UI code
+        /// should invoke the RefreshBus system in Rdmp.UI
+        /// </summary>
+        /// <param name="databaseEntity"></param>
+        void Publish(DatabaseEntity databaseEntity);
+
+        /// <summary>
+        /// Display the given message to the user (e.g. in a MessageBox or out into the Console)
+        /// </summary>
+        /// <param name="message"></param>
+        void Show(string message);
     }
 }

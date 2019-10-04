@@ -6,7 +6,6 @@
 
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.IO;
 using System.Linq;
 using System.Windows.Forms;
@@ -18,27 +17,20 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
-using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Icons.IconProvision;
 
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
-    public abstract class BasicUICommandExecution:BasicCommandExecution,IAtomicCommand
+    public abstract class BasicUICommandExecution:BasicCommandExecution
     {
         protected readonly IActivateItems Activator;
 
         protected BasicUICommandExecution(IActivateItems activator):base(activator)
         {
             Activator = activator;
-        }
-
-        protected sealed override void Publish(DatabaseEntity o)
-        {
-            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(o));
         }
 
         protected void Activate(DatabaseEntity o)
@@ -200,25 +192,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return TypeText(header, prompt, 500, null, out text);
         }
 
-        
-        /// <summary>
-        /// Displays the given message to the user
-        /// </summary>
-        /// <param name="message"></param>
-        protected void Show(string message)
-        {
-            MessageBox.Show(message);
-        }
-
-        /// <summary>
-        /// Displays the given message to the user, calling String.Format 
-        /// </summary>
-        /// <param name="message"></param>
-        /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
-        protected void Show(string message, params object[] objects)
-        {
-            MessageBox.Show(string.Format(message,objects));
-        }
         
         /// <summary>
         /// Runs checks on the <paramref name="checkable"/> and calls <see cref="BasicCommandExecution.SetImpossible(string)"/> if there are any failures

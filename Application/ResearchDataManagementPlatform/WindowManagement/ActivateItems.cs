@@ -79,6 +79,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public IArrangeWindows WindowArranger { get; private set; }
         
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
+        public void Publish(DatabaseEntity databaseEntity)
+        {
+            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+        }
+
+        public void Show(string message)
+        {
+            MessageBox.Show(message);
+        }
 
         public ICommandFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }

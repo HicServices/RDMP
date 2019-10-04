@@ -6,6 +6,7 @@ using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -17,26 +18,38 @@ namespace Rdmp.Core.CommandLine.Interactive
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         
         /// <inheritdoc/>
-        public ICoreChildProvider CoreChildProvider { get; }
+        public ICoreChildProvider CoreChildProvider { get; private set; }
 
         public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
-
+        
 
         public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             _repositoryLocator = repositoryLocator;
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
-
-            //todo pass the plugin child providers
-            if(repositoryLocator.DataExportRepository != null)
-                CoreChildProvider = new DataExportChildProvider(repositoryLocator,null,new ThrowImmediatelyCheckNotifier());
-            else
-                CoreChildProvider = new CatalogueChildProvider(repositoryLocator.CatalogueRepository,null,new ThrowImmediatelyCheckNotifier());
+            RefreshChildProvider();
 
         }
+        public void Publish(DatabaseEntity databaseEntity)
+        {
+            RefreshChildProvider();
+        }
 
-        
+        public void Show(string message)
+        {
+            Console.WriteLine(message);
+        }
+
+        private void RefreshChildProvider()
+        {
+            //todo pass the plugin child providers
+            if(_repositoryLocator.DataExportRepository != null)
+                CoreChildProvider = new DataExportChildProvider(_repositoryLocator,null,new ThrowImmediatelyCheckNotifier());
+            else
+                CoreChildProvider = new CatalogueChildProvider(_repositoryLocator.CatalogueRepository,null,new ThrowImmediatelyCheckNotifier());
+        }
+
 
         public Dictionary<Type, Func<object>> GetDelegates()
         {

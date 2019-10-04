@@ -122,7 +122,7 @@ namespace Rdmp.Core.CommandExecution
 
         protected virtual void Publish(DatabaseEntity o)
         {
-
+            BasicActivator.Publish(o);
         }
         
         /// <summary>
@@ -137,6 +137,25 @@ namespace Rdmp.Core.CommandExecution
                 throw new Exception(msg,ex);
 
             BasicActivator.GlobalErrorCheckNotifier.OnCheckPerformed(new CheckEventArgs(msg, CheckResult.Fail, ex));
+        }
+        
+        /// <summary>
+        /// Displays the given message to the user
+        /// </summary>
+        /// <param name="message"></param>
+        protected void Show(string message)
+        {
+            BasicActivator.Show(message);
+        }
+
+        /// <summary>
+        /// Displays the given message to the user, calling String.Format 
+        /// </summary>
+        /// <param name="message"></param>
+        /// <param name="objects">Objects to use for {0},{1} etc tokens in <paramref name="message"/></param>
+        protected void Show(string message, params object[] objects)
+        {
+            BasicActivator.Show(string.Format(message,objects));
         }
     }
 }
