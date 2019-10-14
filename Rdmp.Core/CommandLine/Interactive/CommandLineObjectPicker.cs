@@ -58,7 +58,7 @@ namespace Rdmp.Core.CommandLine.Interactive
                 return new CommandLineObjectPickerArgumentValue(arg,idx,objs.Cast<IMapsDirectlyToDatabaseTable>().ToArray());
             }
 
-            throw new CommandLineObjectPickerParseException("Could not parse argument" , idx,arg);
+            return new CommandLineObjectPickerArgumentValue(arg,idx);
         }
 
         private IEnumerable<IMapsDirectlyToDatabaseTable> GetObjectByToString(Type type, string pattern)

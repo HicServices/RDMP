@@ -47,7 +47,10 @@ namespace Rdmp.Core.CommandLine.Interactive
         public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(header);
+            Console.Write(prompt +":");
+            text = ReadLine();
+            return !string.IsNullOrWhiteSpace(text);
         }
 
         private void RefreshChildProvider()

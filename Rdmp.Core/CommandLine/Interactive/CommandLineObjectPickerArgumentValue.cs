@@ -17,7 +17,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; }
 
-        private CommandLineObjectPickerArgumentValue(string rawValue,int idx)
+        public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
         {
             RawValue = rawValue;
             Index = idx;

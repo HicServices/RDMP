@@ -69,12 +69,15 @@ namespace Rdmp.Core.CommandExecution
 
                 object value = null;
 
+                //if we have argument values specified
                 if (picker != null)
                 {
+                    //and the specified value matches the expected parameter type
                     if (picker.HasArgumentOfType(idx, paramType))
                     {
-                        idx++;
+                        //consume a value
                         value = picker[idx].GetValueForParameterOfType(paramType);
+                        idx++;
                     }
                 }
 
@@ -122,7 +125,10 @@ namespace Rdmp.Core.CommandExecution
                 return _basicActivator.PickDirectory(parameterInfo, paramType);
 
             if (typeof(string) == paramType)
-                return _basicActivator.TypeText("Value Needed", parameterInfo.Name, 1000, null, out _, false);
+                return
+                _basicActivator.TypeText("Value needed for parameter", parameterInfo.Name, 1000, null, out string result, false)
+                    ? result
+                    : null;
 
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
