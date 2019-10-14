@@ -6,7 +6,9 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using FAnsi.Discovery;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
@@ -16,6 +18,7 @@ using Rdmp.Core.Repositories;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.Automation;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
@@ -109,6 +112,8 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
 
         [TestCase(typeof(ExecuteCommandDelete))]
         [TestCase(typeof(ExecuteCommandList))]
+        [TestCase(typeof(TestCommand_DiscoveredDatabase))]
+        [TestCase(typeof(TestCommand_LotsOfParameters))]
         public void Test_IsSupported_BasicActivator(Type t)
         {
             IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
@@ -117,5 +122,26 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
             
             Assert.IsTrue(commandCaller.IsSupported(t));
         }
+
+        private class TestCommand_DiscoveredDatabase:BasicCommandExecution
+        {   
+            public TestCommand_DiscoveredDatabase(IActivateItems activator,DiscoveredDatabase db):base(activator)
+            {
+                
+            }
+        }
+
+        private class TestCommand_LotsOfParameters : BasicCommandExecution
+        {
+            public TestCommand_LotsOfParameters(IRDMPPlatformRepositoryServiceLocator repositoryLocator, DiscoveredDatabase databaseToCreateInto, DirectoryInfo projectDirectory):base()
+            {
+                
+            }
+        }
+
+
+
     }
+
+    
 }

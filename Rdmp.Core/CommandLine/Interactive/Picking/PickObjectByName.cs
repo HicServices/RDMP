@@ -11,7 +11,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
     {
         public PickObjectByName(IRDMPPlatformRepositoryServiceLocator repositoryLocator) :
             base(repositoryLocator,
-            new Regex(@"([A-Za-z]+):([A-Za-z,*]+)"))
+            new Regex(@"^([A-Za-z]+):([A-Za-z,*]+)$"))
         {
         }
         

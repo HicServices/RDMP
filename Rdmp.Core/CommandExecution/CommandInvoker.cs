@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
@@ -50,6 +51,9 @@ namespace Rdmp.Core.CommandExecution
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
                 ? result
                 : null);
+
+            AddDelegate(typeof(DiscoveredDatabase),(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
+            AddDelegate(typeof(DiscoveredTable),(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
 
             AddDelegate(typeof(DatabaseEntity), (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.ParameterType)));
             AddDelegate(typeof(IMightBeDeprecated), SelectOne<IMightBeDeprecated>);

@@ -132,7 +132,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
         {
-            throw new NotImplementedException();
+            Console.WriteLine($"Enter Directory For Parameter '{parameterInfo}'");
+            
+            return new DirectoryInfo(Console.ReadLine());
         }
 
         public void OnCommandImpossible(IAtomicCommand instance)

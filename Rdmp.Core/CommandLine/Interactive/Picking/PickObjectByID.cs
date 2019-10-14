@@ -10,7 +10,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
     {
         public PickObjectByID(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
             :base(repositoryLocator,
-                new Regex("([A-Za-z]+):([0-9,]+)"))
+                new Regex("^([A-Za-z]+):([0-9,]+)$"))
         {
                 
         }

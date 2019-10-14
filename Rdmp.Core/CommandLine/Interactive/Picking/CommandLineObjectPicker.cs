@@ -20,11 +20,11 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public CommandLineObjectPicker(IEnumerable<string> args,
             IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
-            _arguments = args.Select(ParseValue).ToArray();
-
             _pickers.Add(new PickObjectByID(repositoryLocator));
             _pickers.Add(new PickObjectByName(repositoryLocator));
             _pickers.Add(new PickDatabase());
+
+            _arguments = args.Select(ParseValue).ToArray();
         }
 
         private CommandLineObjectPickerArgumentValue ParseValue(string arg,int idx)
