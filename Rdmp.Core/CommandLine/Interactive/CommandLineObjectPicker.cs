@@ -12,7 +12,7 @@ namespace Rdmp.Core.CommandLine.Interactive
     /// Parses arguments given along with the "cmd" command to rdmp.exe (<see cref="Rdmp.Core.CommandLine.Options.ExecuteCommandOptions"/>).  This
     /// allows the user to launch certain commands (<see cref="Rdmp.Core.CommandExecution.BasicCommandExecution"/>) from the CLI.
     /// </summary>
-    class CommandLineObjectPicker
+    public class CommandLineObjectPicker
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         Regex selectObjectByID = new Regex("([A-Za-z]+):([0-9,]+)");
@@ -105,6 +105,21 @@ namespace Rdmp.Core.CommandLine.Interactive
             return t;
 
 
+        }
+
+        /// <summary>
+        /// Returns true if the given <paramref name="idx"/> exists and is populated with a value of the expected <paramref name="paramType"/>
+        /// </summary>
+        /// <param name="idx"></param>
+        /// <param name="paramType"></param>
+        /// <returns></returns>
+        public bool HasArgumentOfType(int idx, Type paramType)
+        {
+            //if the index is greater than the number of arguments we have
+            if (idx >= _arguments.Length)
+                return false;
+
+            return _arguments[idx].HasValueOfType(paramType);
         }
     }
 }

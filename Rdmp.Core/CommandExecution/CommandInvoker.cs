@@ -5,6 +5,7 @@ using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -14,11 +15,11 @@ namespace Rdmp.Core.CommandExecution
 {
     public class CommandInvoker
     {
-        private readonly IBasicActivateItems _argumentProvider;
+        private readonly IBasicActivateItems _basicActivator;
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         
         /// <summary>
-        /// Delegates provided by <see cref="_argumentProvider"/> for fulfilling constructor arguments of the key Type
+        /// Delegates provided by <see cref="_basicActivator"/> for fulfilling constructor arguments of the key Type
         /// </summary>
         private Dictionary<Type, Func<object>> _argumentDelegates;
 
@@ -32,32 +33,53 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         public event EventHandler<CommandEventArgs> CommandCompleted;
 
-        public CommandInvoker(IBasicActivateItems argumentProvider, IRDMPPlatformRepositoryServiceLocator repositoryLocator)
+        public CommandInvoker(IBasicActivateItems basicActivator)
         {
-            _argumentProvider = argumentProvider;
-            _repositoryLocator = repositoryLocator;
+            _basicActivator = basicActivator;
+            _repositoryLocator = basicActivator.RepositoryLocator;
 
-            _argumentDelegates = _argumentProvider.GetDelegates();
+            _argumentDelegates = _basicActivator.GetDelegates();
         }
 
-        public IEnumerable<Type> GetSupportedCommands(MEF mef)
+        public IEnumerable<Type> GetSupportedCommands()
         {
-            return mef.GetAllTypes().Where(IsSupported);
+            
+            return _basicActivator.RepositoryLocator.CatalogueRepository.MEF.GetAllTypes().Where(IsSupported);
         }
 
-        public void ExecuteCommand(Type type)
+        /// <summary>
+        /// Constructs an instance of the <see cref="IAtomicCommand"/> and executes it.  Constructor parameters
+        /// are populated from the (optional) <paramref name="picker"/> or the <see cref="IBasicActivateItems"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <param name="picker"></param>
+        public void ExecuteCommand(Type type, CommandLineObjectPicker picker)
         {
-            ExecuteCommand(GetConstructor(type));
+            ExecuteCommand(GetConstructor(type),picker);
         }
-        private void ExecuteCommand(ConstructorInfo constructorInfo)
+        private void ExecuteCommand(ConstructorInfo constructorInfo, CommandLineObjectPicker picker)
         {
             List<object> parameterValues = new List<object>();
+            
+            int idx = 0;
 
             foreach (var parameterInfo in constructorInfo.GetParameters())
             {
                 var paramType = parameterInfo.ParameterType;
 
-                var value = GetValueForParameterOfType(parameterInfo,paramType);
+                object value = null;
+
+                if (picker != null)
+                {
+                    if (picker.HasArgumentOfType(idx, paramType))
+                    {
+                        idx++;
+                        value = picker[idx].GetValueForParameterOfType(paramType);
+                    }
+                }
+
+                if(value == null) 
+                    value = GetValueForParameterOfType(parameterInfo,paramType);
                 
                 //if it's a null and not a default null
                 if(value == null && !parameterInfo.HasDefaultValue)
@@ -80,7 +102,7 @@ namespace Rdmp.Core.CommandExecution
         private object GetValueForParameterOfType(ParameterInfo parameterInfo, Type paramType)
         {
             var key = _argumentDelegates.Keys.FirstOrDefault(k => k.IsAssignableFrom(paramType));
-
+            
             if (key != null)
                 return _argumentDelegates[key]();
 
@@ -88,7 +110,7 @@ namespace Rdmp.Core.CommandExecution
                 return _repositoryLocator.CatalogueRepository;
 
             if (typeof(IBasicActivateItems).IsAssignableFrom(paramType))
-                return _argumentProvider;
+                return _basicActivator;
 
             if (typeof(IDataExportRepository).IsAssignableFrom(paramType))
                 return _repositoryLocator.DataExportRepository;
@@ -97,22 +119,22 @@ namespace Rdmp.Core.CommandExecution
                 return _repositoryLocator;
 
             if (typeof(DirectoryInfo).IsAssignableFrom(paramType))
-                return _argumentProvider.PickDirectory(parameterInfo, paramType);
+                return _basicActivator.PickDirectory(parameterInfo, paramType);
 
             if (typeof(string) == paramType)
-                return _argumentProvider.TypeText("Value Needed", parameterInfo.Name, 1000, null, out _, false);
+                return _basicActivator.TypeText("Value Needed", parameterInfo.Name, 1000, null, out _, false);
 
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
             {
                 IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType.GetElementType());
-                return _argumentProvider.PickMany(parameterInfo,paramType.GetElementType(), available);
+                return _basicActivator.PickMany(parameterInfo,paramType.GetElementType(), available);
             }
 
             if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
             {
                 IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType);
-                return _argumentProvider.SelectOne(parameterInfo.Name, available);
+                return _basicActivator.SelectOne(parameterInfo.Name, available);
             }
 
             if (typeof(IMightBeDeprecated).IsAssignableFrom(paramType))
@@ -128,8 +150,8 @@ namespace Rdmp.Core.CommandExecution
                 return SelectOne<IDeleteable>(parameterInfo);
             
             if (typeof(ICheckable) == paramType)
-                return _argumentProvider.SelectOne(parameterInfo.Name, 
-                    _argumentProvider.GetAll<ICheckable>()
+                return _basicActivator.SelectOne(parameterInfo.Name, 
+                    _basicActivator.GetAll<ICheckable>()
                     .Where(paramType.IsInstanceOfType)
                     .ToArray());
             
@@ -137,14 +159,14 @@ namespace Rdmp.Core.CommandExecution
                 return parameterInfo.DefaultValue;
 
             if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
-                return _argumentProvider.PickValueType(parameterInfo,paramType);
+                return _basicActivator.PickValueType(parameterInfo,paramType);
             
             return null;
         }
 
         private object SelectOne<T>(ParameterInfo parameterInfo)
         {
-            return _argumentProvider.SelectOne(parameterInfo.Name,_argumentProvider.GetAll<T>().ToArray());
+            return _basicActivator.SelectOne(parameterInfo.Name,_basicActivator.GetAll<T>().ToArray());
         }
 
         public bool IsSupported(ConstructorInfo c)
@@ -176,7 +198,7 @@ namespace Rdmp.Core.CommandExecution
             if (!acceptableType)
                 return false;
 
-            if (_argumentProvider.GetIgnoredCommands().Contains(t))
+            if (_basicActivator.GetIgnoredCommands().Contains(t))
                 return false;
 
             try

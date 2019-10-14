@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.DataFlowPipeline;
@@ -24,30 +25,27 @@ namespace Rdmp.Core.CommandLine.Runners
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener,
             ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
-            const string cmdPrefix = "ExecuteCommand";
-
             var input = new ConsoleInputManager(repositoryLocator,checkNotifier);
 
-            var invoker = new CommandInvoker(input, repositoryLocator);
+            var invoker = new CommandInvoker(input);
             
-            var commands = invoker.GetSupportedCommands(repositoryLocator.CatalogueRepository.MEF).ToDictionary(k=>
-                k.Name.StartsWith(cmdPrefix) ? k.Name.Substring(cmdPrefix.Length): k.Name,v=>v,StringComparer.CurrentCultureIgnoreCase);
+            var commands = invoker.GetSupportedCommands().ToDictionary(
+                k=>BasicCommandExecution.GetCommandName(k.Name),
+                v=>v,StringComparer.CurrentCultureIgnoreCase);
 
-            foreach (var args in _options.CommandArgs)
-                input.ScriptedInput.Enqueue(args);
+            CommandLineObjectPicker picker = 
+                _options.CommandArgs.Any() ?
+                picker = new CommandLineObjectPicker(_options.CommandArgs, repositoryLocator) :
+                null;
 
-            string command;
-
-            if (string.IsNullOrWhiteSpace(_options.CommandName))
-                command = input.GetString("Command", commands.Keys.ToList()); //get command name from user
-            else
-                command = _options.CommandName;
-            
+            var command = string.IsNullOrWhiteSpace(_options.CommandName) ?
+                input.GetString("Command", commands.Keys.ToList()) :
+                _options.CommandName;
             
             if (!string.IsNullOrWhiteSpace(command) && commands.ContainsKey(command))
-                invoker.ExecuteCommand(commands[command]);
+                invoker.ExecuteCommand(commands[command],picker);
             else
-                Console.WriteLine($"Unknown Command '{command}'");
+                Console.WriteLine($"Unknown Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands" );
             
             return 0;
         }

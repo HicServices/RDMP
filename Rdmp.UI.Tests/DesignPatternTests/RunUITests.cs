@@ -89,7 +89,7 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
 
             allowedToBeIncompatible.AddRange(activator.GetIgnoredCommands());
 
-            var commandCaller = new CommandInvoker(activator,RepositoryLocator);
+            var commandCaller = new CommandInvoker(activator);
             
             Assert.IsTrue(commandCaller.IsSupported(typeof(ExecuteCommandDelete)));
 
@@ -113,7 +113,7 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
         {
             IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
 
-            var commandCaller = new CommandInvoker(basic,RepositoryLocator);
+            var commandCaller = new CommandInvoker(basic);
             
             Assert.IsTrue(commandCaller.IsSupported(t));
         }

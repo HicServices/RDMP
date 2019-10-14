@@ -34,18 +34,18 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             _commandsDictionary = new Dictionary<string, Type>(StringComparer.CurrentCultureIgnoreCase);
             _argsDictionary.Add(typeof(IActivateItems),()=>activator);
 
-            _commandCaller = new CommandInvoker(activator,activator.RepositoryLocator);
+            _commandCaller = new CommandInvoker(activator);
             _commandCaller.CommandImpossible += (s,e) =>MessageBox.Show(e.Command.ReasonCommandImpossible);
             _commandCaller.CommandCompleted += (s, e) => this.Close();
 
-            var commands = _commandCaller.GetSupportedCommands(activator.RepositoryLocator.CatalogueRepository.MEF);
+            var commands = _commandCaller.GetSupportedCommands();
             
             foreach (var c in commands)
             {
-                var name = c.Name.Replace("ExecuteCommand", "");
+                var name = BasicCommandExecution.GetCommandName(c.Name);
                 
                 if(!_commandsDictionary.ContainsKey(name))
-                    _commandsDictionary.Add(c.Name.Replace("ExecuteCommand", ""), c);
+                    _commandsDictionary.Add(name, c);
             }
 
             comboBox1.Items.AddRange(_commandsDictionary.Keys.ToArray());
@@ -69,7 +69,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
 
                     try
                     {
-                        _commandCaller.ExecuteCommand(type);
+                        _commandCaller.ExecuteCommand(type, null);
                     }
                     catch (OperationCanceledException)
                     {

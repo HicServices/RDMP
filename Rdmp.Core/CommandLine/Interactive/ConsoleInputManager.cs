@@ -18,8 +18,6 @@ namespace Rdmp.Core.CommandLine.Interactive
     /// </summary>
     public class ConsoleInputManager : IBasicActivateItems
     {
-        public Queue<string> ScriptedInput { get; } = new Queue<string>();
-
         /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; private set; }
 
@@ -98,9 +96,6 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         private string ReadLine()
         {
-            if(ScriptedInput.Any())
-                return ScriptedInput.Dequeue();
-
             return Console.ReadLine();
         }
 

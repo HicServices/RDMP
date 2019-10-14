@@ -31,7 +31,12 @@ namespace Rdmp.Core.CommandExecution
         public string ReasonCommandImpossible { get; private set; }
         public string OverrideCommandName { get; set; }
 
-        
+        /// <summary>
+        /// The prefix that must appear on all Types derived from <see cref="BasicCommandExecution"/> in order to be rendered correctly in
+        /// menus, called from the command line etc.
+        /// </summary>
+        public const string ExecuteCommandPrefix = "ExecuteCommand";
+
         /// <summary>
         /// True to add "..." to the end of the <see cref="GetCommandName"/>
         /// </summary>
@@ -53,20 +58,43 @@ namespace Rdmp.Core.CommandExecution
                 throw new ImpossibleCommandException(this, ReasonCommandImpossible);
         }
 
-
+        /// <summary>
+        /// Returns human readable name for the command (This includes spaces and may have triple dots at the end, see <see cref="UseTripleDotSuffix"/>).
+        /// For a programmatic name e.g. if user is to type command name into a CLI then use the static method <see cref="GetCommandName(string)"/>
+        /// </summary>
+        /// <returns></returns>
         public virtual string GetCommandName()
         {
             if (!string.IsNullOrWhiteSpace(OverrideCommandName))
                 return OverrideCommandName;
 
             var name = GetType().Name;
-            var adjusted = name.Replace("ExecuteCommand", "");
+            var adjusted = name.Replace(ExecuteCommandPrefix, "");
 
             if (UseTripleDotSuffix)
                 adjusted += "...";
 
             return UsefulStuff.PascalCaseStringToHumanReadable(adjusted);
         
+        }
+
+        /// <summary>
+        /// Returns the name of the command in programmatic format e.g. no spaces no triple dot suffix etc.
+        /// </summary>
+        /// <param name="typeName"></param>
+        /// <returns></returns>
+        public static string GetCommandName(string typeName)
+        {
+            return typeName.Replace(ExecuteCommandPrefix, "");
+        }
+
+        /// <summary>
+        /// Returns the name of the command in programmatic format e.g. no spaces no triple dot suffix etc.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetCommandName<T>() where T : BasicCommandExecution
+        {
+            return GetCommandName(typeof(T).Name);
         }
 
         public virtual string GetCommandHelp()
