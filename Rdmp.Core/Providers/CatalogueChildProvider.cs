@@ -164,6 +164,9 @@ namespace Rdmp.Core.Providers
         public JoinableCohortAggregateConfiguration[] AllJoinables { get; set; }
         public JoinableCohortAggregateConfigurationUse[] AllJoinUses { get; set; }
 
+        /// <summary>
+        /// Collection of all objects for which there are masqueraders
+        /// </summary>
         public ConcurrentDictionary<object,HashSet<IMasqueradeAs>> AllMasqueraders { get; private set; }
 
         public readonly IChildProvider[] PluginChildProviders;
@@ -184,7 +187,23 @@ namespace Rdmp.Core.Providers
         public Curation.Data.Plugin[] AllCompatiblePlugins { get; }
 
         public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
-            
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders)
+        {
+            //things that are a match on Type but not IMasqueradeAs
+            var exactMatches = GetAllSearchables().Keys.Where(t=>!(t is IMasqueradeAs)).Where(type.IsInstanceOfType);
+
+            //Union the unwrapped masqueraders
+            if (unwrapMasqueraders)
+                return exactMatches.Union(
+                    AllMasqueraders
+                        .Select(kvp => kvp.Key)
+                        .OfType<IMapsDirectlyToDatabaseTable>()
+                        .Where(type.IsInstanceOfType))
+                    .Distinct();
+
+            return exactMatches;
+        }
+
         public AllOrphanAggregateConfigurationsNode OrphanAggregateConfigurationsNode { get;set; } = new AllOrphanAggregateConfigurationsNode();
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;

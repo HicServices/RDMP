@@ -73,7 +73,7 @@ namespace Rdmp.Core.CommandLine.Interactive
         private object GetOneDatabaseEntity<T>()
         {
             //if there are not exactly 1 database entity
-            if (DatabaseEntities == null || DatabaseEntities.Count == 1)
+            if (DatabaseEntities == null || DatabaseEntities.Count != 1)
                 return null;
 
             //return the single object as the type you want e.g. ICheckable

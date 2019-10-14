@@ -75,26 +75,36 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
-            throw new NotImplementedException();
+            Console.WriteLine("Format \"{Type}:{ID}\" e.g. \"Catalogue:*mysql*\" or \"Catalogue:12,23,34\"");
+
+            string line = ReadLine();
+            var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator);
+            var chosen = picker[0].DatabaseEntities;
+
+            var unavailable = chosen.Except(availableObjects).ToArray();
+
+            if(unavailable.Any())
+                throw new Exception("The following objects were not among the listed available objects " + string.Join(",",unavailable.Select(o=>o.ToString())));
+
+            return chosen;
         }
 
         public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null,bool allowAutoSelect = false)
         {
+            //todo this should be in ComandLineObjectPicker / use delegates?
             Console.WriteLine("Format \"{Type}:{ID}\" e.g. \"Catalogue:123\"");
 
-            var args = ReadLine().Split(':');
+            string line = ReadLine();
+            var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator);
+            var chosen = picker[0].DatabaseEntities?.SingleOrDefault();
 
-            if (args.Length != 2)
-            {
-                Console.WriteLine("Invalid format");
+            if (chosen == null)
                 return null;
-            }
 
-            var id = int.Parse(args[1]);
+            if(!availableObjects.Contains(chosen))
+                throw new Exception("Picked object was not one of the listed available objects");
 
-            return availableObjects.Single(o =>
-                o.ID == id &&
-                o.GetType().Name.Equals(args[0].Trim(), StringComparison.CurrentCultureIgnoreCase));
+            return chosen;
         }
 
         private string ReadLine()

@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -21,8 +22,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
 
             StringBuilder sb = new StringBuilder();
-            foreach (var m in BasicActivator.CoreChildProvider.GetAllSearchables().Keys
-                .Where(o => _type.IsInstanceOfType(o)))
+            foreach (var m in BasicActivator.CoreChildProvider.GetAllObjects(_type,true))
             {
                 sb.AppendLine(m.ID + ":" + m);
             }
