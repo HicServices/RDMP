@@ -1,0 +1,142 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<ClassDiagram MajorVersion="1" MinorVersion="1">
+  <Comment CommentText="Runner for commands like &quot;rdmp.exe cmd delete Catalogue:123&quot;">
+    <Position X="0.5" Y="0.5" Height="0.323" Width="4.46" />
+  </Comment>
+  <Comment CommentText="Handles turning a collection of arguments e.g. &quot;Catalogue:123&quot; into an actuall class references">
+    <Position X="1.177" Y="4.208" Height="0.75" Width="2.325" />
+  </Comment>
+  <Comment CommentText="Things that can be parsed into values to use in constructing commands">
+    <Position X="8.135" Y="5.167" Height="0.5" Width="2.325" />
+  </Comment>
+  <Comment CommentText="Handles manual entry e.g. if user types &quot;rdmp.exe cmd delete&quot; (i.e. without specifying what they want to delete)">
+    <Position X="0.594" Y="9.104" Height="0.75" Width="2.69" />
+  </Comment>
+  <Comment CommentText="Handles constructing and executing the command with parameters from the command line or typed in console at runtime.">
+    <Position X="9.198" Y="8.229" Height="0.76" Width="2.794" />
+  </Comment>
+  <Comment CommentText="Commands that can be run from the command line (assuming constructor arguments pass IsSupported check)">
+    <Position X="10.521" Y="10.448" Height="0.656" Width="3.377" />
+  </Comment>
+  <Comment CommentText="Example commands the user might want to run from CLI">
+    <Position X="10.812" Y="12.656" Height="0.354" Width="3.408" />
+  </Comment>
+  <Class Name="Rdmp.Core.CommandLine.Runners.ExecuteCommandRunner">
+    <Position X="0.75" Y="1.5" Width="2" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAI=</HashCode>
+      <FileName>CommandLine\Runners\ExecuteCommandRunner.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_options" />
+    </ShowAsAssociation>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Options.ExecuteCommandOptions">
+    <Position X="3.75" Y="2" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAAAAAAAQAAAAAAAAAAIAAAAQAAAAAA=</HashCode>
+      <FileName>CommandLine\Options\ExecuteCommandOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Options.RDMPCommandLineOptions" Collapsed="true">
+    <Position X="3.75" Y="1" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gAAAAAgAAAAAIQCAAAAABAACAAAAAgCAIQQAABAAAAA=</HashCode>
+      <FileName>CommandLine\Options\RDMPCommandLineOptions.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.CommandLineObjectPicker">
+    <Position X="3.75" Y="4.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AACAAAAAAAAAAAAACAAAAAgAAAAAABAAQAAAAAAAAAA=</HashCode>
+      <FileName>CommandLine\Interactive\Picking\CommandLineObjectPicker.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsCollectionAssociation>
+      <Field Name="_arguments" />
+    </ShowAsCollectionAssociation>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.CommandLineObjectPickerArgumentValue" Collapsed="true">
+    <Position X="7.75" Y="4.25" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>ABAAAAAAAEAAAAAAAAAAAAAAAQAAAAAIACEABAAAAAA=</HashCode>
+      <FileName>CommandLine\Interactive\Picking\CommandLineObjectPickerArgumentValue.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectBase" Collapsed="true">
+    <Position X="8.25" Y="5.75" Width="2" />
+    <TypeIdentifier>
+      <HashCode>IAAiAAAEAIEABABAQAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <FileName>CommandLine\Interactive\Picking\PickObjectBase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickDatabase" Collapsed="true">
+    <Position X="6.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CommandLine\Interactive\Picking\PickDatabase.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectByID" Collapsed="true">
+    <Position X="8.5" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CommandLine\Interactive\Picking\PickObjectByID.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectByName" Collapsed="true">
+    <Position X="10.75" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <FileName>CommandLine\Interactive\Picking\PickObjectByName.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.ConsoleInputManager">
+    <Position X="3.5" Y="9" Width="2.5" />
+    <TypeIdentifier>
+      <HashCode>AABgAAAAABEAQACAQEAAJAQBAEAkQkAACgAAAAAAAiA=</HashCode>
+      <FileName>CommandLine\Interactive\ConsoleInputManager.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CommandExecution.CommandInvoker">
+    <Position X="6.75" Y="8.25" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>gIAAAAAAAAgAAAAAAAAAJAAAgCIgQAAIAAAAgAAAAgA=</HashCode>
+      <FileName>CommandExecution\CommandInvoker.cs</FileName>
+    </TypeIdentifier>
+    <ShowAsAssociation>
+      <Field Name="_basicActivator" />
+    </ShowAsAssociation>
+  </Class>
+  <Class Name="Rdmp.Core.CommandExecution.BasicCommandExecution" Collapsed="true">
+    <Position X="10.5" Y="9.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAQAARQAAEAAAQAAEAAAAAQAAAEAAAAiGKAAQAAAAA=</HashCode>
+      <FileName>CommandExecution\BasicCommandExecution.cs</FileName>
+    </TypeIdentifier>
+    <Lollipop Position="0.2" />
+  </Class>
+  <Class Name="Rdmp.Core.CommandExecution.AtomicCommands.ExecuteCommandListSupportedCommands" Collapsed="true">
+    <Position X="9.75" Y="11.75" Width="3.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <FileName>CommandExecution\AtomicCommands\ExecuteCommandListSupportedCommands.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandExecution.AtomicCommands.ExecuteCommandDelete" Collapsed="true">
+    <Position X="13.25" Y="11.75" Width="2.25" />
+    <TypeIdentifier>
+      <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
+      <FileName>CommandExecution\AtomicCommands\ExecuteCommandDelete.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Interface Name="Rdmp.Core.CommandExecution.IBasicActivateItems" Collapsed="true">
+    <Position X="3.5" Y="8" Width="1.75" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAEAAACAQEAAIAQBAEAkQgAACgAAAAAAAgA=</HashCode>
+      <FileName>CommandExecution\IBasicActivateItems.cs</FileName>
+    </TypeIdentifier>
+  </Interface>
+  <Font Name="Segoe UI" Size="9" />
+</ClassDiagram>
