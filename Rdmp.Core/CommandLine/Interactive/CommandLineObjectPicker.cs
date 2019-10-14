@@ -1,15 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.Core.CommandLine
+namespace Rdmp.Core.CommandLine.Interactive
 {
+    /// <summary>
+    /// Parses arguments given along with the "cmd" command to rdmp.exe (<see cref="Rdmp.Core.CommandLine.Options.ExecuteCommandOptions"/>).  This
+    /// allows the user to launch certain commands (<see cref="Rdmp.Core.CommandExecution.BasicCommandExecution"/>) from the CLI.
+    /// </summary>
     class CommandLineObjectPicker
     {
         private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
@@ -103,39 +105,6 @@ namespace Rdmp.Core.CommandLine
             return t;
 
 
-        }
-    }
-
-    internal class CommandLineObjectPickerParseException : Exception
-    {
-        public int Index { get; }
-        public string RawValue { get; }
-
-        public CommandLineObjectPickerParseException(string message, int index, string rawValue):base(message)
-        {
-            Index = index;
-            RawValue = rawValue;
-        }
-    }
-
-    public class CommandLineObjectPickerArgumentValue
-    {
-
-        public string RawValue { get; }
-        public int Index { get; }
-
-        public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; }
-
-        private CommandLineObjectPickerArgumentValue(string rawValue,int idx)
-        {
-            RawValue = rawValue;
-            Index = idx;
-        }
-
-
-        public CommandLineObjectPickerArgumentValue(string rawValue,int idx,IMapsDirectlyToDatabaseTable[] entities):this(rawValue, idx)
-        {
-            DatabaseEntities = new ReadOnlyCollection<IMapsDirectlyToDatabaseTable>(entities);
         }
     }
 }
