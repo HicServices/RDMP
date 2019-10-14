@@ -8,6 +8,7 @@ using System;
 using System.Windows.Forms;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.SimpleDialogs
 {

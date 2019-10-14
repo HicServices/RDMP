@@ -130,16 +130,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return selected != null;
         }
 
+        protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        {
+            return BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
+        }
+
         protected DiscoveredTable SelectTable(bool allowDatabaseCreation,string taskDescription)
         {
-            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
-
-            dialog.ShowDialog();
-
-            if (dialog.DialogResult != DialogResult.OK)
-                return null;
-
-            return dialog.SelectedTable;
+            return BasicActivator.SelectTable(allowDatabaseCreation, taskDescription);
         }
 
         protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity

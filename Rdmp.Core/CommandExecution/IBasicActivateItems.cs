@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
@@ -22,7 +23,7 @@ namespace Rdmp.Core.CommandExecution
         /// exists for the parameter Type then the constructor will not be supported by the <see cref="IBasicActivateItems"/>
         /// </summary>
         /// <returns></returns>
-        Dictionary<Type, Func<object>> GetDelegates();
+        List<KeyValuePair<Type, Func<ParameterInfo,object>>> GetDelegates();
         
         /// <summary>
         /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
@@ -39,7 +40,7 @@ namespace Rdmp.Core.CommandExecution
 
         object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
-        DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType);
+        DirectoryInfo PickDirectory(ParameterInfo parameterInfo);
 
         
         /// <summary>
@@ -102,5 +103,9 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="requireSaneHeaderText"></param>
         /// <returns></returns>
         bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
+
+        DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription);
+
+        DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
     }
 }

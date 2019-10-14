@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -561,6 +562,29 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return !string.IsNullOrWhiteSpace(text);
         }
 
+        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true);
+            dialog.ShowDialog();
+            
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
+
+            return dialog.SelectedDatabase;
+        }
+
+        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
+            
+            dialog.ShowDialog();
+
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
+
+            return dialog.SelectedTable;
+        }
+
         public void Wait(string title, Task task, CancellationTokenSource cts)
         {
             var ui = new WaitUI(title,task,cts);
@@ -609,7 +633,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
 
-        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType)
+        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
         {
             var fb = new FolderBrowserDialog();
             if (fb.ShowDialog() == DialogResult.OK)
@@ -663,9 +687,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public Dictionary<Type, Func<object>> GetDelegates()
+        public List<KeyValuePair<Type, Func<ParameterInfo, object>>> GetDelegates()
         {
-            return new Dictionary<Type, Func<object>>(){{typeof(IActivateItems),()=>this}};
+            return new List<KeyValuePair<Type, Func<ParameterInfo, object>>>
+            {
+                new KeyValuePair<Type, Func<ParameterInfo, object>>(typeof(IActivateItems),(p)=>this)
+            };
         }
     }
 }

@@ -12,6 +12,7 @@ using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
@@ -232,14 +233,27 @@ namespace Rdmp.UI.Tests
             return !string.IsNullOrWhiteSpace(TypeTextResponse);
         }
 
+        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        {
+            throw new NotImplementedException();
+        }
+
         public void Wait(string title, Task task, CancellationTokenSource cts)
         {
             task.Wait(cts.Token);
         }
 
-        public Dictionary<Type, Func<object>> GetDelegates()
+        public List<KeyValuePair<Type, Func<ParameterInfo, object>>> GetDelegates()
         {
-            return new Dictionary<Type, Func<object>>(){ {typeof(IActivateItems),()=>this}};
+            return new List<KeyValuePair<Type, Func<ParameterInfo, object>>>
+            {
+                new KeyValuePair<Type, Func<ParameterInfo, object>>(typeof(IActivateItems),(p)=>this)
+            };
         }
 
         public IEnumerable<Type> GetIgnoredCommands()
@@ -257,7 +271,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType)
+        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
         {
             throw new NotImplementedException();
         }

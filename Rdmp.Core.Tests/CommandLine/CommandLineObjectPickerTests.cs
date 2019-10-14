@@ -5,6 +5,7 @@ using System.Text;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Tests.Common;
 

@@ -6,6 +6,7 @@ using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
@@ -21,7 +22,7 @@ namespace Rdmp.Core.CommandExecution
         /// <summary>
         /// Delegates provided by <see cref="_basicActivator"/> for fulfilling constructor arguments of the key Type
         /// </summary>
-        private Dictionary<Type, Func<object>> _argumentDelegates;
+        private List<KeyValuePair<Type, Func<ParameterInfo,object>>> _argumentDelegates;
 
         /// <summary>
         /// Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible"/>
@@ -39,6 +40,34 @@ namespace Rdmp.Core.CommandExecution
             _repositoryLocator = basicActivator.RepositoryLocator;
 
             _argumentDelegates = _basicActivator.GetDelegates();
+            
+            AddDelegate(typeof(ICatalogueRepository),(p)=>_repositoryLocator.CatalogueRepository);
+            AddDelegate(typeof(IDataExportRepository),(p)=>_repositoryLocator.DataExportRepository);
+            AddDelegate(typeof(IBasicActivateItems),(p)=>_basicActivator);
+            AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),(p)=>_repositoryLocator);
+            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.PickDirectory(p));
+            AddDelegate(typeof(string), (p) =>
+                _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
+                ? result
+                : null);
+
+            AddDelegate(typeof(DatabaseEntity), (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.ParameterType)));
+            AddDelegate(typeof(IMightBeDeprecated), SelectOne<IMightBeDeprecated>);
+            AddDelegate(typeof(IDisableable), SelectOne<IDisableable>);
+            AddDelegate(typeof(INamed), SelectOne<INamed>);
+            AddDelegate(typeof(IDeleteable), SelectOne<IDeleteable>);
+
+            AddDelegate(typeof(ICheckable), 
+                (p)=>_basicActivator.SelectOne(p.Name, 
+                    _basicActivator.GetAll<ICheckable>()
+                        .Where(p.ParameterType.IsInstanceOfType)
+                        .ToArray())
+                );
+        }
+
+        private void AddDelegate(Type type, Func<ParameterInfo, object> func)
+        {
+            _argumentDelegates.Add(new KeyValuePair<Type, Func<ParameterInfo, object>>(type,func));
         }
 
         public IEnumerable<Type> GetSupportedCommands()
@@ -65,28 +94,26 @@ namespace Rdmp.Core.CommandExecution
 
             foreach (var parameterInfo in constructorInfo.GetParameters())
             {
-                var paramType = parameterInfo.ParameterType;
-
                 object value = null;
 
                 //if we have argument values specified
                 if (picker != null)
                 {
                     //and the specified value matches the expected parameter type
-                    if (picker.HasArgumentOfType(idx, paramType))
+                    if (picker.HasArgumentOfType(idx, parameterInfo.ParameterType))
                     {
                         //consume a value
-                        value = picker[idx].GetValueForParameterOfType(paramType);
+                        value = picker[idx].GetValueForParameterOfType(parameterInfo.ParameterType);
                         idx++;
                     }
                 }
 
                 if(value == null) 
-                    value = GetValueForParameterOfType(parameterInfo,paramType);
+                    value = GetValueForParameterOfType(parameterInfo);
                 
                 //if it's a null and not a default null
                 if(value == null && !parameterInfo.HasDefaultValue)
-                    throw new OperationCanceledException("Could not figure out a value for property '" + parameterInfo + "' for constructor '" + constructorInfo + "'.  Parameter Type was '" + paramType + "'");
+                    throw new OperationCanceledException("Could not figure out a value for property '" + parameterInfo + "' for constructor '" + constructorInfo + "'.  Parameter Type was '" + parameterInfo.ParameterType + "'");
 
                 parameterValues.Add(value);
             }
@@ -102,71 +129,32 @@ namespace Rdmp.Core.CommandExecution
             instance.Execute();
             CommandCompleted?.Invoke(this,new CommandEventArgs(instance));
         }
-        private object GetValueForParameterOfType(ParameterInfo parameterInfo, Type paramType)
+        private object GetValueForParameterOfType(ParameterInfo parameterInfo)
         {
-            var key = _argumentDelegates.Keys.FirstOrDefault(k => k.IsAssignableFrom(paramType));
+            Type paramType = parameterInfo.ParameterType;
+
+            var record = _argumentDelegates.Where(p => p.Key.IsAssignableFrom(paramType))
+                .Select(p => new {p.Key, p.Value })
+                .FirstOrDefault();
+
+            if (record != null)
+                return record.Value(parameterInfo);
             
-            if (key != null)
-                return _argumentDelegates[key]();
-
-            if (typeof(ICatalogueRepository).IsAssignableFrom(paramType))
-                return _repositoryLocator.CatalogueRepository;
-
-            if (typeof(IBasicActivateItems).IsAssignableFrom(paramType))
-                return _basicActivator;
-
-            if (typeof(IDataExportRepository).IsAssignableFrom(paramType))
-                return _repositoryLocator.DataExportRepository;
-
-            if (typeof(IRDMPPlatformRepositoryServiceLocator).IsAssignableFrom(paramType))
-                return _repositoryLocator;
-
-            if (typeof(DirectoryInfo).IsAssignableFrom(paramType))
-                return _basicActivator.PickDirectory(parameterInfo, paramType);
-
-            if (typeof(string) == paramType)
-                return
-                _basicActivator.TypeText("Value needed for parameter", parameterInfo.Name, 1000, null, out string result, false)
-                    ? result
-                    : null;
-
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
             {
                 IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType.GetElementType());
                 return _basicActivator.PickMany(parameterInfo,paramType.GetElementType(), available);
             }
-
-            if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
-            {
-                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType);
-                return _basicActivator.SelectOne(parameterInfo.Name, available);
-            }
-
-            if (typeof(IMightBeDeprecated).IsAssignableFrom(paramType))
-                return SelectOne<IMightBeDeprecated>(parameterInfo);
-
-            if (typeof (IDisableable) == paramType)
-                return SelectOne<IDisableable>(parameterInfo);
-
-            if (typeof (INamed) == paramType)
-                return SelectOne<INamed>(parameterInfo);
-            
-            if (typeof (IDeleteable) == paramType)
-                return SelectOne<IDeleteable>(parameterInfo);
-            
-            if (typeof(ICheckable) == paramType)
-                return _basicActivator.SelectOne(parameterInfo.Name, 
-                    _basicActivator.GetAll<ICheckable>()
-                    .Where(paramType.IsInstanceOfType)
-                    .ToArray());
             
             if (parameterInfo.HasDefaultValue)
                 return parameterInfo.DefaultValue;
 
             if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
                 return _basicActivator.PickValueType(parameterInfo,paramType);
-            
+
+
+
             return null;
         }
 
@@ -179,18 +167,8 @@ namespace Rdmp.Core.CommandExecution
         {
             return c.GetParameters().All(
                 p =>
-                    typeof (ICatalogueRepository).IsAssignableFrom(p.ParameterType) ||
-                    typeof (IDataExportRepository).IsAssignableFrom(p.ParameterType) ||
-                    typeof(IBasicActivateItems).IsAssignableFrom(p.ParameterType) ||
-                    typeof (IRDMPPlatformRepositoryServiceLocator).IsAssignableFrom(p.ParameterType) ||
-                    _argumentDelegates.Keys.Any(k=>k.IsAssignableFrom(p.ParameterType)) ||
-                    typeof(DirectoryInfo).IsAssignableFrom(p.ParameterType) ||
+                    _argumentDelegates.Any(k=>k.Key.IsAssignableFrom(p.ParameterType)) ||
                     p.ParameterType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(p.ParameterType.GetElementType()) ||
-                    typeof(DatabaseEntity).IsAssignableFrom(p.ParameterType) ||
-                    typeof(ICheckable).IsAssignableFrom(p.ParameterType) ||
-                    typeof(IMightBeDeprecated).IsAssignableFrom(p.ParameterType)||
-                    typeof(IDeleteable).IsAssignableFrom(p.ParameterType)||
-                    typeof(INamed).IsAssignableFrom(p.ParameterType)||
                     p.HasDefaultValue ||
                     p.ParameterType == typeof(string) ||
                     (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType))

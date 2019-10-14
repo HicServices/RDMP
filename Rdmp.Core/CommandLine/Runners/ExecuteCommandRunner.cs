@@ -5,6 +5,7 @@ using System.Text;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.DataFlowPipeline;
 using Rdmp.Core.Repositories;

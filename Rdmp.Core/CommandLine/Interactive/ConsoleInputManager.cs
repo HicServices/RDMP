@@ -3,9 +3,11 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
@@ -53,6 +55,22 @@ namespace Rdmp.Core.CommandLine.Interactive
             return !string.IsNullOrWhiteSpace(text);
         }
 
+        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        {
+            Console.WriteLine($"Format {PickDatabase.Format} e.g. {PickDatabase.Example}");
+            string line = ReadLine();
+
+            var picker = new PickDatabase();
+
+            var value = picker.Parse(line, 0);
+            return value.Database;
+        }
+
+        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        {
+            throw new NotImplementedException();
+        }
+
         private void RefreshChildProvider()
         {
             //todo pass the plugin child providers
@@ -63,9 +81,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         }
 
 
-        public Dictionary<Type, Func<object>> GetDelegates()
+        public List<KeyValuePair<Type, Func<ParameterInfo, object>>> GetDelegates()
         {
-            return new Dictionary<Type, Func<object>>();
+            return new List<KeyValuePair<Type, Func<ParameterInfo, object>>>();
         }
 
         public IEnumerable<Type> GetIgnoredCommands()
@@ -91,7 +109,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null,bool allowAutoSelect = false)
         {
-            //todo this should be in ComandLineObjectPicker / use delegates?
+            //todo this should be in PickObjectBase
             Console.WriteLine("Format \"{Type}:{ID}\" e.g. \"Catalogue:123\"");
 
             string line = ReadLine();
@@ -112,7 +130,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             return Console.ReadLine();
         }
 
-        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo, Type paramType)
+        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
         {
             throw new NotImplementedException();
         }

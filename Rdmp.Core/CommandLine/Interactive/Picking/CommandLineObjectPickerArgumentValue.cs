@@ -2,18 +2,19 @@
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
-using System.Reflection;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.Checks;
 
-namespace Rdmp.Core.CommandLine.Interactive
+namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
     public class CommandLineObjectPickerArgumentValue
     {
-
         public string RawValue { get; }
         public int Index { get; }
+
+        public DiscoveredDatabase Database { get; }
 
         public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; }
 
@@ -26,6 +27,11 @@ namespace Rdmp.Core.CommandLine.Interactive
         public CommandLineObjectPickerArgumentValue(string rawValue,int idx,IMapsDirectlyToDatabaseTable[] entities):this(rawValue, idx)
         {
             DatabaseEntities = new ReadOnlyCollection<IMapsDirectlyToDatabaseTable>(entities);
+        }
+
+        public CommandLineObjectPickerArgumentValue(string rawValue, int idx, DiscoveredDatabase database):this(rawValue, idx)
+        {
+            Database = database;
         }
 
         /// <summary>
@@ -41,6 +47,9 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             if (typeof(string) == paramType)
                 return RawValue;
+
+            if (typeof(DiscoveredDatabase) == paramType)
+                return Database;
 
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
