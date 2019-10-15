@@ -20,6 +20,8 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; }
 
+        public Type Type { get;}
+
         public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
         {
             RawValue = rawValue;
@@ -40,7 +42,12 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         {
             Table = table;
         }
-        
+
+        public CommandLineObjectPickerArgumentValue(string rawValue, int idx, Type type):this(rawValue,idx)
+        {
+            Type = type;
+        }
+
         /// <summary>
         /// Returns the contents of this class expressed as the given <paramref name="paramType"/> or null if the current state
         /// does not describe an object of that Type
@@ -49,14 +56,23 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// <returns></returns>
         public object GetValueForParameterOfType(Type paramType)
         {
-            if (typeof(DirectoryInfo).IsAssignableFrom(paramType))
+            if (typeof(DirectoryInfo) == paramType)
                 return new DirectoryInfo(RawValue);
+
+            if(typeof(FileInfo) == paramType)
+                return new FileInfo(RawValue);
 
             if (typeof(string) == paramType)
                 return RawValue;
 
+            if (typeof(Type) == paramType)
+                return Type;
+
             if (typeof(DiscoveredDatabase) == paramType)
                 return Database;
+
+            if (typeof(DiscoveredTable) == paramType)
+                return Table;
 
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))

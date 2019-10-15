@@ -11,6 +11,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
     /// </summary>
     public class CommandLineObjectPicker
     {
+        private readonly IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
         private CommandLineObjectPickerArgumentValue[] _arguments;
         
         public CommandLineObjectPickerArgumentValue this[int i] => _arguments[i];
@@ -25,12 +26,16 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public CommandLineObjectPicker(IEnumerable<string> args,
             IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
+            _repositoryLocator = repositoryLocator;
+            
             _pickers.Add(new PickObjectByID(repositoryLocator));
             _pickers.Add(new PickObjectByName(repositoryLocator));
             _pickers.Add(new PickDatabase());
             _pickers.Add(new PickTable());
 
             _arguments = args.Select(ParseValue).ToArray();
+
+
         }
 
         /// <summary>
@@ -38,8 +43,10 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// </summary>
         /// <param name="args"></param>
         /// <param name="pickers"></param>
-        public CommandLineObjectPicker(string[] args, IEnumerable<PickObjectBase> pickers)
+        public CommandLineObjectPicker(string[] args,IRDMPPlatformRepositoryServiceLocator repositoryLocator, IEnumerable<PickObjectBase> pickers)
         {
+            _repositoryLocator = repositoryLocator;
+
             foreach(PickObjectBase p in pickers)
                 _pickers.Add(p);
 
@@ -53,6 +60,12 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
             if (picker != null)
                 return picker.Parse(arg, idx);
+
+            //perhaps it's a Type?
+            var type =_repositoryLocator.CatalogueRepository.MEF.GetType(arg);
+
+            if(type != null)
+                return new CommandLineObjectPickerArgumentValue(arg,idx,type);
 
             //nobody recognized it, use the raw value (maybe it's just a regular string, int etc).  Delay hard typing it till we know
             //what constructor we are trying to match it to.

@@ -139,7 +139,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             
             string line = ReadLine();
             
-            var picker = new CommandLineObjectPicker(new[]{line},pickers);
+            var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator,pickers);
             return picker[0];
         }
 
