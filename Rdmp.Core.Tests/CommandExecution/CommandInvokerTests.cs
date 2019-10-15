@@ -41,5 +41,42 @@ namespace Rdmp.Core.Tests.CommandExecution
             var picker = new CommandLineObjectPicker(new[] {"Catalogue:*"}, RepositoryLocator);
             invoker.ExecuteCommand(typeof(ExecuteCommandDelete),picker);
         }
+
+        
+        [Test]
+        [Timeout(5000)]
+        public void Test_Generic_WithPicker()
+        {
+            var mgr = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
+            var invoker = new CommandInvoker(mgr);
+
+            WhenIHaveA<Catalogue>();
+
+            invoker.ExecuteCommand(typeof(GenericCommand<DatabaseEntity>),GetPicker("Catalogue:*"));
+            invoker.ExecuteCommand(typeof(GenericCommand<Type>),GetPicker("Pipeline"));
+            
+        }
+
+        private CommandLineObjectPicker GetPicker(params string[] args)
+        {
+            return new CommandLineObjectPicker(args, RepositoryLocator);
+        }
+
+        private class GenericCommand<T> : BasicCommandExecution
+        {
+            private readonly T _arg;
+            
+            public GenericCommand(T a)
+            {
+                _arg = a;
+            }
+
+            public override void Execute()
+            {
+                base.Execute();
+                Console.Write("Arg was " + _arg);
+                Assert.IsNotNull(_arg);
+            }
+        }
     }
 }
