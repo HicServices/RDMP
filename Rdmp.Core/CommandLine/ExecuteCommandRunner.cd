@@ -66,28 +66,21 @@
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectBase" Collapsed="true">
     <Position X="8.25" Y="5.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>IAAiAAAEAIEABABAQAAAAAAAAAAAAAAAAIAAAAAAAAA=</HashCode>
+      <HashCode>IAAiAAAEAIEIBABAQAAAAAAAAAgAAAAAAIAAQAAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\PickObjectBase.cs</FileName>
-    </TypeIdentifier>
-  </Class>
-  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickDatabase" Collapsed="true">
-    <Position X="6.25" Y="7" Width="1.5" />
-    <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAAAAAAAAIAAAAAAAgAAAAAAAAAAAAAAAA=</HashCode>
-      <FileName>CommandLine\Interactive\Picking\PickDatabase.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectByID" Collapsed="true">
     <Position X="8.5" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA=</HashCode>
+      <HashCode>AAAgAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\PickObjectByID.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectByName" Collapsed="true">
     <Position X="10.75" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEAAAAA=</HashCode>
+      <HashCode>AAAgAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQEAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\PickObjectByName.cs</FileName>
     </TypeIdentifier>
   </Class>
@@ -129,6 +122,13 @@
     <TypeIdentifier>
       <HashCode>AAAAAAAAAAAAAAQAAAAAAAAAAAAAAAAIAAAAAAAAAAA=</HashCode>
       <FileName>CommandExecution\AtomicCommands\ExecuteCommandDelete.cs</FileName>
+    </TypeIdentifier>
+  </Class>
+  <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickTable" Collapsed="true">
+    <Position X="6.25" Y="7" Width="1.5" />
+    <TypeIdentifier>
+      <HashCode>AAAgAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQAAAAAA=</HashCode>
+      <FileName>CommandLine\Interactive\Picking\PickTable.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Rdmp.Core.CommandExecution.IBasicActivateItems" Collapsed="true">

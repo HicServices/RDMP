@@ -16,6 +16,8 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         public DiscoveredDatabase Database { get; }
 
+        public DiscoveredTable Table { get; set; }
+
         public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; }
 
         public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
@@ -34,6 +36,11 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             Database = database;
         }
 
+        public CommandLineObjectPickerArgumentValue(string rawValue, int idx, DiscoveredTable table):this(rawValue, idx)
+        {
+            Table = table;
+        }
+        
         /// <summary>
         /// Returns the contents of this class expressed as the given <paramref name="paramType"/> or null if the current state
         /// does not describe an object of that Type

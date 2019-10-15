@@ -23,8 +23,9 @@ namespace Rdmp.Core.CommandLine.Options
         {
             get
             {
-                yield return new Example("Runs the delete command on Catalogue with ID 1",new ExecuteCommandOptions(){Command = CommandLineActivity.run,CommandName = "Delete", CommandArgs = new string[]{"Catalogue:1"}});
-                yield return new Example("Prompts you which command to run",new ExecuteCommandOptions(){Command = CommandLineActivity.run});
+                yield return new Example("Runs the delete command on Catalogue with ID 1",new ExecuteCommandOptions(){CommandName = "Delete", CommandArgs = new string[]{"Catalogue:1"}});
+                yield return new Example("List available commands",new ExecuteCommandOptions(){CommandName = "ListSupportedCommands"});
+                yield return new Example("Prompts you which command to run",new ExecuteCommandOptions());
             }
         }
 

@@ -57,18 +57,16 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
-            Console.WriteLine($"Format {PickDatabase.Format} e.g. {PickDatabase.Example}");
-            string line = ReadLine();
-
-            var picker = new PickDatabase();
-
-            var value = picker.Parse(line, 0);
+            Console.WriteLine(taskDescription);
+            var value = ReadLine(new PickDatabase());
             return value.Database;
         }
 
         public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
-            throw new NotImplementedException();
+            Console.WriteLine(taskDescription);
+            var value = ReadLine(new PickTable());
+            return value.Table;
         }
 
         private void RefreshChildProvider()
@@ -93,28 +91,23 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
         {
-            Console.WriteLine("Format \"{Type}:{ID}\" e.g. \"Catalogue:*mysql*\" or \"Catalogue:12,23,34\"");
-
-            string line = ReadLine();
-            var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator);
-            var chosen = picker[0].DatabaseEntities;
-
-            var unavailable = chosen.Except(availableObjects).ToArray();
+            var value = ReadLine(new PickObjectBase[]
+                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)});
+            
+            var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
             if(unavailable.Any())
                 throw new Exception("The following objects were not among the listed available objects " + string.Join(",",unavailable.Select(o=>o.ToString())));
 
-            return chosen;
+            return value.DatabaseEntities;
         }
 
         public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null,bool allowAutoSelect = false)
         {
-            //todo this should be in PickObjectBase
-            Console.WriteLine("Format \"{Type}:{ID}\" e.g. \"Catalogue:123\"");
+            var value = ReadLine(new PickObjectBase[]
+                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)});
 
-            string line = ReadLine();
-            var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator);
-            var chosen = picker[0].DatabaseEntities?.SingleOrDefault();
+            var chosen = value.DatabaseEntities?.SingleOrDefault();
 
             if (chosen == null)
                 return null;
@@ -130,28 +123,33 @@ namespace Rdmp.Core.CommandLine.Interactive
             return Console.ReadLine();
         }
 
+        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase picker)
+        {
+            Console.WriteLine($"Format:\r\n {picker.Format} \r\n Example(s): \r\n {string.Join(Environment.NewLine,picker.Examples)} \r\n Help: \r\n {picker.Help}");
+            string line = ReadLine();
+
+            return picker.Parse(line, 0);
+        }
+        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase[] pickers)
+        {
+            Console.WriteLine("Enter value in one of the following formats:");
+
+            foreach (PickObjectBase p in pickers)
+                Console.WriteLine($"Format:\r\n {p.Format} \r\n Example(s): \r\n {string.Join(Environment.NewLine,p.Examples)} \r\n Help: \r\n {p.Help}");
+            
+            string line = ReadLine();
+            
+            var picker = new CommandLineObjectPicker(new[]{line},pickers);
+            return picker[0];
+        }
+
         public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
         {
             Console.WriteLine($"Enter Directory For Parameter '{parameterInfo}'");
             
             return new DirectoryInfo(Console.ReadLine());
         }
-
-        public void OnCommandImpossible(IAtomicCommand instance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCommandFinished(IAtomicCommand instance)
-        {
-            throw new NotImplementedException();
-        }
-
-        public void OnCommandExecutionException(IAtomicCommand instance, Exception exception)
-        {
-            throw new NotImplementedException();
-        }
-
+        
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
         {
             //todo abstract base class!
@@ -194,13 +192,15 @@ namespace Rdmp.Core.CommandLine.Interactive
                     case ConsoleKey.Enter:
                         var lowerLine = result.LineBeforeKeyPress.Line.ToLower();
                         if (lowerLine == "exit")
-                            return null;
+                            return "exit";
                         else
                         {
                             var match = options.FirstOrDefault(c => c.ToLower() == lowerLine);
 
                             if (match != null)
                                 return match;
+
+                            return lowerLine;
                         }
                         break;
                     case ConsoleKey.Tab:

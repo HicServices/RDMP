@@ -8,8 +8,12 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
-    internal abstract class PickObjectBase
+    public abstract class PickObjectBase
     {
+        public abstract string Format { get; }
+        public abstract string Help { get; }
+        public abstract IEnumerable<string> Examples { get; }
+
         protected Regex Regex { get; }
         protected readonly IRDMPPlatformRepositoryServiceLocator RepositoryLocator;
         
@@ -99,6 +103,22 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             
             return patternDictionary[pattern].IsMatch(o.ToString());
         }
+        
+        /// <summary>
+        /// Takes a key value pair in a string e.g. "Schema:dbo" and returns the substring "dbo".  Trims leading and trailing ':'.  Returns null if <paramref name="keyValueString"/> is null
+        /// </summary>
+        /// <param name="key"></param>
+        /// <param name="keyValueString"></param>
+        /// <returns></returns>
+        protected string Trim(string key, string keyValueString)
+        {
+            if (string.IsNullOrWhiteSpace(keyValueString))
+                return null;
 
+            if(!keyValueString.StartsWith(key,StringComparison.CurrentCultureIgnoreCase))
+                throw new ArgumentException($"Provided value '{keyValueString}' did not start with expected key '{key}'");
+
+            return keyValueString.Substring(key.Length).Trim(':');
+        }
     }
 }

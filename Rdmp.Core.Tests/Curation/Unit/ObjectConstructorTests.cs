@@ -44,7 +44,7 @@ namespace Rdmp.Core.Tests.Curation.Unit
             var ex = Assert.Throws<ObjectLacksCompatibleConstructorException>(()=>constructor.Construct(typeof (TestClass4), testarg3));
             Assert.IsTrue(ex.Message.Contains("Could not pick the correct constructor between"));
 
-            //exactly the same as the above case but one constructor has been decorated with ImportingConstructor
+            //exactly the same as the above case but one constructor has been decorated with [UseWithObjectConstructor] attribute
             constructor.Construct(typeof (TestClass5), testarg3);
         }
 

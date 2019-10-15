@@ -16,13 +16,32 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public CommandLineObjectPickerArgumentValue this[int i] => _arguments[i];
 
         private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
-
+        
+        /// <summary>
+        /// Constructs a picker with all possible formats and immediately parse the provided <paramref name="args"/>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="repositoryLocator"></param>
         public CommandLineObjectPicker(IEnumerable<string> args,
             IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             _pickers.Add(new PickObjectByID(repositoryLocator));
             _pickers.Add(new PickObjectByName(repositoryLocator));
             _pickers.Add(new PickDatabase());
+            _pickers.Add(new PickTable());
+
+            _arguments = args.Select(ParseValue).ToArray();
+        }
+
+        /// <summary>
+        /// Constructs a picker with only the passed format(s) (<paramref name="pickers"/>) and immediately parse the provided <paramref name="args"/>
+        /// </summary>
+        /// <param name="args"></param>
+        /// <param name="pickers"></param>
+        public CommandLineObjectPicker(string[] args, IEnumerable<PickObjectBase> pickers)
+        {
+            foreach(PickObjectBase p in pickers)
+                _pickers.Add(p);
 
             _arguments = args.Select(ParseValue).ToArray();
         }
@@ -39,9 +58,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             //what constructor we are trying to match it to.
             return new CommandLineObjectPickerArgumentValue(arg,idx);
         }
-
-
-
+        
         /// <summary>
         /// Returns true if the given <paramref name="idx"/> exists and is populated with a value of the expected <paramref name="paramType"/>
         /// </summary>
