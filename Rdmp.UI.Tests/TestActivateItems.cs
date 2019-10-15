@@ -271,7 +271,12 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
-        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
+        public DirectoryInfo PickDirectory(string prompt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FileInfo PickFile(string prompt)
         {
             throw new NotImplementedException();
         }

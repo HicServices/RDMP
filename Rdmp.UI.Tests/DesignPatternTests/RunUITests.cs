@@ -114,6 +114,7 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
         [TestCase(typeof(ExecuteCommandList))]
         [TestCase(typeof(TestCommand_DiscoveredDatabase))]
         [TestCase(typeof(TestCommand_LotsOfParameters))]
+        [TestCase(typeof(TestCommand_TypeParameter))]
         public void Test_IsSupported_BasicActivator(Type t)
         {
             IBasicActivateItems basic = new ConsoleInputManager(RepositoryLocator,new ThrowImmediatelyCheckNotifier());
@@ -134,6 +135,14 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
         private class TestCommand_LotsOfParameters : BasicCommandExecution
         {
             public TestCommand_LotsOfParameters(IRDMPPlatformRepositoryServiceLocator repositoryLocator, DiscoveredDatabase databaseToCreateInto, DirectoryInfo projectDirectory):base()
+            {
+                
+            }
+        }
+
+        private class TestCommand_TypeParameter : BasicCommandExecution
+        {
+            public TestCommand_TypeParameter(IRDMPPlatformRepositoryServiceLocator repositoryLocator, Type myType):base()
             {
                 
             }

@@ -46,11 +46,20 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(IDataExportRepository),(p)=>_repositoryLocator.DataExportRepository);
             AddDelegate(typeof(IBasicActivateItems),(p)=>_basicActivator);
             AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),(p)=>_repositoryLocator);
-            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.PickDirectory(p));
+            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.PickDirectory($"Enter Directory For Parameter '{p}'"));
+            AddDelegate(typeof(FileInfo), (p) => _basicActivator.PickFile($"Enter File For Parameter '{p}'"));
+
             AddDelegate(typeof(string), (p) =>
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
                 ? result
                 : null);
+
+            AddDelegate(typeof(Type), (p) =>
+            
+                _basicActivator.TypeText("Enter Type for parameter", p.Name, 1000, null, out string result, false)
+                    ?_repositoryLocator.CatalogueRepository.MEF.GetType()
+                    :null
+            );
 
             AddDelegate(typeof(DiscoveredDatabase),(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
             AddDelegate(typeof(DiscoveredTable),(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));

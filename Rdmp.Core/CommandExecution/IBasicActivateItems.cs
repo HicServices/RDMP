@@ -40,8 +40,9 @@ namespace Rdmp.Core.CommandExecution
 
         object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
-        DirectoryInfo PickDirectory(ParameterInfo parameterInfo);
-
+        DirectoryInfo PickDirectory(string prompt);
+        
+        FileInfo PickFile(string prompt);
         
         /// <summary>
         /// Return all Types of the given {T} which also implement 

@@ -143,13 +143,16 @@ namespace Rdmp.Core.CommandLine.Interactive
             return picker[0];
         }
 
-        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
+        public DirectoryInfo PickDirectory(string prompt)
         {
-            Console.WriteLine($"Enter Directory For Parameter '{parameterInfo}'");
-            
+            Console.WriteLine(prompt);
             return new DirectoryInfo(Console.ReadLine());
         }
-        
+        public FileInfo PickFile(string prompt)
+        {
+            Console.WriteLine(prompt);
+            return new FileInfo(Console.ReadLine());
+        }
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
         {
             //todo abstract base class!
@@ -160,10 +163,12 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         public object PickValueType(ParameterInfo parameterInfo, Type paramType)
         {
+            Console.WriteLine("Enter value for " + parameterInfo +":");
+
             if (paramType == typeof(string))
                 return ReadLine();
 
-            throw new NotImplementedException();
+            return Convert.ChangeType(ReadLine(), paramType);
         }
 
         public bool DeleteWithConfirmation(IDeleteable deleteable)

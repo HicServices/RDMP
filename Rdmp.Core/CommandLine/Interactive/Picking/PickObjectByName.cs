@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
@@ -26,8 +27,15 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
             new Regex(@"^([A-Za-z]+):([^:]+)$",RegexOptions.IgnoreCase))
         {
         }
-
-
+        public override bool IsMatch(string arg, int idx)
+        {
+            var baseMatch = base.IsMatch(arg, idx);
+            
+            //only considered  match if the first letter is an Rdmp Type e.g. "Catalogue:12" but not "C:\fish"
+            return baseMatch && 
+                   RepositoryLocator.CatalogueRepository.MEF.GetType(Regex.Match(arg).Groups[1].Value) is Type t 
+                   && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
+        }
         public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
         {
             var objByToString = MatchOrThrow(arg, idx);

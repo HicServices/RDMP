@@ -42,8 +42,8 @@ ConnectionString (Required)";
         {
             var m = MatchOrThrow(arg, idx);
 
-            var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType),m.Groups[1].Value);
-            var dbName = m.Groups[2].Value;
+            var dbType = (DatabaseType)Enum.Parse(typeof(DatabaseType),m.Groups[1].Value,true);
+            var dbName = Trim("Name:",m.Groups[2].Value);
             var connectionString = m.Groups[3].Value;
 
             var server = new DiscoveredServer(connectionString, dbType);

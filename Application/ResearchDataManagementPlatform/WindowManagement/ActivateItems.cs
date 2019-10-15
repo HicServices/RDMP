@@ -633,14 +633,24 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
 
-        public DirectoryInfo PickDirectory(ParameterInfo parameterInfo)
+        public DirectoryInfo PickDirectory(string prompt)
         {
             var fb = new FolderBrowserDialog();
+
             if (fb.ShowDialog() == DialogResult.OK)
                 return new DirectoryInfo(fb.SelectedPath);
             
             return null;
-        
+        }
+
+        public FileInfo PickFile(string prompt)
+        {
+            var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+
+            if (fb.ShowDialog() == DialogResult.OK)
+                return new FileInfo(fb.FileName);
+            
+            return null;
         }
 
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
