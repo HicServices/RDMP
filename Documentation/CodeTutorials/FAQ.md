@@ -54,21 +54,21 @@ RDMP comes in three parts:
 The RDMP Client is a graphical user interface that allows data analysts to create cohorts, perform linkage operations and data extractions etc.  The following system requirements exist for the RDMP Client
 
 | Area | Requirement | Logic |
-|------|-----|
+|------|-----|-----|
 | Operating System | Windows 7 or later | Application uses Windows Forms with DotNet 4.6.1 (included in redistributable)|
 
 <a name="reqdb"></a>
 RDMP stores all configuration data in 'platform databases'.  These must be created on an Sql Server Instance accessible to RDMP Client users.  The server can be the same server you host clinical data or a seperate server.
 
 | Area | Requirement | Logic |
-|------|-----|
+|------|-----|-----|
 | Sql Server Version | X or later | |
 
 <a name="reqcli"></a>
 The RDMP command line client can run unattended jobs (such as overnight extractions or automated loads)
 
 | Area | Requirement | Logic |
-|------|-----|
+|------|-----|-----|
 | Operating System | Windows 7 or later or 64 bit Linux compatible with dotnetcore2.2| Application uses the cross platform Dot Net Core 2.2 API|
 
 
