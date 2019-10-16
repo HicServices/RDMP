@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Rdmp.Core.CommandLine.Interactive
+namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
     internal class CommandLineObjectPickerParseException : Exception
     {

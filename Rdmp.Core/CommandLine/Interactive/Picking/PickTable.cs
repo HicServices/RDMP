@@ -6,6 +6,9 @@ using FAnsi.Discovery;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
+    /// <summary>
+    /// Determines if a command line argument provided was a reference to a <see cref="DiscoveredTable"/>
+    /// </summary>
     public class PickTable : PickObjectBase
     {
         public override string Format => "Table:{TableName}:[Schema:{SchemaIfAny}:][IsView:{True/False}]:Database:{DatabaseType}:Name:{DatabaseName}:{ConnectionString}";

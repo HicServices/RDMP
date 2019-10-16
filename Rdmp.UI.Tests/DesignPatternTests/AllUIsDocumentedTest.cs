@@ -74,6 +74,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 if (type.Namespace == null) 
                     continue;
 
+                //don't validate classes in testing code
+                if (type.Namespace.Contains(".Tests"))
+                    continue;
+
                 //theese guys can be wherever they want
                 if (_exemptNamespaces.Any(e => type.Namespace.Contains(e)))
                     continue;

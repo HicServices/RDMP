@@ -2,7 +2,7 @@
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
-    public static class ConsoleKeyConverter
+    static class ConsoleKeyConverter
     {
         public static bool TryParseChar(char keyChar, out ConsoleKey consoleKey)
         {

@@ -1,9 +1,10 @@
-﻿
+﻿// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications
+
 using System;
 
 namespace Rdmp.Core.CommandLine.Interactive.ConsoleActions
 {
-    public class InsertCharacterAction : IConsoleAction
+    class InsertCharacterAction : IConsoleAction
     {
         public void Execute(IConsole console, ConsoleKeyInfo consoleKeyInfo)
         {

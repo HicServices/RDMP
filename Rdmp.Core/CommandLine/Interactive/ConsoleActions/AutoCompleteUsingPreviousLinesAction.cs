@@ -1,9 +1,11 @@
-﻿using System;
+﻿// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications
+
+using System;
 using System.Globalization;
 
 namespace Rdmp.Core.CommandLine.Interactive.ConsoleActions
 {
-    public class AutoCompleteUsingPreviousLinesAction : IConsoleAction
+    class AutoCompleteUsingPreviousLinesAction : IConsoleAction
     {
         public void Execute(IConsole console, ConsoleKeyInfo consoleKeyInfo)
         {

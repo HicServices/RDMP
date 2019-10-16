@@ -4,7 +4,7 @@ using Rdmp.Core.CommandLine.Interactive.ConsoleActions;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
-    public static class ConsoleExt
+    static class ConsoleExt
     {
         private static readonly object LockObj = new object();
         private static int _maxLineLength;

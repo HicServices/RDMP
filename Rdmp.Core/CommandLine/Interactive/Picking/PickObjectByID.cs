@@ -8,6 +8,9 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
+    /// <summary>
+    /// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on ID (e.g. "Catalogue:23")
+    /// </summary>
     public class PickObjectByID :PickObjectBase
     {
         /*

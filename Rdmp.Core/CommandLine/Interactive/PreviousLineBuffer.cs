@@ -1,7 +1,12 @@
-﻿using System.Collections.Generic;
+﻿// This code is adapted from https://www.codeproject.com/Articles/1182358/Using-Autocomplete-in-Windows-Console-Applications
+
+using System.Collections.Generic;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
+    /// <summary>
+    /// Records previously typed lines that the user has entered into the console
+    /// </summary>
     public class PreviousLineBuffer
     {
         private bool _cyclingStarted;

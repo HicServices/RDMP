@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace Rdmp.Core.CommandLine.Interactive
 {
-    public static class AutoComplete
+    static class AutoComplete
     {
         public static List<string> GetAutoCompletePossibilities(string input, List<string> strings, bool ignoreCase = true)
         {

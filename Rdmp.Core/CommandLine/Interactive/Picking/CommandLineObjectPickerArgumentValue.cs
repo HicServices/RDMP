@@ -9,6 +9,10 @@ using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
+    /// <summary>
+    /// Holds a string value entered in at the console (or other source).  Typically produced by a <see cref="CommandLineObjectPicker"/> or <see cref="PickObjectBase"/> this class
+    /// can be an expression of multiple different types of objects (e.g. a <see cref="Database"/> or <see cref="Table"/>).  You can always access the original string via <see cref="RawValue"/>.
+    /// </summary>
     public class CommandLineObjectPickerArgumentValue
     {
         public string RawValue { get; }
@@ -16,7 +20,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
         public DiscoveredDatabase Database { get; }
 
-        public DiscoveredTable Table { get; set; }
+        public DiscoveredTable Table { get; }
 
         public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; }
 

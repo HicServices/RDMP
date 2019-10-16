@@ -4,9 +4,13 @@ using System.Linq;
 using System.Text;
 using CommandLine;
 using CommandLine.Text;
+using Rdmp.Core.CommandLine.Runners;
 
 namespace Rdmp.Core.CommandLine.Options
 {
+    /// <summary>
+    /// Runs a given RDMP command specified by <see cref="CommandName"/> from the CLI.  See <see cref="ExecuteCommandRunner"/> for implementation.
+    /// </summary>
     [Verb("cmd",HelpText = "Run the named IAtomicCommand")]
     public class ExecuteCommandOptions : RDMPCommandLineOptions
     {

@@ -8,6 +8,9 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
 {
+    /// <summary>
+    /// Determines if a command line argument provided was a reference to one or more <see cref="DatabaseEntity"/> matching based on name (e.g. "Catalogue:my*cata")
+    /// </summary>
     public class PickObjectByName: PickObjectBase
     {
         public override string Format => "{Type}:{NamePattern}[,{NamePattern2},{NamePattern3}...]";

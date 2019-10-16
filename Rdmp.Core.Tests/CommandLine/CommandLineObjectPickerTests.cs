@@ -29,11 +29,16 @@ namespace Rdmp.Core.Tests.CommandLine
 
 
         [Test]
-        public void Test_RandomGarbage_Throws()
+        public void Test_RandomGarbage_GeneratesRawValueOnly()
         {
-            var ex = Assert.Throws<CommandLineObjectPickerParseException>(()=> new CommandLineObjectPicker(new []{$"Shiver me timbers"}, RepositoryLocator));
+            string str = $"Shiver me timbers";
+             var picker = new CommandLineObjectPicker(new []{str}, RepositoryLocator);
 
-            Assert.AreEqual(0,ex.Index);
+            Assert.AreEqual(str,picker[0].RawValue); 
+            Assert.IsNull(picker[0].DatabaseEntities);
+            Assert.IsNull(picker[0].Database);
+            Assert.IsNull(picker[0].Table);
+            Assert.IsNull(picker[0].Type);
         }
 
         [Test]
