@@ -1,6 +1,7 @@
 # Frequently Asked Questions
 ## Table of contents
 1. Compatibility
+   1. [What System Requirements does RDMP have?](#reqs)
    1. [Does RDMP have a Command Line Interface?](#cli)
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
@@ -40,6 +41,38 @@
    1. [Are there Unit/Integration Tests?](#tests)
 
 ## Compatibility
+
+<a name="reqs"></a>
+### What System Requirements does RDMP have?
+
+RDMP comes in three parts:
+  1. [RDMP Client](#reqclient)
+  2. [RDMP Platform Databases](#reqdb)
+  3. [RDMP Command Line](#reqcli)
+
+<a name="reqclient"></a>
+The RDMP Client is a graphical user interface that allows data analysts to create cohorts, perform linkage operations and data extractions etc.  The following system requirements exist for the RDMP Client
+
+| Area | Requirement | Logic |
+|------|-----|
+| Operating System | Windows 7 or later | Application uses Windows Forms with DotNet 4.6.1 (included in redistributable)|
+
+<a name="reqdb"></a>
+RDMP stores all configuration data in 'platform databases'.  These must be created on an Sql Server Instance accessible to RDMP Client users.  The server can be the same server you host clinical data or a seperate server.
+
+| Area | Requirement | Logic |
+|------|-----|
+| Sql Server Version | X or later | |
+
+<a name="reqcli"></a>
+The RDMP command line client can run unattended jobs (such as overnight extractions or automated loads)
+
+| Area | Requirement | Logic |
+|------|-----|
+| Operating System | Windows 7 or later or 64 bit Linux compatible with dotnetcore2.2| Application uses the cross platform Dot Net Core 2.2 API|
+
+
+
    
 <a name="cli"></a>
 ### Does RDMP have a Command Line Interface (CLI)
