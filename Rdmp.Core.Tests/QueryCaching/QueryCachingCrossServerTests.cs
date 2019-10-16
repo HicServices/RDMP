@@ -235,6 +235,114 @@ namespace Rdmp.Core.Tests.QueryCaching
             Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
         }
 
+        /// <summary>
+        /// Tests the ability to run a cic in which there are 2 tables that must be joined but are on separate servers.
+        /// A patient index table on server 1 and a table on server 2 to which it must be joined.
+        ///
+        /// <para>This only works if there is a cache on server 2</para>
+        ///
+        /// </summary>
+        [Test]
+        public void Join_PatientIndexTable_NotOnCacheServer()
+        {
+            /*
+             *           Server1                    Server 2
+             *         _____________                _________
+             *        |Biochemistry|    →          | Cache  |  (cache must first be populated)
+             *               
+             *                        ↘ join   ↘ (must use cache)
+             *                                  _____________________
+             *                                  | Hospital Admissions|
+             *
+             */
+             
+            var server1 = GetCleanedServer(DatabaseType.MySql);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            ExternalDatabaseServer cache = CreateCache(server2);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var joinable = SetupPatientIndexTable(server1, people, r, cic);
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var hospitalAdmissions = SetupPatientIndexTableUser(server2, people, r, cic, joinable);
+            cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
+
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            
+            runner.Run(new CancellationToken());
+
+            AssertNoErrors(compiler);
+            
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
+        }
+
+
+        /// <summary>
+        /// Tests the ability to run a cic in which there are 2 tables that must be joined but are on separate servers.
+        /// A patient index table on server 1 and a table on server 2 to which it must be joined.
+        ///
+        /// <para>This should fail because the only way to combine the two datasets is with a join and they are on separate servers
+        /// The cache cannot be used at all during the join because it's on a separate server.'
+        /// </para>
+        ///
+        /// </summary>
+        [Test]
+        public void Join_PatientIndexTable_ThreeServers()
+        {
+            /*
+             *           Server1                    Server 2                                Server 3
+             *         _____________                                                       _________
+             *        |Biochemistry|    →          (successfully caches joinable bit)      | Cache  |  
+             *               
+             *                        ↘ join   ↘ (should crash)
+             *                                  _____________________
+             *                                  | Hospital Admissions|
+             *
+             */
+             
+            var server1 = GetCleanedServer(DatabaseType.MySql);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            var server3 = GetCleanedServer(DatabaseType.Oracle);
+
+            ExternalDatabaseServer cache = CreateCache(server3);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var joinable = SetupPatientIndexTable(server1, people, r, cic);
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var hospitalAdmissions = SetupPatientIndexTableUser(server2, people, r, cic, joinable);
+            cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
+
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            
+            runner.Run(new CancellationToken());
+            
+            var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>().Single(t => t.Aggregate.Equals(hospitalAdmissions));
+
+            Assert.AreEqual(CompilationState.Crashed,hospitalAdmissionsTask.State);
+
+            StringAssert.Contains("is not fully cached and CacheUsageDecision is MustUse",hospitalAdmissionsTask.CrashMessage.ToString());
+        }
+
         [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]

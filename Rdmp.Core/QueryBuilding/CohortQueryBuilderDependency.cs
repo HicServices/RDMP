@@ -147,5 +147,19 @@ namespace Rdmp.Core.QueryBuilding
 
             return null;
         }
+
+        public string DescribeCachedState()
+        {
+            if (!string.IsNullOrWhiteSpace(SqlFullyCached))
+                return "Fully Cached";
+
+            if (!string.IsNullOrWhiteSpace(SqlPartiallyCached))
+                return "Partially Cached";
+
+            if (!string.IsNullOrWhiteSpace(SqlCacheless))
+                return "Not Cached";
+
+            return "Not Built";
+        }
     }
 }

@@ -109,10 +109,10 @@ namespace Rdmp.Core.QueryBuilding
 
             LogDependencies();
 
-            MakeInitialCacheDecision();
-
             BuildDependenciesSql();
 
+            MakeCacheDecision();
+            
             Sql = BuildSql(container);
         }
 
@@ -123,12 +123,13 @@ namespace Rdmp.Core.QueryBuilding
 
             _log.AppendLine("Starting Build for " + configuration);
             var d = AddDependency(configuration);
+            
+            BuildDependenciesSql();
 
             LogDependencies();
 
-            MakeInitialCacheDecision();
+            MakeCacheDecision();
 
-            BuildDependenciesSql();
 
             Sql = BuildSql(d);
         }
@@ -346,44 +347,65 @@ namespace Rdmp.Core.QueryBuilding
             return d;
         }
 
-        private void MakeInitialCacheDecision()
+        private void MakeCacheDecision()
         {
             if (CacheServer == null)
                 SetCacheUsage(CacheUsage.AllOrNothing,"there is no cache server");
             else
-                SetCacheUsage(CacheUsage.Opportunistic, "there is a cache server available (dependencies have not yet been evaluated)");
+                SetCacheUsage(CacheUsage.Opportunistic, "there is a cache server (so starting with Opportunistic)");
             
             DependenciesSingleServer =  new DataAccessPointCollection(true);
 
             foreach (var dependency in Dependencies)
             {
+
+                _log.AppendLine($"Evaluating '{dependency.CohortSet}'");
                 foreach (ITableInfo dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
-                    HandleDependency(dependency.CohortSet, dependantTable);
+                    HandleDependency(dependency,false, dependantTable);
                 
-                if(dependency.JoinedTo != null)
+                if (dependency.JoinedTo != null)
+                {
+                    _log.AppendLine($"Evaluating '{dependency.JoinedTo}'");
                     foreach (ITableInfo dependantTable in dependency.JoinedTo.Catalogue.GetTableInfoList(false))
-                        HandleDependency(dependency.JoinedTo,dependantTable);
+                        HandleDependency(dependency,true,dependantTable);
+                }
             }
         }
 
-        private void HandleDependency(AggregateConfiguration aggregate, ITableInfo dependantTable)
+        private void HandleDependency(CohortQueryBuilderDependency dependency,bool isPatientIndexTable, ITableInfo dependantTable)
         {
-            _log.AppendLine($"{aggregate} depends on " + dependantTable);
-                    
+            _log.AppendLine($"Found dependant table '{dependantTable}'");
+            
             //if dependencies are on different servers / access credentials
             if(DependenciesSingleServer != null)
                 if (!DependenciesSingleServer.TryAdd(dependantTable))
                 {
                     //we can no longer establish a consistent connection to all the dependencies
-                    DependenciesSingleServer = null;
+                    _log.AppendLine($"Found problematic dependant table '{dependantTable}'");
 
                     //if there's no cache server that's a problem!
                     if(CacheServer == null)
                         throw new QueryBuildingException($"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
                     
-                    //there IS a cache so we now Must use it
-                    if(CacheUsageDecision != CacheUsage.MustUse)
-                        SetCacheUsage(CacheUsage.MustUse,$"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies.  Therefore the QueryCache MUST be used for all dependencies");
+                    //there is a cache server, perhaps we can dodge 'dependantTable' by going to cache instead
+                    bool canUseCacheForDependantTable =
+                        !string.IsNullOrWhiteSpace(isPatientIndexTable
+                            ? dependency.SqlJoinableCached
+                            : dependency.SqlFullyCached);
+
+                    //can we go to the cache server instead?
+                    if (canUseCacheForDependantTable && DependenciesSingleServer.TryAdd(CacheServer))
+                    {
+                        _log.AppendLine($"Avoided problematic dependant table '{dependantTable}' by using the cache");
+                    }
+                    else
+                    {
+                        DependenciesSingleServer = null;
+
+                        //there IS a cache so we now Must use it
+                        if(CacheUsageDecision != CacheUsage.MustUse)
+                            SetCacheUsage(CacheUsage.MustUse,$"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies.  Therefore the QueryCache MUST be used for all dependencies");
+                    }
                 }
 
             if (DependenciesSingleServer != null &&
@@ -391,7 +413,7 @@ namespace Rdmp.Core.QueryBuilding
                 CacheUsageDecision == CacheUsage.Opportunistic)
             {
                 //We can only do opportunistic joins if the Cache and Data server are on the same server
-                bool canCombine = DependenciesSingleServer.Clone().TryAdd(CacheServer);
+                bool canCombine = DependenciesSingleServer.AddWouldBePossible(CacheServer);
 
                 if(!canCombine)
                     SetCacheUsage(CacheUsage.AllOrNothing,"All datasets are on one server/access credentials while Cache is on a separate one");
@@ -400,8 +422,8 @@ namespace Rdmp.Core.QueryBuilding
         }
         private void LogDependencies()
         {
-            _log.AppendLine("Found Dependencies:" + Environment.NewLine +
-                            string.Join(Environment.NewLine,Dependencies));
+            foreach (var d in Dependencies)
+                _log.AppendLine($"Dependency '{d}' is {d.DescribeCachedState()}");
         }
 
         
