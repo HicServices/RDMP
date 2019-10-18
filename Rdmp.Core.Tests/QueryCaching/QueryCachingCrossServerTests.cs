@@ -5,9 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using BadMedicine;
 using BadMedicine.Datasets;
@@ -20,11 +18,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
-using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Databases;
-using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
-using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
 
@@ -59,14 +54,14 @@ namespace Rdmp.Core.Tests.QueryCaching
         [TestCase(DatabaseType.MicrosoftSQLServer,false)]
         //[TestCase(DatabaseType.Oracle,true)] //Oracle FAnsi doesn't currently support parameters
         //[TestCase(DatabaseType.Oracle,false)]
-        public void Test_SingleServer_WithParameters(DatabaseType dbType, bool useParameter)
+        public void Test_SingleServer_WithOneParameter(DatabaseType dbType, bool useParameter)
         {
 
             /*
              *           Server1                        Server2
              *       _____________________         _____________________
              *        |HospitalAdmissions |   →    |      Cache         |
-             *
+             *           @date_of_max
              *
              */
 
@@ -80,30 +75,7 @@ namespace Rdmp.Core.Tests.QueryCaching
             people.GeneratePeople(5000, r);
 
             var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
-
-            var ac1 = SetupAggregateConfiguration(server1, people, r, cic);
-            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-            ac1.RootFilterContainer_ID = container.ID;
-            ac1.SaveToDatabase();
-
-            //create a filter
-            var filter = new AggregateFilter(CatalogueRepository,"My Filter",container);
-
-            if (useParameter)
-            {
-                filter.WhereSQL = "AdmissionDate < @date_of_max";
-
-                var parameterSql = server1.Server.GetQuerySyntaxHelper()
-                    .GetParameterDeclaration("@date_of_max", new DatabaseTypeRequest(typeof(DateTime)));
-
-                var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
-                parameter.Value = "'2001-01-01'";
-                parameter.SaveToDatabase();
-            }
-            else
-                filter.WhereSQL = "AdmissionDate < '2001-01-01'";
-
-            filter.SaveToDatabase();
+            var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,useParameter,"@date_of_max","'2001-01-01'");
 
             cic.CreateRootContainerIfNotExists();
             cic.QueryCachingServer_ID = cache.ID;
@@ -121,7 +93,62 @@ namespace Rdmp.Core.Tests.QueryCaching
             Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
         }
 
+        /// <summary>
+        /// Tests running a simple cic with a single UNION container holding two aggregates.  The aggregates both have their own parameter
+        /// called @date_of_max but they have different values.  This means the SQL generated needs to be adjusted so they don't collide /
+        /// overwrite one another.
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        //[TestCase(DatabaseType.Oracle)] //Oracle FAnsi doesn't currently support parameters
+        public void Test_SingleServer_WithTwoParameters(DatabaseType dbType)
+        {
 
+            /*
+             *           Server1                        Server2
+             *        ____________________         _____________________
+             *        |HospitalAdmissions |   →    |      Cache         |
+             *           @date_of_max
+             *        ____________________     ↗   
+             *        |HospitalAdmissions |      
+             *           @date_of_max
+             *
+             *   (has different value so rename operations come into effect)
+             */
+
+            var server1 = GetCleanedServer(dbType);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            var cache = CreateCache(server2);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,true,"@date_of_max","'2001-01-01'");
+            var ac2 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,true,"@date_of_max","'2005-01-01'");
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache.ID;
+            cic.SaveToDatabase();
+
+            var root = cic.RootCohortAggregateContainer;
+            root.AddChild(ac1,0);
+            root.AddChild(ac2,1);
+            
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            runner.Run(new CancellationToken());
+            
+            AssertNoErrors(compiler);
+            
+            Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected UNION container to use the cache for both");
+        }
+
+        
         /// <summary>
         /// Tests running a cic in which there are 2 aggregates both hospitalizations with 1 EXCEPT the other.  The expected result is 0
         /// patients
@@ -593,6 +620,47 @@ namespace Rdmp.Core.Tests.QueryCaching
             return ac;
         }
 
+        /// <summary>
+        /// Creates an AggregateConfiguration with a filter on date that optionally uses a parameter e.g. @example
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="people"></param>
+        /// <param name="r"></param>
+        /// <param name="cic"></param>
+        /// <param name="useParameter"></param>
+        /// <param name="paramName"></param>
+        /// <param name="paramValue"></param>
+        /// <returns></returns>
+        private AggregateConfiguration SetupAggregateConfigurationWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
+        {
+            var ac1 = SetupAggregateConfiguration(db, people, r, cic);
+            
+            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+            ac1.RootFilterContainer_ID = container.ID;
+            ac1.SaveToDatabase();
+            
+            //create a filter
+            var filter = new AggregateFilter(CatalogueRepository,"My Filter",container);
+
+            if (useParameter)
+            {
+                filter.WhereSQL = "AdmissionDate < " + paramName;
+
+                var parameterSql = db.Server.GetQuerySyntaxHelper()
+                    .GetParameterDeclaration(paramName, new DatabaseTypeRequest(typeof(DateTime)));
+
+                var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
+                parameter.Value = paramValue;
+                parameter.SaveToDatabase();
+                
+            }
+            else
+                filter.WhereSQL = "AdmissionDate < " + paramValue;
+
+            filter.SaveToDatabase();
+
+            return ac1;
+        }
 
         /// <summary>
         /// Shows the state of the <paramref name="compiler"/> and asserts that all the jobs are finished
