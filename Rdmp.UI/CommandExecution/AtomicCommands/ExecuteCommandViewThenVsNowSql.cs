@@ -20,36 +20,36 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandViewThenVsNowSql : BasicUICommandExecution, IAtomicCommand
     {
+        private readonly SelectedDataSets _selectedDataSet;
         private FlatFileReleasePotential _releasePotential;
 
         public ExecuteCommandViewThenVsNowSql(IActivateItems activator, SelectedDataSets selectedDataSet):base(activator)
         {
-            try
-            {
-                var rp = new FlatFileReleasePotential(Activator.RepositoryLocator, selectedDataSet);
-
-                rp.Check(new IgnoreAllErrorsCheckNotifier());
-
-                if (string.IsNullOrWhiteSpace(rp.SqlCurrentConfiguration))
-                    SetImpossible("Could not generate Sql for dataset");
-                else
-                if(string.IsNullOrWhiteSpace(rp.SqlExtracted))
-                    SetImpossible("Dataset has never been extracted");
-                else
-                if(rp.SqlCurrentConfiguration == rp.SqlExtracted)
-                    SetImpossible("No differences");
-
-                _releasePotential = rp;
-            }
-            catch (Exception)
-            {
-                SetImpossible("Could not make assesment");
-            }
+            _selectedDataSet = selectedDataSet;
         }
 
         public override void Execute()
         {
             base.Execute();
+
+            var rp = new FlatFileReleasePotential(Activator.RepositoryLocator, _selectedDataSet);
+
+            rp.Check(new IgnoreAllErrorsCheckNotifier());
+
+            if (string.IsNullOrWhiteSpace(rp.SqlCurrentConfiguration))
+                Show("Could not generate Sql for dataset");
+            else
+            if(string.IsNullOrWhiteSpace(rp.SqlExtracted))
+                Show("Dataset has never been extracted");
+            else
+            if(rp.SqlCurrentConfiguration == rp.SqlExtracted)
+                Show("No differences");
+            else
+                _releasePotential = rp;
+
+            if (_releasePotential == null)
+                return;
+
 
             var dialog = new SQLBeforeAndAfterViewer(_releasePotential.SqlCurrentConfiguration, _releasePotential.SqlExtracted, "Current Configuration", "Configuration when last run", "Sql Executed", MessageBoxButtons.OK);
             dialog.Show();
