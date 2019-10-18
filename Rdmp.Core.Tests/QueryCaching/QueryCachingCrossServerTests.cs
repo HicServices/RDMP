@@ -20,11 +20,13 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Curation.FilterImporting.Construction;
 using Rdmp.Core.Databases;
 using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
 using Tests.Common;
 using Tests.Common.Scenarios;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.QueryCaching
 {
@@ -44,6 +46,81 @@ namespace Rdmp.Core.Tests.QueryCaching
             var mds = new MasterDatabaseScriptExecutor(db);
             mds.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
         }
+
+
+        /// <summary>
+        /// Tests running a simple cic with a single UNION container holding an aggregate.  The aggregate optionally has a parameter on it.  The
+        /// second server is the cache server
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.MySql,true)]
+        [TestCase(DatabaseType.MySql,false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,false)]
+        //[TestCase(DatabaseType.Oracle,true)] //Oracle FAnsi doesn't currently support parameters
+        //[TestCase(DatabaseType.Oracle,false)]
+        public void Test_SingleServer_WithParameters(DatabaseType dbType, bool useParameter)
+        {
+
+            /*
+             *           Server1                        Server2
+             *       _____________________         _____________________
+             *        |HospitalAdmissions |   →    |      Cache         |
+             *
+             *
+             */
+
+            var server1 = GetCleanedServer(dbType);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            var cache = CreateCache(server2);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var ac1 = SetupAggregateConfiguration(server1, people, r, cic);
+            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+            ac1.RootFilterContainer_ID = container.ID;
+            ac1.SaveToDatabase();
+
+            //create a filter
+            var filter = new AggregateFilter(CatalogueRepository,"My Filter",container);
+
+            if (useParameter)
+            {
+                filter.WhereSQL = "AdmissionDate < @date_of_max";
+
+                var parameterSql = server1.Server.GetQuerySyntaxHelper()
+                    .GetParameterDeclaration("@date_of_max", new DatabaseTypeRequest(typeof(DateTime)));
+
+                var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
+                parameter.Value = "'2001-01-01'";
+                parameter.SaveToDatabase();
+            }
+            else
+                filter.WhereSQL = "AdmissionDate < '2001-01-01'";
+
+            filter.SaveToDatabase();
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache.ID;
+            cic.SaveToDatabase();
+
+            var root = cic.RootCohortAggregateContainer;
+            root.AddChild(ac1,0);
+            
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            runner.Run(new CancellationToken());
+            
+            AssertNoErrors(compiler);
+            
+            Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
+        }
+
 
         /// <summary>
         /// Tests running a cic in which there are 2 aggregates both hospitalizations with 1 EXCEPT the other.  The expected result is 0
