@@ -460,5 +460,21 @@ namespace Rdmp.Core.QueryBuilding.Parameters
                 ParametersFoundSoFarInQueryGeneration.Single(k => k.Value.Contains(parameter)).Key;
         
         }
+
+        /// <summary>
+        /// Creates a shallow copy of the <see cref="ParameterManager"/> in which <see cref="ParametersFoundSoFarInQueryGeneration"/> is a new
+        /// instance but the parameters referenced are shared (with the original).
+        /// </summary>
+        /// <returns></returns>
+        public ParameterManager Clone()
+        {
+            var clone = new ParameterManager(this.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
+            clone.State = State;
+
+            foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
+                clone.ParametersFoundSoFarInQueryGeneration[kvp.Key].AddRange(kvp.Value);
+
+            return clone;
+        }
     }
 }

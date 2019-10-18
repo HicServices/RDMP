@@ -31,7 +31,17 @@ namespace Rdmp.Core.QueryBuilding
             ParameterManager = parameterManager;
         }
 
-        public string GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
+        /// <summary>
+        /// Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include parameter declarations (which
+        /// would appear at the very top) and includes rename operations dependant on what has been written out before by (tracked by <see cref="ParameterManager"/>).
+        ///
+        /// <para>Use <paramref name="isolatedSql"/> for the original un renamed / including parameter declarations e.g. to test for cache hits</para>
+        /// </summary>
+        /// <param name="aggregate"></param>
+        /// <param name="args"></param>
+        /// <param name="isolatedSql"></param>
+        /// <returns></returns>
+        public string GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args, out string isolatedSql)
         {
             bool isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
@@ -107,6 +117,14 @@ namespace Rdmp.Core.QueryBuilding
 
             //get the SQL from the builder (for the current configuration) - without parameters
             string currentBlock = builderSqlWithoutParameters;
+
+
+            //we need to generate the full SQL with parameters (and no rename operations) so we can do cache hit tests
+            string parameterSql = QueryBuilder.GetParameterDeclarationSQL(builder.ParameterManager.Clone().GetFinalResolvedParametersList());
+            isolatedSql = parameterSql + currentBlock;
+
+            //but we need to return the sql designed for nesting (i.e. no parameter declarations and including rename operations) for the depth
+            //of nesting we are at (e.g. where 2 parameters share the same name but different values in separate sections of the tree).
 
             //import parameters unless caching was used
             Dictionary<string, string> renameOperations;

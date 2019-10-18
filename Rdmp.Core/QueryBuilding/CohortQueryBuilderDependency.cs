@@ -10,6 +10,7 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Providers;
+using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
 
 namespace Rdmp.Core.QueryBuilding
@@ -43,6 +44,8 @@ namespace Rdmp.Core.QueryBuilding
         /// The raw SQL that can be used to join the <see cref="CohortSet"/> and <see cref="PatientIndexTableIfAny"/> (if there is one).  Null if they exist
         /// on different servers (this is allowed only if the <see cref="CohortSet"/> is on the same server as the cache while the <see cref="PatientIndexTableIfAny"/>
         /// is remote).
+        ///
+        /// <para>This SQL does not include the parameter declaration SQL since it is designed for nesting e.g. in UNION / INTERSECT / EXCEPT hierarchy</para>
         /// </summary>
         public string SqlCacheless { get; private set; }
         
@@ -92,18 +95,22 @@ namespace Rdmp.Core.QueryBuilding
         {
             bool isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
 
+            //Includes the parameter declaration and no rename operations (i.e. couldn't be used for building the tree but can be used for cache hit testing).
+            string isolatedSqlJoinableCacheless = null;
+            string isolatedSqlCacheless = null;
+            string isolatedSqlPartiallyCached = null;
+
             if (JoinedTo != null)
             {
-                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,new QueryBuilderArgs(parent.Customise));
-                SqlJoinableCached = GetCachFetchSqlIfPossible(parent,JoinedTo,SqlJoinableCacheless,true);
+                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,new QueryBuilderArgs(parent.Customise),out isolatedSqlJoinableCacheless);
+                SqlJoinableCached = GetCachFetchSqlIfPossible(parent,JoinedTo,isolatedSqlJoinableCacheless,true);
             }
-
-
+            
             if (isSolitaryPatientIndexTable)
             {
                 //explicit execution of a patient index table on it's own
                 //the full uncached SQL for the query
-                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise));
+                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise),out isolatedSqlCacheless);
 
                 if(SqlJoinableCached != null)
                     throw new QueryBuildingException("Patient index tables can't use other patient index tables!");
@@ -113,22 +120,22 @@ namespace Rdmp.Core.QueryBuilding
                 //the full uncached SQL for the query
                 SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,
                     new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
-                        parent.TabIn(SqlJoinableCacheless, 1),parent.Customise));
+                        parent.TabIn(SqlJoinableCacheless, 1),parent.Customise),out isolatedSqlCacheless);
 
                 
                 //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join
                 if (SqlJoinableCached != null)
                     SqlPartiallyCached = parent.Helper.GetSQLForAggregate(CohortSet,
                         new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
-                            SqlJoinableCached,parent.Customise));
+                            SqlJoinableCached,parent.Customise),out isolatedSqlPartiallyCached);
             }
             
             //We would prefer a cache hit on the exact uncached SQL
-            SqlFullyCached = GetCachFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable);
+            SqlFullyCached = GetCachFetchSqlIfPossible(parent, CohortSet, isolatedSqlCacheless, isSolitaryPatientIndexTable);
 
             //but if that misses we would take a cache hit of an execution of the SqlPartiallyCached
-            if(SqlFullyCached == null && SqlPartiallyCached != null)
-                SqlFullyCached = GetCachFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable);
+            if(SqlFullyCached == null && SqlPartiallyCached != null && isolatedSqlPartiallyCached != null)
+                SqlFullyCached = GetCachFetchSqlIfPossible(parent,CohortSet,isolatedSqlPartiallyCached,isSolitaryPatientIndexTable);
         }
 
         private string GetCachFetchSqlIfPossible(CohortQueryBuilderResult parent,AggregateConfiguration aggregate, string sql, bool isPatientIndexTable)

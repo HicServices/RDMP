@@ -155,8 +155,7 @@ namespace Rdmp.Core.QueryBuilding
 
             if(finalParams.Any())
             {
-                foreach (ISqlParameter param in finalParams)
-                    parameterSql += QueryBuilder.GetParameterDeclarationSQL(param);
+                parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
 
                 return parameterSql + Environment.NewLine + sampleSQL;
             }
