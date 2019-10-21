@@ -6,11 +6,11 @@
 
 using System.Linq;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 
 namespace Rdmp.UI.Tests.CohortBuilding
 {
@@ -43,7 +43,7 @@ namespace Rdmp.UI.Tests.CohortBuilding
             GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic);
             
             //we should be able to add it
-            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCommand(cata),cic.RootCohortAggregateContainer);
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
             AssertCommandIsPossible(cmd);
 
             cmd.Execute();
@@ -52,7 +52,7 @@ namespace Rdmp.UI.Tests.CohortBuilding
             Assert.AreEqual(0,ac1.Order);
 
             //add another one
-            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCommand(cata),cic.RootCohortAggregateContainer);
+            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
             AssertCommandIsPossible(cmd2);
             cmd2.Execute();
 
@@ -74,7 +74,7 @@ namespace Rdmp.UI.Tests.CohortBuilding
             GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic);
             
             //we should be able to add it to root container
-            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCommand(cata),cic.RootCohortAggregateContainer);
+            var cmd = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),cic.RootCohortAggregateContainer);
             cmd.Execute();
 
             
@@ -83,7 +83,7 @@ namespace Rdmp.UI.Tests.CohortBuilding
             cic.RootCohortAggregateContainer.AddChild(subcontainer);
 
             //add the second ac to the subcontainer 
-            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCommand(cata),subcontainer);
+            var cmd2 = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator, new CatalogueCombineable(cata),subcontainer);
             cmd2.Execute();
 
             //should now look like this:
@@ -104,7 +104,7 @@ namespace Rdmp.UI.Tests.CohortBuilding
             Assert.AreEqual(0,ac2.Order);
 
             //now move the Ac2 to Root (problematic since both Ac 2 and the INTERSECT have Order 0 - in their own separate containers)
-            var cmd3 = new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, new AggregateConfigurationCommand(ac2),cic.RootCohortAggregateContainer);
+            var cmd3 = new ExecuteCommandMoveAggregateIntoContainer(ItemActivator, new AggregateConfigurationCombineable(ac2),cic.RootCohortAggregateContainer);
             cmd3.Execute();
 
             all = cic.RootCohortAggregateContainer.GetOrderedContents().ToArray();

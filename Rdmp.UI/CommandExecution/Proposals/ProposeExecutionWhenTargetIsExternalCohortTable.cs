@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ExternalCohortTableUI, ExternalCohortTable>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ExternalCohortTable target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExternalCohortTable target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

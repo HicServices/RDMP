@@ -4,23 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandMoveFilterIntoContainer : BasicUICommandExecution
     {
-        private readonly FilterCommand _filterCommand;
+        private readonly FilterCombineable _filterCombineable;
         private readonly IContainer _targetContainer;
 
-        public ExecuteCommandMoveFilterIntoContainer(IActivateItems activator,FilterCommand filterCommand, IContainer targetContainer) : base(activator)
+        public ExecuteCommandMoveFilterIntoContainer(IActivateItems activator,FilterCombineable filterCombineable, IContainer targetContainer) : base(activator)
         {
-            _filterCommand = filterCommand;
+            _filterCombineable = filterCombineable;
             _targetContainer = targetContainer;
 
-            if(!filterCommand.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
+            if(!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
                 SetImpossible("Filters can only be moved within their own container tree");
         }
 
@@ -28,8 +28,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            _filterCommand.Filter.FilterContainer_ID = _targetContainer.ID;
-            ((DatabaseEntity)_filterCommand.Filter).SaveToDatabase();
+            _filterCombineable.Filter.FilterContainer_ID = _targetContainer.ID;
+            ((DatabaseEntity)_filterCombineable.Filter).SaveToDatabase();
             Publish((DatabaseEntity) _targetContainer);
         }
     }

@@ -6,10 +6,10 @@
 
 using System.Linq;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ProjectUI;
 
@@ -32,12 +32,12 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 ItemActivator.Activate<ExecuteExtractionUI, ExtractionConfiguration>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionConfiguration targetExtractionConfiguration, InsertOption insertOption = InsertOption.Default)
         {
             //user is trying to set the cohort of the configuration
-            var sourceExtractableCohortComand = cmd as ExtractableCohortCommand;
+            var sourceExtractableCohortComand = cmd as ExtractableCohortCombineable;
 
-            var sourceCatalogueCommand = cmd as CatalogueCommand;
+            var sourceCatalogueCommand = cmd as CatalogueCombineable;
 
             if (sourceCatalogueCommand != null)
             {
@@ -55,7 +55,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 return new ExecuteCommandAddCohortToExtractionConfiguration(ItemActivator, sourceExtractableCohortComand, targetExtractionConfiguration);
 
             //user is trying to add datasets to a configuration
-            var sourceExtractableDataSetCommand = cmd as ExtractableDataSetCommand;
+            var sourceExtractableDataSetCommand = cmd as ExtractableDataSetCombineable;
 
             if (sourceExtractableDataSetCommand != null)
                 return new ExecuteCommandAddDatasetsToConfiguration(ItemActivator, sourceExtractableDataSetCommand, targetExtractionConfiguration);

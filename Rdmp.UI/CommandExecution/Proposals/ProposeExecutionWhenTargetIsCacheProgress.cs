@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ExecuteCacheProgressUI, CacheProgress>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, CacheProgress target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CacheProgress target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

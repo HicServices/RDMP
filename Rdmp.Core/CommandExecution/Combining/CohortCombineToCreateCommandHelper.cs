@@ -5,30 +5,25 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.SimpleDialogs;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class CohortCommandHelper
+    public class CohortCombineToCreateCommandHelper
     {
 
-        public static ExtractionInformation PickOneExtractionIdentifier(Catalogue c, ExtractionInformation[] candidates)
+        public static ExtractionInformation PickOneExtractionIdentifier(IBasicActivateItems activator,Catalogue c, ExtractionInformation[] candidates)
         {
             if (candidates.Length == 0)
                 throw new Exception("None of the ExtractionInformations in Catalogue " + c + " are marked IsExtractionIdentifier.  You will need to edit the Catalogue in CatalogueManager and select one of the columns in the dataset as the extraction identifier");
 
-            MessageBox.Show("Dataset " + c + " has " + candidates.Length + " columns marked IsExtractionInformation, which one do you want to do cohort identification on?");
+            activator.Show("Dataset " + c + " has " + candidates.Length + " columns marked IsExtractionInformation, which one do you want to do cohort identification on?");
 
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(candidates, false, false);
+            var selected = activator.SelectOne("Pick Extraction Identifier", candidates);
 
-            dialog.ShowDialog();
-
-            if (dialog.DialogResult == DialogResult.OK)
-                return (ExtractionInformation)dialog.Selected;
-
-
+            if (selected != null)
+                return (ExtractionInformation)selected;
+            
             throw new Exception("User refused to choose an extraction identifier");
         }
     }

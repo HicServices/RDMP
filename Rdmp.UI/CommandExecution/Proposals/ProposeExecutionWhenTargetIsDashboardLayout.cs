@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<DashboardLayoutUI, DashboardLayout>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, DashboardLayout target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DashboardLayout target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

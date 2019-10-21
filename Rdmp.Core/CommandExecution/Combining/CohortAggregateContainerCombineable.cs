@@ -4,19 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
+using System.Collections.Generic;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class CohortIdentificationConfigurationCommand:ICommand
+    public class CohortAggregateContainerCombineable : ICombineToMakeCommand
     {
-        public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
+        public CohortAggregateContainer ParentContainerIfAny { get; private set; }
+        public CohortAggregateContainer AggregateContainer { get; private set; }
+        public List<CohortAggregateContainer> AllSubContainersRecursively  { get; private set; }
 
-        public CohortIdentificationConfigurationCommand(CohortIdentificationConfiguration cohortIdentificationConfiguration)
+        public CohortAggregateContainerCombineable(CohortAggregateContainer aggregateContainer)
         {
-            CohortIdentificationConfiguration = cohortIdentificationConfiguration;
+            AggregateContainer = aggregateContainer;
+            AllSubContainersRecursively = AggregateContainer.GetAllSubContainersRecursively();
+
+            ParentContainerIfAny = AggregateContainer.GetParentContainerIfAny();
         }
+
+        
 
         public string GetSqlString()
         {

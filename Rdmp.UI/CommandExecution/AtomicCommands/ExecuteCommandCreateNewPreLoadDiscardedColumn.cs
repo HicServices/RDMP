@@ -8,9 +8,9 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
@@ -30,9 +30,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             _tableInfo = tableInfo;
         }
 
-        public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo, ColumnInfoCommand sourceColumnInfoCommand):this(activator,tableInfo)
+        public ExecuteCommandCreateNewPreLoadDiscardedColumn(IActivateItems activator, TableInfo tableInfo, ColumnInfoCombineable sourceColumnInfoCombineable):this(activator,tableInfo)
         {
-            _prototypes = sourceColumnInfoCommand.ColumnInfos;
+            _prototypes = sourceColumnInfoCombineable.ColumnInfos;
 
             var existing = tableInfo.PreLoadDiscardedColumns;
             foreach (ColumnInfo prototype in _prototypes)

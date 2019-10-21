@@ -5,10 +5,10 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.UI.AggregationUIs.Advanced;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -29,9 +29,9 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AggregateConfiguration targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
         {
-            var sourceAggregateCommand = cmd as AggregateConfigurationCommand;
+            var sourceAggregateCommand = cmd as AggregateConfigurationCombineable;
 
             //if it is an aggregate being dragged
             if (sourceAggregateCommand != null)
@@ -45,7 +45,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                     return new ExecuteCommandReOrderAggregate(ItemActivator, sourceAggregateCommand, targetAggregateConfiguration, insertOption);
             }
 
-            var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCommand;
+            var sourceCohortAggregateContainerCommand = cmd as CohortAggregateContainerCombineable;
             if (sourceCohortAggregateContainerCommand != null)
             {
                 //can never drag the root container elsewhere

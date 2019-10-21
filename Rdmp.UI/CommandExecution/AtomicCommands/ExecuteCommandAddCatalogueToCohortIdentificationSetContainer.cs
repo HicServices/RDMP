@@ -4,16 +4,16 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicUICommandExecution
     {
-        private readonly CatalogueCommand _catalogueCommand;
+        private readonly CatalogueCombineable _catalogueCombineable;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
         private ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer _postImportCommand;
@@ -31,13 +31,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             }
         }
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IActivateItems activator,CatalogueCommand catalogueCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
-            _catalogueCommand = catalogueCommand;
+            _catalogueCombineable = catalogueCombineable;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
 
-            if(!catalogueCommand.ContainsAtLeastOneExtractionIdentifier)
-                SetImpossible("Catalogue " + catalogueCommand.Catalogue + " does not contain any IsExtractionIdentifier columns");
+            if(!catalogueCombineable.ContainsAtLeastOneExtractionIdentifier)
+                SetImpossible("Catalogue " + catalogueCombineable.Catalogue + " does not contain any IsExtractionIdentifier columns");
         }
 
         public override void Execute()
@@ -45,7 +45,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             
-            var cmd = _catalogueCommand.GenerateAggregateConfigurationFor(_targetCohortAggregateContainer,!SkipMandatoryFilterCreation);
+            var cmd = _catalogueCombineable.GenerateAggregateConfigurationFor(Activator,_targetCohortAggregateContainer,!SkipMandatoryFilterCreation);
             if(cmd != null)
             {
                 _postImportCommand = 

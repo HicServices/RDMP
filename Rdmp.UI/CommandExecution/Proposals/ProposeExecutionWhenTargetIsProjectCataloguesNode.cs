@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -30,7 +30,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ProjectCataloguesNode target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCataloguesNode target, InsertOption insertOption = InsertOption.Default)
         {
             //use the same drop options as Project except for this one
 

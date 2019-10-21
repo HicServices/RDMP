@@ -5,7 +5,6 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandLine.Runners;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
@@ -16,6 +15,7 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -28,9 +28,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         }
 
-        public ExecuteCommandAddPlugins(IActivateItems itemActivator, FileCollectionCommand fileCommand):base(itemActivator)
+        public ExecuteCommandAddPlugins(IActivateItems itemActivator, FileCollectionCombineable fileCombineable):base(itemActivator)
         {
-            if(!fileCommand.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
+            if(!fileCombineable.Files.All(f=>f.Extension == PackPluginRunner.PluginPackageSuffix))
             {
                 SetImpossible("Plugins must " + PackPluginRunner.PluginPackageSuffix); 
                 return;
@@ -38,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             var existing = Activator.RepositoryLocator.CatalogueRepository.PluginManager.GetCompatiblePlugins();
 
-            _files = fileCommand.Files;
+            _files = fileCombineable.Files;
 
             var collision = existing.FirstOrDefault(p=>_files.Any(f=>f.Name.Equals(p.Name)));
             if(collision != null)

@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -13,9 +13,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     internal class ExecuteCommandMoveAggregateIntoContainer : BasicUICommandExecution
     {
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
-        private readonly AggregateConfigurationCommand _sourceAggregateCommand;
+        private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
         
-        public ExecuteCommandMoveAggregateIntoContainer(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandMoveAggregateIntoContainer(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _sourceAggregateCommand = sourceAggregateCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;

@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.MainFormUITabs;
 
@@ -29,9 +29,9 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<CatalogueItemUI, CatalogueItem>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, CatalogueItem target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItem target, InsertOption insertOption = InsertOption.Default)
         {
-            var sourceColumnInfo = cmd as ColumnInfoCommand;
+            var sourceColumnInfo = cmd as ColumnInfoCombineable;
 
             if (sourceColumnInfo != null)
                 return new ExecuteCommandLinkCatalogueItemToColumnInfo(ItemActivator, sourceColumnInfo, target);

@@ -5,12 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class ContainerCommand : ICommand
+    public class ContainerCombineable : ICombineToMakeCommand
     {
         public IContainer Container { get; private set; }
 
@@ -25,7 +24,7 @@ namespace Rdmp.UI.Copying.Commands
         /// </summary>
         public List<IContainer> AllContainersInEntireTreeFromRootDown { get; private set; }
 
-        public ContainerCommand(IContainer container)
+        public ContainerCombineable(IContainer container)
         {
             Container = container;
             AllSubContainersRecursive = Container.GetAllSubContainersRecursively();

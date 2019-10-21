@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ConfigureDatasetUI, SelectedDataSets>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, SelectedDataSets target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SelectedDataSets target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

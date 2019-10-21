@@ -4,23 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.QueryBuilding;
+using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class ColumnCommand : ICommand
+    public class TableInfoCombineable : ICombineToMakeCommand
     {
-        public readonly IColumn Column;
+        public TableInfo TableInfo { get; private set; }
 
-        public ColumnCommand(IColumn column)
+        public TableInfoCombineable(TableInfo tableInfo)
         {
-            Column = column;
+            TableInfo = tableInfo;
         }
 
         public string GetSqlString()
         {
-            return Column.SelectSQL;
+            return TableInfo.Name;
         }
     }
 }

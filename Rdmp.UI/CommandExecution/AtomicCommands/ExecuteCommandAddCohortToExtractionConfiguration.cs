@@ -5,18 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddCohortToExtractionConfiguration : BasicUICommandExecution
     {
-        private readonly ExtractableCohortCommand _sourceExtractableCohortComand;
+        private readonly ExtractableCohortCombineable _sourceExtractableCohortComand;
         private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
-        public ExecuteCommandAddCohortToExtractionConfiguration(IActivateItems activator, ExtractableCohortCommand sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
+        public ExecuteCommandAddCohortToExtractionConfiguration(IActivateItems activator, ExtractableCohortCombineable sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
         {
             _sourceExtractableCohortComand = sourceExtractableCohortComand;
             _targetExtractionConfiguration = targetExtractionConfiguration;

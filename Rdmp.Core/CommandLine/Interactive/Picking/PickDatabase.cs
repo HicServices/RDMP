@@ -61,6 +61,7 @@ ConnectionString (Required)";
         public override IEnumerable<string> GetAutoCompleteIfAny()
         {
             yield return "DatabaseType:";
+            yield return "Oracle";
         }
     }
 }

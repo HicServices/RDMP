@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ExtractableCohortUI, ExtractableCohort>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractableCohort target, InsertOption insertOption = InsertOption.Default)
         {
             //no command possible, dragged command must have been something else
             return null;

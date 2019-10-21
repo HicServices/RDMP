@@ -6,10 +6,10 @@
 
 using System.Linq;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -30,10 +30,10 @@ namespace Rdmp.UI.CommandExecution.Proposals
             
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, LoadStageNode targetStage, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadStageNode targetStage, InsertOption insertOption = InsertOption.Default)
         {
-            var sourceProcessTaskCommand = cmd as ProcessTaskCommand;
-            var sourceFileTaskCommand = cmd as FileCollectionCommand;
+            var sourceProcessTaskCommand = cmd as ProcessTaskCombineable;
+            var sourceFileTaskCommand = cmd as FileCollectionCombineable;
             
             if (sourceProcessTaskCommand != null)
                 return new ExecuteCommandChangeLoadStage(ItemActivator, sourceProcessTaskCommand, targetStage);

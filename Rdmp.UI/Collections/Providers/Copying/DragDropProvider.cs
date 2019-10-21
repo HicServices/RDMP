@@ -142,7 +142,7 @@ namespace Rdmp.UI.Collections.Providers.Copying
            {
                //get file list
                var files = dataObject.GetFileDropList().Cast<string>().Select(s => new FileInfo(s)).ToArray();
-               ICommand fileCommand = _commandFactory.Create(files);
+               ICombineToMakeCommand fileCommand = _commandFactory.Create(files);
 
                //if command factory supports generating file based commands
                if (fileCommand != null)
@@ -169,7 +169,7 @@ namespace Rdmp.UI.Collections.Providers.Copying
                 var toReturn = (OLVDataObject)base.StartDrag(olv, button, item);
                 
                 //can we process it into a command?
-                ICommand command = _commandFactory.Create(toReturn);
+                ICombineToMakeCommand command = _commandFactory.Create(toReturn);
 
                 if (command == null)
                     return null;//it couldn't become a command so leave it as a model object

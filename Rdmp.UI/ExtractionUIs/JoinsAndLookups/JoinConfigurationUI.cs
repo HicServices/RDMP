@@ -10,9 +10,9 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Collections;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
@@ -245,7 +245,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
                 return null;
 
             var ti = data.ModelObjects[0] as TableInfo;
-            var ticmd = data.ModelObjects[0] as TableInfoCommand;
+            var ticmd = data.ModelObjects[0] as TableInfoCombineable;
 
             if (ti != null)
                 return ti;

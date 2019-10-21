@@ -8,12 +8,12 @@ using System;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands.Alter;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.Icons.IconProvision;
@@ -89,7 +89,7 @@ namespace Rdmp.UI.Menus
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_availableCredentials, false, false);
             if (dialog.ShowDialog() == DialogResult.OK)
             {
-                var cmd = new DataAccessCredentialsCommand((DataAccessCredentials)dialog.Selected);
+                var cmd = new DataAccessCredentialsCombineable((DataAccessCredentials)dialog.Selected);
                 var execute = new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator, cmd, tableInfo);
 
                 if(execute.IsImpossible)

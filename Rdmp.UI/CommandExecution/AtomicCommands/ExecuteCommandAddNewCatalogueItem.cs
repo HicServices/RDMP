@@ -10,8 +10,8 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -24,7 +24,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private ColumnInfo[] _columnInfos;
         private HashSet<int> _existingColumnInfos;
 
-        public ExecuteCommandAddNewCatalogueItem(IActivateItems activator, Catalogue catalogue,ColumnInfoCommand colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
+        public ExecuteCommandAddNewCatalogueItem(IActivateItems activator, Catalogue catalogue,ColumnInfoCombineable colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
         {
             
         }

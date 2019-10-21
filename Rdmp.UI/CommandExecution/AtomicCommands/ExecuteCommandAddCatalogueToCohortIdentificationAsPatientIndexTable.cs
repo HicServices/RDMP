@@ -6,9 +6,9 @@
 
 using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -18,14 +18,14 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicUICommandExecution,IAtomicCommand
     {
         private readonly CohortIdentificationConfiguration _configuration;
-        private CatalogueCommand _catalogue;
+        private CatalogueCombineable _catalogue;
 
         public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator, CohortIdentificationConfiguration configuration) : base(activator)
         {
             _configuration = configuration;
         }
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator,CatalogueCommand catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
+        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator,CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
         {
             _catalogue = catalogue;
             if(!_catalogue.ContainsAtLeastOneExtractionIdentifier)
@@ -47,10 +47,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 if(!SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out cata))
                     return;
                 
-                _catalogue = new CatalogueCommand(cata);
+                _catalogue = new CatalogueCombineable(cata);
             }
             
-            AggregateConfigurationCommand aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(_configuration);
+            AggregateConfigurationCombineable aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(Activator,_configuration);
 
             var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(Activator, aggregateCommand, _configuration);
             joinableCommandExecution.Execute();

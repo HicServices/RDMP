@@ -6,9 +6,9 @@
 
 using System;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -29,10 +29,10 @@ namespace Rdmp.UI.CommandExecution.Proposals
             throw new NotSupportedException();
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
         {
-            var cata = cmd as CatalogueCommand;
-            var manyCata = cmd as ManyCataloguesCommand;
+            var cata = cmd as CatalogueCombineable;
+            var manyCata = cmd as ManyCataloguesCombineable;
 
             ICommandExecution cmdExecution = null;
 

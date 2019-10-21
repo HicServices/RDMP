@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -27,13 +27,13 @@ namespace Rdmp.UI.CommandExecution.Proposals
         /// Decides which (if any) command should be advertised/run when combining the dragged object (cmd) with the drop target
         /// </summary>
         /// <param name="cmd">Self contained class describing both the object(s) being dragged and salient facts about it e.g. if  it is a
-        /// <see cref="CatalogueCommand"/> then it will know whether the dragged <see cref="Catalogue"/>
+        /// <see cref="CatalogueCombineable"/> then it will know whether the dragged <see cref="Catalogue"/>
         /// has at least one patient identifier column.</param>
         /// 
         /// <param name="target"> The object the cursor is currently hovering over </param>
         /// <param name="insertOption">Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it)</param>
         /// <returns></returns>
-        public abstract ICommandExecution ProposeExecution(ICommand cmd, T target, InsertOption insertOption = InsertOption.Default);
+        public abstract ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, T target, InsertOption insertOption = InsertOption.Default);
 
         public bool IsCompatibleTarget(object target)
         {
@@ -45,7 +45,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             return true;
         }
 
-        public ICommandExecution ProposeExecution(ICommand cmd, object target,InsertOption insertOption = InsertOption.Default)
+        public ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, object target,InsertOption insertOption = InsertOption.Default)
         {
             if(IsCompatibleTarget(target))
                 return ProposeExecution(cmd,(T)target, insertOption);

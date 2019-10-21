@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.Governance;
 
@@ -29,17 +29,17 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<GovernancePeriodUI, GovernancePeriod>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, GovernancePeriod target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, GovernancePeriod target, InsertOption insertOption = InsertOption.Default)
         {
             
 
-            if (cmd is FileCollectionCommand files && files.Files.Length == 1)
+            if (cmd is FileCollectionCombineable files && files.Files.Length == 1)
                 return new ExecuteCommandAddNewGovernanceDocument(ItemActivator, target, files.Files[0]);
 
-            if(cmd is CatalogueCommand c)
+            if(cmd is CatalogueCombineable c)
                 return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator,target,c.Catalogue);
 
-            if(cmd is ManyCataloguesCommand mcat)
+            if(cmd is ManyCataloguesCombineable mcat)
                 return new ExecuteCommandAddCatalogueToGovernancePeriod(ItemActivator,target,mcat.Catalogues);
 
             //no drag and drop support

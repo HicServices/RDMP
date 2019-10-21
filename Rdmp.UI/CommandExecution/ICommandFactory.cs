@@ -13,15 +13,15 @@ namespace Rdmp.UI.CommandExecution
 {
     /// <summary>
     /// Handles the commencement of drag operations.  This involves deciding whether a given object can be dragged and parceling up the object
-    /// into an <see cref="ICommand"/> (which will gather relevant facts about the object).  Dropping is handled by <see cref="ICommandExecutionFactory"/>
+    /// into an <see cref="ICombineToMakeCommand"/> (which will gather relevant facts about the object).  Dropping is handled by <see cref="ICommandExecutionFactory"/>
     /// </summary>
     public interface ICommandFactory
     {
-        ICommand Create(OLVDataObject o);
-        ICommand Create(ModelDropEventArgs e);
-        ICommand Create(DragEventArgs e);
-        ICommand Create(FileInfo[] files);
-        ICommand Create(object modelObject);
+        ICombineToMakeCommand Create(OLVDataObject o);
+        ICombineToMakeCommand Create(ModelDropEventArgs e);
+        ICombineToMakeCommand Create(DragEventArgs e);
+        ICombineToMakeCommand Create(FileInfo[] files);
+        ICombineToMakeCommand Create(object modelObject);
         
     }
 }

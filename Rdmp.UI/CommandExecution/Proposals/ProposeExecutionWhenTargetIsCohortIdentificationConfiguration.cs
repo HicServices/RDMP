@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<CohortIdentificationConfigurationUI, CohortIdentificationConfiguration>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, CohortIdentificationConfiguration target,
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CohortIdentificationConfiguration target,
             InsertOption insertOption = InsertOption.Default)
         {
             return null;

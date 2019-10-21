@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ANOTableUI, ANOTable>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ANOTable target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ANOTable target, InsertOption insertOption = InsertOption.Default)
         {
             //no drag and drop support
             return null;

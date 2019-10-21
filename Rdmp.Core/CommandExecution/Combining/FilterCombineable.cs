@@ -5,12 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class FilterCommand : ICommand
+    public class FilterCombineable : ICombineToMakeCommand
     {
         public IFilter Filter { get; private set; }
         
@@ -24,7 +23,7 @@ namespace Rdmp.UI.Copying.Commands
         /// </summary>
         public List<IContainer> AllContainersInEntireTreeFromRootDown { get; private set; } 
 
-        public FilterCommand(IFilter filter)
+        public FilterCombineable(IFilter filter)
         {
             Filter = filter;
 

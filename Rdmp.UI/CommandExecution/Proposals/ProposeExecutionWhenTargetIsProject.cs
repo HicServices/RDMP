@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -28,23 +28,23 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ProjectUI.ProjectUI, Project>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Project project, InsertOption insertOption = InsertOption.Default)
         {
             //drop a cic on a Project to associate it with that project
             var cicCommand = cmd as CohortIdentificationConfigurationCommand;
             if(cicCommand != null)
                 return new ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(ItemActivator).SetTarget(cicCommand.CohortIdentificationConfiguration).SetTarget(project);
 
-            var cataCommand = cmd as CatalogueCommand;
+            var cataCommand = cmd as CatalogueCombineable;
             if (cataCommand != null)
                 return new ExecuteCommandMakeCatalogueProjectSpecific(ItemActivator).SetTarget(cataCommand.Catalogue).SetTarget(project);
 
-            var file = cmd as FileCollectionCommand;
+            var file = cmd as FileCollectionCombineable;
 
             if(file != null)
                 return new ExecuteCommandCreateNewCatalogueByImportingFile(ItemActivator,file).SetTarget(project);
 
-            var aggCommand = cmd as AggregateConfigurationCommand;
+            var aggCommand = cmd as AggregateConfigurationCombineable;
             
             if(aggCommand != null)
                 return new ExecuteCommandCreateNewCatalogueByExecutingAnAggregateConfiguration(ItemActivator).SetTarget(project).SetTarget(aggCommand.Aggregate);

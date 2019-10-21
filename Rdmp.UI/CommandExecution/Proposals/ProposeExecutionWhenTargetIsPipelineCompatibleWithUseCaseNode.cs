@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             var cmd = new ExecuteCommandEditPipelineWithUseCase(ItemActivator,target.Pipeline, target.UseCase);
             cmd.Execute();
         }
-        public override ICommandExecution ProposeExecution(ICommand cmd, PipelineCompatibleWithUseCaseNode target,
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PipelineCompatibleWithUseCaseNode target,
             InsertOption insertOption = InsertOption.Default)
         {
             return null;

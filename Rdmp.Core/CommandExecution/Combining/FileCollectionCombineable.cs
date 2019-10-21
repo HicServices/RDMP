@@ -4,20 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
+using System.IO;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class ManyCataloguesCommand : ICommand
+    public class FileCollectionCombineable : ICombineToMakeCommand
     {
-        public Catalogue[] Catalogues { get; set; }
+        public FileInfo[] Files { get; set; }
+        
+        public bool IsShareDefinition { get; set; }
+        
 
-        public ManyCataloguesCommand(Catalogue[] catalogues)
+        public FileCollectionCombineable(FileInfo[] files)
         {
-            Catalogues = catalogues;
-        }
+            Files = files;
+            IsShareDefinition = files.Length == 1 && files[0].Extension == ".sd";
 
+        }
+        
         public string GetSqlString()
         {
             return null;

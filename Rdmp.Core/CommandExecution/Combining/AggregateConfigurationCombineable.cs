@@ -6,14 +6,13 @@
 
 using System.Collections.Generic;
 using System.Linq;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class AggregateConfigurationCommand : ICommand
+    public class AggregateConfigurationCombineable : ICombineToMakeCommand
     {
         public AggregateConfiguration Aggregate { get; private set; }
         public CohortIdentificationConfiguration CohortIdentificationConfigurationIfAny { get; private set; }
@@ -25,7 +24,7 @@ namespace Rdmp.UI.Copying.Commands
         public JoinableCohortAggregateConfiguration JoinableDeclarationIfAny { get; set; }
         public AggregateConfiguration[] JoinableUsersIfAny { get; set; }
 
-        public AggregateConfigurationCommand(AggregateConfiguration aggregate)
+        public AggregateConfigurationCombineable(AggregateConfiguration aggregate)
         {
             Aggregate = aggregate;
 

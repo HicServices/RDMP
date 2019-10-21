@@ -4,23 +4,25 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data.Cache;
+using Rdmp.Core.Curation.Data.Pipelines;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class CacheProgressCommand : ICommand
+    public class PipelineCombineable : ICombineToMakeCommand
     {
-        public CacheProgress CacheProgress { get; private set; }
+        public Pipeline Pipeline { get; private set; }
+        public bool IsEmpty { get; private set; }
 
-        public CacheProgressCommand(CacheProgress cacheProgress)
+        public PipelineCombineable(Pipeline pipeline)
         {
-            CacheProgress = cacheProgress;
+            Pipeline = pipeline;
+
+            IsEmpty = Pipeline.PipelineComponents.Count == 0;
         }
 
         public string GetSqlString()
         {
-            return null;
+            return "";
         }
     }
 }

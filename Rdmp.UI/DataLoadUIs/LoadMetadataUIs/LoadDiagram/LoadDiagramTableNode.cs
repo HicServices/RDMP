@@ -9,11 +9,11 @@ using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.DataLoad.Engine.DatabaseManagement.EntityNaming;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using ReusableLibraryCode;
 
@@ -79,9 +79,9 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return TableName;
         }
         
-        public ICommand GetCommand()
+        public ICombineToMakeCommand GetCommand()
         {
-            return new SqlTextOnlyCommand(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
+            return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
         }
 
         public void DiscoverState()

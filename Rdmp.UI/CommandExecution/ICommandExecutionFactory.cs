@@ -23,7 +23,7 @@ namespace Rdmp.UI.CommandExecution
         /// <param name="targetModel"></param>
         /// <param name="insertOption"></param>
         /// <returns></returns>
-        ICommandExecution Create(ICommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default);
+        ICommandExecution Create(ICombineToMakeCommand cmd, object targetModel,InsertOption insertOption = InsertOption.Default);
 
         void Activate(object target);
         bool CanActivate(object target);

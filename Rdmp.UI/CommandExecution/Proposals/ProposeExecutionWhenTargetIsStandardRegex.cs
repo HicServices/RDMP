@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<StandardRegexUI, StandardRegex>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, StandardRegex target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, StandardRegex target, InsertOption insertOption = InsertOption.Default)
         {
             //no drag and drop support
             return null;

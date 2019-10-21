@@ -6,8 +6,8 @@
 
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;
 
@@ -16,10 +16,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain : BasicUICommandExecution
     {
-        private readonly AggregateConfigurationCommand _sourceAggregateCommand;
+        private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
-        public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IActivateItems activator, AggregateConfigurationCommand sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _sourceAggregateCommand = sourceAggregateCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;

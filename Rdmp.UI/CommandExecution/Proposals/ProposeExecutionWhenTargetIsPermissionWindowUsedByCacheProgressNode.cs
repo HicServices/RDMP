@@ -32,7 +32,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 ItemActivator.Activate<CacheProgressUI, CacheProgress>(target.CacheProgress);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, PermissionWindowUsedByCacheProgressNode target,InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PermissionWindowUsedByCacheProgressNode target,InsertOption insertOption = InsertOption.Default)
         {
             //no drag and drop
             return null;

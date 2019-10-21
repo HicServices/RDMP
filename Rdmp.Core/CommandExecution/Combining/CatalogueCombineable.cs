@@ -6,19 +6,18 @@
 
 using System.Linq;
 using System.Runtime.CompilerServices;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class CatalogueCommand : ICommand
+    public class CatalogueCombineable : ICombineToMakeCommand
     {
         public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
         public Catalogue Catalogue { get; set; }
         public CohortIdentificationConfiguration.ChooseWhichExtractionIdentifierToUseFromManyHandler ResolveMultipleExtractionIdentifiers { get; set; }
 
-        public CatalogueCommand(Catalogue catalogue)
+        public CatalogueCombineable(Catalogue catalogue)
         {
             Catalogue = catalogue;
             ContainsAtLeastOneExtractionIdentifier = catalogue.GetAllExtractionInformation(ExtractionCategory.Any).Any(e => e.IsExtractionIdentifier);
@@ -37,20 +36,25 @@ namespace Rdmp.UI.Copying.Commands
         /// <param name="importMandatoryFilters"></param>
         /// <param name="caller"></param>
         /// <returns></returns>
-        public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortAggregateContainer cohortAggregateContainer,bool importMandatoryFilters=true, [CallerMemberName] string caller = null)
+        public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,CohortAggregateContainer cohortAggregateContainer,bool importMandatoryFilters=true, [CallerMemberName] string caller = null)
         {
             var cic = cohortAggregateContainer.GetCohortIdentificationConfiguration();
 
             if (cic == null)
                 return null;
 
-            return GenerateAggregateConfigurationFor(cic, importMandatoryFilters);
+            return GenerateAggregateConfigurationFor(activator,cic, importMandatoryFilters);
         }
 
-        public AggregateConfigurationCommand GenerateAggregateConfigurationFor(CohortIdentificationConfiguration cic, bool importMandatoryFilters = true, [CallerMemberName] string caller = null)
+        public AggregateConfigurationCombineable GenerateAggregateConfigurationFor(IBasicActivateItems activator,
+            CohortIdentificationConfiguration cic, bool importMandatoryFilters = true,
+            [CallerMemberName] string caller = null)
         {
-            var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue, ResolveMultipleExtractionIdentifiers ?? CohortCommandHelper.PickOneExtractionIdentifier, importMandatoryFilters);
-            return new AggregateConfigurationCommand(newAggregate);
+            var newAggregate = cic.CreateNewEmptyConfigurationForCatalogue(Catalogue,
+                ResolveMultipleExtractionIdentifiers ??
+                ((a,b)=> CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(activator,a, b)),
+            importMandatoryFilters);
+            return new AggregateConfigurationCombineable(newAggregate);
         }
     }
 }

@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProjectCohortIdentificationConfigurationAssociationsNode target,
             InsertOption insertOption = InsertOption.Default)
         {
             var cicCommand = cmd as CohortIdentificationConfigurationCommand;

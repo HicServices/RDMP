@@ -6,12 +6,11 @@
 
 using System;
 using System.Linq;
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class ExtractableCohortCommand : ICommand
+    public class ExtractableCohortCombineable : ICombineToMakeCommand
     {
         public int ExternalProjectNumber { get; set; }
         public ExtractableCohort Cohort { get; set; }
@@ -21,7 +20,7 @@ namespace Rdmp.UI.Copying.Commands
         public IExtractionConfiguration[] CompatibleExtractionConfigurations { get; set; }
         public Project[] CompatibleProjects { get; set; }
 
-        public ExtractableCohortCommand(ExtractableCohort extractableCohort)
+        public ExtractableCohortCombineable(ExtractableCohort extractableCohort)
         {
             Cohort = extractableCohort;
 

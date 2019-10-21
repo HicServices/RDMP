@@ -5,8 +5,8 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -16,12 +16,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private readonly Catalogue[] _catalogues;
         private readonly CatalogueFolder _targetModel;
 
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, CatalogueCommand cmd, CatalogueFolder targetModel)
+        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, CatalogueCombineable cmd, CatalogueFolder targetModel)
             :this(activator,new []{cmd.Catalogue},targetModel)
         {
             
         }
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, ManyCataloguesCommand cmd, CatalogueFolder targetModel)
+        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, ManyCataloguesCombineable cmd, CatalogueFolder targetModel)
             : this(activator, cmd.Catalogues, targetModel)
         {
             

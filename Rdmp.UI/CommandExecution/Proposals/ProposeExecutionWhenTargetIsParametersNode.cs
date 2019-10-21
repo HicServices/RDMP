@@ -30,7 +30,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 cmd.Execute();
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ParametersNode target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ParametersNode target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

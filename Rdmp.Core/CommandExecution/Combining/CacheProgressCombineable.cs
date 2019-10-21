@@ -4,23 +4,22 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cache;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class TableInfoCommand : ICommand
+    public class CacheProgressCombineable : ICombineToMakeCommand
     {
-        public TableInfo TableInfo { get; private set; }
+        public CacheProgress CacheProgress { get; private set; }
 
-        public TableInfoCommand(TableInfo tableInfo)
+        public CacheProgressCombineable(CacheProgress cacheProgress)
         {
-            TableInfo = tableInfo;
+            CacheProgress = cacheProgress;
         }
 
         public string GetSqlString()
         {
-            return TableInfo.Name;
+            return null;
         }
     }
 }

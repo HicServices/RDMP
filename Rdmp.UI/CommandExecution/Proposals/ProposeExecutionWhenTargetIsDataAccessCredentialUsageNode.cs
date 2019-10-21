@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<DataAccessCredentialsUI,DataAccessCredentials>(target.Credentials);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, DataAccessCredentialUsageNode target,
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, DataAccessCredentialUsageNode target,
             InsertOption insertOption = InsertOption.Default)
         {
             return null;

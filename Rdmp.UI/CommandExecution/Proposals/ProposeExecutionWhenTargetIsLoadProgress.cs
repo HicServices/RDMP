@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<LoadProgressUI, LoadProgress>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, LoadProgress target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadProgress target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

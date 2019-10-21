@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<PreLoadDiscardedColumnUI, PreLoadDiscardedColumn>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, PreLoadDiscardedColumn target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, PreLoadDiscardedColumn target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

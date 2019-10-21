@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.Proposals
@@ -29,10 +29,10 @@ namespace Rdmp.UI.CommandExecution.Proposals
             cmd.Execute();
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, CatalogueItemsNode target, InsertOption insertOption = InsertOption.Default)
         {
-            var colInfo = cmd as ColumnInfoCommand;
-            var tableInfo = cmd as TableInfoCommand;
+            var colInfo = cmd as ColumnInfoCombineable;
+            var tableInfo = cmd as TableInfoCombineable;
 
             if (colInfo != null)
                 return new ExecuteCommandAddNewCatalogueItem(ItemActivator, target.Catalogue, colInfo);

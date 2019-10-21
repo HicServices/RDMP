@@ -4,27 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Repositories;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class ExtractableDataSetCommand : ICommand
+    public class ExtractableDataSetCombineable : ICombineToMakeCommand
     {
         public IExtractableDataSet[] ExtractableDataSets { get; set; }
 
-        public ExtractableDataSetCommand(ExtractableDataSet extractableDataSet)
+        public ExtractableDataSetCombineable(ExtractableDataSet extractableDataSet)
         {
             ExtractableDataSets = new ExtractableDataSet[]{extractableDataSet};
         }
 
-        public ExtractableDataSetCommand(ExtractableDataSet[] extractableDataSetArray)
+        public ExtractableDataSetCombineable(ExtractableDataSet[] extractableDataSetArray)
         {
             ExtractableDataSets = extractableDataSetArray;
         }
 
-        public ExtractableDataSetCommand(ExtractableDataSetPackage extractableDataSetPackage)
+        public ExtractableDataSetCombineable(ExtractableDataSetPackage extractableDataSetPackage)
         {
             var repository = (IDataExportRepository) extractableDataSetPackage.Repository;
             ExtractableDataSets = repository.PackageManager.GetAllDataSets(extractableDataSetPackage, repository.GetAllObjects<ExtractableDataSet>());

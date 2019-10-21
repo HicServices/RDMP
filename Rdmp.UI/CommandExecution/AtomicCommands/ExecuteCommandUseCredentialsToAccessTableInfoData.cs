@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.DataAccess;
 
@@ -18,15 +18,15 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private readonly DataAccessCredentials _credentials;
         private readonly TableInfo _tableInfo;
 
-        public ExecuteCommandUseCredentialsToAccessTableInfoData(IActivateItems activator,DataAccessCredentialsCommand sourceDataAccessCredentialsCommand, TableInfo targetTableInfo) : base(activator)
+        public ExecuteCommandUseCredentialsToAccessTableInfoData(IActivateItems activator,DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable, TableInfo targetTableInfo) : base(activator)
         {
-            _credentials = sourceDataAccessCredentialsCommand.DataAccessCredentials;
+            _credentials = sourceDataAccessCredentialsCombineable.DataAccessCredentials;
             _catalogueRepository = _credentials.Repository as CatalogueRepository;
 
             _tableInfo = targetTableInfo;
             
-            if(sourceDataAccessCredentialsCommand.CurrentUsage[DataAccessContext.Any].Contains(targetTableInfo))
-                SetImpossible(sourceDataAccessCredentialsCommand.DataAccessCredentials + " is already used to access " + targetTableInfo + " under Any context");
+            if(sourceDataAccessCredentialsCombineable.CurrentUsage[DataAccessContext.Any].Contains(targetTableInfo))
+                SetImpossible(sourceDataAccessCredentialsCombineable.DataAccessCredentials + " is already used to access " + targetTableInfo + " under Any context");
         }
 
         public override void Execute()

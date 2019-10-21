@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ExtractionFilterUI, ConcreteFilter>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ConcreteFilter target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ConcreteFilter target, InsertOption insertOption = InsertOption.Default)
         {
             //currently nothing can be dropped onto a filter
             return null;

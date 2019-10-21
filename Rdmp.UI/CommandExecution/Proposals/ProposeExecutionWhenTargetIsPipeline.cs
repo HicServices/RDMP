@@ -47,7 +47,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             return true;
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

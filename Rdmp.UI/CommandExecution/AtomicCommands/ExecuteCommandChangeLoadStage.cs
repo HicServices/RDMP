@@ -4,9 +4,9 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
@@ -16,12 +16,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         private readonly ProcessTask _sourceProcessTask;
         private readonly LoadStageNode _targetStage;
 
-        public ExecuteCommandChangeLoadStage(IActivateItems activator, ProcessTaskCommand sourceProcessTaskCommand, LoadStageNode targetStage) : base(activator)
+        public ExecuteCommandChangeLoadStage(IActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
         {
-            _sourceProcessTask = sourceProcessTaskCommand.ProcessTask;
+            _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
             _targetStage = targetStage;
 
-            if(sourceProcessTaskCommand.ProcessTask.LoadMetadata_ID != targetStage.LoadMetadata.ID)
+            if(sourceProcessTaskCombineable.ProcessTask.LoadMetadata_ID != targetStage.LoadMetadata.ID)
                 SetImpossible("ProcessTask belongs to a different LoadMetadata");
 
             if (!ProcessTask.IsCompatibleStage(_sourceProcessTask.ProcessTaskType, _targetStage.LoadStage))

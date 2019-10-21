@@ -6,8 +6,8 @@
 
 using System.Drawing;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -33,7 +33,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Resolve an orphaned virtual column by matching it up to an actual column in the underlying database";
         }
 
-        public ExecuteCommandLinkCatalogueItemToColumnInfo(IActivateItems activator, ColumnInfoCommand cmd, CatalogueItem catalogueItem) : base(activator)
+        public ExecuteCommandLinkCatalogueItemToColumnInfo(IActivateItems activator, ColumnInfoCombineable cmd, CatalogueItem catalogueItem) : base(activator)
         {
             _catalogueItem = catalogueItem;
             

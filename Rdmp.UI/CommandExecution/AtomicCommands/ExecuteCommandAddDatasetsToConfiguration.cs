@@ -6,9 +6,9 @@
 
 using System.Drawing;
 using System.Linq;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -27,10 +27,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// </summary>
         private bool _userMustPick;
 
-        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems activator,ExtractableDataSetCommand sourceExtractableDataSetCommand, ExtractionConfiguration targetExtractionConfiguration) 
+        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems activator,ExtractableDataSetCombineable sourceExtractableDataSetCombineable, ExtractionConfiguration targetExtractionConfiguration) 
             : this(activator,targetExtractionConfiguration)
         {
-            SetExtractableDataSets(false,sourceExtractableDataSetCommand.ExtractableDataSets);
+            SetExtractableDataSets(false,sourceExtractableDataSetCombineable.ExtractableDataSets);
         }
 
         public ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)

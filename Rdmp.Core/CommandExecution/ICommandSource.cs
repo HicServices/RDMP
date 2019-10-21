@@ -11,6 +11,6 @@ namespace Rdmp.Core.CommandExecution
     /// </summary>
     public interface ICommandSource
     {
-        ICommand GetCommand();
+        ICombineToMakeCommand GetCommand();
     }
 }

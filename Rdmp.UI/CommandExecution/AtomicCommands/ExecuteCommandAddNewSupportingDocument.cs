@@ -11,10 +11,10 @@ using System.IO;
 using System.Linq;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -23,7 +23,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddNewSupportingDocument : BasicUICommandExecution,IAtomicCommand
     {
-        private readonly FileCollectionCommand _fileCollectionCommand;
+        private readonly FileCollectionCombineable _fileCollectionCombineable;
         private readonly Catalogue _targetCatalogue;
 
         [UseWithObjectConstructor]
@@ -31,9 +31,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             _targetCatalogue = catalogue;
         }
-        public ExecuteCommandAddNewSupportingDocument(IActivateItems activator, FileCollectionCommand fileCollectionCommand, Catalogue targetCatalogue): base(activator)
+        public ExecuteCommandAddNewSupportingDocument(IActivateItems activator, FileCollectionCombineable fileCollectionCombineable, Catalogue targetCatalogue): base(activator)
         {
-            _fileCollectionCommand = fileCollectionCommand;
+            _fileCollectionCombineable = fileCollectionCombineable;
             _targetCatalogue = targetCatalogue;
             var allExisting = targetCatalogue.GetAllSupportingDocuments(FetchOptions.AllGlobalsAndAllLocals);
 
@@ -44,7 +44,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 if(filename == null)
                     continue;
 
-                var collisions = _fileCollectionCommand.Files.FirstOrDefault(f => f.FullName.Equals(filename.FullName,StringComparison.CurrentCultureIgnoreCase));
+                var collisions = _fileCollectionCombineable.Files.FirstOrDefault(f => f.FullName.Equals(filename.FullName,StringComparison.CurrentCultureIgnoreCase));
                 
                 if(collisions != null)
                     SetImpossible("File '" + collisions.Name +"' is already a SupportingDocument (ID=" + doc.ID + " - '"+doc.Name+"')");
@@ -62,8 +62,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             FileInfo[] files = null;
 
-            if (_fileCollectionCommand != null)
-                files = _fileCollectionCommand.Files;
+            if (_fileCollectionCombineable != null)
+                files = _fileCollectionCombineable.Files;
             else
             {
                 OpenFileDialog fileDialog = new OpenFileDialog();

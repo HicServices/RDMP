@@ -11,6 +11,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cache;
@@ -21,31 +22,30 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.CommandExecution;
-using Rdmp.UI.Copying.Commands;
 
 namespace Rdmp.UI.Copying
 {
     /// <inheritdoc/>
     public class RDMPCommandFactory:ICommandFactory
     {
-        public ICommand Create(ModelDropEventArgs e)
+        public ICombineToMakeCommand Create(ModelDropEventArgs e)
         {
             return Create((OLVDataObject)e.DataObject);
         }
 
-        public ICommand Create(DragEventArgs e)
+        public ICombineToMakeCommand Create(DragEventArgs e)
         {
             return Create(e.Data as OLVDataObject);
         }
 
-        public ICommand Create(OLVDataObject o)
+        public ICombineToMakeCommand Create(OLVDataObject o)
         {
             if (o == null || o.ModelObjects == null)
                 return null;
 
             //does the data object already contain a command? 
-            if (o.ModelObjects.OfType<ICommand>().Count() == 1)
-                return o.ModelObjects.OfType<ICommand>().Single();//yes
+            if (o.ModelObjects.OfType<ICombineToMakeCommand>().Count() == 1)
+                return o.ModelObjects.OfType<ICombineToMakeCommand>().Single();//yes
 
             //otherwise is it something that can be turned into a command?
             if (o.ModelObjects.Count == 0)
@@ -59,12 +59,12 @@ namespace Rdmp.UI.Copying
             return Create(o.ModelObjects.Cast<object>().ToArray());
         }
 
-        public ICommand Create(FileInfo[] files)
+        public ICombineToMakeCommand Create(FileInfo[] files)
         {
-            return new FileCollectionCommand(files);
+            return new FileCollectionCombineable(files);
         }
 
-        public ICommand Create(object modelObject)
+        public ICombineToMakeCommand Create(object modelObject)
         {
             IMasqueradeAs masquerader = modelObject as IMasqueradeAs;
 
@@ -74,80 +74,80 @@ namespace Rdmp.UI.Copying
             //Extractable column e.g. ExtractionInformation,AggregateDimension etc
             var icolumn = modelObject as IColumn;
             if (icolumn != null)
-                return new ColumnCommand(icolumn);
+                return new ColumnCombineable(icolumn);
 
             var pipeline = modelObject as Pipeline;
             if (pipeline != null)
-                return new PipelineCommand(pipeline);
+                return new PipelineCombineable(pipeline);
 
             //table column pointers (not extractable)
             var columnInfo = modelObject as ColumnInfo; //ColumnInfo is not an IColumn btw because it does not have column order or other extraction rule stuff (alias, hash etc)
             var linkedColumnInfo = modelObject as LinkedColumnInfoNode;
             
             if (columnInfo != null || linkedColumnInfo != null)
-                return new ColumnInfoCommand(columnInfo ?? linkedColumnInfo.ColumnInfo);
+                return new ColumnInfoCombineable(columnInfo ?? linkedColumnInfo.ColumnInfo);
 
             var columnInfoArray = IsArrayOf<ColumnInfo>(modelObject);
             if(columnInfoArray != null)
-                return new ColumnInfoCommand(columnInfoArray);
+                return new ColumnInfoCombineable(columnInfoArray);
             
             var tableInfo = modelObject as TableInfo;
             if (tableInfo != null)
-                return new TableInfoCommand(tableInfo);
+                return new TableInfoCombineable(tableInfo);
 
             //catalogues
             var catalogues = IsArrayOf<Catalogue>(modelObject);
             
             if (catalogues != null)
                 if(catalogues.Length == 1)
-                    return new CatalogueCommand(catalogues[0]);
+                    return new CatalogueCombineable(catalogues[0]);
                 else
-                    return new ManyCataloguesCommand(catalogues);
+                    return new ManyCataloguesCombineable(catalogues);
 
             //filters
             var filter = modelObject as IFilter;
             if (filter != null)
-                return new FilterCommand(filter);
+                return new FilterCombineable(filter);
 
             //containers
             var container = modelObject as IContainer;
             if (container != null)
-                return new ContainerCommand(container);
+                return new ContainerCombineable(container);
 
             //aggregates
             var aggregate = modelObject as AggregateConfiguration;
             if (aggregate != null)
-                return new AggregateConfigurationCommand(aggregate);
+                return new AggregateConfigurationCombineable(aggregate);
 
             //aggregate containers
             var aggregateContainer = modelObject as CohortAggregateContainer;
             if (aggregateContainer != null)
-                return new CohortAggregateContainerCommand(aggregateContainer);
+                return new CohortAggregateContainerCombineable(aggregateContainer);
             
             var extractableCohort = modelObject as ExtractableCohort;
             if (extractableCohort != null)
-                return new ExtractableCohortCommand(extractableCohort);
+                return new ExtractableCohortCombineable(extractableCohort);
 
             //extractable data sets
             var extractableDataSets = IsArrayOf<ExtractableDataSet>(modelObject);
             if (extractableDataSets != null)
-                return new ExtractableDataSetCommand(extractableDataSets);
+                return new ExtractableDataSetCombineable(extractableDataSets);
 
             var extractableDataSetPackage = modelObject as ExtractableDataSetPackage;
             if(extractableDataSetPackage != null)
-                return new ExtractableDataSetCommand(extractableDataSetPackage);
+                return new ExtractableDataSetCombineable(extractableDataSetPackage);
 
             var dataAccessCredentials = modelObject as DataAccessCredentials;
             if (dataAccessCredentials != null)
-                return new DataAccessCredentialsCommand(dataAccessCredentials);
+                return new DataAccessCredentialsCombineable(dataAccessCredentials);
 
             var processTask = modelObject as ProcessTask;
             if (processTask != null)
-                return new ProcessTaskCommand(processTask);
+                return new ProcessTaskCombineable(processTask);
 
             var cacheProgress = modelObject as CacheProgress;
             if (cacheProgress != null)
-                return new CacheProgressCommand(cacheProgress);
+                return new CacheProgressCombineable(cacheProgress);
 
             var cic = modelObject as CohortIdentificationConfiguration;
             var cicAssociation = modelObject as ProjectCohortIdentificationConfigurationAssociation;

@@ -7,11 +7,11 @@
 using System;
 using FAnsi.Discovery;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.DataLoad.Extensions;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram.StateDiscovery;
 using Rdmp.UI.Icons.IconProvision;
 using ReusableLibraryCode;
@@ -76,12 +76,12 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return State == LoadDiagramState.Different ? _discoveredDataType : _expectedDataType;
         }
         
-        public ICommand GetCommand()
+        public ICombineToMakeCommand GetCommand()
         {
 
             var querySyntaxHelper = _tableNode.TableInfo.GetQuerySyntaxHelper();
 
-            return new SqlTextOnlyCommand(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName,null, _tableNode.TableName, ColumnName));
+            return new SqlTextOnlyCombineable(querySyntaxHelper.EnsureFullyQualified(_tableNode.DatabaseName,null, _tableNode.TableName, ColumnName));
         }
 
         public object GetImage(ICoreIconProvider coreIconProvider)

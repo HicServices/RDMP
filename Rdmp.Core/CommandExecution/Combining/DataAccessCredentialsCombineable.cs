@@ -4,19 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.Curation.Data.DataLoad;
+using System.Collections.Generic;
+using Rdmp.Core.Curation.Data;
+using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.Copying.Commands
+namespace Rdmp.Core.CommandExecution.Combining
 {
-    public class ProcessTaskCommand : ICommand
+    public class DataAccessCredentialsCombineable : ICombineToMakeCommand
     {
-        public ProcessTask ProcessTask { get; set; }
+        public DataAccessCredentials DataAccessCredentials { get; private set; }
+        public Dictionary<DataAccessContext, List<TableInfo>> CurrentUsage { get; set; }
 
-        public ProcessTaskCommand(ProcessTask processTask)
+        public DataAccessCredentialsCombineable(DataAccessCredentials dataAccessCredentials)
         {
-            ProcessTask = processTask;
+            DataAccessCredentials = dataAccessCredentials;
+            CurrentUsage = DataAccessCredentials.GetAllTableInfosThatUseThis();
         }
+
+        
 
         public string GetSqlString()
         {

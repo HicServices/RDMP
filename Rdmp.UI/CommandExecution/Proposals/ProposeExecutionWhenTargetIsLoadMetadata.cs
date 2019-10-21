@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ExecuteLoadMetadataUI,LoadMetadata>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, LoadMetadata target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, LoadMetadata target, InsertOption insertOption = InsertOption.Default)
         {
             //nothing can be dropped on Load Metadatas
             return null;

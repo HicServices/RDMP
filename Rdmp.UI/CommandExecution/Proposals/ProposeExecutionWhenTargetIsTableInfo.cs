@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<TableInfoUI, TableInfo>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, TableInfo target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, TableInfo target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

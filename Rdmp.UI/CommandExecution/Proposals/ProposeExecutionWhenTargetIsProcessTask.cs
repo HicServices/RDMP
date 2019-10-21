@@ -36,7 +36,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 ItemActivator.Activate<SqlProcessTaskUI, ProcessTask>(processTask);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ProcessTask target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ProcessTask target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

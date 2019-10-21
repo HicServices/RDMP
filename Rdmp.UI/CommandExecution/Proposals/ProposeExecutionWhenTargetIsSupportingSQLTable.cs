@@ -28,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<SupportingSQLTableUI, SupportingSQLTable>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, SupportingSQLTable target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, SupportingSQLTable target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

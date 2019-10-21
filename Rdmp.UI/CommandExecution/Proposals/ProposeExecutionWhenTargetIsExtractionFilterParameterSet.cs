@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<ExtractionFilterParameterSetUI, ExtractionFilterParameterSet>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, ExtractionFilterParameterSet target,
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, ExtractionFilterParameterSet target,
             InsertOption insertOption = InsertOption.Default)
         {
             return null;

@@ -7,9 +7,9 @@
 using System.Drawing;
 using System.Linq;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -44,7 +44,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             if(SelectOne(_packages,out ExtractableDataSetPackage package))
-                new ExecuteCommandAddDatasetsToConfiguration(Activator, new ExtractableDataSetCommand(package), _extractionConfiguration).Execute();
+                new ExecuteCommandAddDatasetsToConfiguration(Activator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
         }
 
         public override Image GetImage(IIconProvider iconProvider)

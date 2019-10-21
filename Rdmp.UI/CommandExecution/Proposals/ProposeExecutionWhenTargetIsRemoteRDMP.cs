@@ -27,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             ItemActivator.Activate<RemoteRDMPUI, RemoteRDMP>(target);
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, RemoteRDMP targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, RemoteRDMP targetAggregateConfiguration, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

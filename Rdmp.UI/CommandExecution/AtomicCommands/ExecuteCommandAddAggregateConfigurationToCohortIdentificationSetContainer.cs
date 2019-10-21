@@ -5,27 +5,27 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer :BasicUICommandExecution
     {
-        private readonly AggregateConfigurationCommand _aggregateConfigurationCommand;
+        private readonly AggregateConfigurationCombineable _aggregateConfigurationCommand;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
         public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
 
         /// <summary>
-        /// True if the <see cref="AggregateConfigurationCommand"/> passed to the constructor was a newly created one and does
+        /// True if the <see cref="AggregateConfigurationCombineable"/> passed to the constructor was a newly created one and does
         /// not need cloning.
         /// </summary>
         public bool DoNotClone { get; set; }
         
-        public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IActivateItems activator,AggregateConfigurationCommand aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IActivateItems activator,AggregateConfigurationCombineable aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _aggregateConfigurationCommand = aggregateConfigurationCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
@@ -37,8 +37,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-            AggregateConfiguration child = DoNotClone ? _aggregateConfigurationCommand.Aggregate :
-                cic.ImportAggregateConfigurationAsIdentifierList(_aggregateConfigurationCommand.Aggregate,CohortCommandHelper.PickOneExtractionIdentifier);
+            AggregateConfiguration child = DoNotClone
+                ? _aggregateConfigurationCommand.Aggregate
+                : cic.ImportAggregateConfigurationAsIdentifierList(_aggregateConfigurationCommand.Aggregate,(a, b) =>CohortCombineToCreateCommandHelper.PickOneExtractionIdentifier(Activator, a, b));
 
             //current contents
             var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();
