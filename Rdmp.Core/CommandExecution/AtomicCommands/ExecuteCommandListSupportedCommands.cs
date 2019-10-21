@@ -15,10 +15,11 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public override void Execute()
         {
             var commandCaller = new CommandInvoker(BasicActivator);
-            
+
             string commands = string.Join(Environment.NewLine,
                 commandCaller.GetSupportedCommands()
-                    .Select(t=>BasicCommandExecution.GetCommandName(t.Name)));
+                    .Select(t => BasicCommandExecution.GetCommandName(t.Name))
+                        .OrderBy(s=>s));
 
             BasicActivator.Show(commands);
 

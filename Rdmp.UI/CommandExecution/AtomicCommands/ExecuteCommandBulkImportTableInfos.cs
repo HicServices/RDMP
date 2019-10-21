@@ -45,7 +45,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var db = SelectDatabase("Import all Tables form Database...");
+            var db = SelectDatabase(false,"Import all Tables form Database...");
 
             if(db == null)
                 return;

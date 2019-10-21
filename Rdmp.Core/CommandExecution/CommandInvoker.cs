@@ -70,6 +70,8 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(INamed), SelectOne<INamed>);
             AddDelegate(typeof(IDeleteable), SelectOne<IDeleteable>);
 
+            AddDelegate(typeof(Enum),(p)=>_basicActivator.SelectEnum("Value needed for parameter " + p.Name , p.Type, out Enum chosen)?chosen:null);
+
             AddDelegate(typeof(ICheckable), 
                 (p)=>_basicActivator.SelectOne(p.Name, 
                     _basicActivator.GetAll<ICheckable>()
@@ -187,14 +189,19 @@ namespace Rdmp.Core.CommandExecution
 
         public bool IsSupported(ConstructorInfo c)
         {
-            return c.GetParameters().All(
-                p =>
-                    _argumentDelegates.Any(k=>k.Key.IsAssignableFrom(p.ParameterType)) ||
-                    p.ParameterType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType.GetElementType()) ||
-                    p.HasDefaultValue ||
-                    p.ParameterType == typeof(string) ||
-                    (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType))
-                );
+            var notSupported = c.GetParameters().Where(p=>!IsSupported(p));
+
+            return c.GetParameters().All(IsSupported);
+        }
+
+        private bool IsSupported(ParameterInfo p)
+        {
+            return _argumentDelegates.Any(k => k.Key.IsAssignableFrom(p.ParameterType)) ||
+                   p.ParameterType.IsArray &&
+                   typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType.GetElementType()) ||
+                   p.HasDefaultValue ||
+                   p.ParameterType == typeof(string) ||
+                   (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType));
         }
 
         public bool IsSupported(Type t)

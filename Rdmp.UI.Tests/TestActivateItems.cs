@@ -142,7 +142,12 @@ namespace Rdmp.UI.Tests
         {
             Emphasise?.Invoke(sender, new EmphasiseEventArgs(request));
         }
-                
+
+        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             throw new NotImplementedException();

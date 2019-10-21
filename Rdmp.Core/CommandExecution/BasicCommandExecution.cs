@@ -5,10 +5,13 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using FAnsi.Discovery;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
@@ -216,7 +219,60 @@ namespace Rdmp.Core.CommandExecution
         {
             BasicActivator.ShowException(message,exception);
         }
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T in the list you provide
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="availableObjects"></param>
+        /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
+        /// <returns></returns>
+        protected T SelectOne<T>(IList<T> availableObjects, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
+        {
+            return SelectOne(availableObjects, out T selected, initialSearchText,allowAutoSelect) ? selected : null;
+        }
+        
+        /// <summary>
+        /// Prompts user to select 1 object of type T from all the ones stored in the repository provided
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="repository"></param>
+        /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
+        /// <returns></returns>
+        protected T SelectOne<T>(IRepository repository, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
+        {
+            return SelectOne(repository.GetAllObjects<T>().ToList(),out T answer,initialSearchText,allowAutoSelect) ? answer: null;
+        }
 
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T from all the ones stored in the repository provided, returns true if they made a non null selection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="repository"></param>
+        /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 compatible object in the <paramref name="repository"/></param>
+        /// <returns></returns>
+        protected bool SelectOne<T>(IRepository repository, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
+        {
+            return SelectOne(repository.GetAllObjects<T>().ToList(),out selected,initialSearchText,allowAutoSelect);
+        }
+
+        /// <summary>
+        /// Prompts user to select 1 of the objects of type T in the list you provide, returns true if they made a non null selection
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="availableObjects"></param>
+        /// <param name="selected"></param>
+        /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect">True to silently auto select the object if there are only 1 <paramref name="availableObjects"/></param>
+        /// <returns></returns>
+        protected bool SelectOne<T>(IList<T> availableObjects, out T selected, string initialSearchText = null, bool allowAutoSelect = false) where T : DatabaseEntity
+        {
+            selected = (T)BasicActivator.SelectOne("Select One",availableObjects.ToArray(), initialSearchText, allowAutoSelect);
+            return selected != null;
+        }
         
         protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
         {
@@ -232,5 +288,16 @@ namespace Rdmp.Core.CommandExecution
         {
             BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
         }
+        
+        protected DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        {
+            return BasicActivator.SelectDatabase(allowDatabaseCreation, taskDescription);
+        }
+
+        protected DiscoveredTable SelectTable(bool allowDatabaseCreation,string taskDescription)
+        {
+            return BasicActivator.SelectTable(allowDatabaseCreation, taskDescription);
+        }
+
     }
 }

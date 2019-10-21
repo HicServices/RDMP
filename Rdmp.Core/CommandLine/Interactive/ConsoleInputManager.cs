@@ -86,6 +86,13 @@ namespace Rdmp.Core.CommandLine.Interactive
             //do nothing
         }
 
+        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        {
+            string chosenStr = GetString(prompt, Enum.GetNames(enumType).ToList());
+            chosen = (Enum)Enum.Parse(enumType, chosenStr);
+            return true;
+        }
+
         private void RefreshChildProvider()
         {
             //todo pass the plugin child providers
@@ -127,6 +134,13 @@ namespace Rdmp.Core.CommandLine.Interactive
             string initialSearchText = null, bool allowAutoSelect = false)
         {
             Console.WriteLine(prompt);
+
+            if (availableObjects.Length == 0)
+                throw new Exception("No available objects found");
+
+            //handle auto selection when there is one object
+            if (availableObjects.Length == 1 && allowAutoSelect)
+                return availableObjects[0];
 
             var value = ReadLine(new PickObjectBase[]
                 {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},

@@ -57,7 +57,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// </summary>
     public class ActivateItems : IActivateItems, IRefreshBusSubscriber
     {
-
         public event EmphasiseItemHandler Emphasise;
 
         private readonly DockPanel _mainDockPanel;
@@ -327,6 +326,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if(args.FormRequestingActivation is DockContent content)
                     content.Activate();
             }
+        }
+
+        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        {
+            var selector = new PickOneOrCancelDialog<Enum>(Enum.GetValues(enumType).Cast<Enum>().ToArray(), prompt);
+            if (selector.ShowDialog() == DialogResult.OK)
+            {
+                chosen = selector.Picked;
+                return true;
+            }
+
+            chosen = default;
+            return false;
         }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)

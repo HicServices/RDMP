@@ -100,10 +100,12 @@ namespace Rdmp.Core.DataExport.DataExtraction
             if (!Directory.Exists(_outputDirectory.FullName))
                 Directory.CreateDirectory(_outputDirectory.FullName);
 
+            string filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
 
-            OutputFilename = _outputDirectory.FullName + "\\" +
-                                    tableName.Replace("[", "").Replace("]", "").ToLower().Trim() +
-                                    ".csv";
+            if (!filename.EndsWith(".csv"))
+                filename += ".csv";
+
+            OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
 
             StreamWriter sw = new StreamWriter(OutputFilename);
 

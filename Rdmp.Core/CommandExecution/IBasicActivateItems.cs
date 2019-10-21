@@ -149,5 +149,14 @@ namespace Rdmp.Core.CommandExecution
         /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
         /// </summary>
         void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest);
+
+        /// <summary>
+        /// Requests a selection of one of the values of the <see cref="Enum"/> <paramref name="enumType"/>
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="enumType"></param>
+        /// <param name="chosen"></param>
+        /// <returns></returns>
+        bool SelectEnum(string prompt, Type enumType, out Enum chosen);
     }
 }

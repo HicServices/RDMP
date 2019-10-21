@@ -12,6 +12,7 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
@@ -137,7 +138,7 @@ namespace Rdmp.UI.Logging
                 WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]);
         }
 
-        private IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
+        private IEnumerable<IAtomicCommand> GetCommands(int rowIdnex)
         {
             var rowId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
 

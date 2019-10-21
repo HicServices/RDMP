@@ -112,6 +112,7 @@ typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
 
         [TestCase(typeof(ExecuteCommandDelete))]
         [TestCase(typeof(ExecuteCommandList))]
+        [TestCase(typeof(ExecuteCommandExportLoggedDataToCsv))]
         [TestCase(typeof(TestCommand_DiscoveredDatabase))]
         [TestCase(typeof(TestCommand_LotsOfParameters))]
         [TestCase(typeof(TestCommand_TypeParameter))]

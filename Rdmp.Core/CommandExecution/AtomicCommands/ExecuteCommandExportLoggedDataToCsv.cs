@@ -5,23 +5,37 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Data;
-using System.Data.Common;
-using System.IO;
+using System.Globalization;
 using System.Linq;
-using System.Text;
+using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Databases;
+using Rdmp.Core.DataExport.DataExtraction;
 using Rdmp.Core.Logging;
-using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandExportLoggedDataToCsv : ExecuteCommandViewLoggedData
+    public class ExecuteCommandExportLoggedDataToCsv : BasicCommandExecution
     {
-        public ExecuteCommandExportLoggedDataToCsv(IActivateItems activator, LogViewerFilter filter) : base(activator, filter)
+        private LogViewerFilter _filter;
+        private ExternalDatabaseServer[] _loggingServers;
+        
+        [UseWithObjectConstructor]
+        public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator,LoggingTables table, int idIfAny)
+        : this(activator,new LogViewerFilter(table,idIfAny <= 0 ? (int?) null:idIfAny))
         {
+            
+        }
+
+        public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
+        {
+            _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
+            _loggingServers = activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+
+            if(!_loggingServers.Any())
+                SetImpossible("There are no logging servers");
         }
 
         public override string GetCommandName()
@@ -33,9 +47,9 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             DataTable dt = new DataTable();
 
-            var db = SelectOne(_loggingServers);
-            var server = db.Discover(DataAccessContext.DataLoad).Server;
-
+            var db = SelectOne(_loggingServers,null,true);
+            var server = db.Discover(DataAccessContext.Logging).Server;
+            
             if (db != null)
             {
                 using (var con = server.GetConnection())
@@ -63,25 +77,12 @@ SELECT [dataLoadRunID]
  ) as x
 order by time ASC", LoggingTables.ProgressLog, LoggingTables.FatalError, _filter.GetWhereSql());
 
-                    DbCommand cmd = server.GetCommand(sql, con);
-                    DbDataAdapter da = server.GetDataAdapter(cmd);
-                    da.Fill(dt);
-                    StringBuilder sb = new StringBuilder(); 
-                    IEnumerable<string> columnNames = dt.Columns.Cast<DataColumn>().
-                        Select(column => column.ColumnName);
-                    sb.AppendLine(string.Join(",", columnNames));
+                    var output = BasicActivator.SelectFile("Output CSV file");
 
-                    foreach (DataRow row in dt.Rows)
-                    {
-                        IEnumerable<string> fields = row.ItemArray.Select(field =>
-                            string.Concat("\"", field.ToString().Replace("\"", "\"\""), "\""));
-                        sb.AppendLine(string.Join(",", fields));
-                    }
-
-                    var outputfile = Path.GetTempFileName() + ".csv";
-
-                    File.WriteAllText(outputfile, sb.ToString());
-                    UsefulStuff.GetInstance().ShowFileInWindowsExplorer(new FileInfo(outputfile));
+                    var extract = new ExtractTableVerbatim(server, sql, output.Name, output.Directory, ",",
+                        CultureInfo.CurrentCulture.DateTimeFormat.FullDateTimePattern);
+                    
+                    extract.DoExtraction();
                 }
             }
         }
