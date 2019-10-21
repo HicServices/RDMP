@@ -147,8 +147,60 @@ namespace Rdmp.Core.Tests.QueryCaching
             
             Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected UNION container to use the cache for both");
         }
+        /// <summary>
+        /// Tests running a simple cic a cohort that has a parameter and a patient index table which also has a parameter.
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.MySql)]
+        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        public void Test_SingleServerPatientIndexTable_WithTwoParameters(DatabaseType dbType)
+        {
 
-        
+            /*
+             *           Server1                                  (Also Server1)
+             *        ______________________________            __________________________
+             *        |   Patient Index Table       |     →    |         Cache           |
+             *        |  (NA by date )              |         ↗ 
+             *           @date_of_max
+             *                                              ↗  
+             *            JOIN (should use cache)
+             *         ___________________________       ↗   
+             *        | Hospitalised after NA (ac) |
+             *               @date_of_max
+             *
+             *   (has different value so rename operations come into effect)
+             */
+
+            var server1 = GetCleanedServer(dbType);
+
+            var cache = CreateCache(server1);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var patientIndexTable = SetupPatientIndexTableWithFilter(server1, people, r, cic,true,"@date_of_max","'2001-01-01'");
+            var ac = SetupPatientIndexTableUserWithFilter(server1, people, r, cic,patientIndexTable,true,"@date_of_max","'2005-01-01'");
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache.ID;
+            cic.SaveToDatabase();
+
+            var root = cic.RootCohortAggregateContainer;
+            root.AddChild(ac,0);
+            
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            runner.Run(new CancellationToken());
+            
+            AssertNoErrors(compiler);
+            
+            Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("2/2")), "Expected UNION container to use the cache for both");
+        }
+
+
         /// <summary>
         /// Tests running a cic in which there are 2 aggregates both hospitalizations with 1 EXCEPT the other.  The expected result is 0
         /// patients
@@ -564,6 +616,13 @@ namespace Rdmp.Core.Tests.QueryCaching
 
             return new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, ac);
         }
+        
+        private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
+        {
+            var joinable = SetupPatientIndexTable(db, people, r, cic);
+            AddFilter(db,"Test After","SampleDate < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
+            return joinable;
+        }
 
         /// <summary>
         /// Creates a table HospitalAdmissions that uses the patient index table <paramref name="joinable"/> to return distinct patients
@@ -590,7 +649,42 @@ namespace Rdmp.Core.Tests.QueryCaching
             new JoinableCohortAggregateConfigurationUse(CatalogueRepository, ac, joinable);
 
             return ac;
+        }
 
+        private AggregateConfiguration SetupPatientIndexTableUserWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable, bool useParameter, string paramName, string paramValue)
+        {
+            var ac1 = SetupPatientIndexTableUser(db, people, r, cic,joinable);
+
+            AddFilter(db,"My Filter", "SampleDate < ", ac1, useParameter, paramName, paramValue);
+
+            return ac1;
+        }
+
+        private void AddFilter(DiscoveredDatabase db,string filterName, string whereSqlFirstHalf, AggregateConfiguration ac, bool useParameter, string paramName, string paramValue)
+        {
+            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+            ac.RootFilterContainer_ID = container.ID;
+            ac.SaveToDatabase();
+            
+            //create a filter
+            var filter = new AggregateFilter(CatalogueRepository,filterName,container);
+
+            if (useParameter)
+            {
+                filter.WhereSQL = whereSqlFirstHalf + paramName;
+
+                var parameterSql = db.Server.GetQuerySyntaxHelper()
+                    .GetParameterDeclaration(paramName, new DatabaseTypeRequest(typeof(DateTime)));
+
+                var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
+                parameter.Value = paramValue;
+                parameter.SaveToDatabase();
+                
+            }
+            else
+                filter.WhereSQL = whereSqlFirstHalf + paramValue;
+
+            filter.SaveToDatabase();
         }
 
         /// <summary>
@@ -634,31 +728,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         private AggregateConfiguration SetupAggregateConfigurationWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
         {
             var ac1 = SetupAggregateConfiguration(db, people, r, cic);
-            
-            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
-            ac1.RootFilterContainer_ID = container.ID;
-            ac1.SaveToDatabase();
-            
-            //create a filter
-            var filter = new AggregateFilter(CatalogueRepository,"My Filter",container);
-
-            if (useParameter)
-            {
-                filter.WhereSQL = "AdmissionDate < " + paramName;
-
-                var parameterSql = db.Server.GetQuerySyntaxHelper()
-                    .GetParameterDeclaration(paramName, new DatabaseTypeRequest(typeof(DateTime)));
-
-                var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
-                parameter.Value = paramValue;
-                parameter.SaveToDatabase();
-                
-            }
-            else
-                filter.WhereSQL = "AdmissionDate < " + paramValue;
-
-            filter.SaveToDatabase();
-
+            AddFilter(db, "My Filter", "AdmissionDate < ", ac1, useParameter, paramName, paramValue);
             return ac1;
         }
 
