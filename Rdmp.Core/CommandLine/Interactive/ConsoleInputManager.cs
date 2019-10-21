@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
@@ -69,6 +71,16 @@ namespace Rdmp.Core.CommandLine.Interactive
             return value.Table;
         }
 
+        public void ShowException(string errorText, Exception exception)
+        {
+            throw exception ?? new Exception(errorText);
+        }
+
+        public void Wait(string title, Task task, CancellationTokenSource cts)
+        {
+            task.Wait(cts.Token);
+        }
+
         private void RefreshChildProvider()
         {
             //todo pass the plugin child providers
@@ -89,23 +101,31 @@ namespace Rdmp.Core.CommandLine.Interactive
             return new Type[0];
         }
 
-        public object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
         {
+            Console.WriteLine(prompt);
+
             var value = ReadLine(new PickObjectBase[]
-                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)});
+                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
+                availableObjects.Select(t=>t.GetType().Name).Distinct());
             
             var unavailable = value.DatabaseEntities.Except(availableObjects).ToArray();
 
             if(unavailable.Any())
                 throw new Exception("The following objects were not among the listed available objects " + string.Join(",",unavailable.Select(o=>o.ToString())));
 
-            return value.DatabaseEntities;
+            return value.DatabaseEntities.ToArray();
         }
 
-        public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null,bool allowAutoSelect = false)
+        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+            string initialSearchText = null, bool allowAutoSelect = false)
         {
+            Console.WriteLine(prompt);
+
             var value = ReadLine(new PickObjectBase[]
-                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)});
+                {new PickObjectByID(RepositoryLocator), new PickObjectByName(RepositoryLocator)},
+                availableObjects.Select(t=>t.GetType().Name).Distinct());
 
             var chosen = value.DatabaseEntities?.SingleOrDefault();
 
@@ -118,52 +138,57 @@ namespace Rdmp.Core.CommandLine.Interactive
             return chosen;
         }
 
-        private string ReadLine()
+        private string ReadLine(IEnumerable<string> autoComplete = null)
         {
-            return Console.ReadLine();
+            return autoComplete != null ? GetString("", autoComplete.ToList()) : Console.ReadLine();
         }
 
         private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase picker)
         {
             Console.WriteLine($"Format:\r\n {picker.Format} \r\n Example(s): \r\n {string.Join(Environment.NewLine,picker.Examples)} \r\n Help: \r\n {picker.Help}");
-            string line = ReadLine();
+            string line = ReadLine(picker.GetAutoCompleteIfAny());
 
             return picker.Parse(line, 0);
         }
-        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase[] pickers)
+        private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase[] pickers,IEnumerable<string> autoComplete)
         {
             Console.WriteLine("Enter value in one of the following formats:");
 
             foreach (PickObjectBase p in pickers)
                 Console.WriteLine($"Format:\r\n {p.Format} \r\n Example(s): \r\n {string.Join(Environment.NewLine,p.Examples)} \r\n Help: \r\n {p.Help}");
             
-            string line = ReadLine();
+            string line = ReadLine(autoComplete);
             
             var picker = new CommandLineObjectPicker(new[]{line},RepositoryLocator,pickers);
             return picker[0];
         }
 
-        public DirectoryInfo PickDirectory(string prompt)
+        public DirectoryInfo SelectDirectory(string prompt)
         {
             Console.WriteLine(prompt);
             return new DirectoryInfo(Console.ReadLine());
         }
-        public FileInfo PickFile(string prompt)
+        public FileInfo SelectFile(string prompt)
         {
             Console.WriteLine(prompt);
             return new FileInfo(Console.ReadLine());
         }
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
+        public IEnumerable<T> GetAll<T>()
         {
             //todo abstract base class!
             return CoreChildProvider.GetAllSearchables()
-                .Keys.OfType<T>()
-                .Cast<IMapsDirectlyToDatabaseTable>();
+                .Keys.OfType<T>();
         }
 
-        public object PickValueType(ParameterInfo parameterInfo, Type paramType)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
         {
-            Console.WriteLine("Enter value for " + parameterInfo +":");
+            return CoreChildProvider.GetAllSearchables()
+                .Keys.Where(t.IsInstanceOfType);
+        }
+
+        public object SelectValueType(string prompt, Type paramType)
+        {
+            Console.WriteLine("Enter value for " + prompt +":");
 
             if (paramType == typeof(string))
                 return ReadLine();
@@ -183,7 +208,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(text + "(y/n)");
             return string.Equals(Console.ReadLine(), "y", StringComparison.CurrentCultureIgnoreCase);
         }
-
+        
         public string GetString(string prompt, List<string> options)
         {
             Console.WriteLine(prompt +":");

@@ -46,8 +46,8 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(IDataExportRepository),(p)=>_repositoryLocator.DataExportRepository);
             AddDelegate(typeof(IBasicActivateItems),(p)=>_basicActivator);
             AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),(p)=>_repositoryLocator);
-            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.PickDirectory($"Enter Directory For Parameter '{p}'"));
-            AddDelegate(typeof(FileInfo), (p) => _basicActivator.PickFile($"Enter File For Parameter '{p}'"));
+            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.SelectDirectory($"Enter Directory For Parameter '{p}'"));
+            AddDelegate(typeof(FileInfo), (p) => _basicActivator.SelectFile($"Enter File For Parameter '{p}'"));
 
             AddDelegate(typeof(string), (p) =>
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
@@ -74,6 +74,7 @@ namespace Rdmp.Core.CommandExecution
                 (p)=>_basicActivator.SelectOne(p.Name, 
                     _basicActivator.GetAll<ICheckable>()
                         .Where(p.ParameterType.IsInstanceOfType)
+                        .Cast<IMapsDirectlyToDatabaseTable>()
                         .ToArray())
                 );
         }
@@ -154,26 +155,26 @@ namespace Rdmp.Core.CommandExecution
                 return record.Value(parameterInfo);
             
             //it's an array of DatabaseEntities
-            if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
+            if(paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
             {
                 IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType.GetElementType());
-                return _basicActivator.PickMany(parameterInfo,paramType.GetElementType(), available);
+                return _basicActivator.SelectMany(parameterInfo.Name,paramType.GetElementType(), available);
             }
             
             if (parameterInfo.HasDefaultValue)
                 return parameterInfo.DefaultValue;
 
             if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
-                return _basicActivator.PickValueType(parameterInfo,paramType);
+                return _basicActivator.SelectValueType(parameterInfo.Name,paramType);
 
 
 
             return null;
         }
 
-        private object SelectOne<T>(ParameterInfo parameterInfo)
+        private T SelectOne<T>(ParameterInfo parameterInfo)
         {
-            return _basicActivator.SelectOne(parameterInfo.Name,_basicActivator.GetAll<T>().ToArray());
+            return (T)_basicActivator.SelectOne(parameterInfo.Name,_basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
         }
 
         public bool IsSupported(ConstructorInfo c)
@@ -181,7 +182,7 @@ namespace Rdmp.Core.CommandExecution
             return c.GetParameters().All(
                 p =>
                     _argumentDelegates.Any(k=>k.Key.IsAssignableFrom(p.ParameterType)) ||
-                    p.ParameterType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(p.ParameterType.GetElementType()) ||
+                    p.ParameterType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(p.ParameterType.GetElementType()) ||
                     p.HasDefaultValue ||
                     p.ParameterType == typeof(string) ||
                     (p.ParameterType.IsValueType && !typeof(Enum).IsAssignableFrom(p.ParameterType))
@@ -230,6 +231,9 @@ namespace Rdmp.Core.CommandExecution
         }
         private IMapsDirectlyToDatabaseTable[] GetAllObjectsOfType(Type type)
         {
+            if (type.IsAbstract || type.IsInterface)
+                return _basicActivator.GetAll(type).Cast<IMapsDirectlyToDatabaseTable>().ToArray();
+
             if (_repositoryLocator.CatalogueRepository.SupportsObjectType(type))
                 return  _repositoryLocator.CatalogueRepository.GetAllObjects(type).ToArray();
             if (_repositoryLocator.DataExportRepository.SupportsObjectType(type))

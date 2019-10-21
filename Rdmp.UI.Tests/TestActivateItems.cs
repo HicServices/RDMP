@@ -243,6 +243,11 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
+        public void ShowException(string errorText, Exception exception)
+        {
+            throw exception ?? new Exception(errorText);
+        }
+
         public void Wait(string title, Task task, CancellationTokenSource cts)
         {
             task.Wait(cts.Token);
@@ -261,32 +266,39 @@ namespace Rdmp.UI.Tests
             return new List<Type>();
         }
 
-        public object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
         {
             throw new NotImplementedException();
         }
 
-        public object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
+        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+            string initialSearchText = null, bool allowAutoSelect = false)
         {
             throw new NotImplementedException();
         }
 
-        public DirectoryInfo PickDirectory(string prompt)
+        public DirectoryInfo SelectDirectory(string prompt)
         {
             throw new NotImplementedException();
         }
 
-        public FileInfo PickFile(string prompt)
+        public FileInfo SelectFile(string prompt)
         {
             throw new NotImplementedException();
         }
 
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
+        public IEnumerable<T> GetAll<T>()
         {
             throw new NotImplementedException();
         }
 
-        public object PickValueType(ParameterInfo parameterInfo, Type paramType)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object SelectValueType(string prompt, Type paramType)
         {
             throw new NotImplementedException();
         }

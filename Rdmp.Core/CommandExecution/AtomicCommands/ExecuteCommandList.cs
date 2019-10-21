@@ -1,20 +1,18 @@
 using System;
 using System.Linq;
 using System.Text;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandList : BasicCommandExecution
     {
-        private Type _type;
+        private IMapsDirectlyToDatabaseTable[] _toList;
 
-        public ExecuteCommandList(IBasicActivateItems activator,string typename):base(activator)
+        public ExecuteCommandList(IBasicActivateItems activator,IMapsDirectlyToDatabaseTable[] toList):base(activator)
         {
-            _type = activator.RepositoryLocator.CatalogueRepository.MEF.GetType(typename);
-
-            if(_type == null)
-                SetImpossible($"Unknown Type '{typename}'");
+            _toList = toList;
         }
 
         public override void Execute()
@@ -22,10 +20,8 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             base.Execute();
 
             StringBuilder sb = new StringBuilder();
-            foreach (var m in BasicActivator.CoreChildProvider.GetAllObjects(_type,true))
-            {
+            foreach (var m in _toList)
                 sb.AppendLine(m.ID + ":" + m);
-            }
 
             BasicActivator.Show(sb.ToString());
         }

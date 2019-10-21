@@ -6,15 +6,14 @@
 
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Sharing.Refactoring;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
-    internal class ExecuteCommandAlterTableName : AlterTableCommandExecution
+    public class ExecuteCommandAlterTableName : AlterTableCommandExecution
     {
         private SelectSQLRefactorer _refactorer;
 
-        public ExecuteCommandAlterTableName(IActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
+        public ExecuteCommandAlterTableName(IBasicActivateItems activator, TableInfo tableInfo) : base(activator,tableInfo)
         {
             if(IsImpossible)
                 return;

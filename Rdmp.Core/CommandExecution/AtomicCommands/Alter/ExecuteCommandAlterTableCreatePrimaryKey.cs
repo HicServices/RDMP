@@ -4,20 +4,18 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.DataAccess;
+using System;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Rdmp.UI.SimpleDialogs;
+using Rdmp.Core.Curation.Data;
+using ReusableLibraryCode.DataAccess;
 
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
     public class ExecuteCommandAlterTableCreatePrimaryKey : AlterTableCommandExecution
     {
-        public ExecuteCommandAlterTableCreatePrimaryKey(IActivateItems activator, TableInfo tableInfo):base(activator,tableInfo)
+        public ExecuteCommandAlterTableCreatePrimaryKey(IBasicActivateItems activator, TableInfo tableInfo):base(activator,tableInfo)
         {
             if(IsImpossible)
                 return;
@@ -42,10 +40,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
                 var task = Task.Run(() =>
                     Table.CreatePrimaryKey(selected.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
                 
-                Activator.Wait("Creating Primary Key...",task, cts);
+                Wait("Creating Primary Key...",task, cts);
 
                 if(task.IsFaulted)
-                    ExceptionViewer.Show(task.Exception);
+                    ShowException("Create Primary Key Failed",task.Exception);
             }
                 
             

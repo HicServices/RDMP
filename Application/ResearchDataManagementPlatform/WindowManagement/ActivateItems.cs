@@ -585,6 +585,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return dialog.SelectedTable;
         }
 
+        public void ShowException(string errorText, Exception exception)
+        {
+            ExceptionViewer.Show(errorText, exception);
+        }
+
         public void Wait(string title, Task task, CancellationTokenSource cts)
         {
             var ui = new WaitUI(title,task,cts);
@@ -603,7 +608,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         
-        public object SelectOne(string prompt,IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false)
+        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+            string initialSearchText = null, bool allowAutoSelect = false)
         {
             if (!availableObjects.Any())
             {
@@ -633,7 +639,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
 
-        public DirectoryInfo PickDirectory(string prompt)
+        public DirectoryInfo SelectDirectory(string prompt)
         {
             var fb = new FolderBrowserDialog();
 
@@ -643,7 +649,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public FileInfo PickFile(string prompt)
+        public FileInfo SelectFile(string prompt)
         {
             var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
 
@@ -653,16 +659,21 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>()
+        public IEnumerable<T> GetAll<T>()
         {
             return CoreChildProvider.GetAllSearchables()
-                .Keys.OfType<T>()
-                .Cast<IMapsDirectlyToDatabaseTable>();
+                .Keys.OfType<T>();
         }
 
-        public object PickValueType(ParameterInfo parameterInfo, Type paramType)
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
         {
-            var typeTextDialog = new TypeTextOrCancelDialog("Enter Value","Enter value for '" + parameterInfo.Name + "' (" + paramType.Name + ")",1000);
+            return CoreChildProvider.GetAllSearchables()
+                .Keys.Where(t.IsInstanceOfType);
+        }
+
+        public object SelectValueType(string prompt, Type paramType)
+        {
+            var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000);
 
             if (typeTextDialog.ShowDialog() == DialogResult.OK)
                 return Convert.ChangeType(typeTextDialog.ResultText, paramType);
@@ -670,7 +681,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public object PickMany(ParameterInfo parameterInfo, Type arrayElementType, IMapsDirectlyToDatabaseTable[] availableObjects)
+        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
         {
             if (!availableObjects.Any())
             {
@@ -679,9 +691,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
 
             SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
-            selectDialog.Text = parameterInfo.Name;
+            selectDialog.Text = prompt;
+            selectDialog.SetInitialFilter(initialSearchText);
             selectDialog.AllowMultiSelect = true;
-                                   
             
             if (selectDialog.ShowDialog() == DialogResult.OK)
             {
@@ -691,7 +703,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 for(int i = 0;i<ms.Count;i++)
                     toReturn.SetValue(ms[i],i);
                 
-                return toReturn;
+                return (IMapsDirectlyToDatabaseTable[]) toReturn;
             }
 
             return null;

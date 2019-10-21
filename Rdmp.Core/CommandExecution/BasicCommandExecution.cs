@@ -6,6 +6,9 @@
 
 using System;
 using System.Drawing;
+using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
@@ -184,6 +187,46 @@ namespace Rdmp.Core.CommandExecution
         protected void Show(string message, params object[] objects)
         {
             BasicActivator.Show(string.Format(message,objects));
+        }
+
+
+        /// <summary>
+        /// Prompts the user to type in some text (up to a maximum length).  Returns true if they supplied some text or false if they didn't or it was blank/cancelled etc
+        /// </summary>
+        /// <param name="header"></param>
+        /// <param name="prompt"></param>
+        /// <param name="maxLength"></param>
+        /// <param name="initialText"></param>
+        /// <param name="text"></param>
+        /// <param name="requireSaneHeaderText"></param>
+        /// <returns></returns>
+        protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText = false)
+        {
+            return BasicActivator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
+        }
+
+        /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
+        protected bool TypeText(string header, string prompt, out string text)
+        {
+            return TypeText(header, prompt, 500, null, out text);
+        }
+        
+        /// <inheritdoc cref="IBasicActivateItems.ShowException"/>
+        protected void ShowException(string message, Exception exception)
+        {
+            BasicActivator.ShowException(message,exception);
+        }
+
+        
+        protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
+        {
+            selected = (T[]) BasicActivator.SelectMany("Select Objects", typeof(T), available,initialSearchText);
+            return selected != null && selected.Any();
+        }
+
+        protected void Wait(string title, Task task, CancellationTokenSource cts)
+        {
+            BasicActivator.Wait(title,task,cts);
         }
     }
 }

@@ -57,5 +57,10 @@ ConnectionString (Required)";
             
             return new CommandLineObjectPickerArgumentValue(arg,idx,db);
         }
+
+        public override IEnumerable<string> GetAutoCompleteIfAny()
+        {
+            yield return "DatabaseType:";
+        }
     }
 }

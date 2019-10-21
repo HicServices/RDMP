@@ -2,6 +2,8 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
@@ -36,28 +38,44 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         IEnumerable<Type> GetIgnoredCommands();
 
-        object PickMany(ParameterInfo parameterInfo, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects);
+        /// <summary>
+        /// Prompts the user to pick from one of the <paramref name="availableObjects"/> one or more objects.  Returns null or empty if
+        /// no objects end up being selected.
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="arrayElementType"></param>
+        /// <param name="availableObjects"></param>
+        /// <param name="initialSearchText"></param>
+        /// <returns></returns>
+        IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
 
-        object SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
+        IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
-        DirectoryInfo PickDirectory(string prompt);
+        DirectoryInfo SelectDirectory(string prompt);
         
-        FileInfo PickFile(string prompt);
+        FileInfo SelectFile(string prompt);
         
         /// <summary>
-        /// Return all Types of the given {T} which also implement 
+        /// Return all Types of the given {T} which should be <see cref="IMapsDirectlyToDatabaseTable"/>
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <returns></returns>
-        IEnumerable<IMapsDirectlyToDatabaseTable> GetAll<T>();
+        IEnumerable<T> GetAll<T>();
+
+        /// <summary>
+        ///  Return all Types of the given <paramref name="t"/> which should be <see cref="IMapsDirectlyToDatabaseTable"/>
+        /// </summary>
+        /// <param name="t"></param>
+        /// <returns></returns>
+        IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t);
 
         /// <summary>
         /// User must supply a basic value type e.g. string, double, int
         /// </summary>
-        /// <param name="parameterInfo"></param>
+        /// <param name="prompt"></param>
         /// <param name="paramType"></param>
         /// <returns></returns>
-        object PickValueType(ParameterInfo parameterInfo, Type paramType);
+        object SelectValueType(string prompt, Type paramType);
 
         /// <summary>
         /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)
@@ -108,5 +126,22 @@ namespace Rdmp.Core.CommandExecution
         DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription);
 
         DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
+        
+        /// <summary>
+        /// Shows the given error message to the user, optionally with the <paramref name="exception"/> stack trace / Message with high visibility
+        /// </summary>
+        /// <param name="errorText"></param>
+        /// <param name="exception"></param>
+        void ShowException(string errorText, Exception exception);
+
+        
+        /// <summary>
+        /// Block until the <paramref name="task"/> is completed with optionally showing the user some kind of ongoing operation
+        /// indication (ui) and letting them cancel the task with the <paramref name="cts"/>.
+        /// </summary>
+        /// <param name="title"></param>
+        /// <param name="task"></param>
+        /// <param name="cts"></param>
+        void Wait(string title, Task task, CancellationTokenSource cts);
     }
 }

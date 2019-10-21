@@ -169,13 +169,5 @@ namespace Rdmp.UI.ItemActivation
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
         
 
-        /// <summary>
-        /// Block until the <paramref name="task"/> is completed with optionally showing the user some kind of ongoing operation
-        /// indication (ui) and letting them cancel the task with the <paramref name="cts"/>.
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="task"></param>
-        /// <param name="cts"></param>
-        void Wait(string title, Task task, CancellationTokenSource cts);
     }
 }

@@ -4,24 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation;
+using System;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-using System;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.UI.SimpleDialogs;
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
-    internal class ExecuteCommandAlterColumnType : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandAlterColumnType : BasicCommandExecution
     {
         private ColumnInfo columnInfo;
 
-        public ExecuteCommandAlterColumnType(IActivateItems activator, ColumnInfo columnInfo) : base(activator)
+        public ExecuteCommandAlterColumnType(IBasicActivateItems activator, ColumnInfo columnInfo) : base(activator)
         {
             this.columnInfo = columnInfo;
         }
@@ -34,7 +27,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
             var fansiType = col.DataType;
             string oldSqlType = fansiType.SQLType;
 
-
+            
             if (TypeText("New Data Type", "Type", 50, oldSqlType, out string newSqlType, false))
             {
                 try
@@ -43,7 +36,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
                 }
                 catch (Exception ex)
                 {
-                    ExceptionViewer.Show("Failed to Alter Type", ex);
+                    ShowException("Failed to Alter Type", ex);
                     return;
                 }
 
@@ -66,7 +59,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
                                 }
                                 catch (Exception ex)
                                 {
-                                    ExceptionViewer.Show("Failed to Alter Archive Column", ex);
+                                    ShowException("Failed to Alter Archive Column", ex);
                                     return;
                                 }
                         }
@@ -76,14 +69,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
                         //maybe the archive is broken? corrupt or someone just happens to have a Table called that?
                         return;
                     }
-
                 }
-
-
             }
 
             Publish(columnInfo.TableInfo);
-
         }
+
     }
 }

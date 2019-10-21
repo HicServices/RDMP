@@ -139,24 +139,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             return BasicActivator.SelectTable(allowDatabaseCreation, taskDescription);
         }
-
-        protected bool SelectMany<T>(T[] available, out T[] selected, string initialSearchText = null) where T : DatabaseEntity
-        {
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
-            dialog.AllowMultiSelect = true;
-            dialog.SetInitialFilter(initialSearchText);
-            dialog.ShowDialog();
-            
-            if (dialog.DialogResult != DialogResult.OK)
-            {
-                selected = null;
-                return false;
-            }
-
-            selected = dialog.MultiSelected.Cast<T>().ToArray();
-            return true;
-        }
-
+        
         protected DiscoveredDatabase SelectDatabase(string taskDescription)
         {
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription, false, false);
@@ -167,27 +150,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 return null;
 
             return dialog.SelectedDatabase;
-        }
-
-        /// <summary>
-        /// Prompts the user to type in some text (up to a maximum length).  Returns true if they supplied some text or false if they didn't or it was blank/cancelled etc
-        /// </summary>
-        /// <param name="header"></param>
-        /// <param name="prompt"></param>
-        /// <param name="maxLength"></param>
-        /// <param name="initialText"></param>
-        /// <param name="text"></param>
-        /// <param name="requireSaneHeaderText"></param>
-        /// <returns></returns>
-        protected bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText = false)
-        {
-            return Activator.TypeText(header, prompt, maxLength, initialText, out text, requireSaneHeaderText);
-        }
-
-        /// <inheritdoc cref="TypeText(string, string, int, string, out string,bool)"/>
-        protected bool TypeText(string header, string prompt, out string text)
-        {
-            return TypeText(header, prompt, 500, null, out text);
         }
 
         

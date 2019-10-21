@@ -120,5 +120,10 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
             return keyValueString.Substring(key.Length).Trim(':');
         }
+
+        public virtual IEnumerable<string> GetAutoCompleteIfAny()
+        {
+            return null;
+        }
     }
 }

@@ -7,18 +7,17 @@
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
+namespace Rdmp.Core.CommandExecution.AtomicCommands.Alter
 {
-    public abstract class AlterTableCommandExecution :BasicUICommandExecution
+    public abstract class AlterTableCommandExecution :BasicCommandExecution
     {
         protected TableInfo TableInfo;
         protected DiscoveredTable Table;
 
-        protected AlterTableCommandExecution(IActivateItems activator, TableInfo tableInfo) : base(activator)
+        protected AlterTableCommandExecution(IBasicActivateItems activator, TableInfo tableInfo) : base(activator)
         {
             TableInfo = tableInfo;
             Table = TableInfo.Discover(DataAccessContext.InternalDataProcessing);
