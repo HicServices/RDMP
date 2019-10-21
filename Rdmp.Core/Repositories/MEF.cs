@@ -84,14 +84,20 @@ namespace Rdmp.Core.Repositories
                 if(toReturn == null)
                     if(!type.Contains('.'))
                     {
-                        //can we find one in Core with that name e.g. "Plugin"
-                        toReturn = typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(type));
+                        //can we find one in Core with that name e.g. "Plugin" or "plugin"
+                        toReturn =
+                            typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(type))
+                            ??typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(type,StringComparison.CurrentCultureIgnoreCase));
 
                         //no, anyone else got one?
                         if(toReturn == null)
                         {
                             var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(type)).ToArray();
-                            
+
+                            //try caseless
+                            if(matches.Length == 0)
+                                matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(type,StringComparison.CurrentCultureIgnoreCase)).ToArray();
+
                             //great theres only one
                             if(matches.Length == 1)
                                 toReturn = matches[0];
@@ -103,13 +109,19 @@ namespace Rdmp.Core.Repositories
                     {
                         //ok they are lying about the Type.  It's not MyLib.Myclass but maybe we still have a Myclass in Rdmp.Core?
                         string name = type.Substring(type.LastIndexOf('.')+1);
-                        toReturn = typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name));
+                        toReturn = 
+                            typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name))
+                            ?? typeof(Catalogue).Assembly.ExportedTypes.SingleOrDefault(t=>t.Name.Equals(name,StringComparison.CurrentCultureIgnoreCase));
 
                         //no, anyone else got one?
                         if(toReturn == null)
                         {
                             var matches = SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(name)).ToArray();
                             
+                            //try caseless
+                            if(matches.Length == 0)
+                                matches =  SafeDirectoryCatalog.TypesByName.Values.Where(t=>t.Name.Equals(name,StringComparison.CurrentCultureIgnoreCase)).ToArray();
+
                             //great theres only one
                             if(matches.Length == 1)
                                 toReturn = matches[0];
