@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI;
 using Rdmp.UI.Collections;

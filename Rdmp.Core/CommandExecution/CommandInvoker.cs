@@ -23,7 +23,7 @@ namespace Rdmp.Core.CommandExecution
         /// <summary>
         /// Delegates provided by <see cref="_basicActivator"/> for fulfilling constructor arguments of the key Type
         /// </summary>
-        private List<KeyValuePair<Type, Func<ParameterInfo,object>>> _argumentDelegates;
+        private List<KeyValuePair<Type, Func<RequiredArgument,object>>> _argumentDelegates;
 
         /// <summary>
         /// Called when the user attempts to run a command marked <see cref="ICommandExecution.IsImpossible"/>
@@ -57,14 +57,14 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(Type), (p) =>
             
                 _basicActivator.TypeText("Enter Type for parameter", p.Name, 1000, null, out string result, false)
-                    ?_repositoryLocator.CatalogueRepository.MEF.GetType()
+                    ?_repositoryLocator.CatalogueRepository.MEF.GetType(result)
                     :null
             );
 
             AddDelegate(typeof(DiscoveredDatabase),(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
             AddDelegate(typeof(DiscoveredTable),(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));
 
-            AddDelegate(typeof(DatabaseEntity), (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.ParameterType)));
+            AddDelegate(typeof(DatabaseEntity), (p) =>_basicActivator.SelectOne(p.Name, GetAllObjectsOfType(p.Type)));
             AddDelegate(typeof(IMightBeDeprecated), SelectOne<IMightBeDeprecated>);
             AddDelegate(typeof(IDisableable), SelectOne<IDisableable>);
             AddDelegate(typeof(INamed), SelectOne<INamed>);
@@ -73,17 +73,18 @@ namespace Rdmp.Core.CommandExecution
             AddDelegate(typeof(ICheckable), 
                 (p)=>_basicActivator.SelectOne(p.Name, 
                     _basicActivator.GetAll<ICheckable>()
-                        .Where(p.ParameterType.IsInstanceOfType)
+                        .Where(p.Type.IsInstanceOfType)
                         .Cast<IMapsDirectlyToDatabaseTable>()
                         .ToArray())
                 );
         }
 
-        private void AddDelegate(Type type, Func<ParameterInfo, object> func)
+        private void AddDelegate(Type type, Func<RequiredArgument, object> func)
         {
-            _argumentDelegates.Add(new KeyValuePair<Type, Func<ParameterInfo, object>>(type,func));
+            _argumentDelegates.Add(new KeyValuePair<Type, Func<RequiredArgument, object>>(type,func));
         }
 
+        
         public IEnumerable<Type> GetSupportedCommands()
         {
             
@@ -143,36 +144,43 @@ namespace Rdmp.Core.CommandExecution
             instance.Execute();
             CommandCompleted?.Invoke(this,new CommandEventArgs(instance));
         }
-        private object GetValueForParameterOfType(ParameterInfo parameterInfo)
-        {
-            Type paramType = parameterInfo.ParameterType;
 
-            var record = _argumentDelegates.Where(p => p.Key.IsAssignableFrom(paramType))
+        public object GetValueForParameterOfType(PropertyInfo propertyInfo)
+        {
+            return GetValueFor(new RequiredArgument(propertyInfo));
+        }
+
+        public object GetValueForParameterOfType(ParameterInfo parameterInfo)
+        {
+            return GetValueFor(new RequiredArgument(parameterInfo));
+        }
+
+        private object GetValueFor(RequiredArgument a)
+        {
+            var record = _argumentDelegates.Where(p => p.Key.IsAssignableFrom(a.Type))
                 .Select(p => new {p.Key, p.Value })
                 .FirstOrDefault();
 
             if (record != null)
-                return record.Value(parameterInfo);
+                return record.Value(a);
             
             //it's an array of DatabaseEntities
-            if(paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
+            if(a.Type.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(a.Type.GetElementType()))
             {
-                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(paramType.GetElementType());
-                return _basicActivator.SelectMany(parameterInfo.Name,paramType.GetElementType(), available);
+                IMapsDirectlyToDatabaseTable[] available = GetAllObjectsOfType(a.Type.GetElementType());
+                return _basicActivator.SelectMany(a.Name,a.Type.GetElementType(), available);
             }
             
-            if (parameterInfo.HasDefaultValue)
-                return parameterInfo.DefaultValue;
+            if (a.HasDefaultValue)
+                return a.DefaultValue;
 
-            if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
-                return _basicActivator.SelectValueType(parameterInfo.Name,paramType);
-
-
+            if (a.Type.IsValueType && !typeof(Enum).IsAssignableFrom(a.Type))
+                return _basicActivator.SelectValueType(a.Name,a.Type);
 
             return null;
         }
 
-        private T SelectOne<T>(ParameterInfo parameterInfo)
+        private T SelectOne<T>(RequiredArgument parameterInfo)
         {
             return (T)_basicActivator.SelectOne(parameterInfo.Name,_basicActivator.GetAll<T>().Cast<IMapsDirectlyToDatabaseTable>().ToArray());
         }

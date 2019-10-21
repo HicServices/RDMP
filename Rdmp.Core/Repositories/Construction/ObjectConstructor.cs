@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.ImportExport;
 
 namespace Rdmp.Core.Repositories.Construction
 {
@@ -332,6 +333,42 @@ namespace Rdmp.Core.Repositories.Construction
                 return InvokeBestConstructor(compatible,constructorValues);
 
             return null;
+        }
+
+        /// <summary>
+        /// Returns the most likely constructor for creating new instances of a <see cref="DatabaseEntity"/> class e.g.
+        /// for <see cref="Catalogue"/> it would return the constructor <see cref="Catalogue(ICatalogueRepository,string)"/>
+        /// </summary>
+        /// <param name="type"></param>
+        /// <returns></returns>
+        public ConstructorInfo GetRepositoryConstructor(Type type)
+        {
+            var compatible = new List<ConstructorInfo>();
+
+            foreach (var constructorInfo in type.GetConstructors())
+            {
+                var parameters = constructorInfo.GetParameters();
+
+                //don't use this constructor
+                if (parameters.Any(p => p.GetType() == typeof(ShareManager)))
+                    continue;
+                
+                //this is for fetching existing instances
+                if (parameters.Any(p => p.GetType() == typeof(DbDataReader)))
+                    continue;
+                
+                //at least one parameter must be an IRepository
+                if(!parameters.Any(p=>typeof(IRepository).IsAssignableFrom(p.ParameterType)))
+                    continue;
+
+                //yay it's compatible
+                compatible.Add(constructorInfo);
+            }
+
+            if (compatible.Count == 1)
+                return compatible.Single();
+
+            throw new ObjectLacksCompatibleConstructorException("No best constructor found for Type " + type +" (found " + compatible.Count +")");
         }
     }
 }

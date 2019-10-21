@@ -15,6 +15,7 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -252,12 +253,12 @@ namespace Rdmp.UI.Tests
         {
             task.Wait(cts.Token);
         }
-
-        public List<KeyValuePair<Type, Func<ParameterInfo, object>>> GetDelegates()
+        
+        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<ParameterInfo, object>>>
+            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
             {
-                new KeyValuePair<Type, Func<ParameterInfo, object>>(typeof(IActivateItems),(p)=>this)
+                new KeyValuePair<Type, Func<RequiredArgument, object>>(typeof(IActivateItems),(p)=>this)
             };
         }
 

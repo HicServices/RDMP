@@ -109,11 +109,6 @@ namespace Rdmp.UI.ItemActivation
 
         event EmphasiseItemHandler Emphasise;
 
-        /// <summary>
-        /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
-        /// </summary>
-        void RequestItemEmphasis(object sender, EmphasiseRequest request);
-
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);

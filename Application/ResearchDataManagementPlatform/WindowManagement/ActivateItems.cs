@@ -15,6 +15,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -709,11 +710,11 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public List<KeyValuePair<Type, Func<ParameterInfo, object>>> GetDelegates()
+        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<ParameterInfo, object>>>
+            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
             {
-                new KeyValuePair<Type, Func<ParameterInfo, object>>(typeof(IActivateItems),(p)=>this)
+                new KeyValuePair<Type, Func<RequiredArgument, object>>(typeof(IActivateItems),(p)=>this)
             };
         }
     }

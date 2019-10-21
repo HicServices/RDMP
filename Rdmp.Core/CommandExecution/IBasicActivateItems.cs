@@ -25,7 +25,7 @@ namespace Rdmp.Core.CommandExecution
         /// exists for the parameter Type then the constructor will not be supported by the <see cref="IBasicActivateItems"/>
         /// </summary>
         /// <returns></returns>
-        List<KeyValuePair<Type, Func<ParameterInfo,object>>> GetDelegates();
+        List<KeyValuePair<Type, Func<RequiredArgument,object>>> GetDelegates();
         
         /// <summary>
         /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
@@ -143,5 +143,11 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="task"></param>
         /// <param name="cts"></param>
         void Wait(string title, Task task, CancellationTokenSource cts);
+
+        
+        /// <summary>
+        /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
+        /// </summary>
+        void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest);
     }
 }

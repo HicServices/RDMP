@@ -228,5 +228,9 @@ namespace Rdmp.Core.CommandExecution
         {
             BasicActivator.Wait(title,task,cts);
         }
+        protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
+        {
+            BasicActivator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
+        }
     }
 }

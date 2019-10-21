@@ -39,11 +39,6 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             cmd.Execute();
         }
 
-        protected void Emphasise(DatabaseEntity o, int expansionDepth = 0)
-        {
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(o, expansionDepth));
-        }
-        
         protected FileInfo SelectSaveFile(string filter)
         {
             var sfd = new SaveFileDialog();

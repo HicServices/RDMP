@@ -81,6 +81,11 @@ namespace Rdmp.Core.CommandLine.Interactive
             task.Wait(cts.Token);
         }
 
+        public void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest)
+        {
+            //do nothing
+        }
+
         private void RefreshChildProvider()
         {
             //todo pass the plugin child providers
@@ -91,9 +96,9 @@ namespace Rdmp.Core.CommandLine.Interactive
         }
 
 
-        public List<KeyValuePair<Type, Func<ParameterInfo, object>>> GetDelegates()
+        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
         {
-            return new List<KeyValuePair<Type, Func<ParameterInfo, object>>>();
+            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>();
         }
 
         public IEnumerable<Type> GetIgnoredCommands()
@@ -230,9 +235,9 @@ namespace Rdmp.Core.CommandLine.Interactive
                             if (match != null)
                                 return match;
 
-                            return lowerLine;
+                            return result.LineBeforeKeyPress.Line;
                         }
-                        break;
+
                     case ConsoleKey.Tab:
                         var shiftPressed = (result.Modifiers & ConsoleModifiers.Shift) != 0;
                         var cyclingDirection = shiftPressed ? CyclingDirections.Backward : CyclingDirections.Forward;

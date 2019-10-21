@@ -7,18 +7,26 @@
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicUICommandExecution
+    public class ExecuteCommandUseCredentialsToAccessTableInfoData : BasicCommandExecution
     {
         private readonly CatalogueRepository _catalogueRepository;
         private readonly DataAccessCredentials _credentials;
         private readonly TableInfo _tableInfo;
 
-        public ExecuteCommandUseCredentialsToAccessTableInfoData(IActivateItems activator,DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable, TableInfo targetTableInfo) : base(activator)
+        [UseWithObjectConstructor]
+        public ExecuteCommandUseCredentialsToAccessTableInfoData(IBasicActivateItems activator,
+            DataAccessCredentials credentials, TableInfo targetTableInfo) : this(activator,
+            new DataAccessCredentialsCombineable(credentials), targetTableInfo)
+        {
+
+        }
+
+        public ExecuteCommandUseCredentialsToAccessTableInfoData(IBasicActivateItems activator,DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable, TableInfo targetTableInfo) : base(activator)
         {
             _credentials = sourceDataAccessCredentialsCombineable.DataAccessCredentials;
             _catalogueRepository = _credentials.Repository as CatalogueRepository;

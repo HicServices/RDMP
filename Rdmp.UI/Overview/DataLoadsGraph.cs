@@ -11,6 +11,7 @@ using System.Linq;
 using System.Threading;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Logging;
