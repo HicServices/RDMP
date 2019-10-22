@@ -553,8 +553,7 @@ namespace Rdmp.UI.SubComponents
                     BuildItem("View Results", c, a => a.Identifiers != null,
                         a =>
                         {
-                            var ui = new DataTableViewerUI(a.Identifiers,$"Results {c}");
-                            ui.Show();
+                            Activator.ShowWindow(new DataTableViewerUI(a.Identifiers, $"Results {c}"));
                         })
                     );
 
