@@ -6,6 +6,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Drawing;
 using System.Linq;
@@ -25,6 +26,7 @@ using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
+using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.SubComponents.EmptyLineElements;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
@@ -528,6 +530,56 @@ namespace Rdmp.UI.SubComponents
 
             if(SelectionChanged != null)
                 SelectionChanged(c == null ? null : c.Child);
+
+            BuildRightClickMenu(c);
+        }
+
+        private void BuildRightClickMenu(ICompileable c)
+        {
+            if (c != null)
+            {
+                var menu = new ContextMenuStrip();
+                
+                menu.Items.Add(
+                    BuildItem("View Sql", c, a => !string.IsNullOrWhiteSpace(a.CountSQL),
+                        a => WideMessageBox.Show($"Sql {c}", a.CountSQL, WideMessageBoxTheme.Help))
+                    );
+                
+                menu.Items.Add(
+                    new ToolStripMenuItem("View Build Log", null,
+                        (s, e) => WideMessageBox.Show($"Build Log {c}", c.Log, WideMessageBoxTheme.Help)));
+                
+                menu.Items.Add(
+                    BuildItem("View Results", c, a => a.Identifiers != null,
+                        a =>
+                        {
+                            var ui = new DataTableViewerUI(a.Identifiers,$"Results {c}");
+                            ui.Show();
+                        })
+                    );
+
+                tlvConfiguration.ContextMenuStrip = menu;
+            }
+            else
+                tlvConfiguration.ContextMenuStrip = null;
+        }
+
+        private ToolStripMenuItem BuildItem(string title, ICompileable c,Func<CohortIdentificationTaskExecution,bool> enabledFunc, Action<CohortIdentificationTaskExecution> action)
+        {
+            var menuItem = new ToolStripMenuItem(title);
+
+            if (Compiler.Tasks.ContainsKey(c))
+            {
+                var exe = Compiler.Tasks[c];
+                if (enabledFunc(exe))
+                    menuItem.Click += (s, e) => action(exe);
+                else
+                    menuItem.Enabled = false;
+            }
+            else
+                menuItem.Enabled = false;
+
+            return menuItem;
         }
     }
 
