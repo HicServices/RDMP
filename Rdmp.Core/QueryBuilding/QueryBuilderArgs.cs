@@ -5,8 +5,11 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.QueryBuilding.Parameters;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -18,14 +21,16 @@ namespace Rdmp.Core.QueryBuilding
     {
         public JoinableCohortAggregateConfigurationUse JoinIfAny { get; }
         public AggregateConfiguration JoinedTo { get; }
-        public string JoinSql { get; }
+        public CohortQueryBuilderDependencySql JoinSql { get; }
+        public ISqlParameter[] Globals { get;}
 
         /// <summary>
         /// Creates basic arguments for an <see cref="AggregateConfiguration"/> that does not have a join to a patient index table
         /// </summary>
-        public QueryBuilderArgs(QueryBuilderCustomArgs customisations)
+        public QueryBuilderArgs(QueryBuilderCustomArgs customisations, ISqlParameter[] globals)
         {
             customisations?.Populate(this);
+            Globals = globals ?? new ISqlParameter[0];
         }
 
         /// <summary>
@@ -34,7 +39,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="join">The join usage relationship object (includes join direction etc)</param>
         /// <param name="joinedTo">The patient index to which the join is made to (e.g. <see cref="JoinableCohortAggregateConfiguration.AggregateConfiguration"/>)</param>
         /// <param name="joinSql">The full SQL of the join</param>
-        public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join,AggregateConfiguration joinedTo,string joinSql, QueryBuilderCustomArgs customisations):this(customisations)
+        public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join,AggregateConfiguration joinedTo,CohortQueryBuilderDependencySql joinSql, QueryBuilderCustomArgs customisations, ISqlParameter[] globals):this(customisations,globals)
         {
             JoinIfAny = join;
             JoinedTo = joinedTo;

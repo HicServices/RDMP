@@ -81,7 +81,6 @@ namespace Rdmp.UI.DataViewing.Collections
             if (ac.IsCohortIdentificationAggregate)
             {
                 var cic = ac.GetCohortIdentificationConfigurationIfAny();
-                var isJoinable = ac.IsJoinablePatientIndexTable();
                 var globals = cic.GetAllParameters();
 
                 var builder = new CohortQueryBuilder(ac, globals,null);

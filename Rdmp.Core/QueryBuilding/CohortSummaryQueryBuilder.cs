@@ -157,9 +157,9 @@ namespace Rdmp.Core.QueryBuilding
             {
                 //get sql for the join table
                 var builder = new CohortQueryBuilder(joinTo, _globals, null);
-                string joinableSql = builder.SQL;
+                var joinableSql = new CohortQueryBuilderDependencySql(builder.SQL, builder.ParameterManager);
 
-                var helper = new CohortQueryBuilderHelper( new ParameterManager(_globals));
+                var helper = new CohortQueryBuilderHelper();
 
                 var extractionIdentifierColumn = _summary.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
                     .Where(ei => ei.IsExtractionIdentifier).ToArray();
@@ -167,7 +167,7 @@ namespace Rdmp.Core.QueryBuilding
                 if(extractionIdentifierColumn.Length != 1)
                     throw new Exception($"Catalogue behind {_summary} must have exactly 1 IsExtractionIdentifier column but it had " + extractionIdentifierColumn.Length);
                 
-                helper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null));
+                helper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
             }
 
             //if the cohort has no WHERE SQL

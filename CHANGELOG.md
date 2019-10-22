@@ -11,9 +11,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added 
 
+- Errors during caching (of cohort builder results) now appear in the results control (previously could generate erro popups)
+- Patient Index Tables are no longer allowed to have parameters with the same name (but different values) of tables they are joined against
+- Sql Parameters (e.g. `@test_code`) now work properly cross DBMS (e.g. MySql / SqlServer) when using a query cache.
+
 ### Fixed 
 
 - Fixed ExceptionViewer showing the wrong stack trace under certain circumstances
+- Fixed cache usage bug where sql parameters were used in queries (cache would not be used when it should)
+- Fixed 'View Dataset Sample' user interface generating the wrong SQL when a patient index table has a column alias (e.g. `SELECT chi,AdmissionDate as fish from MyPatIndexTable`)
+
 ## [3.2.1-rc3] - 2019-10-21
 
 ### Fixed 

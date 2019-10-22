@@ -6,6 +6,7 @@
 
 using System;
 using System.Linq;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
@@ -47,21 +48,21 @@ namespace Rdmp.Core.QueryBuilding
         ///
         /// <para>This SQL does not include the parameter declaration SQL since it is designed for nesting e.g. in UNION / INTERSECT / EXCEPT hierarchy</para>
         /// </summary>
-        public string SqlCacheless { get; private set; }
+        public CohortQueryBuilderDependencySql SqlCacheless { get; private set; }
         
         /// <summary>
         /// The raw SQL for the <see cref="CohortSet"/> with a join against the cached artifact for the <see cref="PatientIndexTableIfAny"/>
         /// </summary>
-        public string SqlPartiallyCached { get;  private set;}
+        public CohortQueryBuilderDependencySql SqlPartiallyCached { get;  private set;}
         
         /// <summary>
         /// Sql for a single cache fetch  that pulls the cached result of the <see cref="CohortSet"/> joined to <see cref="PatientIndexTableIfAny"/> (if there was any)
         /// </summary>
-        public string SqlFullyCached { get;  private set;}
+        public CohortQueryBuilderDependencySql SqlFullyCached { get;  private set;}
 
-        public string SqlJoinableCacheless { get; private set; }
+        public CohortQueryBuilderDependencySql SqlJoinableCacheless { get; private set; }
         
-        public string SqlJoinableCached { get; private set; }
+        public CohortQueryBuilderDependencySql SqlJoinableCached { get; private set; }
 
         public CohortQueryBuilderDependency(AggregateConfiguration cohortSet,
             JoinableCohortAggregateConfigurationUse patientIndexTableIfAny, ICoreChildProvider childProvider)
@@ -91,26 +92,24 @@ namespace Rdmp.Core.QueryBuilding
             return CohortSet.Name + (JoinedTo != null ? PatientIndexTableIfAny.JoinType + " JOIN " + JoinedTo.Name : "");
         }
 
-        public void Build(CohortQueryBuilderResult parent)
+        public void Build(CohortQueryBuilderResult parent,ISqlParameter[] globals)
         {
             bool isSolitaryPatientIndexTable = CohortSet.IsJoinablePatientIndexTable();
-
+            
             //Includes the parameter declaration and no rename operations (i.e. couldn't be used for building the tree but can be used for cache hit testing).
-            string isolatedSqlJoinableCacheless = null;
-            string isolatedSqlCacheless = null;
-            string isolatedSqlPartiallyCached = null;
-
             if (JoinedTo != null)
             {
-                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,new QueryBuilderArgs(parent.Customise),out isolatedSqlJoinableCacheless);
-                SqlJoinableCached = GetCachFetchSqlIfPossible(parent,JoinedTo,isolatedSqlJoinableCacheless,true);
+                SqlJoinableCacheless = parent.Helper.GetSQLForAggregate(JoinedTo,
+                    new QueryBuilderArgs(new QueryBuilderCustomArgs(), //don't respect customizations in the inception bit!
+                        globals));
+                SqlJoinableCached = GetCachFetchSqlIfPossible(parent,JoinedTo,SqlJoinableCacheless,true);
             }
             
             if (isSolitaryPatientIndexTable)
             {
                 //explicit execution of a patient index table on it's own
                 //the full uncached SQL for the query
-                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise),out isolatedSqlCacheless);
+                SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,new QueryBuilderArgs(parent.Customise,globals));
 
                 if(SqlJoinableCached != null)
                     throw new QueryBuildingException("Patient index tables can't use other patient index tables!");
@@ -120,50 +119,59 @@ namespace Rdmp.Core.QueryBuilding
                 //the full uncached SQL for the query
                 SqlCacheless = parent.Helper.GetSQLForAggregate(CohortSet,
                     new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
-                        parent.TabIn(SqlJoinableCacheless, 1),parent.Customise),out isolatedSqlCacheless);
+                        SqlJoinableCacheless,parent.Customise,globals));
 
                 
                 //if the joined to table is cached we can generate a partial too with full sql for the outer sql block and a cache fetch join
                 if (SqlJoinableCached != null)
                     SqlPartiallyCached = parent.Helper.GetSQLForAggregate(CohortSet,
                         new QueryBuilderArgs(PatientIndexTableIfAny, JoinedTo,
-                            SqlJoinableCached,parent.Customise),out isolatedSqlPartiallyCached);
+                            SqlJoinableCached,parent.Customise,globals));
             }
             
             //We would prefer a cache hit on the exact uncached SQL
-            SqlFullyCached = GetCachFetchSqlIfPossible(parent, CohortSet, isolatedSqlCacheless, isSolitaryPatientIndexTable);
+            SqlFullyCached = GetCachFetchSqlIfPossible(parent, CohortSet, SqlCacheless, isSolitaryPatientIndexTable);
 
             //but if that misses we would take a cache hit of an execution of the SqlPartiallyCached
-            if(SqlFullyCached == null && SqlPartiallyCached != null && isolatedSqlPartiallyCached != null)
-                SqlFullyCached = GetCachFetchSqlIfPossible(parent,CohortSet,isolatedSqlPartiallyCached,isSolitaryPatientIndexTable);
+            if(SqlFullyCached == null && SqlPartiallyCached != null)
+                SqlFullyCached = GetCachFetchSqlIfPossible(parent,CohortSet,SqlPartiallyCached,isSolitaryPatientIndexTable);
         }
 
-        private string GetCachFetchSqlIfPossible(CohortQueryBuilderResult parent,AggregateConfiguration aggregate, string sql, bool isPatientIndexTable)
+        private CohortQueryBuilderDependencySql GetCachFetchSqlIfPossible(CohortQueryBuilderResult parent,AggregateConfiguration aggregate, CohortQueryBuilderDependencySql sql, bool isPatientIndexTable)
         {
             if (parent.CacheManager == null)
                 return null;
 
+            string parameterSql = QueryBuilder.GetParameterDeclarationSQL(sql.ParametersUsed.Clone().GetFinalResolvedParametersList());
+
+            string hitTestSql = parameterSql + sql.Sql;
+
             var existingTable = parent.CacheManager.GetLatestResultsTable(aggregate, isPatientIndexTable
-                ?AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList , sql);
+                ?AggregateOperation.JoinableInceptionQuery:AggregateOperation.IndexedExtractionIdentifierList , hitTestSql);
                 
             //if there is a cached entry matching the cacheless SQL then we can just do a select from it (in theory)
-            if(existingTable != null)
-                return
-                    CachedAggregateConfigurationResultsManager.CachingPrefix + aggregate.Name + @"*/" + Environment.NewLine +
+            if (existingTable != null)
+            {
+                string sqlCachFetch = CachedAggregateConfigurationResultsManager.CachingPrefix + aggregate.Name + @"*/" + Environment.NewLine +
                     "select * from " + existingTable.GetFullyQualifiedName() + Environment.NewLine;
 
+                //Cache fetch does not require any parameters
+                return new CohortQueryBuilderDependencySql(sqlCachFetch,new ParameterManager());
+            }
+                    
+            
             return null;
         }
 
         public string DescribeCachedState()
         {
-            if (!string.IsNullOrWhiteSpace(SqlFullyCached))
+            if (SqlFullyCached != null)
                 return "Fully Cached";
 
-            if (!string.IsNullOrWhiteSpace(SqlPartiallyCached))
+            if (SqlPartiallyCached != null)
                 return "Partially Cached";
 
-            if (!string.IsNullOrWhiteSpace(SqlCacheless))
+            if (SqlCacheless != null)
                 return "Not Cached";
 
             return "Not Built";
