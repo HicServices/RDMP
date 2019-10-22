@@ -6,8 +6,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+
 ...
 
+### Added 
+
+### Fixed 
+
+- Fixed ExceptionViewer showing the wrong stack trace under certain circumstances
 ## [3.2.1-rc3] - 2019-10-21
 
 ### Fixed 
