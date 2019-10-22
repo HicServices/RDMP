@@ -14,6 +14,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Errors during caching (of cohort builder results) now appear in the results control (previously could generate erro popups)
 - Patient Index Tables are no longer allowed to have parameters with the same name (but different values) of tables they are joined against
 - Sql Parameters (e.g. `@test_code`) now work properly cross DBMS (e.g. MySql / SqlServer) when using a query cache.
+- Added menu for inspecting the state of a cohort compiler (view SQL executed, build log, results etc)
+- SET containers (UNION / INTERSECT / EXCEPT) now highlight (as a `Problem`) when they will be ignored (empty) or not applied (when they contain only 1 child)
 
 ### Fixed 
 
