@@ -36,7 +36,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
             var options = factory.Create(_collector,Activator.CoreChildProvider);
-            parameterCollectionUI.SetUp(options);
+            parameterCollectionUI.SetUp(options,Activator);
 
             Activator.ShowWindow(parameterCollectionUI, true);
         }

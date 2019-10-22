@@ -134,7 +134,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
         private void btnParameters_Click(object sender, EventArgs e)
         {
-            ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptionsFactory().Create(_tableInfo));
+            ParameterCollectionUI.ShowAsDialog(Activator,new ParameterCollectionUIOptionsFactory().Create(_tableInfo));
         }
 
         private void btnSynchronize_Click(object sender, EventArgs e)

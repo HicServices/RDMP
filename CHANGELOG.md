@@ -20,6 +20,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed ExceptionViewer showing the wrong stack trace under certain circumstances
 - Fixed cache usage bug where sql parameters were used in queries (cache would not be used when it should)
 - Fixed 'View Dataset Sample' user interface generating the wrong SQL when a patient index table has a column alias (e.g. `SELECT chi,AdmissionDate as fish from MyPatIndexTable`)
+- Fixed renaming parameters causing UI to incorrectly ask if you want to save changes
 
 ## [3.2.1-rc3] - 2019-10-21
 
