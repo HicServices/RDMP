@@ -13,6 +13,7 @@ using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;

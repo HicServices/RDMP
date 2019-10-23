@@ -6,6 +6,7 @@
 
 using System.Drawing;
 using System.Windows.Forms;
+using Rdmp.Core.Icons.IconProvision;
 
 namespace Rdmp.UI.SimpleControls
 {

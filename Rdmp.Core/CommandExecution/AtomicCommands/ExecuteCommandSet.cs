@@ -31,7 +31,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 var invoker = new CommandInvoker(BasicActivator);
 
                 var val = invoker.GetValueForParameterOfType(prop);
-
+                
                 prop.SetValue(_setOn,val);
                 ((DatabaseEntity)_setOn).SaveToDatabase();
                 

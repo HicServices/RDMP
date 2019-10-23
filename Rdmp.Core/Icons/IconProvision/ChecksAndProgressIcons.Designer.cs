@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Rdmp.UI.Icons {
+namespace Rdmp.Core.Icons.IconProvision {
     using System;
     
     
@@ -19,10 +19,10 @@ namespace Rdmp.UI.Icons {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class ChecksAndProgressIcons {
+    public class ChecksAndProgressIcons {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,10 +36,10 @@ namespace Rdmp.UI.Icons {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.UI.Icons.ChecksAndProgressIcons", typeof(ChecksAndProgressIcons).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.Core.Icons.IconProvision.ChecksAndProgressIcons", typeof(ChecksAndProgressIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;
@@ -51,7 +51,7 @@ namespace Rdmp.UI.Icons {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -61,9 +61,9 @@ namespace Rdmp.UI.Icons {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Fail {
+        public static System.Drawing.Bitmap Fail {
             get {
                 object obj = ResourceManager.GetObject("Fail", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -71,9 +71,9 @@ namespace Rdmp.UI.Icons {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap FailEx {
+        public static System.Drawing.Bitmap FailEx {
             get {
                 object obj = ResourceManager.GetObject("FailEx", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -81,9 +81,9 @@ namespace Rdmp.UI.Icons {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Information {
+        public static System.Drawing.Bitmap Information {
             get {
                 object obj = ResourceManager.GetObject("Information", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -91,9 +91,9 @@ namespace Rdmp.UI.Icons {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Tick {
+        public static System.Drawing.Bitmap Tick {
             get {
                 object obj = ResourceManager.GetObject("Tick", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -101,9 +101,9 @@ namespace Rdmp.UI.Icons {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Warning {
+        public static System.Drawing.Bitmap Warning {
             get {
                 object obj = ResourceManager.GetObject("Warning", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -111,9 +111,9 @@ namespace Rdmp.UI.Icons {
         }
         
         /// <summary>
-        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        ///   Looks up a localized resource of type System.System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap WarningEx {
+        public static System.Drawing.Bitmap WarningEx {
             get {
                 object obj = ResourceManager.GetObject("WarningEx", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));

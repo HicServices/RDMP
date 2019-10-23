@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Rdmp.UI.Icons.IconProvision {
+namespace Rdmp.Core.Icons.IconProvision {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>
@@ -36,7 +36,7 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.UI.Icons.IconProvision.FamFamFamIcons", typeof(FamFamFamIcons).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.Core.Icons.IconProvision.FamFamFamIcons", typeof(FamFamFamIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

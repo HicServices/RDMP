@@ -5,6 +5,7 @@ using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Interactive.Picking
@@ -101,7 +102,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                 return GetOneDatabaseEntity<ICheckable>();
             
             if (paramType.IsValueType && !typeof(Enum).IsAssignableFrom(paramType))
-                return Convert.ChangeType(RawValue, paramType);
+                return UsefulStuff.ChangeType(RawValue, paramType);
             
             return null;
         }

@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Rdmp.UI.Icons.IconProvision {
+namespace Rdmp.Core.Icons.IconProvision {
     using System;
     
     
@@ -39,7 +39,7 @@ namespace Rdmp.UI.Icons.IconProvision {
         public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
-                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.UI.Icons.IconProvision.CatalogueIcons", typeof(CatalogueIcons).Assembly);
+                    global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("Rdmp.Core.Icons.IconProvision.CatalogueIcons", typeof(CatalogueIcons).Assembly);
                     resourceMan = temp;
                 }
                 return resourceMan;

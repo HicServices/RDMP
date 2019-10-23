@@ -8,7 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 
-namespace Rdmp.UI.Icons
+namespace Rdmp.Core.Icons.IconProvision
 {
     /// <summary>
     /// Creates <see cref="Icon"/> instances based on provided <see cref="Bitmap"/> (with support for caching).

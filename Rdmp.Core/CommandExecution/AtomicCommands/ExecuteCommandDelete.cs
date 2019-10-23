@@ -18,12 +18,12 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly IList<IDeleteable> _deletables;
 
-        
+        [UseWithObjectConstructor]
         public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable deletable) : this(activator,new []{ deletable})
         {
         }
 
-        [UseWithObjectConstructor]
+        
         public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable[] deletables) : base(activator)
         {
             _deletables = deletables;

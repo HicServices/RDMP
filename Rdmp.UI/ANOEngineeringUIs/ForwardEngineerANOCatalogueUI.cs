@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.DataLoad.Modules.Attachers;
 using Rdmp.Core.DataLoad.Modules.Mutilators.Dilution;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands.Sharing;
 using Rdmp.UI.Icons.IconProvision;

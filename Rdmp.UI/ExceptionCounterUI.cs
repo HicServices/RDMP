@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Drawing.Drawing2D;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Checks;
 
 using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;

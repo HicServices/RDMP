@@ -11,6 +11,8 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.Icons;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
 using Rdmp.UI.Icons;

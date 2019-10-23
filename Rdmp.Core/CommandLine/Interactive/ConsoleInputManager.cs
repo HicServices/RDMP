@@ -13,6 +13,7 @@ using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.Core.CommandLine.Interactive
@@ -212,7 +213,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             if (paramType == typeof(string))
                 return ReadLine();
 
-            return Convert.ChangeType(ReadLine(), paramType);
+            return UsefulStuff.ChangeType(ReadLine(), paramType);
         }
 
         public bool DeleteWithConfirmation(IDeleteable deleteable)

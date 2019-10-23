@@ -8,10 +8,11 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
-using Rdmp.UI.Icons.IconProvision;
+using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Icons.IconOverlays
+namespace Rdmp.Core.Icons.IconOverlays
 {
     public class IconOverlayProvider
     {

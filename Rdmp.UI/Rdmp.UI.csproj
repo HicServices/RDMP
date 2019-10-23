@@ -15,9 +15,6 @@
     <None Remove="Hunspellx64.dll" />
     <None Remove="Hunspellx86.dll" />
     <None Remove="hyph_en_US.dic" />
-    <None Remove="Images\DependencyGraphInformation.png" />
-    <None Remove="Images\DependencyGraphToolbarInformation.png" />
-    <None Remove="Images\LoadIcon.gif" />
     <None Remove="Pencil.cur" />
   </ItemGroup>
   <ItemGroup>
@@ -60,11 +57,6 @@
   <ItemGroup>
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Windows.Forms.DataVisualization" />
-  </ItemGroup>
-  <ItemGroup>
-    <Resource Include="Images\DependencyGraphInformation.png" />
-    <Resource Include="Images\DependencyGraphToolbarInformation.png" />
-    <Resource Include="Images\LoadIcon.gif" />
   </ItemGroup>
   <ItemGroup>
     <Compile Update="ChecksUI\ChecksUI.cs">
@@ -159,16 +151,6 @@
     </Compile>
     <Compile Update="Icons\ChecksAndProgressIcons.Designer.cs">
       <DependentUpon>ChecksAndProgressIcons.resx</DependentUpon>
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-    </Compile>
-    <Compile Update="Icons\IconProvision\CatalogueIcons.Designer.cs">
-      <DesignTime>True</DesignTime>
-      <AutoGen>True</AutoGen>
-      <DependentUpon>CatalogueIcons.resx</DependentUpon>
-    </Compile>
-    <Compile Update="Images.Designer.cs">
-      <DependentUpon>Images.resx</DependentUpon>
       <DesignTime>True</DesignTime>
       <AutoGen>True</AutoGen>
     </Compile>
@@ -434,15 +416,6 @@
     </EmbeddedResource>
     <EmbeddedResource Update="SimpleControls\HeatmapUI.resx">
       <DependentUpon>HeatmapUI.cs</DependentUpon>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Icons\IconProvision\CatalogueIcons.resx">
-      <Generator>PublicResXFileCodeGenerator</Generator>
-      <LastGenOutput>CatalogueIcons.Designer.cs</LastGenOutput>
-    </EmbeddedResource>
-    <EmbeddedResource Update="Images.resx">
-      <SubType>Designer</SubType>
-      <LastGenOutput>Images.Designer.cs</LastGenOutput>
-      <Generator>ResXFileCodeGenerator</Generator>
     </EmbeddedResource>
     <EmbeddedResource Update="SimpleControls\KeyboardReminder.resx">
       <DependentUpon>KeyboardReminder.cs</DependentUpon>

@@ -5,20 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandFreezeCohortIdentificationConfiguration : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandFreezeCohortIdentificationConfiguration : BasicCommandExecution
     {
         private readonly CohortIdentificationConfiguration _cic;
         private readonly bool _desiredFreezeState;
 
-        public ExecuteCommandFreezeCohortIdentificationConfiguration(IActivateItems activator, CohortIdentificationConfiguration cic, bool desiredFreezeState):base(activator)
+        public ExecuteCommandFreezeCohortIdentificationConfiguration(IBasicActivateItems activator, CohortIdentificationConfiguration cic, bool desiredFreezeState):base(activator)
         {
             _cic = cic;
             _desiredFreezeState = desiredFreezeState;

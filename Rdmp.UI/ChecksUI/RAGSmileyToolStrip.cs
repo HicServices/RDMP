@@ -9,6 +9,7 @@ using System.Drawing;
 using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Checks;
 

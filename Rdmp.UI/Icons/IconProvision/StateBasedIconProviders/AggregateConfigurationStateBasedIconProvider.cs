@@ -7,6 +7,8 @@
 using System;
 using System.Drawing;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Icons.IconOverlays;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 

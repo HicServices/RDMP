@@ -43,6 +43,7 @@ using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 
@@ -689,8 +690,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
             var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000);
 
             if (typeTextDialog.ShowDialog() == DialogResult.OK)
-                return Convert.ChangeType(typeTextDialog.ResultText, paramType);
-            
+                return UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
+
             return null;
         }
 

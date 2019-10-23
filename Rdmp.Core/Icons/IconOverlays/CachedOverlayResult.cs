@@ -7,7 +7,7 @@
 using System.Drawing;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.Icons.IconOverlays
+namespace Rdmp.Core.Icons.IconOverlays
 {
     /// <summary>
     /// Do not draw on these Bitmaps once you have created them, this will corrupt the image for future users of the cache

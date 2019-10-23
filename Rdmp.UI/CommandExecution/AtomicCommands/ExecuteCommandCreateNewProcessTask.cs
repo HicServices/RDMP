@@ -11,6 +11,8 @@ using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Icons.IconOverlays;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision;

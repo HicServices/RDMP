@@ -9,9 +9,8 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
 using System.Resources;
-using Rdmp.UI.Icons.IconProvision.Exceptions;
 
-namespace Rdmp.UI.Icons.IconProvision
+namespace Rdmp.Core.Icons.IconProvision
 {
     public class EnumImageCollection<T> where T : struct, IConvertible
     {
