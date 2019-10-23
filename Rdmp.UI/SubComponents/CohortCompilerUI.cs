@@ -519,7 +519,7 @@ namespace Rdmp.UI.SubComponents
             var o = tlvConfiguration.SelectedObject as ICompileable;
             if (o != null)
                 if(o.CrashMessage != null)
-                    ExceptionViewer.Show(o.CrashMessage);
+                    ViewCrashMessage(o);
                 else
                     WideMessageBox.Show("Build Log", o.Log,WideMessageBoxTheme.Help);
         }
@@ -545,6 +545,11 @@ namespace Rdmp.UI.SubComponents
                         a => WideMessageBox.Show($"Sql {c}", a.CountSQL, WideMessageBoxTheme.Help))
                     );
                 
+                                
+                menu.Items.Add(
+                    new ToolStripMenuItem("View Crash Message", null,
+                        (s, e) => ViewCrashMessage(c)){Enabled = c.CrashMessage != null});
+
                 menu.Items.Add(
                     new ToolStripMenuItem("View Build Log", null,
                         (s, e) => WideMessageBox.Show($"Build Log {c}", c.Log, WideMessageBoxTheme.Help)));
@@ -561,6 +566,11 @@ namespace Rdmp.UI.SubComponents
             }
             else
                 tlvConfiguration.ContextMenuStrip = null;
+        }
+
+        private void ViewCrashMessage(ICompileable compileable)
+        {
+            ExceptionViewer.Show(compileable.CrashMessage);
         }
 
         private ToolStripMenuItem BuildItem(string title, ICompileable c,Func<CohortIdentificationTaskExecution,bool> enabledFunc, Action<CohortIdentificationTaskExecution> action)
