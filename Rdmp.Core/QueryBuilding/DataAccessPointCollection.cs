@@ -10,6 +10,7 @@ using System.Linq;
 using System.Security.Cryptography;
 using FAnsi;
 using FAnsi.Discovery;
+using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
@@ -174,6 +175,17 @@ namespace Rdmp.Core.QueryBuilding
             col._points = new HashSet<IDataAccessPoint>(_points);
             return col;
 
+        }
+
+        /// <summary>
+        /// Tests whether the supplied <paramref name="point"/> could be added to the current collection (without
+        /// actually adding it).
+        /// </summary>
+        /// <param name="point"></param>
+        /// <returns></returns>
+        public bool AddWouldBePossible(IDataAccessPoint point)
+        {
+            return Clone().TryAdd(point);
         }
     }
 }

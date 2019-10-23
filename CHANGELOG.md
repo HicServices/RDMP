@@ -6,7 +6,47 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 
 ## [Unreleased]
+
 ...
+
+## [3.2.1-rc4] - 2019-10-22
+
+### Added 
+
+- Errors during caching (of cohort builder results) now appear in the results control (previously could generate erro popups)
+- Patient Index Tables are no longer allowed to have parameters with the same name (but different values) of tables they are joined against
+- Sql Parameters (e.g. `@test_code`) now work properly cross DBMS (e.g. MySql / SqlServer) when using a query cache.
+- Added menu for inspecting the state of a cohort compiler (view SQL executed, build log, results etc)
+- SET containers (UNION / INTERSECT / EXCEPT) now highlight (as a `Problem`) when they will be ignored (empty) or not applied (when they contain only 1 child)
+
+### Fixed 
+
+- Fixed ExceptionViewer showing the wrong stack trace under certain circumstances
+- Fixed cache usage bug where sql parameters were used in queries (cache would not be used when it should)
+- Fixed 'View Dataset Sample' user interface generating the wrong SQL when a patient index table has a column alias (e.g. `SELECT chi,AdmissionDate as fish from MyPatIndexTable`)
+- Fixed renaming parameters causing UI to incorrectly ask if you want to save changes
+
+## [3.2.1-rc3] - 2019-10-21
+
+### Fixed 
+
+- Fixed bug in cross server query building when using parameters (@testcode etc)
+
+## [3.2.1-rc2] - 2019-10-18
+
+### Added 
+
+- Added GoTo from cohorts to Extraction Configuration(s)
+
+### Changed
+
+- View ThenVsNow Sql in right click context menu of data extractions is only evaluated when run (improves performance).  This results as the command always being enabled.
+
+### Fixed
+
+- Fixed [bug in cross server query building](https://github.com/HicServices/RDMP/commit/a0c6223d1a7793bde4a67b368ae062e8bec3d960#diff-196fcda7990895e9f656c99602d1972b) (via cache) when joining patient index tables on one server to a main dataset on another
+
+## [3.2.1-rc1] - 2019-10-14
 
 ### Added
 
@@ -19,7 +59,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Database patching user interface presents clearer information about what version upgrade is occuring and the patches that will be applied.
 - Updated to latest version of [FAnsiSql] (0.10.7) for task cancellation
 - Data load engine no longer lists dropping columns / anonymising in progress if there are no operations actually being performed (e.g. no ANOTables configured)
-- 
+- Delete is now disabled for the top level container (e.g. UNION - Inclusion criteria) of cohort builder configuration
+
 ### Fixed
 
 - Database patching user interface no longer suggests restarting if the patching process has failed
@@ -182,7 +223,6 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Attempting to deleting an Extractable Catalogue no longer shows an error and instead asks if you want to make it non extractable (then delete)
 - xmldoc are now shipped inside SourceCodeForSelfAwareness.zip (instead of side by side with the binary).  This avoids an issue where [Squirrel drops xmldoc files](https://github.com/Squirrel/Squirrel.Windows/issues/1323)
 
-
 ### Fixed 
 
 - Fixed bug in CLI (rdmp.exe) where yaml settings would override command line values for connection strings to platform databases
@@ -193,7 +233,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed Culture (e.g. en-us) not being passed correctly in DelimitedFlatFileAttacher
 - Fixed bug where Updater would show older versions of RDMP as installable 'updates'
 
-[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.2.0-rc1...develop
+[Unreleased]: https://github.com/HicServices/RDMP/compare/v3.2.1-rc4...develop
+[3.2.1-rc4]: https://github.com/HicServices/RDMP/compare/v3.2.1-rc3...v3.2.1-rc4
+[3.2.1-rc3]: https://github.com/HicServices/RDMP/compare/v3.2.1-rc2...v3.2.1-rc3
+[3.2.1-rc2]: https://github.com/HicServices/RDMP/compare/3.2.1-rc1...v3.2.1-rc2
+[3.2.1-rc1]: https://github.com/HicServices/RDMP/compare/3.2.0...3.2.1-rc1
+[3.2.0]: https://github.com/HicServices/RDMP/compare/v3.2.0-rc1...3.2.0
 [3.2.0-rc1]: https://github.com/HicServices/RDMP/compare/3.1.0...v3.2.0-rc1
 [3.1.0]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc2...3.1.0
 [3.0.16-rc2]: https://github.com/HicServices/RDMP/compare/v3.0.16-rc...v3.0.16-rc2

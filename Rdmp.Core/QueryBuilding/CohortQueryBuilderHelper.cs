@@ -24,14 +24,16 @@ namespace Rdmp.Core.QueryBuilding
     /// </summary>
     public class CohortQueryBuilderHelper
     {
-        public ParameterManager ParameterManager { get; set; }
-        
-        public CohortQueryBuilderHelper(ParameterManager parameterManager)
-        {
-            ParameterManager = parameterManager;
-        }
-
-        public string GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
+        /// <summary>
+        /// Returns the SQL you need to include in your nested query (in UNION / EXCEPT / INTERSECT).  This does not include parameter declarations (which
+        /// would appear at the very top) and includes rename operations dependant on what has been written out before by (tracked by <see cref="ParameterManager"/>).
+        ///
+        /// <para>Use <paramref name="isolatedSql"/> for the original un renamed / including parameter declarations e.g. to test for cache hits</para>
+        /// </summary>
+        /// <param name="aggregate"></param>
+        /// <param name="args"></param>
+        /// <returns></returns>
+        public CohortQueryBuilderDependencySql GetSQLForAggregate(AggregateConfiguration aggregate, QueryBuilderArgs args)
         {
             bool isJoinAggregate = aggregate.IsCohortIdentificationAggregate;
 
@@ -59,7 +61,7 @@ namespace Rdmp.Core.QueryBuilding
                     selectList = string.Join("," + Environment.NewLine,
                         aggregate.AggregateDimensions.Select(e => e.SelectSQL + (e.Alias != null ? " " + e.Alias : ""))); //joinable patient index tables have patientIdentifier + 1 or more other columns
 
-                if (args?.OverrideSelectList != null)
+                if (args.OverrideSelectList != null)
                     selectList = args.OverrideSelectList;
 
                 string limitationSQL = args?.OverrideLimitationSQL ?? "distinct";
@@ -75,7 +77,7 @@ namespace Rdmp.Core.QueryBuilding
             }
             else
             {
-                if (args?.OverrideSelectList != null)
+                if (args.OverrideSelectList != null)
                     throw new NotSupportedException("Cannot override Select list on aggregates that have HAVING / Count SQL configured in them");
 
                 builder = new AggregateBuilder("distinct", aggregate.CountSQL, aggregate, aggregate.ForcedJoins);
@@ -89,15 +91,17 @@ namespace Rdmp.Core.QueryBuilding
                 builder.DoNotWriteOutOrderBy = true;
             }
 
-            if (args != null &&  args.TopX != -1)
+            if (args.TopX != -1)
                 builder.AggregateTopX = new SpontaneouslyInventedAggregateTopX(new MemoryRepository(), args.TopX, AggregateTopXOrderByDirection.Descending, null);
 
-            
+            //make sure builder has globals
+            foreach(var global in args.Globals)
+                builder.ParameterManager.AddGlobalParameter(global);
+
             //Add the inception join
-            if (args?.JoinIfAny != null)
+            if (args.JoinIfAny != null)
                 AddJoinToBuilder(aggregate,extractionIdentifier,builder, args);
             
-
             //set the where container
             builder.RootFilterContainer = aggregate.RootFilterContainer;
 
@@ -108,15 +112,16 @@ namespace Rdmp.Core.QueryBuilding
             //get the SQL from the builder (for the current configuration) - without parameters
             string currentBlock = builderSqlWithoutParameters;
 
-            //import parameters unless caching was used
-            Dictionary<string, string> renameOperations;
-            ParameterManager.ImportAndElevateResolvedParametersFromSubquery(builder.ParameterManager, out renameOperations);
+            var toReturn = new CohortQueryBuilderDependencySql(currentBlock,builder.ParameterManager);
 
-            //rename in the SQL too!
-            foreach (KeyValuePair<string, string> kvp in renameOperations)
-                currentBlock = ParameterCreator.RenameParameterInSQL(currentBlock, kvp.Key, kvp.Value);
+            if (args.JoinSql != null)
+            {
+                toReturn.ParametersUsed.MergeWithoutRename(args.JoinSql.ParametersUsed);
+            }
 
-            return currentBlock;
+            //we need to generate the full SQL with parameters (and no rename operations) so we can do cache hit tests
+            //renaming is deferred to later
+            return toReturn;
         }
 
         public void AddJoinToBuilder(AggregateConfiguration user,IColumn usersExtractionIdentifier,AggregateBuilder builder, QueryBuilderArgs args)
@@ -132,7 +137,17 @@ namespace Rdmp.Core.QueryBuilding
             // will end up with something like this where 51 is the ID of the joinTable:
             // LEFT Join (***INCEPTION QUERY***)ix51 on ["+TestDatabaseNames.Prefix+@"ScratchArea]..[BulkData].[patientIdentifier] = ix51.patientIdentifier
 
-            builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + args.JoinSql + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + usersExtractionIdentifier.SelectSQL + " = " + joinableTableAlias + "." + joinOn.GetRuntimeName(),QueryComponent.JoinInfoJoin);
+            builder.AddCustomLine(" " + joinDirection + " Join (" + Environment.NewLine + TabIn(args.JoinSql.Sql,1) + Environment.NewLine + ")" + joinableTableAlias + Environment.NewLine + "on " + usersExtractionIdentifier.SelectSQL + " = " + joinableTableAlias + "." + joinOn.GetRuntimeName(),QueryComponent.JoinInfoJoin);
         }
+        
+        public string TabIn(string str, int numberOfTabs)
+        {
+            if (string.IsNullOrWhiteSpace(str))
+                return str;
+
+            var tabs = new String('\t', numberOfTabs);
+            return tabs + str.Replace(Environment.NewLine, Environment.NewLine + tabs);
+        }
+
     }
 }

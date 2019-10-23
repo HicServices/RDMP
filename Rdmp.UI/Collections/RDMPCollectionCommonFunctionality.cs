@@ -460,7 +460,7 @@ namespace Rdmp.UI.Collections
 
                     if (many.Cast<object>().All(d => d is IDeleteable))
                     {
-                        var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToList()));
+                        var mi = factory.CreateMenuItem(new ExecuteCommandDelete(_activator, many.Cast<IDeleteable>().ToArray()));
                         mi.ShortcutKeys = Keys.Delete;
                         menu.Items.Add(mi);
                     }

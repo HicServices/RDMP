@@ -332,7 +332,7 @@ namespace Rdmp.Core.QueryBuilding.Parameters
             }
         }
         
-        private bool AreDeclaredTheSame(ISqlParameter first, ISqlParameter other)
+        private static bool AreDeclaredTheSame(ISqlParameter first, ISqlParameter other)
         {
             if (first == null || other == null)
                 throw new NullReferenceException("You cannot pass null parameters into this method");
@@ -343,7 +343,7 @@ namespace Rdmp.Core.QueryBuilding.Parameters
             return sql1.Trim().Equals(sql2.Trim(), StringComparison.CurrentCultureIgnoreCase);
         }
 
-        private bool AreIdentical(ISqlParameter first, ISqlParameter other)
+        private static bool AreIdentical(ISqlParameter first, ISqlParameter other)
         {
             bool sameSql = AreDeclaredTheSame(first, other);
             
@@ -459,6 +459,63 @@ namespace Rdmp.Core.QueryBuilding.Parameters
             return 
                 ParametersFoundSoFarInQueryGeneration.Single(k => k.Value.Contains(parameter)).Key;
         
+        }
+
+        /// <summary>
+        /// Creates a shallow copy of the <see cref="ParameterManager"/> in which <see cref="ParametersFoundSoFarInQueryGeneration"/> is a new
+        /// instance but the parameters referenced are shared (with the original).
+        /// </summary>
+        /// <returns></returns>
+        public ParameterManager Clone()
+        {
+            var clone = new ParameterManager(this.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
+            clone.State = State;
+
+            foreach (var kvp in ParametersFoundSoFarInQueryGeneration)
+                clone.ParametersFoundSoFarInQueryGeneration[kvp.Key].AddRange(kvp.Value);
+
+            return clone;
+        }
+
+        /// <summary>
+        /// Returns all <see cref="ISqlParameter"/> that collide with <paramref name="other"/> (same name different value)
+        /// </summary>
+        /// <param name="other"></param>
+        /// <returns></returns>
+        public string[] GetCollisions(ParameterManager other)
+        {
+            var pm = new ParameterManager();
+            pm.ImportAndElevateResolvedParametersFromSubquery(this,out Dictionary<string,string> subs);
+            
+            //not sure how there could be collisions given we went into a fresh one but I guess it would count
+            if(subs.Keys.Any())
+                return subs.Keys.ToArray();
+
+            pm.ImportAndElevateResolvedParametersFromSubquery(other, out subs);
+
+            return subs.Keys.ToArray();
+        }
+
+        /// <summary>
+        /// Imports novel <see cref="ISqlParameter"/> from <paramref name="other"/> without renaming.
+        /// </summary>
+        /// <param name="other"></param>
+        /// <exception cref="QueryBuildingException">Thrown if there are non identical parameter name collisions (same name different value)</exception>
+        public void MergeWithoutRename(ParameterManager other)
+        {
+            var collisions = GetCollisions(other);
+            if(collisions.Any())
+                throw new QueryBuildingException("PatientIndexTables cannot have parameters with the same name as their users.  Offending parameter(s) were " + string.Join(",",collisions));
+
+            foreach (ParameterLevel l in Enum.GetValues(typeof(ParameterLevel)))
+            {
+                var to = ParametersFoundSoFarInQueryGeneration[l]; 
+                var from = other.ParametersFoundSoFarInQueryGeneration[l];
+
+                //add all paramters which are not already represented with an identical parameter
+                to.AddRange(from.Where(f=>!to.Any(t=>AreIdentical(f,t))));
+            }
+
         }
     }
 }

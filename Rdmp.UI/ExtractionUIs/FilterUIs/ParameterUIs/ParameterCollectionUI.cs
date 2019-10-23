@@ -14,9 +14,10 @@ using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.ItemActivation;
+using Rdmp.UI.Refreshing;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-
 using Enum = System.Enum;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
@@ -181,7 +182,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
         }
 
 
-        public static Form ShowAsDialog(ParameterCollectionUIOptions options, bool modal = false)
+        public static Form ShowAsDialog(IActivateItems activator,ParameterCollectionUIOptions options, bool modal = false)
         {
             Form f = new Form();
             f.Text = "Parameters For:" + options.Collector;
@@ -189,7 +190,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             f.Width = ui.Width;
             f.Height = ui.Height;
 
-            ui.SetUp(options);
+            ui.SetUp(options,activator);
             ui.Dock = DockStyle.Fill;
             f.Controls.Add(ui);
 
@@ -201,9 +202,11 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             return f;
         }
 
-        public void SetUp(ParameterCollectionUIOptions options)
+        public void SetUp(ParameterCollectionUIOptions options,IActivateItems activator)
         {
             Options = options;
+            
+            SetItemActivator(activator);
 
             hiParameters.SetHelpText("Use Case",options.UseCase);
 
@@ -302,7 +305,15 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
                 
                 //if the name has changed handle renaming
                 if(oldParameterName != null)
-                    Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName);
+                    if (Options.Refactorer.HandleRename(parameter, oldParameterName, newParameterName))
+                    {
+                        var owner = parameter.GetOwnerIfAny();
+                        var toRefresh = (owner ?? (object)parameter) as DatabaseEntity;
+                        
+                        if(toRefresh != null)
+                            Activator.RefreshBus.Publish(this,new RefreshObjectEventArgs(toRefresh));
+                    }
+                        
                 
                 //anything that was a problem before
                 var problemsBefore = parameterEditorScintillaControl1.ProblemObjects.Keys;

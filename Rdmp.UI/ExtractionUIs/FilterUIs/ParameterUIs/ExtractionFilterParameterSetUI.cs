@@ -45,7 +45,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 
             ParameterCollectionUIOptionsFactory factory = new ParameterCollectionUIOptionsFactory();
             var options = factory.Create(ExtractionFilterParameterSet);
-            parameterCollectionUI1.SetUp(options);
+            parameterCollectionUI1.SetUp(options,Activator);
         }
 
         public ExtractionFilterParameterSetUI()

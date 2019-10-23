@@ -9,6 +9,8 @@ using System.Collections.Generic;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Repositories.Construction;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
@@ -16,13 +18,18 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private readonly IList<IDeleteable> _deletables;
 
-        public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable deletable) : base(activator)
+        
+        public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable deletable) : this(activator,new []{ deletable})
         {
-            _deletables = new []{ deletable};
         }
-        public ExecuteCommandDelete(IBasicActivateItems activator, IList<IDeleteable> deletables) : base(activator)
+
+        [UseWithObjectConstructor]
+        public ExecuteCommandDelete(IBasicActivateItems activator, IDeleteable[] deletables) : base(activator)
         {
             _deletables = deletables;
+
+            if(_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
+                SetImpossible("Cannot delete root containers");
         }
         public override void Execute()
         {

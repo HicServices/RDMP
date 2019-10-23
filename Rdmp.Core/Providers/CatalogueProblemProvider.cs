@@ -9,6 +9,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
@@ -76,6 +77,9 @@ namespace Rdmp.Core.Providers
 
             if (o is ParametersNode p)
                 return DescribeProblem(p);
+
+            if (o is CohortAggregateContainer container)
+                return DescribeProblem(container);
 
             return null;
         }
@@ -214,5 +218,22 @@ namespace Rdmp.Core.Providers
             return null;
         }
 
+        public string DescribeProblem(CohortAggregateContainer container)
+        {
+            //if it's a root container don't check
+            if (_childProvider.AllCohortIdentificationConfigurations.Any(c =>
+                c.RootCohortAggregateContainer_ID == container.ID))
+                return null;
+
+            var children = _childProvider.GetChildren(container);
+
+            if (children.Length == 0)
+                return "Empty SET containers have no effect (and will be ignored)";
+
+            if (children.Length == 1)
+                return "SET container operations have no effect if there is only one child within";
+            
+            return null;
+        }
     }
 }

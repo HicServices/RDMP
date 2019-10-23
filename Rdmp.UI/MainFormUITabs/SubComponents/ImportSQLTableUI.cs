@@ -114,7 +114,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
                 if(ti.IsTableValuedFunction && ti.GetAllParameters().Any())
                 {
                     var options = new ParameterCollectionUIOptionsFactory().Create(ti);
-                    ParameterCollectionUI.ShowAsDialog(options,true);
+                    ParameterCollectionUI.ShowAsDialog(Activator,options,true);
                 }
 
                 MessageBox.Show("Successfully imported table '" + ti + "'");

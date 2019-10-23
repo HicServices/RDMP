@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
+using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
@@ -94,7 +95,7 @@ namespace Rdmp.Core.QueryBuilding
         }
 
 
-        public void BuildFor(CohortAggregateContainer container)
+        public void BuildFor(CohortAggregateContainer container, ParameterManager parameterManager)
         {
             ThrowIfAlreadyBuilt();
             IsForContainer = true;
@@ -109,33 +110,32 @@ namespace Rdmp.Core.QueryBuilding
 
             LogDependencies();
 
-            MakeInitialCacheDecision();
+            BuildDependenciesSql(parameterManager.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
 
-            BuildDependenciesSql();
-
-            Sql = BuildSql(container);
+            MakeCacheDecision();
+            
+            Sql = BuildSql(container,parameterManager);
         }
 
-        public void BuildFor(AggregateConfiguration configuration)
+        public void BuildFor(AggregateConfiguration configuration, ParameterManager parameterManager)
         {
             ThrowIfAlreadyBuilt();
             IsForContainer = false;
 
             _log.AppendLine("Starting Build for " + configuration);
             var d = AddDependency(configuration);
-
+            
             LogDependencies();
 
-            MakeInitialCacheDecision();
+            BuildDependenciesSql(parameterManager.ParametersFoundSoFarInQueryGeneration[ParameterLevel.Global].ToArray());
 
-            BuildDependenciesSql();
+            MakeCacheDecision();
 
-            Sql = BuildSql(d);
+
+            Sql = BuildSql(d,parameterManager);
         }
-
-
         
-        private string BuildSql(CohortAggregateContainer container)
+        private string BuildSql(CohortAggregateContainer container,ParameterManager parameterManager)
         {
             Dictionary<CohortQueryBuilderDependency, string> sqlDictionary;
             
@@ -147,7 +147,7 @@ namespace Rdmp.Core.QueryBuilding
                 //all are cached
                 CountOfCachedSubQueries = CountOfSubQueries;
 
-                sqlDictionary = Dependencies.ToDictionary(k => k, v => v.SqlFullyCached); //run the fully cached sql
+                sqlDictionary = Dependencies.ToDictionary(k => k, v => v.SqlFullyCached.Use(parameterManager)); //run the fully cached sql
             }
             else
             {
@@ -170,9 +170,9 @@ namespace Rdmp.Core.QueryBuilding
                         
                         sqlDictionary =
                             Dependencies.ToDictionary(k => k,
-                                v =>  v.SqlFullyCached ??
-                                    v.SqlPartiallyCached ??
-                                    v.SqlCacheless); //run the fully cached sql
+                                v =>  v.SqlFullyCached?.Use(parameterManager) ??
+                                    v.SqlPartiallyCached?.Use(parameterManager) ??
+                                    v.SqlCacheless.Use(parameterManager)); //run the fully cached sql
                         break;
 
                     case CacheUsage.AllOrNothing:
@@ -183,7 +183,7 @@ namespace Rdmp.Core.QueryBuilding
                         //cannot use any of the caches because it's all or nothing
                         CountOfCachedSubQueries = 0;
                         sqlDictionary =
-                            Dependencies.ToDictionary(k => k, v => v.SqlCacheless); //run the fully uncached sql
+                            Dependencies.ToDictionary(k => k, v => v.SqlCacheless.Use(parameterManager)); //run the fully uncached sql
                         break;
                     default:
                         throw new ArgumentOutOfRangeException();
@@ -291,14 +291,14 @@ namespace Rdmp.Core.QueryBuilding
             }
         }
 
-        private string BuildSql(CohortQueryBuilderDependency dependency)
+        private string BuildSql(CohortQueryBuilderDependency dependency,ParameterManager parameterManager)
         {
             //if we are fully cached on everything
             if (dependency.SqlFullyCached != null)
             {
                 SetTargetServer(GetCacheServer()," dependency is cached"); //run on the cache server
                 CountOfCachedSubQueries++; //it is cached
-                return dependency.SqlFullyCached; //run the fully cached sql
+                return dependency.SqlFullyCached.Use(parameterManager); //run the fully cached sql
             }
 
             switch (CacheUsageDecision)
@@ -310,12 +310,12 @@ namespace Rdmp.Core.QueryBuilding
 
                     //The cache and dataset are on the same server so run it
                     SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"data and cache are on the same server");
-                    return dependency.SqlPartiallyCached ?? dependency.SqlCacheless;
+                    return dependency.SqlPartiallyCached?.Use(parameterManager) ?? dependency.SqlCacheless.Use(parameterManager);
                 case CacheUsage.AllOrNothing:
 
                     //It's not fully cached so we have to run it entirely uncached
                     SetTargetServer(DependenciesSingleServer.GetDistinctServer(),"cache and data are on seperate servers / access credentials and not all datasets are in the cache");
-                    return dependency.SqlCacheless;
+                    return dependency.SqlCacheless.Use(parameterManager);
                 default:
                     throw new ArgumentOutOfRangeException();
             }
@@ -326,10 +326,10 @@ namespace Rdmp.Core.QueryBuilding
             return CacheServer.Discover(DataAccessContext.InternalDataProcessing).Server;
         }
 
-        private void BuildDependenciesSql()
+        private void BuildDependenciesSql(ISqlParameter[] globals)
         {
             foreach (var d in Dependencies)
-                d.Build(this);
+                d.Build(this,globals);
         }
 
 
@@ -346,44 +346,64 @@ namespace Rdmp.Core.QueryBuilding
             return d;
         }
 
-        private void MakeInitialCacheDecision()
+        private void MakeCacheDecision()
         {
             if (CacheServer == null)
                 SetCacheUsage(CacheUsage.AllOrNothing,"there is no cache server");
             else
-                SetCacheUsage(CacheUsage.Opportunistic, "there is a cache server available (dependencies have not yet been evaluated)");
+                SetCacheUsage(CacheUsage.Opportunistic, "there is a cache server (so starting with Opportunistic)");
             
             DependenciesSingleServer =  new DataAccessPointCollection(true);
 
             foreach (var dependency in Dependencies)
             {
+
+                _log.AppendLine($"Evaluating '{dependency.CohortSet}'");
                 foreach (ITableInfo dependantTable in dependency.CohortSet.Catalogue.GetTableInfoList(false))
-                    HandleDependency(dependency.CohortSet, dependantTable);
+                    HandleDependency(dependency,false, dependantTable);
                 
-                if(dependency.JoinedTo != null)
+                if (dependency.JoinedTo != null)
+                {
+                    _log.AppendLine($"Evaluating '{dependency.JoinedTo}'");
                     foreach (ITableInfo dependantTable in dependency.JoinedTo.Catalogue.GetTableInfoList(false))
-                        HandleDependency(dependency.JoinedTo,dependantTable);
+                        HandleDependency(dependency,true,dependantTable);
+                }
             }
         }
 
-        private void HandleDependency(AggregateConfiguration aggregate, ITableInfo dependantTable)
+        private void HandleDependency(CohortQueryBuilderDependency dependency,bool isPatientIndexTable, ITableInfo dependantTable)
         {
-            _log.AppendLine($"{aggregate} depends on " + dependantTable);
-                    
+            _log.AppendLine($"Found dependant table '{dependantTable}'");
+            
             //if dependencies are on different servers / access credentials
             if(DependenciesSingleServer != null)
                 if (!DependenciesSingleServer.TryAdd(dependantTable))
                 {
                     //we can no longer establish a consistent connection to all the dependencies
-                    DependenciesSingleServer = null;
+                    _log.AppendLine($"Found problematic dependant table '{dependantTable}'");
 
                     //if there's no cache server that's a problem!
                     if(CacheServer == null)
                         throw new QueryBuildingException($"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies and no QueryCache is configured");
                     
-                    //there IS a cache so we now Must use it
-                    if(CacheUsageDecision != CacheUsage.MustUse)
-                        SetCacheUsage(CacheUsage.MustUse,$"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies.  Therefore the QueryCache MUST be used for all dependencies");
+                    //there is a cache server, perhaps we can dodge 'dependantTable' by going to cache instead
+                    bool canUseCacheForDependantTable =
+                        (isPatientIndexTable ? dependency.SqlJoinableCached : dependency.SqlFullyCached)
+                        != null;
+
+                    //can we go to the cache server instead?
+                    if (canUseCacheForDependantTable && DependenciesSingleServer.TryAdd(CacheServer))
+                    {
+                        _log.AppendLine($"Avoided problematic dependant table '{dependantTable}' by using the cache");
+                    }
+                    else
+                    {
+                        DependenciesSingleServer = null;
+
+                        //there IS a cache so we now Must use it
+                        if(CacheUsageDecision != CacheUsage.MustUse)
+                            SetCacheUsage(CacheUsage.MustUse,$"Table {dependantTable} is on a different server (or uses different access credentials) from previously seen dependencies.  Therefore the QueryCache MUST be used for all dependencies");
+                    }
                 }
 
             if (DependenciesSingleServer != null &&
@@ -391,7 +411,7 @@ namespace Rdmp.Core.QueryBuilding
                 CacheUsageDecision == CacheUsage.Opportunistic)
             {
                 //We can only do opportunistic joins if the Cache and Data server are on the same server
-                bool canCombine = DependenciesSingleServer.Clone().TryAdd(CacheServer);
+                bool canCombine = DependenciesSingleServer.AddWouldBePossible(CacheServer);
 
                 if(!canCombine)
                     SetCacheUsage(CacheUsage.AllOrNothing,"All datasets are on one server/access credentials while Cache is on a separate one");
@@ -400,8 +420,8 @@ namespace Rdmp.Core.QueryBuilding
         }
         private void LogDependencies()
         {
-            _log.AppendLine("Found Dependencies:" + Environment.NewLine +
-                            string.Join(Environment.NewLine,Dependencies));
+            foreach (var d in Dependencies)
+                _log.AppendLine($"Dependency '{d}' is {d.DescribeCachedState()}");
         }
 
         

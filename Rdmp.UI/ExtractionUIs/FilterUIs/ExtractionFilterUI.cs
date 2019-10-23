@@ -202,7 +202,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             //collapse panel 1 unless there are parameters
             splitContainer1.Panel1Collapsed = !options.ParameterManager.ParametersFoundSoFarInQueryGeneration.Values.Any(v => v.Any());
 
-            parameterCollectionUI1.SetUp(options);
+            parameterCollectionUI1.SetUp(options,Activator);
 
             CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.TOP_100));
             CommonFunctionality.AddToMenu(new ExecuteCommandViewFilterMatchData(Activator, databaseObject, ViewType.Aggregate));
