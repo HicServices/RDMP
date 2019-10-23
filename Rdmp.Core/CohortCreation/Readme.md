@@ -20,7 +20,9 @@ See [CohortComitting](../CohortCommitting/Readme.md) for committing (saving) a f
 <a name="cache-background"></a>
 ### Background
 
-A complicated cohort can easily include 10 or more subsets.  To speed up performance and to persist results a query cache can be used.  A query cache also get's around DBMS limitations e.g. MySql not supporting Set operations (UNION / INTERSECT / EXCEPT)
+A complicated cohort can easily include 10 or more criteria (prescribed drug X; never prescribed drug y etc).  Each criteria can involve querying a large number of records and can take some time.  The traditional approach to this problem is to use temporary tables (e.g. `tempdb`) or a scratch area (e.g. MyWorkingDb) to create tables that store results for subsections of the overall query.  RDMP automates this practice through it's query caching subsystem.
+
+The RDMP query cache also get's around [DBMS] limitations e.g. MySql not supporting Set operations (UNION / INTERSECT / EXCEPT) and enables cross server (and DBMS) query generation.
 
 <a name="hit-miss"></a>
 ### Cache Hit/Miss
@@ -188,3 +190,6 @@ Notice that the parameter has been renamed `@Result_2` and `@code_2` in the comp
 ## Class Diagram
 
 ![Class Diagram of cohort building](./Images/classdiagram.png)
+
+
+[DBMS]: ../../Documentation/CodeTutorials/Glossary.md#DBMS
