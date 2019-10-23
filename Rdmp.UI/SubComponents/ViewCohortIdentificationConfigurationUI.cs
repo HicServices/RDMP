@@ -34,7 +34,7 @@ namespace Rdmp.UI.SubComponents
             InitializeComponent();
 
             var factory = new ScintillaTextEditorFactory();
-            QueryEditor = factory.Create(new RDMPCommandFactory());
+            QueryEditor = factory.Create(new RDMPCombineableFactory());
             this.Controls.Add(QueryEditor);
 
             AssociatedCollection = RDMPCollection.Cohort;

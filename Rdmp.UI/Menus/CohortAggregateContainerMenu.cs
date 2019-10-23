@@ -7,6 +7,7 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
@@ -18,8 +19,6 @@ using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
-
-
 using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.Menus

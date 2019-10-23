@@ -27,7 +27,7 @@ namespace Rdmp.UI.SimpleDialogs.SqlDialogs
             get { return QueryEditor.Text; }
         }
 
-        public SetSQLDialog(string originalSQL, ICommandFactory commandFactory)
+        public SetSQLDialog(string originalSQL, ICombineableFactory commandFactory)
         {
             InitializeComponent();
             

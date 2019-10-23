@@ -14,7 +14,6 @@ using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs;

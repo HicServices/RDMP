@@ -110,7 +110,7 @@ namespace Rdmp.UI.Tests
             Assert.Fail("Did not expect a MessageBox to be shown");
         }
 
-        public ICommandFactory CommandFactory { get; private set; }
+        public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; set; }
         public CommentStore CommentStore { get; private set; }
 

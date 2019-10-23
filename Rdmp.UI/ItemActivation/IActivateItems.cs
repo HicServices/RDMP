@@ -76,7 +76,7 @@ namespace Rdmp.UI.ItemActivation
         /// <summary>
         /// Component for starting drag or copy operations
         /// </summary>
-        ICommandFactory CommandFactory { get;}
+        ICombineableFactory CommandFactory { get;}
 
         /// <summary>
         /// Component for suggesting completion options for an ongoing drag or paste

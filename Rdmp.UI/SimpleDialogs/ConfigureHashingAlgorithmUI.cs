@@ -39,7 +39,7 @@ namespace Rdmp.UI.SimpleDialogs
             if(VisualStudioDesignMode)
                 return;
 
-            QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             QueryPreview.ReadOnly = true;
 
             panel2.Controls.Add(QueryPreview);

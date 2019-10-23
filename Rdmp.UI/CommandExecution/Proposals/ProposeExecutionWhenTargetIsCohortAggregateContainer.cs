@@ -5,10 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
+
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -35,10 +37,8 @@ namespace Rdmp.UI.CommandExecution.Proposals
             //Target is a cohort container (UNION / INTERSECT / EXCEPT)
 
             //source is catalogue
-            var sourceCatalogueCommand = cmd as CatalogueCombineable;
-
-            if (sourceCatalogueCommand != null)
-                return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCommand, targetCohortAggregateContainer);
+            if (cmd is CatalogueCombineable sourceCatalogueCombineable)
+                return new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(ItemActivator,sourceCatalogueCombineable, targetCohortAggregateContainer);
 
             //source is aggregate
             var sourceAggregateCommand = cmd as AggregateConfigurationCombineable;

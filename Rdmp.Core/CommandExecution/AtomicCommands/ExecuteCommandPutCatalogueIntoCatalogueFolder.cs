@@ -7,27 +7,26 @@
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandPutCatalogueIntoCatalogueFolder: BasicUICommandExecution
+    public class ExecuteCommandPutCatalogueIntoCatalogueFolder: BasicCommandExecution
     {
         private readonly Catalogue[] _catalogues;
         private readonly CatalogueFolder _targetModel;
 
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, CatalogueCombineable cmd, CatalogueFolder targetModel)
+        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, CatalogueCombineable cmd, CatalogueFolder targetModel)
             :this(activator,new []{cmd.Catalogue},targetModel)
         {
             
         }
-        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, ManyCataloguesCombineable cmd, CatalogueFolder targetModel)
+        public ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, ManyCataloguesCombineable cmd, CatalogueFolder targetModel)
             : this(activator, cmd.Catalogues, targetModel)
         {
             
         }
 
-        private ExecuteCommandPutCatalogueIntoCatalogueFolder(IActivateItems activator, Catalogue[] catalogues, CatalogueFolder targetModel) : base(activator)
+        private ExecuteCommandPutCatalogueIntoCatalogueFolder(IBasicActivateItems activator, Catalogue[] catalogues, CatalogueFolder targetModel) : base(activator)
         {
             _targetModel = targetModel;
             _catalogues = catalogues;

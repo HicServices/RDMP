@@ -382,7 +382,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _trackedWindows.OfType<PersistableObjectCollectionDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.Collection.Equals(collection));
         }
         /// <summary>
-        /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueTab)
+        /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueUI)
         /// </summary>
         /// <exception cref="ArgumentException"></exception>
         /// <param name="windowType">A Type derrived from RDMPSingleControlTab</param>

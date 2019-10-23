@@ -7,11 +7,10 @@
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicUICommandExecution
+    public class ExecuteCommandAddCatalogueToCohortIdentificationSetContainer : BasicCommandExecution
     {
         private readonly CatalogueCombineable _catalogueCombineable;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
@@ -31,7 +30,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             }
         }
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(IBasicActivateItems activator,CatalogueCombineable catalogueCombineable, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _catalogueCombineable = catalogueCombineable;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
@@ -45,11 +44,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             
-            var cmd = _catalogueCombineable.GenerateAggregateConfigurationFor(Activator,_targetCohortAggregateContainer,!SkipMandatoryFilterCreation);
+            var cmd = _catalogueCombineable.GenerateAggregateConfigurationFor(BasicActivator,_targetCohortAggregateContainer,!SkipMandatoryFilterCreation);
             if(cmd != null)
             {
                 _postImportCommand = 
-                    new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(Activator,cmd, _targetCohortAggregateContainer)
+                    new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(BasicActivator,cmd, _targetCohortAggregateContainer)
                         {DoNotClone = true};
                 _postImportCommand.Execute();
             }

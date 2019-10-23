@@ -8,7 +8,7 @@
 // </auto-generated>
 //------------------------------------------------------------------------------
 
-namespace Rdmp.UI.Icons.IconOverlays {
+namespace Rdmp.Core.Icons.IconOverlays {
     /// <summary>
     ///   A strongly-typed resource class, for looking up localized strings, etc.
     /// </summary>

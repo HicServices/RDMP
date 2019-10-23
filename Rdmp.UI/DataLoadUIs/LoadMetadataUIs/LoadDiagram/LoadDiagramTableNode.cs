@@ -23,7 +23,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
     /// Depicts a table in a given DLE <see cref="LoadBubble"/>.  Given the Create/Destroy nature of load stages this
     /// node may or may not map to an existing table in the database.
     /// </summary>
-    public class LoadDiagramTableNode:Node,ICommandSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
+    public class LoadDiagramTableNode:Node,ICombineableSource, IHasLoadDiagramState, IMasqueradeAs, IKnowWhatIAm
     {
         private readonly LoadDiagramDatabaseNode _databaseNode;
         public readonly TableInfo TableInfo;
@@ -79,7 +79,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
             return TableName;
         }
         
-        public ICombineToMakeCommand GetCommand()
+        public ICombineToMakeCommand GetCombineable()
         {
             return new SqlTextOnlyCombineable(TableInfo.GetQuerySyntaxHelper().EnsureFullyQualified(DatabaseName,null, TableName));
         }

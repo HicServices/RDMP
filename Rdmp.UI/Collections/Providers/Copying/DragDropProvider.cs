@@ -24,11 +24,11 @@ namespace Rdmp.UI.Collections.Providers.Copying
     /// </summary>
     public class DragDropProvider:SimpleDragSource
     {
-        private readonly ICommandFactory _commandFactory;
+        private readonly ICombineableFactory _commandFactory;
         private readonly ICommandExecutionFactory _commandExecutionFactory;
         private readonly TreeListView _treeView;
 
-        public DragDropProvider(ICommandFactory commandFactory, ICommandExecutionFactory commandExecutionFactory, TreeListView treeView)
+        public DragDropProvider(ICombineableFactory commandFactory, ICommandExecutionFactory commandExecutionFactory, TreeListView treeView)
         {
             _commandFactory = commandFactory;
             _commandExecutionFactory = commandExecutionFactory;

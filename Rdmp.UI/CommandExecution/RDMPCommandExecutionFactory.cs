@@ -160,10 +160,8 @@ namespace Rdmp.UI.CommandExecution
 
         private ICommandExecution CreateWhenTargetIsATableInfo(ICombineToMakeCommand cmd, TableInfo targetTableInfo)
         {
-            var sourceDataAccessCredentialsCommand = cmd as DataAccessCredentialsCombineable;
-
-            if (sourceDataAccessCredentialsCommand != null)
-                return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCommand, targetTableInfo);
+            if (cmd is DataAccessCredentialsCombineable sourceDataAccessCredentialsCombineable)
+                return new ExecuteCommandUseCredentialsToAccessTableInfoData(_activator,sourceDataAccessCredentialsCombineable, targetTableInfo);
 
             return null;
         }
@@ -171,14 +169,12 @@ namespace Rdmp.UI.CommandExecution
 
         private ICommandExecution CreateWhenTargetIsJoinableCollectionNode(ICombineToMakeCommand cmd, JoinableCollectionNode targetJoinableCollectionNode)
         {
-            var sourceAggregateConfigurationCommand = cmd as AggregateConfigurationCombineable;
-            if(sourceAggregateConfigurationCommand != null)
-                if (sourceAggregateConfigurationCommand.Aggregate.IsCohortIdentificationAggregate)
-                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCommand, targetJoinableCollectionNode.Configuration);
+            if(cmd is AggregateConfigurationCombineable sourceAggregateConfigurationCombineable)
+                if (sourceAggregateConfigurationCombineable.Aggregate.IsCohortIdentificationAggregate)
+                    return new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(_activator,sourceAggregateConfigurationCombineable, targetJoinableCollectionNode.Configuration);
 
-            var sourceCatalogueCommand = cmd as CatalogueCombineable;
-            if (sourceCatalogueCommand != null)
-                return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCommand, targetJoinableCollectionNode.Configuration);
+            if (cmd is CatalogueCombineable sourceCatalogueCombineable)
+                return new ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(_activator,sourceCatalogueCombineable, targetJoinableCollectionNode.Configuration);
 
             return null;
         }
@@ -186,10 +182,8 @@ namespace Rdmp.UI.CommandExecution
 
         private ICommandExecution CreateWhenTargetIsPreLoadDiscardedColumnsNode(ICombineToMakeCommand cmd, PreLoadDiscardedColumnsNode targetPreLoadDiscardedColumnsNode)
         {
-            var sourceColumnInfoCommand = cmd as ColumnInfoCombineable;
-
-            if(sourceColumnInfoCommand != null)
-                return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,targetPreLoadDiscardedColumnsNode.TableInfo,sourceColumnInfoCommand);
+            if(cmd is ColumnInfoCombineable sourceColumnInfoCombineable)
+                return new ExecuteCommandCreateNewPreLoadDiscardedColumn(_activator,targetPreLoadDiscardedColumnsNode.TableInfo,sourceColumnInfoCombineable);
 
             return null;
         }

@@ -91,7 +91,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             WideMessageBox.Show("Message",message);
         }
 
-        public ICommandFactory CommandFactory { get; private set; }
+        public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
         public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
 
@@ -125,7 +125,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
             
-            CommandFactory = new RDMPCommandFactory();
+            CommandFactory = new RDMPCombineableFactory();
             CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
 
             ProblemProviders = new List<IProblemProvider>();

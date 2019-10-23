@@ -26,7 +26,7 @@ using Rdmp.UI.CommandExecution;
 namespace Rdmp.UI.Copying
 {
     /// <inheritdoc/>
-    public class RDMPCommandFactory:ICommandFactory
+    public class RDMPCombineableFactory:ICombineableFactory
     {
         public ICombineToMakeCommand Create(ModelDropEventArgs e)
         {
@@ -154,10 +154,8 @@ namespace Rdmp.UI.Copying
             if (cic != null || cicAssociation != null)
                 return new CohortIdentificationConfigurationCommand(cic ?? cicAssociation.CohortIdentificationConfiguration);
 
-            var commandSource = modelObject as ICommandSource;
-
-            if (commandSource != null)
-                return commandSource.GetCommand();
+            if (modelObject is ICombineableSource commandSource)
+                return commandSource.GetCombineable();
 
             return null;
         }

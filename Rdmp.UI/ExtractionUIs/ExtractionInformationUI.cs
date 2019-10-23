@@ -78,7 +78,7 @@ namespace Rdmp.UI.ExtractionUIs
 
             //note that we don't add the Any category
             ddExtractionCategory.DataSource = new object[] { ExtractionCategory.Core, ExtractionCategory.Supplemental, ExtractionCategory.SpecialApprovalRequired, ExtractionCategory.Internal,ExtractionCategory.Deprecated, ExtractionCategory.ProjectSpecific};
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             QueryEditor.TextChanged += QueryEditorOnTextChanged;
 
             ObjectSaverButton1.BeforeSave += BeforeSave;

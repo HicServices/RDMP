@@ -29,7 +29,7 @@ namespace Rdmp.Core.CommandExecution.Combining
         }
 
         /// <summary>
-        /// Creates a new AggregateConfiguration based on the Catalogue and returns it as an AggregateConfigurationCommand, you should only use this method during EXECUTE as you do not
+        /// Creates a new AggregateConfiguration based on the Catalogue and returns it as an <see cref="AggregateConfigurationCombineable"/>, you should only use this method during EXECUTE as you do not
         /// want to be randomly creating these as the user waves an object around over the user interface trying to decide where to drop it.
         /// </summary>
         /// <param name="cohortAggregateContainer"></param>

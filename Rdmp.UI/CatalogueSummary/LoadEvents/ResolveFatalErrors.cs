@@ -39,7 +39,7 @@ namespace Rdmp.UI.CatalogueSummary.LoadEvents
             if (VisualStudioDesignMode || logManager == null) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
 
-            Explanation = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            Explanation = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             Explanation.ReadOnly = false;
 
             //if there is only 1 explanation already recorded then we should populate the explanation textbox with thsi

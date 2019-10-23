@@ -13,20 +13,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicUICommandExecution
     {
-        private readonly AggregateConfigurationCombineable _sourceAggregateConfigurationCommand;
+        private readonly AggregateConfigurationCombineable _sourceAggregateConfigurationCombineable;
         private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
         
         public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
         {
-            _sourceAggregateConfigurationCommand = sourceAggregateConfigurationCommand;
+            _sourceAggregateConfigurationCombineable = sourceAggregateConfigurationCommand;
             _cohortIdentificationConfiguration = cohortIdentificationConfiguration;
 
             if(sourceAggregateConfigurationCommand.JoinableDeclarationIfAny != null)
                 SetImpossible("Aggregate is already a Patient Index Table");
 
-            if(_sourceAggregateConfigurationCommand.CohortIdentificationConfigurationIfAny != null &&
-                _sourceAggregateConfigurationCommand.CohortIdentificationConfigurationIfAny.ID != _cohortIdentificationConfiguration.ID)
-                SetImpossible("Aggregate '" + _sourceAggregateConfigurationCommand.Aggregate + "'  belongs to a different Cohort Identification Configuration");
+            if(_sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny != null &&
+                _sourceAggregateConfigurationCombineable.CohortIdentificationConfigurationIfAny.ID != _cohortIdentificationConfiguration.ID)
+                SetImpossible("Aggregate '" + _sourceAggregateConfigurationCombineable.Aggregate + "'  belongs to a different Cohort Identification Configuration");
 
         }
 
@@ -34,7 +34,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var sourceAggregate = _sourceAggregateConfigurationCommand.Aggregate;
+            var sourceAggregate = _sourceAggregateConfigurationCombineable.Aggregate;
             
             //make sure it is not part of any folders
             var parent = sourceAggregate.GetCohortAggregateContainerIfAny();

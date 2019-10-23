@@ -68,7 +68,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs
             if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
 
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             QueryEditor.TextChanged += QueryEditor_TextChanged;
             pQueryEditor.Controls.Add(QueryEditor);
             #endregion QueryEditor

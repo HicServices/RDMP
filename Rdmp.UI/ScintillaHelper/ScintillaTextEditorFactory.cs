@@ -38,7 +38,7 @@ namespace Rdmp.UI.ScintillaHelper
         /// <param name="lineNumbers"></param>
         /// <param name="currentDirectory"></param>
         /// <returns></returns>
-        public Scintilla Create(ICommandFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
+        public Scintilla Create(ICombineableFactory commandFactory = null, string language = "mssql", IQuerySyntaxHelper syntaxHelper = null, bool spellCheck = false, bool lineNumbers = true, string currentDirectory = null)
         {
             var toReturn =  new Scintilla();
             toReturn.Dock = DockStyle.Fill;
@@ -134,14 +134,14 @@ namespace Rdmp.UI.ScintillaHelper
             
         }
 
-        private void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICommandFactory commandFactory)
+        private void OnDragEnter(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
         {
             var command = commandFactory.Create(dragEventArgs);
 
             if(command != null)
                 dragEventArgs.Effect = DragDropEffects.Copy;
         }
-        private void OnDragDrop(object sender, DragEventArgs dragEventArgs, ICommandFactory commandFactory)
+        private void OnDragDrop(object sender, DragEventArgs dragEventArgs, ICombineableFactory commandFactory)
         {
             //point they are dragged over
             var editor = ((Scintilla) sender);

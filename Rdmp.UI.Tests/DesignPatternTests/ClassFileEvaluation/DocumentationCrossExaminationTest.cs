@@ -236,7 +236,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "ObjectType",
             "UserInterfaceOverview",
             "MyPipelinePlugin",
-            "TestAnonymisationPluginsDatabaseTests"
+            "TestAnonymisationPluginsDatabaseTests",
+            "PDFs"
         };
 
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

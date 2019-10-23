@@ -9,7 +9,6 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.Linq;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconOverlays;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.Icons.IconOverlays

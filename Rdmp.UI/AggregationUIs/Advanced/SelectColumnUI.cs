@@ -247,7 +247,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                 var col = cellClickEventArgs.Model as IColumn;
                 if(col != null)
                 {
-                    var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCommandFactory());
+                    var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCombineableFactory());
 
                     var querySyntaxSource = col as IHasQuerySyntaxHelper ?? _aggregate;
 

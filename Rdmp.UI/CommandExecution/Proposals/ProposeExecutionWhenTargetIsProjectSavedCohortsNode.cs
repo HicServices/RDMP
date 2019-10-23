@@ -43,9 +43,8 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 return new ExecuteCommandCreateNewCohortFromFile(ItemActivator,fileCommand.Files[0]).SetTarget(target.Project);
 
             //drop a Project Specific Catalogue onto it
-            var catalogueCommand = cmd as CatalogueCombineable;
-            if (catalogueCommand != null)
-                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCommand.Catalogue).SetTarget(target.Project);
+            if (cmd is CatalogueCombineable catalogueCombineable)
+                return new ExecuteCommandCreateNewCohortFromCatalogue(ItemActivator, catalogueCombineable.Catalogue).SetTarget(target.Project);
 
             var columnCommand = cmd as ColumnCombineable;
 

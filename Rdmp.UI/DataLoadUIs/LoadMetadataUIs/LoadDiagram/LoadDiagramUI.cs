@@ -325,7 +325,7 @@ namespace Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram
                 });
 
             if (_dragDropProvider == null)
-                _dragDropProvider = new DragDropProvider(new RDMPCommandFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
+                _dragDropProvider = new DragDropProvider(new RDMPCombineableFactory(), new RDMPCommandExecutionFactory(Activator), tlvLoadedTables);
             
             _loadMetadata = databaseObject;
             RefreshUIFromDatabase();

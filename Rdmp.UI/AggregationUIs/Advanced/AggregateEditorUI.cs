@@ -85,7 +85,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             if(VisualStudioDesignMode)
                 return;
 
-            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             
             gbHaving.Controls.Add(QueryHaving);
 

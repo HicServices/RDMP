@@ -23,7 +23,6 @@ using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
-using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision.StateBasedIconProviders;
 using ReusableLibraryCode.Icons.IconProvision;
 

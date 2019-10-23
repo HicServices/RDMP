@@ -86,16 +86,16 @@ To add support for item dropping you should add an implementation to the body of
 
 | Parameter | Purpose |
 | ------------- | ------------- |
-| ICommand cmd| Self contained class describing both the object being dragged and salient facts about it e.g. if  it is a `CatalogueCommand` then it will know whether the dragged `Catalogue` has at least one patient identifier column.|
+| ICombineable cmd| Self contained class describing both the object being dragged and salient facts about it e.g. if  it is a `CatalogueCombineable` then it will know whether the dragged `Catalogue` has at least one patient identifier column.|
 | T target | The object the cursor is currently hovering over |
 | InsertOption insertOption | Whether the cursor is above or below or ontop of your object (if the collection the object is in supports it) |
 
-The reason we have an `ICommand` is so we can front load discovery and encapsulate facts into a single class which can then be waved around the place to look for valid combinations.  If an object doesn't have an associated `ICommand` then it won't be draggable in the first place.
+The reason we have an `ICombineable` is so we can front load discovery and encapsulate facts into a single class which can then be waved around the place to look for valid combinations.  If an object doesn't have an associated `ICommand` then it won't be draggable in the first place.
 
-To add support for dropping an object with an existing `ICommand` you should cast `cmd` and return an appropriate `ICommandExecution`.
+To add support for dropping an object with an existing `ICombineable` you should cast `cmd` and return an appropriate `ICommandExecution`.
 
 ```csharp
-public override ICommandExecution ProposeExecution(ICommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+public override ICommandExecution ProposeExecution(ICombineable cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
 {
 	var sourceCatalogueCommand = cmd as CatalogueCommand;
 	
@@ -114,12 +114,12 @@ You can create your own `ICommandExecution` implementations by [following this t
 
 # Drag
 
-`RDMPCommandFactory` is responsible for creating `ICommand` objects at the start of a drag operation (including files etc from the OS).  Most objects will have a 1 to 1 mapping with an `ICommand` e.g `CatalogueCommand` is a wrapper for a `Catalogue`.  The `ICommand` is responsible for doing expensive fact gathering at the start of a drag operation.
+`RDMPCommandFactory` is responsible for creating `ICombineable` objects at the start of a drag operation (including files etc from the OS).  Most objects will have a 1 to 1 mapping with an `ICommand` e.g `CatalogueCommand` is a wrapper for a `Catalogue`.  The `ICommand` is responsible for doing expensive fact gathering at the start of a drag operation.
 
 If you need to provide drag support for a new object `Type` (e.g. `Pipeline`) first create an appropriate `ICommand` e.g. `PipelineCommand` and then in `RDMPCommandFactory` modify the method `ICommand Create(object modelObject)` to return it given the appropriate modelObject:
 
 ```csharp
-public ICommand Create(object modelObject)
+public ICombineable Create(object modelObject)
 {
 	//Other stuff
 	
@@ -131,12 +131,12 @@ public ICommand Create(object modelObject)
 }
 ```
 
-The `ICommand` could look like this.
+The `ICombineable` could look like this.
 
 ```csharp
 namespace CatalogueManager.Copying.Commands
 {
-    public class PipelineCommand : ICommand
+    public class PipelineCommand : ICombineable
     {
         public Pipeline Pipeline { get; private set; }
         public bool IsEmpty { get; private set; }
@@ -159,4 +159,4 @@ Doing this will allow you to drag the object (when previously you couldn't).  Th
 
 ![CannotDrop](Images/DoubleClickAndDragDrop/CannotDrop.png)
 
-To provide drop targets for the new `ICommand` go to the `RDMPCommandExecutionProposal<T>` of the object `Type` you want to be able to drop on and [provide an implementation of ProposeExecution](#drop)
+To provide drop targets for the new `ICombineable` go to the `RDMPCommandExecutionProposal<T>` of the object `Type` you want to be able to drop on and [provide an implementation of ProposeExecution](#drop)
