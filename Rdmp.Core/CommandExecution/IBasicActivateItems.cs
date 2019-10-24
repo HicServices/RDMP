@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
@@ -52,8 +51,10 @@ namespace Rdmp.Core.CommandExecution
         IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
         DirectoryInfo SelectDirectory(string prompt);
-        
+
         FileInfo SelectFile(string prompt);
+
+        FileInfo SelectFile(string prompt,string patternDescription, string pattern);
         
         /// <summary>
         /// Return all Types of the given {T} which should be <see cref="IMapsDirectlyToDatabaseTable"/>

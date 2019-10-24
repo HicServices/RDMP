@@ -7,20 +7,18 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandAddNewAggregateGraph : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddNewAggregateGraph : BasicCommandExecution,IAtomicCommand
     {
         private readonly Catalogue _catalogue;
 
-        public ExecuteCommandAddNewAggregateGraph(IActivateItems activator, Catalogue catalogue) : base(activator)
+        public ExecuteCommandAddNewAggregateGraph(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
 
@@ -37,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var newAggregate = new AggregateConfiguration(Activator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
+            var newAggregate = new AggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository,_catalogue,"New Aggregate " + Guid.NewGuid());
             Publish(_catalogue);
             Activate(newAggregate);
         }

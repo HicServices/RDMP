@@ -2,13 +2,11 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
@@ -188,7 +186,13 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine(prompt);
             return new DirectoryInfo(Console.ReadLine());
         }
+
         public FileInfo SelectFile(string prompt)
+        {
+            return SelectFile(prompt, null, null);
+        }
+
+        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
             Console.WriteLine(prompt);
             return new FileInfo(Console.ReadLine());

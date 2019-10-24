@@ -7,16 +7,15 @@
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicUICommandExecution
+    public class ExecuteCommandConvertAggregateConfigurationToPatientIndexTable : BasicCommandExecution
     {
         private readonly AggregateConfigurationCombineable _sourceAggregateConfigurationCombineable;
         private readonly CohortIdentificationConfiguration _cohortIdentificationConfiguration;
         
-        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
+        public ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateConfigurationCommand,CohortIdentificationConfiguration cohortIdentificationConfiguration) : base(activator)
         {
             _sourceAggregateConfigurationCombineable = sourceAggregateConfigurationCommand;
             _cohortIdentificationConfiguration = cohortIdentificationConfiguration;
@@ -42,7 +41,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 parent.RemoveChild(sourceAggregate);
 
             //create a new patient index table usage allowance for this aggregate
-            new JoinableCohortAggregateConfiguration(Activator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
+            new JoinableCohortAggregateConfiguration(BasicActivator.RepositoryLocator.CatalogueRepository, _cohortIdentificationConfiguration, sourceAggregate);
             
             Publish(_cohortIdentificationConfiguration);
             Emphasise(sourceAggregate);

@@ -5,19 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandAddCohortSubContainer : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddCohortSubContainer : BasicCommandExecution,IAtomicCommand
     {
         private CohortAggregateContainer _container;
         
-        public ExecuteCommandAddCohortSubContainer(IActivateItems activator, CohortAggregateContainer container):base(activator)
+        public ExecuteCommandAddCohortSubContainer(IBasicActivateItems activator, CohortAggregateContainer container):base(activator)
         {
             this._container = container;
         }
@@ -31,7 +29,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var newContainer = new CohortAggregateContainer(Activator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
+            var newContainer = new CohortAggregateContainer(BasicActivator.RepositoryLocator.CatalogueRepository, SetOperation.UNION);
             _container.AddChild(newContainer);
             Publish(_container);
         }

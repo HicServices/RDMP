@@ -16,7 +16,6 @@ using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.Exceptions;
 using ReusableLibraryCode.Icons.IconProvision;
 
 namespace Rdmp.Core.CommandExecution
@@ -299,5 +298,8 @@ namespace Rdmp.Core.CommandExecution
             return BasicActivator.SelectTable(allowDatabaseCreation, taskDescription);
         }
 
+        protected virtual void Activate(DatabaseEntity o)
+        {
+        }
     }
 }

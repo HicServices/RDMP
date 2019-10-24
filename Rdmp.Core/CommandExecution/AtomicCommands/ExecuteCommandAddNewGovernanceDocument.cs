@@ -4,28 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Governance;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandAddNewGovernanceDocument : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddNewGovernanceDocument : BasicCommandExecution,IAtomicCommand
     {
         private readonly GovernancePeriod _period;
         private FileInfo _file;
 
-        public ExecuteCommandAddNewGovernanceDocument(IActivateItems activator,GovernancePeriod period) : base(activator)
+        public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator,GovernancePeriod period) : base(activator)
         {
             _period = period;
         }
 
-        public ExecuteCommandAddNewGovernanceDocument(IActivateItems activator, GovernancePeriod period,FileInfo file): base(activator)
+        public ExecuteCommandAddNewGovernanceDocument(IBasicActivateItems activator, GovernancePeriod period,FileInfo file): base(activator)
         {
             _period = period;
             _file = file;
@@ -35,17 +33,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            if (_file == null)
-            {
-                OpenFileDialog ofd = new OpenFileDialog();
-                if(ofd.ShowDialog() == DialogResult.OK)
-                    _file = new FileInfo(ofd.FileName);
-            }
+            if (_file == null) 
+                _file = BasicActivator.SelectFile("Document to add");
 
             if(_file == null)
                 return;
 
-            var doc = new GovernanceDocument(Activator.RepositoryLocator.CatalogueRepository, _period, _file);
+            var doc = new GovernanceDocument(BasicActivator.RepositoryLocator.CatalogueRepository, _period, _file);
             Publish(_period);
             Emphasise(doc);
             Activate(doc);

@@ -6,20 +6,18 @@
 
 using System;
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddNewSupportingSqlTable : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddNewSupportingSqlTable : BasicCommandExecution,IAtomicCommand
     {
         private readonly Catalogue _catalogue;
 
-        public ExecuteCommandAddNewSupportingSqlTable(IActivateItems activator, Catalogue catalogue) : base(activator)
+        public ExecuteCommandAddNewSupportingSqlTable(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
         }

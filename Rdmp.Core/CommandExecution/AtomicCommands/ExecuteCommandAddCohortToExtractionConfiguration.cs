@@ -7,16 +7,15 @@
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddCohortToExtractionConfiguration : BasicUICommandExecution
+    public class ExecuteCommandAddCohortToExtractionConfiguration : BasicCommandExecution
     {
         private readonly ExtractableCohortCombineable _sourceExtractableCohortComand;
         private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
-        public ExecuteCommandAddCohortToExtractionConfiguration(IActivateItems activator, ExtractableCohortCombineable sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
+        public ExecuteCommandAddCohortToExtractionConfiguration(IBasicActivateItems activator, ExtractableCohortCombineable sourceExtractableCohortComand, ExtractionConfiguration targetExtractionConfiguration) : base(activator)
         {
             _sourceExtractableCohortComand = sourceExtractableCohortComand;
             _targetExtractionConfiguration = targetExtractionConfiguration;

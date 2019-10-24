@@ -9,29 +9,26 @@ using System.Collections.Generic;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddNewSupportingDocument : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddNewSupportingDocument : BasicCommandExecution,IAtomicCommand
     {
         private readonly FileCollectionCombineable _fileCollectionCombineable;
         private readonly Catalogue _targetCatalogue;
 
         [UseWithObjectConstructor]
-        public ExecuteCommandAddNewSupportingDocument(IActivateItems activator, Catalogue catalogue) : base(activator)
+        public ExecuteCommandAddNewSupportingDocument(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _targetCatalogue = catalogue;
         }
-        public ExecuteCommandAddNewSupportingDocument(IActivateItems activator, FileCollectionCombineable fileCollectionCombineable, Catalogue targetCatalogue): base(activator)
+        public ExecuteCommandAddNewSupportingDocument(IBasicActivateItems activator, FileCollectionCombineable fileCollectionCombineable, Catalogue targetCatalogue): base(activator)
         {
             _fileCollectionCombineable = fileCollectionCombineable;
             _targetCatalogue = targetCatalogue;
@@ -60,19 +57,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            FileInfo[] files = null;
-
-            if (_fileCollectionCombineable != null)
-                files = _fileCollectionCombineable.Files;
-            else
-            {
-                OpenFileDialog fileDialog = new OpenFileDialog();
-                fileDialog.Multiselect = true;
-                if (fileDialog.ShowDialog() == DialogResult.OK)
-                    files = fileDialog.FileNames.Select(f => new FileInfo(f)).Where(fi => fi.Exists).ToArray();
-                else
-                    return;
-            }
+            var files = _fileCollectionCombineable != null ? _fileCollectionCombineable.Files : new[] {BasicActivator.SelectFile("File to add")};
 
             List<SupportingDocument> created = new List<SupportingDocument>();
             foreach (var f in files)

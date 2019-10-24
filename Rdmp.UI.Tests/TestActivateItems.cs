@@ -291,6 +291,11 @@ namespace Rdmp.UI.Tests
 
         public FileInfo SelectFile(string prompt)
         {
+            return SelectFile(prompt, null, null);
+        }
+
+        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+        {
             throw new NotImplementedException();
         }
 

@@ -8,14 +8,13 @@ using System.Drawing;
 using System.Linq;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddDatasetsToConfiguration : BasicUICommandExecution
+    public class ExecuteCommandAddDatasetsToConfiguration : BasicCommandExecution
     {
         private readonly ExtractionConfiguration _targetExtractionConfiguration;
 
@@ -27,19 +26,19 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         /// </summary>
         private bool _userMustPick;
 
-        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems activator,ExtractableDataSetCombineable sourceExtractableDataSetCombineable, ExtractionConfiguration targetExtractionConfiguration) 
+        public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems activator,ExtractableDataSetCombineable sourceExtractableDataSetCombineable, ExtractionConfiguration targetExtractionConfiguration) 
             : this(activator,targetExtractionConfiguration)
         {
             SetExtractableDataSets(false,sourceExtractableDataSetCombineable.ExtractableDataSets);
         }
 
-        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
+        public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator, ExtractableDataSet extractableDataSet, ExtractionConfiguration targetExtractionConfiguration)
             : this(itemActivator,targetExtractionConfiguration)
         {
             SetExtractableDataSets(false, extractableDataSet);
         }
 
-        public ExecuteCommandAddDatasetsToConfiguration(IActivateItems itemActivator, ExtractionConfiguration targetExtractionConfiguration):base(itemActivator)
+        public ExecuteCommandAddDatasetsToConfiguration(IBasicActivateItems itemActivator, ExtractionConfiguration targetExtractionConfiguration):base(itemActivator)
         {
             _targetExtractionConfiguration = targetExtractionConfiguration;
 

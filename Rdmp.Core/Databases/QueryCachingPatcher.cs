@@ -6,10 +6,8 @@
 
 using System;
 using System.Collections.Generic;
-using FAnsi;
 using FAnsi.Discovery;
 using FAnsi.Discovery.QuerySyntax;
-using FAnsi.Implementation;
 using MapsDirectlyToDatabaseTable.Versioning;
 using TypeGuesser;
 

@@ -8,6 +8,7 @@ using System.Drawing;
 using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;

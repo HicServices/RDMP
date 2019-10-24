@@ -15,7 +15,6 @@ using FAnsi.Discovery;
 using FAnsi.Extensions;
 using Rdmp.Core.DataFlowPipeline.Requirements;
 using Rdmp.Core.DataLoad.Modules.Exceptions;
-using ReusableLibraryCode.Extensions;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.DataLoad.Modules.DataFlowSources.SubComponents

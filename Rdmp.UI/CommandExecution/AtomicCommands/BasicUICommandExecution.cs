@@ -33,7 +33,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             Activator = activator;
         }
 
-        protected void Activate(DatabaseEntity o)
+        protected override void Activate(DatabaseEntity o)
         {
             var cmd = new ExecuteCommandActivate(Activator, o);
             cmd.Execute();

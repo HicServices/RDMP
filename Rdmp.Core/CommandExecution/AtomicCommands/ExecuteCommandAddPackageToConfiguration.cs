@@ -4,24 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandAddPackageToConfiguration : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandAddPackageToConfiguration : BasicCommandExecution, IAtomicCommand
     {
         private ExtractionConfiguration _extractionConfiguration;
         private ExtractableDataSetPackage[] _packages;
 
-        public ExecuteCommandAddPackageToConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
+        public ExecuteCommandAddPackageToConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
         {
             this._extractionConfiguration = extractionConfiguration;
 
@@ -44,7 +43,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             if(SelectOne(_packages,out ExtractableDataSetPackage package))
-                new ExecuteCommandAddDatasetsToConfiguration(Activator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
+                new ExecuteCommandAddDatasetsToConfiguration(BasicActivator, new ExtractableDataSetCombineable(package), _extractionConfiguration).Execute();
         }
 
         public override Image GetImage(IIconProvider iconProvider)

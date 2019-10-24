@@ -7,11 +7,9 @@
 using System;
 using System.Data;
 using System.Data.Common;
-using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using FAnsi.Discovery;
-using Rdmp.Core.QueryBuilding;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution

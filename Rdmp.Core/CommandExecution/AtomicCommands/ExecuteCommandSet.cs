@@ -1,5 +1,4 @@
-﻿using System;
-using MapsDirectlyToDatabaseTable;
+﻿using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands

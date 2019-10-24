@@ -8,28 +8,25 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddNewCatalogueItem : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddNewCatalogueItem : BasicCommandExecution,IAtomicCommand
     {
         private Catalogue _catalogue;
         private ColumnInfo[] _columnInfos;
         private HashSet<int> _existingColumnInfos;
 
-        public ExecuteCommandAddNewCatalogueItem(IActivateItems activator, Catalogue catalogue,ColumnInfoCombineable colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
+        public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,ColumnInfoCombineable colInfo) : this(activator,catalogue,colInfo.ColumnInfos)
         {
             
         }
 
-        public ExecuteCommandAddNewCatalogueItem(IActivateItems activator, Catalogue catalogue,params ColumnInfo[] columnInfos) : base(activator)
+        public ExecuteCommandAddNewCatalogueItem(IBasicActivateItems activator, Catalogue catalogue,params ColumnInfo[] columnInfos) : base(activator)
         {
             _catalogue = catalogue;
 
@@ -54,18 +51,18 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             //if we have not got an explicit one to import let the user pick one
             if (_columnInfos.Length == 0)
             {
-                MessageBox.Show("Select which column the new CatalogueItem will describe/extract", "Choose underlying Column");
+                Show("Select which column the new CatalogueItem will describe/extract", "Choose underlying Column");
 
                 ColumnInfo columnInfo;
                 string text;
 
                 //get them to pick a column info
-                SelectOne(Activator.CoreChildProvider.AllColumnInfos,out columnInfo);
+                SelectOne(BasicActivator.CoreChildProvider.AllColumnInfos,out columnInfo);
                                                
                 //get them to type a name for it (based on the ColumnInfo if picked)
                 if(TypeText("Name", "Type a name for the new CatalogueItem", 500,columnInfo?.GetRuntimeName(),out text))
                 {
-                    var ci = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
+                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, "New CatalogueItem " + Guid.NewGuid());
                     ci.Name = text;
 
                     //set the associated column if they did pick it
@@ -85,7 +82,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     if(AlreadyInCatalogue(columnInfo))
                         continue;
 
-                    var ci = new CatalogueItem(Activator.RepositoryLocator.CatalogueRepository, _catalogue, columnInfo.Name);
+                    var ci = new CatalogueItem(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogue, columnInfo.Name);
                     ci.SetColumnInfo(columnInfo);
                     ci.SaveToDatabase();
                 }

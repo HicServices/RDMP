@@ -665,7 +665,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public FileInfo SelectFile(string prompt)
         {
+            return SelectFile(prompt, null, null);
+        }
+
+        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+        {
             var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+
+            if (patternDescription != null && pattern != null)
+                fb.Filter = patternDescription + "|" + pattern;
 
             if (fb.ShowDialog() == DialogResult.OK)
                 return new FileInfo(fb.FileName);

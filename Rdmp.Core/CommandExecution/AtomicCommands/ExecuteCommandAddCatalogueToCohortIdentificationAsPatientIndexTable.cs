@@ -4,28 +4,27 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
+using Rdmp.Core.Icons.IconProvision;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable : BasicCommandExecution,IAtomicCommand
     {
         private readonly CohortIdentificationConfiguration _configuration;
         private CatalogueCombineable _catalogue;
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator, CohortIdentificationConfiguration configuration) : base(activator)
+        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator, CohortIdentificationConfiguration configuration) : base(activator)
         {
             _configuration = configuration;
         }
 
-        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IActivateItems activator,CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
+        public ExecuteCommandAddCatalogueToCohortIdentificationAsPatientIndexTable(IBasicActivateItems activator,CatalogueCombineable catalogue, CohortIdentificationConfiguration configuration):this(activator,configuration)
         {
             _catalogue = catalogue;
             if(!_catalogue.ContainsAtLeastOneExtractionIdentifier)
@@ -44,15 +43,15 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (_catalogue == null)
             {
                 Catalogue cata;
-                if(!SelectOne(Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out cata))
+                if(!SelectOne(BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<Catalogue>(), out cata))
                     return;
                 
                 _catalogue = new CatalogueCombineable(cata);
             }
             
-            AggregateConfigurationCombineable aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(Activator,_configuration);
+            AggregateConfigurationCombineable aggregateCommand = _catalogue.GenerateAggregateConfigurationFor(BasicActivator,_configuration);
 
-            var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(Activator, aggregateCommand, _configuration);
+            var joinableCommandExecution = new ExecuteCommandConvertAggregateConfigurationToPatientIndexTable(BasicActivator, aggregateCommand, _configuration);
             joinableCommandExecution.Execute();
         }
 
