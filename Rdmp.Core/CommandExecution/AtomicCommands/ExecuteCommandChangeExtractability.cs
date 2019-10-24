@@ -4,28 +4,26 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandChangeExtractability:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandChangeExtractability:BasicCommandExecution,IAtomicCommand
     {
         private readonly Catalogue _catalogue;
         private bool _isExtractable;
 
-        public ExecuteCommandChangeExtractability(IActivateItems activator, Catalogue catalogue) : base(activator)
+        public ExecuteCommandChangeExtractability(IBasicActivateItems activator, Catalogue catalogue) : base(activator)
         {
             _catalogue = catalogue;
-            var status = catalogue.GetExtractabilityStatus(activator.RepositoryLocator.DataExportRepository);
+            var status = catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
             if (status == null)
             {
                 SetImpossible("We don't know whether Catalogue is extractable or not (possibly no Data Export database is available)");
@@ -66,13 +64,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if (_isExtractable)
             {
-                var extractabilityRecord = ((DataExportChildProvider) Activator.CoreChildProvider).ExtractableDataSets.Single(ds => ds.Catalogue_ID == _catalogue.ID);
+                var extractabilityRecord = ((DataExportChildProvider)BasicActivator.CoreChildProvider).ExtractableDataSets.Single(ds => ds.Catalogue_ID == _catalogue.ID);
                 extractabilityRecord.DeleteInDatabase();
                 Publish(_catalogue);
             }
             else
             {
-                 new ExtractableDataSet(Activator.RepositoryLocator.DataExportRepository, _catalogue);
+                 new ExtractableDataSet(BasicActivator.RepositoryLocator.DataExportRepository, _catalogue);
                 Publish(_catalogue);
 
             }

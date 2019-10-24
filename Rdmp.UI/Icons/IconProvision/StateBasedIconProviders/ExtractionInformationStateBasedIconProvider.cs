@@ -22,6 +22,7 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
         private Bitmap _extractionInformation_Deprecated;
         private Bitmap _extractionInformation_ProjectSpecific;
         private IconOverlayProvider _overlayProvider;
+        private Bitmap _noIconAvailable;
 
         public ExtractionInformationStateBasedIconProvider()
         {
@@ -32,6 +33,8 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
             _overlayProvider = new IconOverlayProvider();
             _extractionInformation_InternalOnly = _overlayProvider.GetOverlayNoCache(_extractionInformation_SpecialApproval, OverlayKind.Internal);
             _extractionInformation_Deprecated = _overlayProvider.GetOverlayNoCache(_extractionInformation_Core,OverlayKind.Deprecated);
+
+            _noIconAvailable = CatalogueIcons.NoIconAvailable;
         }
         
         public Bitmap GetImageIfSupportedObject(object o)
@@ -70,6 +73,8 @@ namespace Rdmp.UI.Icons.IconProvision.StateBasedIconProviders
                     return _extractionInformation_Deprecated;
                 case ExtractionCategory.ProjectSpecific:
                     return _extractionInformation_ProjectSpecific;
+                case ExtractionCategory.Any:
+                    return _noIconAvailable;
                 default:
                     throw new ArgumentOutOfRangeException();//.Any is not valid for ExtractionInformations
             }

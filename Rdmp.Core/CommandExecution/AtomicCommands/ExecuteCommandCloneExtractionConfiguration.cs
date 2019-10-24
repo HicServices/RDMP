@@ -7,23 +7,18 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandCloneExtractionConfiguration : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCloneExtractionConfiguration : BasicCommandExecution,IAtomicCommand
     {
         private readonly ExtractionConfiguration _extractionConfiguration;
 
-        public ExecuteCommandCloneExtractionConfiguration(IActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
+        public ExecuteCommandCloneExtractionConfiguration(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration) : base(activator)
         {
             _extractionConfiguration = extractionConfiguration;
 
@@ -45,17 +40,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            try
-            {
-                var clone = _extractionConfiguration.DeepCloneWithNewIDs();
-                
-                Publish((DatabaseEntity)clone.Project);
-                Emphasise(clone,int.MaxValue);
-            }
-            catch (Exception exception)
-            {
-                ExceptionViewer.Show(exception);
-            }
+            var clone = _extractionConfiguration.DeepCloneWithNewIDs();
+            
+            Publish((DatabaseEntity)clone.Project);
+            Emphasise(clone,int.MaxValue);
         }
     }
 }

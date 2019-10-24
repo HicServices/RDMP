@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
@@ -18,6 +19,8 @@ namespace Rdmp.Core.CommandExecution
         /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
         /// </summary>
         ICoreChildProvider CoreChildProvider { get; }
+
+        IServerDefaults ServerDefaults { get; }
 
         /// <summary>
         /// Returns a dictionary of methods to call for each type of constructor parameter needed.  If no Type

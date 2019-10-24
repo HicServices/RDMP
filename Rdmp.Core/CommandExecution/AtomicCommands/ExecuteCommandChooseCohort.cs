@@ -4,28 +4,24 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandChooseCohort : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandChooseCohort : BasicCommandExecution,IAtomicCommand
     {
         private readonly ExtractionConfiguration _extractionConfiguration;
         private DataExportChildProvider _childProvider;
         List<ExtractableCohort> _compatibleCohorts = new List<ExtractableCohort>();
 
-        public ExecuteCommandChooseCohort(IActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
+        public ExecuteCommandChooseCohort(IBasicActivateItems activator, ExtractionConfiguration extractionConfiguration):base(activator)
         {
             _extractionConfiguration = extractionConfiguration;
 
@@ -43,7 +39,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 return;
             }
 
-            _childProvider = Activator.CoreChildProvider as DataExportChildProvider;
+            _childProvider = BasicActivator.CoreChildProvider as DataExportChildProvider;
 
             if (_childProvider == null)
             {
@@ -71,13 +67,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID), false, false);
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (SelectOne(_compatibleCohorts.Where(c => c.ID != _extractionConfiguration.Cohort_ID).ToList(), out ExtractableCohort selected))
             {
                 //clear current one
-                _extractionConfiguration.Cohort_ID = ((ExtractableCohort)dialog.Selected).ID;
+                _extractionConfiguration.Cohort_ID = selected.ID;
                 _extractionConfiguration.SaveToDatabase();
                 Publish(_extractionConfiguration);
             }

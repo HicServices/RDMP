@@ -5,25 +5,19 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    class ExecuteCommandChangeExtractionCategory : BasicUICommandExecution
+    public class ExecuteCommandChangeExtractionCategory : BasicCommandExecution
     {
         ExtractionInformation[] _extractionInformations;
         
-        public ExecuteCommandChangeExtractionCategory(IActivateItems activator,params ExtractionInformation[] eis) : base(activator)
+        public ExecuteCommandChangeExtractionCategory(IBasicActivateItems activator,params ExtractionInformation[] eis) : base(activator)
         {
             eis = (eis??new ExtractionInformation[0]).Where(e => e != null).ToArray();
 
@@ -50,21 +44,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var dlg = new SimpleDialogs.PickOneOrCancelDialog<ExtractionCategory>(
-                Enum.GetValues(typeof(ExtractionCategory))
-                    .OfType<ExtractionCategory>()
-                    .Where(v=>v!= ExtractionCategory.Any).ToArray(),
-                "New Extraction Category",
-                (o)=>Activator.CoreIconProvider.GetImage(o),
-                null
-                );
-
-
-            if(dlg.ShowDialog() == System.Windows.Forms.DialogResult.OK)
+            var category = BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory));
+            
+            if(category != null)
             {
                 foreach (var ei in _extractionInformations)
                 {
-                    ei.ExtractionCategory = dlg.Picked;
+                    ei.ExtractionCategory = (ExtractionCategory) category;
                     ei.SaveToDatabase();
                 }
             }

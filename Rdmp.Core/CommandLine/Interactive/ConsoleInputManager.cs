@@ -9,6 +9,7 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode;
@@ -24,6 +25,8 @@ namespace Rdmp.Core.CommandLine.Interactive
         /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; private set; }
 
+        public IServerDefaults ServerDefaults { get; }
+
         public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
         
 
@@ -35,6 +38,8 @@ namespace Rdmp.Core.CommandLine.Interactive
             GlobalErrorCheckNotifier = globalErrorCheckNotifier;
 
             RefreshChildProvider();
+
+            ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
 
         }
         public void Publish(DatabaseEntity databaseEntity)

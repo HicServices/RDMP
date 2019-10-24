@@ -42,8 +42,6 @@ namespace Rdmp.UI.ItemActivation
     {
         ITheme Theme { get; }
 
-        IServerDefaults ServerDefaults { get; }
-
         /// <summary>
         /// Component for publishing the fact that an object has recently been put out of date by you.
         /// </summary>

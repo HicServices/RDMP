@@ -4,31 +4,29 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject:BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandAssociateCohortIdentificationConfigurationWithProject:BasicCommandExecution,IAtomicCommandWithTarget
     {
         private Project _project;
         private CohortIdentificationConfiguration _cic;
         private ProjectCohortIdentificationConfigurationAssociation[] _existingAssociations;
 
-        public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IActivateItems activator) : base(activator)
+        public ExecuteCommandAssociateCohortIdentificationConfigurationWithProject(IBasicActivateItems activator) : base(activator)
         {
             if(!activator.CoreChildProvider.AllCohortIdentificationConfigurations.Any())
                 SetImpossible("There are no Cohort Identification Configurations yet");
 
-            _existingAssociations = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
+            _existingAssociations = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<ProjectCohortIdentificationConfigurationAssociation>();
         }
 
         public override string GetCommandHelp()
@@ -41,7 +39,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if(_project == null)
             {
                 //project is not known so get all projects 
-                var valid = Activator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
+                var valid = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjects<Project>();
 
                 //except if the cic is the launch point
                 if (_cic != null)
@@ -63,7 +61,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             {
                 //cic is not known (but project is thanks to above block)
                 var valid =
-                    Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
+                    BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<CohortIdentificationConfiguration>();
                 
                 //allow them to select any cic where it does not already belong to the project
                 valid =
@@ -83,7 +81,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             base.Execute();
 
-            var assoc = new ProjectCohortIdentificationConfigurationAssociation(Activator.RepositoryLocator.DataExportRepository,_project, _cic);
+            var assoc = new ProjectCohortIdentificationConfigurationAssociation(BasicActivator.RepositoryLocator.DataExportRepository,_project, _cic);
             
             Publish(_project);
             Publish(_cic);

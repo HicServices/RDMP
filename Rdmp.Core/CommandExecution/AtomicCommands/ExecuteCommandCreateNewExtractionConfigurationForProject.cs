@@ -5,20 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewExtractionConfigurationForProject:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewExtractionConfigurationForProject:BasicCommandExecution,IAtomicCommand
     {
         private readonly Project _project;
 
-        public ExecuteCommandCreateNewExtractionConfigurationForProject(IActivateItems activator,Project project) : base(activator)
+        public ExecuteCommandCreateNewExtractionConfigurationForProject(IBasicActivateItems activator,Project project) : base(activator)
         {
             _project = project;
         }
@@ -37,7 +34,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var newConfig = new ExtractionConfiguration(Activator.RepositoryLocator.DataExportRepository, _project);
+            var newConfig = new ExtractionConfiguration(BasicActivator.RepositoryLocator.DataExportRepository, _project);
 
             //refresh the project
             Publish(_project);

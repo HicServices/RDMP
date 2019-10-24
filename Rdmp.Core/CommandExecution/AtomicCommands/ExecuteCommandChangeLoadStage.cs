@@ -7,16 +7,15 @@
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandChangeLoadStage : BasicUICommandExecution
+    public class ExecuteCommandChangeLoadStage : BasicCommandExecution
     {
         private readonly ProcessTask _sourceProcessTask;
         private readonly LoadStageNode _targetStage;
 
-        public ExecuteCommandChangeLoadStage(IActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
+        public ExecuteCommandChangeLoadStage(IBasicActivateItems activator, ProcessTaskCombineable sourceProcessTaskCombineable, LoadStageNode targetStage) : base(activator)
         {
             _sourceProcessTask = sourceProcessTaskCombineable.ProcessTask;
             _targetStage = targetStage;

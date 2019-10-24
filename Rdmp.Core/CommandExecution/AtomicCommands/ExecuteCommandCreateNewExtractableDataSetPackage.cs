@@ -5,23 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewExtractableDataSetPackage:BasicCommandExecution,IAtomicCommand
     {
-        public ExecuteCommandCreateNewExtractableDataSetPackage(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewExtractableDataSetPackage(IBasicActivateItems activator) : base(activator)
         {
-            if(Activator.RepositoryLocator.DataExportRepository == null)
+            if(BasicActivator.RepositoryLocator.DataExportRepository == null)
                 SetImpossible("Data export database is not setup");
 
             UseTripleDotSuffix = true;
@@ -35,10 +29,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-            var dialog = new TypeTextOrCancelDialog("Name for package", "Name", 500);
-            if (dialog.ShowDialog() == DialogResult.OK)
+            
+            if (TypeText("Name for package", "Name", 500, null, out string name))
             {
-                var p = new ExtractableDataSetPackage(Activator.RepositoryLocator.DataExportRepository, dialog.ResultText);
+                var p = new ExtractableDataSetPackage(BasicActivator.RepositoryLocator.DataExportRepository, name);
                 Publish(p);
             }
         }

@@ -16,6 +16,7 @@ using System.Windows.Forms;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -695,6 +696,20 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public object SelectValueType(string prompt, Type paramType)
         {
+            //if it's Enum or Enum?
+            if((Nullable.GetUnderlyingType(paramType) ??paramType).IsEnum)
+            {
+                var dlg = new PickOneOrCancelDialog<Enum>(
+                    Enum.GetValues(paramType).Cast<Enum>().ToArray(),
+                    prompt,
+                    (o) => CoreIconProvider.GetImage(o),
+                    null
+                );
+
+                return dlg.ShowDialog() == DialogResult.OK ? dlg.Picked : null;
+            }
+
+            //whatever else it is use string
             var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000);
 
             if (typeTextDialog.ShowDialog() == DialogResult.OK)

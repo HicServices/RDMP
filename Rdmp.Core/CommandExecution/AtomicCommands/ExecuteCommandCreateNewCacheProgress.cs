@@ -5,21 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewCacheProgress : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewCacheProgress : BasicCommandExecution,IAtomicCommand
     {
         private readonly LoadProgress _loadProgress;
 
-        public ExecuteCommandCreateNewCacheProgress(IActivateItems activator, LoadProgress loadProgress) : base(activator)
+        public ExecuteCommandCreateNewCacheProgress(IBasicActivateItems activator, LoadProgress loadProgress) : base(activator)
         {
             _loadProgress = loadProgress;
 
@@ -37,7 +34,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             // If the LoadProgress doesn't have a corresponding CacheProgress, create it
-            var cp = new CacheProgress(Activator.RepositoryLocator.CatalogueRepository, _loadProgress);
+            var cp = new CacheProgress(BasicActivator.RepositoryLocator.CatalogueRepository, _loadProgress);
             
             Publish(_loadProgress);
             Emphasise(cp);

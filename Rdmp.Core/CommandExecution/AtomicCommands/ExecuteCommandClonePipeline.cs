@@ -5,20 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandClonePipeline : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandClonePipeline : BasicCommandExecution, IAtomicCommand
     {
         private readonly Pipeline _pipeline;
 
-        public ExecuteCommandClonePipeline(IActivateItems activator, Pipeline pipeline)
+        public ExecuteCommandClonePipeline(IBasicActivateItems activator, Pipeline pipeline)
             : base(activator)
         {
             _pipeline = pipeline;

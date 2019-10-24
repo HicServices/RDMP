@@ -4,32 +4,27 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
 
-using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicUICommandExecution, IAtomicCommandWithTarget
+    public class ExecuteCommandCloneCohortIdentificationConfiguration : BasicCommandExecution, IAtomicCommandWithTarget
     {
-        private readonly IActivateItems activator;
         private CohortIdentificationConfiguration _cic;
         private Project _project;
 
         [UseWithObjectConstructor]
-        public ExecuteCommandCloneCohortIdentificationConfiguration(IActivateItems activator,CohortIdentificationConfiguration cic)
+        public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator,CohortIdentificationConfiguration cic)
             : base(activator)
         {
-            this.activator = activator;
             _cic = cic;
         }
 
@@ -38,9 +33,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Creates an exact copy of the Cohort Identification Configuration (query) including all cohort sets, patient index tables, parameters, filter containers, filters etc";
         }
 
-        public ExecuteCommandCloneCohortIdentificationConfiguration(IActivateItems activator) : base(activator)
+        public ExecuteCommandCloneCohortIdentificationConfiguration(IBasicActivateItems activator) : base(activator)
         {
-            this.activator = activator;
         }
 
         public override Image GetImage(IIconProvider iconProvider)
@@ -64,7 +58,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             if (_cic == null)
-                _cic = SelectOne<CohortIdentificationConfiguration>(activator.RepositoryLocator.CatalogueRepository);
+                _cic = SelectOne<CohortIdentificationConfiguration>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
             if(_cic == null)
                 return;
@@ -73,12 +67,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                     "filters, parameters and set operations. Are you sure this is what you want?",
                     "Confirm Cloning"))
             {
-                var checks = new PopupChecksUI("Cloning " + _cic, false);
-                var clone = _cic.CreateClone(checks);
+                
+                var clone = _cic.CreateClone(new ThrowImmediatelyCheckNotifier());
 
                 if (_project != null) // clone the association
                     new ProjectCohortIdentificationConfigurationAssociation(
-                                    Activator.RepositoryLocator.DataExportRepository,
+                                    BasicActivator.RepositoryLocator.DataExportRepository,
                                     _project,
                                     clone);
 

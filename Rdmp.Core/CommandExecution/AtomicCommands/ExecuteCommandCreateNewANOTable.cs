@@ -4,28 +4,23 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Drawing;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewANOTable : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandCreateNewANOTable : BasicCommandExecution,IAtomicCommand
     {
         private IExternalDatabaseServer _anoStoreServer;
 
-        public ExecuteCommandCreateNewANOTable(IActivateItems activator) : base(activator)
+        public ExecuteCommandCreateNewANOTable(IBasicActivateItems activator) : base(activator)
         {
-            _anoStoreServer = Activator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
+            _anoStoreServer = BasicActivator.ServerDefaults.GetDefaultFor(PermissableDefaults.ANOStore);
 
             if(_anoStoreServer == null)
                 SetImpossible("No default ANOStore has been set");
@@ -45,20 +40,16 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var name = new TypeTextOrCancelDialog("ANO Concept Name", "Name", 500,"ANOConceptName");
-            if (name.ShowDialog() == DialogResult.OK)
+            if(TypeText("ANO Concept Name","Name",500,null, out string name))
             {
-                var suffix = new TypeTextOrCancelDialog("Type Concept Suffix", "Suffix", 5, "_X");
-                if (suffix.ShowDialog() == DialogResult.OK)
+                if(TypeText("Type Concept Suffix", "Suffix", 5, null, out string suffix))
                 {
-                    var n = name.ResultText;
+                    if(!name.StartsWith("ANO"))
+                        name = "ANO" + name;
 
-                    if(!n.StartsWith("ANO"))
-                        n = "ANO" + n;
+                    var s = suffix.Trim('_');
 
-                    var s = suffix.ResultText.Trim('_');
-
-                    var anoTable = new ANOTable(Activator.RepositoryLocator.CatalogueRepository, (ExternalDatabaseServer) _anoStoreServer,n,s);
+                    var anoTable = new ANOTable(BasicActivator.RepositoryLocator.CatalogueRepository, (ExternalDatabaseServer) _anoStoreServer,name,s);
                     Publish(anoTable);
                     Activate(anoTable);
                 }
