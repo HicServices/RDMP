@@ -11,6 +11,7 @@ using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CohortCreation.Execution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;

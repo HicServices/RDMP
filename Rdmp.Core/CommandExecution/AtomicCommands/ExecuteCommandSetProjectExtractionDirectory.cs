@@ -5,21 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandSetProjectExtractionDirectory : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandSetProjectExtractionDirectory : BasicCommandExecution,IAtomicCommand
     {
         private readonly Project _project;
 
-        public ExecuteCommandSetProjectExtractionDirectory(IActivateItems activator, Project project) : base(activator)
+        public ExecuteCommandSetProjectExtractionDirectory(IBasicActivateItems activator, Project project) : base(activator)
         {
             _project = project;
         }
@@ -32,17 +28,15 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
+            
+            var dir = BasicActivator.SelectDirectory("Extraction Directory");
 
-            using (var ofd = new FolderBrowserDialog())
+            if (dir != null)
             {
-                if (ofd.ShowDialog() == DialogResult.OK)
-                {
-                    _project.ExtractionDirectory = ofd.SelectedPath;
-                    _project.SaveToDatabase();
-                    Publish(_project);
-                }
+                _project.ExtractionDirectory = dir.FullName;
+                _project.SaveToDatabase();
+                Publish(_project);
             }
-
         }
 
         public override Image GetImage(IIconProvider iconProvider)

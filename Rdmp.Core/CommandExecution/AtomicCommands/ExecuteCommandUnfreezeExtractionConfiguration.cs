@@ -5,20 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandUnfreezeExtractionConfiguration:BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandUnfreezeExtractionConfiguration:BasicCommandExecution,IAtomicCommand
     {
         private readonly ExtractionConfiguration _configuration;
 
-        public ExecuteCommandUnfreezeExtractionConfiguration(IActivateItems activator, ExtractionConfiguration configuration):base(activator)
+        public ExecuteCommandUnfreezeExtractionConfiguration(IBasicActivateItems activator, ExtractionConfiguration configuration):base(activator)
         {
             _configuration = configuration;
 

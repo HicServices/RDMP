@@ -7,29 +7,26 @@
 using System;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories.Construction;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandMakeCatalogueProjectSpecific : BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandMakeCatalogueProjectSpecific : BasicCommandExecution,IAtomicCommandWithTarget
     {
         private Catalogue _catalogue;
         private Project _project;
 
         [UseWithObjectConstructor]
-        public ExecuteCommandMakeCatalogueProjectSpecific(IActivateItems itemActivator,Catalogue catalogue, Project project):this(itemActivator)
+        public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator,Catalogue catalogue, Project project):this(itemActivator)
         {
             SetCatalogue(catalogue);
             _project = project;
         }
-        public ExecuteCommandMakeCatalogueProjectSpecific(IActivateItems itemActivator): base(itemActivator)
+        public ExecuteCommandMakeCatalogueProjectSpecific(IBasicActivateItems itemActivator): base(itemActivator)
         {
             UseTripleDotSuffix = true;
         }
@@ -42,17 +39,17 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             if(_catalogue == null) 
-                SetCatalogue(SelectOne<Catalogue>(Activator.RepositoryLocator.CatalogueRepository));
+                SetCatalogue(SelectOne<Catalogue>(BasicActivator.RepositoryLocator.CatalogueRepository));
 
             if(_project == null)
-                _project = SelectOne<Project>(Activator.RepositoryLocator.DataExportRepository);
+                _project = SelectOne<Project>(BasicActivator.RepositoryLocator.DataExportRepository);
 
             if(_project == null || _catalogue == null)
                 return;
             
             base.Execute();
 
-            var eds = Activator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
+            var eds = BasicActivator.RepositoryLocator.DataExportRepository.GetAllObjectsWithParent<ExtractableDataSet>(_catalogue).SingleOrDefault();
             
             IExtractionConfiguration alreadyInConfiguration = eds.ExtractionConfigurations.FirstOrDefault(ec => ec.Project_ID != _project.ID);
 
@@ -98,7 +95,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 return;
             }
 
-            var status = _catalogue.GetExtractabilityStatus(Activator.RepositoryLocator.DataExportRepository);
+            var status = _catalogue.GetExtractabilityStatus(BasicActivator.RepositoryLocator.DataExportRepository);
 
             if (status.IsProjectSpecific)
                 SetImpossible("Catalogue is already Project Specific");

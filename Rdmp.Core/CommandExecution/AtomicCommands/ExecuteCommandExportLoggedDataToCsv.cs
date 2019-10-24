@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         public ExecuteCommandExportLoggedDataToCsv(IBasicActivateItems activator, LogViewerFilter filter) : base(activator)
         {
             _filter = filter ?? new LogViewerFilter(LoggingTables.DataLoadTask);
-            _loggingServers = activator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
+            _loggingServers = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllDatabases<LoggingDatabasePatcher>();
 
             if(!_loggingServers.Any())
                 SetImpossible("There are no logging servers");

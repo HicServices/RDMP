@@ -5,21 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Linq;
-using System.Windows.Forms;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain : BasicUICommandExecution
+    public class ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain : BasicCommandExecution
     {
         private readonly AggregateConfigurationCombineable _sourceAggregateCommand;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
-        public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandMakePatientIndexTableIntoRegularCohortIdentificationSetAgain(IBasicActivateItems activator, AggregateConfigurationCombineable sourceAggregateCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _sourceAggregateCommand = sourceAggregateCommand;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
@@ -39,16 +35,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if(_sourceAggregateCommand.ContainerIfAny != null)
                 _sourceAggregateCommand.ContainerIfAny.RemoveChild(_sourceAggregateCommand.Aggregate);
 
-            var dialog = new YesNoYesToAllDialog();
-
             //remove any non IsExtractionIdentifier columns
             foreach (var dimension in _sourceAggregateCommand.Aggregate.AggregateDimensions)
                 if (!dimension.IsExtractionIdentifier)
-                    if (
-                        dialog.ShowDialog(
+                    if (YesNo(
                             "Changing to a CohortSet means deleting AggregateDimension '" + dimension + "'.  Ok?",
-                            "Delete Aggregate Dimension") ==
-                        DialogResult.Yes)
+                            "Delete Aggregate Dimension"))
                         dimension.DeleteInDatabase();
                     else
                         return;

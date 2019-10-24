@@ -6,26 +6,23 @@
 
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandMakeProjectSpecificCatalogueNormalAgain : BasicCommandExecution,IAtomicCommand
     {
         private Catalogue _catalogue;
         private ExtractableDataSet _extractableDataSet;
 
-        public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IActivateItems activator, Catalogue catalogue):base(activator)
+        public ExecuteCommandMakeProjectSpecificCatalogueNormalAgain(IBasicActivateItems activator, Catalogue catalogue):base(activator)
         {
             _catalogue = catalogue;
 
-            var dataExportRepository = activator.RepositoryLocator.DataExportRepository;
+            var dataExportRepository = BasicActivator.RepositoryLocator.DataExportRepository;
             if (dataExportRepository == null)
             {
                 SetImpossible("Data Export functionality is not available");

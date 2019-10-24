@@ -6,25 +6,20 @@
 
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandOverrideRawServer:BasicUICommandExecution,IAtomicCommand,IAtomicCommandWithTarget
+    public class ExecuteCommandOverrideRawServer:BasicCommandExecution,IAtomicCommand,IAtomicCommandWithTarget
     {
         private readonly LoadMetadata _loadMetadata;
         private ExternalDatabaseServer _server;
         private ExternalDatabaseServer[] _available;
 
-        public ExecuteCommandOverrideRawServer(IActivateItems activator,LoadMetadata loadMetadata) : base(activator)
+        public ExecuteCommandOverrideRawServer(IBasicActivateItems activator,LoadMetadata loadMetadata) : base(activator)
         {
             _loadMetadata = loadMetadata;
             _available =
@@ -40,10 +35,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             if (_server == null)
             {
-                var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_available,true, false);
-
-                if (dialog.ShowDialog() == DialogResult.OK)
-                    _server = dialog.Selected as ExternalDatabaseServer;
+                if (SelectOne(_available,out ExternalDatabaseServer selected))
+                    _server = selected;
                 else
                     return;
             }

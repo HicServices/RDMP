@@ -5,20 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Collections.Generic;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.DataAccess;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandSetDataAccessContextForCredentials : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandSetDataAccessContextForCredentials : BasicCommandExecution, IAtomicCommand
     {
         private DataAccessCredentialUsageNode _node;
         private readonly DataAccessContext _newContext;
 
-        public ExecuteCommandSetDataAccessContextForCredentials(IActivateItems activator, DataAccessCredentialUsageNode node, DataAccessContext newContext, Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials): base(activator)
+        public ExecuteCommandSetDataAccessContextForCredentials(IBasicActivateItems activator, DataAccessCredentialUsageNode node, DataAccessContext newContext, Dictionary<DataAccessContext, DataAccessCredentials> existingCredentials): base(activator)
         {
             _node = node;
             _newContext = newContext;
@@ -53,7 +51,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             if (_node.Context == _newContext)
                 return;
 
-            var linker = Activator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager;
+            var linker = BasicActivator.RepositoryLocator.CatalogueRepository.TableInfoCredentialsManager;
 
             linker.BreakLinkBetween(_node.Credentials, _node.TableInfo, _node.Context);
             linker.CreateLinkBetween(_node.Credentials, _node.TableInfo, _newContext);

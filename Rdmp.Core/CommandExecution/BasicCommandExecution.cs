@@ -159,7 +159,7 @@ namespace Rdmp.Core.CommandExecution
         }
         
         /// <summary>
-        /// Reports a low visibility error to the <see cref="IActivateItems.GlobalErrorCheckNotifier"/>.  Throws <paramref name="ex"/>
+        /// Reports a low visibility error to the <see cref="IBasicActivateItems.GlobalErrorCheckNotifier"/>.  Throws <paramref name="ex"/>
         /// with <paramref name="msg"/> if no global errors handler is registered
         /// </summary>
         /// <param name="msg"></param>

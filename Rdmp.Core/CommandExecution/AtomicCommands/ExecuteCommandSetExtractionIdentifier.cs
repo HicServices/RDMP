@@ -4,24 +4,21 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.Icons.IconProvision;
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
+using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandSetExtractionIdentifier : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandSetExtractionIdentifier : BasicCommandExecution, IAtomicCommand
     {
         private Catalogue _catalogue;
         private ExtractionInformation[] _extractionInformations;
         private ExtractionInformation[] _alreadyMarked;
 
-        public ExecuteCommandSetExtractionIdentifier(IActivateItems activator,Catalogue catalogue):base(activator)
+        public ExecuteCommandSetExtractionIdentifier(IBasicActivateItems activator,Catalogue catalogue):base(activator)
         {
             _catalogue = catalogue;
 

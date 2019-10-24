@@ -5,22 +5,18 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.DataAccess;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandScriptTable : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandScriptTable : BasicCommandExecution,IAtomicCommand
     {
         private readonly TableInfo _tableInfo;
 
-        public ExecuteCommandScriptTable(IActivateItems activator, TableInfo tableInfo):base(activator)
+        public ExecuteCommandScriptTable(IBasicActivateItems activator, TableInfo tableInfo):base(activator)
         {
             _tableInfo = tableInfo;
         }
@@ -32,7 +28,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override void Execute()
         {
-            Clipboard.SetText(_tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false,false,false));
+            Show(_tableInfo.Discover(DataAccessContext.InternalDataProcessing).ScriptTableCreation(false,false,false));
         }
 
         public override Image GetImage(IIconProvider iconProvider)

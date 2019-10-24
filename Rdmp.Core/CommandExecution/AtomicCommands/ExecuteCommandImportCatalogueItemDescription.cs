@@ -6,14 +6,10 @@
 
 using System;
 using System.Linq;
-using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
     /// <summary>
     /// Allows you to copy descriptive metadata (CatalogueItems) between datasets.  This is useful for maintaining a 'single version of the truth' e.g. if every dataset has a field called 
@@ -21,28 +17,28 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     /// for setting up new fields, the synchronizing of this description over time (e.g. when a data analyst edits one of the other 'NHS Number' fields) is done through propagation
     /// (See PropagateCatalogueItemChangesToSimilarNamedUI)
     /// </summary>
-    internal class ExecuteCommandImportCatalogueItemDescription : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandImportCatalogueItemDescription : BasicCommandExecution, IAtomicCommand
     {
         private readonly CatalogueItem _toPopulate;
         
-        public ExecuteCommandImportCatalogueItemDescription(IActivateItems activator, CatalogueItem toPopulate):base(activator)
+        public ExecuteCommandImportCatalogueItemDescription(IBasicActivateItems activator, CatalogueItem toPopulate):base(activator)
         {
             _toPopulate = toPopulate;
         }
 
         public override void Execute()
         {
-            var available = Activator.CoreChildProvider.AllCatalogueItems.Except(new[] {_toPopulate}).ToArray();
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
-            
-            //if we have a CatalogueItem other than us that has same Name maybe that's the one they want
-            if(available.Any(a=>a.Name.Equals(_toPopulate.Name,StringComparison.CurrentCultureIgnoreCase)))
-                dialog.SetInitialFilter(_toPopulate.Name);
+            var available = BasicActivator.CoreChildProvider.AllCatalogueItems.Except(new[] {_toPopulate}).ToList();
 
-            if (dialog.ShowDialog() == DialogResult.OK)
+            string initialSearchText = null;
+
+            //if we have a CatalogueItem other than us that has same Name maybe that's the one they want
+            if (available.Any(a => a.Name.Equals(_toPopulate.Name, StringComparison.CurrentCultureIgnoreCase)))
+                initialSearchText = _toPopulate.Name;
+            
+            if(SelectOne(available,out CatalogueItem selected,initialSearchText,false))
             {
-                var chosen = (CatalogueItem) dialog.Selected;
-                CopyNonIDValuesAcross(chosen, _toPopulate, true);
+                CopyNonIDValuesAcross(selected, _toPopulate, true);
                 _toPopulate.SaveToDatabase();
                 
                 Publish(_toPopulate);

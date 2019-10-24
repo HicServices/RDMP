@@ -5,23 +5,20 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandLinkCatalogueItemToColumnInfo : BasicCommandExecution, IAtomicCommand
     {
         private readonly CatalogueItem _catalogueItem;
         private ColumnInfo _columnInfo;
 
 
-        public ExecuteCommandLinkCatalogueItemToColumnInfo(IActivateItems activator, CatalogueItem catalogueItem): base(activator)
+        public ExecuteCommandLinkCatalogueItemToColumnInfo(IBasicActivateItems activator, CatalogueItem catalogueItem): base(activator)
         {
             _catalogueItem = catalogueItem;
 
@@ -34,7 +31,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             return "Resolve an orphaned virtual column by matching it up to an actual column in the underlying database";
         }
 
-        public ExecuteCommandLinkCatalogueItemToColumnInfo(IActivateItems activator, ColumnInfoCombineable cmd, CatalogueItem catalogueItem) : base(activator)
+        public ExecuteCommandLinkCatalogueItemToColumnInfo(IBasicActivateItems activator, ColumnInfoCombineable cmd, CatalogueItem catalogueItem) : base(activator)
         {
             _catalogueItem = catalogueItem;
             
@@ -55,7 +52,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             if (_columnInfo == null)
-                _columnInfo = SelectOne<ColumnInfo>(Activator.RepositoryLocator.CatalogueRepository,_catalogueItem.Name);
+                _columnInfo = SelectOne<ColumnInfo>(BasicActivator.RepositoryLocator.CatalogueRepository,_catalogueItem.Name);
 
             if (_columnInfo == null)
                 return;

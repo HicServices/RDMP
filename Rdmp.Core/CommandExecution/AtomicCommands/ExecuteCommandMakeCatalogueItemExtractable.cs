@@ -5,20 +5,17 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System.Drawing;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandMakeCatalogueItemExtractable : BasicUICommandExecution,IAtomicCommand
+    public class ExecuteCommandMakeCatalogueItemExtractable : BasicCommandExecution,IAtomicCommand
     {
         private readonly CatalogueItem _catalogueItem;
 
-        public ExecuteCommandMakeCatalogueItemExtractable(IActivateItems activator, CatalogueItem catalogueItem) : base(activator)
+        public ExecuteCommandMakeCatalogueItemExtractable(IBasicActivateItems activator, CatalogueItem catalogueItem) : base(activator)
         {
             _catalogueItem = catalogueItem;
 
@@ -39,10 +36,10 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             //Create a new ExtractionInformation (contains the transform sql / column name)
-            var newExtractionInformation = new ExtractionInformation(Activator.RepositoryLocator.CatalogueRepository, _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
+            var newExtractionInformation = new ExtractionInformation(BasicActivator.RepositoryLocator.CatalogueRepository, _catalogueItem, _catalogueItem.ColumnInfo, _catalogueItem.ColumnInfo.Name);
 
             //it will be Core but if the Catalogue is ProjectSpecific then instead we should make our new ExtractionInformation ExtractionCategory.ProjectSpecific
-            if(_catalogueItem.Catalogue.IsProjectSpecific(Activator.RepositoryLocator.DataExportRepository))
+            if(_catalogueItem.Catalogue.IsProjectSpecific(BasicActivator.RepositoryLocator.DataExportRepository))
             {
                 newExtractionInformation.ExtractionCategory = ExtractionCategory.ProjectSpecific;
                 newExtractionInformation.SaveToDatabase();

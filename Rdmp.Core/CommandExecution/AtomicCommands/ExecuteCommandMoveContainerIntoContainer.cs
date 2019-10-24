@@ -6,30 +6,29 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandMoveFilterIntoContainer : BasicUICommandExecution
+    public class ExecuteCommandMoveContainerIntoContainer : BasicCommandExecution
     {
-        private readonly FilterCombineable _filterCombineable;
+        private readonly ContainerCombineable _containerCombineable;
         private readonly IContainer _targetContainer;
 
-        public ExecuteCommandMoveFilterIntoContainer(IActivateItems activator,FilterCombineable filterCombineable, IContainer targetContainer) : base(activator)
+        public ExecuteCommandMoveContainerIntoContainer(IBasicActivateItems activator, ContainerCombineable containerCombineable, IContainer targetContainer) : base(activator)
         {
-            _filterCombineable = filterCombineable;
+            _containerCombineable = containerCombineable;
             _targetContainer = targetContainer;
 
-            if(!filterCombineable.AllContainersInEntireTreeFromRootDown.Contains(targetContainer))
-                SetImpossible("Filters can only be moved within their own container tree");
+            if(containerCombineable.AllSubContainersRecursive.Contains(targetContainer))
+                SetImpossible("You cannot move a container (AND/OR) into one of it's own subcontainers");
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            _filterCombineable.Filter.FilterContainer_ID = _targetContainer.ID;
-            ((DatabaseEntity)_filterCombineable.Filter).SaveToDatabase();
+            _containerCombineable.Container.MakeIntoAnOrphan();
+            _targetContainer.AddChild(_containerCombineable.Container);
             Publish((DatabaseEntity) _targetContainer);
         }
     }

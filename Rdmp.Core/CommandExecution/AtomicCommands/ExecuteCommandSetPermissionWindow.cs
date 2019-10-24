@@ -6,22 +6,19 @@
 
 using System.Drawing;
 using System.Linq;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandSetPermissionWindow : BasicUICommandExecution,IAtomicCommandWithTarget
+    public class ExecuteCommandSetPermissionWindow : BasicCommandExecution,IAtomicCommandWithTarget
     {
         private readonly CacheProgress _cacheProgress;
         private PermissionWindow _window;
         
-        public ExecuteCommandSetPermissionWindow(IActivateItems activator, CacheProgress cacheProgress) : base(activator)
+        public ExecuteCommandSetPermissionWindow(IBasicActivateItems activator, CacheProgress cacheProgress) : base(activator)
         {
             _cacheProgress = cacheProgress;
             _window = null;
@@ -40,7 +37,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             if(_window == null)
-                _window = SelectOne<PermissionWindow>(Activator.RepositoryLocator.CatalogueRepository);
+                _window = SelectOne<PermissionWindow>(BasicActivator.RepositoryLocator.CatalogueRepository);
 
             if(_window == null)
                 return;

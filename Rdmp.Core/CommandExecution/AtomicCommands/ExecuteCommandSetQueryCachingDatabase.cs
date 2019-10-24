@@ -6,29 +6,24 @@
 
 using System.Drawing;
 using System.Linq;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Databases;
 using Rdmp.Core.Icons.IconProvision;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandSetQueryCachingDatabase : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandSetQueryCachingDatabase : BasicCommandExecution, IAtomicCommand
     {
         private readonly CohortIdentificationConfiguration _cic;
         private ExternalDatabaseServer[] _caches;
 
-        public ExecuteCommandSetQueryCachingDatabase(IActivateItems activator,CohortIdentificationConfiguration cic) : base(activator)
+        public ExecuteCommandSetQueryCachingDatabase(IBasicActivateItems activator,CohortIdentificationConfiguration cic) : base(activator)
         {
             _cic = cic;
 
-            _caches = Activator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
+            _caches = BasicActivator.RepositoryLocator.CatalogueRepository.GetAllObjects<ExternalDatabaseServer>()
                 .Where(s => s.WasCreatedBy(new QueryCachingPatcher())).ToArray();
 
             if(!_caches.Any())
@@ -38,15 +33,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
         public override void Execute()
         {
             base.Execute();
-
-            var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(_caches,true,false);
             
-            if (dialog.ShowDialog() == DialogResult.OK)
+            if (SelectOne(_caches.ToList(), out ExternalDatabaseServer selected))
             {
-                if (dialog.Selected == null)
+                if (selected == null)
                     _cic.QueryCachingServer_ID = null;
                 else
-                    _cic.QueryCachingServer_ID = dialog.Selected.ID;
+                    _cic.QueryCachingServer_ID = selected.ID;
 
                 _cic.SaveToDatabase();
                 Publish(_cic);

@@ -6,16 +6,15 @@
 
 using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.UI.ItemActivation;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    internal class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicUICommandExecution
+    public class ExecuteCommandMoveCohortAggregateContainerIntoSubContainer : BasicCommandExecution
     {
         private readonly CohortAggregateContainerCombineable _sourceCohortAggregateContainer;
         private readonly CohortAggregateContainer _targetCohortAggregateContainer;
 
-        public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainer, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
+        public ExecuteCommandMoveCohortAggregateContainerIntoSubContainer(IBasicActivateItems activator, CohortAggregateContainerCombineable sourceCohortAggregateContainer, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {    
             _sourceCohortAggregateContainer = sourceCohortAggregateContainer;
             _targetCohortAggregateContainer = targetCohortAggregateContainer;
