@@ -32,7 +32,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
             _pickers.Add(new PickObjectByName(repositoryLocator));
             _pickers.Add(new PickDatabase());
             _pickers.Add(new PickTable());
-
+            _pickers.Add(new PickType(repositoryLocator));
             _arguments = args.Select(ParseValue).ToArray();
 
 
@@ -56,17 +56,11 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         private CommandLineObjectPickerArgumentValue ParseValue(string arg,int idx)
         {
             //find a picker that recognizes the format
-            var picker = _pickers.FirstOrDefault(p => p.IsMatch(arg, idx));
+            var pickers = _pickers.Where(p => p.IsMatch(arg, idx)).ToArray();
 
-            if (picker != null)
-                return picker.Parse(arg, idx);
-
-            //perhaps it's a Type?
-            var type =_repositoryLocator.CatalogueRepository.MEF.GetType(arg);
-
-            if(type != null)
-                return new CommandLineObjectPickerArgumentValue(arg,idx,type);
-
+            if (pickers.Any())
+                return pickers.First().Parse(arg, idx).Merge(pickers.Skip(1).Select(p=>p.Parse(arg,idx)));
+            
             //nobody recognized it, use the raw value (maybe it's just a regular string, int etc).  Delay hard typing it till we know
             //what constructor we are trying to match it to.
             return new CommandLineObjectPickerArgumentValue(arg,idx);

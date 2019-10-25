@@ -33,14 +33,30 @@ NamePattern2+: (optional) only allowed if you are being prompted for multiple ob
         public override bool IsMatch(string arg, int idx)
         {
             var baseMatch = base.IsMatch(arg, idx);
-            
+
+            if (!string.IsNullOrWhiteSpace(arg))
+                if (IsLegitType(arg, out _))
+                    return true;
+
             //only considered  match if the first letter is an Rdmp Type e.g. "Catalogue:12" but not "C:\fish"
-            return baseMatch && 
-                   RepositoryLocator.CatalogueRepository.MEF.GetType(Regex.Match(arg).Groups[1].Value) is Type t 
-                   && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
+            return baseMatch && IsLegitType(Regex.Match(arg).Groups[1].Value,out _);        
         }
+
+        private bool IsLegitType(string possibleTypeName, out Type t)
+        {
+            t = RepositoryLocator.CatalogueRepository.MEF.GetType(possibleTypeName);
+
+            return  t != null 
+                && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(t);
+        }
+
         public override CommandLineObjectPickerArgumentValue Parse(string arg, int idx)
         {
+            if (IsLegitType(arg, out Type t))
+            {
+                return new CommandLineObjectPickerArgumentValue(arg,idx,GetAllObjects(t).ToArray());
+            }
+
             var objByToString = MatchOrThrow(arg, idx);
             
             string objectType = objByToString.Groups[1].Value;

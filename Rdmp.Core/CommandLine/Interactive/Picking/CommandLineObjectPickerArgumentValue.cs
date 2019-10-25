@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
 using System.Linq;
@@ -19,13 +20,13 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public string RawValue { get; }
         public int Index { get; }
 
-        public DiscoveredDatabase Database { get; }
+        public DiscoveredDatabase Database { get; private set; }
 
-        public DiscoveredTable Table { get; }
+        public DiscoveredTable Table { get; private set; }
 
-        public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; }
+        public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; private set; }
 
-        public Type Type { get;}
+        public Type Type { get; private set; }
 
         public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
         {
@@ -80,10 +81,10 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                 return Table;
 
             //it's an array of DatabaseEntities
-            if(paramType.IsArray && typeof(DatabaseEntity).IsAssignableFrom(paramType.GetElementType()))
-                return DatabaseEntities;
+            if(paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
+                return DatabaseEntities.ToArray();
             
-            if (typeof(DatabaseEntity).IsAssignableFrom(paramType))
+            if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType))
                 return GetOneDatabaseEntity<DatabaseEntity>();
 
             if (typeof(IMightBeDeprecated).IsAssignableFrom(paramType))
@@ -133,6 +134,34 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
                 Console.WriteLine($"Bad parameter.  Expected Type '{paramType}' for index {Index}.  Error was:{e.Message}");
                 return false;
             }
+        }
+
+        /// <summary>
+        /// Modifies this instance to include missing values identified in <paramref name="others"/>
+        /// </summary>
+        /// <param name="others"></param>
+        /// <returns></returns>
+        public CommandLineObjectPickerArgumentValue Merge(IEnumerable<CommandLineObjectPickerArgumentValue> others)
+        {
+            foreach (var other in others)
+            {
+                if(other.Index != Index || other.RawValue != RawValue)
+                    throw new ArgumentException("Merge only arguments of the same object");
+
+                Type = Type ?? other.Type;
+                Database = Database ?? other.Database;
+                Table = Table ?? other.Table;
+
+                //do we have any? yet
+                if (DatabaseEntities == null || !DatabaseEntities.Any()) //no
+                    DatabaseEntities = other.DatabaseEntities; //use theirs
+                else
+                    if(other.DatabaseEntities != null && other.DatabaseEntities.Any())
+                        throw new Exception("Did not know what set to pick during merge.  Both had DatabaseEntitites");
+                
+            }
+
+            return this;
         }
     }
 }

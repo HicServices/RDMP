@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 null;
             
             if (string.IsNullOrWhiteSpace(_options.CommandName))
-                RunCommandExecutionLoop();
+                RunCommandExecutionLoop(repositoryLocator);
             else
                 RunCommand(_options.CommandName);
             
@@ -58,7 +58,7 @@ namespace Rdmp.Core.CommandLine.Runners
                 _listener.OnNotify(this,new NotifyEventArgs(ProgressEventType.Error,$"Unknown Command '{command}', use {BasicCommandExecution.GetCommandName<ExecuteCommandListSupportedCommands>()} to see available commands" ));
         }
 
-        private void RunCommandExecutionLoop()
+        private void RunCommandExecutionLoop(IRDMPPlatformRepositoryServiceLocator repositoryLocator)
         {
             //when running a command loop don't use command line arguments (shouldn't really be possible anyway)
             _picker = null;
@@ -68,11 +68,64 @@ namespace Rdmp.Core.CommandLine.Runners
                 Console.WriteLine("Enter Command (or 'exit')");
                 var command = _input.GetString("Command", _commands.Keys.ToList());
 
+                if (command.Contains(' '))
+                {
+                    _picker = new CommandLineObjectPicker(SplitCommandLine(command).Skip(1).ToArray(),repositoryLocator);
+                    command = command.Substring(0, command.IndexOf(' '));
+                }
+
                 if (string.Equals(command, "exit", StringComparison.CurrentCultureIgnoreCase))
                     break;
 
                 RunCommand(command);
+
+                _picker = null;
             }
         }
+
+        public static IEnumerable<string> SplitCommandLine(string commandLine)
+        {
+            bool inQuotes = false;
+
+            return commandLine.Split(c =>
+                {
+                    if (c == '\"')
+                        inQuotes = !inQuotes;
+
+                    return !inQuotes && c == ' ';
+                })
+                .Select(arg => arg.Trim().TrimMatchingQuotes('\"'))
+                .Where(arg => !string.IsNullOrEmpty(arg));
+        }
+    }
+}
+
+public static class StringExtensions
+{
+
+    public static IEnumerable<string> Split(this string str, 
+        Func<char, bool> controller)
+    {
+        int nextPiece = 0;
+
+        for (int c = 0; c < str.Length; c++)
+        {
+            if (controller(str[c]))
+            {
+                yield return str.Substring(nextPiece, c - nextPiece);
+                nextPiece = c + 1;
+            }
+        }
+
+        yield return str.Substring(nextPiece);
+    }
+
+    public static string TrimMatchingQuotes(this string input, char quote)
+    {
+        if ((input.Length >= 2) && 
+            (input[0] == quote) && (input[input.Length - 1] == quote))
+            return input.Substring(1, input.Length - 2);
+
+        return input;
     }
 }
