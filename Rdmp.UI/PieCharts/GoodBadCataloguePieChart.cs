@@ -279,7 +279,7 @@ namespace Rdmp.UI.PieCharts
 
         private void btnViewDataTable_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandShow(Activator, GetCatalogueItems(),1);
+            var cmd = new ExecuteCommandShow(Activator, GetCatalogueItems().Where(ci=>string.IsNullOrWhiteSpace(ci.Description)),1);
             cmd.Execute();
         }
     }
