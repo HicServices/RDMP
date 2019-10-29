@@ -177,7 +177,7 @@ When importing a table from a Microsoft Sql Server database to create a `Catalog
    
 ### Cohort Builder is not working with MySql
 
-Cohorts are built by combining datasets (with filters) using SET operations UNION/EXCEPT/INTERSECT.  These queries can become very big and run slowly.  In some DBMS certain operations aren't even supported (e.g. INTERSECT/EXCEPT in MySql).  Therefore it is recommended to create a [query cache].
+Cohorts are built by combining datasets (with filters) using SET operations [UNION]/[EXCEPT]/[INTERSECT].  These queries can become very big and run slowly.  In some [DBMS] certain operations aren't even supported (e.g. [INTERSECT]/[EXCEPT] in MySql).  Therefore it is recommended to create a [query cache].
 
 ![A Table Valued Function TableInfo](Images/FAQ/cicQueryCache.png)
 
@@ -518,3 +518,7 @@ Yes there are over 1,000 unit and integration tests, this is covered in [Tests](
 
 
 [query cache]: ../../Rdmp.Core/CohortCreation/Readme.md
+[UNION]: ./Glossary.md#UNION
+[EXCEPT]: ./Glossary.md#EXCEPT
+[INTERSECT]: ./Glossary.md#INTERSECT
+[DBMS]: ./Glossary.md#DBMS
