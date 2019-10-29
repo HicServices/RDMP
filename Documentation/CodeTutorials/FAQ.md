@@ -16,6 +16,7 @@
    1. [Does RDMP Support Table Valued Functions?](#tvf)
 1. Cohort Creation
    1. [Cohort Builder isn't working or is slow](#cicslow)
+   2. [Does RDMP support ontologies e.g. SNOMED CT?](#ontologies)
 1. Data Load Engine
    1. [How does RDMP differ from classic tools e.g. SSIS?](#vsssis)
    1. [Can RDMP Load UnTyped Data?](#untyped)
@@ -175,13 +176,21 @@ When importing a table from a Microsoft Sql Server database to create a `Catalog
 
 <a name="cicslow"></a>
    
-### Cohort Builder is not working with MySql
-
 Cohorts are built by combining datasets (with filters) using SET operations [UNION]/[EXCEPT]/[INTERSECT].  These queries can become very big and run slowly.  In some [DBMS] certain operations aren't even supported (e.g. [INTERSECT]/[EXCEPT] in MySql).  Therefore it is recommended to create a [query cache].
 
 ![A Table Valued Function TableInfo](Images/FAQ/cicQueryCache.png)
 
 The [query cache] will be used to store the results of each subquery in indexed temporary tables (of patient identifiers).  The cache also records the SQL executed in order to invalidate the cache if the configuration is changed.
+
+### Does RDMP support ontologies e.g. SNOMED CT?
+
+<a name="ontologies"></a>
+
+Not directly.  RDMP supports multiple [DBMS] and does not enforce any specific table schemas on your data.  There are many clinical ontologies (e.g. BNF, ICD9/ICD10, SNOMED CT) and these evolve over time.  Cohort creation in RDMP is done with filters which are defined by the data analyst and are closely tied to thier own data model.  For this reason it would be difficult to create an ontology system which worked with all datasets without requiring table schema changes.
+
+Ontology creation / management can still occur behind the scenes in your database e.g. with scalar functions or table valued functions.  This approach allows maximum flexibility of the tool and reduces overhead when deploying RDMP against an existing mature data hosting environment (with established systems for handling ontologies).
+
+RDMP supports lookup tables which can form part of an ontology mapping solution.  The DLE can be helpful in ensuring lookup tables / ontology mappings remain current and avoid duplication.
 
 ## Data Load Engine
 
