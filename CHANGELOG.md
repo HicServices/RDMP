@@ -27,6 +27,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Fixed renaming parameters causing UI to incorrectly ask if you want to save changes
 - Fixed bug generating metadata reports that include Catalogues with orphan ExtractionInformation (not mapped to an underlying ColumnInfo)
 - Fixed bug in column descriptions pie chart where navigate to CatalogueItem(s) would show all CatalogueItems instead of only those missing descriptions
+- Fixed bug in example dataset creation where views (vConditions and vOperations) were not marked IsView
 
 ## [3.2.1-rc3] - 2019-10-21
 
