@@ -26,6 +26,8 @@
    1. [When loading data can I skip some columns?](#skipColumns)
    1. [Can I run SQL Scripts during a load?](#sqlScripts)
    1. [RDMP is not listing my table as importable](#notlistingtable)
+1. User Interface
+   1. [I cannot resize a column in a listbox/tree view](#resize)
 1. Anonymisation
    1. [Does RDMP support data anonymisation?](#does-rdmp-support-data-anonymisation)
 1. Curation
@@ -308,6 +310,16 @@ If you cannot see any tables listed in the database
 
 - Check that the servername/database name are correct
 - If you need a connection string keyword (e.g. specific port) [create a ConnectionStringKeyword](#connectionStringKeywords)
+
+## User Interface
+
+<a name="resize"></a>
+
+## I cannot resize a column in a listbox/tree view
+
+Some columns in RDMP are set to fill the available space (in the dialog).  For example the Name column in the object selection dialog.  You can still resize other columns (e.g. CatalogueName) by using dragging the far side of the column to the right.
+
+![How to resize a column](Images/FAQ/ResizeColumnFillsSpace.png)
 
 ## Anonymisation
 
