@@ -203,7 +203,7 @@ namespace Rdmp.Core.QueryBuilding
                 throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is null");
 
             if(qb.SelectColumns.Count == 0)
-                throw new QueryBuildingException("ISqlQueryBuilder.SelectedColumns is empty, use .AddColumn to add a column to the query builder");
+                throw new QueryBuildingException("There are no columns in the SELECT query");
 
             List<TableInfo> toReturn = new List<TableInfo>(forceJoinsToTheseTables ?? new TableInfo[0]);
 

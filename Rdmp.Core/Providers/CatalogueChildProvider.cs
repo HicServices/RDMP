@@ -189,11 +189,19 @@ namespace Rdmp.Core.Providers
 
         public HashSet<AggregateConfiguration> OrphanAggregateConfigurations;
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="repository"></param>
+        /// <param name="pluginChildProviders"></param>
+        /// <param name="errorsCheckNotifier">Where to report errors building the hierarchy e.g. when <paramref name="pluginChildProviders"/> crash.  Set to null for <see cref="IgnoreAllErrorsCheckNotifier"/></param>
         public CatalogueChildProvider(ICatalogueRepository repository, IChildProvider[] pluginChildProviders, ICheckNotifier errorsCheckNotifier)
         {
             _commentStore = repository.CommentStore;
             _catalogueRepository = repository;
-            _errorsCheckNotifier = errorsCheckNotifier;
+            _catalogueRepository?.EncryptionManager?.ClearAllInjections();
+
+            _errorsCheckNotifier = errorsCheckNotifier ?? new IgnoreAllErrorsCheckNotifier();
 
             // all the objects which are 
             AllMasqueraders = new ConcurrentDictionary<object, HashSet<IMasqueradeAs>>();

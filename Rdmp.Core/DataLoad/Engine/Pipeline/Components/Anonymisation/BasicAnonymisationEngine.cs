@@ -65,6 +65,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
 
         public DataTable ProcessPipelineData( DataTable toProcess, IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
+            bool didAno = false;
+
             stopwatch_TimeSpentTransforming.Start();
             
             if(!_bInitialized)
@@ -83,12 +85,16 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
             stopwatch_TimeSpentDumping.Start();
             _dumper.DumpAllIdentifiersInTable(toProcess); //do the dumping of all the rest of the columns (those that must disapear from pipeline as opposed to those above which were substituted for ANO versions)
             stopwatch_TimeSpentDumping.Stop();
-            listener.OnProgress(this, new ProgressEventArgs("Dump Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentDumping.Elapsed));//time taken to dump identifiers
+            
+            if(_dumper.HaveDumpedRecords)
+                listener.OnProgress(this, new ProgressEventArgs("Dump Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentDumping.Elapsed));//time taken to dump identifiers
            
             //Process ANO Identifier Substitutions
             //for each column with an ANOTrasformer
             foreach (KeyValuePair<string, ANOTransformer> kvp in columnsToAnonymise)
             {
+                didAno = true;
+
                 var column = kvp.Key;
                 ANOTransformer transformer = kvp.Value;
 
@@ -104,8 +110,9 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
             }
 
             stopwatch_TimeSpentTransforming.Stop();
-            listener.OnProgress(this, new ProgressEventArgs("Anonymise Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentTransforming.Elapsed)); //time taken to swap ANO identifiers
-            
+
+            if(didAno)
+                listener.OnProgress(this, new ProgressEventArgs("Anonymise Identifiers", new ProgressMeasurement(recordsProcessedSoFar, ProgressType.Records), stopwatch_TimeSpentTransforming.Elapsed)); //time taken to swap ANO identifiers
             
             return toProcess;
         }

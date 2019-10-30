@@ -29,11 +29,12 @@ namespace Rdmp.Core.CohortCreation.Execution
         public AggregationContainerTask(CohortAggregateContainer container, CohortCompiler compiler):base(compiler)
         {
             Container = container;
+            
+            SubContainers = compiler.CoreChildProvider.GetChildren(Container).OfType<CohortAggregateContainer>().ToArray();
+            ContainedConfigurations = compiler.CoreChildProvider.GetChildren(Container).OfType<AggregateConfiguration>().ToArray();
 
-            SubContainers = Container.GetSubContainers();
-            ContainedConfigurations = Container.GetAggregateConfigurations();
-
-            _parentContainers = Container.GetAllParentContainers().ToArray();
+            var d = compiler.CoreChildProvider.GetDescendancyListIfAnyFor(Container);
+            _parentContainers = d?.Parents?.OfType<CohortAggregateContainer>()?.ToArray() ?? new CohortAggregateContainer[0];
         }
 
         public override string GetCatalogueName()

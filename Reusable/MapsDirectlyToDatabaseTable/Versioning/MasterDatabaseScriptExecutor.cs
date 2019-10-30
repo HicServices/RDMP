@@ -6,13 +6,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
+using TypeGuesser;
 using Version = System.Version;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
@@ -22,158 +25,96 @@ namespace MapsDirectlyToDatabaseTable.Versioning
     /// </summary>
     public class MasterDatabaseScriptExecutor
     {
-        private readonly string _server;
-        private readonly string _database;
+        public DiscoveredDatabase Database { get; }
 
-        private const string RoundhouseSchemaName ="RoundhousE";
-        private const string RoundhouseVersionTable = "Version";
-        private const string RoundhouseScriptsRunTable = "ScriptsRun";
+        /// <summary>
+        /// Returns the name of the schema we expect to create/store the Version / ScriptsRun tables in.  Returns null if
+        /// <see cref="Database"/> is not a DBMS that supports schemas (e.g. MySql).
+        /// </summary>
+        public string RoundhouseSchemaName => GetRoundhouseSchemaName(Database);
 
-        private readonly SqlConnectionStringBuilder _builder;
+        public static string GetRoundhouseSchemaName(DiscoveredDatabase database)
+        {
+            return database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer ? "RoundhousE" : null;
+        }
+
+        public const string RoundhouseVersionTable = "Version";
+        public const string RoundhouseScriptsRunTable = "ScriptsRun";
+
         private const string InitialDatabaseScriptName = @"Initial Database Setup";
-
-        public MasterDatabaseScriptExecutor(string connectionString)
+        
+        public MasterDatabaseScriptExecutor(DiscoveredDatabase database)
         {
-            _builder = new SqlConnectionStringBuilder(connectionString);
-            _server = _builder.DataSource;
-            _database = _builder.InitialCatalog;
+            Database = database;
         }
-
-        public MasterDatabaseScriptExecutor(string server, string database, string username, string password)
-        {
-            _server = server;
-            _database = database;
-
-            _builder = new SqlConnectionStringBuilder
-            {
-                DataSource = _server,
-                InitialCatalog = _database,
-                IntegratedSecurity = string.IsNullOrWhiteSpace(username),
-            };
-
-            if (!string.IsNullOrWhiteSpace(username))
-            {
-                _builder.UserID = username;
-                _builder.Password = password;
-            }
-        }
-
-        public MasterDatabaseScriptExecutor(DiscoveredServer server, string database):this(server.ExpectDatabase(database))
-        {
-            
-        }
-
-        public MasterDatabaseScriptExecutor(DiscoveredDatabase discoveredDatabase)
-        {
-            _builder = (SqlConnectionStringBuilder)discoveredDatabase.Server.Builder;
-            _server = _builder.DataSource;
-            _database = _builder.InitialCatalog;
-
-            _builder = new SqlConnectionStringBuilder
-            {
-                DataSource = _server,
-                InitialCatalog = _database,
-                IntegratedSecurity = string.IsNullOrWhiteSpace(_builder.UserID),
-            };
-
-            if (!string.IsNullOrWhiteSpace(_builder.UserID))
-            {
-                _builder.UserID = _builder.UserID;
-                _builder.Password = _builder.Password;
-            }
-        }
-
+        
         public bool BinaryCollation { get; set; }
-
-        public string CreateConnectionString(bool includeDatabaseInString = true)
-        {
-            if (!includeDatabaseInString)
-            {
-                var serverOnlyBuilder = new SqlConnectionStringBuilder(_builder.ConnectionString) {InitialCatalog = ""};
-                return serverOnlyBuilder.ConnectionString;
-            }
-
-            return _builder.ConnectionString;
-        }
-
-        public bool CreateDatabase(string createTablesAndFunctionsSql, string initialVersionNumber, ICheckNotifier notifier)
+        
+        public bool CreateDatabase(Patch initialCreationPatch, ICheckNotifier notifier)
         {
             try
             {
-                // The _builder has InitialCatalog set which will cause the pre-database creation connection to fail, so create one which doesn't contain InitialCatalog
-                var serverBuilder = new SqlConnectionStringBuilder(_builder.ConnectionString) { InitialCatalog = "" };
-
-                DiscoveredServer server = new DiscoveredServer(serverBuilder);
-                server.TestConnection();
-
-                var db = server.ExpectDatabase(_database);
-
-                if (db.Exists())//make sure database does not already exist
+                if (Database.Exists())//make sure database does not already exist
                 {
-                    bool createAnyway = notifier.OnCheckPerformed(new CheckEventArgs("Database already exists", CheckResult.Warning, null,"Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
+                    bool createAnyway = notifier.OnCheckPerformed(new CheckEventArgs($"Database {Database.GetRuntimeName()} already exists", CheckResult.Warning, null,"Attempt to create database inside existing database (will cause problems if the database is not empty)?"));
 
                     if(!createAnyway)
                         throw new Exception("User chose not continue");
                 }
                 else
                 {
-                    using (var con = server.GetConnection())//do it manually 
+                    if (Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer && BinaryCollation)
                     {
-                        con.Open();
-                        server.GetCommand("CREATE DATABASE " + _database + (BinaryCollation?" COLLATE Latin1_General_BIN2":""), con).ExecuteNonQuery();
-                        notifier.OnCheckPerformed(new CheckEventArgs("Database " + _database + " created", CheckResult.Success, null));
-                    }
+                        var master = Database.Server.ExpectDatabase("master");
+                        using (var con = master.Server.GetConnection())
+                        {
+                            con.Open();
+                            Database.Server.GetCommand(
+                                "CREATE DATABASE " + Database + " COLLATE Latin1_General_BIN2", con).ExecuteNonQuery();
+                        }
+                    }    
+                    else
+                        Database.Create();
+
+                    if (!Database.Exists())
+                        throw new Exception(
+                            "Create database failed without Exception! (It did not Exist after creation)");
+
+                    notifier.OnCheckPerformed(new CheckEventArgs("Database " + Database + " created", CheckResult.Success, null));
                 }
+
+                if(Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer)
+                    Database.CreateSchema(RoundhouseSchemaName);
+
+                Database.CreateTable("ScriptsRun",new []
+                    {
+                        new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, IsPrimaryKey = true},
+                        new DatabaseColumnRequest("version_id",new DatabaseTypeRequest(typeof(int))),
+                        new DatabaseColumnRequest("script_name",new DatabaseTypeRequest(typeof(string),255)),
+                        new DatabaseColumnRequest("text_of_script",new DatabaseTypeRequest(typeof(string),int.MaxValue)),
+                        new DatabaseColumnRequest("text_hash",new DatabaseTypeRequest(typeof(string),512){Unicode = true}),
+                        new DatabaseColumnRequest("one_time_script",new DatabaseTypeRequest(typeof(bool))),
+                        new DatabaseColumnRequest("entry_date",new DatabaseTypeRequest(typeof(DateTime))),
+                        new DatabaseColumnRequest("modified_date",new DatabaseTypeRequest(typeof(DateTime))),
+                        new DatabaseColumnRequest("entered_by",new DatabaseTypeRequest(typeof(string),50))
+
+                    }, RoundhouseSchemaName);
+
                 
-                SqlConnection.ClearAllPools();
+                Database.CreateTable("Version", new[]
+                    {
+                        new DatabaseColumnRequest("id",new DatabaseTypeRequest(typeof(int))){IsAutoIncrement = true, IsPrimaryKey = true},
+                        new DatabaseColumnRequest("repository_path",new DatabaseTypeRequest(typeof(string),255){Unicode = true}),
+                        new DatabaseColumnRequest("version",new DatabaseTypeRequest(typeof(string),50){Unicode = true}),
+                        new DatabaseColumnRequest("entry_date",new DatabaseTypeRequest(typeof(DateTime))),
+                        new DatabaseColumnRequest("modified_date",new DatabaseTypeRequest(typeof(DateTime))),
+                        new DatabaseColumnRequest("entered_by",new DatabaseTypeRequest(typeof(string),50))
 
-                using (var con = db.Server.GetConnection())
-                {
-                    con.Open();
-
-                    var cmd =  db.Server.GetCommand($@"if not exists (select 1 from sys.schemas where name = '{RoundhouseSchemaName}')
-	EXEC('CREATE SCHEMA {RoundhouseSchemaName}')", con);
-                    cmd.ExecuteNonQuery();
-
-                    var sql = 
-                    $@"CREATE TABLE [{RoundhouseSchemaName}].[ScriptsRun](
-	[id] [bigint] IDENTITY(1,1) NOT NULL,
-	[version_id] [bigint] NULL,
-	[script_name] [nvarchar](255) NULL,
-	[text_of_script] [text] NULL,
-	[text_hash] [nvarchar](512) NULL,
-	[one_time_script] [bit] NULL,
-	[entry_date] [datetime] NULL,
-	[modified_date] [datetime] NULL,
-	[entered_by] [nvarchar](50) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)
-)
-
-CREATE TABLE [{RoundhouseSchemaName}].[Version](
-	[id] [bigint] IDENTITY(1,1) NOT NULL,
-	[repository_path] [nvarchar](255) NULL,
-	[version] [nvarchar](50) NULL,
-	[entry_date] [datetime] NULL,
-	[modified_date] [datetime] NULL,
-	[entered_by] [nvarchar](50) NULL,
-PRIMARY KEY CLUSTERED 
-(
-	[id] ASC
-)
-)
-";
-
-                    var cmd2 = db.Server.GetCommand(sql, con);
-                    cmd2.ExecuteNonQuery();
-                }
-
-                RunSQL(db, createTablesAndFunctionsSql, InitialDatabaseScriptName);
-
-                SetVersion(db,"Initial Setup", initialVersionNumber);
-
+                    }, RoundhouseSchemaName);
+                
+                
+                RunSQL(new KeyValuePair<string, Patch>(InitialDatabaseScriptName, initialCreationPatch));
+                
                 notifier.OnCheckPerformed(new CheckEventArgs("Tables created", CheckResult.Success, null));
 
                 notifier.OnCheckPerformed(new CheckEventArgs("Setup Completed successfully", CheckResult.Success, null));
@@ -187,48 +128,31 @@ PRIMARY KEY CLUSTERED
             }
         }
 
-        private void RunSQL(DiscoveredDatabase db, string sql, string filename)
+        private void RunSQL(KeyValuePair<string,Patch> kvp)
         {
-            using (var con = db.Server.GetConnection())
+            using (var con = Database.Server.GetConnection())
             {
                 con.Open();
-
-                UsefulStuff.ExecuteBatchNonQuery(sql, con);
-
-                string insert = $@"
-INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
-           ([script_name],
-           [text_of_script],
-           [text_hash],
-           [one_time_script],
-           [entry_date],
-           [modified_date],
-           [entered_by])
-     VALUES
-          (@script_name,
-           @text_of_script,
-           @text_hash,
-           @one_time_script,
-           @entry_date,
-           @modified_date,
-           @entered_by)
-";
-
-                DateTime dt = DateTime.Now;
-
-                var cmd2 = db.Server.GetCommand(insert, con);
-
-                db.Server.AddParameterWithValueToCommand("@script_name",cmd2,filename);
-                db.Server.AddParameterWithValueToCommand("@text_of_script",cmd2,sql);
-                db.Server.AddParameterWithValueToCommand("@text_hash",cmd2,CalculateHash(sql));
-                db.Server.AddParameterWithValueToCommand("@one_time_script",cmd2,1);
-                db.Server.AddParameterWithValueToCommand("@entry_date",cmd2,dt);
-                db.Server.AddParameterWithValueToCommand("@modified_date",cmd2,dt);
-                db.Server.AddParameterWithValueToCommand("@entered_by",cmd2,Environment.UserName);
-
-                cmd2.ExecuteNonQuery();
+                UsefulStuff.ExecuteBatchNonQuery(kvp.Value.GetScriptBody(), con);  
             }
+            
+            var now = DateTime.Now;
 
+            Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName)
+                    .Insert(new Dictionary<string, object>()
+                    {
+                        {"script_name", kvp.Key},
+                        {"text_of_script", kvp.Value.EntireScript},
+                        {"text_hash", CalculateHash(kvp.Value.EntireScript)},
+
+                        {"entry_date", now},
+                        {"modified_date", now},
+                        {"entered_by", Environment.UserName},
+
+                    });
+
+            SetVersion(kvp.Key,kvp.Value.DatabaseVersionNumber.ToString());
+            
         }
         
         public string CalculateHash(string input)
@@ -255,35 +179,25 @@ INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
 
 
 
-        private void SetVersion(DiscoveredDatabase db, string name, string version)
+        private void SetVersion(string name, string version)
         {
-            var versionTable = db.ExpectTable(RoundhouseVersionTable,RoundhouseSchemaName);
+            var versionTable = Database.ExpectTable(RoundhouseVersionTable,RoundhouseSchemaName);
             versionTable.Truncate();
 
             //repository_path	version	entry_date	modified_date	entered_by
             //Patching	2.6.0.1	2018-02-05 08:26:54.000	2018-02-05 08:26:54.000	DUNDEE\TZNind
-            
-            using(var con =  db.Server.GetConnection())
+
+            var now = DateTime.Now;
+
+            versionTable.Insert(new Dictionary<string, object>()
             {
-                con.Open();
-
-                var sql = "INSERT INTO " + versionTable.GetFullyQualifiedName() +
-                          "(repository_path,version,entry_date,modified_date,entered_by) VALUES (@repository_path,@version,@entry_date,@modified_date,@entered_by)";
-
-
-                var cmd = db.Server.GetCommand(sql, con);
-
-                var dt = DateTime.Now;
-
-                db.Server.AddParameterWithValueToCommand("@repository_path", cmd, name);
-                db.Server.AddParameterWithValueToCommand("@version",cmd,version);
-                db.Server.AddParameterWithValueToCommand("@entry_date",cmd, dt);
-                db.Server.AddParameterWithValueToCommand("@modified_date",cmd,dt);
-                db.Server.AddParameterWithValueToCommand("@entered_by", cmd, Environment.UserName);
-
-                cmd.ExecuteNonQuery();
-            }
+                {"repository_path", name},
+                {"version", version},
                 
+                {"entry_date", now},
+                {"modified_date", now},
+                {"entered_by", Environment.UserName}
+            });
         }
 
         public bool PatchDatabase(SortedDictionary<string, Patch> patches, ICheckNotifier notifier, Func<Patch, bool> patchPreviewShouldIRunIt, bool backupDatabase = true)
@@ -296,15 +210,13 @@ INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
 
             Version maxPatchVersion = patches.Values.Max(pat => pat.DatabaseVersionNumber);
 
-            var db = new DiscoveredServer(_builder).GetCurrentDatabase();
-
-            if (backupDatabase)
+            if (backupDatabase && Database.Server.DatabaseType == DatabaseType.MicrosoftSQLServer) //todo: Only ms has a backup implementation in FAnsi currently
             {
                 try
                 {
                     notifier.OnCheckPerformed(new CheckEventArgs("About to backup database", CheckResult.Success, null));
 
-                    db.CreateBackup("Full backup of " + _database);
+                    Database.CreateBackup("Full backup of " + Database);
             
                     notifier.OnCheckPerformed(new CheckEventArgs("Database backed up", CheckResult.Success, null));
                 
@@ -333,7 +245,7 @@ INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
 
                         try
                         {
-                            RunSQL(db, patch.Value.EntireScript, patch.Key);
+                            RunSQL(patch);
                         }
                         catch(Exception e)
                         {
@@ -346,9 +258,10 @@ INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
                     else
                         throw new Exception("User decided not to execute patch " + patch.Key + " aborting ");
                 }
-
-                UpdateVersionIncludingClearingLastVersion(db,notifier,maxPatchVersion);
                 
+                SetVersion("Patching",maxPatchVersion.ToString());
+                notifier.OnCheckPerformed(new CheckEventArgs("Updated database version to " + maxPatchVersion.ToString(), CheckResult.Success, null));
+
                 //all went fine
                 notifier.OnCheckPerformed(new CheckEventArgs("All Patches applied, transaction committed", CheckResult.Success, null));
                 
@@ -362,60 +275,29 @@ INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
             }
         }
 
-        private void UpdateVersionIncludingClearingLastVersion(DiscoveredDatabase db,ICheckNotifier notifier, Version maxPatchVersion)
-        {
-            try
-            {
-                using (SqlConnection con = new SqlConnection(_builder.ConnectionString))
-                {
-                    con.Open();
-                    SqlCommand cmdClear = new SqlCommand($"Delete from {RoundhouseSchemaName}.Version", con);
-                    cmdClear.ExecuteNonQuery();
-                    con.Close();
-                    notifier.OnCheckPerformed(new CheckEventArgs($"successfully deleted old Version number from {RoundhouseSchemaName}.Version", CheckResult.Success, null));
-                }
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(new CheckEventArgs(
-                    "Could not clear previous version history (but will continue with versioning anyway) ",
-                    CheckResult.Fail, e));
-            }
-            //increment the version number if there were any patches
-            SetVersion(db,"Patching", maxPatchVersion.ToString());
-            notifier.OnCheckPerformed(new CheckEventArgs("Updated database version to " + maxPatchVersion.ToString(), CheckResult.Success, null));
-                
-        }
-
 
         public Patch[] GetPatchesRun()
         { 
             List<Patch> toReturn = new List<Patch>();
-            
-            using (var con = new SqlConnection(CreateConnectionString()))
+
+            var scriptsRun = Database.ExpectTable(RoundhouseScriptsRunTable, RoundhouseSchemaName);
+
+            var dt = scriptsRun.GetDataTable();
+
+            foreach(DataRow r in dt.Rows)
             {
-                
-                con.Open();
+                string text_of_script = r["text_of_script"] as string;
+                string script_name = r["script_name"] as string;
 
-                SqlCommand cmd = new SqlCommand($"Select * from {RoundhouseSchemaName}.{RoundhouseScriptsRunTable}", con);
-                var r = cmd.ExecuteReader();
+                if (string.IsNullOrWhiteSpace(script_name) ||
+                    string.IsNullOrWhiteSpace(text_of_script) ||
+                    script_name.Equals(InitialDatabaseScriptName))
+                    continue;
 
-                while (r.Read())
-                {
-                    string text_of_script = r["text_of_script"] as string;
-                    string script_name = r["script_name"] as string;
-                    
-                    if(string.IsNullOrWhiteSpace(script_name) || 
-                        string.IsNullOrWhiteSpace(text_of_script) || 
-                        script_name.Equals(InitialDatabaseScriptName))
-                        continue;
-
-                    Patch p = new Patch(script_name,text_of_script);
-                    toReturn.Add(p);
-                }
-                
-                con.Close();
+                Patch p = new Patch(script_name, text_of_script);
+                toReturn.Add(p);
             }
+
             return toReturn.ToArray();
         }
 
@@ -426,12 +308,11 @@ INSERT INTO [{RoundhouseSchemaName}].[ScriptsRun]
         /// <param name="notifier">audit object, can be a new ThrowImmediatelyCheckNotifier if you aren't in a position to pass one</param>
         public void CreateAndPatchDatabase(IPatcher patcher, ICheckNotifier notifier)
         {
-            string sql = Patch.GetInitialCreateScriptContents(patcher);
+            var initialPatch = patcher.GetInitialCreateScriptContents(Database);
+            CreateDatabase(initialPatch, notifier);
 
             //get everything in the /up/ folder that are .sql
-            var patches = Patch.GetAllPatchesInAssembly(patcher);
-
-            CreateDatabase(sql, "1.0.0.0", notifier);
+            var patches = patcher.GetAllPatchesInAssembly(Database);
             PatchDatabase(patches,notifier,(p)=>true);//apply all patches without question
         }
     }

@@ -4,9 +4,12 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.DataExport.Data;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
 namespace Rdmp.UI.Tests.CommandExecution
@@ -37,6 +40,54 @@ namespace Rdmp.UI.Tests.CommandExecution
 
             Assert.IsFalse(ci.Exists());
             Assert.IsFalse(ei.Exists());
+        }
+
+        [Test, UITimeout(50000)]
+        public void Test_DeleteRootContainer_IsImpossible()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            Assert.IsNotNull(container);
+            Assert.IsTrue(container.IsRootContainer(),"expected it to be a root container");
+
+            var cmd = new ExecuteCommandDelete(base.ItemActivator, container);
+
+            Assert.IsTrue(cmd.IsImpossible,"expected command to be impossible");
+            StringAssert.Contains("root container",cmd.ReasonCommandImpossible);
+
+        }
+
+        
+        [Test, UITimeout(50000)]
+        public void Test_Delete2RootContainers_IsImpossible()
+        {
+            var container1 = WhenIHaveA<CohortAggregateContainer>();
+            
+            var container2= WhenIHaveA<CohortAggregateContainer>();
+
+            var cmd = new ExecuteCommandDelete(base.ItemActivator, new List<IDeleteable>(){container1,container2});
+
+            Assert.IsTrue(cmd.IsImpossible,"expected command to be impossible");
+            StringAssert.Contains("root container",cmd.ReasonCommandImpossible);
+
+        }
+
+        
+        [Test, UITimeout(50000)]
+        public void Test_DeleteNonRootContainer_Possible()
+        {
+            var container = WhenIHaveA<CohortAggregateContainer>();
+            var subcontainer = WhenIHaveA<CohortAggregateContainer>();
+
+            var cic = subcontainer.GetCohortIdentificationConfiguration();
+            cic.RootCohortAggregateContainer_ID = null;
+            cic.SaveToDatabase();
+
+            container.AddChild(subcontainer);
+            Assert.IsFalse(subcontainer.IsRootContainer(),"expected it not to be a root container");
+            var cmd = new ExecuteCommandDelete(base.ItemActivator, subcontainer);
+
+            Assert.IsFalse(cmd.IsImpossible,"expected command to be possible");
+
         }
 
     }

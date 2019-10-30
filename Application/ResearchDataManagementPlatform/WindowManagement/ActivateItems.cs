@@ -8,6 +8,8 @@ using System;
 using System.Collections.Generic;
 using System.Drawing;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
@@ -546,6 +548,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             text = textTyper.ShowDialog() == DialogResult.OK ? textTyper.ResultText : null;
             return !string.IsNullOrWhiteSpace(text);
+        }
+
+        public void Wait(string title, Task task, CancellationTokenSource cts)
+        {
+            var ui = new WaitUI(title,task,cts);
+            ui.ShowDialog();
         }
     }
 }

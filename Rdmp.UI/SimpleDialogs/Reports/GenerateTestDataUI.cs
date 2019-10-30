@@ -191,9 +191,6 @@ namespace Rdmp.UI.SimpleDialogs.Reports
                     Queue<DataGeneratorUI> queue = new Queue<DataGeneratorUI>(uis);
                     Execute(identifiers,queue,queue.Dequeue(),r);
                 }
-                                
-                UsefulStuff.GetInstance().ShowFolderInWindowsExplorer(_extractDirectory);
-
             }
             catch (Exception exception)
             {

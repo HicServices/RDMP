@@ -19,7 +19,7 @@ namespace ReusableUIComponents.Dialogs
     {
         private readonly Exception _exception;
         
-        private ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,exception.StackTrace??Environment.StackTrace,null,WideMessageBoxTheme.Exception))
+        private ExceptionViewer(string title, string message, Exception exception):base(new WideMessageBoxArgs(title,message,GetStackTrace(exception,Environment.StackTrace),null,WideMessageBoxTheme.Exception))
         {
             _exception = exception;
 
@@ -33,7 +33,27 @@ namespace ReusableUIComponents.Dialogs
                     _exception = aggregateException.InnerExceptions[0];
             }
         }
-        
+
+        /// <summary>
+        /// Returns the first stack trace from the <paramref name="exception"/> (including examining inner exceptions where stack trace is missing).
+        /// Otherwise returns <paramref name="ifNotFound"/>. 
+        /// </summary>
+        /// <param name="exception"></param>
+        /// <param name="ifNotFound"></param>
+        /// <returns></returns>
+        private static string GetStackTrace(Exception exception, string ifNotFound)
+        {
+            while (exception != null)
+            {
+                if (exception.StackTrace != null)
+                    return exception.StackTrace;
+
+                exception = exception.InnerException;
+            }
+
+            return ifNotFound;
+        }
+
         public static void Show(Exception exception, bool isModalDialog = true)
         {
             var longMessage = "";
@@ -71,6 +91,13 @@ namespace ReusableUIComponents.Dialogs
                 message = split[0];
 
                 longMessage = string.Join(Environment.NewLine,split.Skip(1)) + Environment.NewLine + Environment.NewLine + longMessage;
+            }
+
+            //if there's still no body to the error make the title the body and put a generic title in
+            if (string.IsNullOrWhiteSpace(longMessage))
+            {
+                longMessage = message;
+                message = "Error";
             }
 
             ExceptionViewer ev = new ExceptionViewer(message,longMessage,exception);

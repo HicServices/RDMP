@@ -65,8 +65,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
                 Console.WriteLine("Dropping Database:" + builder.InitialCatalog);
                 db.Drop();
             }
-            
-            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(builder.ConnectionString);
+
+            MasterDatabaseScriptExecutor executor = new MasterDatabaseScriptExecutor(db);
             executor.BinaryCollation = options.BinaryCollation;
             executor.CreateAndPatchDatabase(patcher,new AcceptAllCheckNotifier());
             Console.WriteLine("Created " + builder.InitialCatalog + " on server " + builder.DataSource);

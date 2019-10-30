@@ -8,6 +8,8 @@ using System;
 using System.Data;
 using System.IO;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using FAnsi.Discovery;
 using Rdmp.Core.Curation;
@@ -364,14 +366,19 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
                 var engine = GetFactory().Create(p, new FromCheckNotifierToDataLoadEventListener(ragSmileyExecute));
                 engine.Initialize(new FlatFileToLoad(_selectedFile), db);
 
-                Cursor.Current = Cursors.WaitCursor;
+                var cts = new CancellationTokenSource();
+                var t =Task.Run(()=> engine.ExecutePipeline(new GracefulCancellationToken(cts.Token,cts.Token)));
 
-                engine.ExecutePipeline(new GracefulCancellationToken());
+                Activator.Wait("Uploading Table...",t,cts);
+
+                if (t.IsFaulted)
+                    throw t.Exception?? new Exception("Task Failed");
+
+                if(t.IsCanceled || cts.IsCancellationRequested)
+                    return;
 
                 var dest = (DataTableUploadDestination) engine.DestinationObject;
-
-                Cursor.Current = Cursors.Default;
-
+                
                 ForwardEngineer(db.ExpectTable(dest.TargetTableName));
 
 
@@ -379,10 +386,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             catch (Exception exception)
             {
                 ragSmileyExecute.Fatal(exception);
-            }
-            finally
-            {
-                Cursor.Current = Cursors.Default;
             }
         }
 

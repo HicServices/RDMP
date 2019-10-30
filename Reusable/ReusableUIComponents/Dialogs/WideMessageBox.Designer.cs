@@ -35,19 +35,21 @@
             this.pbIcon = new System.Windows.Forms.PictureBox();
             this.panel1 = new System.Windows.Forms.Panel();
             this.btnViewSourceCode = new System.Windows.Forms.Button();
-            this.richTextBox1 = new ReusableUIComponents.RichTextBoxEx();
             this.lblMainMessage = new System.Windows.Forms.Label();
             this.panel2 = new System.Windows.Forms.Panel();
+            this.ButtonsPanel = new System.Windows.Forms.Panel();
             this.btnBack = new System.Windows.Forms.Button();
+            this.richTextBox1 = new ReusableUIComponents.RichTextBoxEx();
             ((System.ComponentModel.ISupportInitialize)(this.pbIcon)).BeginInit();
             this.panel1.SuspendLayout();
             this.panel2.SuspendLayout();
+            this.ButtonsPanel.SuspendLayout();
             this.SuspendLayout();
             // 
             // btnOk
             // 
-            this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Bottom;
-            this.btnOk.Location = new System.Drawing.Point(336, 11);
+            this.btnOk.Anchor = System.Windows.Forms.AnchorStyles.Top;
+            this.btnOk.Location = new System.Drawing.Point(211, 4);
             this.btnOk.Name = "btnOk";
             this.btnOk.Size = new System.Drawing.Size(75, 23);
             this.btnOk.TabIndex = 0;
@@ -58,7 +60,7 @@
             // btnCopyToClipboard
             // 
             this.btnCopyToClipboard.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnCopyToClipboard.Location = new System.Drawing.Point(650, 11);
+            this.btnCopyToClipboard.Location = new System.Drawing.Point(650, 9);
             this.btnCopyToClipboard.Name = "btnCopyToClipboard";
             this.btnCopyToClipboard.Size = new System.Drawing.Size(106, 23);
             this.btnCopyToClipboard.TabIndex = 0;
@@ -69,7 +71,7 @@
             // btnViewStackTrace
             // 
             this.btnViewStackTrace.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
-            this.btnViewStackTrace.Location = new System.Drawing.Point(538, 11);
+            this.btnViewStackTrace.Location = new System.Drawing.Point(538, 9);
             this.btnViewStackTrace.Name = "btnViewStackTrace";
             this.btnViewStackTrace.Size = new System.Drawing.Size(106, 23);
             this.btnViewStackTrace.TabIndex = 2;
@@ -113,6 +115,53 @@
             this.btnViewSourceCode.TextImageRelation = System.Windows.Forms.TextImageRelation.ImageBeforeText;
             this.btnViewSourceCode.UseVisualStyleBackColor = true;
             // 
+            // lblMainMessage
+            // 
+            this.lblMainMessage.AutoSize = true;
+            this.lblMainMessage.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
+            this.lblMainMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(200)))));
+            this.lblMainMessage.Location = new System.Drawing.Point(46, 16);
+            this.lblMainMessage.Name = "lblMainMessage";
+            this.lblMainMessage.Size = new System.Drawing.Size(106, 19);
+            this.lblMainMessage.TabIndex = 6;
+            this.lblMainMessage.Text = "Main Message";
+            // 
+            // panel2
+            // 
+            this.panel2.Controls.Add(this.ButtonsPanel);
+            this.panel2.Controls.Add(this.btnBack);
+            this.panel2.Controls.Add(this.btnViewStackTrace);
+            this.panel2.Controls.Add(this.btnCopyToClipboard);
+            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
+            this.panel2.Location = new System.Drawing.Point(0, 303);
+            this.panel2.Name = "panel2";
+            this.panel2.Size = new System.Drawing.Size(759, 37);
+            this.panel2.TabIndex = 7;
+            // 
+            // ButtonsPanel
+            // 
+            this.ButtonsPanel.Anchor = ((System.Windows.Forms.AnchorStyles)(((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left) 
+            | System.Windows.Forms.AnchorStyles.Right)));
+            this.ButtonsPanel.Controls.Add(this.btnOk);
+            this.ButtonsPanel.Location = new System.Drawing.Point(66, 3);
+            this.ButtonsPanel.Name = "ButtonsPanel";
+            this.ButtonsPanel.Size = new System.Drawing.Size(466, 31);
+            this.ButtonsPanel.TabIndex = 4;
+            // 
+            // btnBack
+            // 
+            this.btnBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
+            this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
+            this.btnBack.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
+            this.btnBack.Location = new System.Drawing.Point(3, 8);
+            this.btnBack.Name = "btnBack";
+            this.btnBack.Size = new System.Drawing.Size(57, 26);
+            this.btnBack.TabIndex = 3;
+            this.btnBack.Text = "Back";
+            this.btnBack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
+            this.btnBack.UseVisualStyleBackColor = true;
+            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
+            // 
             // richTextBox1
             // 
             this.richTextBox1.Anchor = ((System.Windows.Forms.AnchorStyles)((((System.Windows.Forms.AnchorStyles.Top | System.Windows.Forms.AnchorStyles.Bottom) 
@@ -128,43 +177,6 @@
             this.richTextBox1.Text = "";
             this.richTextBox1.WordWrap = false;
             this.richTextBox1.KeyDown += new System.Windows.Forms.KeyEventHandler(this.richTextBox1_KeyDown);
-            // 
-            // lblMainMessage
-            // 
-            this.lblMainMessage.AutoSize = true;
-            this.lblMainMessage.Font = new System.Drawing.Font("Tahoma", 12F, System.Drawing.FontStyle.Regular, System.Drawing.GraphicsUnit.Point, ((byte)(0)));
-            this.lblMainMessage.ForeColor = System.Drawing.Color.FromArgb(((int)(((byte)(0)))), ((int)(((byte)(100)))), ((int)(((byte)(200)))));
-            this.lblMainMessage.Location = new System.Drawing.Point(46, 16);
-            this.lblMainMessage.Name = "lblMainMessage";
-            this.lblMainMessage.Size = new System.Drawing.Size(106, 19);
-            this.lblMainMessage.TabIndex = 6;
-            this.lblMainMessage.Text = "Main Message";
-            // 
-            // panel2
-            // 
-            this.panel2.Controls.Add(this.btnBack);
-            this.panel2.Controls.Add(this.btnOk);
-            this.panel2.Controls.Add(this.btnViewStackTrace);
-            this.panel2.Controls.Add(this.btnCopyToClipboard);
-            this.panel2.Dock = System.Windows.Forms.DockStyle.Bottom;
-            this.panel2.Location = new System.Drawing.Point(0, 303);
-            this.panel2.Name = "panel2";
-            this.panel2.Size = new System.Drawing.Size(759, 37);
-            this.panel2.TabIndex = 7;
-            // 
-            // btnBack
-            // 
-            this.btnBack.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
-            this.btnBack.Image = ((System.Drawing.Image)(resources.GetObject("btnBack.Image")));
-            this.btnBack.ImageAlign = System.Drawing.ContentAlignment.MiddleLeft;
-            this.btnBack.Location = new System.Drawing.Point(3, 8);
-            this.btnBack.Name = "btnBack";
-            this.btnBack.Size = new System.Drawing.Size(57, 26);
-            this.btnBack.TabIndex = 3;
-            this.btnBack.Text = "Back";
-            this.btnBack.TextAlign = System.Drawing.ContentAlignment.MiddleRight;
-            this.btnBack.UseVisualStyleBackColor = true;
-            this.btnBack.Click += new System.EventHandler(this.btnBack_Click);
             // 
             // WideMessageBox
             // 
@@ -185,6 +197,7 @@
             this.panel1.ResumeLayout(false);
             this.panel1.PerformLayout();
             this.panel2.ResumeLayout(false);
+            this.ButtonsPanel.ResumeLayout(false);
             this.ResumeLayout(false);
 
         }
@@ -201,5 +214,6 @@
         private System.Windows.Forms.Label lblMainMessage;
         private System.Windows.Forms.Button btnBack;
         private System.Windows.Forms.Button btnViewSourceCode;
+        protected System.Windows.Forms.Panel ButtonsPanel;
     }
 }

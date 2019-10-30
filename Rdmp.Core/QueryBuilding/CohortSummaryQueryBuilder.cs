@@ -9,7 +9,9 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Spontaneous;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.Repositories;
 
@@ -28,6 +30,7 @@ namespace Rdmp.Core.QueryBuilding
         private IColumn _extractionIdentifierColumn;
 
         private AggregateConfiguration _cohort;
+        private readonly ICoreChildProvider _childProvider;
         private CohortAggregateContainer _cohortContainer;
 
         /// <summary>
@@ -36,7 +39,8 @@ namespace Rdmp.Core.QueryBuilding
         /// </summary>
         /// <param name="summary">A basic aggregate that you want to restrict by cohort e.g. a pivot on drugs prescribed over time with an axis interval of year</param>
         /// <param name="cohort">A cohort aggregate that has a single AggregateDimension which must be an IsExtractionIdentifier and must follow the correct cohort aggregate naming conventions (See IsCohortIdentificationAggregate)</param>
-        public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort)
+        /// <param name="childProvider"></param>
+        public CohortSummaryQueryBuilder(AggregateConfiguration summary, AggregateConfiguration cohort, ICoreChildProvider childProvider)
         {
             if (cohort == null)
                 throw new ArgumentException("cohort was null in CohortSummaryQueryBuilder constructor","cohort");
@@ -60,6 +64,7 @@ namespace Rdmp.Core.QueryBuilding
 
             _summary = summary;
             _cohort = cohort;
+            _childProvider = childProvider;
 
             //here we take the identifier from the cohort because the dataset might have multiple identifiers e.g. birth record could have patient Id, parent Id, child Id etc.  The Aggregate will already have one of those selected and only one of them selected
             _extractionIdentifierColumn = _cohort.AggregateDimensions.Single(d=>d.IsExtractionIdentifier);
@@ -144,10 +149,26 @@ namespace Rdmp.Core.QueryBuilding
             if (singleFilterOnly != null)
                 cohortRootContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null, new [] { singleFilterOnly }, FilterContainerOperation.AND);
 
-            //so hacky, we pass in the summary builder (a blatant lie!) and tell the CohortQueryBuilderHelper it belongs to AggregateConfiguration _cohort (when it doesn't).  This
-            //will result in any PatientIndex tables associated with _cohort being propagated into the _summary builder
-            var cohortHelper = new CohortQueryBuilderHelper(_globals, new ParameterManager(_globals),_cohort.GetCohortIdentificationConfigurationIfAny().QueryCachingServer);
-            cohortHelper.AddJoinablesToBuilder(summaryBuilder,_cohort,1);
+            var joinUse = _cohort.PatientIndexJoinablesUsed.SingleOrDefault();
+            var joinTo = joinUse?.JoinableCohortAggregateConfiguration?.AggregateConfiguration;
+            
+            //if there is a patient index table we must join to it
+            if (joinUse != null)
+            {
+                //get sql for the join table
+                var builder = new CohortQueryBuilder(joinTo, _globals, null);
+                var joinableSql = new CohortQueryBuilderDependencySql(builder.SQL, builder.ParameterManager);
+
+                var helper = new CohortQueryBuilderHelper();
+
+                var extractionIdentifierColumn = _summary.Catalogue.GetAllExtractionInformation(ExtractionCategory.Any)
+                    .Where(ei => ei.IsExtractionIdentifier).ToArray();
+
+                if(extractionIdentifierColumn.Length != 1)
+                    throw new Exception($"Catalogue behind {_summary} must have exactly 1 IsExtractionIdentifier column but it had " + extractionIdentifierColumn.Length);
+                
+                helper.AddJoinToBuilder(_summary,extractionIdentifierColumn[0],summaryBuilder,new QueryBuilderArgs(joinUse,joinTo,joinableSql,null,_globals));
+            }
 
             //if the cohort has no WHERE SQL
             if (cohortRootContainer == null)
@@ -199,8 +220,8 @@ namespace Rdmp.Core.QueryBuilding
             //the basic cohort SQL select chi from dataset where ....
             var cohortSql = cohortQueryBuilder.SQL;
 
-            if (cohortQueryBuilder.CountOfCachedSubQueries == 0 || cohortQueryBuilder.CountOfSubQueries != cohortQueryBuilder.CountOfCachedSubQueries)
-                throw new NotSupportedException("Only works for 100% Cached queries, your query has " + cohortQueryBuilder.CountOfCachedSubQueries + "/" + cohortQueryBuilder.CountOfSubQueries + " queries cached");
+            if (cohortQueryBuilder.Results.CountOfCachedSubQueries == 0 || cohortQueryBuilder.Results.CountOfSubQueries != cohortQueryBuilder.Results.CountOfCachedSubQueries)
+                throw new NotSupportedException("Only works for 100% Cached queries, your query has " + cohortQueryBuilder.Results.CountOfCachedSubQueries + "/" + cohortQueryBuilder.Results.CountOfSubQueries + " queries cached");
 
             //there will be a single dimension on the cohort aggregate so this translates to "MyTable.MyDataset.CHI in Select(
             var filterSql = _extractionIdentifierColumn.SelectSQL + " IN (" + cohortSql + ")";
@@ -227,10 +248,10 @@ namespace Rdmp.Core.QueryBuilding
         private CohortQueryBuilder GetBuilder()
         {
             if(_cohort != null)
-             return new CohortQueryBuilder(_cohort, _globals);
+             return new CohortQueryBuilder(_cohort, _globals,_childProvider);
             
             if(_cohortContainer != null)
-                return new CohortQueryBuilder(_cohortContainer,_globals);
+                return new CohortQueryBuilder(_cohortContainer,_globals,_childProvider);
 
             throw new NotSupportedException("Expected there to be either a _cohort or a _cohortContainer");
         }

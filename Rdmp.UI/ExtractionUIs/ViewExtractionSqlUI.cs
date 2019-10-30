@@ -93,6 +93,8 @@ namespace Rdmp.UI.ExtractionUIs
 
         private void RefreshUIFromDatabase()
         {
+            CommonFunctionality.ResetChecks();
+
             try
             {
                 if (bLoading)
@@ -144,12 +146,15 @@ namespace Rdmp.UI.ExtractionUIs
                 //generate SQL -- only make it readonly after setting the .Text otherwise it ignores the .Text setting even though it is programatical
                 QueryPreview.ReadOnly = false;
                 QueryPreview.Text = GenerateExtractionSQLForCatalogue(extractionInformations.ToArray());
+                CommonFunctionality.ScintillaGoRed(QueryPreview, false);
                 QueryPreview.ReadOnly = true;
             }
             catch (Exception ex)
             {
                 QueryPreview.ReadOnly = false;
-                QueryPreview.Text = ex.ToString();
+                QueryPreview.Text = ex.Message;
+                CommonFunctionality.Fatal(ex.Message,ex);
+                CommonFunctionality.ScintillaGoRed(QueryPreview,true);
                 QueryPreview.ReadOnly = true;
             }
             finally

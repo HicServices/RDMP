@@ -89,18 +89,19 @@ namespace Rdmp.Core.DataExport.DataExtraction.Pipeline.Destinations
         protected override void Open(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken)
         {
             _toProcess = toProcess;
-            _destination = PrepareDestination(job, toProcess);
-            OutputFile = toProcess.TableName;
+
+            //give the data table the correct name
+            if (_toProcess.ExtendedProperties.ContainsKey("ProperlyNamed") && _toProcess.ExtendedProperties["ProperlyNamed"].Equals(true))
+                _isTableAlreadyNamed = true;
+
+            _toProcess.TableName = GetTableName();
+
+            _destination = PrepareDestination(job, _toProcess);
+            OutputFile = _toProcess.TableName;
         }
                 
         protected override void WriteRows(DataTable toProcess, IDataLoadEventListener job, GracefulCancellationToken cancellationToken, Stopwatch stopwatch)
         {
-            toProcess.TableName = GetTableName();
-
-            //give the data table the correct name
-            if (toProcess.ExtendedProperties.ContainsKey("ProperlyNamed") && toProcess.ExtendedProperties["ProperlyNamed"].Equals(true))
-                _isTableAlreadyNamed = true;
-            
             _destination.ProcessPipelineData(toProcess, job, cancellationToken);
 
             LinesWritten += toProcess.Rows.Count;

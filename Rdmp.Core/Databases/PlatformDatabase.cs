@@ -39,14 +39,6 @@ namespace Rdmp.Core.Databases
         }
     }
 
-    public sealed class QueryCachingPatcher:Patcher
-    {
-        public QueryCachingPatcher():base(2,"Databases.QueryCachingDatabase")
-        {
-            LegacyName = "QueryCaching.Database";
-        }
-    }
-
     public sealed class DataExportPatcher:Patcher
     {
         public DataExportPatcher():base(1,"Databases.DataExportDatabase")

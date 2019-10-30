@@ -4,7 +4,10 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Reflection;
+using FAnsi;
+using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
@@ -41,5 +44,25 @@ namespace MapsDirectlyToDatabaseTable.Versioning
         /// The legacy name (if any) that this patcher might have been known by in the past
         /// </summary>
         string LegacyName { get; }
+
+        /// <summary>
+        /// True if the <see cref="Patcher"/> contains SQL implementations only for <see cref="DatabaseType.MicrosoftSQLServer"/> or false
+        /// if it can create tailored schemas for other <see cref="DatabaseType"/>.
+        /// </summary>
+        bool SqlServerOnly { get; }
+
+
+        /// <summary>
+        /// Returns the initial Sql to create <paramref name="db"/> with the appropriate SQL code
+        /// </summary>
+        /// <returns></returns>
+        Patch GetInitialCreateScriptContents(DiscoveredDatabase db);
+
+        /// <summary>
+        /// Returns all patches defined in the <see cref="Patcher"/> assembly.  This is probably a superset of the ones that have been
+        /// run on the live database on which you want to patch
+        /// </summary>
+        /// <returns></returns>
+        SortedDictionary<string, Patch> GetAllPatchesInAssembly(DiscoveredDatabase db);
     }
 }

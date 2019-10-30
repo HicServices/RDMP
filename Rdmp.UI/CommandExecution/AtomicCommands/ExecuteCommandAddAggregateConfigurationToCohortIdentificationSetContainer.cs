@@ -19,6 +19,12 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public AggregateConfiguration AggregateCreatedIfAny { get; private set; }
 
+        /// <summary>
+        /// True if the <see cref="AggregateConfigurationCommand"/> passed to the constructor was a newly created one and does
+        /// not need cloning.
+        /// </summary>
+        public bool DoNotClone { get; set; }
+        
         public ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(IActivateItems activator,AggregateConfigurationCommand aggregateConfigurationCommand, CohortAggregateContainer targetCohortAggregateContainer) : base(activator)
         {
             _aggregateConfigurationCommand = aggregateConfigurationCommand;
@@ -31,7 +37,8 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             var cic = _targetCohortAggregateContainer.GetCohortIdentificationConfiguration();
 
-            AggregateConfiguration child = cic.ImportAggregateConfigurationAsIdentifierList(_aggregateConfigurationCommand.Aggregate,CohortCommandHelper.PickOneExtractionIdentifier);
+            AggregateConfiguration child = DoNotClone ? _aggregateConfigurationCommand.Aggregate :
+                cic.ImportAggregateConfigurationAsIdentifierList(_aggregateConfigurationCommand.Aggregate,CohortCommandHelper.PickOneExtractionIdentifier);
 
             //current contents
             var contents = _targetCohortAggregateContainer.GetOrderedContents().ToArray();

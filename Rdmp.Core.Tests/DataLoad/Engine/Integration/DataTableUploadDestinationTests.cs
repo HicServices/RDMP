@@ -1073,7 +1073,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         [TestCase(DatabaseType.MicrosoftSQLServer)]
         [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MySql)]
-        public void Test_DataTableUploadDestination_ForceString(DatabaseType dbType)
+        public void Test_DataTableUploadDestination_ForceBool(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType);
 
@@ -1092,7 +1092,10 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             {
                 var col = s.Single(c => c.ColumnName.Equals("hb_extract"));
 
+                //Guesser would normally make it a string
                 Assert.AreEqual(typeof(string), col.TypeRequested.CSharpType);
+
+                //we demand a boolean interpretation instead!
                 col.TypeRequested.CSharpType = typeof(bool);
             };
 
@@ -1109,13 +1112,24 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
 
             var tbl = db.ExpectTable("ForceStringTable");
 
-            //in the database it should be typed as string
-            Assert.AreEqual(typeof(bool), tbl.DiscoverColumn("hb_extract").DataType.GetCSharpDataType());
+            if (dbType == DatabaseType.Oracle)
+            {
+                //in the database it should be typed as string
+                Assert.AreEqual(typeof(string), tbl.DiscoverColumn("hb_extract").DataType.GetCSharpDataType());
 
-            var dt2 = tbl.GetDataTable();
-            Assert.Contains(true,dt2.Rows.Cast<DataRow>().Select(r=>r[0]).ToArray());
-            Assert.Contains(false,dt2.Rows.Cast<DataRow>().Select(r =>r[0]).ToArray());
+                var dt2 = tbl.GetDataTable();
+                Assert.Contains("T",dt2.Rows.Cast<DataRow>().Select(r=>r[0]).ToArray());
+                Assert.Contains("F",dt2.Rows.Cast<DataRow>().Select(r =>r[0]).ToArray());
+            }
+            else
+            {
+                //in the database it should be typed as bool
+                Assert.AreEqual(typeof(bool), tbl.DiscoverColumn("hb_extract").DataType.GetCSharpDataType());
 
+                var dt2 = tbl.GetDataTable();
+                Assert.Contains(true,dt2.Rows.Cast<DataRow>().Select(r=>r[0]).ToArray());
+                Assert.Contains(false,dt2.Rows.Cast<DataRow>().Select(r =>r[0]).ToArray());
+            }
         }
 
         #region Two Batch Tests

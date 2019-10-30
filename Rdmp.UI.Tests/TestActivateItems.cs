@@ -7,6 +7,8 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
@@ -216,6 +218,11 @@ namespace Rdmp.UI.Tests
         {
             text = TypeTextResponse;
             return !string.IsNullOrWhiteSpace(TypeTextResponse);
+        }
+
+        public void Wait(string title, Task task, CancellationTokenSource cts)
+        {
+            task.Wait(cts.Token);
         }
     }
 

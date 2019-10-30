@@ -36,7 +36,7 @@ namespace ReusableUIComponents.Performance.StackTraceProcessing
             CurrentFrame = stackFrameAndSubframes[0];
             AddSubframes(stackFrameAndSubframes,performed);
             
-            IsInDatabaseAccessAssembly = isInDatabaseAccessAssemblyYet || CurrentFrame.Contains("MapsDirectlyToDatabaseTable") || CurrentFrame.Contains("DatabaseCommandHelper");
+            IsInDatabaseAccessAssembly = isInDatabaseAccessAssemblyYet || CurrentFrame.Contains("DatabaseCommandHelper");
         }
 
         private bool PopulateSourceCode(string frame)

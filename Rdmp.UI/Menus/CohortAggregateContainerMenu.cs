@@ -93,7 +93,8 @@ namespace Rdmp.UI.Menus
 
         private void AddCohortAggregate()
         {
-            var cohortAggregates = RepositoryLocator.CatalogueRepository.GetAllObjects<AggregateConfiguration>().Where(c => c.IsCohortIdentificationAggregate).ToArray();
+            var cohortAggregates = _activator.CoreChildProvider.AllAggregateConfigurations.Where(c=>
+                c.IsCohortIdentificationAggregate && !c.IsJoinablePatientIndexTable()).ToArray();
 
             if (!cohortAggregates.Any())
             {

@@ -57,23 +57,13 @@ namespace Rdmp.Core.QueryCaching.Aggregation.Arguments
 
         private void CreateIndex(DiscoveredTable table, DiscoveredColumn onColumn, string configurationName)
         {
-            
-            string pkCreationSql = "ALTER TABLE " + table.GetRuntimeName() + " ADD CONSTRAINT PK_" + table.GetRuntimeName() + " PRIMARY KEY CLUSTERED (" + onColumn.GetRuntimeName() + ")";
             try
             {
-                var server = table.Database.Server;
-                using (var con = server.GetConnection())
-                {
-                    con.Open();
-
-                    var cmd = server.GetCommand(pkCreationSql, con);
-                    cmd.CommandTimeout = Timeout;
-                    cmd.ExecuteNonQuery();
-                }
+                table.CreatePrimaryKey(onColumn);
             }
             catch (Exception e)
             {
-                throw new Exception("Failed to create unique primary key on the results of AggregateConfiguration " + configurationName + ".  The SQL that failed was:" + Environment.NewLine + pkCreationSql, e);
+                throw new Exception("Failed to create unique primary key on the results of AggregateConfiguration " + configurationName, e);
             }
         }
     }

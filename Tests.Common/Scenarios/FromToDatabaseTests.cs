@@ -39,7 +39,7 @@ namespace Tests.Common.Scenarios
 
         /// <summary>
         /// Sets up the databases <see cref="From"/> and <see cref="To"/> on the test database server of the given
-        /// <see cref="dbType"/>.  This method is automatically called with <see cref="DatabaseType.MicrosoftSQLServer"/>
+        /// <paramref name="dbType"/>.  This method is automatically called with <see cref="DatabaseType.MicrosoftSQLServer"/>
         /// in <see cref="OneTimeSetUp()"/> (nunit automatically fires it).
         /// </summary>
         /// <param name="dbType"></param>

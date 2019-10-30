@@ -38,22 +38,11 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             CreatePlatformDatabase createPlatform = new CreatePlatformDatabase(p);
             createPlatform.ShowDialog();
 
-            if (!string.IsNullOrWhiteSpace(createPlatform.DatabaseConnectionString))
+            var db = createPlatform.DatabaseCreatedIfAny;
+            if (db != null)
             {
-                SqlConnectionStringBuilder builder = new SqlConnectionStringBuilder(createPlatform.DatabaseConnectionString);
-
                 var newServer = new ExternalDatabaseServer(Activator.RepositoryLocator.CatalogueRepository, "Caching Database", p);
-
-                newServer.Server = builder.DataSource;
-                newServer.Database = builder.InitialCatalog;
-
-                //if there is a username/password
-                if (!builder.IntegratedSecurity)
-                {
-                    newServer.Password = builder.Password;
-                    newServer.Username = builder.UserID;
-                }
-                newServer.SaveToDatabase();
+                newServer.SetProperties(db);
 
                 _cic.QueryCachingServer_ID = newServer.ID;
                 _cic.SaveToDatabase();

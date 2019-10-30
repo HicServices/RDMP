@@ -29,7 +29,9 @@ namespace Rdmp.Core.CohortCreation
         event EventHandler StateChanged;
         Exception CrashMessage { get; set; }
 
-        int FinalRowCount { set; }
+        string Log { get; set; }
+
+        int FinalRowCount { get; set; }
         int? CumulativeRowCount { get; set; }
 
         IDataAccessPoint[] GetDataAccessPoints();

@@ -38,6 +38,8 @@ namespace Rdmp.UI.Tests.CohortBuilding
         [Test, UITimeout(50000)]
         public void Test_AggregateConfigurationOrder_TwoAggregates()
         {
+            DeleteOldAggregates();
+
             GetObjects(out Catalogue cata, out CohortIdentificationConfiguration cic);
             
             //we should be able to add it
@@ -61,6 +63,8 @@ namespace Rdmp.UI.Tests.CohortBuilding
 
             Assert.AreEqual(0,ac1.Order);
             Assert.AreEqual(1,ac2.Order);
+
+            Assert.AreEqual(2, Repository.GetAllObjects<AggregateConfiguration>().Length, "Expected you to create 2 AggregateConfiguration only");
         }
 
 
@@ -118,8 +122,15 @@ namespace Rdmp.UI.Tests.CohortBuilding
             Assert.AreEqual(0,ac2.Order);
             Assert.AreEqual(1,intersect.Order);
             Assert.AreEqual(2,ac1.Order);
-            
+        }
 
+        private void DeleteOldAggregates()
+        {
+            //remove any remnants so we can count them at the end to make sure no duplicates were created
+            foreach (AggregateConfiguration ac in Repository.GetAllObjects<AggregateConfiguration>())
+                ac.DeleteInDatabase();
+
+            Assert.AreEqual(0, Repository.GetAllObjects<AggregateConfiguration>().Length, "We just deleted the AggregateConfigurations why were there suddenly some in the db!?");
         }
 
     }

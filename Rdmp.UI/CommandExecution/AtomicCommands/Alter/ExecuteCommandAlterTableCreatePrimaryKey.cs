@@ -8,6 +8,9 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
 using ReusableLibraryCode.DataAccess;
 using System.Linq;
+using System.Threading;
+using System.Threading.Tasks;
+using ReusableUIComponents.Dialogs;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
 {
@@ -30,9 +33,20 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.Alter
             base.Execute();
 
             Synchronize();
-                        
-            if(SelectMany(TableInfo.ColumnInfos,out ColumnInfo[] selected))
-                Table.CreatePrimaryKey(selected.Select(c=>c.Discover(DataAccessContext.DataLoad)).ToArray());
+
+            if (SelectMany(TableInfo.ColumnInfos, out ColumnInfo[] selected))
+            {
+                var cts = new CancellationTokenSource();
+
+                var task = Task.Run(() =>
+                    Table.CreatePrimaryKey(selected.Select(c => c.Discover(DataAccessContext.DataLoad)).ToArray()));
+                
+                Activator.Wait("Creating Primary Key...",task, cts);
+
+                if(task.IsFaulted)
+                    ExceptionViewer.Show(task.Exception);
+            }
+                
             
             Synchronize();
 

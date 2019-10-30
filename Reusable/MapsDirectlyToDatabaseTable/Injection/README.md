@@ -5,7 +5,7 @@
 In RDMP `DatabaseEntity` objects are class instances that map 1 to 1 with a row in a table in a database.  
 
 * The table will have the same name as the class
-* The public properties map to columns of the same name in the table 
+* The public properties map to columns of the same name in the table (unless they are marked `[NoMappingToDatabase]`)
 * There will be a public `ID` property on the class and an `ID` column which is identity autonum and primary key in the table
 
 Often your class will have foreign key properties e.g. `CatalogueItem.Catalogue_ID`.  For these properties it is recommended to create a property `Catalogue` which returns the corresponding object.  For example
@@ -107,7 +107,7 @@ To cache this result we should move the call to a `Lazy<AggregateConfiguration>`
 
 This is going to get out of hand fast, especially if we have multiple relationship properties etc.  It also isn't exposed by any kind of interfaces.  To deal with this we have the interface `IInjectKnown<T>`.
 
-Implement the interface `IInjectKnown` for `AggregateConfiguration`.  Rename the SetupLazy method to `ClearAllInjections`.
+Implement the interface `IInjectKnown` for `AggregateConfiguration`.  Rename the `SetupLazy` method to `ClearAllInjections`.
 
 ```csharp
 public class AggregateTopX : DatabaseEntity, IInjectKnown<AggregateConfiguration>

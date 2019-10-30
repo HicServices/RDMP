@@ -59,6 +59,8 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
         private void btnGenerateReport_Click(object sender, EventArgs e)
         {
+            progressBarsUI1.Clear();
+
             IEnumerable<Catalogue> toReportOn = _catalogues;
 
             if(rbAllCatalogues.Checked)

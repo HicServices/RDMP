@@ -64,7 +64,7 @@ namespace Rdmp.Core.Tests.CohortCreation.QueryTests
                 container.AddChild(config1, 0);
                 container.AddChild(config2, 1);
 
-                CohortQueryBuilder builder = new CohortQueryBuilder(cic);
+                CohortQueryBuilder builder = new CohortQueryBuilder(cic,null);
                 Assert.AreEqual(
                     CollapseWhitespace(
                     string.Format(
@@ -104,7 +104,7 @@ SET @name='fish';
                 param2.Value = "'monkey'";
                 param2.SaveToDatabase();
 
-                CohortQueryBuilder builder2 = new CohortQueryBuilder(cic);
+                CohortQueryBuilder builder2 = new CohortQueryBuilder(cic,null);
 
                 Assert.AreEqual(
                     CollapseWhitespace(

@@ -18,8 +18,10 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
+using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CohortCreation.Execution
@@ -36,10 +38,20 @@ namespace Rdmp.Core.CohortCreation.Execution
     {
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }
         public bool IncludeCumulativeTotals { get; set; }
-        
+
+        /// <summary>
+        /// Returns the current child provider (creating it if none has been injected yet).
+        /// </summary>
+        public ICoreChildProvider CoreChildProvider
+        {
+            get => _coreChildProvider = _coreChildProvider ?? new CatalogueChildProvider(CohortIdentificationConfiguration.CatalogueRepository,null,new IgnoreAllErrorsCheckNotifier());
+            set => _coreChildProvider = value;
+        }
+
         public Dictionary<ICompileable, CohortIdentificationTaskExecution> Tasks = new Dictionary<ICompileable, CohortIdentificationTaskExecution>();
         
         public List<Thread> Threads = new List<Thread>();
+        private ICoreChildProvider _coreChildProvider;
 
         public CohortCompiler(CohortIdentificationConfiguration cohortIdentificationConfiguration)
         {
@@ -52,9 +64,8 @@ namespace Rdmp.Core.CohortCreation.Execution
             {
                 task.Timeout = timeout;
                 task.State = CompilationState.Executing;
-                var accessPoints = task.GetDataAccessPoints();
                 
-                execution.GetCohortAsync(accessPoints, timeout);
+                execution.GetCohortAsync( timeout);
 
                 task.FinalRowCount = execution.Identifiers.Rows.Count;
 
@@ -108,8 +119,11 @@ namespace Rdmp.Core.CohortCreation.Execution
         {
             var toReturn = new List<ICompileable>();
 
+            if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == null)
+                throw new QueryBuildingException($"CohortIdentificationConfiguration '{CohortIdentificationConfiguration}' had not root SET container (UNION / INERSECT / EXCEPT)");
+
             //if it is the root container or we are adding tasks for all containers including subcontainers
-            if(CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
+            if (CohortIdentificationConfiguration.RootCohortAggregateContainer_ID == container.ID || addSubcontainerTasks)
                 toReturn.Add(AddTask(container,globals));
 
             foreach (IOrderable c in container.GetOrderedContents())
@@ -159,20 +173,20 @@ namespace Rdmp.Core.CohortCreation.Execution
             {
                 //which has a parent
                 task = new AggregationTask(aggregate, this);
-                queryBuilder = new CohortQueryBuilder(aggregate, globals);
+                queryBuilder = new CohortQueryBuilder(aggregate, globals,CoreChildProvider);
 
                 parent = aggregate.GetCohortAggregateContainerIfAny();
             }
             else if (joinable != null)
             {
                 task = new JoinableTask(joinable,this);
-                queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,true);
+                queryBuilder = new CohortQueryBuilder(joinable.AggregateConfiguration,globals,CoreChildProvider);
                 parent = null;
             }
             else
             {
                 task = new AggregationContainerTask(container, this);
-                queryBuilder = new CohortQueryBuilder(container, globals);
+                queryBuilder = new CohortQueryBuilder(container, globals,CoreChildProvider);
                 parent = container.GetParentContainerIfAny();
             }
 
@@ -187,7 +201,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 //if the container/aggregate being processed isn't the first component in the container
                 if (!isFirstInContainer && IncludeCumulativeTotals) //and we want cumulative totals
                 {
-                    cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals);
+                    cumulativeQueryBuilder = new CohortQueryBuilder(parent, globals,CoreChildProvider);
                     cumulativeQueryBuilder.StopContainerWhenYouReach = (IOrderable) runnable;
                 }
                 
@@ -217,12 +231,14 @@ namespace Rdmp.Core.CohortCreation.Execution
                 if (cumulativeQueryBuilder != null)
                     cumulativeSql = cumulativeQueryBuilder.SQL;
             }
-            catch (QueryBuildingException e)
+            catch (Exception e)
             {
                 //it was not possible to generate valid SQL for the task
                 task.CrashMessage = e;
                 task.State = CompilationState.Crashed;
             }
+
+            task.Log = queryBuilder?.Results?.Log;
 
             //we have seen this entity before (by ID & entity type)
             KeyValuePair<ICompileable, CohortIdentificationTaskExecution> existingTask;
@@ -263,9 +279,10 @@ namespace Rdmp.Core.CohortCreation.Execution
 
 
             var taskExecution = new CohortIdentificationTaskExecution(cacheServer, newsql, cumulativeSql, source,
-                queryBuilder.CountOfSubQueries,
-                queryBuilder.CountOfCachedSubQueries, 
-                isResultsForRootContainer);
+                queryBuilder?.Results?.CountOfSubQueries ?? -1,
+                queryBuilder?.Results?.CountOfCachedSubQueries ??-1,
+                isResultsForRootContainer,
+                queryBuilder?.Results?.TargetServer);
 
             //create a new task 
             Tasks.Add(task, taskExecution);
@@ -279,7 +296,7 @@ namespace Rdmp.Core.CohortCreation.Execution
                 throw new KeyNotFoundException("Cannot launch task because it is not in the list of current Tasks");
 
             if(compileable.State != CompilationState.NotScheduled)
-                throw new ArgumentException("Task must be in state NotScheduled, try clicking Reset");
+                throw new ArgumentException("Task must be in state NotScheduled, try clicking refreshing");
 
             KickOff(compileable, Tasks[compileable], timeout, cacheOnCompletion);
         }
@@ -314,55 +331,63 @@ namespace Rdmp.Core.CohortCreation.Execution
 
         public void CacheSingleTask(ICacheableTask cacheableTask, ExternalDatabaseServer queryCachingServer)
         {
-            //if it is already cached don't inception cache
-            var sql = Tasks[cacheableTask].CountSQL;
-
-            if (sql.Trim().StartsWith(CachedAggregateConfigurationResultsManager.CachingPrefix))
-                return;
-            
-            var manager = new CachedAggregateConfigurationResultsManager(queryCachingServer);
-
-            var explicitTypes = new List<DatabaseColumnRequest>();
-
-            AggregateConfiguration configuration = cacheableTask.GetAggregateConfiguration();
             try
             {
-                //the identifier column that we read from
-                var identifiers = configuration.AggregateDimensions.Where(c => c.IsExtractionIdentifier).ToArray();
+                //if it is already cached don't inception cache
+                var sql = Tasks[cacheableTask].CountSQL;
 
-                if (identifiers.Length != 1)
-                    throw new Exception(string.Format(
-                        "There were {0} columns in the configuration marked IsExtractionIdentifier:{1}",
-                        identifiers.Length, string.Join(",", identifiers.Select(i => i.GetRuntimeName()))));
-
-                var identifierDimension = identifiers[0];
-                ColumnInfo identifierColumnInfo = identifierDimension.ColumnInfo;
-                var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
+                if (sql.Trim().StartsWith(CachedAggregateConfigurationResultsManager.CachingPrefix))
+                    return;
                 
-                explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
+                var manager = new CachedAggregateConfigurationResultsManager(queryCachingServer);
 
-                //make other non transform Types have explicit values
-                foreach(AggregateDimension d in configuration.AggregateDimensions)
+                var explicitTypes = new List<DatabaseColumnRequest>();
+
+                AggregateConfiguration configuration = cacheableTask.GetAggregateConfiguration();
+                try
                 {
-                    if(d != identifierDimension)
+                    //the identifier column that we read from
+                    var identifiers = configuration.AggregateDimensions.Where(c => c.IsExtractionIdentifier).ToArray();
+
+                    if (identifiers.Length != 1)
+                        throw new Exception(string.Format(
+                            "There were {0} columns in the configuration marked IsExtractionIdentifier:{1}",
+                            identifiers.Length, string.Join(",", identifiers.Select(i => i.GetRuntimeName()))));
+
+                    var identifierDimension = identifiers[0];
+                    ColumnInfo identifierColumnInfo = identifierDimension.ColumnInfo;
+                    var destinationDataType = GetDestinationType(identifierColumnInfo.Data_type,cacheableTask,queryCachingServer);
+                    
+                    explicitTypes.Add(new DatabaseColumnRequest(identifierDimension.GetRuntimeName(), destinationDataType));
+
+                    //make other non transform Types have explicit values
+                    foreach(AggregateDimension d in configuration.AggregateDimensions)
                     {
-                        //if the user has not changed the SelectSQL and the SelectSQL of the original column is not a transform
-                        if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
+                        if(d != identifierDimension)
                         {
-                            //then use the origin datatype
-                            explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
+                            //if the user has not changed the SelectSQL and the SelectSQL of the original column is not a transform
+                            if(d.ExtractionInformation.SelectSQL.Equals(d.SelectSQL) && !d.ExtractionInformation.IsProperTransform())
+                            {
+                                //then use the origin datatype
+                                explicitTypes.Add(new DatabaseColumnRequest(d.GetRuntimeName(),GetDestinationType(d.ExtractionInformation.ColumnInfo.Data_type, cacheableTask, queryCachingServer)));
+                            }
                         }
                     }
                 }
+                catch (Exception e)
+                {
+                    throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
+                }
+
+                CacheCommitArguments args = cacheableTask.GetCacheArguments(sql, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
+
+                manager.CommitResults(args);
             }
             catch (Exception e)
             {
-                throw new Exception("Error occurred trying to find the data type of the identifier column when attempting to submit the result data table to the cache", e);
+                cacheableTask.State = CompilationState.Crashed;
+                cacheableTask.CrashMessage = new Exception("Failed to cache results",e);
             }
-
-            CacheCommitArguments args = cacheableTask.GetCacheArguments(sql, Tasks[cacheableTask].Identifiers, explicitTypes.ToArray());
-
-            manager.CommitResults(args);
         }
 
         /// <summary>

@@ -11,6 +11,7 @@ using FAnsi.Discovery.QuerySyntax;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.AutoComplete;
 using ReusableLibraryCode.DataAccess;
@@ -80,10 +81,9 @@ namespace Rdmp.UI.DataViewing.Collections
             if (ac.IsCohortIdentificationAggregate)
             {
                 var cic = ac.GetCohortIdentificationConfigurationIfAny();
-                var isJoinable = ac.IsJoinablePatientIndexTable();
                 var globals = cic.GetAllParameters();
 
-                var builder = new CohortQueryBuilder(ac, globals, isJoinable);
+                var builder = new CohortQueryBuilder(ac, globals,null);
                 
                 if(UseQueryCache)
                     builder.CacheServer = GetCacheServer();

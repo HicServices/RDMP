@@ -35,7 +35,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
         
         protected override  string GetSQL()
         {
-            CohortQueryBuilder builder = new CohortQueryBuilder(AggregateConfiguration,CohortIdentificationConfigurationIfAny.GetAllParameters(),true);
+            CohortQueryBuilder builder = new CohortQueryBuilder(AggregateConfiguration,CohortIdentificationConfigurationIfAny.GetAllParameters(),null);
 
             var sql = builder.SQL;
 

@@ -7,11 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using FAnsi;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
+using Rdmp.Core.Repositories;
+using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding
 {
@@ -33,6 +38,7 @@ namespace Rdmp.Core.QueryBuilding
     /// </summary>
     public class CohortQueryBuilder
     {
+        private ICoreChildProvider _childProvider;
         private readonly ISqlParameter[] _globals;
         object oSQLLock = new object();
         private string _sql;
@@ -54,30 +60,28 @@ namespace Rdmp.Core.QueryBuilding
 
         private CohortAggregateContainer container;
         private AggregateConfiguration configuration;
-        private readonly bool _isExplicitRequestForJoinableInceptionAggregateQuery;
-
+        
         public ExternalDatabaseServer CacheServer
         {
             get { return _cacheServer; }
             set
             {
                 _cacheServer = value;
-                if(helper != null)
-                    helper.CacheServer = value;
-
                 SQLOutOfDate = true;
             }
         }
 
         public ParameterManager ParameterManager = new ParameterManager();
 
-        public int CountOfSubQueries { get { return helper != null? helper.CountOfSubQueries:- 1; } }
-        public int CountOfCachedSubQueries { get { return helper != null ? helper.CountOfCachedSubQueries : -1; } }
+        
+        private CohortQueryBuilderHelper helper;
+        public CohortQueryBuilderResult Results { get; private set; }
 
         #region constructors
         //Constructors - This one is the base one called by all others
-        private CohortQueryBuilder(IEnumerable<ISqlParameter> globals)
+        private CohortQueryBuilder(IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider)
         {
+            _childProvider = childProvider;
             globals = globals ?? new ISqlParameter[] {};
             _globals = globals.ToArray();
             TopX = -1;
@@ -86,11 +90,9 @@ namespace Rdmp.Core.QueryBuilding
 
             foreach (ISqlParameter parameter in _globals)
                 ParameterManager.AddGlobalParameter(parameter);
-
-            RecreateHelper();
         }
 
-        public CohortQueryBuilder(CohortIdentificationConfiguration configuration):this(configuration.GetAllParameters())
+        public CohortQueryBuilder(CohortIdentificationConfiguration configuration, ICoreChildProvider childProvider):this(configuration.GetAllParameters(),childProvider)
         {
             if (configuration == null)
                 throw new QueryBuildingException("Configuration has not been set yet");
@@ -103,75 +105,80 @@ namespace Rdmp.Core.QueryBuilding
 
             //set ourselves up to run with the root container
             container = configuration.RootCohortAggregateContainer;
+
+            SetChildProviderIfNull();
+            
         }
-        public CohortQueryBuilder(CohortAggregateContainer c,IEnumerable<ISqlParameter> globals): this(globals)
+
+        public CohortQueryBuilder(CohortAggregateContainer c,IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider): this(globals,childProvider)
         {
             //set ourselves up to run with the root container
             container = c;
+
+            SetChildProviderIfNull();
         }
-        public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals, bool isExplicitRequestForJoinableInceptionAggregateQuery = false): this(globals)
+        public CohortQueryBuilder(AggregateConfiguration config, IEnumerable<ISqlParameter> globals, ICoreChildProvider childProvider): this(globals,childProvider)
         {
             //set ourselves up to run with the root container
             configuration = config;
-            _isExplicitRequestForJoinableInceptionAggregateQuery = isExplicitRequestForJoinableInceptionAggregateQuery;
+
+            SetChildProviderIfNull();
         }
+        private void SetChildProviderIfNull()
+        {
+            if (_childProvider == null)
+                _childProvider = new CatalogueChildProvider(
+                    configuration?.CatalogueRepository ?? container.CatalogueRepository, null, null);
+        }
+
 
         #endregion
 
-        public string GetDatasetSampleSQL(int topX = 1000)
+        public string GetDatasetSampleSQL(int topX = 1000,ICoreChildProvider childProvider = null)
         {
             if(configuration == null)
                 throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
-
-            //create a clone of ourselves so we don't mess up the ParameterManager of this instance
-            var cloneBuilder = new CohortQueryBuilder(configuration, _globals);
-            cloneBuilder.TopX = topX;
-            cloneBuilder.CacheServer = CacheServer;
-
-            //preview means we override the select columns with *
-            var overrideSelectList = "*";
-
-            // unless its a patient index table or has HAVING sql
-            if (!string.IsNullOrWhiteSpace(configuration.HavingSQL) || _isExplicitRequestForJoinableInceptionAggregateQuery)
-                overrideSelectList = null;
             
-            string sampleSQL = 
-                cloneBuilder.GetSQLForAggregate(configuration,
-                0, 
-                _isExplicitRequestForJoinableInceptionAggregateQuery,
-                overrideSelectList,
-                ""); //gets rid of the distinct keyword
+            //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
+            string selectList = 
+                string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
+
+            RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX));
+
+            Results.BuildFor(configuration,ParameterManager);
+            
+            string sampleSQL = Results.Sql;
 
             string parameterSql = "";
 
-            //get resolved parameters for the select * query (via the clone builder
-            var finalParams = cloneBuilder.ParameterManager.GetFinalResolvedParametersList().ToArray();
+            //get resolved parameters for the select * query
+            var finalParams = ParameterManager.GetFinalResolvedParametersList().ToArray();
 
             if(finalParams.Any())
             {
-                foreach (ISqlParameter param in finalParams)
-                    parameterSql += QueryBuilder.GetParameterDeclarationSQL(param);
+                parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
 
                 return parameterSql + Environment.NewLine + sampleSQL;
             }
             
             return sampleSQL;
         }
-
         
-
-        private CohortQueryBuilderHelper helper;
         public void RegenerateSQL()
         {
-            RecreateHelper();
-            
-            _sql = "";
+            RecreateHelpers(null);
+
+            ParameterManager.ClearNonGlobals();
+
+            Results.StopContainerWhenYouReach = _stopContainerWhenYouReach;
 
             if (container != null)
-                AddContainerRecursively(container, 0);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
+                Results.BuildFor(container,ParameterManager);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
             else
-                AddAggregate(configuration, -1);//user constructed us without a container, he only cares about 1 aggregate
-            
+                Results.BuildFor(configuration,ParameterManager);//user constructed us without a container, he only cares about 1 aggregate
+
+            _sql = Results.Sql;
+  
             //Still finalise the ParameterManager even if we are not writting out the parameters so that it is in the Finalized state
             var finalParameters = ParameterManager.GetFinalResolvedParametersList();
 
@@ -188,9 +195,10 @@ namespace Rdmp.Core.QueryBuilding
             SQLOutOfDate = false;
         }
 
-        private void RecreateHelper()
+        private void RecreateHelpers(QueryBuilderCustomArgs customizations)
         {
-            helper = new CohortQueryBuilderHelper(_globals, ParameterManager, CacheServer);
+            helper = new CohortQueryBuilderHelper();
+            Results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations);
         }
 
         /// <summary>
@@ -206,78 +214,12 @@ namespace Rdmp.Core.QueryBuilding
             }
         }
         
-        private void AddContainerRecursively(CohortAggregateContainer currentContainer, int tabDepth)
-        {
-            string tabs;
-            string tabplusOne;
-            helper.GetTabs(tabDepth, out tabs, out tabplusOne);
-
-            //Things we need to output
-            var toWriteOut = currentContainer.GetOrderedContents().Where(IsEnabled).ToArray();
-
-            if (toWriteOut.Any())
-                _sql += Environment.NewLine + tabs + "(" + Environment.NewLine;
-
-            bool firstEntityWritten = false;
-            foreach (IOrderable toWrite in toWriteOut)
-            {
-                if (firstEntityWritten)
-                    _sql += Environment.NewLine + Environment.NewLine + tabplusOne + currentContainer.Operation + Environment.NewLine + Environment.NewLine;
-
-                if(toWrite is AggregateConfiguration)
-                    AddAggregate((AggregateConfiguration)toWrite, tabDepth);
-
-                if (toWrite is CohortAggregateContainer)
-                {
-                    if(_isExplicitRequestForJoinableInceptionAggregateQuery)
-                        throw new NotSupportedException("Flag _isExplicitRequestForJoinableInceptionAggregateQuery is not supported when outputing an entire container, how did you even manage to set this private flag?");
-
-                    AddContainerRecursively((CohortAggregateContainer) toWrite, tabDepth + 1);
-
-                }
-
-
-                //we have now written the first thing at this level of recursion - all others will need to be separated by the OPERATION e.g. UNION
-                firstEntityWritten = true;
-
-                if (StopContainerWhenYouReach != null && StopContainerWhenYouReach.Equals(toWrite))
-                    if (tabDepth != 0)
-                        throw new NotSupportedException("Stopping prematurely only works when the aggregate to stop at is in the top level container");
-                    else
-                        break;
-            }
-
-            //if we outputted anything
-            if (toWriteOut.Any())
-                _sql += Environment.NewLine + tabs + ")" + Environment.NewLine ;
-        }
-
-        /// <summary>
-        /// Objects are enabled if they do not support disabling (<see cref="IDisableable"/>) or are <see cref="IDisableable.IsDisabled"/> = false
-        /// </summary>
-        /// <returns></returns>
-        private bool IsEnabled(IOrderable arg)
-        {
-            //skip disabled things
-            var dis = arg as IDisableable;
-            return dis == null || !dis.IsDisabled;
-        }
-
-        private void AddAggregate(AggregateConfiguration aggregate, int tabDepth)
-        {
-            _sql += GetSQLForAggregate(aggregate, tabDepth, _isExplicitRequestForJoinableInceptionAggregateQuery);
-        }
-
-        private string GetSQLForAggregate(AggregateConfiguration aggregate, int tabDepth, bool isJoinAggregate = false, string overrideSelectList = null, string overrideLimitationSQL=null)
-        {
-            return helper.GetSQLForAggregate(aggregate, tabDepth, isJoinAggregate, overrideSelectList,overrideLimitationSQL,TopX);
-        }
-
         public bool SQLOutOfDate { get; set; }
 
         private IOrderable _stopContainerWhenYouReach;
         private bool _doNotWriteOutParameters;
         private ExternalDatabaseServer _cacheServer;
+        
 
         public IOrderable StopContainerWhenYouReach
         {

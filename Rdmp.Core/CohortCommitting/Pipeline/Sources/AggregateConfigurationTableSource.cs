@@ -49,7 +49,7 @@ namespace Rdmp.Core.CohortCommitting.Pipeline.Sources
             if(cic == null)
                 throw new Exception("There GetCohortIdentificationConfiguration is unknown for '" + AggregateConfiguration +"'");
 
-            var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),AggregateConfiguration.IsJoinablePatientIndexTable());
+            var cohortBuilder = new CohortQueryBuilder(AggregateConfiguration, cic.GetAllParameters(),null);
             return cohortBuilder.SQL;
         }
         

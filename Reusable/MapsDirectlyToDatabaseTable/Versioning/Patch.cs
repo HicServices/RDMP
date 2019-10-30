@@ -11,6 +11,8 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using System.Text.RegularExpressions;
+using FAnsi;
+using FAnsi.Discovery;
 
 namespace MapsDirectlyToDatabaseTable.Versioning
 {
@@ -78,60 +80,16 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             } 
         }
 
-
-        public static string GetInitialCreateScriptContents(IPatcher patcher)
+        /// <summary>
+        /// Returns the body without the header text "--Version:1.2.0 etc".
+        /// </summary>
+        /// <returns></returns>
+        public string GetScriptBody()
         {
-            var assembly = patcher.GetDbAssembly();
-            var subdirectory = patcher.ResourceSubdirectory;
-            Regex initialCreationRegex;
-
-            if(string.IsNullOrWhiteSpace(subdirectory))
-                initialCreationRegex = new Regex(@".*\.runAfterCreateDatabase\..*\.sql");
-            else
-                initialCreationRegex = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.runAfterCreateDatabase\..*\.sql");
-            
-            var candidates = assembly.GetManifestResourceNames().Where(r => initialCreationRegex.IsMatch(r)).ToArray();
-
-            if (candidates.Length == 1)
-            {
-                var sr = new StreamReader(assembly.GetManifestResourceStream(candidates[0]));
-                return sr.ReadToEnd();
-            }
-
-            if(candidates.Length == 0)
-                throw new FileNotFoundException("Could not find an initial create database script in dll "+assembly.FullName + ".  Make sure it is marked as an Embedded Resource and that it is in a folder called 'runAfterCreateDatabase' (and matches regex "+initialCreationRegex +"). And make sure that it is marked as 'Embedded Resource' in the .csproj build action");
-
-            throw new Exception("There are too many create scripts in the assembly " + assembly.FullName + " only 1 create database script is allowed, all other scripts must go into the up folder");
-
+            return string.Join(Environment.NewLine,
+            EntireScript.Split(new[] { '\r', '\n' }, StringSplitOptions.RemoveEmptyEntries).Skip(2));
         }
-
-        public static SortedDictionary<string, Patch> GetAllPatchesInAssembly(IPatcher patcher)
-        {
-            var assembly = patcher.GetDbAssembly();
-            var subdirectory = patcher.ResourceSubdirectory;
-            Regex upgradePatchesRegexPattern;
-
-            if(string.IsNullOrWhiteSpace(subdirectory))
-                upgradePatchesRegexPattern =  new Regex(@".*\.up\.(.*\.sql)");
-            else
-                upgradePatchesRegexPattern = new Regex(@".*\."+Regex.Escape(subdirectory)+@"\.up\.(.*\.sql)");
-
-            var files = new SortedDictionary<string, Patch>();
-            
-            //get all resources out of 
-            foreach (string manifestResourceName in assembly.GetManifestResourceNames())
-            {
-                var match = upgradePatchesRegexPattern.Match(manifestResourceName);
-                if (match.Success)
-                {
-                    string fileContents = new StreamReader(assembly.GetManifestResourceStream(manifestResourceName)).ReadToEnd();
-                    files.Add(match.Groups[1].Value, new Patch(match.Groups[1].Value, fileContents));
-                }
-            }
-
-            return files;
-        }
-
+        
         public override int GetHashCode()
         {
             return locationInAssembly.GetHashCode();
@@ -191,14 +149,14 @@ namespace MapsDirectlyToDatabaseTable.Versioning
             SoftwareBehindDatabase
         }
 
-        public static PatchingState IsPatchingRequired(SqlConnectionStringBuilder builder, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
+        public static PatchingState IsPatchingRequired(DiscoveredDatabase database, IPatcher patcher, out Version databaseVersion, out Patch[] patchesInDatabase, out SortedDictionary<string, Patch> allPatchesInAssembly)
         {
-            databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(builder);
+            databaseVersion = DatabaseVersionProvider.GetVersionFromDatabase(database);
 
-            MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(builder.DataSource, builder.InitialCatalog, builder.UserID, builder.Password);
+            MasterDatabaseScriptExecutor scriptExecutor = new MasterDatabaseScriptExecutor(database);
             patchesInDatabase = scriptExecutor.GetPatchesRun();
 
-            allPatchesInAssembly = GetAllPatchesInAssembly(patcher);
+            allPatchesInAssembly = patcher.GetAllPatchesInAssembly(database);
 
             AssemblyName databaseAssemblyName = patcher.GetDbAssembly().GetName();
             

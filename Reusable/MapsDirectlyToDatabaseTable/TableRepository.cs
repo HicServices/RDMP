@@ -389,7 +389,7 @@ namespace MapsDirectlyToDatabaseTable
 
         public Version GetVersion()
         {
-            return DatabaseVersionProvider.GetVersionFromDatabase(ConnectionStringBuilder);
+            return DatabaseVersionProvider.GetVersionFromDatabase(DiscoveredServer.GetCurrentDatabase());
         }
 
         public IEnumerable<T> GetAllObjectsInIDList<T>(IEnumerable<int> ids) where T : IMapsDirectlyToDatabaseTable
@@ -726,6 +726,13 @@ namespace MapsDirectlyToDatabaseTable
             
             //if we are in the middle of doing stuff we can just reuse the ongoing one
             if (ongoingConnection != null && ongoingConnection.Connection.State == ConnectionState.Open)//as long as it hasn't timed out or been disposed etc
+                if (ongoingConnection.CloseOnDispose)
+                {
+                    var clone = ongoingConnection.Clone();
+                    clone.CloseOnDispose = false;
+                    return clone;
+                }
+                else
                     return ongoingConnection;
 
             ongoingConnection = DiscoveredServer.GetManagedConnection(ongoingTransaction);

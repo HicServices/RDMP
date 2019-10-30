@@ -11,6 +11,7 @@ using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
@@ -18,13 +19,15 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
     {
         private readonly IList<IDeleteable> _deletables;
 
-        public ExecuteCommandDelete(IActivateItems activator, IDeleteable deletable) : base(activator)
+        public ExecuteCommandDelete(IActivateItems activator, IDeleteable deletable) : this(activator,new []{ deletable})
         {
-            _deletables = new []{ deletable};
-        }
+                 }
         public ExecuteCommandDelete(IActivateItems activator, IList<IDeleteable> deletables) : base(activator)
         {
             _deletables = deletables;
+
+            if(_deletables.Any( d => d is CohortAggregateContainer c && c.IsRootContainer()))
+                SetImpossible("Cannot delete root containers");
         }
         public override void Execute()
         {

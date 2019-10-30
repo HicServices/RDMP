@@ -78,7 +78,7 @@ namespace Rdmp.Core.Curation
                 }
                 catch (CryptographicException e)
                 {
-                    throw new Exception("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
+                    throw new CryptographicException("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey to a different one than at the time it was encrypted?",e);
                 }
             }
         }

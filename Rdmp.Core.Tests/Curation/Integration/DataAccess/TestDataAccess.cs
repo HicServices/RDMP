@@ -184,6 +184,8 @@ namespace Rdmp.Core.Tests.Curation.Integration.DataAccess
                     creds.Password = "bobsPassword";
                     creds.SaveToDatabase();
 
+                    //credentials are cached
+                    t.ClearAllInjections();
 
                     ////t has some credentials now
                     server = DataAccessPortal.GetInstance().ExpectServer(t, DataAccessContext.InternalDataProcessing);

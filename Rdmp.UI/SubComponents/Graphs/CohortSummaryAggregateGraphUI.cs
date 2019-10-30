@@ -140,7 +140,7 @@ namespace Rdmp.UI.SubComponents.Graphs
             CohortSummaryQueryBuilder builder;
 
             if (_collection.CohortIfAny != null)
-                builder = new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny);
+                builder = new CohortSummaryQueryBuilder(summary, _collection.CohortIfAny,Activator.CoreChildProvider);
             else
                 builder = new CohortSummaryQueryBuilder(summary, _collection.CohortContainerIfAny);
 

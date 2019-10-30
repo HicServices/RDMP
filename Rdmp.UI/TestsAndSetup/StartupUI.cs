@@ -230,19 +230,25 @@ namespace Rdmp.UI.TestsAndSetup
                     if (eventArgs.Patcher.Tier == 1)
                     {
                         pbDisconnected.Visible = true;
-                        lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
+
+                        if (eventArgs.Repository == null)
+                            lblProgress.Text = "RDMP Platform Databases are not set";
+                        else
+                            lblProgress.Text = "Could not reach " + eventArgs.Patcher.Name;
+
                         _couldNotReachTier1Database = true;
-                        ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name)));
+
+                        ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
                     }
                     else
-                        ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name)));
+                        ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
                     break;
 
                     case RDMPPlatformDatabaseStatus.Broken:
                     if (eventArgs.Patcher.Tier == 1)
-                        ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name)));
+                        ragSmiley1.Fatal(new Exception(string.Format("Core Platform Database was {0} ({1})",eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
                     else
-                        ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name)));
+                        ragSmiley1.Warning(new Exception(string.Format("Tier {0} Database was {1} ({2})",eventArgs.Patcher.Tier ,eventArgs.Status , eventArgs.Patcher.Name), eventArgs.Exception));
                     break;
 
                 case RDMPPlatformDatabaseStatus.RequiresPatching:
@@ -251,7 +257,7 @@ namespace Rdmp.UI.TestsAndSetup
                             MessageBoxButtons.YesNo) == DialogResult.Yes)
                     {
                         PatchingUI.ShowIfRequired(
-                            (SqlConnectionStringBuilder) eventArgs.Repository.ConnectionStringBuilder,
+                            eventArgs.Repository.DiscoveredServer.GetCurrentDatabase(),
                             eventArgs.Repository, eventArgs.Patcher);
                         DoNotContinue = true;
                     }

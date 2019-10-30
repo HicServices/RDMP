@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Linq;
 using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
@@ -15,6 +16,34 @@ namespace Rdmp.Core.Tests.Curation.Unit
     [Category("Unit")]
     public class ParameterManagerTests
     {
+        [Test]
+        public void Test_ParameterManager_SimpleRename()
+        {
+            var p1 = new ConstantParameter("DECLARE @fish as int", "1", "fishes be here",new MicrosoftQuerySyntaxHelper());
+            var p2 = new ConstantParameter("DECLARE @fish as int", "2", "fishes be here",new MicrosoftQuerySyntaxHelper());
+
+            var pm1 = new ParameterManager();
+            var pm2 = new ParameterManager();
+            var pm3 = new ParameterManager();
+            
+            pm1.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p1);
+            pm2.ParametersFoundSoFarInQueryGeneration[ParameterLevel.QueryLevel].Add(p2);
+
+            pm3.ImportAndElevateResolvedParametersFromSubquery(pm1, out Dictionary<string,string> renames1);
+            pm3.ImportAndElevateResolvedParametersFromSubquery(pm2, out Dictionary<string,string> renames2);
+
+            var final = pm3.GetFinalResolvedParametersList().ToArray();
+
+            //the final composite parameters should have a rename in them
+            Assert.AreEqual("@fish",final[0].ParameterName);
+            Assert.AreEqual("@fish_2",final[1].ParameterName);
+
+            Assert.IsEmpty(renames1);
+
+            Assert.AreEqual("@fish",renames2.Single().Key);
+            Assert.AreEqual("@fish_2",renames2.Single().Value);
+        }
+
         [Test]
         [TestCase(ParameterLevel.TableInfo,ParameterLevel.Global)]
         [TestCase(ParameterLevel.QueryLevel, ParameterLevel.Global)]
