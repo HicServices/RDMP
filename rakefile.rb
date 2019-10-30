@@ -47,13 +47,20 @@ end
 
 task :build_cli => :restorepackages do
 	Dir.chdir("Tools/rdmp/") do
-        sh "dotnet publish -r win-x64 -c Release -o Publish"
-		Dir.chdir("Publish/") do
-			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v *.dll"
-			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v *.exe"
+        sh "dotnet publish -r win-x64 -c Release -o PublishWindows"
+		sh "dotnet publish -r linux-x64 -c Release -o PublishLinux --self-contained false"
+
+		Dir.chdir("PublishWindows/") do
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v *.dll"
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v *.exe"
+		end
+
+		Dir.chdir("PublishLinux/") do
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v *.dll"
 		end
     end
-	sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/Publish', 'Tools/rdmp/rdmp-cli-win-x64.zip'); }\""
+	sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishWindows', 'Tools/rdmp/rdmp-cli-win-x64.zip'); }\""
+	sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishLinux', 'Tools/rdmp/rdmp-cli-linux-x64.zip'); }\""
 end
 
 task :build_low_warning, [:config,:level,:aserrors] => :restorepackages do |msb, args|
@@ -106,7 +113,7 @@ task :deployplugins, [:config] do |t, args|
 	
 	# Publish the CLI
 	Dir.chdir('Tools/rdmp') do
-		sh "dotnet publish -c #{args.config}"
+		sh "dotnet publish -c #{args.config} --self-contained false"
 	end
 	
 	#Package all the plugins
@@ -127,7 +134,7 @@ task :squirrel do
 	
 	Dir.chdir "Application/ResearchDataManagementPlatform" do
 		sh "nuget pack RDMP.nuspec -Properties Configuration=Release -Version #{version}"
-		sh "#{SQUIRREL}/Squirrel.exe --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version} -n \"/a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v\""
+		sh "#{SQUIRREL}/Squirrel.exe --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version} -n \"/a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v\""
 	end
 end
 
@@ -163,6 +170,7 @@ task :github do
     end
 	Dir.chdir("Tools/rdmp") do
 		upload_to_github(upload_url, "rdmp-cli-win-x64.zip")
+		upload_to_github(upload_url, "rdmp-cli-linux-x64.zip")
     end
 end
 

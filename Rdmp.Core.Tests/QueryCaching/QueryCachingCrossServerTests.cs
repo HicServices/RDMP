@@ -5,9 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using BadMedicine;
 using BadMedicine.Datasets;
@@ -21,10 +19,9 @@ using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Databases;
-using Rdmp.Core.QueryCaching.Aggregation;
 using ReusableLibraryCode.Checks;
-using Tests.Common;
 using Tests.Common.Scenarios;
+using TypeGuesser;
 
 namespace Rdmp.Core.Tests.QueryCaching
 {
@@ -44,6 +41,207 @@ namespace Rdmp.Core.Tests.QueryCaching
             var mds = new MasterDatabaseScriptExecutor(db);
             mds.CreateAndPatchDatabase(patcher, new AcceptAllCheckNotifier());
         }
+
+
+        /// <summary>
+        /// Tests running a simple cic with a single UNION container holding an aggregate.  The aggregate optionally has a parameter on it.  The
+        /// second server is the cache server
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.MySql,true)]
+        [TestCase(DatabaseType.MySql,false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,false)]
+        //[TestCase(DatabaseType.Oracle,true)] //Oracle FAnsi doesn't currently support parameters
+        //[TestCase(DatabaseType.Oracle,false)]
+        public void Test_SingleServer_WithOneParameter(DatabaseType dbType, bool useParameter)
+        {
+
+            /*
+             *           Server1                        Server2
+             *       _____________________         _____________________
+             *        |HospitalAdmissions |   →    |      Cache         |
+             *           @date_of_max
+             *
+             */
+
+            var server1 = GetCleanedServer(dbType);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            var cache = CreateCache(server2);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+            var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,useParameter,"@date_of_max","'2001-01-01'");
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache.ID;
+            cic.SaveToDatabase();
+
+            var root = cic.RootCohortAggregateContainer;
+            root.AddChild(ac1,0);
+            
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            runner.Run(new CancellationToken());
+            
+            AssertNoErrors(compiler);
+            
+            Assert.IsTrue(compiler.Tasks.Where(t=>t.Key is AggregationContainerTask).Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")), "Expected UNION container to use the cache");
+        }
+
+        /// <summary>
+        /// Tests running a simple cic with a single UNION container holding two aggregates.  The aggregates both have their own parameter
+        /// called @date_of_max but they have different values.  This means the SQL generated needs to be adjusted so they don't collide /
+        /// overwrite one another.
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.MySql,true)]
+        //[TestCase(DatabaseType.MySql,false)] //only works with cache because container operations (UNION) are not supported on MySql
+        [TestCase(DatabaseType.MicrosoftSQLServer,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,false)]
+        //[TestCase(DatabaseType.Oracle)] //Oracle FAnsi doesn't currently support parameters
+        public void Test_SingleServer_WithTwoParameters(DatabaseType dbType,bool useCache)
+        {
+
+            /*
+             *           Server1                        Server2
+             *        ____________________         _____________________
+             *        |HospitalAdmissions |   →    |      Cache         |
+             *           @date_of_max
+             *        ____________________     ↗   
+             *        |HospitalAdmissions |      
+             *           @date_of_max
+             *
+             *   (has different value so rename operations come into effect)
+             */
+
+            var server1 = GetCleanedServer(dbType);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            var cache = useCache ? CreateCache(server2): null;
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var ac1 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,true,"@date_of_max","'2001-01-01'");
+            var ac2 = SetupAggregateConfigurationWithFilter(server1, people, r, cic,true,"@date_of_max","'2005-01-01'");
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var root = cic.RootCohortAggregateContainer;
+            root.AddChild(ac1,0);
+            root.AddChild(ac2,1);
+            
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            runner.Run(new CancellationToken());
+            
+            AssertNoErrors(compiler);
+            
+            //each container on it's own ran with the normal SQL
+            AssertNoErrors(compiler,ac1,"@date_of_max='2001-01-01'");
+            AssertNoErrors(compiler,ac2,"@date_of_max='2005-01-01'");
+
+
+            if (useCache)
+            {
+                //the root container run with dual cache fetch and no parameters
+                AssertNoErrors(compiler,root,"IndexedExtractionIdentifierList");
+                AssertCacheUsed(compiler,root,"2/2");
+            }
+            else
+            {
+                //the root container ran with a rename operations (no cache available)
+                AssertNoErrors(compiler,root,"@date_of_max='2001-01-01'","@date_of_max_2='2005-01-01'");
+                AssertCacheUsed(compiler,root,"0/2");
+            }
+        }
+        /// <summary>
+        /// Tests running a simple cic a cohort that has a parameter and a patient index table which also has a parameter.
+        /// </summary>
+        /// <param name="dbType"></param>
+        [TestCase(DatabaseType.MySql,true,true)]
+        [TestCase(DatabaseType.MySql,true,false)]
+        [TestCase(DatabaseType.MySql,false,true)]
+        [TestCase(DatabaseType.MySql,false,false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,true,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,true,false)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,false,true)]
+        [TestCase(DatabaseType.MicrosoftSQLServer,false,false)]
+        public void Test_SingleServerPatientIndexTable_WithTwoParameters(DatabaseType dbType,bool useSameName,bool useCache)
+        {
+
+            /*
+             *           Server1                                  (Also Server1 - if useCache is true)
+             *        ______________________________            __________________________
+             *        |   Patient Index Table       |     →    |         Cache           |
+             *        |  (NA by date )              |         ↗ 
+             *           @date_of_max '2001-01-01'
+             *                                              ↗  
+             *            JOIN (should use cache)
+             *         ___________________________       ↗   
+             *        | Hospitalised after NA (ac) |
+             *          @date_of_max (or @maximum) '2005-01-01'
+             *
+             *   (has different value so rename operations come into effect)
+             */
+
+            var server1 = GetCleanedServer(dbType);
+
+            var cache = useCache? CreateCache(server1): null;
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var patientIndexTable = SetupPatientIndexTableWithFilter(server1, people, r, cic,true,"@date_of_max","'2001-01-01'");
+            var ac = SetupPatientIndexTableUserWithFilter(server1, people, r, cic,patientIndexTable,true,
+                useSameName ? "@date_of_max": "@maximum","'2005-01-01'");
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var root = cic.RootCohortAggregateContainer;
+            root.AddChild(ac,0);
+            
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            runner.Run(new CancellationToken());
+
+            if (useSameName)
+            {
+                AssertCrashed(compiler, ac, "PatientIndexTables cannot have parameters with the same name as their users.  Offending parameter(s) were @date_of_max");
+            }
+            else
+            {
+                if (useCache)
+                {
+                    //we should hit up the cache for the interior of the query and therefore not need the parameter
+                    AssertNoErrors(compiler,ac,"@maximum='2005-01-01'","JoinableInceptionQuery_AggregateConfiguration","AdmissionDate < @maximum");
+
+                    AssertCacheUsed(compiler, root, "1/1");
+                }
+                else
+                    AssertNoErrors(compiler,ac,"@date_of_max='2001-01-01'","@maximum='2005-01-01'","SampleDate < @date_of_max","AdmissionDate < @maximum");
+
+                AssertNoErrors(compiler);
+            }
+                
+            
+        }
+
 
         /// <summary>
         /// Tests running a cic in which there are 2 aggregates both hospitalizations with 1 EXCEPT the other.  The expected result is 0
@@ -235,6 +433,114 @@ namespace Rdmp.Core.Tests.QueryCaching
             Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
         }
 
+        /// <summary>
+        /// Tests the ability to run a cic in which there are 2 tables that must be joined but are on separate servers.
+        /// A patient index table on server 1 and a table on server 2 to which it must be joined.
+        ///
+        /// <para>This only works if there is a cache on server 2</para>
+        ///
+        /// </summary>
+        [Test]
+        public void Join_PatientIndexTable_NotOnCacheServer()
+        {
+            /*
+             *           Server1                    Server 2
+             *         _____________                _________
+             *        |Biochemistry|    →          | Cache  |  (cache must first be populated)
+             *               
+             *                        ↘ join   ↘ (must use cache)
+             *                                  _____________________
+             *                                  | Hospital Admissions|
+             *
+             */
+             
+            var server1 = GetCleanedServer(DatabaseType.MySql);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+
+            ExternalDatabaseServer cache = CreateCache(server2);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var joinable = SetupPatientIndexTable(server1, people, r, cic);
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var hospitalAdmissions = SetupPatientIndexTableUser(server2, people, r, cic, joinable);
+            cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
+
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            
+            runner.Run(new CancellationToken());
+
+            AssertNoErrors(compiler);
+            
+            Assert.IsTrue(compiler.Tasks.Any(t => t.Key.GetCachedQueryUseCount().Equals("1/1")),"Expected cache to be used only for the final UNION");
+        }
+
+
+        /// <summary>
+        /// Tests the ability to run a cic in which there are 2 tables that must be joined but are on separate servers.
+        /// A patient index table on server 1 and a table on server 2 to which it must be joined.
+        ///
+        /// <para>This should fail because the only way to combine the two datasets is with a join and they are on separate servers
+        /// The cache cannot be used at all during the join because it's on a separate server.'
+        /// </para>
+        ///
+        /// </summary>
+        [Test]
+        public void Join_PatientIndexTable_ThreeServers()
+        {
+            /*
+             *           Server1                    Server 2                                Server 3
+             *         _____________                                                       _________
+             *        |Biochemistry|    →          (successfully caches joinable bit)      | Cache  |  
+             *               
+             *                        ↘ join   ↘ (should crash)
+             *                                  _____________________
+             *                                  | Hospital Admissions|
+             *
+             */
+             
+            var server1 = GetCleanedServer(DatabaseType.MySql);
+            var server2 = GetCleanedServer(DatabaseType.MicrosoftSQLServer);
+            var server3 = GetCleanedServer(DatabaseType.Oracle);
+
+            ExternalDatabaseServer cache = CreateCache(server3);
+
+            var r = new Random(500);
+            var people = new PersonCollection();
+            people.GeneratePeople(5000, r);
+
+            var cic = new CohortIdentificationConfiguration(CatalogueRepository, "cic");
+
+            var joinable = SetupPatientIndexTable(server1, people, r, cic);
+
+            cic.CreateRootContainerIfNotExists();
+            cic.QueryCachingServer_ID = cache?.ID;
+            cic.SaveToDatabase();
+
+            var hospitalAdmissions = SetupPatientIndexTableUser(server2, people, r, cic, joinable);
+            cic.RootCohortAggregateContainer.AddChild(hospitalAdmissions, 0);
+
+            var compiler = new CohortCompiler(cic);
+            var runner = new CohortCompilerRunner(compiler, 50000);
+            
+            runner.Run(new CancellationToken());
+            
+            var hospitalAdmissionsTask = compiler.Tasks.Keys.OfType<AggregationTask>().Single(t => t.Aggregate.Equals(hospitalAdmissions));
+
+            Assert.AreEqual(CompilationState.Crashed,hospitalAdmissionsTask.State);
+
+            StringAssert.Contains("is not fully cached and CacheUsageDecision is MustUse",hospitalAdmissionsTask.CrashMessage.ToString());
+        }
+
         [TestCase(DatabaseType.Oracle)]
         [TestCase(DatabaseType.MySql)]
         [TestCase(DatabaseType.MicrosoftSQLServer)]
@@ -352,6 +658,13 @@ namespace Rdmp.Core.Tests.QueryCaching
 
             return new JoinableCohortAggregateConfiguration(CatalogueRepository, cic, ac);
         }
+        
+        private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
+        {
+            var joinable = SetupPatientIndexTable(db, people, r, cic);
+            AddFilter(db,"Test After","SampleDate < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
+            return joinable;
+        }
 
         /// <summary>
         /// Creates a table HospitalAdmissions that uses the patient index table <paramref name="joinable"/> to return distinct patients
@@ -378,7 +691,42 @@ namespace Rdmp.Core.Tests.QueryCaching
             new JoinableCohortAggregateConfigurationUse(CatalogueRepository, ac, joinable);
 
             return ac;
+        }
 
+        private AggregateConfiguration SetupPatientIndexTableUserWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable, bool useParameter, string paramName, string paramValue)
+        {
+            var ac1 = SetupPatientIndexTableUser(db, people, r, cic,joinable);
+
+            AddFilter(db,"My Filter", "AdmissionDate < ", ac1, useParameter, paramName, paramValue);
+
+            return ac1;
+        }
+
+        private void AddFilter(DiscoveredDatabase db,string filterName, string whereSqlFirstHalf, AggregateConfiguration ac, bool useParameter, string paramName, string paramValue)
+        {
+            var container = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
+            ac.RootFilterContainer_ID = container.ID;
+            ac.SaveToDatabase();
+            
+            //create a filter
+            var filter = new AggregateFilter(CatalogueRepository,filterName,container);
+
+            if (useParameter)
+            {
+                filter.WhereSQL = whereSqlFirstHalf + paramName;
+
+                var parameterSql = db.Server.GetQuerySyntaxHelper()
+                    .GetParameterDeclaration(paramName, new DatabaseTypeRequest(typeof(DateTime)));
+
+                var parameter = filter.GetFilterFactory().CreateNewParameter(filter, parameterSql);
+                parameter.Value = paramValue;
+                parameter.SaveToDatabase();
+                
+            }
+            else
+                filter.WhereSQL = whereSqlFirstHalf + paramValue;
+
+            filter.SaveToDatabase();
         }
 
         /// <summary>
@@ -408,6 +756,23 @@ namespace Rdmp.Core.Tests.QueryCaching
             return ac;
         }
 
+        /// <summary>
+        /// Creates an AggregateConfiguration with a filter on date that optionally uses a parameter e.g. @example
+        /// </summary>
+        /// <param name="db"></param>
+        /// <param name="people"></param>
+        /// <param name="r"></param>
+        /// <param name="cic"></param>
+        /// <param name="useParameter"></param>
+        /// <param name="paramName"></param>
+        /// <param name="paramValue"></param>
+        /// <returns></returns>
+        private AggregateConfiguration SetupAggregateConfigurationWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
+        {
+            var ac1 = SetupAggregateConfiguration(db, people, r, cic);
+            AddFilter(db, "My Filter", "AdmissionDate < ", ac1, useParameter, paramName, paramValue);
+            return ac1;
+        }
 
         /// <summary>
         /// Shows the state of the <paramref name="compiler"/> and asserts that all the jobs are finished
@@ -425,6 +790,67 @@ namespace Rdmp.Core.Tests.QueryCaching
                 TestContext.WriteLine($"{i++} - {kvp.Key.ToString()} | {kvp.Key.GetType()} | {kvp.Key.State} | {kvp.Key?.CrashMessage} | {kvp.Key.FinalRowCount} | {kvp.Key.GetCachedQueryUseCount()}");
             
             Assert.IsTrue(compiler.Tasks.All(t => t.Key.State == CompilationState.Finished), "Expected all tasks to finish without error");
+        }
+
+        /// <summary>
+        /// Asserts that the given <paramref name="task"/> (when run on it's own) crashed with the given
+        /// <see cref="expectedErrorMessageToContain"/>
+        /// </summary>
+        private void AssertCrashed(CohortCompiler compiler, AggregateConfiguration task, string expectedErrorMessageToContain)
+        {
+            var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
+            Assert.AreEqual(CompilationState.Crashed,acResult.Key.State);
+            StringAssert.Contains(expectedErrorMessageToContain,acResult.Key.CrashMessage.Message);
+        }
+
+        /// <summary>
+        /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
+        /// included all the strings in <see cref="expectedSqlBits"/>
+        /// </summary>
+        /// <param name="compiler"></param>
+        /// <param name="task"></param>
+        /// <param name="expectedSqlBits"></param>
+        private void AssertNoErrors(CohortCompiler compiler, AggregateConfiguration task,
+            params string[] expectedSqlBits)
+        {
+            var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
+            Assert.AreEqual(CompilationState.Finished,acResult.Key.State);
+
+            foreach (var s in expectedSqlBits)
+                StringAssert.Contains(s,acResult.Value.CountSQL);
+        }
+
+        /// <summary>
+        /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
+        /// included all the strings in <see cref="expectedSqlBits"/>
+        /// </summary>
+        /// <param name="compiler"></param>
+        /// <param name="task"></param>
+        /// <param name="expectedSqlBits"></param>
+        private void AssertNoErrors(CohortCompiler compiler, CohortAggregateContainer task,
+            params string[] expectedSqlBits)
+        {
+            var acResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask a && a.Container.Equals(task));
+            Assert.AreEqual(CompilationState.Finished,acResult.Key.State);
+
+            foreach (var s in expectedSqlBits)
+                StringAssert.Contains(s,acResult.Value.CountSQL);
+        }
+
+        /// <summary>
+        /// Asserts that the given <paramref name="container"/> ran successfully and fetched it's results from the cache (if any) with the
+        /// given <paramref name="expectedCacheUsageCount"/>
+        /// </summary>
+        /// <param name="compiler"></param>
+        /// <param name="container"></param>
+        /// <param name="expectedCacheUsageCount">The amount you expect to be used of the cache e.g. "2/2" </param>
+        private void AssertCacheUsed(CohortCompiler compiler, CohortAggregateContainer container, string expectedCacheUsageCount)
+        {
+            //cache should have been used
+            var containerResult = compiler.Tasks.Single(t => t.Key is AggregationContainerTask c && c.Container.Equals(container));
+            
+            Assert.AreEqual(CompilationState.Finished,containerResult.Key.State);
+            Assert.AreEqual(expectedCacheUsageCount,containerResult.Key.GetCachedQueryUseCount());
         }
         #endregion
     }

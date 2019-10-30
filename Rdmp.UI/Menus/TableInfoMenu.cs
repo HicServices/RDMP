@@ -185,7 +185,7 @@ namespace Rdmp.UI.Menus
         
         private void ConfigureTableInfoParameters(TableInfo tableInfo)
         {
-            ParameterCollectionUI.ShowAsDialog(new ParameterCollectionUIOptionsFactory().Create(tableInfo));
+            ParameterCollectionUI.ShowAsDialog(_activator,new ParameterCollectionUIOptionsFactory().Create(tableInfo));
         }
 
     }

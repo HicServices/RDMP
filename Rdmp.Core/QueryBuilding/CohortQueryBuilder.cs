@@ -138,13 +138,14 @@ namespace Rdmp.Core.QueryBuilding
         {
             if(configuration == null)
                 throw new NotSupportedException("Can only generate select * statements when constructed for a single AggregateConfiguration, this was constructed with a container as the root entity (it may even reflect a UNION style query that spans datasets)");
-
-            //Show the user all the fields (*) unless there is a HAVING statement on the aggregate in which case we can only show the chi.
-            string selectList = string.IsNullOrWhiteSpace(configuration.HavingSQL) ? "*" : null;
+            
+            //Show the user all the fields (*) unless there is a HAVING or it is a Patient Index Table.
+            string selectList = 
+                string.IsNullOrWhiteSpace(configuration.HavingSQL) && !configuration.IsJoinablePatientIndexTable() ? "*" : null;
 
             RecreateHelpers(new QueryBuilderCustomArgs(selectList, "" /*removes distinct*/, topX));
 
-            Results.BuildFor(configuration);
+            Results.BuildFor(configuration,ParameterManager);
             
             string sampleSQL = Results.Sql;
 
@@ -155,8 +156,7 @@ namespace Rdmp.Core.QueryBuilding
 
             if(finalParams.Any())
             {
-                foreach (ISqlParameter param in finalParams)
-                    parameterSql += QueryBuilder.GetParameterDeclarationSQL(param);
+                parameterSql = QueryBuilder.GetParameterDeclarationSQL(finalParams);
 
                 return parameterSql + Environment.NewLine + sampleSQL;
             }
@@ -168,12 +168,14 @@ namespace Rdmp.Core.QueryBuilding
         {
             RecreateHelpers(null);
 
+            ParameterManager.ClearNonGlobals();
+
             Results.StopContainerWhenYouReach = _stopContainerWhenYouReach;
 
             if (container != null)
-                Results.BuildFor(container);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
+                Results.BuildFor(container,ParameterManager);    //user constructed us with a container (and possibly subcontainers even - any one of them chock full of aggregates)
             else
-                Results.BuildFor(configuration);//user constructed us without a container, he only cares about 1 aggregate
+                Results.BuildFor(configuration,ParameterManager);//user constructed us without a container, he only cares about 1 aggregate
 
             _sql = Results.Sql;
   
@@ -195,7 +197,7 @@ namespace Rdmp.Core.QueryBuilding
 
         private void RecreateHelpers(QueryBuilderCustomArgs customizations)
         {
-            helper = new CohortQueryBuilderHelper(ParameterManager);
+            helper = new CohortQueryBuilderHelper();
             Results = new CohortQueryBuilderResult(CacheServer,_childProvider, helper,customizations);
         }
 
