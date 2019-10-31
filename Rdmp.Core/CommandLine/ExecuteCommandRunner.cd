@@ -4,7 +4,7 @@
     <Position X="0.5" Y="0.5" Height="0.323" Width="4.46" />
   </Comment>
   <Comment CommentText="Handles turning a collection of arguments e.g. &quot;Catalogue:123&quot; into an actuall class references">
-    <Position X="1.177" Y="4.208" Height="0.75" Width="2.325" />
+    <Position X="1" Y="4.698" Height="0.75" Width="2.325" />
   </Comment>
   <Comment CommentText="Things that can be parsed into values to use in constructing commands">
     <Position X="8.135" Y="5.167" Height="0.5" Width="2.325" />
@@ -24,7 +24,7 @@
   <Class Name="Rdmp.Core.CommandLine.Runners.ExecuteCommandRunner">
     <Position X="0.75" Y="1.5" Width="2" />
     <TypeIdentifier>
-      <HashCode>AAAAAAAAAQICAAAAAAAAAAAAAAAAAABAACAAABIABAI=</HashCode>
+      <HashCode>AAAAAACAAQICAAAAAAAAAAAAAAAAAABAACAAABIABAI=</HashCode>
       <FileName>CommandLine\Runners\ExecuteCommandRunner.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -49,7 +49,7 @@
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.CommandLineObjectPicker">
     <Position X="3.75" Y="4.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AACAAAAAAAAAAAAACAAAAAgAAAAAABAAQAAAAAAAAAA=</HashCode>
+      <HashCode>gACAAAAAAAAAAAAACAAAAAgAAAAAABAAQAAAAAAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\CommandLineObjectPicker.cs</FileName>
     </TypeIdentifier>
     <ShowAsCollectionAssociation>
@@ -59,35 +59,35 @@
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.CommandLineObjectPickerArgumentValue" Collapsed="true">
     <Position X="7.75" Y="4.25" Width="3.25" />
     <TypeIdentifier>
-      <HashCode>ABAAAAAAAEAAAAAAAAAAQAAAAQAAAAAIACEABAAAAAA=</HashCode>
+      <HashCode>ABAAAAAAAEAAAAAAAAAAQAAAAQAAAQAIASEABAAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\CommandLineObjectPickerArgumentValue.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectBase" Collapsed="true">
     <Position X="8.25" Y="5.75" Width="2" />
     <TypeIdentifier>
-      <HashCode>IAAiAAAEAIEIhABAQAAAAAAAAAgAAAAAAIAAQAAAAAA=</HashCode>
+      <HashCode>IAAiAAAEAIEIhABAQAAAAAAAAAgAAAAAAIAAQBAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\PickObjectBase.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectByID" Collapsed="true">
     <Position X="9" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQAAAAAA=</HashCode>
+      <HashCode>AAAiAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQAAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\PickObjectByID.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickObjectByName" Collapsed="true">
     <Position X="10.75" Y="7" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQEAAAAA=</HashCode>
+      <HashCode>ACAiAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQEAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\PickObjectByName.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Class Name="Rdmp.Core.CommandLine.Interactive.ConsoleInputManager">
     <Position X="3.5" Y="9" Width="2.5" />
     <TypeIdentifier>
-      <HashCode>AABgAAAAAAEAAACAQEAAJAQBAEAkQkAACgAAAAAAAgA=</HashCode>
+      <HashCode>AIRAABAQAAEQAACAQEAAJAQBAEQ0QkJACgAAAAAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\ConsoleInputManager.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -95,7 +95,7 @@
   <Class Name="Rdmp.Core.CommandExecution.CommandInvoker">
     <Position X="6.75" Y="8.25" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>gIAAAAAAAAgAAAAAAAAAJAAAgCIgQAAIAAAAgAAAAgA=</HashCode>
+      <HashCode>gIAAAAAAAAgQAAAAAAAAJAAAgCIgQAAIAAAAgAAAAgA=</HashCode>
       <FileName>CommandExecution\CommandInvoker.cs</FileName>
     </TypeIdentifier>
     <ShowAsAssociation>
@@ -105,7 +105,7 @@
   <Class Name="Rdmp.Core.CommandExecution.BasicCommandExecution" Collapsed="true">
     <Position X="10.5" Y="9.75" Width="2.25" />
     <TypeIdentifier>
-      <HashCode>AAAQAARQAAEAAAQAAEAAAAAQAAAEAAAAiGKAAQAAAAA=</HashCode>
+      <HashCode>AIAQAARQAAEAAARAAEAAIAARAEQEQAAgiGKAAQAAAAA=</HashCode>
       <FileName>CommandExecution\BasicCommandExecution.cs</FileName>
     </TypeIdentifier>
     <Lollipop Position="0.2" />
@@ -134,14 +134,14 @@
   <Class Name="Rdmp.Core.CommandLine.Interactive.Picking.PickDatabase" Collapsed="true">
     <Position X="12.75" Y="7" Width="1.5" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQAAAAAA=</HashCode>
+      <HashCode>AAAgAAAAAAAIAAAAAAAAAAAAAAgAAAAAAAAAQBAAAAA=</HashCode>
       <FileName>CommandLine\Interactive\Picking\PickDatabase.cs</FileName>
     </TypeIdentifier>
   </Class>
   <Interface Name="Rdmp.Core.CommandExecution.IBasicActivateItems" Collapsed="true">
     <Position X="3.5" Y="8" Width="1.75" />
     <TypeIdentifier>
-      <HashCode>AAAgAAAAAAEAAACAQEAAIAQBAEAkQgAACgAAAAAAAgA=</HashCode>
+      <HashCode>AIQAABAQAAEQAACAQEAAIAQBAEQ0QgJACgAAAAAAAAA=</HashCode>
       <FileName>CommandExecution\IBasicActivateItems.cs</FileName>
     </TypeIdentifier>
   </Interface>

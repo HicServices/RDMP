@@ -11,6 +11,7 @@ using System.Text.RegularExpressions;
 using System.Windows.Forms;
 using FAnsi.Discovery.QuerySyntax;
 using NHunspell;
+using Rdmp.Core.CommandExecution;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Settings;
@@ -29,8 +30,8 @@ namespace Rdmp.UI.ScintillaHelper
         /// <summary>
         /// Creates a new SQL (default) Scintilla editor with highlighting
         /// </summary>
-        /// <param name="commandFactory">Unless your control is going to be 100% ReadOnly then you should supply an ICommandFactory e.g. RDMPCommandFactory to allow dragging and  
-        /// dropping components into the window.  The ICommandFactory will decide whether the given object can be translated into an ICommand and hence into a unique bit of SQL
+        /// <param name="commandFactory">Unless your control is going to be 100% ReadOnly then you should supply an <see cref="ICombineableFactory"/> to allow dragging and  
+        /// dropping components into the window.  The <see cref="ICombineableFactory"/> will decide whether the given object can be translated into an <see cref="ICombineToMakeCommand"/> and hence into a unique bit of SQL
         /// to add to the editor</param>
         /// <param name="language">Determines highlighting, options include mssql,csharp or null</param>
         /// <param name="syntaxHelper"></param>

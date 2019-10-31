@@ -75,7 +75,8 @@ typeof(ExecuteCommandMoveFilterIntoContainer),
 typeof(ExecuteCommandPutCatalogueIntoCatalogueFolder),
 typeof(ExecuteCommandReOrderAggregate),
 typeof(ExecuteCommandReOrderAggregateContainer),
-typeof(ExecuteCommandUseCredentialsToAccessTableInfoData)
+typeof(ExecuteCommandUseCredentialsToAccessTableInfoData),
+typeof(ExecuteCommandCreateLookup)
 
             });
 
