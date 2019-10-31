@@ -111,13 +111,16 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
 
                 var ti = TableInfoCreatedIfAny;
 
-                if(ti.IsTableValuedFunction && ti.GetAllParameters().Any())
+                if (ti != null)
                 {
-                    var options = new ParameterCollectionUIOptionsFactory().Create(ti);
-                    ParameterCollectionUI.ShowAsDialog(Activator,options,true);
+                    if(ti.IsTableValuedFunction && ti.GetAllParameters().Any())
+                    {
+                        var options = new ParameterCollectionUIOptionsFactory().Create(ti);
+                        ParameterCollectionUI.ShowAsDialog(Activator,options,true);
+                    }
+                    MessageBox.Show("Successfully imported table '" + ti + "'");
                 }
 
-                MessageBox.Show("Successfully imported table '" + ti + "'");
                 Close();
             }
             catch (SqlException exception)
