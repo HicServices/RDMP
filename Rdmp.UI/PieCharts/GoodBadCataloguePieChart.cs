@@ -280,8 +280,19 @@ namespace Rdmp.UI.PieCharts
 
         private void btnViewDataTable_Click(object sender, EventArgs e)
         {
-            var cmd = new ExecuteCommandShow(Activator, GetCatalogueItems(),1);
-            cmd.Execute();
+            var navigateTo = new SelectIMapsDirectlyToDatabaseTableDialog(
+                GetCatalogueItems().Where(ci => string.IsNullOrWhiteSpace(ci.Description)), false, false);
+
+            navigateTo.Show();
+
+            navigateTo.Closed += (o, args) =>
+            {
+                if (navigateTo.DialogResult == DialogResult.OK)
+                {
+                    var cmd = new ExecuteCommandShow(Activator,navigateTo.Selected,1);
+                    cmd.Execute();
+                }   
+            };
         }
     }
 }

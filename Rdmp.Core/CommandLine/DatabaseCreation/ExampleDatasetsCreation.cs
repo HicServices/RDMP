@@ -117,8 +117,8 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
 
             CreateAdmissionsViews(db);
-            var vConditions = ImportCatalogue(db.ExpectTable("vConditions"));
-            var vOperations = ImportCatalogue(db.ExpectTable("vOperations"));    
+            var vConditions = ImportCatalogue(db.ExpectTable("vConditions",null,TableType.View));
+            var vOperations = ImportCatalogue(db.ExpectTable("vOperations",null,TableType.View));
 
             CreateGraph(biochem,"Test Codes","TestCode",false,null);
             CreateGraph(biochem,"Test Codes By Date","SampleDate",true,"TestCode");

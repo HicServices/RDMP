@@ -51,12 +51,12 @@ task :build_cli => :restorepackages do
 		sh "dotnet publish -r linux-x64 -c Release -o PublishLinux --self-contained false"
 
 		Dir.chdir("PublishWindows/") do
-			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v *.dll"
-			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v *.exe"
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v *.dll"
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v *.exe"
 		end
 
 		Dir.chdir("PublishLinux/") do
-			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v *.dll"
+			sh "#{SQUIRREL}/signtool.exe sign /a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v *.dll"
 		end
     end
 	sh "powershell.exe -nologo -noprofile -command \"& { Add-Type -A 'System.IO.Compression.FileSystem'; [IO.Compression.ZipFile]::CreateFromDirectory('Tools/rdmp/PublishWindows', 'Tools/rdmp/rdmp-cli-win-x64.zip'); }\""
@@ -134,7 +134,7 @@ task :squirrel do
 	
 	Dir.chdir "Application/ResearchDataManagementPlatform" do
 		sh "nuget pack RDMP.nuspec -Properties Configuration=Release -Version #{version}"
-		sh "#{SQUIRREL}/Squirrel.exe --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version} -n \"/a /s MY /n \"University of Dundee\" /fd sha256 /tr http://sha256timestamp.ws.symantec.com/sha256/timestamp /td sha256 /v\""
+		sh "#{SQUIRREL}/Squirrel.exe --releasify ResearchDataManagementPlatform.#{version}.nupkg -r Release_#{version} -n \"/a /s MY /n \"University of Dundee\" /fd sha256 /tr http://timestamp.digicert.com /td sha256 /v\""
 	end
 end
 

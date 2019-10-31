@@ -117,5 +117,18 @@ namespace Rdmp.UI.Progress
             if(ParentForm != null && ParentForm.IsHandleCreated)
                 ParentForm.Close();
         }
+
+        public void Clear()
+        {
+            //remove existing progress bars
+            foreach (var pb in Controls.OfType<ProgressBar>().ToArray()) 
+                Controls.Remove(pb);
+
+            //clear our record of them
+            progressBars.Clear();
+
+            //reset the smiley
+            ragSmiley1.Reset();
+        }
     }
 }

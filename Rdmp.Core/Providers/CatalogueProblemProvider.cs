@@ -7,6 +7,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -225,14 +226,20 @@ namespace Rdmp.Core.Providers
                 c.RootCohortAggregateContainer_ID == container.ID))
                 return null;
 
+            //count children that are not disabled, there should be at least 2
             var children = _childProvider.GetChildren(container);
-
-            if (children.Length == 0)
+            var enabledChildren = children.Where(o=>!(o is IDisableable d) || !d.IsDisabled).ToArray();
+            
+            if (enabledChildren.Length == 0)
                 return "Empty SET containers have no effect (and will be ignored)";
 
-            if (children.Length == 1)
+            if (enabledChildren.Length == 1)
                 return "SET container operations have no effect if there is only one child within";
-            
+
+            //are there any children with the same order in this container?
+            if (children.OfType<IOrderable>().GroupBy(o => o.Order).Any(g => g.Count() > 1))
+                return "Child order is ambiguous, show the Order column and reorder contents";
+
             return null;
         }
     }

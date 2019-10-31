@@ -295,14 +295,14 @@ namespace Rdmp.Core.Reports
             foreach (ExtractionInformation information in extractionInformations)
             {
                 SetTableCell(table, tableLine, 0, information.GetRuntimeName(), TextFontSize);
-                SetTableCell(table, tableLine, 1, information.ColumnInfo.Data_type, TextFontSize);
+                SetTableCell(table, tableLine, 1, information.ColumnInfo == null ? "ORPHAN":information.ColumnInfo.Data_type, TextFontSize);
                 string description = information.CatalogueItem.Description;
 
                 //a field should only ever be a foreign key to one Lookup table
-                var lookups = information.ColumnInfo.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
+                var lookups = information.ColumnInfo?.GetAllLookupForColumnInfoWhereItIsA(LookupType.ForeignKey);
 
                 //if it has any lookups
-                if (lookups.Any())
+                if (lookups != null && lookups.Any())
                 {
                     var pkTableId = lookups.Select(l => l.PrimaryKey.TableInfo_ID).Distinct().SingleOrDefault();
 
