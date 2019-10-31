@@ -129,10 +129,7 @@ namespace Rdmp.UI.Tests
                 _itemActivator.Results.Clear();
 
             _checkResults = null;
-
-            if(LastUserInterfaceLaunched is IDisposable d)
-                d.Dispose();
-
+            
             LastUserInterfaceLaunched = null;
         }
         /// <summary>
@@ -436,6 +433,9 @@ namespace Rdmp.UI.Tests
                     try
                     {
                         ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{o,true});
+                        
+                        if(ui is IDisposable d)
+                            d.Dispose();
                     }
                     catch(Exception ex)
                     {
