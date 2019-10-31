@@ -129,6 +129,10 @@ namespace Rdmp.UI.Tests
                 _itemActivator.Results.Clear();
 
             _checkResults = null;
+
+            if(LastUserInterfaceLaunched is IDisposable d)
+                d.Dispose();
+
             LastUserInterfaceLaunched = null;
         }
         /// <summary>
