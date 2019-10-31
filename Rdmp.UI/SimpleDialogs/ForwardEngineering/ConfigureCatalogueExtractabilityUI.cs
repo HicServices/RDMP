@@ -59,7 +59,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         private HelpWorkflow _workflow;
         private CatalogueItem[] _catalogueItems;
         private bool _ddChangeAllChanged = false;
-        
+        private bool _importedNewTable = false;
+
         /// <summary>
         /// the Project to associate the Catalogue with to make it ProjectSpecific (probably null)
         /// </summary>
@@ -82,6 +83,8 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         {
             ColumnInfo[] cols;
             importer.DoImport(out _tableInfo, out cols);
+
+            _importedNewTable = true;
 
             Initialize(activator,initialDescription,projectSpecificIfAny);
         }
@@ -417,17 +420,39 @@ namespace Rdmp.UI.SimpleDialogs.ForwardEngineering
         {
             if(!_choicesFinalised)
             {
-                if (MessageBox.Show("Your data table will still exist but no Catalogue will be created",
-                    "Confirm", MessageBoxButtons.OKCancel) == DialogResult.OK)
+                if (_importedNewTable)
                 {
-                    DialogResult = DialogResult.Cancel;
-                    _catalogue.DeleteInDatabase();
-                    _catalogue = null;
-
-                    Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
+                    var confirm = MessageBox.Show("The database table was created as part of this import. Do you want to keep that?",
+                        "Confirm", MessageBoxButtons.YesNoCancel);
+                    if (confirm != DialogResult.Cancel)
+                    {
+                        DialogResult = DialogResult.Cancel;
+                        _catalogue.DeleteInDatabase();
+                        _catalogue = null;
+                        if (confirm == DialogResult.No)
+                        {
+                            _tableInfo.DeleteInDatabase();
+                            _tableInfo = null;
+                        }
+                        else
+                            Activator.RefreshBus.Publish(this, new RefreshObjectEventArgs(TableInfoCreated));
+                    }
+                    else
+                        e.Cancel = true;
                 }
                 else
-                    e.Cancel = true;
+                {
+                    if(MessageBox.Show(
+                            "Are you sure you want to Cancel?",
+                            "Confirm", MessageBoxButtons.YesNo) == DialogResult.Yes)
+                    {
+                        DialogResult = DialogResult.Cancel;
+                        _catalogue.DeleteInDatabase();
+                        _catalogue = null;
+                    }
+                    else
+                        e.Cancel = true;
+                }
             }
             else
             {

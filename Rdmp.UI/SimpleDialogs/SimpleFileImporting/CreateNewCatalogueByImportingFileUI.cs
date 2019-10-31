@@ -348,7 +348,6 @@ namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
             return new DataFlowPipelineEngineFactory(GetUseCase(), Activator.RepositoryLocator.CatalogueRepository.MEF);
         }
 
-
         private void btnExecute_Click(object sender, EventArgs e)
         {
             var p = ddPipeline.SelectedItem as Pipeline;
