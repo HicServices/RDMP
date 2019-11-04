@@ -8,9 +8,10 @@ using System.Drawing;
 using System.IO;
 using Rdmp.Core;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.DataExport.Data;
-using Rdmp.UI.Copying.Commands;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.SimpleDialogs.SimpleFileImporting;
@@ -42,7 +43,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             CheckFile();
         }
 
-        public ExecuteCommandCreateNewCatalogueByImportingFile(IActivateItems activator, FileCollectionCommand file) : base(activator)
+        public ExecuteCommandCreateNewCatalogueByImportingFile(IActivateItems activator, FileCollectionCombineable file) : base(activator)
         {
              if(file.Files.Length != 1)
              {

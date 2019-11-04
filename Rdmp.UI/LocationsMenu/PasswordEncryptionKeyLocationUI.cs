@@ -10,9 +10,10 @@ using System.IO;
 using System.Windows.Forms;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Managers;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.LocationsMenu
 {

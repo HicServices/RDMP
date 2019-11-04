@@ -8,11 +8,10 @@ using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
+
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -26,7 +25,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
 
         public override void Activate(Pipeline target)
         {
-            var dialog = new PickOneOrCancelDialog<StandardPipelineUseCaseNode>(
+            var dialog = new SimpleDialogs.PickOneOrCancelDialog<StandardPipelineUseCaseNode>(
                 ItemActivator.CoreChildProvider.PipelineUseCases.ToArray(),
                 "What is this Pipeline supposed to be used for?",
                 o=>ItemActivator.CoreIconProvider.GetImage(o),
@@ -48,7 +47,7 @@ namespace Rdmp.UI.CommandExecution.Proposals
             return true;
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
         {
             return null;
         }

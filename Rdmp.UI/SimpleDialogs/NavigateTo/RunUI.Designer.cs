@@ -29,7 +29,7 @@
         private void InitializeComponent()
         {
             this.label2 = new System.Windows.Forms.Label();
-            this.comboBox1 = new ReusableUIComponents.SuggestComboBox();
+            this.comboBox1 = new SuggestComboBox();
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
@@ -85,7 +85,7 @@
         #endregion
 
         private System.Windows.Forms.Label label2;
-        private ReusableUIComponents.SuggestComboBox comboBox1;
+        private SuggestComboBox comboBox1;
         private System.Windows.Forms.Label label1;
     }
 }

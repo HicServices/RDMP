@@ -75,23 +75,23 @@ namespace rdmp
                             DleOptions,
                             DqeOptions,
                             CacheOptions,
-                            ListOptions,
                             ExtractionOptions,
                             ReleaseOptions,
                             CohortCreationOptions,
                             PackOptions,
+                            ExecuteCommandOptions,
                             PlatformDatabaseCreationOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
                             (DleOptions opts) => Run(opts),
                             (DqeOptions opts) => Run(opts),
                             (CacheOptions opts) => Run(opts),
-                            (ListOptions opts) => Run(opts),
                             (ExtractionOptions opts) => Run(opts),
                             (ReleaseOptions opts) => Run(opts),
                             (CohortCreationOptions opts) => Run(opts),
                             (PackOptions opts) => Run(opts),
                             (PlatformDatabaseCreationOptions opts) => Run(opts),
+                            (ExecuteCommandOptions opts) => Run(opts),
                             errs => 1);
 
                 NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);

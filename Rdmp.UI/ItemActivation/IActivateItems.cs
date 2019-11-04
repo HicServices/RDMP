@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -17,6 +18,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation.Arranging;
 using Rdmp.UI.ItemActivation.Emphasis;
@@ -24,10 +26,9 @@ using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Theme;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Theme;
 
 namespace Rdmp.UI.ItemActivation
 {
@@ -37,11 +38,9 @@ namespace Rdmp.UI.ItemActivation
     /// 
     /// <para>Also exposes the location of the Catalogue / Data Export repository databases via RepositoryLocator</para>
     /// </summary>
-    public interface IActivateItems
+    public interface IActivateItems:IBasicActivateItems
     {
         ITheme Theme { get; }
-
-        IServerDefaults ServerDefaults { get; }
 
         /// <summary>
         /// Component for publishing the fact that an object has recently been put out of date by you.
@@ -52,11 +51,6 @@ namespace Rdmp.UI.ItemActivation
         /// Component for telling you whether a given DatabaseEntity is one of the current users favourite objects and for toggling it
         /// </summary>
         FavouritesProvider FavouritesProvider { get;}
-        
-        /// <summary>
-        /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
-        /// </summary>
-        ICoreChildProvider CoreChildProvider { get; }
 
         /// <summary>
         /// List of the currently loaded IPluginUserInterface classes (these allow injection of additional tree items, tailoring context menus etc).  This list will
@@ -72,24 +66,15 @@ namespace Rdmp.UI.ItemActivation
         Form ShowWindow(Control singleControlForm, bool asDocument = false);
 
         /// <summary>
-        /// Stores the location of the Catalogue / Data Export repository databases and provides access to their objects
-        /// </summary>
-        IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
-
-        /// <summary>
         /// Component for providing access to RDMPConcept icon images, these are 19x19 pixel icons representing specific objects/concepts in RDMP
         /// </summary>
         ICoreIconProvider CoreIconProvider { get; }
 
-        /// <summary>
-        /// Component for auditing errors that should be brought to the users attention subtly (e.g. if a plugin crashes while attempting to create menu items)
-        /// </summary>
-        ICheckNotifier GlobalErrorCheckNotifier { get; }
         
         /// <summary>
         /// Component for starting drag or copy operations
         /// </summary>
-        ICommandFactory CommandFactory { get;}
+        ICombineableFactory CommandFactory { get;}
 
         /// <summary>
         /// Component for suggesting completion options for an ongoing drag or paste
@@ -119,14 +104,8 @@ namespace Rdmp.UI.ItemActivation
         /// <returns></returns>
         T Activate<T>(IPersistableObjectCollection collection) where T : Control,IObjectCollectionControl, new();
 
-        bool DeleteWithConfirmation(object sender, IDeleteable deleteable);
 
         event EmphasiseItemHandler Emphasise;
-
-        /// <summary>
-        /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
-        /// </summary>
-        void RequestItemEmphasis(object sender, EmphasiseRequest request);
 
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
@@ -182,23 +161,6 @@ namespace Rdmp.UI.ItemActivation
         /// <returns></returns>
         bool ShouldReloadFreshCopy(DatabaseEntity databaseEntity);
         
-        /// <summary>
-        /// Offers the user a binary choice and returns true if they accept it.  This method is blocking.
-        /// </summary>
-        /// <param name="text">The question to pose</param>
-        /// <param name="caption"></param>
-        /// <returns></returns>
-        bool YesNo(string text, string caption);
 
-        bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
-
-        /// <summary>
-        /// Block until the <paramref name="task"/> is completed with optionally showing the user some kind of ongoing operation
-        /// indication (ui) and letting them cancel the task with the <paramref name="cts"/>.
-        /// </summary>
-        /// <param name="title"></param>
-        /// <param name="task"></param>
-        /// <param name="cts"></param>
-        void Wait(string title, Task task, CancellationTokenSource cts);
     }
 }

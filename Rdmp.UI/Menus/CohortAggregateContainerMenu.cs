@@ -7,18 +7,19 @@
 using System;
 using System.Linq;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.Graphs;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
-using ReusableUIComponents;
-using ReusableUIComponents.ChecksUI;
+using PopupChecksUI = Rdmp.UI.ChecksUI.PopupChecksUI;
 
 namespace Rdmp.UI.Menus
 {
@@ -137,7 +138,7 @@ namespace Rdmp.UI.Menus
                 {
                     try
                     {
-                        var cmd = new AggregateConfigurationCommand(aggregateConfiguration);
+                        var cmd = new AggregateConfigurationCombineable(aggregateConfiguration);
                         var cmdExecution = new ExecuteCommandAddAggregateConfigurationToCohortIdentificationSetContainer(_activator, cmd, _container);
                         if (cmdExecution.IsImpossible)
                             checks.OnCheckPerformed(
@@ -175,7 +176,7 @@ namespace Rdmp.UI.Menus
                 {
                     try
                     {
-                        var cmd = new CatalogueCommand(catalogue);
+                        var cmd = new CatalogueCombineable(catalogue);
                         var cmdExecution = new ExecuteCommandAddCatalogueToCohortIdentificationSetContainer(_activator, cmd, _container);
                         if (cmdExecution.IsImpossible)
                             checks.OnCheckPerformed(

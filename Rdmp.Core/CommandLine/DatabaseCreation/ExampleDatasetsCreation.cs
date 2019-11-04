@@ -338,7 +338,7 @@ namespace Rdmp.Core.CommandLine.DatabaseCreation
 
             //Create a new cohort set to the 'Inclusion Criteria' based on the filters Catalogue
             var cata = inclusionFilter1.ExtractionInformation.CatalogueItem.Catalogue;
-            var ac = cic.CreateNewEmptyConfigurationForCatalogue(cata,(a,b)=>{throw new Exception("Problem encountered with chi column(s)");},false);
+            var ac = cic.CreateNewEmptyConfigurationForCatalogue(cata,(a,b)=> throw new Exception("Problem encountered with chi column(s)"),false);
             container.AddChild(ac,0);
 
             //Add the filter to the WHERE logic of the cohort set

@@ -17,6 +17,7 @@ using FAnsi.Implementations.MicrosoftSQL;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.UI.AutoComplete;
@@ -25,9 +26,10 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.SqlDialogs;
+
 
 namespace Rdmp.UI.AggregationUIs.Advanced
 {
@@ -245,7 +247,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
                 var col = cellClickEventArgs.Model as IColumn;
                 if(col != null)
                 {
-                    var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCommandFactory());
+                    var dialog = new SetSQLDialog(col.SelectSQL, new RDMPCombineableFactory());
 
                     var querySyntaxSource = col as IHasQuerySyntaxHelper ?? _aggregate;
 

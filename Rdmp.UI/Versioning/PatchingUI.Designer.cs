@@ -33,7 +33,7 @@
             this.lblDatabase = new System.Windows.Forms.Label();
             this.tbPatch = new System.Windows.Forms.TextBox();
             this.tbDatabase = new System.Windows.Forms.TextBox();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             this.SuspendLayout();
             // 
             // label4
@@ -115,7 +115,7 @@
 
         #endregion
         private System.Windows.Forms.Label label4;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.Button btnAttemptPatching;
         private System.Windows.Forms.Label lblDatabase;
         private System.Windows.Forms.TextBox tbPatch;

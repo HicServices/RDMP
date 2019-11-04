@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.ChecksUI;
 
 namespace Rdmp.UI.Wizard
 {
@@ -46,11 +47,11 @@ namespace Rdmp.UI.Wizard
             this.lblCohortFile = new System.Windows.Forms.Label();
             this.btnSelectClearCohortFile = new System.Windows.Forms.Button();
             this.gbCic = new System.Windows.Forms.GroupBox();
-            this.ragCic = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragCic = new RAGSmiley();
             this.btnClearCohort = new System.Windows.Forms.Button();
             this.ddCicPipeline = new System.Windows.Forms.ComboBox();
             this.label7 = new System.Windows.Forms.Label();
-            this.cbxCohort = new ReusableUIComponents.SuggestComboBox();
+            this.cbxCohort = new SuggestComboBox();
             this.gbFile = new System.Windows.Forms.GroupBox();
             this.ddFilePipeline = new System.Windows.Forms.ComboBox();
             this.label8 = new System.Windows.Forms.Label();
@@ -62,8 +63,8 @@ namespace Rdmp.UI.Wizard
             this.label6 = new System.Windows.Forms.Label();
             this.pbCohortSources = new System.Windows.Forms.PictureBox();
             this.btnCreateNewCohortSource = new System.Windows.Forms.Button();
-            this.ragExecute = new ReusableUIComponents.ChecksUI.RAGSmiley();
-            this.ragProjectNumber = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragExecute = new RAGSmiley();
+            this.ragProjectNumber = new RAGSmiley();
             this.label11 = new System.Windows.Forms.Label();
             this.tbCohortName = new System.Windows.Forms.TextBox();
             this.cbDefineCohort = new System.Windows.Forms.CheckBox();
@@ -507,7 +508,7 @@ namespace Rdmp.UI.Wizard
         private System.Windows.Forms.Button btnSelectClearCohortFile;
         private System.Windows.Forms.GroupBox gbCic;
         private System.Windows.Forms.GroupBox gbFile;
-        private ReusableUIComponents.SuggestComboBox cbxCohort;
+        private SuggestComboBox cbxCohort;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.Label label8;
         private System.Windows.Forms.ComboBox ddCicPipeline;
@@ -520,13 +521,13 @@ namespace Rdmp.UI.Wizard
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.PictureBox pbCohortSources;
         private System.Windows.Forms.Button btnCreateNewCohortSource;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragExecute;
+        private RAGSmiley ragExecute;
         private OLVColumn olvColumn1;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragProjectNumber;
+        private RAGSmiley ragProjectNumber;
         private System.Windows.Forms.Label label11;
         private System.Windows.Forms.TextBox tbCohortName;
         private System.Windows.Forms.Button btnClearCohort;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragCic;
+        private RAGSmiley ragCic;
         private System.Windows.Forms.CheckBox cbDefineCohort;
         private System.Windows.Forms.GroupBox gbCohortAndDatasets;
     }

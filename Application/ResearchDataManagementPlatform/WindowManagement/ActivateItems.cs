@@ -7,11 +7,16 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -20,6 +25,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.ImportExport;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
+using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
@@ -35,14 +41,14 @@ using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.WindowArranging;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-using ReusableUIComponents;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.Theme;
+
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -53,7 +59,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// </summary>
     public class ActivateItems : IActivateItems, IRefreshBusSubscriber
     {
-
         public event EmphasiseItemHandler Emphasise;
 
         private readonly DockPanel _mainDockPanel;
@@ -77,8 +82,17 @@ namespace ResearchDataManagementPlatform.WindowManagement
         public IArrangeWindows WindowArranger { get; private set; }
         
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
+        public void Publish(DatabaseEntity databaseEntity)
+        {
+            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+        }
 
-        public ICommandFactory CommandFactory { get; private set; }
+        public void Show(string message)
+        {
+            WideMessageBox.Show("Message",message);
+        }
+
+        public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; private set; }
         public CommentStore CommentStore { get { return RepositoryLocator.CatalogueRepository.CommentStore; } }
 
@@ -112,7 +126,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
             WindowArranger = new WindowArranger(this,_windowManager,_mainDockPanel);
             
-            CommandFactory = new RDMPCommandFactory();
+            CommandFactory = new RDMPCombineableFactory();
             CommandExecutionFactory = new RDMPCommandExecutionFactory(this);
 
             ProblemProviders = new List<IProblemProvider>();
@@ -195,7 +209,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
+        public bool DeleteWithConfirmation(IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
                         
@@ -314,6 +328,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 if(args.FormRequestingActivation is DockContent content)
                     content.Activate();
             }
+        }
+
+        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        {
+            var selector = new PickOneOrCancelDialog<Enum>(Enum.GetValues(enumType).Cast<Enum>().ToArray(), prompt);
+            if (selector.ShowDialog() == DialogResult.OK)
+            {
+                chosen = selector.Picked;
+                return true;
+            }
+
+            chosen = default;
+            return false;
         }
 
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
@@ -550,10 +577,181 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return !string.IsNullOrWhiteSpace(text);
         }
 
+        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true);
+            dialog.ShowDialog();
+            
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
+
+            return dialog.SelectedDatabase;
+        }
+
+        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        {
+            var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
+            
+            dialog.ShowDialog();
+
+            if (dialog.DialogResult != DialogResult.OK)
+                return null;
+
+            return dialog.SelectedTable;
+        }
+
+        public void ShowException(string errorText, Exception exception)
+        {
+            ExceptionViewer.Show(errorText, exception);
+        }
+
         public void Wait(string title, Task task, CancellationTokenSource cts)
         {
             var ui = new WaitUI(title,task,cts);
             ui.ShowDialog();
+        }
+
+
+        public IEnumerable<Type> GetIgnoredCommands()
+        {
+            yield return typeof(ExecuteCommandPin);
+            yield return typeof(ExecuteCommandUnpin);
+            yield return typeof(ExecuteCommandRefreshObject);
+            yield return typeof(ExecuteCommandChangeExtractability);
+            yield return typeof (ExecuteCommandOpenInExplorer);
+            yield return typeof (ExecuteCommandCreateNewProcessTask);
+        }
+
+        
+        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+            string initialSearchText = null, bool allowAutoSelect = false)
+        {
+            if (!availableObjects.Any())
+            {
+                MessageBox.Show("There are no compatible objects in your RMDP for '"+ prompt +"''");
+                return null;
+            }
+
+            //if there is only one object available to select
+            if (availableObjects.Length == 1)
+                if(allowAutoSelect || YesNo("You only have one compatible object, use '"+availableObjects[0]+"'","Select '" + availableObjects[0] + "'?"))
+                {
+                    return availableObjects[0];
+                }
+                else
+                {
+                    return null;
+                }
+
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            selectDialog.Text = prompt;
+            selectDialog.SetInitialFilter(initialSearchText);
+
+
+            if (selectDialog.ShowDialog() == DialogResult.OK)
+                return selectDialog.Selected;
+
+            return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
+        }
+
+        public DirectoryInfo SelectDirectory(string prompt)
+        {
+            var fb = new FolderBrowserDialog();
+
+            if (fb.ShowDialog() == DialogResult.OK)
+                return new DirectoryInfo(fb.SelectedPath);
+            
+            return null;
+        }
+
+        public FileInfo SelectFile(string prompt)
+        {
+            return SelectFile(prompt, null, null);
+        }
+
+        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+        {
+            var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
+
+            if (patternDescription != null && pattern != null)
+                fb.Filter = patternDescription + "|" + pattern;
+
+            if (fb.ShowDialog() == DialogResult.OK)
+                return new FileInfo(fb.FileName);
+            
+            return null;
+        }
+
+        public IEnumerable<T> GetAll<T>()
+        {
+            return CoreChildProvider.GetAllSearchables()
+                .Keys.OfType<T>();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
+        {
+            return CoreChildProvider.GetAllSearchables()
+                .Keys.Where(t.IsInstanceOfType);
+        }
+
+        public object SelectValueType(string prompt, Type paramType)
+        {
+            //if it's Enum or Enum?
+            if((Nullable.GetUnderlyingType(paramType) ??paramType).IsEnum)
+            {
+                var dlg = new PickOneOrCancelDialog<Enum>(
+                    Enum.GetValues(paramType).Cast<Enum>().ToArray(),
+                    prompt,
+                    (o) => CoreIconProvider.GetImage(o),
+                    null
+                );
+
+                return dlg.ShowDialog() == DialogResult.OK ? dlg.Picked : null;
+            }
+
+            //whatever else it is use string
+            var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000);
+
+            if (typeTextDialog.ShowDialog() == DialogResult.OK)
+                return UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
+
+            return null;
+        }
+
+        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
+        {
+            if (!availableObjects.Any())
+            {
+                MessageBox.Show("There are no '" + arrayElementType.Name + "' objects in your RMDP");
+                return null;
+            }
+
+            SelectIMapsDirectlyToDatabaseTableDialog selectDialog = new SelectIMapsDirectlyToDatabaseTableDialog(availableObjects, false, false);
+            selectDialog.Text = prompt;
+            selectDialog.SetInitialFilter(initialSearchText);
+            selectDialog.AllowMultiSelect = true;
+            
+            if (selectDialog.ShowDialog() == DialogResult.OK)
+            {
+                var ms = selectDialog.MultiSelected.ToList();
+                var toReturn = Array.CreateInstance(arrayElementType, ms.Count);
+
+                for(int i = 0;i<ms.Count;i++)
+                    toReturn.SetValue(ms[i],i);
+                
+                return (IMapsDirectlyToDatabaseTable[]) toReturn;
+            }
+
+            return null;
+        }
+
+        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        {
+            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
+            {
+                new KeyValuePair<Type, Func<RequiredArgument, object>>(typeof(IActivateItems),(p)=>this)
+            };
         }
     }
 }

@@ -6,12 +6,16 @@
 
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.Core.Curation.Data.Defaults;
@@ -19,6 +23,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
+using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
@@ -27,10 +32,9 @@ using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
+using Rdmp.UI.Theme;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
-using ReusableUIComponents.CommandExecution;
-using ReusableUIComponents.Theme;
 
 namespace Rdmp.UI.Tests
 {
@@ -96,7 +100,17 @@ namespace Rdmp.UI.Tests
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
         public ICoreIconProvider CoreIconProvider { get; private set; }
         public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
-        public ICommandFactory CommandFactory { get; private set; }
+        public void Publish(DatabaseEntity databaseEntity)
+        {
+            RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
+        }
+
+        public void Show(string message)
+        {
+            Assert.Fail("Did not expect a MessageBox to be shown");
+        }
+
+        public ICombineableFactory CommandFactory { get; private set; }
         public ICommandExecutionFactory CommandExecutionFactory { get; set; }
         public CommentStore CommentStore { get; private set; }
 
@@ -113,13 +127,13 @@ namespace Rdmp.UI.Tests
             return t;
         }
 
-        public bool DeleteWithConfirmation(object sender, IDeleteable deleteable)
+        public bool DeleteWithConfirmation(IDeleteable deleteable)
         {
             if(deleteable is DatabaseEntity d && !d.Exists())
                 throw new Exception("Attempt made to delete an object which didn't exist");
 
             deleteable.DeleteInDatabase();
-            RefreshBus.Publish(sender, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
+            RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
             return true;
         }
 
@@ -128,7 +142,12 @@ namespace Rdmp.UI.Tests
         {
             Emphasise?.Invoke(sender, new EmphasiseEventArgs(request));
         }
-                
+
+        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             throw new NotImplementedException();
@@ -220,9 +239,79 @@ namespace Rdmp.UI.Tests
             return !string.IsNullOrWhiteSpace(TypeTextResponse);
         }
 
+        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        {
+            throw new NotImplementedException();
+        }
+
+        public void ShowException(string errorText, Exception exception)
+        {
+            throw exception ?? new Exception(errorText);
+        }
+
         public void Wait(string title, Task task, CancellationTokenSource cts)
         {
             task.Wait(cts.Token);
+        }
+        
+        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        {
+            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
+            {
+                new KeyValuePair<Type, Func<RequiredArgument, object>>(typeof(IActivateItems),(p)=>this)
+            };
+        }
+
+        public IEnumerable<Type> GetIgnoredCommands()
+        {
+            return new List<Type>();
+        }
+
+        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+            IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+            string initialSearchText = null, bool allowAutoSelect = false)
+        {
+            throw new NotImplementedException();
+        }
+
+        public DirectoryInfo SelectDirectory(string prompt)
+        {
+            throw new NotImplementedException();
+        }
+
+        public FileInfo SelectFile(string prompt)
+        {
+            return SelectFile(prompt, null, null);
+        }
+
+        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<T> GetAll<T>()
+        {
+            throw new NotImplementedException();
+        }
+
+        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
+        {
+            throw new NotImplementedException();
+        }
+
+        public object SelectValueType(string prompt, Type paramType)
+        {
+            throw new NotImplementedException();
         }
     }
 

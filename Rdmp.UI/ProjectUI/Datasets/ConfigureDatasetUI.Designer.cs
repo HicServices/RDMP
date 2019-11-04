@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.ProjectUI.Datasets
 {
@@ -46,7 +47,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
             this.btnSelectCore = new System.Windows.Forms.Button();
             this.flpCouldNotJoinTables = new System.Windows.Forms.FlowLayoutPanel();
             this.label8 = new System.Windows.Forms.Label();
-            this.helpIconJoin = new ReusableUIComponents.HelpIcon();
+            this.helpIconJoin = new HelpIcon();
             this.tbSearchTables = new System.Windows.Forms.TextBox();
             this.label6 = new System.Windows.Forms.Label();
             this.label5 = new System.Windows.Forms.Label();
@@ -463,7 +464,7 @@ namespace Rdmp.UI.ProjectUI.Datasets
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.FlowLayoutPanel flpCouldNotJoinTables;
         private System.Windows.Forms.Label label8;
-        private ReusableUIComponents.HelpIcon helpIconJoin;
+        private HelpIcon helpIconJoin;
         private OLVColumn olvIssues;
     }
 }

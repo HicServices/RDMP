@@ -6,7 +6,7 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
-using ReusableUIComponents.ScintillaHelper;
+using Rdmp.UI.ScintillaHelper;
 
 namespace Rdmp.UI.SimpleDialogs
 {

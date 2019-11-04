@@ -15,9 +15,9 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents.ScintillaHelper;
 using ScintillaNET;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
@@ -50,7 +50,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
 
-            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             gbCompiledView.Controls.Add(QueryEditor);
 
             QueryEditor.KeyDown += new KeyEventHandler(QueryEditor_KeyDown);

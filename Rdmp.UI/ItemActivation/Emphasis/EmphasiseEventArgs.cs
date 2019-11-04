@@ -6,6 +6,7 @@
 
 using System;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution;
 
 namespace Rdmp.UI.ItemActivation.Emphasis
 {

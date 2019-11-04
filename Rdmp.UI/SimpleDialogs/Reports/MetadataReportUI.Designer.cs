@@ -1,4 +1,5 @@
 ﻿using Rdmp.UI.AggregationUIs;
+using Rdmp.UI.Progress;
 
 namespace Rdmp.UI.SimpleDialogs.Reports
 {
@@ -49,7 +50,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
             this.aggregateGraph1 = new Rdmp.UI.AggregationUIs.AggregateGraphUI();
             this.nMaxLookupRows = new System.Windows.Forms.NumericUpDown();
             this.label3 = new System.Windows.Forms.Label();
-            this.progressBarsUI1 = new ReusableUIComponents.Progress.ProgressBarsUI();
+            this.progressBarsUI1 = new ProgressBarsUI();
             this.gbReportOptions = new System.Windows.Forms.GroupBox();
             this.gbInclude.SuspendLayout();
             this.gbCatalogue.SuspendLayout();
@@ -347,7 +348,7 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         private System.Windows.Forms.CheckBox cbIncludeNonExtractable;
         private System.Windows.Forms.NumericUpDown nMaxLookupRows;
         private System.Windows.Forms.Label label3;
-        private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;
+        private ProgressBarsUI progressBarsUI1;
         private System.Windows.Forms.Button btnPick;
         private System.Windows.Forms.GroupBox gbReportOptions;
         private System.Windows.Forms.CheckBox cbIncludeDeprecatedCatalogueItems;

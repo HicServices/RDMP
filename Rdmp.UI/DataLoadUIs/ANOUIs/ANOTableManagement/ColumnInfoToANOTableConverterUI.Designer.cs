@@ -52,7 +52,7 @@
             this.dgPreview = new System.Windows.Forms.DataGridView();
             this.gbANOTable = new System.Windows.Forms.GroupBox();
             this.btnFinalise = new System.Windows.Forms.Button();
-            this.checksUI1 = new ReusableUIComponents.ChecksUI.ChecksUI();
+            this.checksUI1 = new ChecksUI.ChecksUI();
             this.label11 = new System.Windows.Forms.Label();
             this.ddANOTables = new System.Windows.Forms.ComboBox();
             this.btnCreateNewANOTable = new System.Windows.Forms.Button();
@@ -531,7 +531,7 @@
         private System.Windows.Forms.Label label6;
         private System.Windows.Forms.Label label7;
         private System.Windows.Forms.ComboBox ddExternalDatabaseServer;
-        private ReusableUIComponents.ChecksUI.ChecksUI checksUI1;
+        private ChecksUI.ChecksUI checksUI1;
         private System.Windows.Forms.SplitContainer splitContainer1;
         private System.Windows.Forms.Label label10;
         private System.Windows.Forms.Label label9;

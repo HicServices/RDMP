@@ -15,10 +15,10 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Rules;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.SimpleDialogs
@@ -54,7 +54,7 @@ namespace Rdmp.UI.SimpleDialogs
             if (VisualStudioDesignMode)
                 return;
 
-            QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryPreview = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             QueryPreview.ReadOnly = false;
             QueryPreview.TextChanged += new EventHandler(QueryPreview_TextChanged);
 

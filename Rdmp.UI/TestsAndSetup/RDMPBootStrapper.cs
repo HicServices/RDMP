@@ -7,8 +7,9 @@
 using System;
 using System.Windows.Forms;
 using Rdmp.Core.Startup;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents.Dialogs;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.TestsAndSetup

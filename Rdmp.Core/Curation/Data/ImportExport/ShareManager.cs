@@ -16,6 +16,7 @@ using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Curation.Data.Serialization;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Repositories.Construction;
+using ReusableLibraryCode;
 
 namespace Rdmp.Core.Curation.Data.ImportExport
 {
@@ -597,7 +598,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
                 if (typeof(Enum).IsAssignableFrom(propertyType))
                     value = Enum.ToObject(propertyType, value);//if the property is an enum
                 else
-                    value = Convert.ChangeType(value, propertyType); //the property is not an enum
+                    value = UsefulStuff.ChangeType(value, propertyType); //the property is not an enum
 
             prop.SetValue(onObject, value); //if it's a shared property (most properties) use the new shared value being imported
         }

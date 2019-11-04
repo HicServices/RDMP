@@ -17,8 +17,8 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
-using ReusableUIComponents.SqlDialogs;
+
+using Rdmp.UI.SimpleDialogs.SqlDialogs;
 
 
 namespace Rdmp.UI.Versioning

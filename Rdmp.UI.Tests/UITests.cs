@@ -13,6 +13,7 @@ using System.Reflection;
 using System.Text;
 using System.Windows.Forms;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.UI.Collections;
@@ -21,7 +22,6 @@ using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using Tests.Common;
 
 namespace Rdmp.UI.Tests
@@ -129,6 +129,7 @@ namespace Rdmp.UI.Tests
                 _itemActivator.Results.Clear();
 
             _checkResults = null;
+            
             LastUserInterfaceLaunched = null;
         }
         /// <summary>
@@ -432,6 +433,9 @@ namespace Rdmp.UI.Tests
                     try
                     {
                         ui = (IRDMPSingleDatabaseObjectControl) genericAndLaunch.Invoke(this,new object[]{o,true});
+                        
+                        if(ui is IDisposable d)
+                            d.Dispose();
                     }
                     catch(Exception ex)
                     {

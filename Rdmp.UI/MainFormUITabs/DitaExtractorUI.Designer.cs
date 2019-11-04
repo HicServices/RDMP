@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.MainFormUITabs
+﻿using Rdmp.UI.Progress;
+
+namespace Rdmp.UI.MainFormUITabs
 {
     partial class DitaExtractorUI
     {
@@ -35,7 +37,7 @@
             this.lblCataloguesProcessed = new System.Windows.Forms.Label();
             this.btnShowDirectory = new System.Windows.Forms.Button();
             this.btnCheck = new System.Windows.Forms.Button();
-            this.progressBarsUI1 = new ReusableUIComponents.Progress.ProgressBarsUI();
+            this.progressBarsUI1 = new ProgressBarsUI();
             this.SuspendLayout();
             // 
             // btnExtract
@@ -141,6 +143,6 @@
         private System.Windows.Forms.Label lblCataloguesProcessed;
         private System.Windows.Forms.Button btnShowDirectory;
         private System.Windows.Forms.Button btnCheck;
-        private ReusableUIComponents.Progress.ProgressBarsUI progressBarsUI1;
+        private ProgressBarsUI progressBarsUI1;
     }
 }

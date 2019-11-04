@@ -10,7 +10,8 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.DataFlowSources;
 using Rdmp.Core.Repositories;
-using ReusableUIComponents.Dialogs;
+using Rdmp.UI.SimpleDialogs;
+
 
 
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs.DataFlowSources

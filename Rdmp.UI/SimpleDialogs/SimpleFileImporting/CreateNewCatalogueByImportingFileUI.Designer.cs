@@ -1,4 +1,7 @@
-﻿namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
+﻿using Rdmp.UI.SimpleControls;
+using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.SimpleDialogs.SimpleFileImporting
 {
     partial class CreateNewCatalogueByImportingFileUI
     {
@@ -29,18 +32,18 @@
         private void InitializeComponent()
         {
             this.gbPickFile = new System.Windows.Forms.GroupBox();
-            this.ragSmileyFile = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmileyFile = new RAGSmiley();
             this.btnClearFile = new System.Windows.Forms.Button();
             this.lblFile = new System.Windows.Forms.Label();
             this.pbFile = new System.Windows.Forms.PictureBox();
             this.btnBrowse = new System.Windows.Forms.Button();
             this.gbPickDatabase = new System.Windows.Forms.GroupBox();
             this.btnConfirmDatabase = new System.Windows.Forms.Button();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.gbPickPipeline = new System.Windows.Forms.GroupBox();
             this.ddPipeline = new System.Windows.Forms.ComboBox();
             this.gbExecute = new System.Windows.Forms.GroupBox();
-            this.ragSmileyExecute = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmileyExecute = new RAGSmiley();
             this.btnExecute = new System.Windows.Forms.Button();
             this.btnPreview = new System.Windows.Forms.Button();
             this.btnAdvanced = new System.Windows.Forms.Button();
@@ -287,16 +290,16 @@
         private System.Windows.Forms.Button btnClearFile;
         private System.Windows.Forms.Label lblFile;
         private System.Windows.Forms.GroupBox gbPickDatabase;
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.Button btnConfirmDatabase;
         private System.Windows.Forms.GroupBox gbPickPipeline;
         private System.Windows.Forms.ComboBox ddPipeline;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyFile;
+        private RAGSmiley ragSmileyFile;
         private System.Windows.Forms.Button btnAdvanced;
         private System.Windows.Forms.GroupBox gbExecute;
         private System.Windows.Forms.Button btnPreview;
         private System.Windows.Forms.Button btnExecute;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmileyExecute;
+        private RAGSmiley ragSmileyExecute;
         private System.Windows.Forms.PictureBox pbHelp;
         private System.Windows.Forms.CheckBox cbAutoClose;
     }

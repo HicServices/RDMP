@@ -48,7 +48,7 @@ namespace Rdmp.Core.Curation.Data
         int? LiveLoggingServer_ID { get; set; }
 
         /// <summary>
-        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a HIC.Common.Validation.Validator
+        /// Currently configured validation rules for columns in a Catalogue, this can be deserialized into a Rdmp.Core.Validation.Validator
         /// </summary>
         string ValidatorXML { get; set; }
 

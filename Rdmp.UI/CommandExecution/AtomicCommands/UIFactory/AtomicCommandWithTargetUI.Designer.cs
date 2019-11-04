@@ -35,7 +35,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
             this.lblName = new System.Windows.Forms.Label();
             this.toolTip1 = new System.Windows.Forms.ToolTip(this.components);
             this.lblGo = new System.Windows.Forms.Label();
-            this.helpIcon1 = new ReusableUIComponents.HelpIcon();
+            this.helpIcon1 = new HelpIcon();
             this.selectIMapsDirectlyToDatabaseTableComboBox1 = new SelectIMapsDirectlyToDatabaseTableComboBox();
             ((System.ComponentModel.ISupportInitialize)(this.pbCommandIcon)).BeginInit();
             this.SuspendLayout();
@@ -116,7 +116,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands.UIFactory
         private System.Windows.Forms.Label lblName;
         private System.Windows.Forms.ToolTip toolTip1;
         private System.Windows.Forms.Label lblGo;
-        private ReusableUIComponents.HelpIcon helpIcon1;
+        private HelpIcon helpIcon1;
         private SelectIMapsDirectlyToDatabaseTableComboBox selectIMapsDirectlyToDatabaseTableComboBox1;
     }
 }

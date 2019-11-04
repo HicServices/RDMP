@@ -1,4 +1,6 @@
-﻿namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating
+﻿using Rdmp.UI.ChecksUI;
+
+namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating
 {
     partial class DataLoadProgressUpdateInfoUI
     {
@@ -37,7 +39,7 @@
             this.lblWarning = new System.Windows.Forms.Label();
             this.tbTimeout = new System.Windows.Forms.TextBox();
             this.lblTimeout = new System.Windows.Forms.Label();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.SuspendLayout();
             // 
             // ddStrategy
@@ -174,6 +176,6 @@
         private System.Windows.Forms.Label lblWarning;
         private System.Windows.Forms.TextBox tbTimeout;
         private System.Windows.Forms.Label lblTimeout;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
     }
 }

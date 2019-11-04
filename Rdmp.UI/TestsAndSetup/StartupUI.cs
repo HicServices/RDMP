@@ -11,15 +11,20 @@ using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using Rdmp.Core.Icons;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Startup;
 using Rdmp.Core.Startup.Events;
+using Rdmp.UI.Icons;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.LocationsMenu;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Versioning;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Settings;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
+
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.TestsAndSetup
 {

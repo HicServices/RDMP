@@ -10,18 +10,19 @@ using System.Drawing;
 using System.Linq;
 using System.Windows.Forms;
 using FAnsi.Discovery;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Copying;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode;
-using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.CohortUI
@@ -97,7 +98,7 @@ namespace Rdmp.UI.CohortUI
             if (VisualStudioDesignMode) //dont add the QueryEditor if we are in design time (visual studio) because it breaks
                 return;
 
-            auditLogEditor = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            auditLogEditor = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             pDescription.Controls.Add(auditLogEditor);
             auditLogEditor.TextChanged += AuditLogEditorOnTextChanged;
 

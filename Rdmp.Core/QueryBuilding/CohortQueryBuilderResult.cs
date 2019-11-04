@@ -18,7 +18,6 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Providers;
 using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.QueryCaching.Aggregation;
-using ReusableLibraryCode;
 using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.QueryBuilding

@@ -5,12 +5,12 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ItemActivation;
-using ReusableLibraryCode.CommandExecution;
-using ReusableUIComponents.CommandExecution;
 
 namespace Rdmp.UI.CommandExecution.Proposals
 {
@@ -30,10 +30,10 @@ namespace Rdmp.UI.CommandExecution.Proposals
             throw new NotSupportedException();
         }
 
-        public override ICommandExecution ProposeExecution(ICommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
+        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AllCataloguesUsedByLoadMetadataNode target,InsertOption insertOption = InsertOption.Default)
         {
-            var cata = cmd as CatalogueCommand;
-            var manyCata = cmd as ManyCataloguesCommand;
+            var cata = cmd as CatalogueCombineable;
+            var manyCata = cmd as ManyCataloguesCombineable;
 
             ICommandExecution cmdExecution = null;
 

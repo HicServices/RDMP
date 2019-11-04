@@ -42,6 +42,7 @@
             <dependency id="System.Globalization" version="4.3.0" />
             <dependency id="System.Net.NameResolution" version="4.3.0" />
             <dependency id="System.Net.Primitives" version="4.3.0" />
+            <dependency id="System.Security.Permissions" version="4.6.0" />
         </dependencies>
     </metadata>
   <files>
@@ -57,8 +58,5 @@
     <file src="bin\$configuration$\net461\ReusableLibraryCode.dll" target="lib\net461"/>
     <file src="bin\$configuration$\net461\ReusableLibraryCode.pdb" target="lib\net461"/>
     <file src="bin\$configuration$\net461\ReusableLibraryCode.xml" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\ReusableUIComponents.dll" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\ReusableUIComponents.pdb" target="lib\net461"/>
-    <file src="bin\$configuration$\net461\ReusableUIComponents.xml" target="lib\net461"/>
   </files>
 </package>

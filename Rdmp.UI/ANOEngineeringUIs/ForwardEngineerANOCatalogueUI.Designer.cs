@@ -1,4 +1,6 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.ChecksUI;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.ANOEngineeringUIs
 {
@@ -53,13 +55,13 @@ namespace Rdmp.UI.ANOEngineeringUIs
             this.label5 = new System.Windows.Forms.Label();
             this.cbDateBasedLoad = new System.Windows.Forms.CheckBox();
             this.lblPlanIsSuggestion = new System.Windows.Forms.Label();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
             this.btnLoadPlan = new System.Windows.Forms.Button();
             this.btnSavePlan = new System.Windows.Forms.Button();
             this.groupBox2 = new System.Windows.Forms.GroupBox();
             this.btnExecute = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.btnRefreshChecks = new System.Windows.Forms.Button();
             this.label2 = new System.Windows.Forms.Label();
             this.label3 = new System.Windows.Forms.Label();
@@ -491,7 +493,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
 
         private System.Windows.Forms.GroupBox gbTables;
         private TreeListView tlvTableInfoMigrations;
-        private ReusableUIComponents.ServerDatabaseTableSelector serverDatabaseTableSelector1;
+        private ServerDatabaseTableSelector serverDatabaseTableSelector1;
         private System.Windows.Forms.GroupBox groupBox1;
         private System.Windows.Forms.GroupBox gbANOTransforms;
         private TreeListView tlvANOTables;
@@ -504,7 +506,7 @@ namespace Rdmp.UI.ANOEngineeringUIs
         private System.Windows.Forms.ImageList imageList1;
         private OLVColumn olvDilution;
         private OLVColumn olvDestinationType;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.Button btnRefreshChecks;
         private OLVColumn olvNumberOfDigits;
         private OLVColumn olvNumberOfCharacters;

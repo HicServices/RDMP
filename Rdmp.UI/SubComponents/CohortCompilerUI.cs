@@ -20,18 +20,21 @@ using Rdmp.Core.CohortCreation.Execution;
 using Rdmp.Core.CohortCreation.Execution.Joinables;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Icons.IconOverlays;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.QueryCaching.Aggregation;
 using Rdmp.UI.Collections;
-using Rdmp.UI.Icons.IconOverlays;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SubComponents.EmptyLineElements;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
+
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.SubComponents
 {

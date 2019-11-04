@@ -9,10 +9,8 @@ using System.Linq;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Curation.Data.Spontaneous;
 using Rdmp.Core.Providers;
-using Rdmp.Core.QueryBuilding.Parameters;
 using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.QueryBuilding

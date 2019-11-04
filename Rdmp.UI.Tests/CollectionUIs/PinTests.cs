@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.Collections;
 
@@ -24,7 +25,7 @@ namespace Rdmp.UI.Tests.CollectionUIs
             Assert.IsNull(collection.CommonTreeFunctionality.Tree.SelectedObject);
             
             //emphasise and pin it (like Ctrl+F to object)
-            ItemActivator.RequestItemEmphasis(this,new ItemActivation.Emphasis.EmphasiseRequest(ti){Pin = true });
+            ItemActivator.RequestItemEmphasis(this,new EmphasiseRequest(ti){Pin = true });
 
             //the TableInfo should now be selected
             Assert.AreEqual(ti,collection.CommonTreeFunctionality.Tree.SelectedObject);
@@ -33,7 +34,7 @@ namespace Rdmp.UI.Tests.CollectionUIs
             Assert.AreEqual(ti,collection.CommonTreeFunctionality.CurrentlyPinned);
 
             //delete the object
-            ItemActivator.DeleteWithConfirmation(this,ti);
+            ItemActivator.DeleteWithConfirmation(ti);
 
             //selection should now be cleared
             Assert.IsNull(collection.CommonTreeFunctionality.Tree.SelectedObject);

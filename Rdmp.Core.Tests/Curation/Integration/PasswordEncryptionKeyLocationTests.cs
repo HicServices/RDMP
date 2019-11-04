@@ -79,8 +79,8 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var p = keyLocation.OpenKeyFile();
 
             CatalogueRepository.EncryptionManager.ClearAllInjections();
+
             var s = CatalogueRepository.EncryptionManager.GetEncrypter();
-            
             var exception = Assert.Throws<CryptographicException>(()=>s.Decrypt(encrypter.Value));
             Assert.IsTrue(exception.Message.StartsWith("Could not decrypt an encrypted string, possibly you are trying to decrypt it after having changed the PrivateKey "));
 

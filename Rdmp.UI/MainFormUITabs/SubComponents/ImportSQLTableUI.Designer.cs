@@ -1,4 +1,4 @@
-﻿using ReusableUIComponents;
+﻿using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.MainFormUITabs.SubComponents
 {
@@ -35,7 +35,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
             this.label1 = new System.Windows.Forms.Label();
             this.ddContext = new System.Windows.Forms.ComboBox();
             this.lblWarningAboutToSaveUsernameAndPasswordIntoCatalogue = new System.Windows.Forms.Label();
-            this.serverDatabaseTableSelector1 = new ReusableUIComponents.ServerDatabaseTableSelector();
+            this.serverDatabaseTableSelector1 = new ServerDatabaseTableSelector();
             this.groupBox1.SuspendLayout();
             this.SuspendLayout();
             // 
@@ -118,7 +118,7 @@ namespace Rdmp.UI.MainFormUITabs.SubComponents
             this.serverDatabaseTableSelector1.TabIndex = 159;
             this.serverDatabaseTableSelector1.Table = "";
             this.serverDatabaseTableSelector1.Username = "";
-            this.serverDatabaseTableSelector1.IntegratedSecurityUseChanged += new ReusableUIComponents.IntegratedSecurityUseChangedHandler(this.serverDatabaseTableSelector1_IntegratedSecurityUseChanged);
+            this.serverDatabaseTableSelector1.IntegratedSecurityUseChanged += new IntegratedSecurityUseChangedHandler(this.serverDatabaseTableSelector1_IntegratedSecurityUseChanged);
             // 
             // ImportSQLTable
             // 

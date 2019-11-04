@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.ChecksUI;
 
 namespace Rdmp.UI.Overview
 {
@@ -35,7 +36,7 @@ namespace Rdmp.UI.Overview
             System.ComponentModel.ComponentResourceManager resources = new System.ComponentModel.ComponentResourceManager(typeof(DataLoadsGraph));
             this.chart1 = new System.Windows.Forms.DataVisualization.Charting.Chart();
             this.groupBox1 = new System.Windows.Forms.GroupBox();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.lblNoDataLoadsFound = new System.Windows.Forms.Label();
             this.pbLoading = new System.Windows.Forms.PictureBox();
             this.label1 = new System.Windows.Forms.Label();
@@ -230,7 +231,7 @@ namespace Rdmp.UI.Overview
         private System.Windows.Forms.ColumnHeader Category;
         private System.Windows.Forms.PictureBox pbLoading;
         private System.Windows.Forms.Label lblNoDataLoadsFound;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private OLVColumn olvName;
         private OLVColumn olvCategory;
         private OLVColumn olvStatus;

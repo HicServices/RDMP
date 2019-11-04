@@ -37,7 +37,6 @@ namespace ReusableCodeTests
 
         //ui dependencies should be in Plugin.UI.nuspec
         [TestCase("../../../../../../Rdmp.UI/Rdmp.UI.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
-        [TestCase("../../../../../../Reusable/ReusableUIComponents/ReusableUIComponents.csproj","../../../../../../Plugins/Plugin.UI/Plugin.UI.nuspec","../../../../../../Documentation/CodeTutorials/Packages.md")]
         public void TestDependencyCorrect( string csproj, string nuspec, string packagesMarkdown)
         {
             if(csproj != null && !Path.IsPathRooted(csproj))

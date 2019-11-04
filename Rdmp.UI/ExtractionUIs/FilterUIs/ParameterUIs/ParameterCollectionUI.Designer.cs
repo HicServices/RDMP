@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
 {
@@ -42,7 +43,7 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
             this.tabControl1 = new System.Windows.Forms.TabControl();
             this.tpDesign = new System.Windows.Forms.TabPage();
             this.tpSql = new System.Windows.Forms.TabPage();
-            this.hiParameters = new ReusableUIComponents.HelpIcon();
+            this.hiParameters = new HelpIcon();
             this.parameterEditorScintillaControl1 = new ParameterEditorScintillaControlUI();
             ((System.ComponentModel.ISupportInitialize)(this.olvParameters)).BeginInit();
             this.tabControl1.SuspendLayout();
@@ -212,6 +213,6 @@ namespace Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs
         private System.Windows.Forms.TabControl tabControl1;
         private System.Windows.Forms.TabPage tpSql;
         private System.Windows.Forms.TabPage tpDesign;
-        private ReusableUIComponents.HelpIcon hiParameters;
+        private HelpIcon hiParameters;
     }
 }

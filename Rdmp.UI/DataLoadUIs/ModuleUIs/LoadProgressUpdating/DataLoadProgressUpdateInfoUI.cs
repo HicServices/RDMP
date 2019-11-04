@@ -10,7 +10,7 @@ using System.Windows.Forms;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.DataLoad.Modules.LoadProgressUpdating;
 using Rdmp.Core.Repositories;
-using ReusableUIComponents.ScintillaHelper;
+using Rdmp.UI.ScintillaHelper;
 using ScintillaNET;
 
 namespace Rdmp.UI.DataLoadUIs.ModuleUIs.LoadProgressUpdating

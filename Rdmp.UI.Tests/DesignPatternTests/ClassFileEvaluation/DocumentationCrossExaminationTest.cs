@@ -239,10 +239,10 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
             "UserInterfaceOverview",
             "MyPipelinePlugin",
             "TestAnonymisationPluginsDatabaseTests",
+            "PDFs",
             "MyPatIndexTable",
             "MSBuild15CMD",
             "SetupLazy",
-
         };
         #endregion
         public DocumentationCrossExaminationTest(DirectoryInfo slndir)

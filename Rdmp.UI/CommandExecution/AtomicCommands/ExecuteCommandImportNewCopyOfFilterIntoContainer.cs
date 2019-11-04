@@ -4,8 +4,8 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CommandExecution.Combining;
 using Rdmp.Core.Curation.Data;
-using Rdmp.UI.Copying.Commands;
 using Rdmp.UI.ExtractionUIs.FilterUIs;
 using Rdmp.UI.ItemActivation;
 
@@ -13,22 +13,22 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     internal class ExecuteCommandImportNewCopyOfFilterIntoContainer : BasicUICommandExecution
     {
-        private FilterCommand _filterCommand;
+        private FilterCombineable _filterCombineable;
         private IContainer _targetContainer;
 
-        public ExecuteCommandImportNewCopyOfFilterIntoContainer(IActivateItems activator,FilterCommand filterCommand, IContainer targetContainer) : base(activator)
+        public ExecuteCommandImportNewCopyOfFilterIntoContainer(IActivateItems activator,FilterCombineable filterCombineable, IContainer targetContainer) : base(activator)
         {
-            _filterCommand = filterCommand;
+            _filterCombineable = filterCombineable;
             _targetContainer = targetContainer;
 
             //if source catalogue is known
-            if(_filterCommand.SourceCatalogueIfAny != null)
+            if(_filterCombineable.SourceCatalogueIfAny != null)
             {
                 var targetCatalogue = targetContainer.GetCatalogueIfAny();
                 
                 if(targetCatalogue != null)
-                    if(!_filterCommand.SourceCatalogueIfAny.Equals(targetCatalogue))
-                        SetImpossible("Cannot Import Filter from '" + _filterCommand.SourceCatalogueIfAny + "' into '" + targetCatalogue +"'");
+                    if(!_filterCombineable.SourceCatalogueIfAny.Equals(targetCatalogue))
+                        SetImpossible("Cannot Import Filter from '" + _filterCombineable.SourceCatalogueIfAny + "' into '" + targetCatalogue +"'");
 
             }
         }
@@ -38,7 +38,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             base.Execute();
 
             var wizard = new FilterImportWizard();
-            IFilter newFilter = wizard.Import(_targetContainer, _filterCommand.Filter);
+            IFilter newFilter = wizard.Import(_targetContainer, _filterCombineable.Filter);
             if (newFilter != null)
             {
                 _targetContainer.AddChild(newFilter);

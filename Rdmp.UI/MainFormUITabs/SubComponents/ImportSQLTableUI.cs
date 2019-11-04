@@ -16,10 +16,11 @@ using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs;
 using Rdmp.UI.ExtractionUIs.FilterUIs.ParameterUIs.Options;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.SimpleDialogs.ForwardEngineering;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents.Dialogs;
+
 
 namespace Rdmp.UI.MainFormUITabs.SubComponents
 {

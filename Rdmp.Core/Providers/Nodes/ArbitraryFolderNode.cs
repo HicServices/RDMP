@@ -5,9 +5,9 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using Rdmp.Core.Curation.Data.Cohort;
-using ReusableLibraryCode.CommandExecution.AtomicCommands;
 using System;
 using System.Collections.Generic;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 
 namespace Rdmp.Core.Providers.Nodes
 {

@@ -10,19 +10,21 @@ using System.Drawing;
 using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data.Dashboarding;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
+using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.Refreshing;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.ContentWindowTracking.Persistence;
 using ResearchDataManagementPlatform.WindowManagement.Events;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
-using ReusableUIComponents.Theme;
+
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement
@@ -380,7 +382,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return _trackedWindows.OfType<PersistableObjectCollectionDockContent>().SingleOrDefault(t => t.GetControl().GetType() == windowType && t.Collection.Equals(collection));
         }
         /// <summary>
-        /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueTab)
+        /// Check whether a given RDMPSingleControlTab is already showing with the given DatabaseObject (e.g. is user currently editing Catalogue bob in CatalogueUI)
         /// </summary>
         /// <exception cref="ArgumentException"></exception>
         /// <param name="windowType">A Type derrived from RDMPSingleControlTab</param>

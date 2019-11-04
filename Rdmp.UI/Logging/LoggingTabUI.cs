@@ -12,15 +12,18 @@ using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
+using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Logging;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.DataAccess;
-using ReusableUIComponents;
-using ReusableUIComponents.Dialogs;
+
+
+using WideMessageBox = Rdmp.UI.SimpleDialogs.WideMessageBox;
 
 namespace Rdmp.UI.Logging
 {
@@ -136,7 +139,7 @@ namespace Rdmp.UI.Logging
                 WideMessageBox.Show("Full Text", dataGridView1.Rows[e.RowIndex]);
         }
 
-        private IEnumerable<ExecuteCommandViewLoggedData> GetCommands(int rowIdnex)
+        private IEnumerable<IAtomicCommand> GetCommands(int rowIdnex)
         {
             var rowId = (int)dataGridView1.Rows[rowIdnex].Cells["ID"].Value;
 

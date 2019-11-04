@@ -8,7 +8,7 @@ using System;
 using System.Windows.Forms;
 using Rdmp.Core.Curation.Data;
 using Rdmp.UI.ItemActivation;
-using ReusableUIComponents.SingleControlForms;
+using Rdmp.UI.SingleControlForms;
 
 namespace Rdmp.UI.TestsAndSetup.ServicePropogation
 {

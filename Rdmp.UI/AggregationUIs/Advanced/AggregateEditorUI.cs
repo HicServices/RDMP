@@ -14,9 +14,11 @@ using FAnsi.Discovery.QuerySyntax;
 using FAnsi.Discovery.QuerySyntax.Aggregation;
 using MapsDirectlyToDatabaseTable.Revertable;
 using Rdmp.Core;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
+using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.QueryBuilding;
 using Rdmp.Core.QueryBuilding.Options;
 using Rdmp.UI.AutoComplete;
@@ -27,10 +29,10 @@ using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
+using Rdmp.UI.ScintillaHelper;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.ScintillaHelper;
+
 using ScintillaNET;
 
 namespace Rdmp.UI.AggregationUIs.Advanced
@@ -83,7 +85,7 @@ namespace Rdmp.UI.AggregationUIs.Advanced
             if(VisualStudioDesignMode)
                 return;
 
-            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCommandFactory());
+            QueryHaving = new ScintillaTextEditorFactory().Create(new RDMPCombineableFactory());
             
             gbHaving.Controls.Add(QueryHaving);
 

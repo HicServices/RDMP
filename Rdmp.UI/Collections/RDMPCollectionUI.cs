@@ -6,9 +6,9 @@
 
 using System.ComponentModel;
 using System.Windows.Forms;
+using Rdmp.UI.SingleControlForms;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
-using ReusableUIComponents;
-using ReusableUIComponents.SingleControlForms;
+
 
 namespace Rdmp.UI.Collections
 {

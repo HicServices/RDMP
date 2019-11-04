@@ -1,4 +1,5 @@
 ﻿using BrightIdeasSoftware;
+using Rdmp.UI.ChecksUI;
 using Rdmp.UI.SimpleControls;
 
 namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
@@ -54,7 +55,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
             this.label10 = new System.Windows.Forms.Label();
             this.btnPrimaryKeyCompositeHelp = new System.Windows.Forms.Button();
             this.btnCreateLookup = new System.Windows.Forms.Button();
-            this.ragSmiley1 = new ReusableUIComponents.ChecksUI.RAGSmiley();
+            this.ragSmiley1 = new RAGSmiley();
             this.fk3 = new KeyDropLocationUI();
             this.fk2 = new KeyDropLocationUI();
             this.fk1 = new KeyDropLocationUI();
@@ -466,7 +467,7 @@ namespace Rdmp.UI.ExtractionUIs.JoinsAndLookups
         private KeyDropLocationUI fk3;
         private OLVColumn olvDescriptionsColumn;
         private System.Windows.Forms.Button btnCreateLookup;
-        private ReusableUIComponents.ChecksUI.RAGSmiley ragSmiley1;
+        private RAGSmiley ragSmiley1;
         private System.Windows.Forms.TextBox tbFilter;
         private System.Windows.Forms.Label label5;
         private System.Windows.Forms.Label label6;

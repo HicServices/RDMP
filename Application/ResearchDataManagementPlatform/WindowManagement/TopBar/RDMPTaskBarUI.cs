@@ -8,13 +8,16 @@ using System;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Icons.IconProvision;
+using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.Icons.IconProvision;
+using Rdmp.UI.SimpleDialogs;
 using Rdmp.UI.Theme;
 using ResearchDataManagementPlatform.WindowManagement.HomePane;
 using ReusableLibraryCode.Checks;
-using ReusableUIComponents;
+
 using WeifenLuo.WinFormsUI.Docking;
 
 namespace ResearchDataManagementPlatform.WindowManagement.TopBar
@@ -246,7 +249,7 @@ namespace ResearchDataManagementPlatform.WindowManagement.TopBar
             var d = cbx.SelectedItem as IDeleteable;
             if (d != null)
             {
-                _manager.ActivateItems.DeleteWithConfirmation(this, d);
+                _manager.ActivateItems.DeleteWithConfirmation(d);
                 ReCreateDropDowns();
             }
         }
