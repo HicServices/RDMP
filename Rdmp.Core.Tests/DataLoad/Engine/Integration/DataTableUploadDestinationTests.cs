@@ -550,9 +550,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             Assert.AreEqual(sendTheZero ?"decimal(19,18)":"decimal(18,18)", db.ExpectTable("DataTableUploadDestinationTests").DiscoverColumn("mynum").DataType.SQLType);
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestResizing(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType);
@@ -617,9 +615,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             }
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestResizing_WithDetection(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType);
@@ -1021,9 +1017,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             }
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Test_DataTableUploadDestination_ScientificNotation(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType);
@@ -1070,9 +1064,7 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
         /// as boolean instead
         /// </summary>
         /// <param name="dbType"></param>
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Test_DataTableUploadDestination_ForceBool(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType);

@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
+using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
 
@@ -248,9 +249,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// patients
         /// </summary>
         /// <param name="dbType"></param>
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Test_EXCEPT_TwoAggregates(DatabaseType dbType)
         {
 
@@ -383,9 +382,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <para>In this case the cache is on another server so we cannot use the cached result for a join and should not try</para>
         /// </summary>
         /// <param name="dbType"></param>
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Join_PatientIndexTable_DoNotUseCacheOnDifferentServer(DatabaseType dbType)
         {
             /*
@@ -541,9 +538,7 @@ namespace Rdmp.Core.Tests.QueryCaching
             StringAssert.Contains("is not fully cached and CacheUsageDecision is MustUse",hospitalAdmissionsTask.CrashMessage.ToString());
         }
 
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Join_PatientIndexTable_ThenShipToCacheForSets(DatabaseType dbType)
         {
             /*

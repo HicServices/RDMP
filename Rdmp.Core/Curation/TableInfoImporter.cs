@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using FAnsi;
 using FAnsi.Discovery;
+using FAnsi.Implementation;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.DataHelper;
 using Rdmp.Core.Repositories;
@@ -52,6 +53,8 @@ namespace Rdmp.Core.Curation
         /// <param name="importFromSchema"></param>
         public TableInfoImporter(ICatalogueRepository repository,string importFromServer, string importDatabaseName, string importTableName, DatabaseType type, string username=null,string password=null, DataAccessContext usageContext=DataAccessContext.Any, string importFromSchema = null,TableType importTableType = TableType.Table)
         {
+            var syntax = ImplementationManager.GetImplementation(type).GetQuerySyntaxHelper();
+            
             _repository = repository;
             _importFromServer = importFromServer;
             _importDatabaseName = importDatabaseName;
@@ -61,7 +64,7 @@ namespace Rdmp.Core.Curation
             _username = string.IsNullOrWhiteSpace(username) ? null : username;
             _password = string.IsNullOrWhiteSpace(password) ? null : password;
             _usageContext = usageContext;
-            _importFromSchema = importFromSchema;
+            _importFromSchema = importFromSchema ?? syntax.GetDefaultSchemaIfAny();
             _importTableType = importTableType;
 
             InitializeBuilder();

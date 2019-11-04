@@ -100,9 +100,7 @@ namespace Rdmp.Core.Tests.CohortCommitting
             Assert.IsTrue(candidate.MatchingExtractionInformations.Single().ID== _extractionInfo1.ID);
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.Oracle)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestActuallyCreatingIt(DatabaseType type)
         {
             var db = GetCleanedServer(type);
