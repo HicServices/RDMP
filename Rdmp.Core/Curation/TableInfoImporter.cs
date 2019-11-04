@@ -104,11 +104,8 @@ namespace Rdmp.Core.Curation
 
             tableName = querySyntaxHelper.EnsureWrapped(_importDatabaseName);
 
-            if (_type == DatabaseType.MicrosoftSQLServer)
-                if (_importFromSchema == "dbo")
-                    tableName += "..";
-                else
-                    tableName += "."+_importFromSchema+".";
+            if (_type == DatabaseType.MicrosoftSQLServer || _type == DatabaseType.PostgreSql)
+                tableName += "."+(_importFromSchema ?? querySyntaxHelper.GetDefaultSchemaIfAny()) +".";
             else if (_type == DatabaseType.MySql || _type == DatabaseType.Oracle)
                 tableName += ".";
             else

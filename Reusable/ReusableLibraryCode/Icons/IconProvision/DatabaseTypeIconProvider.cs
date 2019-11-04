@@ -24,6 +24,12 @@ namespace ReusableLibraryCode.Icons.IconProvision
         private Bitmap _mysBig;
         private Bitmap _mysOverlay;
 
+        private Bitmap _postgresBig;
+        private Bitmap _postgresOverlay;
+        
+        private Bitmap _unknownBig;
+        private Bitmap _unknownOverlay;
+        
         public DatabaseTypeIconProvider()
         {
             _msBig = DatabaseProviderIcons.Microsoft;
@@ -34,6 +40,12 @@ namespace ReusableLibraryCode.Icons.IconProvision
 
             _oraBig = DatabaseProviderIcons.Oracle;
             _oraOverlay = DatabaseProviderIcons.OracleOverlay;
+
+            _postgresBig = DatabaseProviderIcons.PostgreSql;
+            _postgresOverlay = DatabaseProviderIcons.PostgreSqlOverlay;
+
+            _unknownBig = DatabaseProviderIcons.Unknown;
+            _unknownOverlay = DatabaseProviderIcons.UnknownOverlay;
         }
 
         public Bitmap GetOverlay(DatabaseType type)
@@ -46,8 +58,10 @@ namespace ReusableLibraryCode.Icons.IconProvision
                     return _mysOverlay;
                 case DatabaseType.Oracle:
                     return _oraOverlay;
+                case DatabaseType.PostgreSql:
+                        return _postgresOverlay;
                 default:
-                    throw new ArgumentOutOfRangeException("type");
+                    return _unknownOverlay;
             }
         }
 
@@ -61,8 +75,10 @@ namespace ReusableLibraryCode.Icons.IconProvision
                     return _mysBig;
                 case DatabaseType.Oracle:
                     return _oraBig;
+                case DatabaseType.PostgreSql:
+                    return _postgresBig;
                 default:
-                    throw new ArgumentOutOfRangeException("type");
+                    return _unknownBig;
             }
         }
     }

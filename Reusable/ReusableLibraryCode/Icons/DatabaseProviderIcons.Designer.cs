@@ -19,10 +19,10 @@ namespace ReusableLibraryCode.Icons {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "4.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
-    internal class DatabaseProviderIcons {
+    public class DatabaseProviderIcons {
         
         private static global::System.Resources.ResourceManager resourceMan;
         
@@ -36,7 +36,7 @@ namespace ReusableLibraryCode.Icons {
         ///   Returns the cached ResourceManager instance used by this class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Resources.ResourceManager ResourceManager {
+        public static global::System.Resources.ResourceManager ResourceManager {
             get {
                 if (object.ReferenceEquals(resourceMan, null)) {
                     global::System.Resources.ResourceManager temp = new global::System.Resources.ResourceManager("ReusableLibraryCode.Icons.DatabaseProviderIcons", typeof(DatabaseProviderIcons).Assembly);
@@ -51,7 +51,7 @@ namespace ReusableLibraryCode.Icons {
         ///   resource lookups using this strongly typed resource class.
         /// </summary>
         [global::System.ComponentModel.EditorBrowsableAttribute(global::System.ComponentModel.EditorBrowsableState.Advanced)]
-        internal static global::System.Globalization.CultureInfo Culture {
+        public static global::System.Globalization.CultureInfo Culture {
             get {
                 return resourceCulture;
             }
@@ -63,7 +63,7 @@ namespace ReusableLibraryCode.Icons {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Microsoft {
+        public static System.Drawing.Bitmap Microsoft {
             get {
                 object obj = ResourceManager.GetObject("Microsoft", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -73,7 +73,7 @@ namespace ReusableLibraryCode.Icons {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MicrosoftOverlay {
+        public static System.Drawing.Bitmap MicrosoftOverlay {
             get {
                 object obj = ResourceManager.GetObject("MicrosoftOverlay", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -83,7 +83,7 @@ namespace ReusableLibraryCode.Icons {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MySql {
+        public static System.Drawing.Bitmap MySql {
             get {
                 object obj = ResourceManager.GetObject("MySql", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -93,7 +93,7 @@ namespace ReusableLibraryCode.Icons {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap MySqlOverlay {
+        public static System.Drawing.Bitmap MySqlOverlay {
             get {
                 object obj = ResourceManager.GetObject("MySqlOverlay", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -103,7 +103,7 @@ namespace ReusableLibraryCode.Icons {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap Oracle {
+        public static System.Drawing.Bitmap Oracle {
             get {
                 object obj = ResourceManager.GetObject("Oracle", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
@@ -113,9 +113,49 @@ namespace ReusableLibraryCode.Icons {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap OracleOverlay {
+        public static System.Drawing.Bitmap OracleOverlay {
             get {
                 object obj = ResourceManager.GetObject("OracleOverlay", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap PostgreSql {
+            get {
+                object obj = ResourceManager.GetObject("PostgreSql", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap PostgreSqlOverlay {
+            get {
+                object obj = ResourceManager.GetObject("PostgreSqlOverlay", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap Unknown {
+            get {
+                object obj = ResourceManager.GetObject("Unknown", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        public static System.Drawing.Bitmap UnknownOverlay {
+            get {
+                object obj = ResourceManager.GetObject("UnknownOverlay", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

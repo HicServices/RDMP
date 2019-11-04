@@ -136,4 +136,16 @@
   <data name="OracleOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>DatabaseProviderIcons\OracleOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="PostgreSql" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\PostgreSql.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="PostgreSqlOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\PostgreSqlOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Unknown" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\Unknown.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="UnknownOverlay" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>DatabaseProviderIcons\UnknownOverlay.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

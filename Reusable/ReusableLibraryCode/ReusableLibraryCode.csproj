@@ -54,7 +54,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.5.0" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.10.7" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.10.8" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
@@ -64,5 +64,11 @@
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Icons\DatabaseProviderIcons.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>
