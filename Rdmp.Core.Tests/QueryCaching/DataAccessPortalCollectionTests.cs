@@ -9,8 +9,10 @@ using System.Collections.Generic;
 using System.Text;
 using FAnsi;
 using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using Moq;
 using NUnit.Framework;
 using Rdmp.Core.QueryBuilding;
@@ -23,8 +25,10 @@ namespace Rdmp.Core.Tests.QueryCaching
         [OneTimeSetUp]
         public void LoadImplementation()
         {
-            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
             ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
         }
 
         [TestCase(true)]

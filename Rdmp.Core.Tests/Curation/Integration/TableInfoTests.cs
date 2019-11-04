@@ -178,9 +178,7 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestView(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType);

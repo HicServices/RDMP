@@ -12,6 +12,7 @@ using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using NLog;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.CommandLine.Options;
@@ -58,11 +59,10 @@ namespace rdmp
         {
             AssemblyResolver.SetupAssemblyResolver();
 
-            ImplementationManager.Load(
-                typeof(MicrosoftSQLImplementation).Assembly,
-                typeof(MySqlImplementation).Assembly,
-                typeof(OracleImplementation).Assembly
-            );
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
         }
 
         private static int HandleArguments(string[] args)
@@ -128,9 +128,10 @@ namespace rdmp
 
         private static int Run(RDMPCommandLineOptions opts)
         {
-            ImplementationManager.Load(typeof(MicrosoftSQLImplementation).Assembly,
-                                       typeof(OracleImplementation).Assembly,
-                                       typeof(MySqlImplementation).Assembly);
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
 
             PopulateConnectionStringsFromYamlIfMissing(opts);
             

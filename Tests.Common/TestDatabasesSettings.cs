@@ -24,7 +24,10 @@ namespace Tests.Common
         public string Oracle { get; set; }
         public string OracleLowPrivilegeUsername { get; set; }
         public string OracleLowPrivilegePassword { get; set; }
-
+        
+        public string PostgreSql { get; set; }
+        public string PostgreSqlLowPrivilegeUsername { get; set; }
+        public string PostgreSqlLowPrivilegePassword { get; set; }
         public string GetLowPrivilegeUsername(DatabaseType databaseType)
         {
             switch (databaseType)
@@ -35,10 +38,14 @@ namespace Tests.Common
                     return MySqlLowPrivilegeUsername;
                 case DatabaseType.Oracle:
                     return OracleLowPrivilegeUsername;
+                case DatabaseType.PostgreSql:
+                    return PostgreSqlLowPrivilegeUsername;
                 default:
                     throw new ArgumentOutOfRangeException("databaseType");
             }
         }
+
+        
 
         public string GetLowPrivilegePassword(DatabaseType databaseType)
         {
@@ -50,6 +57,8 @@ namespace Tests.Common
                     return MySqlLowPrivilegePassword;
                 case DatabaseType.Oracle:
                     return OracleLowPrivilegePassword;
+                case DatabaseType.PostgreSql:
+                    return PostgreSqlLowPrivilegePassword;
                 default:
                     throw new ArgumentOutOfRangeException("databaseType");
             }
