@@ -230,12 +230,12 @@ namespace Rdmp.Core.Tests.QueryCaching
                 if (useCache)
                 {
                     //we should hit up the cache for the interior of the query and therefore not need the parameter
-                    AssertNoErrors(compiler,ac,"@maximum='2005-01-01'","JoinableInceptionQuery_AggregateConfiguration","AdmissionDate < @maximum");
+                    AssertNoErrors(compiler,ac,"@maximum='2005-01-01'","JoinableInceptionQuery_AggregateConfiguration","AdmissionDate. < @maximum");
 
                     AssertCacheUsed(compiler, root, "1/1");
                 }
                 else
-                    AssertNoErrors(compiler,ac,"@date_of_max='2001-01-01'","@maximum='2005-01-01'","SampleDate < @date_of_max","AdmissionDate < @maximum");
+                    AssertNoErrors(compiler,ac,"@date_of_max='2001-01-01'","@maximum='2005-01-01'","SampleDate. < @date_of_max","AdmissionDate. < @maximum");
 
                 AssertNoErrors(compiler);
             }
@@ -809,11 +809,11 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         /// <summary>
         /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
-        /// included all the strings in <see cref="expectedSqlBits"/>
+        /// included all the regex patterns <see cref="expectedSqlBits"/>
         /// </summary>
         /// <param name="compiler"></param>
         /// <param name="task"></param>
-        /// <param name="expectedSqlBits"></param>
+        /// <param name="expectedSqlBits">regex patterns you expect to be in the sql executed</param>
         private void AssertNoErrors(CohortCompiler compiler, AggregateConfiguration task,
             params string[] expectedSqlBits)
         {
@@ -821,16 +821,16 @@ namespace Rdmp.Core.Tests.QueryCaching
             Assert.AreEqual(CompilationState.Finished,acResult.Key.State);
 
             foreach (var s in expectedSqlBits)
-                StringAssert.Contains(s,acResult.Value.CountSQL);
+                StringAssert.IsMatch(s,acResult.Value.CountSQL);
         }
 
         /// <summary>
         /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
-        /// included all the strings in <see cref="expectedSqlBits"/>
+        /// included all the regex patterns <see cref="expectedSqlBits"/>
         /// </summary>
         /// <param name="compiler"></param>
         /// <param name="task"></param>
-        /// <param name="expectedSqlBits"></param>
+        /// <param name="expectedSqlBits">regex patterns you expect to be in the sql executed</param>
         private void AssertNoErrors(CohortCompiler compiler, CohortAggregateContainer task,
             params string[] expectedSqlBits)
         {

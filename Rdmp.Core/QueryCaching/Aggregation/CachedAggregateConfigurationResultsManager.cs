@@ -54,13 +54,17 @@ namespace Rdmp.Core.QueryCaching.Aggregation
 
         public IHasFullyQualifiedNameToo GetLatestResultsTableUnsafe(AggregateConfiguration configuration,AggregateOperation operation)
         {
+            var syntax = _database.Server.GetQuerySyntaxHelper();
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
             using (var con = _server.GetConnection())
             {
                 con.Open();
 
-                var r = DatabaseCommandHelper.GetCommand($"Select TableName from {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" +operation + "'" , con).ExecuteReader();
+                var r = DatabaseCommandHelper.GetCommand(
+                    $@"Select {syntax.EnsureWrapped("TableName")} from {mgrTable.GetFullyQualifiedName()}
+WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
+AND {syntax.EnsureWrapped("Operation")} = '{ operation }'" , con).ExecuteReader();
                 
                 if (r.Read())
                 {
@@ -74,13 +78,21 @@ namespace Rdmp.Core.QueryCaching.Aggregation
 
         public IHasFullyQualifiedNameToo GetLatestResultsTable(AggregateConfiguration configuration, AggregateOperation operation, string currentSql)
         {
+            var syntax = _database.Server.GetQuerySyntaxHelper();
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
             using (var con = _server.GetConnection())
             {
                 con.Open();
 
-                var cmd = DatabaseCommandHelper.GetCommand($"Select TableName,SqlExecuted from {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID + " AND Operation = '" + operation + "'", con);
+                var cmd = DatabaseCommandHelper.GetCommand(
+                    $@"Select 
+{syntax.EnsureWrapped("TableName")},
+{syntax.EnsureWrapped("SqlExecuted")} 
+from {mgrTable.GetFullyQualifiedName()} 
+WHERE 
+{syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID } AND
+{syntax.EnsureWrapped("Operation")} = '{operation}'", con);
                 var r = cmd.ExecuteReader();
 
                 if (r.Read())
