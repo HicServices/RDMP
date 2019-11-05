@@ -571,18 +571,15 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             {
                 con.Open();
                 
-                //find the columns
-                DiscoveredColumn[] discoveredColumns = table.DiscoverColumns();
-
                 //should not allow nulls before
                 Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
                 //do resize
                 table.DiscoverColumn("StringNotNull").DataType.Resize(500);
 
                 //rediscover it to get the new state in database (it should now be 500 and still shouldn't allow nulls)
-                Assert.AreEqual(
-                    dbType != DatabaseType.Oracle ? "varchar(500)" : "varchar2(500)"
-                    ,table.DiscoverColumn("StringNotNull").DataType.SQLType);
+                AssertIsStringWithLength(table.DiscoverColumn("StringNotNull"), 500);
+
+                
                 Assert.AreEqual(false, table.DiscoverColumn("StringNotNull").AllowNulls);
 
                 //do the same with the one that allows nulls
@@ -590,29 +587,45 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
                 table.DiscoverColumn("StringAllowNull").DataType.Resize(101);
                 table.DiscoverColumn("StringAllowNull").DataType.Resize(103);
                 table.DiscoverColumn("StringAllowNull").DataType.Resize(105);
-                Assert.AreEqual(
-                    dbType != DatabaseType.Oracle ? "varchar(105)" : "varchar2(105)"
-                    , table.DiscoverColumn("StringAllowNull").DataType.SQLType);
+                
+                AssertIsStringWithLength(table.DiscoverColumn("StringAllowNull"), 105);
                 Assert.AreEqual(true, table.DiscoverColumn("StringAllowNull").AllowNulls);
 
                 //we should have correct understanding prior to resize
-                Assert.AreEqual(
-                    dbType != DatabaseType.Oracle ? "varchar(50)" : "varchar2(50)"
-                    , table.DiscoverColumn("StringPk").DataType.SQLType);
+                AssertIsStringWithLength(table.DiscoverColumn("StringPk"),50);
                 Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
                 Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
 
                 //now we execute the resize
                 table.DiscoverColumn("StringPk").DataType.Resize(500);
 
-                Assert.AreEqual(
-                    dbType != DatabaseType.Oracle ? "varchar(500)" : "varchar2(500)"
-                    , table.DiscoverColumn("StringPk").DataType.SQLType);
+                AssertIsStringWithLength(table.DiscoverColumn("StringPk"), 500);
+
                 Assert.AreEqual(true, table.DiscoverColumn("StringPk").IsPrimaryKey);
                 Assert.AreEqual(false, table.DiscoverColumn("StringPk").AllowNulls);
                 
                 con.Close();
             }
+        }
+
+        private void AssertIsStringWithLength(DiscoveredColumn col, int expectedLength)
+        {
+            switch (col.Table.Database.Server.DatabaseType)
+            {
+                case DatabaseType.MicrosoftSQLServer:
+                case DatabaseType.MySql:
+                    Assert.AreEqual($"varchar({expectedLength})",col.DataType.SQLType);
+                    break;
+                case DatabaseType.Oracle:
+                    Assert.AreEqual($"varchar2({expectedLength})",col.DataType.SQLType);
+                    break;
+                case DatabaseType.PostgreSql:
+                    Assert.AreEqual($"character varying({expectedLength})",col.DataType.SQLType);
+                    break;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(col.Table.Database.Server.DatabaseType), col.Table.Database.Server.DatabaseType, null);
+            }
+
         }
 
         [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]

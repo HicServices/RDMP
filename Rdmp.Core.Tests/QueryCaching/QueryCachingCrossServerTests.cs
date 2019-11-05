@@ -31,7 +31,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         [TestCase(DatabaseType.MicrosoftSQLServer,typeof(QueryCachingPatcher))]
         [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]
         [TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))] 
-
+        [TestCase(DatabaseType.PostgreSql, typeof(QueryCachingPatcher))] 
         [TestCase(DatabaseType.MicrosoftSQLServer, typeof(DataQualityEnginePatcher))]
         public void Create_QueryCache(DatabaseType dbType,Type patcherType)
         {
@@ -625,6 +625,8 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <returns></returns>
         private JoinableCohortAggregateConfiguration SetupPatientIndexTable(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var tbl = CreateDataset<Biochemistry>(db, people, 10000, r);
             var cata = Import(tbl,out _, out _, out _,out ExtractionInformation[] eis);
 
@@ -645,7 +647,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
             var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
             var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and);
-            filter.WhereSQL = "TestCode = 'NA'";
+            filter.WhereSQL = syntax.EnsureWrapped("TestCode") + " = 'NA'";
             filter.SaveToDatabase();
 
             ac.RootFilterContainer_ID = and.ID;
@@ -656,8 +658,10 @@ namespace Rdmp.Core.Tests.QueryCaching
         
         private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var joinable = SetupPatientIndexTable(db, people, r, cic);
-            AddFilter(db,"Test After","SampleDate < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
+            AddFilter(db,"Test After",syntax.EnsureWrapped("SampleDate") + " < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
             return joinable;
         }
 
@@ -672,11 +676,13 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <param name="joinable"></param>
         private AggregateConfiguration SetupPatientIndexTableUser(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var ac = SetupAggregateConfiguration(db,people,r,cic);
             
             var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
             var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and);
-            filter.WhereSQL = "AdmissionDate > SampleDate";
+            filter.WhereSQL = syntax.EnsureWrapped("AdmissionDate") + " > " + syntax.EnsureWrapped("SampleDate");
             filter.SaveToDatabase();
 
             ac.RootFilterContainer_ID = and.ID;
@@ -690,9 +696,11 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         private AggregateConfiguration SetupPatientIndexTableUserWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable, bool useParameter, string paramName, string paramValue)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var ac1 = SetupPatientIndexTableUser(db, people, r, cic,joinable);
 
-            AddFilter(db,"My Filter", "AdmissionDate < ", ac1, useParameter, paramName, paramValue);
+            AddFilter(db,"My Filter", syntax.EnsureWrapped("AdmissionDate") + " < ", ac1, useParameter, paramName, paramValue);
 
             return ac1;
         }
@@ -764,8 +772,9 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <returns></returns>
         private AggregateConfiguration SetupAggregateConfigurationWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
             var ac1 = SetupAggregateConfiguration(db, people, r, cic);
-            AddFilter(db, "My Filter", "AdmissionDate < ", ac1, useParameter, paramName, paramValue);
+            AddFilter(db, "My Filter", syntax.EnsureWrapped("AdmissionDate") +" < ", ac1, useParameter, paramName, paramValue);
             return ac1;
         }
 
