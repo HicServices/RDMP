@@ -18,4 +18,4 @@ before_script:
 
 script:
 - dotnet publish "./Tools/rdmp" -r linux-x64
-- "./Tools/rdmp/bin/Debug/netcoreapp2.2/linux-x64/rdmp install localhost TEST_ -D -u sa -p YourStrong!Passw0rd
+- ./Tools/rdmp/bin/Debug/netcoreapp2.2/linux-x64/rdmp install localhost TEST_ -D -u sa -p YourStrong!Passw0rd
