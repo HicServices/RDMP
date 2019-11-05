@@ -84,9 +84,10 @@ namespace Rdmp.Core.Tests.Curation.Integration
             var ex = Assert.Throws<ExpectedIdenticalStringsException>(() => GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
             Assert.IsNotNull(ex.Message);
 
-            string problemsDroppingTrigger, thingsThatWorkedDroppingTrigger;
             var implementer = GetImplementer();
-            implementer.DropTrigger(out problemsDroppingTrigger, out thingsThatWorkedDroppingTrigger);
+            implementer.DropTrigger(out var problemsDroppingTrigger, out _);
+            Assert.IsEmpty(problemsDroppingTrigger);
+
             implementer.CreateTrigger(new ThrowImmediatelyCheckNotifier());
 
             Assert.AreEqual(true, implementer.CheckUpdateTriggerIsEnabledAndHasExpectedBody());
