@@ -109,7 +109,9 @@ namespace Tests.Common
             var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
-                Prefix = TestDatabaseNames.Prefix
+                Prefix = TestDatabaseNames.Prefix,
+                Username = TestDatabaseSettings.Username,
+                Password = TestDatabaseSettings.Password
             };
 
             
@@ -134,10 +136,7 @@ namespace Tests.Common
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
-            _discoveredSqlServer = new DiscoveredServer(
-                new SqlConnectionStringBuilder(){
-                DataSource = TestDatabaseSettings.ServerName,
-                IntegratedSecurity = true});
+            _discoveredSqlServer = new DiscoveredServer(TestDatabaseSettings.ServerName,null,DatabaseType.MicrosoftSQLServer,TestDatabaseSettings.Username,TestDatabaseSettings.Password);
 
             if (TestDatabaseSettings.MySql != null)
             {

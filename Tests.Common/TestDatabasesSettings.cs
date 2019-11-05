@@ -14,6 +14,9 @@ namespace Tests.Common
         public string Prefix { get { return TestDatabaseNames.Prefix; } set { TestDatabaseNames.Prefix = value; } }
 
         public string ServerName { get; set; }
+        public string Username { get; set; }
+        public string Password { get; set; }
+
         public string SqlServerLowPrivilegeUsername { get; set; }
         public string SqlServerLowPrivilegePassword { get; set; }
         
@@ -28,6 +31,7 @@ namespace Tests.Common
         public string PostgreSql { get; set; }
         public string PostgreSqlLowPrivilegeUsername { get; set; }
         public string PostgreSqlLowPrivilegePassword { get; set; }
+
         public string GetLowPrivilegeUsername(DatabaseType databaseType)
         {
             switch (databaseType)

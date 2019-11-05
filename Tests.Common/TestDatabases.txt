@@ -8,6 +8,8 @@
 
 ServerName:	localhost\sqlexpress
 Prefix:	TEST_
+Username:sa
+Password:YourStrong!Passw0rd
 MySql:	Server=localhost;Uid=root;Pwd=zombie;SSL-Mode=None
 Oracle:	Data Source=localhost:1521/orclpdb.dundee.uni;User Id=ora;Password=zombie;
 PostgreSql:	User ID=postgres;Password=zombie;Host=localhost;
