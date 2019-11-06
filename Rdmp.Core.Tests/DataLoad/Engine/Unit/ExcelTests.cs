@@ -228,7 +228,8 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
         {
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"DataLoad\Engine\Resources\BlankLineBook.xlsx"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,
+                "DataLoad","Engine","Resources","BlankLineBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());
@@ -250,7 +251,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             ExcelDataFlowSource source = new ExcelDataFlowSource();
 
             
-            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,@"DataLoad\Engine\Resources\BlankBook.xlsx"));
+            var fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources","BlankBook.xlsx"));
             Assert.IsTrue(fi.Exists);
 
             source.PreInitialize(new FlatFileToLoad(fi), new ThrowImmediatelyDataLoadEventListener());

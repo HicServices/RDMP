@@ -192,11 +192,10 @@ namespace Rdmp.Core.Tests.DataExport
             var p = new Project(DataExportRepository, "Fish");
             config = new ExtractionConfiguration(DataExportRepository, p);
 
-            string assemblyFolder = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
-            assemblyFolder = Path.Combine(assemblyFolder, @"\ProjectCheckerTestDir");
+            var projectFolder = Path.Combine(TestContext.CurrentContext.WorkDirectory, "ProjectCheckerTestDir");
 
-            dir = new DirectoryInfo(assemblyFolder );
-            p.ExtractionDirectory = assemblyFolder;
+            dir = new DirectoryInfo(projectFolder );
+            p.ExtractionDirectory = projectFolder;
             p.ProjectNumber = -5000;
             p.SaveToDatabase();
 
