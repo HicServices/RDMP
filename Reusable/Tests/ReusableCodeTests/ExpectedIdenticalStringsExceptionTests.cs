@@ -106,17 +106,30 @@ meaning
 if the queer clay bas-relief and the disjointed jottings, ramblings, and cuttings which I found? Had
 my uncle, in his latter years become credulous of the most superficial impostures? ");
 
-            //the expected difference index
-            int index = Environment.NewLine.Length == 2 ? 38 : 34;
-            string eol = Environment.NewLine.Replace("\r","\\r").Replace("\n","\\n");
-
-            Assert.AreEqual(
-$@"These are different
-Strings differ at index {index}
-EXPECTED: the{eol}meaning {eol}of the que...
-ACTUAL  : the{eol}meaning {eol}if the que...
+            //line endings change the location in the string that is different.  It also means more preview
+            //text is available since newline characters consume more/less of the preview allowance.
+            if (Environment.NewLine == "\r\n")
+            {
+                Assert.AreEqual(
+                    $@"These are different
+Strings differ at index 38
+EXPECTED: the\r\nmeaning \r\nof the que...
+ACTUAL  : the\r\nmeaning \r\nif the que...
 -----------------------------^"
-                , ex.Message);
+                    , ex.Message);
+            }
+            else
+            {
+                Assert.AreEqual(
+                    $@"These are different
+Strings differ at index 34
+EXPECTED:d be the\nmeaning \nof the que...
+ACTUAL  :d be the\nmeaning \nif the que...
+-----------------------------^"
+                    , ex.Message);
+            }
+
+            
         }
     }
 }
