@@ -195,6 +195,8 @@ namespace Rdmp.Core.Tests.DataExport
             var projectFolder = Path.Combine(TestContext.CurrentContext.WorkDirectory, "ProjectCheckerTestDir");
 
             dir = new DirectoryInfo(projectFolder );
+            dir.Create();
+
             p.ExtractionDirectory = projectFolder;
             p.ProjectNumber = -5000;
             p.SaveToDatabase();
