@@ -164,7 +164,9 @@ namespace Tests.Common
             var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
-                Prefix = prefix
+                Prefix = prefix,
+                Username = TestDatabaseSettings.Username,
+                Password = TestDatabaseSettings.Password
             };
 
             var builder = opts.GetBuilder(databaseName);

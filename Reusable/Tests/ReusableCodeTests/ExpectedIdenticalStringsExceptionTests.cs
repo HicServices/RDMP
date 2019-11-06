@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using NUnit.Framework;
 using ReusableLibraryCode.Exceptions;
 
@@ -61,10 +62,15 @@ ACTUAL  :fish fly high
             var ex = new ExpectedIdenticalStringsException("These are different", @"fi
 sh", "fish");
 
+            
+            
+            string eol = Environment.NewLine.Replace("\r","\\r").Replace("\n","\\n");
+
+
             Assert.AreEqual(
-@"These are different
+$@"These are different
 Strings differ at index 2
-EXPECTED:fi\r\nsh
+EXPECTED:fi{eol}sh
 ACTUAL  :fish
 -----------^"
                 , ex.Message);
@@ -100,11 +106,15 @@ meaning
 if the queer clay bas-relief and the disjointed jottings, ramblings, and cuttings which I found? Had
 my uncle, in his latter years become credulous of the most superficial impostures? ");
 
+            //the expected difference index
+            int index = Environment.NewLine.Length == 2 ? 38 : 34;
+            string eol = Environment.NewLine.Replace("\r","\\r").Replace("\n","\\n");
+
             Assert.AreEqual(
-@"These are different
-Strings differ at index 38
-EXPECTED: the\r\nmeaning \r\nof the que...
-ACTUAL  : the\r\nmeaning \r\nif the que...
+$@"These are different
+Strings differ at index {index}
+EXPECTED: the{eol}meaning {eol}of the que...
+ACTUAL  : the{eol}meaning {eol}if the que...
 -----------------------------^"
                 , ex.Message);
         }
