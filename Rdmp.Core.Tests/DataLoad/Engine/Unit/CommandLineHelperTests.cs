@@ -8,6 +8,8 @@ using System;
 using System.Data.SqlClient;
 using System.IO;
 using FAnsi.Discovery;
+using FAnsi.Implementation;
+using FAnsi.Implementations.MicrosoftSQL;
 using NUnit.Framework;
 using Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Arguments;
 
@@ -21,12 +23,15 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
         {
             var date = new DateTime(2004, 1, 1);
             Assert.AreEqual("\"2004-01-01\"", CommandLineHelper.GetValueString(date));
+            
 
-            var fi = new FileInfo(@"C:\a\test\path");
-            Assert.AreEqual(@"""C:\a\test\path""", CommandLineHelper.GetValueString(fi));
+            var fi = new FileInfo(TestContext.CurrentContext.TestDirectory);
+            Assert.AreEqual($@"""{TestContext.CurrentContext.TestDirectory}""", CommandLineHelper.GetValueString(fi));
 
             const string db = "db-name";
             Assert.AreEqual(db, CommandLineHelper.GetValueString(db));
+
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
 
             //notice how server and db don't actually exist, thats cool they implement IMightNotExist
             var dbInfo = new DiscoveredServer(new SqlConnectionStringBuilder(){DataSource = "server"}).ExpectDatabase("db");
