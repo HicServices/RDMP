@@ -128,7 +128,7 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
-            return _encryptedPasswordHost.GetDecryptedPassword();
+            return _encryptedPasswordHost.GetDecryptedPassword() ?? "";
         }
 
         /// <inheritdoc/>
@@ -141,6 +141,16 @@ namespace Rdmp.Core.Curation.Data
         public IHasDependencies[] GetObjectsDependingOnThis()
         {
             return GetAllTableInfosThatUseThis().SelectMany(kvp=>kvp.Value).Cast<IHasDependencies>().ToArray();
+        }
+
+        public bool PasswordIs(string password)
+        {
+            var p = GetDecryptedPassword();
+
+            if (string.IsNullOrWhiteSpace(p))
+                return string.IsNullOrWhiteSpace(password);
+
+            return p.Equals(password);
         }
     }
 }

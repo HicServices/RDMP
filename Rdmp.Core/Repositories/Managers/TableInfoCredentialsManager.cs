@@ -244,7 +244,7 @@ namespace Rdmp.Core.Repositories.Managers
             if (existingCredentials.Any())
             {
                 //there is one or more existing credential with this username
-                var matchingOnPassword = existingCredentials.Where(c => c.GetDecryptedPassword().Equals(password)).ToArray();
+                var matchingOnPassword = existingCredentials.Where(c => c.PasswordIs(password)).ToArray();
 
                 if (matchingOnPassword.Length == 1)
                     return matchingOnPassword.Single();
