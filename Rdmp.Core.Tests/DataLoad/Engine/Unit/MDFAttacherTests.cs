@@ -196,7 +196,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             }
 
             var memory2 = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
-            mdf.OverrideMDFFileCopyDestination = @"C:/temp";
+            mdf.OverrideMDFFileCopyDestination = TestContext.CurrentContext.WorkDirectory;
             mdf.Check(memory2);
             Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,@"Found server DATA folder .*C:/temp") && m.Result == CheckResult.Success));
 
