@@ -1,11 +1,10 @@
 # Auto detect text files and perform LF normalization
 
 * text=auto
-* eol=crlf
 
-*.cs text eol=crlf diff=csharp
-*.txt text eol=crlf
-*.resx text eol=crlf
+*.cs text diff=csharp
+*.txt text
+*.resx text
 
 # (binary is a macro for -text -diff)
 *.png binary
