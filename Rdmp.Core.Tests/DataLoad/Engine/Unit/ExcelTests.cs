@@ -182,7 +182,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             Assert.AreEqual("Frank", dt.Rows[0][0]);
             Assert.AreEqual("Upper, Left", dt.Rows[0][1]);
             Assert.AreEqual("30", dt.Rows[0][2]);
-            Assert.AreEqual("£11.00", dt.Rows[0][3]);
+            
+            //its a pound symbol alright! but since there is 2 encodings for pound symbol lets just make everyones life easier
+            StringAssert.IsMatch(@"^\W11.00$", dt.Rows[0][3].ToString());
+            
             Assert.AreEqual("0.1", dt.Rows[0][4]);
 
             Assert.AreEqual("Castello", dt.Rows[1][0]);

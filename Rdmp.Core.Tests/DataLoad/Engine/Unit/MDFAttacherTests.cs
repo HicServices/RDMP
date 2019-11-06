@@ -120,17 +120,17 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
                 File.WriteAllText(mdf, "fish");
                 File.WriteAllText(ldf, "fish");
 
-                string serverDatabasePath = @"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
+                string serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
                 var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, null);
                 
 
                 Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
                 Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
                 
-                Assert.AreEqual(@"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\MyFile_log.ldf", locations.CopyToLdf);
-                Assert.AreEqual(@"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\MyFile.mdf", locations.CopyToMdf);
+                Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile_log.ldf", locations.CopyToLdf);
+                Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.CopyToMdf);
 
-                Assert.AreEqual(@"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\MyFile.mdf", locations.AttachMdfPath);
+                Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.AttachMdfPath);
             }
             finally
             {
@@ -196,9 +196,9 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
             }
 
             var memory2 = new ToMemoryCheckNotifier(new ThrowImmediatelyCheckNotifier());
-            mdf.OverrideMDFFileCopyDestination = @"C:\temp";
+            mdf.OverrideMDFFileCopyDestination = @"C:/temp";
             mdf.Check(memory2);
-            Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,@"Found server DATA folder .*C:\\temp") && m.Result == CheckResult.Success));
+            Assert.IsTrue(memory2.Messages.Any(m => Regex.IsMatch(m.Message,@"Found server DATA folder .*C:/temp") && m.Result == CheckResult.Success));
 
             hicProjDir.RootPath.Delete(true);
 
@@ -221,17 +221,17 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Unit
                 File.WriteAllText(mdf, "fish");
                 File.WriteAllText(ldf, "fish");
 
-                string serverDatabasePath = @"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\";
-                var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, @"\\MyDbServer1\Share\Database");
+                string serverDatabasePath = @"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/";
+                var locations = new MdfFileAttachLocations(new DirectoryInfo(TestContext.CurrentContext.TestDirectory), serverDatabasePath, @"//MyDbServer1/Share/Database");
 
 
                 Assert.AreEqual(new FileInfo(mdf).FullName, locations.OriginLocationMdf);
                 Assert.AreEqual(new FileInfo(ldf).FullName, locations.OriginLocationLdf);
 
-                Assert.AreEqual(@"\\MyDbServer1\Share\Database\MyFile_log.ldf", locations.CopyToLdf);
-                Assert.AreEqual(@"\\MyDbServer1\Share\Database\MyFile.mdf", locations.CopyToMdf);
+                StringAssert.IsMatch(@"//MyDbServer1/Share/Database[/\\]MyFile_log.ldf", locations.CopyToLdf);
+                StringAssert.IsMatch(@"//MyDbServer1/Share/Database[/\\]MyFile.mdf", locations.CopyToMdf);
 
-                Assert.AreEqual(@"H:\Program Files\Microsoft SQL Server\MSSQL13.SQLEXPRESS\MSSQL\DATA\MyFile.mdf", locations.AttachMdfPath);
+                Assert.AreEqual(@"H:/Program Files/Microsoft SQL Server/MSSQL13.SQLEXPRESS/MSSQL/DATA/MyFile.mdf", locations.AttachMdfPath);
             }
             finally
             {
