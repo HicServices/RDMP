@@ -162,7 +162,7 @@ namespace ReusableLibraryCode.Comments
             if (value == null)
                 return null;
 
-            return Regex.Replace(value,@"\s{2,}", " ").Trim();
+            return Regex.Replace(value,@"\s+"," ").Trim();
         }
 
         /// <summary>
