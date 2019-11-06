@@ -347,7 +347,8 @@ namespace ReusableLibraryCode.Comments
         /// <returns></returns>
         public string FormatAsParagraphs(string message)
         {
-            message = Regex.Replace(message, "\r\n\\s*","\r\n\r\n");
+            
+            message = Regex.Replace(message, Environment.NewLine + "\\s*",Environment.NewLine + Environment.NewLine);
             message = Regex.Replace(message, @"(\.?[A-z]{2,}\.)+([A-z]+)", (m) => m.Groups[2].Value);
             
             return message;
