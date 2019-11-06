@@ -135,7 +135,7 @@ namespace Rdmp.Core.Tests.DataExport
 
                 Assert.IsTrue(notifier.Messages.Any(
                     m=>m.Result == CheckResult.Fail &&
-                    Regex.IsMatch(m.Message,@"Found non-empty folder .* which is left over extracted folder after data release \(First file found was '.*\\DMPTestCatalogue\\Lookups\\Text.txt' but there may be others\)")));
+                    Regex.IsMatch(m.Message,@"Found non-empty folder .* which is left over extracted folder after data release \(First file found was '.*[/\\]DMPTestCatalogue[/\\]Lookups[/\\]Text.txt' but there may be others\)")));
             }
             finally
             {
@@ -150,7 +150,7 @@ namespace Rdmp.Core.Tests.DataExport
             ExtractionConfiguration config;
             var p = GetProjectWithConfigDirectory(out config, out dir);
             var ex = Assert.Throws<Exception>(()=>RunTestWithCleanup(p,config));
-            Assert.IsTrue(ex.Message.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration"));
+            StringAssert.StartsWith("There are no datasets selected for open configuration 'New ExtractionConfiguration",ex.Message);
 
         }
 
