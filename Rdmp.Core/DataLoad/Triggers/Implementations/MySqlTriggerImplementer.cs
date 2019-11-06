@@ -12,8 +12,10 @@ using ReusableLibraryCode.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
+    /// <inheritdoc/>
     internal class MySqlTriggerImplementer:TriggerImplementer
     {
+        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
         public MySqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
         }

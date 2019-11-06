@@ -35,6 +35,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         private string _schema;
         private string _triggerName;
 
+        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
         public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
             _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo":_table.Schema;

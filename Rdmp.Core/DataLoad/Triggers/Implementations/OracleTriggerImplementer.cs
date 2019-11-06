@@ -11,8 +11,10 @@ using ReusableLibraryCode.Exceptions;
 
 namespace Rdmp.Core.DataLoad.Triggers.Implementations
 {
+    /// <inheritdoc/>
     internal class OracleTriggerImplementer:MySqlTriggerImplementer
     {
+        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
         public OracleTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
         }

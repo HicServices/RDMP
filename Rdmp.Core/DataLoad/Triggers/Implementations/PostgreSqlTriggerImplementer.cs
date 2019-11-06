@@ -1,6 +1,7 @@
 using System;
 using System.Linq;
 using System.Text.RegularExpressions;
+using FAnsi;
 using FAnsi.Discovery;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Exceptions;
@@ -17,6 +18,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         private string _procedureNameFullyQualified;
         private string _procedureRuntimeName;
 
+        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
         public PostgreSqlTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso):base(table,createDataLoadRunIDAlso)
         {
             _schema = string.IsNullOrWhiteSpace(_table.Schema) ? table.GetQuerySyntaxHelper().GetDefaultSchemaIfAny():_table.Schema;
