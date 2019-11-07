@@ -49,7 +49,13 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 fileInfo.Delete();
 
             string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xlsx");
-            File.WriteAllBytes(targetFile, Resources.Resource1.TestExcelFile1);
+
+            FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
+                "Resources", "Test.xlsx"));
+
+            FileAssert.Exists(fi);
+
+            fi.CopyTo(targetFile, true);
 
             TestConversionFor(targetFile, "*.xlsx", 5, LoadDirectory);
         }
@@ -64,7 +70,12 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
                 fileInfo.Delete();
 
             string targetFile = Path.Combine(LoadDirectory.ForLoading.FullName, "Test.xml");
-            File.WriteAllText(targetFile, Resources.Resource1.TestExcelFile2);
+            FileInfo fi = new FileInfo(Path.Combine(TestContext.CurrentContext.TestDirectory, "DataLoad", "Engine",
+                "Resources", "XmlTestForExcel.xml"));
+
+            FileAssert.Exists(fi);
+
+            fi.CopyTo(targetFile, true);
 
             var ex = Assert.Throws<Exception>(()=>TestConversionFor(targetFile, "*.fish", 1, LoadDirectory));
 
