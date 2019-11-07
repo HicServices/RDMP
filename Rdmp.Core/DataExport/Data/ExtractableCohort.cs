@@ -207,14 +207,16 @@ where
             using (var con = db.Server.GetConnection())
             {
                 con.Open();
-                var getDescription = db.Server.GetCommand(sql, con);
+                using (var getDescription = db.Server.GetCommand(sql, con))
+                {
+                    using (var r = getDescription.ExecuteReader())
+                    {
+                        if (!r.Read())
+                            throw new Exception("No records returned for Cohort OriginID " + OriginID);
 
-                var r = getDescription.ExecuteReader();
-
-                if (!r.Read())
-                    throw new Exception("No records returned for Cohort OriginID " + OriginID);
-
-                return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
+                        return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
+                    }
+                }
             }
         }
 
@@ -315,7 +317,8 @@ where
             {
                 con.Open();
 
-                return Convert.ToInt32(db.Server.GetCommand("SELECT count(*) FROM " + ect.TableName + " WHERE " + WhereSQL(), con).ExecuteScalar());
+                using(var cmd = db.Server.GetCommand("SELECT count(*) FROM " + ect.TableName + " WHERE " + WhereSQL(), con))
+                    return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
@@ -336,7 +339,8 @@ where
             {
                 con.Open();
 
-                return db.Server.GetCommand(sql, con).ExecuteScalar();
+                using(var cmd = db.Server.GetCommand(sql, con))
+                    return cmd.ExecuteScalar();
             }
         }
         

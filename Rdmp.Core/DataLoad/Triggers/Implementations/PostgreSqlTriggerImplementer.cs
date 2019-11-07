@@ -77,8 +77,8 @@ EXECUTE PROCEDURE {2}();",
             {
                 con.Open();
 
-                var cmd = _server.GetCommand(sql, con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = _server.GetCommand(sql, con))
+                    cmd.ExecuteNonQuery();
             }
 
             return creationSql;
@@ -100,8 +100,8 @@ LANGUAGE 'plpgsql';"
             {
                 con.Open();
 
-                var cmd = _server.GetCommand(sql, con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = _server.GetCommand(sql, con))
+                    cmd.ExecuteNonQuery();
             }
         }
 
@@ -112,8 +112,8 @@ LANGUAGE 'plpgsql';"
                 con.Open();
 
                 using(var cmd = _server.GetCommand($"select proname,prosrc from pg_proc where proname= '{_procedureRuntimeName}';", con))
-                using (var r = cmd.ExecuteReader())
-                    return r.Read() ? r["prosrc"] as string:null;
+                    using (var r = cmd.ExecuteReader())
+                        return r.Read() ? r["prosrc"] as string:null;
             }
         }
 

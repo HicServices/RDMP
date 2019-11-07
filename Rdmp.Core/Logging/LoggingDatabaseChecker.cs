@@ -101,23 +101,28 @@ namespace Rdmp.Core.Logging
             {
                 conn.Open();
 
-                var cmd = _server.GetCommand("SELECT 1 FROM DataSet WHERE dataSetID=@dsID", conn);
-                _server.AddParameterWithValueToCommand("@dsID",cmd,dataSetID);
-
-                var found = cmd.ExecuteScalar();
-
-                if (found != null)
+                using (var cmd = _server.GetCommand("SELECT 1 FROM DataSet WHERE dataSetID=@dsID", conn))
                 {
-                    notifier.OnCheckPerformed(new CheckEventArgs("Found default dataset: " + dataSetID, CheckResult.Success, null));
-                    return;
+                    _server.AddParameterWithValueToCommand("@dsID", cmd, dataSetID);
+
+                    var found = cmd.ExecuteScalar();
+
+                    if (found != null)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs("Found default dataset: " + dataSetID,
+                            CheckResult.Success, null));
+                        return;
+                    }
                 }
 
                 if (notifier.OnCheckPerformed(new CheckEventArgs("Did not find default dataset '" + dataSetID + "'.", CheckResult.Fail, null, "Create the dataset '" + dataSetID + "'")))
                 {
-
-                    cmd = _server.GetCommand("INSERT INTO DataSet (dataSetID, name) VALUES (@dsID, @dsID)", conn);
-                    _server.AddParameterWithValueToCommand("@dsID", cmd, dataSetID);
-                    cmd.ExecuteNonQuery();
+                    using (var cmd =
+                        _server.GetCommand("INSERT INTO DataSet (dataSetID, name) VALUES (@dsID, @dsID)", conn))
+                    {
+                        _server.AddParameterWithValueToCommand("@dsID", cmd, dataSetID);
+                        cmd.ExecuteNonQuery();
+                    }
                 }
             }
         }
@@ -157,13 +162,10 @@ namespace Rdmp.Core.Logging
             {
                 conn.Open();
 
-                var reader =
-                    _server.GetCommand("SELECT ID, " + valueColumnName + " FROM " + tableName, conn).ExecuteReader();
-                
-                while (reader.Read())
-                    actual.Add(Convert.ToInt32(reader["ID"]), reader[valueColumnName].ToString().Trim());
-
-                reader.Close();
+                using(var cmd = _server.GetCommand("SELECT ID, " + valueColumnName + " FROM " + tableName, conn))
+                    using(var reader = cmd.ExecuteReader())
+                        while (reader.Read())
+                            actual.Add(Convert.ToInt32(reader["ID"]), reader[valueColumnName].ToString().Trim());
             }
 
             //now reconcile what is in the database with what we expect

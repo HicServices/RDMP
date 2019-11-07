@@ -323,27 +323,27 @@ CONSTRAINT AK_" + TableName + @" UNIQUE(" + anonymousColumnName + @")
 )";
 
 
-            DbCommand cmd = server.GetCommand(sql, con);
-
-            cmd.Transaction = forceTransaction;
-
-            notifier.OnCheckPerformed(new CheckEventArgs("Decided appropriate create statement is:" + cmd.CommandText, CheckResult.Success));
-            try
+            using (DbCommand cmd = server.GetCommand(sql, con))
             {
-                cmd.ExecuteNonQuery();
+                cmd.Transaction = forceTransaction;
 
-                if(forceConnection == null)//if we opened this ourselves
-                    con.Close();//shut it
-            }
-            catch (Exception e)
-            {
-                notifier.OnCheckPerformed(
-                    new CheckEventArgs(
-                        "Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server " +
-                        Server, CheckResult.Fail, e));
-                return;
-            }
+                notifier.OnCheckPerformed(new CheckEventArgs("Decided appropriate create statement is:" + cmd.CommandText, CheckResult.Success));
+                try
+                {
+                    cmd.ExecuteNonQuery();
 
+                    if(forceConnection == null)//if we opened this ourselves
+                        con.Close();//shut it
+                }
+                catch (Exception e)
+                {
+                    notifier.OnCheckPerformed(
+                        new CheckEventArgs(
+                            "Failed to successfully create the anonymous/identifier mapping Table in the ANO database on server " +
+                            Server, CheckResult.Fail, e));
+                    return;
+                }
+            }
             
             try
             {

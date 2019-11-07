@@ -463,16 +463,19 @@ namespace Rdmp.Core.Reports
                 sql += tableToQuery.Name;
 
                 identifierName = hasExtractionIdentifier ? bestExtractionInformation[0].GetRuntimeName() : null;
-            
-                DbCommand cmd = server.GetCommand(sql,con);
-                cmd.CommandTimeout = _args.Timeout;
 
-                DbDataReader r = cmd.ExecuteReader();
-                r.Read();
+                using (DbCommand cmd = server.GetCommand(sql, con))
+                {
+                    cmd.CommandTimeout = _args.Timeout;
 
-                count = Convert.ToInt32(r["recordCount"]);
-                distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
-
+                    using (DbDataReader r = cmd.ExecuteReader())
+                    {
+                        r.Read();
+                        count = Convert.ToInt32(r["recordCount"]);
+                        distinct = hasExtractionIdentifier && _args.IncludeDistinctIdentifierCounts ? Convert.ToInt32(r["recordCountDistinct"]) : -1;
+                    }
+                }
+                
                 con.Close();
             }
         }

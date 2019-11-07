@@ -39,19 +39,24 @@ namespace Rdmp.Core.Repositories.Managers
             using (var con = server.GetConnection())
             {
                 con.Open();
-                var cmd = server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue", con);
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
+                using (var cmd =
+                    server.GetCommand(@"SELECT GovernancePeriod_ID,Catalogue_ID FROM GovernancePeriod_Catalogue", con))
                 {
-                    int gp = (int)r["GovernancePeriod_ID"];
-                    int cata = (int)r["Catalogue_ID"];
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        while (r.Read())
+                        {
+                            int gp = (int)r["GovernancePeriod_ID"];
+                            int cata = (int)r["Catalogue_ID"];
 
-                    if (!toReturn.ContainsKey(gp))
-                        toReturn.Add(gp, new HashSet<int>());
+                            if (!toReturn.ContainsKey(gp))
+                                toReturn.Add(gp, new HashSet<int>());
 
-                    toReturn[gp].Add(cata);
+                            toReturn[gp].Add(cata);
+                        }
+                    }
                 }
+                
             }
 
             return toReturn;

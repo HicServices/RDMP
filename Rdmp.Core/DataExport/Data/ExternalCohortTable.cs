@@ -237,18 +237,18 @@ namespace Rdmp.Core.DataExport.Data
 
                 string sql = @"select count(*) from " + DefinitionTableName + " where id = " + originID;
 
-                var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con);
-                try
-                {
-                    return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(
-                        "Could not connect to server " + Server + " (Database '" + Database +
-                        "') which is the data source of ExternalCohortTable (source) called '" + Name + "' (ID=" + ID +
-                        ")", e);
-                }
+                using(var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con))
+                    try
+                    {
+                        return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(
+                            "Could not connect to server " + Server + " (Database '" + Database +
+                            "') which is the data source of ExternalCohortTable (source) called '" + Name + "' (ID=" + ID +
+                            ")", e);
+                    }
             }
 
         }

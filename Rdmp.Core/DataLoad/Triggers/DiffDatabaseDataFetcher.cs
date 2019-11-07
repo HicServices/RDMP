@@ -288,8 +288,8 @@ Join
                     using (var cmd = server.GetCommand(sql, con))
                     {
                         cmd.CommandTimeout = _timeout;
-                        var da = server.GetDataAdapter(cmd);
-                        da.Fill(dt);
+                        using(var da = server.GetDataAdapter(cmd))
+                            da.Fill(dt);
                     }
                 }
             }

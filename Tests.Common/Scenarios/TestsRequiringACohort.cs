@@ -230,7 +230,8 @@ GO
                          projectNumberInTestData + ",'unitTestDataForCohort',1)";
 
                 con.Open();
-                _cohortDatabase.Server.GetCommand(insertSQL, con).ExecuteNonQuery();
+                using(var cmd = _cohortDatabase.Server.GetCommand(insertSQL, con))
+                    cmd.ExecuteNonQuery();
             }
         }
 
@@ -243,10 +244,10 @@ GO
                 con.Open();
 
                 //clear out old data
-                var cmdDelete =
+                using(var cmdDelete =
                     _cohortDatabase.Server.GetCommand(
-                        "DELETE FROM " + cohortTableName + "; DELETE FROM " + definitionTableName + ";", con);
-                cmdDelete.ExecuteNonQuery();
+                        "DELETE FROM " + cohortTableName + "; DELETE FROM " + definitionTableName + ";", con))
+                    cmdDelete.ExecuteNonQuery();
             }
         }
 
@@ -260,8 +261,8 @@ GO
 
                 string insertIntoList = "INSERT INTO Cohort(PrivateID,ReleaseID,cohortDefinition_id) VALUES ('" + privateID + "','" + publicID + "'," + cohortIDInTestData + ")";
 
-                var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con);
-                Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
+                using(var insertRecord = _cohortDatabase.Server.GetCommand(insertIntoList, con))
+                    Assert.AreEqual(1, insertRecord.ExecuteNonQuery());
             }
         }
         

@@ -92,9 +92,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 {
                     con.Open();
                 
-                    var cmdCreateArchive = _server.GetCommand(sql, con);
-
-                    cmdCreateArchive.ExecuteNonQuery();
+                    using(var cmdCreateArchive = _server.GetCommand(sql, con))
+                        cmdCreateArchive.ExecuteNonQuery();
 
                     _archiveTable.AddColumn("hic_validTo", new DatabaseTypeRequest(typeof(DateTime)), true, timeout);
                     _archiveTable.AddColumn("hic_userID", new DatabaseTypeRequest(typeof(string), 128), true, timeout);

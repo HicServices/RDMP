@@ -97,8 +97,8 @@ namespace Rdmp.Core.DataLoad.Engine.DatabaseManagement.Operations
             using (var con = destDatabaseInfo.Server.GetConnection())
             {
                 con.Open();
-                var cmd = destDatabaseInfo.Server.GetCommand(sql, con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = destDatabaseInfo.Server.GetCommand(sql, con))
+                    cmd.ExecuteNonQuery();
             }
 
             if (!newTable.Exists())

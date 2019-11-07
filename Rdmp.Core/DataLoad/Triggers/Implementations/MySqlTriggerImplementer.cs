@@ -31,8 +31,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 {
                     con.Open();
 
-                    var cmd = _server.GetCommand("DROP TRIGGER " + GetTriggerName(), con);
-                    cmd.ExecuteNonQuery();
+                    using(var cmd = _server.GetCommand("DROP TRIGGER " + GetTriggerName(), con))
+                        cmd.ExecuteNonQuery();
 
                     thingsThatWorkedDroppingTrigger = "Droppped trigger " + GetTriggerName();
                 }
@@ -58,8 +58,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             {
                 con.Open();
 
-                var cmd = _server.GetCommand(sql, con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = _server.GetCommand(sql, con))
+                    cmd.ExecuteNonQuery();
             }
 
             return creationSql;
@@ -84,14 +84,13 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             {
                 con.Open();
 
-                var cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()), con);
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
-                {
-                    if (r["Trigger"].Equals(GetTriggerName()))
-                        return (string) r["Statement"];
-                }
+                using(var cmd = _server.GetCommand(string.Format("show triggers like '{0}'", _table.GetRuntimeName()), con))
+                    using(var r = cmd.ExecuteReader())
+                        while (r.Read())
+                        {
+                            if (r["Trigger"].Equals(GetTriggerName()))
+                                return (string) r["Statement"];
+                        }
             }
 
             return null;
