@@ -156,7 +156,6 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
         public void Dispose(IDataLoadEventListener listener, Exception pipelineFailureExceptionIfAny)
         {
             CloseReader(listener);
-            
         }
 
         public void Abort(IDataLoadEventListener listener)
@@ -174,7 +173,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
                 if (_con.State != ConnectionState.Closed)
                     _con.Close();
 
-                _reader.Dispose();
+                _reader?.Dispose();
+                cmd?.Dispose();
 
                 //do not do this more than once! which could happen if they abort then it disposes
                 _con = null;
@@ -191,13 +191,14 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Sources
             using (var con = DatabaseCommandHelper.GetConnection(_builder))
             {
                 con.Open();
-                var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(_sql, con));
-
-                int read = da.Fill(0, 100, chunk);
-
-                if (read == 0)
-                    return null;
-
+                using (var da = DatabaseCommandHelper.GetDataAdapter(DatabaseCommandHelper.GetCommand(_sql, con)))
+                {
+                    int read = da.Fill(0, 100, chunk);
+                                    
+                    if (read == 0)
+                        return null;
+                }
+                
                 return chunk;
             }
         }

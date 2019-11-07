@@ -67,12 +67,15 @@ namespace Rdmp.Core.Repositories.Managers
 
             using (var con = CatalogueRepository.GetConnection())
             {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("SELECT [Order] FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID", con.Connection, con.Transaction);
+                using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+                    "SELECT [Order] FROM CohortAggregateContainer_AggregateConfiguration WHERE AggregateConfiguration_ID = @AggregateConfiguration_ID",
+                    con.Connection, con.Transaction))
+                {
+                    cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
+                    cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
 
-                cmd.Parameters.Add(DatabaseCommandHelper.GetParameter("@AggregateConfiguration_ID", cmd));
-                cmd.Parameters["@AggregateConfiguration_ID"].Value = configuration.ID;
-
-                return CatalogueRepository.ObjectToNullableInt(cmd.ExecuteScalar());
+                    return CatalogueRepository.ObjectToNullableInt(cmd.ExecuteScalar());
+                }
             }
         }
 

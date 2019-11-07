@@ -952,15 +952,18 @@ namespace Rdmp.Core.Curation.Data
                             return;
                         }
                 
-                        var cmd = DatabaseCommandHelper.GetCommand(sql, con);
-                        cmd.CommandTimeout = 10;
-                        DbDataReader r = cmd.ExecuteReader();
-
-                        if (r.Read())
-                            notifier.OnCheckPerformed(new CheckEventArgs("successfully read a row of data from the extraction SQL of Catalogue " + this,CheckResult.Success));
-                        else
-                            notifier.OnCheckPerformed(new CheckEventArgs("The query produced an empty result set for Catalogue" + this, CheckResult.Warning));
-                    
+                        using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
+                        {
+                            cmd.CommandTimeout = 10;
+                            using (DbDataReader r = cmd.ExecuteReader())
+                            {
+                                if (r.Read())
+                                    notifier.OnCheckPerformed(new CheckEventArgs("successfully read a row of data from the extraction SQL of Catalogue " + this,CheckResult.Success));
+                                else
+                                    notifier.OnCheckPerformed(new CheckEventArgs("The query produced an empty result set for Catalogue" + this, CheckResult.Warning));
+                            }
+                        }
+                        
                         con.Close();
                     }
                 }

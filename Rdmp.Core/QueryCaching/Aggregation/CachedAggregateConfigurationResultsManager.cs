@@ -60,17 +60,19 @@ namespace Rdmp.Core.QueryCaching.Aggregation
             using (var con = _server.GetConnection())
             {
                 con.Open();
-
-                var r = DatabaseCommandHelper.GetCommand(
+                using (var cmd = DatabaseCommandHelper.GetCommand(
                     $@"Select {syntax.EnsureWrapped("TableName")} from {mgrTable.GetFullyQualifiedName()}
 WHERE {syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID}
-AND {syntax.EnsureWrapped("Operation")} = '{ operation }'" , con).ExecuteReader();
-                
-                if (r.Read())
+AND {syntax.EnsureWrapped("Operation")} = '{operation}'", con))
                 {
-                    string tableName =  r["TableName"].ToString();
-                    return _database.ExpectTable(tableName);
+                    using(var r = cmd.ExecuteReader())
+                        if (r.Read())
+                        {
+                            string tableName =  r["TableName"].ToString();
+                            return _database.ExpectTable(tableName);
+                        }
                 }
+                
             }
 
             return null;
@@ -85,25 +87,26 @@ AND {syntax.EnsureWrapped("Operation")} = '{ operation }'" , con).ExecuteReader(
             {
                 con.Open();
 
-                var cmd = DatabaseCommandHelper.GetCommand(
+                using (var cmd = DatabaseCommandHelper.GetCommand(
                     $@"Select 
 {syntax.EnsureWrapped("TableName")},
 {syntax.EnsureWrapped("SqlExecuted")} 
 from {mgrTable.GetFullyQualifiedName()} 
 WHERE 
-{syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID } AND
-{syntax.EnsureWrapped("Operation")} = '{operation}'", con);
-                var r = cmd.ExecuteReader();
-
-                if (r.Read())
+{syntax.EnsureWrapped("AggregateConfiguration_ID")} = {configuration.ID} AND
+{syntax.EnsureWrapped("Operation")} = '{operation}'", con))
                 {
-                    if (IsMatchOnSqlExecuted(r, currentSql))
-                    {
-                        string tableName = r["TableName"].ToString();
-                        return _database.ExpectTable(tableName);
-                    }
-                    else
-                        return null; //this means that there was outdated SQL, we could show this to user at some point
+                    using(var r = cmd.ExecuteReader())
+                        if (r.Read())
+                        {
+                            if (IsMatchOnSqlExecuted(r, currentSql))
+                            {
+                                string tableName = r["TableName"].ToString();
+                                return _database.ExpectTable(tableName);
+                            }
+
+                            return null; //this means that there was outdated SQL, we could show this to user at some point
+                        }
                 }
             }
 
@@ -169,20 +172,23 @@ WHERE
             var mgrTable = _database.ExpectTable(ResultsManagerTable);
 
             if (table != null)
+                using (var con = _server.GetConnection())
+                {
+                    con.Open();
 
-            using (var con = _server.GetConnection())
-            {
-                con.Open();
-
-                //drop the data
-                _database.ExpectTable(table.GetRuntimeName()).Drop();
-                
-                //delete the record!
-                int deletedRows = DatabaseCommandHelper.GetCommand($"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " + configuration.ID+" AND Operation = '"+operation+"'", con).ExecuteNonQuery();
-
-                if(deletedRows != 1)
-                    throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");
-            }
+                    //drop the data
+                    _database.ExpectTable(table.GetRuntimeName()).Drop();
+                    
+                    //delete the record!
+                    using (var cmd = DatabaseCommandHelper.GetCommand(
+                        $"DELETE FROM {mgrTable.GetFullyQualifiedName()} WHERE AggregateConfiguration_ID = " +
+                        configuration.ID + " AND Operation = '" + operation + "'", con))
+                    {
+                        int deletedRows = cmd.ExecuteNonQuery();
+                        if(deletedRows != 1)
+                            throw new Exception("Expected exactly 1 record in CachedAggregateConfigurationResults to be deleted when erasing its record of operation " + operation + " but there were " + deletedRows +" affected records");
+                    }                
+                }
         }
     }
 }

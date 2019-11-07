@@ -502,13 +502,13 @@ ALTER TABLE DroppedColumnsTable add color varchar(1)
             using (var con = db.Server.GetConnection())
             {
                 con.Open();
-                var r = DatabaseCommandHelper.GetCommand("Select * from DataTableUploadDestinationTests", con).ExecuteReader();
-                
-                foreach (object e in expectedValuesReadFromDatabase)
-                {
-                    Assert.IsTrue(r.Read());
-                    Assert.AreEqual(e, r["myCol"]);
-                }
+                using(var cmd = DatabaseCommandHelper.GetCommand("Select * from DataTableUploadDestinationTests", con))
+                    using(var r = cmd.ExecuteReader())
+                        foreach (object e in expectedValuesReadFromDatabase)
+                        {
+                            Assert.IsTrue(r.Read());
+                            Assert.AreEqual(e, r["myCol"]);
+                        }
             }
         }
 

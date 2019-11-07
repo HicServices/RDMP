@@ -246,13 +246,14 @@ namespace Rdmp.Core.Reports
             {
                 con.Open();
                
-                var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con);
-                var da = DatabaseCommandHelper.GetDataAdapter(cmd);
+                using(var cmd = DatabaseCommandHelper.GetCommand("Select * from " + lookupTable.Name, con))
+                    using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+                    {
+                        var dt = new System.Data.DataTable();
+                        da.Fill(dt);
 
-                var dt = new System.Data.DataTable();
-                da.Fill(dt);
-
-                return dt;
+                        return dt;
+                    }
             }
         }
 
