@@ -45,10 +45,10 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 {
                     con.Open();
 
-                    using(var cmd = _server.GetCommand("DROP TRIGGER \"" + _triggerRuntimeName + "\" ON " + _table.GetFullyQualifiedName(), con))
+                    using(var cmd = _server.GetCommand("DROP TRIGGER IF EXISTS \"" + _triggerRuntimeName + "\" ON " + _table.GetFullyQualifiedName(), con))
                         cmd.ExecuteNonQuery();
 
-                    using(var cmd = _server.GetCommand("DROP FUNCTION " + _procedureNameFullyQualified, con))
+                    using(var cmd = _server.GetCommand("DROP FUNCTION IF EXISTS  " + _procedureNameFullyQualified, con))
                         cmd.ExecuteNonQuery();
 
                     thingsThatWorkedDroppingTrigger = "Droppped trigger " + _triggerRuntimeName;
@@ -148,7 +148,7 @@ LANGUAGE 'plpgsql';"
             return
                 string.Format(@"BEGIN
             INSERT INTO {0}({1},""hic_validTo"",""hic_userID"",hic_status)
-            VALUES({2},current_date,now(),current_user,'U');
+            VALUES({2},now(),current_user,'U');
  
             RETURN NEW;
             END;",

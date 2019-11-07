@@ -113,26 +113,29 @@ namespace Rdmp.Core.DataLoad.Triggers
         {
             var memoryRepository = new MemoryCatalogueRepository();
 
-            var sytnaxHelper = server.GetQuerySyntaxHelper();
+            var syntaxHelper = server.GetQuerySyntaxHelper();
             string tableName = _tableInfo.Name;
-            string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
+            string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
 
             var whereStatement = "";
 
             foreach (ColumnInfo pk in _pks)
-                whereStatement += string.Format("{0}.{1} = {2}.{1} AND ", tableName, pk.GetRuntimeName(), archiveTableName);
+                whereStatement += string.Format("{0}.{1} = {2}.{1} AND ", 
+                    tableName,
+                    syntaxHelper.EnsureWrapped(pk.GetRuntimeName()), 
+                    archiveTableName);
 
             var qb = new QueryBuilder(null, null, new[] {_tableInfo});
             qb.TopX = _batchSize;
             qb.AddColumnRange(_tableInfo.ColumnInfos.Select(c => new ColumnInfoToIColumn(memoryRepository,c)).ToArray());
             
             //where
-            var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null, SpecialFieldNames.DataLoadRunID + " = " + _dataLoadRunID, "DataLoadRunID matches", null, null);
+            var filter1 = new SpontaneouslyInventedFilter(memoryRepository,null, syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID) + " = " + _dataLoadRunID, "DataLoadRunID matches", null, null);
             var filter2 =
                 new SpontaneouslyInventedFilter(memoryRepository,null,
                 string.Format(@" not exists (
 select 1 from {0} where {1} {2} < {3}
-)",archiveTableName,whereStatement,SpecialFieldNames.DataLoadRunID,_dataLoadRunID),
+)",archiveTableName,whereStatement,syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID),_dataLoadRunID),
   "Record doesn't exist in archive",null,null);
 
             qb.RootFilterContainer = new SpontaneouslyInventedFilterContainer(memoryRepository,null,new []{filter1,filter2},FilterContainerOperation.AND);
@@ -144,10 +147,13 @@ select 1 from {0} where {1} {2} < {3}
 
         private void GetUpdatetData(DiscoveredServer server, DiscoveredDatabase database, ICheckNotifier checkNotifier)
         {
-            var sytnaxHelper = server.GetQuerySyntaxHelper();
+            const string archive = "archive";
+            const string zzArchive = "zzarchivezz";
+
+            var syntaxHelper = server.GetQuerySyntaxHelper();
             
             string tableName = _tableInfo.Name;
-            string archiveTableName = sytnaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
+            string archiveTableName = syntaxHelper.EnsureFullyQualified(database.GetRuntimeName(),_tableInfo.Schema, _tableInfo.GetRuntimeName() + "_Archive");
 
             var whereStatement = string.Join(" AND ",_pks.Select(pk=>string.Format("{0}.{1} = {2}.{1} ", tableName, pk.GetRuntimeName(),archiveTableName)));
             
@@ -158,7 +164,7 @@ select 1 from {0} where {1} {2} < {3}
 
             var sql = "";
 
-            switch (sytnaxHelper.DatabaseType)
+            switch (syntaxHelper.DatabaseType)
             {
                 case DatabaseType.MicrosoftSQLServer:
                     sql = @"
@@ -173,14 +179,15 @@ CROSS APPLY
         FROM    {2}
         WHERE  
 		 {3}
-		 order by " + SpecialFieldNames.ValidFrom + @" desc
-        ) Archive
+		 order by " + syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) + @" desc
+        ) {8}
 where
 {1}.{4} = {5}";
                     break;
 
                 case DatabaseType.Oracle:
                 case DatabaseType.MySql:
+                case DatabaseType.PostgreSql:
 
                     
                     sql = @"
@@ -191,14 +198,14 @@ SELECT
 FROM    
 {1}
 Join
-{2} Archive on " + whereStatement.Replace(archiveTableName, "Archive") + @"
+{2} {8} on " + whereStatement.Replace(archiveTableName, archive) + @"
  AND
- Archive.hic_validFrom = (select max(" + SpecialFieldNames.ValidFrom + @") from {2} s where " + whereStatement.Replace(archiveTableName, "Archive").Replace(tableName,"s") + @")
+ {8}.{9} = (select max(" + syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom) + @") from {2} s where " + whereStatement.Replace(archiveTableName, archive).Replace(tableName,"s") + @")
  where
   {1}.{4} = {5}
 
 ";
-                    sql += sytnaxHelper.HowDoWeAchieveTopX(_batchSize).SQL;
+                    sql += syntaxHelper.HowDoWeAchieveTopX(_batchSize).SQL;
                     break;
                 default:
                     throw new ArgumentOutOfRangeException();
@@ -210,11 +217,13 @@ Join
                 tableName,                          //{1}
                 archiveTableName,                   //{2}
                 whereStatement,                     //{3}
-                SpecialFieldNames.DataLoadRunID,    //{4}
+                syntaxHelper.EnsureWrapped(SpecialFieldNames.DataLoadRunID),    //{4}
                 _dataLoadRunID,                     //{5}
                 GetSharedColumnsSQL(tableName),     //{6}
-                GetSharedColumnsSQLWithColumnAliasPrefix("Archive", "zzArchivezz")   //{7}
-                            );
+                GetSharedColumnsSQLWithColumnAliasPrefix(archive, zzArchive),   //{7}
+                archive, //{8}            
+                syntaxHelper.EnsureWrapped(SpecialFieldNames.ValidFrom)
+                );
 
             DataTable dtComboTable = new DataTable();
             FillTableWithQueryIfUserConsents(dtComboTable, sql,checkNotifier,server);
@@ -224,7 +233,7 @@ Join
 
             //add the columns from the combo table to both views
             foreach (DataColumn col in dtComboTable.Columns)
-                if (!col.ColumnName.StartsWith("zzArchivezz",StringComparison.InvariantCultureIgnoreCase))
+                if (!col.ColumnName.StartsWith(zzArchive,StringComparison.InvariantCultureIgnoreCase))
                 {
                     Updates_New.Columns.Add(col.ColumnName, col.DataType);
                     Updates_Replaced.Columns.Add(col.ColumnName, col.DataType);
@@ -237,8 +246,8 @@ Join
 
                 foreach (DataColumn column in dtComboTable.Columns)
                 {
-                    if (column.ColumnName.StartsWith("zzArchivezz",StringComparison.InvariantCultureIgnoreCase))
-                        replacedRow[column.ColumnName.Substring("zzArchivezz".Length)] = fromRow[column];
+                    if (column.ColumnName.StartsWith(zzArchive,StringComparison.InvariantCultureIgnoreCase))
+                        replacedRow[column.ColumnName.Substring(zzArchive.Length)] = fromRow[column];
                     else
                         newRow[column.ColumnName] = fromRow[column];
                 }

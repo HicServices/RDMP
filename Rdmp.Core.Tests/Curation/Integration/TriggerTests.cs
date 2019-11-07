@@ -48,7 +48,13 @@ namespace Rdmp.Core.Tests.Curation.Integration
         public void NoTriggerExists(DatabaseType dbType)
         {
             CreateTable(dbType);
-            Assert.AreEqual(TriggerStatus.Missing, GetImplementer().GetTriggerStatus());
+
+            var implementer = GetImplementer();
+
+            //most likely doesn't exist but may do
+            implementer.DropTrigger(out string _, out string _);
+
+            Assert.AreEqual(TriggerStatus.Missing, implementer.GetTriggerStatus());
         }
 
         [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
