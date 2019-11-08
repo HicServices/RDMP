@@ -351,7 +351,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
-            return SelfCertifyingDataAccessPoint.GetDecryptedPassword();
+            return SelfCertifyingDataAccessPoint.GetDecryptedPassword()?? "";
         }
 
         /// <inheritdoc/>

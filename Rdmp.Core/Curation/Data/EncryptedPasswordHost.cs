@@ -74,7 +74,7 @@ namespace Rdmp.Core.Curation.Data
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
-            return _encryptedString.GetDecryptedValue();
+            return _encryptedString.GetDecryptedValue() ?? "";
         }
     }
 }
