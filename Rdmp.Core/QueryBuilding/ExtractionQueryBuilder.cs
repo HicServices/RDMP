@@ -135,6 +135,10 @@ namespace Rdmp.Core.QueryBuilding
         
         public static List<ConstantParameter> GetConstantParameters(IQuerySyntaxHelper syntaxHelper, IExtractionConfiguration configuration, IExtractableCohort extractableCohort)
         {
+            //if the server doesn't support parameters then don't try to add them
+            if(!syntaxHelper.SupportsEmbeddedParameters())
+                return new List<ConstantParameter>();
+
             List<ConstantParameter> toReturn = new List<ConstantParameter>();
 
             if(syntaxHelper.DatabaseType == FAnsi.DatabaseType.Oracle)

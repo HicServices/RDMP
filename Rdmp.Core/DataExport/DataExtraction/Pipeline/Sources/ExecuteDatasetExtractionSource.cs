@@ -173,7 +173,7 @@ OrderByAndDistinctInMemory - Adds an ORDER BY statement to the query and applies
 
                 _hostedSource = new DbDataCommandDataFlowSource(GetCommandSQL(listener),
                                                                 "ExecuteDatasetExtraction " + Request.DatasetBundle.DataSet,
-                                                                _catalogue.GetDistinctLiveDatabaseServer(DataAccessContext.DataExport, false).Builder, 
+                                                                Request.GetDistinctLiveDatabaseServer().Builder, 
                                                                 ExecutionTimeout);
 
                 _hostedSource.AllowEmptyResultSets = AllowEmptyExtractions;

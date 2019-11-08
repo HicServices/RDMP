@@ -94,6 +94,10 @@ WHERE
 [tempdb]..[Cohort].[cohortDefinition_id]=-599
 ", TestDatabaseNames.Prefix);
 
+            //cross server is only used if cohort and dataset are on different servers so pretend the cohort is on bob server
+            var ect = (ExternalCohortTable)_request.ExtractableCohort.ExternalCohortTable;
+            ect.Server = "bob";
+
             var e = DataExportRepository.GetObjectByID<ExternalCohortTable>(_request.ExtractableCohort.ExternalCohortTable_ID);
             string origValue = e.Database;
 

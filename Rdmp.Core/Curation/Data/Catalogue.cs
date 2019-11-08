@@ -1050,7 +1050,8 @@ namespace Rdmp.Core.Curation.Data
             return DataAccessPortal.GetInstance().ExpectDistinctServer(GetTableInfosIdeallyJustFromMainTables(), context, setInitialDatabase);
         }
 
-        private ITableInfo[] GetTableInfosIdeallyJustFromMainTables()
+        /// <inheritdoc/>
+        public ITableInfo[] GetTableInfosIdeallyJustFromMainTables()
         {
 
             //try with only the normal tables
