@@ -65,6 +65,7 @@ namespace Rdmp.Core.Providers
         public List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>> DuplicatesByProject = new List<IObjectUsedByOtherObjectNode<Project,IMapsDirectlyToDatabaseTable>>();
         public List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>> DuplicatesByCohortSourceUsedByProjectNode = new List<IObjectUsedByOtherObjectNode<CohortSourceUsedByProjectNode>>();
         
+        private readonly object _oProjectNumberToCohortsDictionary = new object();
         public Dictionary<int,List<ExtractableCohort>> ProjectNumberToCohortsDictionary = new Dictionary<int, List<ExtractableCohort>>();
 
         public ProjectCohortIdentificationConfigurationAssociation[] AllProjectAssociatedCics;
@@ -466,12 +467,15 @@ namespace Rdmp.Core.Providers
 
                                             //tell the cohort about the data
                                             c.InjectKnown(externalData);
+                                        
+                                            lock (_oProjectNumberToCohortsDictionary)
+                                            {
+                                                //for performance also keep a dictionary of project number => compatible cohorts
+                                                if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
+                                                    ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
 
-                                            //for performance also keep a dictionary of project number => compatible cohorts
-                                            if (!ProjectNumberToCohortsDictionary.ContainsKey(externalData.ExternalProjectNumber))
-                                                ProjectNumberToCohortsDictionary.Add(externalData.ExternalProjectNumber, new List<ExtractableCohort>());
-
-                                            ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
+                                                ProjectNumberToCohortsDictionary[externalData.ExternalProjectNumber].Add(c);
+                                            }
                                         }
                                 }
                             }

@@ -22,6 +22,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed handling of credentials where password is blank (allowed)
+- Fixed race condition when there are multiple cohort databases that host cohorts for the same project
 - Extracting a dataset using Cross Server extraction source now shows the correct SQL in error message when no records are returned by the linkage
 
 ## [3.2.1] - 2019-10-30
