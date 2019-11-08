@@ -23,4 +23,4 @@ script:
 - ./Tools/rdmp/bin/Debug/netcoreapp2.2/linux-x64/rdmp install localhost TEST_ -D -u sa -p YourStrong!Passw0rd
 - dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj"
 - dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" 
-- dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --logger:"console;verbosity=detailed" --filter "FullyQualifiedName~QueryCachingCrossServerTests" --no-build
+#- dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --logger:"console;verbosity=detailed" --filter "FullyQualifiedName~QueryCachingCrossServerTests" --no-build
