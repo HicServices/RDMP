@@ -7,10 +7,12 @@
 using System;
 using System.Collections.Generic;
 using System.Data.Common;
+using System.Diagnostics;
 using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using FAnsi.Extensions;
 using FAnsi.Naming;
+using NLog;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.QueryCaching.Aggregation.Arguments;
@@ -39,6 +41,8 @@ namespace Rdmp.Core.QueryCaching.Aggregation
         private readonly DiscoveredServer _server;
         private DiscoveredDatabase _database;
 
+        private readonly Logger _logger = LogManager.GetCurrentClassLogger();
+        
         /// <summary>
         /// The name of the table in the query cache which tracks the SQL executed and the resulting tables generated when caching
         /// </summary>
@@ -119,7 +123,18 @@ WHERE
             string standardisedDatabaseSql = Regex.Replace(r["SqlExecuted"].ToString(), @"\s+", " ");
             string standardisedUsersSql = Regex.Replace(currentSql,@"\s+"," ");
 
-            return standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
+            var match = standardisedDatabaseSql.ToLower().Trim().Equals(standardisedUsersSql.ToLower().Trim());
+
+            if (!match)
+            {
+                _logger.Info("Cache Miss:");
+                _logger.Info("Current Sql:");
+                _logger.Info(standardisedUsersSql);
+                _logger.Info("Cached Sql:");
+                _logger.Info(standardisedDatabaseSql);
+            }
+
+            return match;
         }
 
         public void CommitResults(CacheCommitArguments arguments)

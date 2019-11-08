@@ -818,6 +818,10 @@ namespace Rdmp.Core.Tests.QueryCaching
             params string[] expectedSqlBits)
         {
             var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
+
+            Console.WriteLine($"Build Log For '{task}':");
+            Console.WriteLine(acResult.Key.Log);
+
             Assert.AreEqual(CompilationState.Finished,acResult.Key.State);
 
             foreach (var s in expectedSqlBits)
