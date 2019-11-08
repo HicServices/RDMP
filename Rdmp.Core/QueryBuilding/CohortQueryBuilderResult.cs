@@ -351,7 +351,7 @@ namespace Rdmp.Core.QueryBuilding
                 SetCacheUsage(CacheUsage.AllOrNothing,"there is no cache server");
             else
             {
-                _log.AppendLine("Cache Server:" + CacheServer.Server);
+                _log.AppendLine($"Cache Server:{CacheServer.Server} (DatabaseType:{CacheServer.DatabaseType})");
                 SetCacheUsage(CacheUsage.Opportunistic, "there is a cache server (so starting with Opportunistic)");
             }
             
@@ -375,7 +375,7 @@ namespace Rdmp.Core.QueryBuilding
 
         private void HandleDependency(CohortQueryBuilderDependency dependency,bool isPatientIndexTable, ITableInfo dependantTable)
         {
-            _log.AppendLine($"Found dependant table '{dependantTable}' (Server:{dependantTable.Server})");
+            _log.AppendLine($"Found dependant table '{dependantTable}' (Server:{dependantTable.Server} DatabaseType:{dependantTable.DatabaseType})");
             
             //if dependencies are on different servers / access credentials
             if(DependenciesSingleServer != null)
