@@ -458,9 +458,9 @@ namespace Rdmp.Core.Providers
                                 {
                                     //really should be only one here but still they might for some reason have 2 references to the same external cohort
                             
-                                    if(_cohortsByOriginId.ContainsKey((int)r["OriginID"]))
+                                    if(_cohortsByOriginId.ContainsKey(Convert.ToInt32(r["OriginID"])))
                                         //Tell the cohorts what their external data values are so they don't have to fetch them themselves individually
-                                        foreach (ExtractableCohort c in _cohortsByOriginId[(int)r["OriginID"]].Where(c=> c.ExternalCohortTable_ID == source.ID))
+                                        foreach (ExtractableCohort c in _cohortsByOriginId[Convert.ToInt32(r["OriginID"])].Where(c=> c.ExternalCohortTable_ID == source.ID))
                                         {
                                             //load external data from the result set
                                             var externalData = new ExternalCohortDefinitionData(r, source.Name);
