@@ -237,18 +237,18 @@ namespace Rdmp.Core.DataExport.Data
 
                 string sql = @"select count(*) from " + DefinitionTableName + " where id = " + originID;
 
-                var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con);
-                try
-                {
-                    return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
-                }
-                catch (Exception e)
-                {
-                    throw new Exception(
-                        "Could not connect to server " + Server + " (Database '" + Database +
-                        "') which is the data source of ExternalCohortTable (source) called '" + Name + "' (ID=" + ID +
-                        ")", e);
-                }
+                using(var cmdGetDescriptionOfCohortFromConsus = server.GetCommand(sql, con))
+                    try
+                    {
+                        return int.Parse(cmdGetDescriptionOfCohortFromConsus.ExecuteScalar().ToString()) >= 1;
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception(
+                            "Could not connect to server " + Server + " (Database '" + Database +
+                            "') which is the data source of ExternalCohortTable (source) called '" + Name + "' (ID=" + ID +
+                            ")", e);
+                    }
             }
 
         }
@@ -351,7 +351,7 @@ namespace Rdmp.Core.DataExport.Data
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
-            return SelfCertifyingDataAccessPoint.GetDecryptedPassword();
+            return SelfCertifyingDataAccessPoint.GetDecryptedPassword()?? "";
         }
 
         /// <inheritdoc/>
@@ -429,27 +429,28 @@ namespace Rdmp.Core.DataExport.Data
         /// <returns></returns>
         public string GetCountsDataTableSql()
         {
+            var syntax = GetQuerySyntaxHelper();
             
-            string sql = @"SELECT 
+
+            return $@"SELECT 
 id as OriginID,
 count(*) as Count,
-count(distinct {0}) as CountDistinct,
-projectNumber as ProjectNumber,
-version as Version,
-description as Description,
-dtCreated as dtCreated
+count(distinct {ReleaseIdentifierField}) as CountDistinct,
+{syntax.EnsureWrapped("projectNumber")} as {syntax.EnsureWrapped("ProjectNumber")},
+version as {syntax.EnsureWrapped("Version")},
+description as {syntax.EnsureWrapped("Description")},
+{syntax.EnsureWrapped("dtCreated")}
   FROM
-   {1}
+   {TableName}
    join 
-   {2} on {3} = id
+   {DefinitionTableName} on {DefinitionTableForeignKeyField} = id
    group by 
    id,
-   projectNumber,
+   {syntax.EnsureWrapped("projectNumber")},
    version,
    description,
-   dtCreated";
+   {syntax.EnsureWrapped("dtCreated")}";
 
-            return string.Format(sql, ReleaseIdentifierField, TableName, DefinitionTableName, DefinitionTableForeignKeyField);
         }
         
         /// <summary>
@@ -459,16 +460,16 @@ dtCreated as dtCreated
         /// <returns></returns>
         public string GetExternalDataSql()
         {
-            string sql = @"SELECT 
-id as OriginID,
-projectNumber as ProjectNumber,
-version as Version,
-description as Description,
-dtCreated as dtCreated
-  FROM
-   {0}";
+            var syntax = GetQuerySyntaxHelper();
 
-                return string.Format(sql, DefinitionTableName);
+            return $@"SELECT 
+id as {syntax.EnsureWrapped("OriginID")},
+{syntax.EnsureWrapped("projectNumber")} as {syntax.EnsureWrapped("ProjectNumber")},
+version as {syntax.EnsureWrapped("Version")},
+description as {syntax.EnsureWrapped("Description")},
+{syntax.EnsureWrapped("dtCreated")}
+  FROM
+   {DefinitionTableName}";
 
         }
         

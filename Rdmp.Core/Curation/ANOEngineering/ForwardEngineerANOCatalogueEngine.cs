@@ -76,7 +76,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
                     {
                         List<DatabaseColumnRequest> columnsToCreate = new List<DatabaseColumnRequest>();
 
-                        Dictionary<string, ColumnInfo> migratedColumns = new Dictionary<string, ColumnInfo>();
+                        Dictionary<string, ColumnInfo> migratedColumns = new Dictionary<string, ColumnInfo>(StringComparer.CurrentCultureIgnoreCase);
 
                         var querybuilderForMigratingTable = new QueryBuilder(null, null);
 
@@ -96,7 +96,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
                                 if (columnPlan.Plan == Plan.ANO)
                                     colName = "ANO" + colName;
 
-                                migratedColumns.Add(colName.ToLower(), columnInfo);
+                                migratedColumns.Add(colName, columnInfo);
 
                                 columnsToCreate.Add(new DatabaseColumnRequest(colName, columnPlan.GetEndpointDataType(), !columnInfo.IsPrimaryKey){IsPrimaryKey = columnInfo.IsPrimaryKey});
                             }
@@ -119,7 +119,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
 
                         foreach (ColumnInfo newColumnInfo in newColumnInfos)
                         {
-                            var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName().ToLower()];
+                            var oldColumnInfo = migratedColumns[newColumnInfo.GetRuntimeName()];
                             
                             var columnPlan =_planManager.GetPlanForColumnInfo(oldColumnInfo);
 
@@ -369,13 +369,29 @@ namespace Rdmp.Core.Curation.ANOEngineering
         /// <returns></returns>
         private ColumnInfo FindNewColumnNamed(IQuerySyntaxHelper syntaxHelper, ColumnInfo col, string expectedName, bool isOptional)
         {
-            string expectedNewName = syntaxHelper.EnsureFullyQualified(
+            HashSet<string> expectedNewNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
+
+            //look for it in the default schema ".." or the API default server ".dbo." or the original table schema.
+            expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
                 _planManager.TargetDatabase.GetRuntimeName(),
                 null,
                 col.TableInfo.GetRuntimeName(),
-                expectedName);
+                expectedName));
 
-            var columns = _allColumnsInfos.Where(c=>c.Name.Equals(expectedNewName,StringComparison.CurrentCultureIgnoreCase)).ToArray();
+            expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
+                _planManager.TargetDatabase.GetRuntimeName(),
+                syntaxHelper.GetDefaultSchemaIfAny(),
+                col.TableInfo.GetRuntimeName(),
+                expectedName));
+
+            expectedNewNames.Add(syntaxHelper.EnsureFullyQualified(
+                _planManager.TargetDatabase.GetRuntimeName(),
+                col.TableInfo.Schema,
+                col.TableInfo.GetRuntimeName(),
+                expectedName));
+                
+
+            var columns = _allColumnsInfos.Where(c=>expectedNewNames.Contains(c.Name)).ToArray();
 
             bool failedANOToo = false;
 
@@ -407,7 +423,7 @@ namespace Rdmp.Core.Curation.ANOEngineering
             if (isOptional)
                 return null;
 
-            throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedNewName + "'" + (failedANOToo ? " (Or 'ANO" + expectedName + "')" : ""));
+            throw new Exception("Found '" + columns.Length + "' ColumnInfos called '" + expectedNewNames.First() + "'" + (failedANOToo ? " (Or 'ANO" + expectedName + "')" : ""));
         }
 
         Dictionary<IMapsDirectlyToDatabaseTable,IMapsDirectlyToDatabaseTable> _parenthoodDictionary = new Dictionary<IMapsDirectlyToDatabaseTable, IMapsDirectlyToDatabaseTable>();

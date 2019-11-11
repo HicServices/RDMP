@@ -111,46 +111,61 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
             
 
             //create an empty table for the anonymised data
-            DbCommand cmdCreateTempMap = DatabaseCommandHelper.GetCommand(string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tbl.GetFullyQualifiedName()),con);
+            using (DbCommand cmdCreateTempMap = DatabaseCommandHelper.GetCommand(
+                string.Format("SELECT top 0 {0},{1} into TempANOMap from {2}", from, to, tbl.GetFullyQualifiedName()),
+                con))
+            {
+                if(!shouldApplySql(cmdCreateTempMap.CommandText))
+                    throw new Exception("User decided not to create the TempANOMap table");
 
-            if(!shouldApplySql(cmdCreateTempMap.CommandText))
-                throw new Exception("User decided not to create the TempANOMap table");
+                cmdCreateTempMap.ExecuteNonQuery();
+            }
 
-            cmdCreateTempMap.ExecuteNonQuery();
             try
             {
-                //get the existing data
-                DbCommand cmdGetExistingData = DatabaseCommandHelper.GetCommand(string.Format("SELECT {0},{1} from {2}",from,to,tbl.GetFullyQualifiedName()),con);
-            
-                DbDataAdapter da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData);
-
-                DataTable dt = new DataTable();
-                da.Fill(dt);//into memory
-
-                //transform it in memory
-                ANOTransformer transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
-                transformer.Transform(dt,dt.Columns[0],dt.Columns[1]);
-
-                var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
-
-                using(var insert = tempAnoMapTbl.BeginBulkInsert())
+                using (DataTable dt = new DataTable())
                 {
-                    insert.Upload(dt);
+                    //get the existing data
+                    using (DbCommand cmdGetExistingData =
+                        DatabaseCommandHelper.GetCommand(
+                            string.Format("SELECT {0},{1} from {2}", from, to, tbl.GetFullyQualifiedName()), con))
+                    {
+                        using (DbDataAdapter da = DatabaseCommandHelper.GetDataAdapter(cmdGetExistingData))
+                        {
+                            da.Fill(dt);//into memory
+
+                            //transform it in memory
+                            ANOTransformer transformer = new ANOTransformer(_toConformTo, new FromCheckNotifierToDataLoadEventListener(notifier));
+                            transformer.Transform(dt,dt.Columns[0],dt.Columns[1]);
+
+                            var tempAnoMapTbl = tbl.Database.ExpectTable("TempANOMap");
+
+                            using(var insert = tempAnoMapTbl.BeginBulkInsert())
+                            {
+                                insert.Upload(dt);
+                            }
+                        }
+                    }
                 }
+                
 
                 //create an empty table for the anonymised data
-                DbCommand cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(string.Format("UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}", from, to, tbl.GetFullyQualifiedName()), con);
-
-                if (!shouldApplySql(cmdUpdateMainTable.CommandText))
-                    throw new Exception("User decided not to perform update on table");
-                cmdUpdateMainTable.ExecuteNonQuery();
+                using (DbCommand cmdUpdateMainTable = DatabaseCommandHelper.GetCommand(
+                    string.Format(
+                        "UPDATE source set source.{1} = map.{1} from {2} source join TempANOMap map on source.{0}=map.{0}",
+                        from, to, tbl.GetFullyQualifiedName()), con))
+                {
+                    if (!shouldApplySql(cmdUpdateMainTable.CommandText))
+                        throw new Exception("User decided not to perform update on table");
+                    cmdUpdateMainTable.ExecuteNonQuery();
+                }
 
             }
             finally
             {
                 //always drop the temp anomap
-                DbCommand dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con);
-                dropMappingTable.ExecuteNonQuery();
+                using(DbCommand dropMappingTable = DatabaseCommandHelper.GetCommand("DROP TABLE TempANOMap", con))
+                    dropMappingTable.ExecuteNonQuery();
             }
         }
 
@@ -162,9 +177,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
 
             if (shouldApplySql(alterSql))
             {
-                var cmd = DatabaseCommandHelper.GetCommand(alterSql, con);
-                cmd.Transaction = transaction;
-                cmd.ExecuteNonQuery();
+                using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con,transaction))
+                    cmd.ExecuteNonQuery();
             }
             else
             {
@@ -206,8 +220,8 @@ namespace Rdmp.Core.DataLoad.Engine.Pipeline.Components.Anonymisation
 
             if (shouldApplySql(alterSql))
             {
-                var cmd = DatabaseCommandHelper.GetCommand(alterSql, con);
-                cmd.ExecuteNonQuery();
+                using(var cmd = DatabaseCommandHelper.GetCommand(alterSql, con))
+                    cmd.ExecuteNonQuery();
 
                 TableInfoSynchronizer synchronizer = new TableInfoSynchronizer(_tableInfo);
                 synchronizer.Synchronize(notifier);

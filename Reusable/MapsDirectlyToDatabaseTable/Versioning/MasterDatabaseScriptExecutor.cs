@@ -69,8 +69,8 @@ namespace MapsDirectlyToDatabaseTable.Versioning
                         using (var con = master.Server.GetConnection())
                         {
                             con.Open();
-                            Database.Server.GetCommand(
-                                "CREATE DATABASE " + Database + " COLLATE Latin1_General_BIN2", con).ExecuteNonQuery();
+                            using(var cmd = Database.Server.GetCommand("CREATE DATABASE " + Database + " COLLATE Latin1_General_BIN2", con))
+                                cmd.ExecuteNonQuery();
                         }
                     }    
                     else

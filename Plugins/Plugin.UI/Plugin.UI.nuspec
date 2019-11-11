@@ -14,7 +14,7 @@
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
 			      <dependency id="HIC.BadMedicine" version="0.1.5" />
-            <dependency id="HIC.FAnsiSql" version="0.10.7" />
+            <dependency id="HIC.FAnsiSql" version="0.10.10" />
             <dependency id="DockPanelSuite.ThemeVS2015" version="2.13.0" />
             <dependency id="CsvHelper" version="12.1.2" />
 			      <dependency id="NHunspell" version="1.2.5554.16953" />
@@ -43,6 +43,7 @@
             <dependency id="System.Net.NameResolution" version="4.3.0" />
             <dependency id="System.Net.Primitives" version="4.3.0" />
             <dependency id="System.Security.Permissions" version="4.6.0" />
+            <dependency id="System.Resources.Extensions" version="4.6.0" />
         </dependencies>
     </metadata>
   <files>

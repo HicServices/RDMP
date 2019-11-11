@@ -76,9 +76,14 @@ namespace MapsDirectlyToDatabaseTable
 
                 using(var con = GetConnection())
                 {
-                    DbCommand cmd = DatabaseCommandHelper.GetCommand("DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,con.Transaction);
-                    DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
-                    int affectedRows = cmd.ExecuteNonQuery();
+                    int affectedRows;
+                    using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+                        "DELETE FROM " + oTableWrapperObject.GetType().Name + " WHERE ID =@ID", con.Connection,
+                        con.Transaction))
+                    {
+                        DatabaseCommandHelper.AddParameterWithValueToCommand("@ID", cmd, oTableWrapperObject.ID);
+                        affectedRows = cmd.ExecuteNonQuery();
+                    }
 
                     if (affectedRows != 1)
                     {

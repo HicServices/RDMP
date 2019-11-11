@@ -66,9 +66,14 @@ namespace Rdmp.Core.DataLoad.Modules.Mutilators
 
                 if (CreateIndex)
                 {
-                    var idxCmd = server.GetCommand(string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", table.GetRuntimeName(), string.Join(",", pks.Select(p => p.GetRuntimeName()))), con);
-                    idxCmd.CommandTimeout = Timeout;
-                    idxCmd.ExecuteNonQuery();
+                    using (var idxCmd =
+                        server.GetCommand(
+                            string.Format(@"CREATE INDEX IX_PK_{0} ON {0}({1});", table.GetRuntimeName(),
+                                string.Join(",", pks.Select(p => p.GetRuntimeName()))), con))
+                    {
+                        idxCmd.CommandTimeout = Timeout;
+                        idxCmd.ExecuteNonQuery();
+                    }                    
                 }
 
                 foreach (var sql in sqlCommands.Keys.ToArray())

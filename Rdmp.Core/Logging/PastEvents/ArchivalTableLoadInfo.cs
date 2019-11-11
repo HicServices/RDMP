@@ -66,11 +66,10 @@ namespace Rdmp.Core.Logging.PastEvents
             {
                 con.Open();
 
-                var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM DataSource WHERE tableLoadRunID=" + ID, con);
-                var r = cmd.ExecuteReader();
-
-                while (r.Read())
-                    toReturn.Add(new ArchivalDataSource(r));
+                using(var cmd = _loggingDatabase.Server.GetCommand("SELECT * FROM DataSource WHERE tableLoadRunID=" + ID, con))
+                    using(var r = cmd.ExecuteReader())
+                        while (r.Read())
+                            toReturn.Add(new ArchivalDataSource(r));
             }
 
             return toReturn;

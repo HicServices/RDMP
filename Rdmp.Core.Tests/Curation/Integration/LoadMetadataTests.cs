@@ -24,11 +24,12 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             try
             {
-                loadMetadata.LocationOfFlatFiles = "C:\\temp";
+                
+                loadMetadata.LocationOfFlatFiles = TestContext.CurrentContext.TestDirectory;
                 loadMetadata.SaveToDatabase();
                 
                 var loadMetadataWithIdAfterwards = CatalogueRepository.GetObjectByID<LoadMetadata>(loadMetadata.ID);
-                Assert.AreEqual(loadMetadataWithIdAfterwards.LocationOfFlatFiles, "C:\\temp");
+                Assert.AreEqual(loadMetadataWithIdAfterwards.LocationOfFlatFiles, TestContext.CurrentContext.TestDirectory);
             }
             finally
             {

@@ -213,14 +213,15 @@ namespace Rdmp.Core.Repositories
         {
             using (var con = GetConnection())
             {
-                DbCommand cmd = DatabaseCommandHelper.GetCommand(
-@"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
+                using (DbCommand cmd = DatabaseCommandHelper.GetCommand(
+                    @"if exists (select 1 from Lookup join ColumnInfo on Lookup.Description_ID = ColumnInfo.ID where TableInfo_ID = @tableInfoID)
 select 1
 else
-select 0", con.Connection, con.Transaction);
-
-                DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
-                return Convert.ToBoolean(cmd.ExecuteScalar());
+select 0", con.Connection, con.Transaction))
+                {
+                    DatabaseCommandHelper.AddParameterWithValueToCommand("@tableInfoID", cmd, tableInfo.ID);
+                    return Convert.ToBoolean(cmd.ExecuteScalar());
+                }
             }
         }
 

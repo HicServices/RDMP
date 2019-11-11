@@ -81,7 +81,7 @@ namespace Rdmp.Core.Curation.Data.Remoting
         /// <inheritdoc/>
         public string GetDecryptedPassword()
         {
-            return _encryptedPasswordHost.GetDecryptedPassword();
+            return _encryptedPasswordHost.GetDecryptedPassword()?? "";
         }
 
 

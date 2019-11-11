@@ -35,6 +35,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         private string _schema;
         private string _triggerName;
 
+        /// <inheritdoc cref="TriggerImplementer(DiscoveredTable,bool)"/>
         public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
             _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo":_table.Schema;
@@ -50,40 +51,40 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 problemsDroppingTrigger = "";
                 thingsThatWorkedDroppingTrigger = "";
 
-                var cmdDropTrigger = _server.GetCommand("DROP TRIGGER " + _triggerName, con);
-                try
-                {
-                    thingsThatWorkedDroppingTrigger += "Dropped Trigger successfully" + Environment.NewLine;
-                    cmdDropTrigger.ExecuteNonQuery();
-                }
-                catch (Exception exception)
-                {
-                    //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
-                    problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
-                }
+                using(var cmdDropTrigger = _server.GetCommand("DROP TRIGGER " + _triggerName, con))
+                    try
+                    {
+                        thingsThatWorkedDroppingTrigger += "Dropped Trigger successfully" + Environment.NewLine;
+                        cmdDropTrigger.ExecuteNonQuery();
+                    }
+                    catch (Exception exception)
+                    {
+                        //this is not a problem really since it is likely that DLE chose to recreate the trigger because it was FUBARed or missing, this is just belt and braces try and drop anything that is lingering, whether or not it is there
+                        problemsDroppingTrigger += "Failed to drop Trigger:" + exception.Message + Environment.NewLine;
+                    }
 
-                var cmdDropArchiveIndex = _server.GetCommand("DROP INDEX PKsIndex ON " + _archiveTable.GetRuntimeName(), con);
-                try
-                {
-                    cmdDropArchiveIndex.ExecuteNonQuery();
+                using(var cmdDropArchiveIndex = _server.GetCommand("DROP INDEX PKsIndex ON " + _archiveTable.GetRuntimeName(), con))
+                    try
+                    {
+                        cmdDropArchiveIndex.ExecuteNonQuery();
 
-                    thingsThatWorkedDroppingTrigger += "Dropped index PKsIndex on Archive table successfully" + Environment.NewLine;
-                }
-                catch (Exception exception)
-                {
-                    problemsDroppingTrigger += "Failed to drop Archive Index:" + exception.Message + Environment.NewLine;
-                }
+                        thingsThatWorkedDroppingTrigger += "Dropped index PKsIndex on Archive table successfully" + Environment.NewLine;
+                    }
+                    catch (Exception exception)
+                    {
+                        problemsDroppingTrigger += "Failed to drop Archive Index:" + exception.Message + Environment.NewLine;
+                    }
 
-                var cmdDropArchiveLegacyView = _server.GetCommand("DROP FUNCTION " + _table.GetRuntimeName() + "_Legacy", con);
-                try
-                {
-                    cmdDropArchiveLegacyView.ExecuteNonQuery();
-                    thingsThatWorkedDroppingTrigger += "Dropped Legacy Table View successfully" + Environment.NewLine;
-                }
-                catch (Exception exception)
-                {
-                    problemsDroppingTrigger += "Failed to drop Legacy Table View:" + exception.Message + Environment.NewLine;
-                }
+                using(var cmdDropArchiveLegacyView = _server.GetCommand("DROP FUNCTION " + _table.GetRuntimeName() + "_Legacy", con))
+                    try
+                    {
+                        cmdDropArchiveLegacyView.ExecuteNonQuery();
+                        thingsThatWorkedDroppingTrigger += "Dropped Legacy Table View successfully" + Environment.NewLine;
+                    }
+                    catch (Exception exception)
+                    {
+                        problemsDroppingTrigger += "Failed to drop Legacy Table View:" + exception.Message + Environment.NewLine;
+                    }
             }
         }
 
@@ -96,8 +97,9 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 con.Open();
 
                 string trigger = GetCreateTriggerSQL();
-                var cmdAddTrigger = _server.GetCommand(trigger, con);
-                cmdAddTrigger.ExecuteNonQuery();
+                
+                using (var cmdAddTrigger = _server.GetCommand(trigger, con))
+                    cmdAddTrigger.ExecuteNonQuery();
                     
                 //Add key so that we can more easily do comparisons on primary key between main table and archive
                 string idxCompositeKeyBody = "";
@@ -109,21 +111,20 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 idxCompositeKeyBody = idxCompositeKeyBody.TrimEnd(',');
 
                 string createIndexSQL = @"CREATE NONCLUSTERED INDEX [PKsIndex] ON " + _archiveTable.GetFullyQualifiedName() + " (" +idxCompositeKeyBody + ")";
-                var cmdCreateIndex = _server.GetCommand(createIndexSQL, con);
-
-                try
-                {
-                    cmdCreateIndex.CommandTimeout = timeout;
-                    cmdCreateIndex.ExecuteNonQuery();
-                }
-                catch (SqlException e)
-                {
-                    notifier.OnCheckPerformed(new CheckEventArgs(
-                        "Could not create index on archive table because of timeout, possibly your _Archive table has a lot of data in it",
-                        CheckResult.Fail, e));
-                            
-                    return null;
-                }
+                using(var cmdCreateIndex = _server.GetCommand(createIndexSQL, con))
+                    try
+                    {
+                        cmdCreateIndex.CommandTimeout = timeout;
+                        cmdCreateIndex.ExecuteNonQuery();
+                    }
+                    catch (SqlException e)
+                    {
+                        notifier.OnCheckPerformed(new CheckEventArgs(
+                            "Could not create index on archive table because of timeout, possibly your _Archive table has a lot of data in it",
+                            CheckResult.Fail, e));
+                                
+                        return null;
+                    }
 
                 CreateViewOldVersionsTableValuedFunction( createArchiveTableSQL,con);
             }
@@ -288,8 +289,8 @@ END
             sqlToRun += "RETURN" + Environment.NewLine;
             sqlToRun += "END" + Environment.NewLine;
 
-            var cmd = _server.GetCommand(sqlToRun, con);
-            cmd.ExecuteNonQuery();
+            using(var cmd = _server.GetCommand(sqlToRun, con))
+                cmd.ExecuteNonQuery();
         }
 
         public override TriggerStatus GetTriggerStatus()
@@ -303,22 +304,24 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                 using (var conn = _server.GetConnection())
                 {
                     conn.Open();
-                    var cmd = _server.GetCommand(queryTriggerIsItDisabledOrMissing, conn);
-                    cmd.Parameters.Add(new SqlParameter("@triggerName",SqlDbType.VarChar));
-                    cmd.Parameters["@triggerName"].Value = updateTriggerName;
-
-                    var result = Convert.ToInt32(cmd.ExecuteScalar());
-
-                    switch (result)
+                    using (var cmd = _server.GetCommand(queryTriggerIsItDisabledOrMissing, conn))
                     {
-                        case 0: 
-                            return TriggerStatus.Enabled;
-                        case 1:
-                            return TriggerStatus.Disabled;
-                        case -1: 
-                            return TriggerStatus.Missing;
-                        default:
-                            throw new NotSupportedException("Query returned unexpected value:" + result);
+                        cmd.Parameters.Add(new SqlParameter("@triggerName",SqlDbType.VarChar));
+                        cmd.Parameters["@triggerName"].Value = updateTriggerName;
+
+                        var result = Convert.ToInt32(cmd.ExecuteScalar());
+
+                        switch (result)
+                        {
+                            case 0: 
+                                return TriggerStatus.Enabled;
+                            case 1:
+                                return TriggerStatus.Disabled;
+                            case -1: 
+                                return TriggerStatus.Missing;
+                            default:
+                                throw new NotSupportedException("Query returned unexpected value:" + result);
+                        }
                     }
                 }
             }
@@ -343,9 +346,11 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
             {
                 using (var con = _server.GetConnection())
                 {
+                    string result;
+
                     con.Open();
-                    var cmd = _server.GetCommand(query, con);
-                    var result = cmd.ExecuteScalar() as string;
+                    using(var cmd = _server.GetCommand(query, con)) 
+                        result = cmd.ExecuteScalar() as string;
 
                     if (String.IsNullOrWhiteSpace(result))
                         throw new TriggerMissingException("Trigger " + updateTriggerName +

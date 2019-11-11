@@ -5,6 +5,7 @@
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TargetFramework>net461</TargetFramework>
     <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
   </PropertyGroup>
   <PropertyGroup>
     <LangVersion>7.1</LangVersion>
@@ -18,6 +19,7 @@
     </PackageReference>
     <PackageReference Include="HIC.BadMedicine" Version="0.1.5" />
     <PackageReference Include="Squirrel.Windows" Version="1.9.1" />
+    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\SharedAssemblyInfo.cs" Link="SharedAssemblyInfo.cs" />

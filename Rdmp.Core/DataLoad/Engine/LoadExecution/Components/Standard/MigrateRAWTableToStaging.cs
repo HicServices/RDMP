@@ -125,23 +125,23 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard
                 using (var con = dbInfo.Server.GetConnection())
                 {
                     con.Open();
-                    var cmd = dbInfo.Server.GetCommand(
+                    using (var cmd = dbInfo.Server.GetCommand(
 
                         //Magical code that nukes blank/null rows - where all rows are blank/null
                         string.Format(@"delete from {0} WHERE {1}",
                             sourceTableName,
                             string.Join(" AND ",
-                                cols.Select(c=> "(" + c + " IS NULL OR " + c + "=''" +")"))),con);
+                                cols.Select(c => "(" + c + " IS NULL OR " + c + "=''" + ")"))), con))
+                    {
+                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "About to delete fully null records using SQL:" + cmd.CommandText));
 
+                        cmd.CommandTimeout = 500000;
 
-                    job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "About to delete fully null records using SQL:" + cmd.CommandText));
+                        int affectedRows = cmd.ExecuteNonQuery();
 
-                    cmd.CommandTimeout = 500000;
-
-                    int affectedRows = cmd.ExecuteNonQuery();
-
-                    if (affectedRows != 0)
-                        job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Deleted " + affectedRows + " fully blank/null rows from RAW database"));
+                        if (affectedRows != 0)
+                            job.OnNotify(this, new NotifyEventArgs(ProgressEventType.Warning, "Deleted " + affectedRows + " fully blank/null rows from RAW database"));
+                    }
                 }
             }
             catch (Exception e)

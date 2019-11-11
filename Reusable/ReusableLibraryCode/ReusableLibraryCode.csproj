@@ -3,7 +3,9 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\SMI\</SolutionDir>
         <GenerateAssemblyInfo>false</GenerateAssemblyInfo>
-    <GenerateDocumentationFile>true</GenerateDocumentationFile>                                                                                                                                                        </PropertyGroup>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>                                                                                                                                                        
+    <GenerateResourceUsePreserializedResources>true</GenerateResourceUsePreserializedResources>
+  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
           </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
@@ -54,7 +56,7 @@
   <ItemGroup>
     <PackageReference Include="CommandLineParser" Version="2.5.0" />
     <PackageReference Include="CsvHelper" Version="12.1.2" />
-    <PackageReference Include="HIC.FAnsiSql" Version="0.10.7" />
+    <PackageReference Include="HIC.FAnsiSql" Version="0.10.10" />
     <PackageReference Include="Newtonsoft.Json" Version="12.0.2" />
     <PackageReference Include="SecurityCodeScan" Version="3.2.0">
       <PrivateAssets>all</PrivateAssets>
@@ -62,7 +64,14 @@
     </PackageReference>
     <PackageReference Include="System.Data.SqlClient" Version="4.6.1" />
     <PackageReference Include="System.Drawing.Common" Version="4.5.1" />
+    <PackageReference Include="System.Resources.Extensions" Version="4.6.0" />
     <PackageReference Include="System.Runtime.Loader" Version="4.3.0" />
     <PackageReference Include="Xam.Plugins.Settings" Version="3.1.1" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Icons\DatabaseProviderIcons.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>DatabaseProviderIcons.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
   </ItemGroup>
 </Project>

@@ -90,8 +90,8 @@ namespace Tests.Common.Scenarios
             using (var con = server.GetConnection())
             {
                 con.Open();
-                var cmdDelete = server.GetCommand("if exists (select top 1 * from sys.tables where name ='" + anoTable.TableName + "') TRUNCATE TABLE " + anoTable.TableName, con);
-                cmdDelete.ExecuteNonQuery();
+                using(var cmdDelete = server.GetCommand("if exists (select top 1 * from sys.tables where name ='" + anoTable.TableName + "') TRUNCATE TABLE " + anoTable.TableName, con))
+                    cmdDelete.ExecuteNonQuery();
                 con.Close();
             }
         

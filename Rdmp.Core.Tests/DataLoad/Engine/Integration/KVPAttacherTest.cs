@@ -229,10 +229,10 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration
         private void CopyToBin(LoadDirectory projDir, string file)
         {
             
-            string testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,@"DataLoad/Engine/Resources" , file);
+            string testFileLocation = Path.Combine(TestContext.CurrentContext.TestDirectory,"DataLoad","Engine","Resources" , file);
             Assert.IsTrue(File.Exists(testFileLocation));
 
-            File.Copy(testFileLocation, projDir.ForLoading.FullName + "\\" + file, true);
+            File.Copy(testFileLocation, projDir.ForLoading.FullName + Path.DirectorySeparatorChar + file, true);
         }
     }
 }

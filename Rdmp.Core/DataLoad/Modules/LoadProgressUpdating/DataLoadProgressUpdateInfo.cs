@@ -116,6 +116,7 @@ namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
 
         private DateTime GetMaxDate(DiscoveredServer server, IDataLoadEventListener listener)
         {
+            DateTime dt;
 
             using (var con = server.GetConnection())
             {
@@ -123,20 +124,23 @@ namespace Rdmp.Core.DataLoad.Modules.LoadProgressUpdating
 
                 listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "About to execute SQL to determine the maximum date for data loaded:" + ExecuteScalarSQL));
 
-                var scalarValue = server.GetCommand(ExecuteScalarSQL, con).ExecuteScalar();
-
-                if (scalarValue == null || scalarValue == DBNull.Value)
-                    throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
-
-                DateTime dt;
-                try
+                using(var cmd = server.GetCommand(ExecuteScalarSQL, con))
                 {
-                    dt = Convert.ToDateTime(scalarValue);
+                    var scalarValue = cmd.ExecuteScalar();
+
+                    if (scalarValue == null || scalarValue == DBNull.Value)
+                        throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned null when executed");
+
+                    try
+                    {
+                        dt = Convert.ToDateTime(scalarValue);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:" + scalarValue, e);
+                    }
                 }
-                catch (Exception e)
-                {
-                    throw new DataLoadProgressUpdateException("ExecuteScalarSQL specified for determining the maximum date of data loaded returned a value that was not a Date:" + scalarValue, e);
-                }
+                
 
                 return dt;
             }

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System.Collections.Generic;
 using System.Data.Common;
 
 namespace ReusableLibraryCode.Performance
@@ -19,7 +20,7 @@ namespace ReusableLibraryCode.Performance
     /// </summary>
     public class ComprehensiveQueryPerformanceCounter
     {
-        public BiDictionary<string,QueryPerformed> DictionaryOfQueries = new BiDictionary<string, QueryPerformed>();
+        public Dictionary<string,QueryPerformed> DictionaryOfQueries = new Dictionary<string, QueryPerformed>();
         
         public ComprehensiveQueryPerformanceCounter()
         {
@@ -30,10 +31,10 @@ namespace ReusableLibraryCode.Performance
         {
             
             //is it a novel origin
-            if (!DictionaryOfQueries.Firsts.Contains(environmentDotStackTrace))
+            if (!DictionaryOfQueries.ContainsKey(environmentDotStackTrace))
                 DictionaryOfQueries.Add(environmentDotStackTrace, new QueryPerformed(cmd.CommandText));
 
-            var query = DictionaryOfQueries.GetByFirst(environmentDotStackTrace);
+            var query = DictionaryOfQueries[environmentDotStackTrace];
             query.IncrementSeenCount();
         }
     }

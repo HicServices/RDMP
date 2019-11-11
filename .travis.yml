@@ -1,0 +1,26 @@
+language: csharp
+mono: none
+dotnet: 2.2.100
+
+addons:
+  postgresql: "10"
+  apt:
+    packages:
+    - postgresql-10
+    - postgresql-client-10
+
+services:
+  - postgresql
+  - mysql
+
+before_script:
+- sudo docker run --name=mssql-server-linux-latest -e 'ACCEPT_EULA=Y' -e 'MSSQL_SA_PASSWORD=YourStrong!Passw0rd' -p 1433:1433 -d microsoft/mssql-server-linux:2017-latest
+- sudo apt install libc6-dev 
+- sudo apt install libgdiplus
+
+script:
+- dotnet publish "./Tools/rdmp" -r linux-x64
+- ./Tools/rdmp/bin/Debug/netcoreapp2.2/linux-x64/rdmp install localhost TEST_ -D -u sa -p YourStrong!Passw0rd
+- dotnet test "Reusable/Tests/ReusableCodeTests/ReusableCodeTests.csproj"
+- dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" 
+#- dotnet test "./Rdmp.Core.Tests/Rdmp.Core.Tests.csproj" --logger:"console;verbosity=detailed" --filter "FullyQualifiedName~QueryCachingCrossServerTests" --no-build

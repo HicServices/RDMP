@@ -1,5 +1,7 @@
 # ![logo](./Application/ResearchDataManagementPlatform/Icon/mainsmall.png)Research Data Management Platform
 
+[![Build Status](https://travis-ci.org/HicServices/RDMP.svg?branch=master)](https://travis-ci.org/HicServices/RDMP) [![Total alerts](https://img.shields.io/lgtm/alerts/g/HicServices/RDMP.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/HicServices/RDMP/alerts/) [![NuGet Badge](https://buildstats.info/nuget/HIC.RDMP.Plugin)](https://buildstats.info/nuget/HIC.RDMP.Plugin)
+
 - [Releases](https://github.com/HicServices/RDMP/releases)
 - [FAQ](Documentation/CodeTutorials/FAQ.md)
 - [User Manual](https://github.com/HicServices/RDMP/raw/master/Documentation/UserManual.docx)

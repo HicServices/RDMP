@@ -106,14 +106,13 @@ namespace Rdmp.Core.Tests.QueryCaching
                 IHasFullyQualifiedNameToo table = _manager.GetLatestResultsTableUnsafe(_config, AggregateOperation.ExtractableAggregateResults);
     
                 con.Open();
-                var r = DatabaseCommandHelper.GetCommand("Select * from " + table.GetFullyQualifiedName(), con).ExecuteReader();
-
-                Assert.IsTrue(r.Read());
-                Assert.AreEqual("fishy!",r["Col1"]);
-
+                using(var cmd = DatabaseCommandHelper.GetCommand("Select * from " + table.GetFullyQualifiedName(), con))
+                    using (var r = cmd.ExecuteReader())
+                    {
+                        Assert.IsTrue(r.Read());
+                        Assert.AreEqual("fishy!",r["Col1"]);
+                    }
             }
-            
-
         }
     }
 }

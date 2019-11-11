@@ -92,14 +92,14 @@ namespace Rdmp.UI.Performance
 
             Roots = new List<StackFramesTree>();
 
-            _worstOffenderCount = performanceCounter.DictionaryOfQueries.Seconds.Sum(k => k.TimesSeen);
+            _worstOffenderCount = performanceCounter.DictionaryOfQueries.Values.Sum(k => k.TimesSeen);
             Regex isSystemCall = new Regex(@"^\s*(at)?\s*System.Windows.Forms");
 
             //for each documented query point (which has a stack trace)
-            foreach (string stackTrace in performanceCounter.DictionaryOfQueries.Firsts)
+            foreach (string stackTrace in performanceCounter.DictionaryOfQueries.Keys)
             {
                 //get the query
-                var query = performanceCounter.DictionaryOfQueries.GetByFirst(stackTrace);
+                var query = performanceCounter.DictionaryOfQueries[stackTrace];
 
                 //get the stack trace split by line reversed so the root is at the top
                 var lines = stackTrace.Split(new[] {Environment.NewLine}, StringSplitOptions.RemoveEmptyEntries).Reverse().ToArray();

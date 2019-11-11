@@ -178,12 +178,11 @@ namespace Rdmp.Core.Tests.Curation.Integration
             }
         }
 
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void TestView(DatabaseType dbType)
         {
             var db = GetCleanedServer(dbType);
+            var syntax = db.Server.GetQuerySyntaxHelper();
 
             DataTable dt = new DataTable();
             dt.Columns.Add("FF");
@@ -198,16 +197,18 @@ namespace Rdmp.Core.Tests.Curation.Integration
 
             //oracle likes to create stuff under your user account not the database your actually using!
             if(dbType == DatabaseType.Oracle)
-            {
-                var syntax = tbl.GetQuerySyntaxHelper();
-                viewName = syntax.EnsureFullyQualified(tbl.Database.GetRuntimeName(),null,"MyView");
-            }
+                viewName = syntax.EnsureFullyQualified(tbl.Database.GetRuntimeName(), null, "MyView");
             
+            //postgres hates upper case tables (unless they are wrapped)
+            if (dbType == DatabaseType.PostgreSql)
+                viewName = syntax.EnsureWrapped(viewName);
+
             var sql = string.Format(@"CREATE VIEW {0} AS
-SELECT FF
+SELECT {2}
 FROM {1}",
 viewName,
- tbl.GetFullyQualifiedName());
+ tbl.GetFullyQualifiedName(),
+syntax.EnsureWrapped("FF"));
 
             using(var con = tbl.Database.Server.GetConnection())
             {

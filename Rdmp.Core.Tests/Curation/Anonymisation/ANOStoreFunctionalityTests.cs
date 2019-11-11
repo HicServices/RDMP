@@ -39,15 +39,15 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
             {
                 connection.Open();
 
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection);
-                var version = new Version(cmd.ExecuteScalar().ToString());
-
-                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
-
+                using (DbCommand cmd =
+                    DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
+                {
+                    var version = new Version(cmd.ExecuteScalar().ToString());
+                    Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+                }
+                
                 connection.Close();
             }
-
-            
         }
 
         [Test]
@@ -73,10 +73,12 @@ namespace Rdmp.Core.Tests.Curation.Anonymisation
             {
                 connection.Open();
 
-                DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection);
-                var version = new Version(cmd.ExecuteScalar().ToString());
-
-                Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+                using (DbCommand cmd = DatabaseCommandHelper.GetCommand("Select version from RoundhousE.Version", connection))
+                {
+                    var version = new Version(cmd.ExecuteScalar().ToString());
+                    Assert.GreaterOrEqual(version, new Version("0.0.0.0"));
+                }
+                
 
                 connection.Close();
             }

@@ -37,12 +37,13 @@ namespace Rdmp.UI.SimpleDialogs
                 {
                     con.Open();
 
-                    var cmd = DatabaseCommandHelper.GetCommand(sql, con);
-                    var da = DatabaseCommandHelper.GetDataAdapter(cmd);
-
-                    DataTable dt = new DataTable();
-                    da.Fill(dt);
-                    dataGridView1.DataSource = dt;
+                    using(var cmd = DatabaseCommandHelper.GetCommand(sql, con))
+                        using (var da = DatabaseCommandHelper.GetDataAdapter(cmd))
+                        {
+                            DataTable dt = new DataTable();
+                            da.Fill(dt);
+                            dataGridView1.DataSource = dt;
+                        }
                 }
             }
             catch (Exception e)

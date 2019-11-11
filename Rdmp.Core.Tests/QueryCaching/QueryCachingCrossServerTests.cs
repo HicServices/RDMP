@@ -20,6 +20,7 @@ using Rdmp.Core.Curation.Data.Cohort;
 using Rdmp.Core.Curation.Data.Cohort.Joinables;
 using Rdmp.Core.Databases;
 using ReusableLibraryCode.Checks;
+using Tests.Common;
 using Tests.Common.Scenarios;
 using TypeGuesser;
 
@@ -30,7 +31,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         [TestCase(DatabaseType.MicrosoftSQLServer,typeof(QueryCachingPatcher))]
         [TestCase(DatabaseType.MySql, typeof(QueryCachingPatcher))]
         [TestCase(DatabaseType.Oracle, typeof(QueryCachingPatcher))] 
-
+        [TestCase(DatabaseType.PostgreSql, typeof(QueryCachingPatcher))] 
         [TestCase(DatabaseType.MicrosoftSQLServer, typeof(DataQualityEnginePatcher))]
         public void Create_QueryCache(DatabaseType dbType,Type patcherType)
         {
@@ -229,12 +230,12 @@ namespace Rdmp.Core.Tests.QueryCaching
                 if (useCache)
                 {
                     //we should hit up the cache for the interior of the query and therefore not need the parameter
-                    AssertNoErrors(compiler,ac,"@maximum='2005-01-01'","JoinableInceptionQuery_AggregateConfiguration","AdmissionDate < @maximum");
+                    AssertNoErrors(compiler,ac,"@maximum='2005-01-01'","JoinableInceptionQuery_AggregateConfiguration","AdmissionDate. < @maximum");
 
                     AssertCacheUsed(compiler, root, "1/1");
                 }
                 else
-                    AssertNoErrors(compiler,ac,"@date_of_max='2001-01-01'","@maximum='2005-01-01'","SampleDate < @date_of_max","AdmissionDate < @maximum");
+                    AssertNoErrors(compiler,ac,"@date_of_max='2001-01-01'","@maximum='2005-01-01'","SampleDate. < @date_of_max","AdmissionDate. < @maximum");
 
                 AssertNoErrors(compiler);
             }
@@ -248,9 +249,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// patients
         /// </summary>
         /// <param name="dbType"></param>
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Test_EXCEPT_TwoAggregates(DatabaseType dbType)
         {
 
@@ -383,9 +382,7 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <para>In this case the cache is on another server so we cannot use the cached result for a join and should not try</para>
         /// </summary>
         /// <param name="dbType"></param>
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Join_PatientIndexTable_DoNotUseCacheOnDifferentServer(DatabaseType dbType)
         {
             /*
@@ -541,9 +538,7 @@ namespace Rdmp.Core.Tests.QueryCaching
             StringAssert.Contains("is not fully cached and CacheUsageDecision is MustUse",hospitalAdmissionsTask.CrashMessage.ToString());
         }
 
-        [TestCase(DatabaseType.Oracle)]
-        [TestCase(DatabaseType.MySql)]
-        [TestCase(DatabaseType.MicrosoftSQLServer)]
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void Join_PatientIndexTable_ThenShipToCacheForSets(DatabaseType dbType)
         {
             /*
@@ -630,6 +625,8 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <returns></returns>
         private JoinableCohortAggregateConfiguration SetupPatientIndexTable(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var tbl = CreateDataset<Biochemistry>(db, people, 10000, r);
             var cata = Import(tbl,out _, out _, out _,out ExtractionInformation[] eis);
 
@@ -650,7 +647,7 @@ namespace Rdmp.Core.Tests.QueryCaching
 
             var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
             var filter = new AggregateFilter(CatalogueRepository,"TestCode is NA",and);
-            filter.WhereSQL = "TestCode = 'NA'";
+            filter.WhereSQL = syntax.EnsureWrapped("TestCode") + " = 'NA'";
             filter.SaveToDatabase();
 
             ac.RootFilterContainer_ID = and.ID;
@@ -661,8 +658,10 @@ namespace Rdmp.Core.Tests.QueryCaching
         
         private JoinableCohortAggregateConfiguration SetupPatientIndexTableWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var joinable = SetupPatientIndexTable(db, people, r, cic);
-            AddFilter(db,"Test After","SampleDate < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
+            AddFilter(db,"Test After",syntax.EnsureWrapped("SampleDate") + " < ",joinable.AggregateConfiguration,useParameter,paramName,paramValue);
             return joinable;
         }
 
@@ -677,11 +676,13 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <param name="joinable"></param>
         private AggregateConfiguration SetupPatientIndexTableUser(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var ac = SetupAggregateConfiguration(db,people,r,cic);
             
             var and = new AggregateFilterContainer(CatalogueRepository, FilterContainerOperation.AND);
             var filter = new AggregateFilter(CatalogueRepository, "Hospitalised after an NA", and);
-            filter.WhereSQL = "AdmissionDate > SampleDate";
+            filter.WhereSQL = syntax.EnsureWrapped("AdmissionDate") + " > " + syntax.EnsureWrapped("SampleDate");
             filter.SaveToDatabase();
 
             ac.RootFilterContainer_ID = and.ID;
@@ -695,9 +696,11 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         private AggregateConfiguration SetupPatientIndexTableUserWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, JoinableCohortAggregateConfiguration joinable, bool useParameter, string paramName, string paramValue)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
             var ac1 = SetupPatientIndexTableUser(db, people, r, cic,joinable);
 
-            AddFilter(db,"My Filter", "AdmissionDate < ", ac1, useParameter, paramName, paramValue);
+            AddFilter(db,"My Filter", syntax.EnsureWrapped("AdmissionDate") + " < ", ac1, useParameter, paramName, paramValue);
 
             return ac1;
         }
@@ -769,8 +772,9 @@ namespace Rdmp.Core.Tests.QueryCaching
         /// <returns></returns>
         private AggregateConfiguration SetupAggregateConfigurationWithFilter(DiscoveredDatabase db, PersonCollection people, Random r, CohortIdentificationConfiguration cic, bool useParameter, string paramName, string paramValue)
         {
+            var syntax = db.Server.GetQuerySyntaxHelper();
             var ac1 = SetupAggregateConfiguration(db, people, r, cic);
-            AddFilter(db, "My Filter", "AdmissionDate < ", ac1, useParameter, paramName, paramValue);
+            AddFilter(db, "My Filter", syntax.EnsureWrapped("AdmissionDate") +" < ", ac1, useParameter, paramName, paramValue);
             return ac1;
         }
 
@@ -805,28 +809,32 @@ namespace Rdmp.Core.Tests.QueryCaching
 
         /// <summary>
         /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
-        /// included all the strings in <see cref="expectedSqlBits"/>
+        /// included all the regex patterns <see cref="expectedSqlBits"/>
         /// </summary>
         /// <param name="compiler"></param>
         /// <param name="task"></param>
-        /// <param name="expectedSqlBits"></param>
+        /// <param name="expectedSqlBits">regex patterns you expect to be in the sql executed</param>
         private void AssertNoErrors(CohortCompiler compiler, AggregateConfiguration task,
             params string[] expectedSqlBits)
         {
             var acResult = compiler.Tasks.Single(t => t.Key is AggregationTask a && a.Aggregate.Equals(task));
+
+            Console.WriteLine($"Build Log For '{task}':");
+            Console.WriteLine(acResult.Key.Log);
+
             Assert.AreEqual(CompilationState.Finished,acResult.Key.State);
 
             foreach (var s in expectedSqlBits)
-                StringAssert.Contains(s,acResult.Value.CountSQL);
+                StringAssert.IsMatch(s,acResult.Value.CountSQL);
         }
 
         /// <summary>
         /// Asserts that the given <paramref name="task"/> (when run on it's own) completed successfully and that the SQL executed
-        /// included all the strings in <see cref="expectedSqlBits"/>
+        /// included all the regex patterns <see cref="expectedSqlBits"/>
         /// </summary>
         /// <param name="compiler"></param>
         /// <param name="task"></param>
-        /// <param name="expectedSqlBits"></param>
+        /// <param name="expectedSqlBits">regex patterns you expect to be in the sql executed</param>
         private void AssertNoErrors(CohortCompiler compiler, CohortAggregateContainer task,
             params string[] expectedSqlBits)
         {

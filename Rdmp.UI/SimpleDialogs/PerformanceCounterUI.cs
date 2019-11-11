@@ -35,9 +35,9 @@ namespace Rdmp.UI.SimpleDialogs
             }
             else
             {
-                int timesSeen = DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Seconds.Sum(s=>s.TimesSeen);
+                int timesSeen = DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Values.Sum(s=>s.TimesSeen);
 
-                lblCommandsAudited.Text = "Commands Audited:" + timesSeen + " (" + DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Firsts.Count + " distinct)";
+                lblCommandsAudited.Text = "Commands Audited:" + timesSeen + " (" + DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Count + " distinct)";
             }
         }
 
@@ -68,7 +68,7 @@ namespace Rdmp.UI.SimpleDialogs
         {
 
             //if there aren't any results don't show
-            if (DatabaseCommandHelper.PerformanceCounter == null || !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Firsts.Any())
+            if (DatabaseCommandHelper.PerformanceCounter == null || !DatabaseCommandHelper.PerformanceCounter.DictionaryOfQueries.Keys.Any())
                 return;                
 
             Form f = new Form();

@@ -188,15 +188,14 @@ namespace Rdmp.Core.DataExport.Data
             var repo = (DataExportRepository)Repository;
             using (var con = repo.GetConnection())
             {
-                var cmdselect = DatabaseCommandHelper
+                using(var cmdselect = DatabaseCommandHelper
                     .GetCommand(@"SELECT *
                                     FROM ReleaseLog
                                     where
-                                    CumulativeExtractionResults_ID = " + ID, con.Connection, con.Transaction);
-
-                var r = cmdselect.ExecuteReader();
-                if (r.Read())
-                    return new ReleaseLog(Repository, r);
+                                    CumulativeExtractionResults_ID = " + ID, con.Connection, con.Transaction))
+                    using(var r = cmdselect.ExecuteReader())
+                        if (r.Read())
+                            return new ReleaseLog(Repository, r);
 
                 return null;
             }

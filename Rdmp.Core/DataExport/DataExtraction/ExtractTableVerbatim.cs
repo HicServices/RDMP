@@ -95,30 +95,36 @@ namespace Rdmp.Core.DataExport.DataExtraction
 
         private int ExtractSQL(string sql, string tableName, DbConnection con)
         {
-            DbCommand cmdExtract = _server.GetCommand( sql, con);
+            int linesWritten;
 
-            if (!Directory.Exists(_outputDirectory.FullName))
-                Directory.CreateDirectory(_outputDirectory.FullName);
+            using (DbCommand cmdExtract = _server.GetCommand(sql, con))
+            {
+                if (!Directory.Exists(_outputDirectory.FullName))
+                    Directory.CreateDirectory(_outputDirectory.FullName);
 
-            string filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
+                string filename = tableName.Replace("[", "").Replace("]", "").ToLower().Trim();
 
-            if (!filename.EndsWith(".csv"))
-                filename += ".csv";
+                if (!filename.EndsWith(".csv"))
+                    filename += ".csv";
 
-            OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
+                OutputFilename = Path.Combine(_outputDirectory.FullName , filename);
 
-            StreamWriter sw = new StreamWriter(OutputFilename);
+                StreamWriter sw = new StreamWriter(OutputFilename);
 
-            cmdExtract.CommandTimeout = 500000;
+                cmdExtract.CommandTimeout = 500000;
 
-            DbDataReader r = cmdExtract.ExecuteReader();
-            WriteHeader(sw, r, _separator, _dateTimeFormat);
-            int linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat);
+                using(DbDataReader r = cmdExtract.ExecuteReader())
+                {
+                    WriteHeader(sw, r, _separator, _dateTimeFormat);
+                    linesWritten = WriteBody(sw, r, _separator, _dateTimeFormat);
 
-            r.Close();
-            sw.Flush();
-            sw.Close();
-
+                    r.Close();
+                }
+                
+                sw.Flush();
+                sw.Close();
+            }
+            
             return linesWritten;
         }
 

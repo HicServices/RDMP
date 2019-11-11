@@ -18,9 +18,11 @@ using FAnsi.Implementation;
 using FAnsi.Implementations.MicrosoftSQL;
 using FAnsi.Implementations.MySql;
 using FAnsi.Implementations.Oracle;
+using FAnsi.Implementations.PostgreSql;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Versioning;
 using MySql.Data.MySqlClient;
+using NLog.Targets.Wrappers;
 using NUnit.Framework;
 using Rdmp.Core.CommandLine.DatabaseCreation;
 using Rdmp.Core.Curation;
@@ -65,6 +67,7 @@ namespace Tests.Common
 
         private readonly DiscoveredServer _discoveredMySqlServer;
         private readonly DiscoveredServer _discoveredOracleServer;
+        private readonly DiscoveredServer _discoveredPostgresServer;
         private DiscoveredServer _discoveredSqlServer;
 
         static private Startup _startup;
@@ -73,11 +76,10 @@ namespace Tests.Common
         {
             CatalogueRepository.SuppressHelpLoading = true;
             
-            ImplementationManager.Load(
-                typeof(MicrosoftSQLImplementation).Assembly,
-                typeof(OracleImplementation).Assembly,
-                typeof(MySqlImplementation).Assembly
-                );
+            ImplementationManager.Load<MicrosoftSQLImplementation>();
+            ImplementationManager.Load<MySqlImplementation>();
+            ImplementationManager.Load<OracleImplementation>();
+            ImplementationManager.Load<PostgreSqlImplementation>();
 
             ReadSettingsFile();
         }
@@ -107,7 +109,9 @@ namespace Tests.Common
             var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
-                Prefix = TestDatabaseNames.Prefix
+                Prefix = TestDatabaseNames.Prefix,
+                Username = TestDatabaseSettings.Username,
+                Password = TestDatabaseSettings.Password
             };
 
             
@@ -132,10 +136,7 @@ namespace Tests.Common
             UnitTestLoggingConnectionString = CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, PlatformDatabaseCreation.DefaultLoggingDatabaseName, PermissableDefaults.LiveLoggingServer_ID, new LoggingDatabasePatcher());
             DiscoveredServerICanCreateRandomDatabasesAndTablesOn = new DiscoveredServer(CreateServerPointerInCatalogue(defaults, TestDatabaseNames.Prefix, null, PermissableDefaults.RAWDataLoadServer, null));
 
-            _discoveredSqlServer = new DiscoveredServer(
-                new SqlConnectionStringBuilder(){
-                DataSource = TestDatabaseSettings.ServerName,
-                IntegratedSecurity = true});
+            _discoveredSqlServer = new DiscoveredServer(TestDatabaseSettings.ServerName,null,DatabaseType.MicrosoftSQLServer,TestDatabaseSettings.Username,TestDatabaseSettings.Password);
 
             if (TestDatabaseSettings.MySql != null)
             {
@@ -153,6 +154,9 @@ namespace Tests.Common
 
             if (TestDatabaseSettings.Oracle != null)
                 _discoveredOracleServer = new DiscoveredServer(TestDatabaseSettings.Oracle, DatabaseType.Oracle);
+
+            if(TestDatabaseSettings.PostgreSql != null)
+                _discoveredPostgresServer = new DiscoveredServer(TestDatabaseSettings.PostgreSql, DatabaseType.PostgreSql);
         }
 
         private SqlConnectionStringBuilder CreateServerPointerInCatalogue(IServerDefaults defaults, string prefix, string databaseName, PermissableDefaults defaultToSet,IPatcher patcher)
@@ -160,7 +164,9 @@ namespace Tests.Common
             var opts = new PlatformDatabaseCreationOptions()
             {
                 ServerName = TestDatabaseSettings.ServerName,
-                Prefix = prefix
+                Prefix = prefix,
+                Username = TestDatabaseSettings.Username,
+                Password = TestDatabaseSettings.Password
             };
 
             var builder = opts.GetBuilder(databaseName);
@@ -494,6 +500,9 @@ delete from {1}..Project
                     break;
                 case DatabaseType.Oracle:
                     server = _discoveredOracleServer == null ? null : new DiscoveredServer(_discoveredOracleServer.Builder);
+                    break;
+                case DatabaseType.PostgreSql:
+                    server = _discoveredPostgresServer == null ? null : new DiscoveredServer(_discoveredPostgresServer.Builder);
                     break;
                 default:
                     throw new ArgumentOutOfRangeException("type");

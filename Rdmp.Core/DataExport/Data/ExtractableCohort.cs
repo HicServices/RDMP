@@ -189,21 +189,34 @@ namespace Rdmp.Core.DataExport.Data
         /// </summary>
         public IExternalCohortDefinitionData GetExternalData()
         {
-            string sql = @"select projectNumber, description,version,dtCreated from " + ExternalCohortTable.DefinitionTableName + " where id = " + OriginID;
-
             var db = ExternalCohortTable.Discover();
 
+            var syntax = db.Server.GetQuerySyntaxHelper();
+
+            string sql =
+                $@"Select 
+{syntax.EnsureWrapped("projectNumber")},
+{syntax.EnsureWrapped("description")},
+{syntax.EnsureWrapped("version")},
+{syntax.EnsureWrapped("dtCreated")}
+from {ExternalCohortTable.DefinitionTableName} 
+where 
+    {syntax.EnsureWrapped("id")} = {OriginID}";
+
+            
             using (var con = db.Server.GetConnection())
             {
                 con.Open();
-                var getDescription = db.Server.GetCommand(sql, con);
+                using (var getDescription = db.Server.GetCommand(sql, con))
+                {
+                    using (var r = getDescription.ExecuteReader())
+                    {
+                        if (!r.Read())
+                            throw new Exception("No records returned for Cohort OriginID " + OriginID);
 
-                var r = getDescription.ExecuteReader();
-
-                if (!r.Read())
-                    throw new Exception("No records returned for Cohort OriginID " + OriginID);
-
-                return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
+                        return new ExternalCohortDefinitionData(r, ExternalCohortTable.Name);
+                    }
+                }
             }
         }
 
@@ -304,13 +317,17 @@ namespace Rdmp.Core.DataExport.Data
             {
                 con.Open();
 
-                return Convert.ToInt32(db.Server.GetCommand("SELECT count(*) FROM " + ect.TableName + " WHERE " + WhereSQL(), con).ExecuteScalar());
+                using(var cmd = db.Server.GetCommand("SELECT count(*) FROM " + ect.TableName + " WHERE " + WhereSQL(), con))
+                    return Convert.ToInt32(cmd.ExecuteScalar());
             }
         }
 
         private int CountDISTINCTCohortInDatabase()
         {
-            return Convert.ToInt32(ExecuteScalar("SELECT count(DISTINCT "+GetReleaseIdentifier(true)+") FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL()));
+            var syntax = GetQuerySyntaxHelper();
+            
+            return Convert.ToInt32(ExecuteScalar("SELECT count(DISTINCT "+
+                                                 syntax.EnsureWrapped(GetReleaseIdentifier(true))+") FROM " + ExternalCohortTable.TableName + " WHERE " + WhereSQL()));
         }
 
         private object ExecuteScalar(string sql)
@@ -322,7 +339,8 @@ namespace Rdmp.Core.DataExport.Data
             {
                 con.Open();
 
-                return db.Server.GetCommand(sql, con).ExecuteScalar();
+                using(var cmd = db.Server.GetCommand(sql, con))
+                    return cmd.ExecuteScalar();
             }
         }
         
@@ -335,19 +353,23 @@ namespace Rdmp.Core.DataExport.Data
         /// <returns></returns>
         public static IEnumerable<CohortDefinition> GetImportableCohortDefinitions(ExternalCohortTable externalSource)
         {
-            string displayMemberName, valueMemberName, versionMemberName,projectNumberMemberName;
-            DataTable dt = GetImportableCohortDefinitionsTable(externalSource, out displayMemberName, out valueMemberName, out versionMemberName,out projectNumberMemberName);
-
-            foreach (DataRow r in dt.Rows)
+            using (DataTable dt = GetImportableCohortDefinitionsTable(externalSource,
+                out string displayMemberName,
+                out string valueMemberName,
+                out string versionMemberName,
+                out string projectNumberMemberName))
             {
-                yield return
-                    new CohortDefinition(
-                        Convert.ToInt32(r[valueMemberName]),
-                        r[displayMemberName].ToString(),
-                        Convert.ToInt32(r[versionMemberName]),
-                        Convert.ToInt32(r[projectNumberMemberName])
-                        ,externalSource);
-           }
+                foreach (DataRow r in dt.Rows)
+                {
+                    yield return
+                        new CohortDefinition(
+                            Convert.ToInt32(r[valueMemberName]),
+                            r[displayMemberName].ToString(),
+                            Convert.ToInt32(r[versionMemberName]),
+                            Convert.ToInt32(r[projectNumberMemberName])
+                            ,externalSource);
+                }
+            }
         }
 
         /// <summary>
@@ -362,26 +384,32 @@ namespace Rdmp.Core.DataExport.Data
         public static DataTable GetImportableCohortDefinitionsTable(ExternalCohortTable externalSource, out string displayMemberName, out string valueMemberName, out string versionMemberName, out string projectNumberMemberName)
         {
             var server = externalSource.Discover().Server;
+            var syntax = server.GetQuerySyntaxHelper();
+
             using (var con = server.GetConnection())
             {
                 con.Open();
-                string sql = string.Format(
-                    "Select description,id,version,projectNumber from {0} where exists (Select 1 from {1} WHERE {2}=id)"
-                    , externalSource.DefinitionTableName,
-                     externalSource.TableName,
-                     externalSource.DefinitionTableForeignKeyField);
+                string sql =
+                    $@"Select 
+{syntax.EnsureWrapped("description")},
+{syntax.EnsureWrapped("id")},
+{syntax.EnsureWrapped("version")},
+{syntax.EnsureWrapped("projectNumber")}
+from {externalSource.DefinitionTableName} 
+where 
+    exists (Select 1 from {externalSource.TableName} WHERE {externalSource.DefinitionTableForeignKeyField}=id)";
 
-                var da = server.GetDataAdapter(sql, con);
+                using (var da = server.GetDataAdapter(sql, con))
+                {
+                    displayMemberName = "description";
+                    valueMemberName = "id";
+                    versionMemberName = "version";
+                    projectNumberMemberName = "projectNumber";
 
-                displayMemberName = "description";
-                valueMemberName = "id";
-                versionMemberName = "version";
-                projectNumberMemberName = "projectNumber";
-
-                DataTable toReturn = new DataTable();
-                da.Fill(toReturn);
-                return toReturn;
-                
+                    DataTable toReturn = new DataTable();
+                    da.Fill(toReturn);
+                    return toReturn;
+                }
             }
         }
         

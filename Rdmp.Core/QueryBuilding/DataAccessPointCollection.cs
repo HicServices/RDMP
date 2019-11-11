@@ -159,9 +159,12 @@ namespace Rdmp.Core.QueryBuilding
         {
             if(!SingleServer)
                 throw new NotSupportedException("Only valid when SingleServer flag is set");
-            
+
+            //they all have to be in the same server but do they also reside in the same database?
+            var allOnSameDatabase = Points.Select(p => p.Database).Distinct().Count() == 1;
+
             return DataAccessPortal.GetInstance().ExpectDistinctServer(Points.ToArray(),
-                DataAccessContext, false);
+                DataAccessContext, allOnSameDatabase);
         }
 
         /// <summary>

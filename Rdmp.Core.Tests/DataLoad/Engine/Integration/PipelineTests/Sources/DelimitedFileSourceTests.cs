@@ -180,7 +180,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
 
                         Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
-                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak"+Environment.NewLine, File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                         break;
                     default:
@@ -248,7 +248,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
             sb.AppendLine("CHI,Name,SomeInterestingFacts,Date");
             sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
             sb.AppendLine("0101010101,Dave,Dave is \"over\" 1000 years old,2001-01-05");
-            sb.AppendLine("0101010101,Dave,\"Dave is \r\nover 1000 years old\",2001-01-05");
+            sb.AppendLine($"0101010101,Dave,\"Dave is {Environment.NewLine}over 1000 years old\",2001-01-05");
             sb.AppendLine("0101010101,Dave,\"Dave is \"over\" 1000 years old\",2001-01-05");
             sb.AppendLine("0101010101,Dave,Dave is over 1000 years old,2001-01-05");
 
@@ -271,7 +271,7 @@ namespace Rdmp.Core.Tests.DataLoad.Engine.Integration.PipelineTests.Sources
                 var chunk = source.GetChunk(new ThrowImmediatelyDataLoadEventListener(), new GracefulCancellationToken());
                 Assert.AreEqual(5,chunk.Rows.Count);
                 Assert.AreEqual("Dave is \"over\" 1000 years old", chunk.Rows[1][2]);
-                Assert.AreEqual("Dave is \r\nover 1000 years old", chunk.Rows[2][2]);
+                Assert.AreEqual($"Dave is {Environment.NewLine}over 1000 years old", chunk.Rows[2][2]);
                 Assert.AreEqual("Dave is over\" 1000 years old\"", chunk.Rows[3][2]); //notice this line drops some of the quotes, we just have to live with that
             }
             finally
@@ -425,7 +425,7 @@ old""", chunk.Rows[2][2]);
 
                         Assert.IsNotNull(source.EventHandlers.DivertErrorsFile);
 
-                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak\r\n", File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
+                        Assert.AreEqual("0101010101,5,2001-01-05,fish,watafak" + Environment.NewLine, File.ReadAllText(source.EventHandlers.DivertErrorsFile.FullName));
 
                         break;
                     default:
