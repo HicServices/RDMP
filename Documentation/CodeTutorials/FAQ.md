@@ -119,6 +119,25 @@ For example to create test databases run:
 ./rdmp install localhost TEST_ -u sa -p YourStrong\!Passw0rd
 ```
 
+The rdmp command `--help` describes how to pass connection strings directly to the executable but it is often easier to enter these in Databases.yaml e.g.
+
+```
+CatalogueConnectionString: Server=localhost;Database=TEST_Catalogue;User Id=sa;Password=YourStrong!Passw0rd
+DataExportConnectionString: Server=localhost;Database=TEST_DataExport;User Id=sa;Password=YourStrong!Passw0rd
+```
+
+Each rdmp engine (e.g. dle) has it's own verb e.g.
+
+```
+./rdmp dle --help
+```
+
+In addition core and plugin commands can be accessed through the cmd verb e.g.
+
+```
+./rdmp cmd ListSupportedCommands
+```
+
 <a name="api"></a>
 ### Does RDMP have an API?
 Yes, RDMP can be controlled programmatically through it's API which is available as 3 NuGet packages 
