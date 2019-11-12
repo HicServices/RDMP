@@ -4,6 +4,7 @@
 1. Compatibility
    1. [What System Requirements does RDMP have?](#reqs)
    1. [Does RDMP have a Command Line Interface?](#cli)
+   1. [Does RDMP run under Linux](#linux)
    1. [Does RDMP have an API?](#api)
    1. [Does RDMP Support Plugins?](#plugins)
    4. [How is RDMP versioned?](#how-is-rdmp-versioned)
@@ -100,6 +101,42 @@ rdmp.exe dle --help
 When performing an operation in the RDMP client application (e.g. releasing a dataset) you can instead select 'Copy Run Command To Clipboard'.  This will generate a CLI command that will perform the current action (e.g. extract Project X using Pipeline Y).  This can be helpful for scheduling long running tasks etc.
 
 ![Accessing menu copy to clipboard](./Images/FAQ/CopyCommandToClipboard.png)
+
+<a name="linux"></a>
+### Does RDMP run under Linux
+
+The [RDMP CLI](#cli) runs natively under linux.
+
+Install dot net core 2.2:
+
+https://dotnet.microsoft.com/download/linux-package-manager/ubuntu16-04/sdk-current
+
+Download the [RDMP CLI release binary for linux-x64](https://github.com/HicServices/RDMP/releases)
+
+For example to create test databases run:
+
+```
+./rdmp install localhost TEST_ -u sa -p YourStrong\!Passw0rd
+```
+
+The rdmp command `--help` describes how to pass connection strings directly to the executable but it is often easier to enter these in Databases.yaml e.g.
+
+```
+CatalogueConnectionString: Server=localhost;Database=TEST_Catalogue;User Id=sa;Password=YourStrong!Passw0rd
+DataExportConnectionString: Server=localhost;Database=TEST_DataExport;User Id=sa;Password=YourStrong!Passw0rd
+```
+
+Each rdmp engine (e.g. dle) has it's own verb e.g.
+
+```
+./rdmp dle --help
+```
+
+In addition core and plugin commands can be accessed through the cmd verb e.g.
+
+```
+./rdmp cmd ListSupportedCommands
+```
 
 <a name="api"></a>
 ### Does RDMP have an API?
