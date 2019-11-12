@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -247,6 +248,10 @@ namespace Rdmp.Core.CommandLine.Interactive
         public string GetString(string prompt, List<string> options)
         {
             Console.WriteLine(prompt +":");
+
+            //This implementation does not play nice with linux
+            if (EnvironmentInfo.IsLinux)
+                return Console.ReadLine();
             
             var cyclingAutoComplete = new CyclingAutoComplete();
             while (true)
