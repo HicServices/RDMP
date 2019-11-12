@@ -42,7 +42,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
             var clone = _extractionConfiguration.DeepCloneWithNewIDs();
             
             Publish((DatabaseEntity)clone.Project);
-            Emphasise(clone,int.MaxValue);
+            Emphasise(clone);
         }
     }
 }

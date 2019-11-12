@@ -437,6 +437,9 @@ namespace Rdmp.Core.DataExport.Data
         {
             var clone = new ExtractionConfiguration(DataExportRepository, Project);
             CopyShallowValuesTo(clone);
+
+            clone.Name = "Clone of " + Name;
+            clone.SaveToDatabase();
             return clone;
         }
 
