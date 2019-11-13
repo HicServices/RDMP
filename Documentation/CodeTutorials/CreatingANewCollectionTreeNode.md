@@ -1,20 +1,22 @@
-# Table of contents
+# Creating a new tree node
+
+## Contents
 1. [Background](#background)
 1. [Tools](#tools)
-1. [Create the icon](#createIcon)
-2. [Writing the node class](#nodeClass)
-3. [Adding the node to the tree](#addToTree)
-4. [Adding children with AddChildren method](#addChildren)
-<a name="background"></a>
-# Background
+1. [Create the icon](#creating-the-icon)
+4. [Adding the icon to the project](#adding-the-icon-to-the-project)
+2. [Writing the node class](#writing-the-node-class)
+3. [Adding the node to the tree](#adding-the-node-to-the-tree)
+4. [Adding children to your node](#adding-children-to-your-node)
+
+## Background
 The RDMP displays almost all the persistent objects  (Projects, Cohorts, Extraction Configurations etc) in various tree views `RDMPCollectionUI`.  In this tutorial we will look at making a code change to the tree structure.
 
 At the time of writing this tutorial, all `ExtractionConfiguration` (![Pr](Icons/ExtractionConfiguration.png)) in a `Project` (![Pr](Icons/Project.png))appear in a single `ExtractionConfigurationsNode` folder (![Pr](Icons/ExtractionConfigurationsNode.png)).  This means that over time a Project can accrue a considerable number of configurations and it can be difficult to see the active one.  RDMP lets you freeze old Extraction Configurations but they are still visible in the tree. We want to add a new node under the `ExtractionConfigurationsNode` (![Pr](Icons/ExtractionConfigurationsNode.png)) in which to store all the frozen configurations.
 
 ![Goal](Images/CreatingANewCollectionTreeNode/Goal.png) 
 
-<a name="tools"></a>
-# Tools
+## Tools
 In this tutorial we will use the following tools:
 1. Paint.Net
 2. Visual Studio
@@ -22,15 +24,13 @@ In this tutorial we will use the following tools:
 
 Feel free to substitute in alternate tooling
 
-<a name="createIcon"></a>
-# Creating The Icon
+## Creating The Icon
 Go to the root directory of your RDMP checkout and open `\Rdmp.UI\Icons\FolderOfX.pdn` and select the middle Layer 'Background'.  Copy in the new icon and resize it to look nice.
 
 ![EditFolderOfX](Images/CreatingANewCollectionTreeNode/EditFolderOfX.png) 
 
  Save the new image as a 19x19 png with the name of the class you intend to use (think about this before you save it!) e.g. `FrozenExtractionConfigurationsNode.png`.  When naming you should use the suffix Node for any class which is not directly tied to a a database persistence object.  For example Project inherits from `DatabaseEntity` and is a persistent object but anything which is created arbitrarily at runtime or is a container of other items should be called a Node.
 
-<a name="addIcon"></a>
 # Adding the icon to the project
 RDMP requires that all tree view objects have an entry in RDMPConcept Enum, a class with the same name and a .png icon file with the same name.  So the first step is to open RDMPConcept and add a new Enum value `FrozenExtractionConfigurationsNode`
 ![AddToRDMPConcept](Images/CreatingANewCollectionTreeNode/AddToRDMPConcept.png) 
@@ -41,7 +41,6 @@ Open CatalogueIcons.resx and add your image.
 
 ![AddToResx](Images/CreatingANewCollectionTreeNode/AddToResx.png) 
 
-<a name="nodeClass"></a>
 # Writing the node class
 In the previous section we created a class `FrozenExtractionConfigurationsNode` (or whatever your node is called) which we left empty.  Ensure the name of this class exactly matches (including capitalisation) the png file and an `RDMPConcept` Enum value.  Now we will write the code that makes the node behave correctly.
 
@@ -64,21 +63,22 @@ NOTE: If a node can only ever appear once in any collection (e.g. it is a unique
 
 Assuming you dont have a SingletonNode then you should add constructor arguments sufficient to uniquely identify which instance you have.  In this case we will have an `FrozenExtractionConfigurationsNode` instance for every `Project` so we need a reference to which `Project` we relate to.
 
+<!--- df7d2bb4cd6145719f933f6f15218b1a --->
 ```csharp
 class FrozenExtractionConfigurationsNode
-   {
-       public Project Project { get; set; }
+{
+    public Project Project { get; set; }
 
-       public FrozenExtractionConfigurationsNode(Project project)
-       {
-           Project = project;
-       }
+    public FrozenExtractionConfigurationsNode(Project project)
+    {
+        Project = project;
+    }
 
-       public override string ToString()
-       {
-           return "Frozen Extraction Configurations";
-       }
-   }
+    public override string ToString()
+    {
+        return "Frozen Extraction Configurations";
+    }
+}
 ```
 
 Finally we need to implement 'Equality members', this ensures that Object List View (the library behind the tree control) knows when two Nodes of the same Type are the same and when they are different (and for HashCode etc).  The easiest way to do this is with ReSharper and Alt+Ins (by default).
@@ -118,7 +118,6 @@ class FrozenExtractionConfigurationsNode
 }
 ```
 
-<a name="addToTree"></a>
 # Adding the node to the tree
 Finally we can add instances of the node class to the tree.  This is done through the `IChildProvider`.  Open  `DataExportChildProvider` and `CatalogueChildProvider` and identify the method which adds children for your parent object.  It will be called `AddChildren` and take a first parameter of the Type you want to add children to.  In this example we want to add the child node to the class `ExtractionConfigurationsNode` (![Pr](Icons/ExtractionConfigurationsNode.png)).  So we search for '`AddChildren(ExtractionConfigurationsNode`'
 
@@ -156,9 +155,8 @@ private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNo
 Run RDMP and your new node should now appear.
 
 ![FrozenFolderNowAppears](Images/CreatingANewCollectionTreeNode/FrozenFolderNowAppears.png) 
-<a name="addChildren"></a>
 
-# Adding Children with an `AddChildren` method
+## Adding Children to your node
 All AddChildren methods have the same basic structure:
 ```csharp
 private void AddChildren(SomeType someTypeInstance, DescendancyList descendancy)
