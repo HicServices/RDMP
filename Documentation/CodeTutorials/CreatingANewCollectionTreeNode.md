@@ -83,6 +83,7 @@ class FrozenExtractionConfigurationsNode
 
 Finally we need to implement 'Equality members', this ensures that Object List View (the library behind the tree control) knows when two Nodes of the same Type are the same and when they are different (and for HashCode etc).  The easiest way to do this is with ReSharper and Alt+Ins (by default).
 
+<!--- a93fd8b3d1fb4ad8975ef8cf9c384236 --->
 ```csharp
 class FrozenExtractionConfigurationsNode
 {
@@ -133,23 +134,25 @@ children.Add(frozenConfigurationsNode);
 ```
 
 The full method should now look something like:
+
+<!--- c9aeab3ddaf643e5967c3e2352c388f0 --->
 ```csharp
 private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
-        {
-            HashSet<object> children = new HashSet<object>();
+{
+    HashSet<object> children = new HashSet<object>();
 
-            var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
-            children.Add(frozenConfigurationsNode);
+    var frozenConfigurationsNode = new FrozenExtractionConfigurationsNode(extractionConfigurationsNode.Project);
+    children.Add(frozenConfigurationsNode);
 
-            var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
-            foreach (ExtractionConfiguration config in configs)
-            {
-                AddChildren(config, descendancy.Add(config));
-                children.Add(config);
-            }
+    var configs = ExtractionConfigurations.Where(c => c.Project_ID == extractionConfigurationsNode.Project.ID).ToArray();
+    foreach (ExtractionConfiguration config in configs)
+    {
+        AddChildren(config, descendancy.Add(config));
+        children.Add(config);
+    }
 
-            AddToDictionaries(children, descendancy);
-        }
+    AddToDictionaries(children, descendancy);
+}
 ```
 
 Run RDMP and your new node should now appear.
@@ -203,14 +206,14 @@ private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConf
 
 In this method add the following:
 ```csharp
-  private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
-	{
-		HashSet<object> children = new HashSet<object>();
+private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
+{
+	HashSet<object> children = new HashSet<object>();
 
-		//todo add child objects here
+	//todo add child objects here
 
-		AddToDictionaries(children,descendancy);
-	}
+	AddToDictionaries(children,descendancy);
+}
 ```
 
 Now add new objects to the children hashset that you want to appear under your node.
@@ -218,7 +221,7 @@ Now add new objects to the children hashset that you want to appear under your n
 Just as an example add the number 87 to the children HashSet:
 
 ```csharp
-  private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
+ private void AddChildren(FrozenExtractionConfigurationsNode frozenExtractionConfigurationsNode, DescendancyList descendancy)
 {
 	HashSet<object> children = new HashSet<object>();
 
@@ -234,6 +237,7 @@ Firstly notice how we get a missing icon appearing.  This is because there is no
 
 To complete this example we will modify the `AddChildren` method for `ExtractionConfigurationsNode` so that it no longer shows Frozen configurations and modify the new one to only show Frozen configurations.
 
+<!--- 0bac9aa7f8874a25bc1fe1361b91f6e5 --->
 ```csharp
 private void AddChildren(ExtractionConfigurationsNode extractionConfigurationsNode, DescendancyList descendancy)
 {

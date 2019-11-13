@@ -362,6 +362,8 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
         {
             string codeBlocks = Path.Combine(TestContext.CurrentContext.TestDirectory,"../../../DesignPatternTests/MarkdownCodeBlockTests.cs");
 
+            Console.WriteLine("Starting " + mdFile);
+
             var codeBlocksContent = File.ReadAllText(codeBlocks);
 
             Regex rGuidComment = new Regex("<!--- (.{32}) --->");
@@ -401,7 +403,7 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
 
             foreach (var kvp in markdownCodeBlocks)
             {
-                Regex rBlock = new Regex($"#region {kvp.Key}(.*)#endregion",RegexOptions.Singleline);
+                Regex rBlock = new Regex($"#region {kvp.Key}([^#]*)#endregion",RegexOptions.Singleline);
                 var m = rBlock.Match(codeBlocksContent);
 
                 if (!m.Success)
@@ -411,10 +413,13 @@ namespace Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation
                 var code = Regex.Replace(m.Groups[1].Value, "\\s+", " ");
                 var docs = Regex.Replace(kvp.Value, "\\s+", " ");
 
-                Assert.AreEqual(code.Trim(), docs.Trim(),"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid "+ kvp.Key);
-            }
+                Assert.AreEqual(code.Trim(), docs.Trim(),        
+                    $"Code in the documentation markdown (actual) did not match the corresponding compiled code (expected) for code guid {kvp.Key} markdown file was {mdFile} and code file was {codeBlocks}");
 
+                Console.WriteLine("Validated markdown block " + kvp.Key);
+            }
             
+            Console.WriteLine("Validated " + markdownCodeBlocks.Count + " markdown blocks");
         }
 
         private void EnsureMaximumGlossaryUse(string mdFile, List<string> problems)
