@@ -34,6 +34,8 @@ namespace Rdmp.UI.SimpleDialogs
         public IMapsDirectlyToDatabaseTable Selected;
 
         public static Func<object, Image> ImageGetter;
+        
+        public const int MaxObjectsToShow = 1000;
 
         public SelectIMapsDirectlyToDatabaseTableDialog(IEnumerable<IMapsDirectlyToDatabaseTable> toSelectFrom, bool allowSelectingNULL,bool allowDeleting)
         {
@@ -42,7 +44,12 @@ namespace Rdmp.UI.SimpleDialogs
 
             //start at cancel so if they hit the X nothing is selected
             DialogResult = DialogResult.Cancel;
+
+            olvID.AspectGetter = (m) => ((IMapsDirectlyToDatabaseTable) m).ID;
+            olvName.AspectGetter = (m) => m.ToString();
             
+            olvObjects.ListFilter = new TailFilter(MaxObjectsToShow);
+
             if (ImageGetter != null)
             {
                 olvName.ImageGetter = (model) => ImageGetter(model);
@@ -294,7 +301,9 @@ namespace Rdmp.UI.SimpleDialogs
 
         private void tbFilter_TextChanged(object sender, EventArgs e)
         {
-            olvObjects.ModelFilter = new TextMatchFilterWithWhiteList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
+            var modelFilter = new TextMatchFilterWithWhiteList(MultiSelected,olvObjects,tbFilter.Text,StringComparison.InvariantCultureIgnoreCase);
+            olvObjects.ListFilter = new CherryPickingTailFilter(MaxObjectsToShow,modelFilter);
+            olvObjects.ModelFilter = modelFilter;
         }
         
         private void tbFilter_KeyUp(object sender, KeyEventArgs e)

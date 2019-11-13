@@ -946,6 +946,8 @@ namespace Rdmp.Core.Providers
                 childObjects.Add(ei);
                 AddChildren(ei, descendancy.Add(ei));
             }
+            else
+                ci.InjectKnown((ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
 
             if (ci.ColumnInfo_ID.HasValue)
                 childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
