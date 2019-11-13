@@ -1,12 +1,10 @@
 # Table of contents
 1. [Background](#background)
 2. [Masquerading](#masquerading)
-3. [Menu Constructor Overloading](#menu-constructor-overloading)
-4. [Reasoning](#reasoning)
 5. [Example](#example)
 6. [Commands](#commands)
 7. [Creating a new Command](#creating-a-new-command)
-<a name="background"></a>
+
 # Background
 RDMP uses tree collections to represent all objects the user is required to interact with (filters, datasets, projects, extraction configurations etc).  Every item can be right clicked resulting in a context menu appropriate to the object.  At a minimum it should have Expand/Collapse and 'What is this?'.
 
@@ -36,7 +34,7 @@ Create a new class in `Rdmp.UI.Menus` called `AllServersNodeMenu`
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 
-namespace CatalogueManager.Menus
+namespace Rdmp.UI.Menus
 {
     class AllServersNodeMenu : RDMPContextMenuStrip
     {
@@ -46,7 +44,6 @@ namespace CatalogueManager.Menus
         }
     }
 }
-
 ```
 
 Run RDMP and right click the `AllServersNode` again, you should see your new menu item.
@@ -56,18 +53,13 @@ Run RDMP and right click the `AllServersNode` again, you should see your new men
 # Commands
 The preferred way of adding menu items is to use abstract base class `RDMPContextMenuStrip` method `Add(IAtomicCommand cmd)`.  For example 
 
+<!--- f243e95a6dc94b3486f44b8f0bb0ed7d --->
 ```csharp
-using Rdmp.Core.Providers.Nodes;
-using Rdmp.UI.CommandExecution.AtomicCommands;
-
-namespace CatalogueManager.Menus
+class AllServersNodeMenu : RDMPContextMenuStrip
 {
-    class AllServersNodeMenu : RDMPContextMenuStrip
+    public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
     {
-        public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
-        {
-            Add(new ExecuteCommandCreateNewEmptyCatalogue(args.ItemActivator));
-        }
+        Add(new ExecuteCommandCreateNewEmptyCatalogue(args.ItemActivator));
     }
 }
 ```

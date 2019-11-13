@@ -14,6 +14,8 @@ using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.Menus;
 using Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
 using ReusableLibraryCode.Checks;
 
@@ -163,6 +165,20 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 {
                 }
             }
+
+            private class _f243e95a6dc94b3486f44b8f0bb0ed7d
+            {
+                #region f243e95a6dc94b3486f44b8f0bb0ed7d
+                class AllServersNodeMenu : RDMPContextMenuStrip
+                {
+                    public AllServersNodeMenu(RDMPContextMenuStripArgs args, AllServersNode o) : base(args, o)
+                    {
+                        Add(new ExecuteCommandCreateNewEmptyCatalogue(args.ItemActivator));
+                    }
+                }
+                #endregion
+            }
+
             
         }
     }
