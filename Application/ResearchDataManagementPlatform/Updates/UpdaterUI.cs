@@ -70,15 +70,21 @@ namespace ResearchDataManagementPlatform.Updates
                 {
                     using (var mgr = UpdateManager.GitHubUpdateManager(RepoUrl, prerelease:true).Result)
                     {
-                         mgr.DownloadReleases(new []{entry },OnProgress).Wait();
-                
-                        var updatePath = mgr.ApplyReleases(_updateInfo,OnProgress).Result;
+                        var rootDir = UpdateManager.GetLocalAppDataDirectory();
+                        var current =
+                            ReleaseEntry.ParseReleaseFile(
+                                File.ReadAllLines(Path.Combine(rootDir, "packages", "RELEASES"))[0]);
+                        _updateInfo = UpdateInfo.Create(current.First(), new []{ entry }, Path.Combine(rootDir, "packages"));
+                        mgr.DownloadReleases(new []{ entry },OnProgress).Wait();
+                        
+                        var updatePath = mgr.ApplyReleases(_updateInfo, OnProgress).Result;
 
                         var task = Task.Run(() => Process.Start(new ProcessStartInfo(Path.Combine(updatePath, "ResearchDataManagementPlatform.exe"))));
                         Application.Exit();
                 
                     }
-                }catch(Exception ex)
+                }
+                catch(Exception ex)
                 {
                     ExceptionViewer.Show(ex);
                 }
@@ -96,7 +102,6 @@ namespace ResearchDataManagementPlatform.Updates
 
         private void GetUpdatesAsync()
         {
-            ReleaseEntry pluto;
             Task t = new Task(() =>
             {
                 try
@@ -154,7 +159,11 @@ namespace ResearchDataManagementPlatform.Updates
         private ReleaseEntry DownloadRelease(Asset releaseFile)
         {
             var content = new WebClient().DownloadString(releaseFile.browser_download_url);
-            return ReleaseEntry.ParseReleaseFile(content).First();
+            content = content.Replace(
+                "ResearchDataManagementPlatform",
+                releaseFile.browser_download_url.Replace("RELEASES", "") + "ResearchDataManagementPlatform");
+            var result = ReleaseEntry.ParseReleaseFile(content).First();
+            return result;
         }
 
         private void FinishedLoading()
