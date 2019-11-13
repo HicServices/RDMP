@@ -124,7 +124,7 @@ Finally we can add instances of the node class to the tree.  This is done throug
 
 ![FindAddChildren](Images/CreatingANewCollectionTreeNode/FindAddChildren.png) 
 
-If you are adding your node to a class that doesn't have any children yet (and therefore doesn't have an `AddChildren` method declared for it) then you will need to find the constructor calls for your chosen parent and add create an `AddChildren` method for it (See [Adding Children with AddChildren method](#addChildren) below for how to do this).
+If you are adding your node to a class that doesn't have any children yet (and therefore doesn't have an `AddChildren` method declared for it) then you will need to find the constructor calls for your chosen parent and add create an `AddChildren` method for it (See [Adding children to your node](#adding-children-to-your-node) below for how to do this).
 
 Create a new instance of your node class and add it to the children HashSet declared in the AddChildren method.
 
