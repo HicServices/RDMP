@@ -6,17 +6,31 @@
 
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Windows.Forms;
 using NUnit.Framework;
+using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandExecution.Combining;
+using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataExport.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Repositories;
+using Rdmp.UI.AggregationUIs.Advanced;
+using Rdmp.UI.CommandExecution;
 using Rdmp.UI.CommandExecution.AtomicCommands;
+using Rdmp.UI.CommandExecution.Proposals;
+using Rdmp.UI.Copying;
+using Rdmp.UI.ItemActivation;
 using Rdmp.UI.Menus;
 using Rdmp.UI.Tests.DesignPatternTests.ClassFileEvaluation;
+using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using ReusableLibraryCode.Checks;
 
 namespace Rdmp.UI.Tests.DesignPatternTests
@@ -179,6 +193,117 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 #endregion
             }
 
+            private class _cae13dde1de14f5cac984330a222c311
+            {
+                #region cae13dde1de14f5cac984330a222c311
+                class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+                {
+                    public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
+                    {
+                    }
+
+                    public override bool CanActivate(Pipeline target)
+                    {
+                        return true;
+                    }
+
+                    public override void Activate(Pipeline target)
+                    {
+                        MessageBox.Show("Double clicked");
+                    }
+
+                    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+                    {
+                        return null;
+                    }
+                }
+                #endregion
+            }
+
+            private class _d5ff7bebc57942df8c6c57a316bf72c6 : RDMPCommandExecutionProposal<AggregateConfiguration>
+            {
+                public override bool CanActivate(AggregateConfiguration target)
+                {
+                    throw new NotImplementedException();
+                }
+                public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, AggregateConfiguration target,
+                    InsertOption insertOption = InsertOption.Default)
+                {
+                    throw new NotImplementedException();
+                }
+                public _d5ff7bebc57942df8c6c57a316bf72c6(IActivateItems itemActivator) : base(itemActivator)
+                {
+                }
+
+                #region d5ff7bebc57942df8c6c57a316bf72c6
+                public override void Activate(AggregateConfiguration target)
+                {
+                    ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
+                }
+                #endregion
+
+
+                #region 56df0867990f4b0397e51a6a49f7bdd0
+                [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
+                public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
+                {
+                }
+                #endregion
+
+
+            }
+
+            private class _59f55fa3ef50404291c7ae3996772635 : RDMPCommandExecutionProposal<Pipeline>
+            {
+                public override bool CanActivate(Pipeline target)
+                {
+                    throw new NotImplementedException();
+                }
+
+                public override void Activate(Pipeline target)
+                {
+                    throw new NotImplementedException();
+                }
+
+                #region 59f55fa3ef50404291c7ae3996772635
+                public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+                {
+                    var sourceCatalogueCombineable = cmd as CatalogueCombineable;
+	    
+                    if(sourceCatalogueCombineable != null)
+                        return new ExecuteCommandDelete(ItemActivator,sourceCatalogueCombineable.Catalogue);
+
+                    return null;
+                }
+                #endregion
+
+                public _59f55fa3ef50404291c7ae3996772635(IActivateItems itemActivator) : base(itemActivator)
+                {
+                }
+            }
+
+            private class _bbee6cb18ebd4e35a19f5fa521063648
+            {
+
+                #region bbee6cb18ebd4e35a19f5fa521063648
+                public class PipelineCombineable : ICombineToMakeCommand
+                {
+                    public Pipeline Pipeline { get; private set; }
+                    public bool IsEmpty { get; private set; }
+
+                    public PipelineCombineable(Pipeline pipeline)
+                    {
+                        Pipeline = pipeline;
+                        IsEmpty = Pipeline.PipelineComponents.Count == 0;
+                    }
+
+                    public string GetSqlString()
+                    {
+                        return "";
+                    }
+                }
+                #endregion
+            }
             
         }
     }

@@ -18,7 +18,7 @@ This pattern allows all tree views system wide to have consistent behaviour for 
 
 For the developer it allows easy troubleshooting, if there is a problem with a tree object right click it and select 'What is this?' then search for the class `ProposeExecutionWhenTargetIs<ClassName>`.  Since the return type of the drop method `ProposeExecution` is `ICommandExecution` you simply have to decide what the appropriate command is for the drop operation.
 
-See [ProposeExecutionWhenTargetIsExtractionConfiguration](https://github.com/HicServices/RDMP/blob/94591a458e3fb3233039a22b8f2e16e8a31f83bf/DataExportManager/DataExportManager/CommandExecution/Proposals/ProposeExecutionWhenTargetIsExtractionConfiguration.cs) for an example of how consise the code is.
+See [ProposeExecutionWhenTargetIsExtractionConfiguration](./../../Rdmp.UI/CommandExecution/Proposals/ProposeExecutionWhenTargetIsExtractionConfiguration.cs) for an example of how consise the code is.
 
 # Activation
 To add support for activating (double clicking) an object we must first know it's `Type`.  Right click it in the tree view and select 'What is this?' to determine it's `Type`.
@@ -27,32 +27,29 @@ To add support for activating (double clicking) an object we must first know it'
 
 Create a new class called `ProposeExecutionWhenTargetIs<TypeName>` in namespace `CatalogueManager.CommandExecution.Proposals` and inherit from `RDMPCommandExecutionProposal<T>`.  Return true for `CanActivate` and put a test message in `Activate`.
 
+<!--- cae13dde1de14f5cac984330a222c311 --->
 ```csharp
-namespace CatalogueManager.CommandExecution.Proposals
+class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
 {
-    class ProposeExecutionWhenTargetIsPipeline:RDMPCommandExecutionProposal<Pipeline>
+    public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
     {
-        public ProposeExecutionWhenTargetIsPipeline(IActivateItems itemActivator) : base(itemActivator)
-        {
-        }
+    }
 
-        public override bool CanActivate(Pipeline target)
-        {
-            return true;
-        }
+    public override bool CanActivate(Pipeline target)
+    {
+        return true;
+    }
 
-        public override void Activate(Pipeline target)
-        {
-            MessageBox.Show("Double clicked");
-        }
+    public override void Activate(Pipeline target)
+    {
+        MessageBox.Show("Double clicked");
+    }
 
-        public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
-        {
-            return null;
-        }
+    public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
+    {
+        return null;
     }
 }
-
 ```
 
 Check this works in the application by double clicking a tree node of the appropriate `Type` or right clicking and selecting `Edit`.
@@ -66,15 +63,17 @@ To show a new tab control for editing your object you should create a normal Win
 
 To trigger the user interface on `Activate` of an `RDMPCommandExecutionProposal<T>` call `ItemActivator.Activate` 
 
+<!--- d5ff7bebc57942df8c6c57a316bf72c6 --->
 ```csharp
 public override void Activate(AggregateConfiguration target)
 {
-    ItemActivator.Activate<AggregateEditor, AggregateConfiguration>(target);
+    ItemActivator.Activate<AggregateEditorUI, AggregateConfiguration>(target);
 }
 ```
 
 If you find you cannot use Visual Studio Designer to edit your control because of the abstract/generic base class `RDMPSingleDatabaseObjectControl` [you can create an AbstractControlDescriptionProvider with an intermediate class](https://stackoverflow.com/questions/1620847/how-can-i-get-visual-studio-2008-windows-forms-designer-to-render-a-form-that-im).
 
+<!--- 56df0867990f4b0397e51a6a49f7bdd0 --->
 ```csharp
 [TypeDescriptionProvider(typeof(AbstractControlDescriptionProvider<ANOTableUI_Design, UserControl>))]
 public abstract class ANOTableUI_Design : RDMPSingleDatabaseObjectControl<ANOTable>
@@ -95,6 +94,7 @@ The reason we have an `ICombineToMakeCommand` is so we can front load discovery 
 
 To add support for dropping an object with an existing `ICombineToMakeCommand` you should cast `cmd` and return an appropriate `ICommandExecution`.
 
+<!--- 59f55fa3ef50404291c7ae3996772635 --->
 ```csharp
 public override ICommandExecution ProposeExecution(ICombineToMakeCommand cmd, Pipeline target, InsertOption insertOption = InsertOption.Default)
 {
@@ -115,9 +115,9 @@ You can create your own `ICommandExecution` implementations by [following this t
 
 # Drag
 
-`RDMPCombineableFactory` is responsible for creating `ICombineToMakeCommand` objects at the start of a drag operation (including files etc from the OS).  Most objects will have a 1 to 1 mapping with an `ICommand` e.g `CatalogueCombineable` is a wrapper for a `Catalogue`.  The `ICommand` is responsible for doing expensive fact gathering at the start of a drag operation.
+`RDMPCombineableFactory` is responsible for creating `ICombineToMakeCommand` objects at the start of a drag operation (including files etc from the OS).  Most objects will have a 1 to 1 mapping with an `ICombineToMakeCommand` e.g `CatalogueCombineable` is a wrapper for a `Catalogue`.  The `ICombineToMakeCommand` is responsible for doing expensive fact gathering at the start of a drag operation.
 
-If you need to provide drag support for a new object `Type` (e.g. `Pipeline`) first create an appropriate `ICommand` e.g. `PipelineCombineable` and then in `RDMPCombineableFactory` modify the method `ICommand Create(object modelObject)` to return it given the appropriate modelObject:
+If you need to provide drag support for a new object `Type` (e.g. `Pipeline`) first create an appropriate `ICombineToMakeCommand` e.g. `PipelineCombineable` and then in `RDMPCombineableFactory` modify the method `ICommand Create(object modelObject)` to return it given the appropriate modelObject:
 
 ```csharp
 public ICombineToMakeCommand Create(object modelObject)
@@ -134,24 +134,22 @@ public ICombineToMakeCommand Create(object modelObject)
 
 The `ICombineToMakeCommand` could look like this.
 
+<!--- bbee6cb18ebd4e35a19f5fa521063648 --->
 ```csharp
-namespace CatalogueManager.Copying.Commands
+public class PipelineCombineable : ICombineToMakeCommand
 {
-    public class PipelineCombineable : ICombineToMakeCommand
+    public Pipeline Pipeline { get; private set; }
+    public bool IsEmpty { get; private set; }
+
+    public PipelineCombineable(Pipeline pipeline)
     {
-        public Pipeline Pipeline { get; private set; }
-        public bool IsEmpty { get; private set; }
+        Pipeline = pipeline;
+        IsEmpty = Pipeline.PipelineComponents.Count == 0;
+    }
 
-        public PipelineCombineable(Pipeline pipeline)
-        {
-            Pipeline = pipeline;
-            IsEmpty = Pipeline.PipelineComponents.Count == 0;
-        }
-
-        public string GetSqlString()
-        {
-            return "";
-        }
+    public string GetSqlString()
+    {
+        return "";
     }
 }
 ```

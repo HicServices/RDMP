@@ -105,13 +105,16 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             if(csFile.Name.Contains(".Designer.cs"))
                 return;
 
+            if(csFile.Name.Equals("MarkdownCodeBlockTests.cs"))
+                return;
+
             if(classes.Count > 1)
             {
                 //The only files allowed 2+ class files in them are tests and factories
                 if (csFile.Name.Contains("Test") || csFile.Name.Contains("Factory"))
                     return;
 
-                                UntidyMessages.Add("FAIL: .cs file contains 2+ classes/interfaces " + csFile.FullName);
+                UntidyMessages.Add("FAIL: .cs file contains 2+ classes/interfaces " + csFile.FullName);
             }
             else
             {
