@@ -18,6 +18,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Reflection;
+using System.Threading;
 using BrightIdeasSoftware;
 using Newtonsoft.Json;
 using NuGet;
@@ -31,7 +32,7 @@ namespace ResearchDataManagementPlatform.Updates
         private const string RepoUrl = "https://github.com/HicServices/RDMP";
         private const string ApiUrl = "https://api.github.com/";
         private UpdateInfo _updateInfo;
-        private Version _currentVersion;
+        private SemanticVersion _currentVersion;
         public List<GHRelease> Entries { get; set; }
         public List<ReleaseEntry> SquirrelEntries { get; set; }
 
@@ -40,10 +41,9 @@ namespace ResearchDataManagementPlatform.Updates
             InitializeComponent();
             Entries = new List<GHRelease>();
             SquirrelEntries = new List<ReleaseEntry>();
+            _currentVersion = new SemanticVersion(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
 
             GetUpdatesAsync();
-
-            _currentVersion = new Version(FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).FileVersion);
 
             olvVersion.AspectGetter = (m) => ((ReleaseEntry) m).Version.ToString();
             olvInstall.AspectGetter = (m) => "Install";
@@ -70,18 +70,36 @@ namespace ResearchDataManagementPlatform.Updates
                 {
                     using (var mgr = UpdateManager.GitHubUpdateManager(RepoUrl, prerelease:true).Result)
                     {
-                        var rootDir = UpdateManager.GetLocalAppDataDirectory();
-                        var current =
-                            ReleaseEntry.ParseReleaseFile(
-                                File.ReadAllLines(Path.Combine(rootDir, "packages", "RELEASES"))[0]);
-                        _updateInfo = UpdateInfo.Create(current.First(), new []{ entry }, Path.Combine(rootDir, "packages"));
-                        mgr.DownloadReleases(new []{ entry },OnProgress).Wait();
-                        
-                        var updatePath = mgr.ApplyReleases(_updateInfo, OnProgress).Result;
+                        if (entry.Version > _currentVersion)
+                        {
+                            _updateInfo = mgr.CheckForUpdate().Result;
+                            
+                            mgr.DownloadReleases(new[] { entry }, OnProgress).Wait();
 
-                        var task = Task.Run(() => Process.Start(new ProcessStartInfo(Path.Combine(updatePath, "ResearchDataManagementPlatform.exe"))));
-                        Application.Exit();
-                
+                            var updatePath = mgr.ApplyReleases(_updateInfo, OnProgress).Result;
+
+                            var task = Task.Run(() => Process.Start(new ProcessStartInfo(Path.Combine(updatePath, "ResearchDataManagementPlatform.exe"))));
+                            Application.Exit();
+                        }
+                        else
+                        {
+                            var setupFile = Path.Combine(Environment.CurrentDirectory, "..", "packages", "Setup.exe");
+                            new WebClient().DownloadFile(entry.BaseUrl + "Setup.exe", setupFile);
+                            var task = Task.Run(() => Process.Start(new ProcessStartInfo(setupFile)));
+                            var sw = new Stopwatch();
+                            sw.Start();
+                            while (task.Status != TaskStatus.RanToCompletion)
+                            {
+                                Debug.Print(task.Status.ToString());
+                                Thread.Sleep(100);
+                                if (sw.ElapsedMilliseconds >= 30000)
+                                    break;
+                            }
+                            Thread.Sleep(5000);
+                            Application.Exit();
+                        }
+
+
                     }
                 }
                 catch(Exception ex)
@@ -126,25 +144,23 @@ namespace ResearchDataManagementPlatform.Updates
                                 SquirrelEntries.Add(DownloadRelease(releaseFile));
                             }
                         });
-                    AddReleases(SquirrelEntries);
+                }
+                //catch(AggregateException ex)
+                //{
+                //    var invalid = ex.GetExceptionIfExists<InvalidOperationException>();
 
-                }
-                catch(AggregateException ex)
-                {
-                    var invalid = ex.GetExceptionIfExists<InvalidOperationException>();
-
-                    if(invalid != null && invalid.Message.Contains("Sequence contains no elements"))
-                        AddReleases(new List<ReleaseEntry>());
-                    else
-                        ExceptionViewer.Show(ex);
-                }
-                catch(InvalidOperationException ex)
-                {
-                    if(ex.Message.Contains("Sequence contains no elements"))
-                        AddReleases(new List<ReleaseEntry>());
-                    else
-                        ExceptionViewer.Show(ex);
-                }
+                //    if(invalid != null && invalid.Message.Contains("Sequence contains no elements"))
+                //        AddReleases(new List<ReleaseEntry>());
+                //    else
+                //        ExceptionViewer.Show(ex);
+                //}
+                //catch(InvalidOperationException ex)
+                //{
+                //    if(ex.Message.Contains("Sequence contains no elements"))
+                //        AddReleases(new List<ReleaseEntry>());
+                //    else
+                //        ExceptionViewer.Show(ex);
+                //}
                 catch (Exception ex)
                 {
                     ExceptionViewer.Show(ex);
@@ -175,6 +191,7 @@ namespace ResearchDataManagementPlatform.Updates
             }
             
             pbLoading.Visible = false;
+            AddReleases(SquirrelEntries);
         }
 
         private void AddReleases(List<ReleaseEntry> releasesToApply)
@@ -196,24 +213,25 @@ namespace ResearchDataManagementPlatform.Updates
                 lblStatus.Text = "No Updates Available";
         }
 
-        private bool CanShow(SemanticVersion v)
+        private bool CanShow(SemanticVersion version)
         {
             if (cbShowOlderVersions.Checked && cbShowPrerelease.Checked)
                 return true;
 
-            var cv = new SemanticVersion(_currentVersion);
-
             if (cbShowOlderVersions.Checked && !cbShowPrerelease.Checked)
-                return String.IsNullOrEmpty(v.SpecialVersion);
+                return String.IsNullOrEmpty(version.SpecialVersion);
 
             if (!cbShowOlderVersions.Checked && cbShowPrerelease.Checked)
-                return (v > cv) && v.SpecialVersion.Any();
+                return (version > _currentVersion) && version.SpecialVersion.Any();
 
-            return (v > cv) && String.IsNullOrEmpty(v.SpecialVersion);
+            return (version > _currentVersion) && String.IsNullOrEmpty(version.SpecialVersion);
         }
 
         private void CheckBoxes_CheckedChanged(object sender, EventArgs e)
         {
+            if (pbLoading.Visible)
+                return;
+
             objectListView1.ClearObjects();
             AddReleases(SquirrelEntries);
         }
