@@ -85,18 +85,11 @@ namespace ResearchDataManagementPlatform.Updates
                         {
                             var setupFile = Path.Combine(Environment.CurrentDirectory, "..", "packages", "Setup.exe");
                             new WebClient().DownloadFile(entry.BaseUrl + "Setup.exe", setupFile);
-                            var task = Task.Run(() => Process.Start(new ProcessStartInfo(setupFile)));
-                            var sw = new Stopwatch();
-                            sw.Start();
-                            while (task.Status != TaskStatus.RanToCompletion)
-                            {
-                                Debug.Print(task.Status.ToString());
-                                Thread.Sleep(100);
-                                if (sw.ElapsedMilliseconds >= 30000)
-                                    break;
-                            }
-                            Thread.Sleep(5000);
-                            Application.Exit();
+                            var proc = new Process() {StartInfo = new ProcessStartInfo(setupFile)};
+                            proc.EnableRaisingEvents = true;
+                            proc.Exited += (s, e) => Application.Exit();
+                            proc.Start();
+                            proc.WaitForExit();
                         }
 
 
