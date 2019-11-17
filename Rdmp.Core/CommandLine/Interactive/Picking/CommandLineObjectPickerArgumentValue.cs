@@ -11,6 +11,7 @@ using System.IO;
 using System.Linq;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using NLog;
 using Rdmp.Core.Curation.Data;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
@@ -33,6 +34,8 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         public ReadOnlyCollection<IMapsDirectlyToDatabaseTable> DatabaseEntities { get; private set; }
 
         public Type Type { get; private set; }
+
+        Logger _logger = LogManager.GetCurrentClassLogger();
 
         public CommandLineObjectPickerArgumentValue(string rawValue,int idx)
         {
@@ -88,8 +91,12 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
 
             //it's an array of DatabaseEntities
             if(paramType.IsArray && typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType.GetElementType()))
+            {
+                if(DatabaseEntities.Count == 0)
+                    _logger.Warn($"Pattern matched no objects '{RawValue}'");
+
                 return DatabaseEntities.ToArray();
-            
+            }
             if (typeof(IMapsDirectlyToDatabaseTable).IsAssignableFrom(paramType))
                 return GetOneDatabaseEntity<DatabaseEntity>();
 
@@ -117,8 +124,14 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         private object GetOneDatabaseEntity<T>()
         {
             //if there are not exactly 1 database entity
-            if (DatabaseEntities == null || DatabaseEntities.Count != 1)
+            if (DatabaseEntities == null)
                 return null;
+
+            if(DatabaseEntities.Count != 1)
+            {
+                _logger.Warn($"Pattern matched {DatabaseEntities.Count} objects '{RawValue}'");
+                return null;
+            }   
 
             //return the single object as the type you want e.g. ICheckable
             if(DatabaseEntities[0] is T)

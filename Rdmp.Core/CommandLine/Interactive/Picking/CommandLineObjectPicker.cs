@@ -22,6 +22,8 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         
         public CommandLineObjectPickerArgumentValue this[int i] => _arguments[i];
 
+        public int Length => _arguments.Length;
+
         private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
         
         /// <summary>

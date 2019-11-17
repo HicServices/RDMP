@@ -7,6 +7,7 @@
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
+using Rdmp.Core.Repositories.Construction;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.CommandExecution.AtomicCommands
@@ -25,6 +26,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
                 SetImpossible("TableInfos cannot not be renamed");
         }
 
+        [UseWithObjectConstructor]
         public ExecuteCommandRename(IBasicActivateItems activator, INamed nameable, string newValue):this(activator,nameable)
         {
             _newValue = newValue;
