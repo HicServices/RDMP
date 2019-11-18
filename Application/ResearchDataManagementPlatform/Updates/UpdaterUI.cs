@@ -47,7 +47,8 @@ namespace ResearchDataManagementPlatform.Updates
 
             olvVersion.AspectGetter = (m) => ((ReleaseEntry) m).Version.ToString();
             olvInstall.AspectGetter = (m) => "Install";
-            olvType.AspectGetter = (m) => ((ReleaseEntry) m).Version.SpecialVersion; //.Any() ? "Alpha" : "Stable";
+            olvType.AspectGetter = (m) => 
+                string.IsNullOrEmpty(((ReleaseEntry) m).Version.SpecialVersion)? "Stable":((ReleaseEntry) m).Version.SpecialVersion;
 
             objectListView1.ButtonClick += ObjectListView1_ButtonClick;
         }
