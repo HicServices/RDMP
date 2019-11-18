@@ -12,6 +12,7 @@ using System.Linq;
 using System.Windows.Forms;
 using BrightIdeasSoftware;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
@@ -441,7 +442,7 @@ namespace Rdmp.UI.Collections
 
         /// <summary>
         /// Creates a menu compatible with object <paramref name="o"/>.  Returns null if no compatible menu exists.
-        /// Errors are reported to <see cref="IActivateItems.GlobalErrorCheckNotifier"/> (if set up).
+        /// Errors are reported to <see cref="IBasicActivateItems.GlobalErrorCheckNotifier"/> (if set up).
         /// 
         /// </summary>
         /// <param name="o"></param>

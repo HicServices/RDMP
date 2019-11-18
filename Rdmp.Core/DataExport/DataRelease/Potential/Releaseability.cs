@@ -6,6 +6,9 @@
 
 namespace Rdmp.Core.DataExport.DataRelease.Potential
 {
+    /// <summary>
+    /// Describes whether a given extraction artifact (e.g. a data extraction to CSV) is in a fit state for release (e.g. to the researcher)
+    /// </summary>
     public enum Releaseability
     {
         /// <summary>

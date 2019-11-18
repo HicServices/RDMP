@@ -8,6 +8,9 @@ using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.CommandExecution.Combining
 {
+    /// <summary>
+    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="CohortAggregateContainer"/>
+    /// </summary>
     public class CohortIdentificationConfigurationCommand:ICombineToMakeCommand
     {
         public CohortIdentificationConfiguration CohortIdentificationConfiguration { get; set; }

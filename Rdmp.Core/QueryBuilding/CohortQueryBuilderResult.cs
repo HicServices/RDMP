@@ -82,6 +82,7 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="cacheServer"></param>
         /// <param name="childProvider"></param>
         /// <param name="helper"></param>
+        /// <param name="customise"></param>
         public CohortQueryBuilderResult(ExternalDatabaseServer cacheServer, ICoreChildProvider childProvider, CohortQueryBuilderHelper helper,QueryBuilderCustomArgs customise)
         {
             CacheServer = cacheServer;
@@ -264,10 +265,12 @@ namespace Rdmp.Core.QueryBuilding
             var dis = arg as IDisableable;
             return dis == null || !dis.IsDisabled;
         }
+
         /// <summary>
         /// Returns the SQL keyword for the <paramref name="currentContainerOperation"/>
         /// </summary>
         /// <param name="currentContainerOperation"></param>
+        /// <param name="dbType"></param>
         /// <returns></returns>
         protected virtual string GetSetOperationSql(SetOperation currentContainerOperation,DatabaseType dbType)
         {

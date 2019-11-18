@@ -22,7 +22,7 @@ namespace Rdmp.Core.Logging
 
         /// <summary>
         /// Creates a new filter showing records in the <paramref name="loggingTable"/> that belong to a parent Type (share foreign key
-        /// <param name="id"></param> e.g. applying a filter on <see cref="LoggingTables.ProgressLog"/> will show all log entries for
+        /// <paramref name="id"/> e.g. applying a filter on <see cref="LoggingTables.ProgressLog"/> will show all log entries for
         /// the parent <see cref="LoggingTables.TableLoadRun"/> with that <paramref name="id"/>.  Pass null to not filter.
         /// </summary>
         /// <param name="loggingTable"></param>

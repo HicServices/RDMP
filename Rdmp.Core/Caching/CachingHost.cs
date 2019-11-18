@@ -26,22 +26,42 @@ namespace Rdmp.Core.Caching
     /// </summary>
     public class CachingHost
     {
+        /// <summary>
+        /// The cacheable tasks that the host will be running
+        /// </summary>
         public List<ICacheProgress> CacheProgressList { get; set; }
+        
+        /// <summary>
+        /// True if the host is attempting to back fill the cache with failed date ranges from the past
+        /// </summary>
         public bool RetryMode { get; set; }
-        // this is more because we can't retrieve CacheWindows from LoadProgresss (yet) 
-
+        
         private readonly ICatalogueRepository _repository;
-
+        
+        // this is more because we can't retrieve CacheWindows from LoadProgresss (yet) 
         private List<PermissionWindowCacheDownloader> _downloaders;
         
+        /// <summary>
+        /// True to shut down once the <see cref="PermissionWindow"/> for the <see cref="CacheProgressList"/> is exceeded.  False
+        /// to sleep until it becomes permissible again.
+        /// </summary>
         public bool TerminateIfOutsidePermissionWindow { get; set; }
 
+        /// <summary>
+        /// Creates a new <see cref="CachingHost"/> connected to the RDMP <paramref name="repository"/>.
+        /// </summary>
+        /// <param name="repository"></param>
         public CachingHost(ICatalogueRepository repository)
         {
             _repository = repository;
             RetryMode = false;
         }
 
+        /// <summary>
+        /// Runs the first (which must be the only) <see cref="CacheProgressList"/> 
+        /// </summary>
+        /// <param name="listener"></param>
+        /// <param name="cancellationToken"></param>
         public void Start(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             if (CacheProgressList.Count > 1)
