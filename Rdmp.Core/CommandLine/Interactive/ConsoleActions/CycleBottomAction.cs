@@ -2,6 +2,8 @@
 
 using System;
 
+#pragma warning disable 1591
+
 namespace Rdmp.Core.CommandLine.Interactive.ConsoleActions
 {
     class CycleBottomAction : IConsoleAction

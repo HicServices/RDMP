@@ -12,14 +12,12 @@ using System.Threading;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
-using Rdmp.Core.Providers;
-using Rdmp.UI.SimpleDialogs.NavigateTo;
 using ReusableLibraryCode;
 
-namespace Rdmp.UI.Collections.Providers.Filtering
+namespace Rdmp.Core.Providers
 {
     /// <summary>
-    /// Scores objects as to how relevant they are to a given search string (See <see cref="NavigateToObjectUI"/>).
+    /// Scores objects as to how relevant they are to a given search string 
     /// </summary>
     public class SearchablesMatchScorer
     {

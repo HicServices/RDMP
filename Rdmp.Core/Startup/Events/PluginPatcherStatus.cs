@@ -6,9 +6,20 @@
 
 namespace Rdmp.Core.Startup.Events
 {
+    /// <summary>
+    /// Describes the status of an <see cref="MapsDirectlyToDatabaseTable.Versioning.PluginPatcher"/> which is responsible
+    /// for patching the database schema of a table used by a plugin
+    /// </summary>
     public enum PluginPatcherStatus
     {
+        /// <summary>
+        /// There was a problem constructing an instance of the patcher class
+        /// </summary>
         CouldNotConstruct,
+
+        /// <summary>
+        /// Patcher was successfully created
+        /// </summary>
         Healthy
     }
 }

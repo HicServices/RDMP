@@ -20,6 +20,11 @@ namespace Rdmp.Core.CommandExecution
     /// </summary>
     public interface ICombineToMakeCommand
     {
+        /// <summary>
+        /// Returns the Sql (if any) for the object the user is seeking to combine (e.g. by dragging / copying etc).  This determines
+        /// what happens when the <see cref="ICombineableSource"/> is combined with an sql endpoint (e.g. SQL text editor in the UI).
+        /// </summary>
+        /// <returns></returns>
         string GetSqlString();
     }
 }

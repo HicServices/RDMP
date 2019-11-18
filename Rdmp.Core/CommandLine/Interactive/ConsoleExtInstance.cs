@@ -3,6 +3,8 @@
 using System;
 using Rdmp.Core.CommandLine.Interactive.ConsoleActions;
 
+#pragma warning disable 1591
+
 namespace Rdmp.Core.CommandLine.Interactive
 {
     internal class ConsoleExtInstance : IConsole

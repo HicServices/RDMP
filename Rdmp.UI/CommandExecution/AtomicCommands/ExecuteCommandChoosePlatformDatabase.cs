@@ -52,7 +52,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             dialog.ShowDialog();
         }
 
-        public Image GetImage(IIconProvider iconProvider)
+        public override Image GetImage(IIconProvider iconProvider)
         {
             return iconProvider.GetImage(RDMPConcept.Database);
         }

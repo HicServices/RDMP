@@ -10,7 +10,6 @@ namespace Rdmp.Core.CommandExecution
 {
     /// <summary>
     /// Models a request to make a given object (<see cref="ObjectToEmphasise"/>) in an RDMP tree view visible to the user.
-    /// See Also <see cref="ExecuteCommandShow"/> and <see cref="ExecuteCommandPin"/>.
     /// </summary>
     public class EmphasiseRequest
     {

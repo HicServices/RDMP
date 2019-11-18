@@ -14,7 +14,6 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cache;
 using Rdmp.Core.Curation.Data.Pipelines;
 using Rdmp.Core.DataFlowPipeline;
-using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Progress;
 
 namespace Rdmp.Core.Caching
@@ -32,38 +31,19 @@ namespace Rdmp.Core.Caching
         private IDataLoadEventListener _listener;
         private RetrievalResult _retrievalResult;
         
-        private Dictionary<IDataFlowPipelineEngine, ILoadProgress> _engineMap;
-        private readonly ICatalogueRepository _repository;
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="permissionWindow">May be null, then allows downloading of CacheProgress with no associated PermissionWindow</param>
-        /// <param name="repository"></param>
-        /// <param name="pipelineEngineExecutionStrategy">Multiple CacheProgresses will result in multiple PipelineEngines, this strategy determines how these should be run, e.g. Round-robin, Async</param>
-        public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, ICatalogueRepository repository, IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)
-        {
-            _permissionWindow = permissionWindow;
-            _cacheProgressItems = _permissionWindow.CacheProgresses.ToList();
-            _repository = repository;
-            _pipelineEngineExecutionStrategy = pipelineEngineExecutionStrategy;
-        }
-
         /// <summary>
         /// Overload with specific cache items to download for this permission window
         /// </summary>
         /// <param name="permissionWindow"></param>
         /// <param name="cacheProgressItems"></param>
-        /// <param name="repository"></param>
         /// <param name="pipelineEngineExecutionStrategy"></param>
-        public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, List<ICacheProgress> cacheProgressItems, ICatalogueRepository repository, IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)
+        public PermissionWindowCacheDownloader(IPermissionWindow permissionWindow, List<ICacheProgress> cacheProgressItems, IMultiPipelineEngineExecutionStrategy pipelineEngineExecutionStrategy)
         {
             _permissionWindow = permissionWindow;
 
             CheckCacheProgressesUseCorrectPermissionWindow(cacheProgressItems);
             _cacheProgressItems = cacheProgressItems;
 
-            _repository = repository;
             _pipelineEngineExecutionStrategy = pipelineEngineExecutionStrategy;
         }
 
@@ -125,8 +105,6 @@ namespace Rdmp.Core.Caching
 
         private RetrievalResult RunPipelineExecutionTask(GracefulCancellationToken cancellationToken, Func<ICacheProgress, IDataFlowPipelineEngine> createEngineFunc)
         {
-            _engineMap = new Dictionary<IDataFlowPipelineEngine, ILoadProgress>();
-            
             // CreateCachingEngine also populates the engineMap as it knows about both the load schedule and pipeline engine at the same time
             var cachingEngines = _cacheProgressItems.Select(createEngineFunc).ToList();
             
@@ -213,17 +191,13 @@ namespace Rdmp.Core.Caching
         private IDataFlowPipelineEngine CreateCachingEngine(ICacheProgress cacheProgress)
         {
             var cachingPipelineEngineFactory = new CachingPipelineUseCase(cacheProgress);
-            var engine = cachingPipelineEngineFactory.GetEngine(_listener);
-            _engineMap.Add(engine, cacheProgress.LoadProgress);
-            return engine;
+            return cachingPipelineEngineFactory.GetEngine(_listener);
         }
 
         private IDataFlowPipelineEngine CreateRetryCachingEngine(ICacheProgress cacheProgress)
         {
             var cachingPipelineEngineFactory = new CachingPipelineUseCase(cacheProgress, true,new FailedCacheFetchRequestProvider(cacheProgress));
-            var engine = cachingPipelineEngineFactory.GetEngine(_listener);
-            _engineMap.Add(engine, cacheProgress.LoadProgress);
-            return engine;
+            return cachingPipelineEngineFactory.GetEngine(_listener);
         }
 
         private void CheckCacheProgressesUseCorrectPermissionWindow(IEnumerable<ICacheProgress> cacheProgressList)

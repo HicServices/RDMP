@@ -2,6 +2,8 @@
 
 using System.Collections.Generic;
 
+#pragma warning disable 1591
+
 namespace Rdmp.Core.CommandLine.Interactive
 {
 

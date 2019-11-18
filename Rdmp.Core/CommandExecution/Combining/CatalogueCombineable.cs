@@ -11,6 +11,9 @@ using Rdmp.Core.Curation.Data.Cohort;
 
 namespace Rdmp.Core.CommandExecution.Combining
 {
+    /// <summary>
+    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="Catalogue"/>
+    /// </summary>
     public class CatalogueCombineable : ICombineToMakeCommand
     {
         public bool ContainsAtLeastOneExtractionIdentifier { get; private set; }
@@ -32,6 +35,7 @@ namespace Rdmp.Core.CommandExecution.Combining
         /// Creates a new AggregateConfiguration based on the Catalogue and returns it as an <see cref="AggregateConfigurationCombineable"/>, you should only use this method during EXECUTE as you do not
         /// want to be randomly creating these as the user waves an object around over the user interface trying to decide where to drop it.
         /// </summary>
+        /// <param name="activator"></param>
         /// <param name="cohortAggregateContainer"></param>
         /// <param name="importMandatoryFilters"></param>
         /// <param name="caller"></param>

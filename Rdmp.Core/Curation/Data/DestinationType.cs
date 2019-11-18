@@ -6,10 +6,24 @@
 
 namespace Rdmp.Core.Curation.Data
 {
+    /// <summary>
+    /// Describes the destination of an artifact (e.g. a linked project extract)
+    /// </summary>
     public enum DestinationType
     {
+        /// <summary>
+        /// Destination is unknown
+        /// </summary>
         Unknown = 0,
+
+        /// <summary>
+        /// Artifact destination is a database (e.g. into an sql server instance)
+        /// </summary>
         Database,
+
+        /// <summary>
+        /// Artifact destination is the file system (e.g. into a folder)
+        /// </summary>
         FileSystem
     }
 }

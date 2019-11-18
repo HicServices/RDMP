@@ -36,6 +36,7 @@
             this.olvInstall = ((BrightIdeasSoftware.OLVColumn)(new BrightIdeasSoftware.OLVColumn()));
             this.pbLoading = new System.Windows.Forms.PictureBox();
             this.cbShowOlderVersions = new System.Windows.Forms.CheckBox();
+            this.cbShowPrerelease = new System.Windows.Forms.CheckBox();
             ((System.ComponentModel.ISupportInitialize)(this.objectListView1)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.pbLoading)).BeginInit();
             this.SuspendLayout();
@@ -63,10 +64,10 @@
             this.olvType,
             this.olvInstall});
             this.objectListView1.Cursor = System.Windows.Forms.Cursors.Default;
-            this.objectListView1.Location = new System.Drawing.Point(3, 28);
+            this.objectListView1.Location = new System.Drawing.Point(3, 50);
             this.objectListView1.Name = "objectListView1";
             this.objectListView1.RowHeight = 19;
-            this.objectListView1.Size = new System.Drawing.Size(683, 217);
+            this.objectListView1.Size = new System.Drawing.Size(683, 195);
             this.objectListView1.TabIndex = 3;
             this.objectListView1.UseCompatibleStateImageBehavior = false;
             this.objectListView1.View = System.Windows.Forms.View.Details;
@@ -74,11 +75,13 @@
             // olvVersion
             // 
             this.olvVersion.Groupable = false;
+            this.olvVersion.Sortable = false;
             this.olvVersion.Text = "Version";
             this.olvVersion.Width = 100;
             // 
             // olvType
             // 
+            this.olvType.Sortable = false;
             this.olvType.Text = "Type";
             this.olvType.Width = 100;
             // 
@@ -87,6 +90,7 @@
             this.olvInstall.ButtonSizing = BrightIdeasSoftware.OLVColumn.ButtonSizingMode.CellBounds;
             this.olvInstall.Groupable = false;
             this.olvInstall.IsButton = true;
+            this.olvInstall.Sortable = false;
             this.olvInstall.Text = "";
             // 
             // pbLoading
@@ -108,12 +112,24 @@
             this.cbShowOlderVersions.TabIndex = 5;
             this.cbShowOlderVersions.Text = "Show Old Versions";
             this.cbShowOlderVersions.UseVisualStyleBackColor = true;
-            this.cbShowOlderVersions.CheckedChanged += new System.EventHandler(this.CbShowOlderVersions_CheckedChanged);
+            this.cbShowOlderVersions.CheckedChanged += new System.EventHandler(this.CheckBoxes_CheckedChanged);
+            // 
+            // cbShowPrerelease
+            // 
+            this.cbShowPrerelease.AutoSize = true;
+            this.cbShowPrerelease.Location = new System.Drawing.Point(571, 27);
+            this.cbShowPrerelease.Name = "cbShowPrerelease";
+            this.cbShowPrerelease.Size = new System.Drawing.Size(111, 17);
+            this.cbShowPrerelease.TabIndex = 6;
+            this.cbShowPrerelease.Text = "Show Prereleases";
+            this.cbShowPrerelease.UseVisualStyleBackColor = true;
+            this.cbShowPrerelease.CheckedChanged += new System.EventHandler(this.CheckBoxes_CheckedChanged);
             // 
             // UpdaterUI
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
+            this.Controls.Add(this.cbShowPrerelease);
             this.Controls.Add(this.cbShowOlderVersions);
             this.Controls.Add(this.pbLoading);
             this.Controls.Add(this.objectListView1);
@@ -135,5 +151,6 @@
         private BrightIdeasSoftware.OLVColumn olvInstall;
         private System.Windows.Forms.PictureBox pbLoading;
         private System.Windows.Forms.CheckBox cbShowOlderVersions;
+        private System.Windows.Forms.CheckBox cbShowPrerelease;
     }
 }

@@ -201,13 +201,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 if (!_typeNames.Contains(t.Name))
                     _typeNames.Add(t.Name);
             }
-            
-            //autocomplete is all Type names (e.g. "Catalogue") + all short codes (e.g. "c")
-            textBox1.AutoCompleteMode = AutoCompleteMode.Append;
-            textBox1.AutoCompleteSource = AutoCompleteSource.CustomSource;
-            textBox1.AutoCompleteCustomSource.AddRange(
-                _typeNames.Union(ShortCodes.Select(kvp=>kvp.Key)).ToArray());
-            
+
             Type[] startingFilters = null;
 
             if (focusedCollection != RDMPCollection.None && StartingEasyFilters.ContainsKey(focusedCollection))
@@ -256,12 +250,16 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             if (e.KeyCode == Keys.Up)
             {
                 e.Handled = true;
+                textBox1.SelectionStart = textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
                 MoveSelectionUp();
             }
 
             if (e.KeyCode == Keys.Down)
             {
                 e.Handled = true;
+                textBox1.SelectionStart = textBox1.Text.Length;
+                textBox1.SelectionLength = 0;
                 MoveSelectionDown();
             }
 
