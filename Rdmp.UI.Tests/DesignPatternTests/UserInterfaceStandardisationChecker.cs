@@ -154,6 +154,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
             //Drag and drop / Activation - Execution Proposal system
             foreach (Type proposalClass in mef.GetAllTypes().Where(t => typeof(ICommandExecutionProposal).IsAssignableFrom(t) && !t.IsAbstract && !t.IsInterface))
             {
+                if(proposalClass.Namespace.Contains("Rdmp.UI.Tests.DesignPatternTests"))
+                    continue;
+
                 //We are looking at something like AutomationServerSlotsMenu
                 if (!proposalClass.Name.StartsWith("ProposeExecutionWhenTargetIs"))
                 {

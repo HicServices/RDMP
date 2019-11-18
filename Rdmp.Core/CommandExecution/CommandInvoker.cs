@@ -129,7 +129,7 @@ namespace Rdmp.Core.CommandExecution
                         idx++;
                     }
                 }
-
+                
                 if(value == null) 
                     value = GetValueForParameterOfType(parameterInfo);
                 
@@ -139,6 +139,8 @@ namespace Rdmp.Core.CommandExecution
 
                 parameterValues.Add(value);
             }
+            if(picker != null && idx < picker.Length)
+                throw new Exception("Unrecognised extra parameter " + picker[idx].RawValue);
 
             var instance = (IAtomicCommand)constructorInfo.Invoke(parameterValues.ToArray());
         
