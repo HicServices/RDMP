@@ -19,12 +19,22 @@ namespace Rdmp.UI.Collections
         private readonly int _numberOfObjects;
         private readonly TextMatchFilterWithWhiteList _modelFilter;
 
+        /// <summary>
+        /// Creates a new whole list filter that prioritizes items in the <paramref name="modelFilter"/> if any
+        /// </summary>
+        /// <param name="numberOfObjects">The maximum number of objects to return (can be exceeded if there are <see cref="TextMatchFilterWithWhiteList.WhiteList"/> objects)</param>
+        /// <param name="modelFilter">The optional search/whitelist filter from which objects should be returned from first</param>
         public CherryPickingTailFilter(int numberOfObjects,TextMatchFilterWithWhiteList modelFilter)
         {
             _numberOfObjects = numberOfObjects;
             _modelFilter = modelFilter;
         }
 
+        /// <summary>
+        /// Returns objects that survive filtering
+        /// </summary>
+        /// <param name="modelObjects">Model objects in the tree</param>
+        /// <returns>Objects that should survive filtering</returns>
         public IEnumerable Filter(IEnumerable modelObjects)
         {
             int countReturned = _numberOfObjects;

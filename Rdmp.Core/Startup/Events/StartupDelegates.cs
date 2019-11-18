@@ -6,8 +6,24 @@
 
 namespace Rdmp.Core.Startup.Events
 {
+    /// <summary>
+    /// Event handler for the <see cref="PlatformDatabaseFoundEventArgs"/> event
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="eventArgs"></param>
     public delegate void FoundPlatformDatabaseHandler(object sender, PlatformDatabaseFoundEventArgs eventArgs);
+
+    /// <summary>
+    /// Event handler for the <see cref="MEFFileDownloadProgressEventArgs"/> event
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="eventArgs"></param>
     public delegate void MEFDownloadProgressHandler(object sender, MEFFileDownloadProgressEventArgs eventArgs);
 
+    /// <summary>
+    /// Event handler for the <see cref="PluginPatcherFoundEventArgs"/> event
+    /// </summary>
+    /// <param name="sender"></param>
+    /// <param name="eventArgs"></param>
     public delegate void PluginPatcherFoundHandler(object sender, PluginPatcherFoundEventArgs eventArgs);
 }

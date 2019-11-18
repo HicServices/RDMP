@@ -6,6 +6,10 @@
 
 namespace Rdmp.Core.Providers.Nodes
 {
+    /// <summary>
+    /// Container node for all <see cref="Rdmp.Core.Curation.Data.Plugin"/> loaded in RDMP including all historic versions of plugins (which
+    /// may not be loaded)
+    /// </summary>
     public class AllPluginsNode:SingletonNode
     {
         public AllPluginsNode():base("Plugins")
