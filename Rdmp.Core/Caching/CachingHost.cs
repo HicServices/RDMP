@@ -20,16 +20,14 @@ using ReusableLibraryCode.Progress;
 namespace Rdmp.Core.Caching
 {
     /// <summary>
-    /// The CachingHost has two public interfaces: 'Start' and 'StartDaemon'. 
-    /// 'Start' is a one-shot mode where any available CacheProgress records are cached until completion (this could be a very long 'one-shot').
-    /// 'StartDaemon' continually attempt to cache available CacheProgress records until cancelled. This mode will keep the caches up-to-date.
+    /// Boot straps a 
     /// </summary>
     public class CachingHost
     {
         /// <summary>
         /// The cacheable tasks that the host will be running
         /// </summary>
-        public List<ICacheProgress> CacheProgressList { get; set; }
+        public ICacheProgress CacheProgress { get; set; }
         
         /// <summary>
         /// True if the host is attempting to back fill the cache with failed date ranges from the past
@@ -42,7 +40,7 @@ namespace Rdmp.Core.Caching
         private List<PermissionWindowCacheDownloader> _downloaders;
         
         /// <summary>
-        /// True to shut down once the <see cref="PermissionWindow"/> for the <see cref="CacheProgressList"/> is exceeded.  False
+        /// True to shut down once the <see cref="PermissionWindow"/> for the <see cref="CacheProgress"/> is exceeded.  False
         /// to sleep until it becomes permissible again.
         /// </summary>
         public bool TerminateIfOutsidePermissionWindow { get; set; }
@@ -58,88 +56,25 @@ namespace Rdmp.Core.Caching
         }
 
         /// <summary>
-        /// Runs the first (which must be the only) <see cref="CacheProgressList"/> 
+        /// Runs the first (which must be the only) <see cref="CacheProgress"/> 
         /// </summary>
         /// <param name="listener"></param>
         /// <param name="cancellationToken"></param>
         public void Start(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
-            if (CacheProgressList.Count > 1)
-                throw new InvalidOperationException(
-                    "Currently this entrypoint only supports single CacheProgress retrieval, ensure CacheProgressList only has one item (it has " +
-                    CacheProgressList.Count + ")");
+            if (CacheProgress == null)
+                throw new InvalidOperationException("No CacheProgress has been set");
 
-            var cacheProgress = CacheProgressList[0];
-            var permissionWindow = cacheProgress.PermissionWindow;
+            var permissionWindow = CacheProgress.PermissionWindow;
 
             _downloaders = new List<PermissionWindowCacheDownloader>
             {
-                new PermissionWindowCacheDownloader(permissionWindow, CacheProgressList, _repository, new RoundRobinPipelineExecution())
+                new PermissionWindowCacheDownloader(permissionWindow, new List<ICacheProgress>(new []{ CacheProgress}), new RoundRobinPipelineExecution())
             };
-
 
             RetrieveNewDataForCache(listener, cancellationToken);
         }
-
-        public void StartDaemon(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
-        {
-            const int sleepInSeconds = 60;
-
-            while (!cancellationToken.IsCancellationRequested)
-            {
-                RetrieveNewDataForCache(listener, cancellationToken);
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information, "Sleeping for " + sleepInSeconds + " seconds"));
-
-                // wake up every sleepInSeconds to re-check if we can download any new data, but check more regularly to see if cancellation has been requested
-                var beenAsleepFor = new Stopwatch();
-                beenAsleepFor.Start();
-                while (beenAsleepFor.ElapsedMilliseconds < (sleepInSeconds*1000))
-                {
-                    if (cancellationToken.IsCancellationRequested)
-                    {
-                        listener.OnNotify(this,
-                            new NotifyEventArgs(ProgressEventType.Information, "Cancellation has been requested"));
-                        break;
-                    }
-
-                    Task.Delay(100).Wait();
-                }
-            }
-
-            listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Daemon has stopped"));
-        }
-
-        public void CacheUsingPermissionWindows(List<IPermissionWindow> permissionWindowList, IDataLoadEventListener listener, GracefulCancellationToken token)
-        {
-            _downloaders = new List<PermissionWindowCacheDownloader>();
-
-            foreach (var permissionWindow in permissionWindowList)
-            {
-                listener.OnNotify(this,
-                    new NotifyEventArgs(ProgressEventType.Information,
-                        "Creating download for permission window: " + permissionWindow.Name));
-                _downloaders.Add(new PermissionWindowCacheDownloader(permissionWindow,  _repository,
-                    new RoundRobinPipelineExecution()));
-            }
-
-            StartDaemon(listener, token);
-        }
-
-        public void CacheUsingCacheProgresses(List<ICacheProgress> cacheProgressList, IDataLoadEventListener listener, GracefulCancellationToken token)
-        {
-            // organise the CacheProgress items into CacheSets, based on any PermissionWindows
-            if (CacheProgressList == null)
-                CacheProgressList = cacheProgressList;
-            else
-                throw new NotSupportedException("CacheProgressList property has already been set... thats probably a problem right? TN2016-08-25");
-
-            _downloaders = new List<PermissionWindowCacheDownloader>();
-            _downloaders.Add(new PermissionWindowCacheDownloader(null, CacheProgressList, _repository, new RoundRobinPipelineExecution()));
-
-            StartDaemon(listener, token);
-        }
-
+        
         private void RetrieveNewDataForCache(IDataLoadEventListener listener, GracefulCancellationToken cancellationToken)
         {
             listener.OnNotify(this, new NotifyEventArgs(ProgressEventType.Information, "Retrieving new data"));

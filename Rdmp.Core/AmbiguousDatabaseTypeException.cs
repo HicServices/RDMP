@@ -16,6 +16,10 @@ namespace Rdmp.Core
     /// </summary>
     public class AmbiguousDatabaseTypeException : Exception
     {
+        /// <summary>
+        /// Creates a new Exception with the given message
+        /// </summary>
+        /// <param name="s"></param>
         public AmbiguousDatabaseTypeException(string s):base(s)
         {
             
