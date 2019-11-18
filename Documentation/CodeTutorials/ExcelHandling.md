@@ -44,6 +44,6 @@ In Excel all Date/Time fields are stored only as a number.  You can see this num
 
 Tests confirming the above behaviour are included in the following tests:
 
-- [ExcelTests.cs](./../../DataLoad/Engine/Tests/DataLoadEngineTests/Unit/ExcelTests.cs)
-- [ExcelConversionTest](./../../DataLoad/Engine/Tests/DataLoadEngineTests/Integration/ExcelConversionTest.cs)
+- [ExcelTests.cs](./../../Rdmp.Core.Tests/DataLoad/Engine/Unit/ExcelTests.cs)
+- [ExcelConversionTest](./../../Rdmp.Core.Tests/DataLoad/Engine/Integration/ExcelConversionTest.cs)
 

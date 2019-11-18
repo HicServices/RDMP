@@ -10,6 +10,9 @@ using Rdmp.Core.DataExport.Data;
 
 namespace Rdmp.Core.CommandExecution.Combining
 {
+    /// <summary>
+    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="ExtractableCohort"/>
+    /// </summary>
     public class ExtractableCohortCombineable : ICombineToMakeCommand
     {
         public int ExternalProjectNumber { get; set; }

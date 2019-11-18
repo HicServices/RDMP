@@ -12,6 +12,12 @@ namespace Rdmp.Core.Validation.Constraints.Primary
     /// </summary>
     public interface IPrimaryConstraint : IConstraint
     {
+        /// <summary>
+        /// Validates the current cell <paramref name="value"/> returning null or a <see cref="ValidationFailure"/> describing
+        /// the reason it does not pass the <see cref="IConstraint"/>
+        /// </summary>
+        /// <param name="value">The cell value that must be validated</param>
+        /// <returns>null if valid otherwise the reason for validation failing</returns>
         ValidationFailure Validate(object value);
     }
 }

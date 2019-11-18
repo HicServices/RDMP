@@ -7,7 +7,9 @@
 
 namespace Rdmp.Core.Validation.Constraints.Primary
 {
-    
+    /// <summary>
+    /// Abstract base that allows plugin developers to create new <see cref="PrimaryConstraint"/> rules
+    /// </summary>
     public abstract class PluginPrimaryConstraint : PrimaryConstraint
     {
     }

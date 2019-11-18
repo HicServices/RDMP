@@ -22,6 +22,8 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         
         public CommandLineObjectPickerArgumentValue this[int i] => _arguments[i];
 
+        public int Length => _arguments.Length;
+
         private readonly HashSet<PickObjectBase> _pickers = new HashSet<PickObjectBase>();
         
         /// <summary>
@@ -48,6 +50,7 @@ namespace Rdmp.Core.CommandLine.Interactive.Picking
         /// Constructs a picker with only the passed format(s) (<paramref name="pickers"/>) and immediately parse the provided <paramref name="args"/>
         /// </summary>
         /// <param name="args"></param>
+        /// <param name="repositoryLocator"></param>
         /// <param name="pickers"></param>
         public CommandLineObjectPicker(string[] args,IRDMPPlatformRepositoryServiceLocator repositoryLocator, IEnumerable<PickObjectBase> pickers)
         {

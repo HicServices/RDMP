@@ -9,6 +9,9 @@ using Rdmp.Core.Repositories;
 
 namespace Rdmp.Core.CommandExecution.Combining
 {
+    /// <summary>
+    /// <see cref="ICombineToMakeCommand"/> for one or more objects of type <see cref="IExtractableDataSet"/>
+    /// </summary>
     public class ExtractableDataSetCombineable : ICombineToMakeCommand
     {
         public IExtractableDataSet[] ExtractableDataSets { get; set; }

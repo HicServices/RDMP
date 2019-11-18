@@ -33,12 +33,13 @@ namespace Rdmp.Core.QueryBuilding
         public DataAccessContext DataAccessContext { get;}
 
         private HashSet<IDataAccessPoint> _points = new HashSet<IDataAccessPoint>();
-        
+
         /// <summary>
         /// Creates a new collection of <see cref="IDataAccessPoint"/> for collecting dependencies e.g.
         /// when building a query in which there are subqueries run on different databases
         /// </summary>
         /// <param name="singleServer">True to require all <see cref="Points"/> to be on the same server (and type).</param>
+        /// <param name="context"></param>
         public DataAccessPointCollection(bool singleServer,DataAccessContext context = DataAccessContext.InternalDataProcessing)
         {
             SingleServer = singleServer;

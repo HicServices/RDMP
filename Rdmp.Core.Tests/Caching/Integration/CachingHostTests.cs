@@ -76,7 +76,7 @@ namespace Rdmp.Core.Tests.Caching.Integration
             // set SetUp a factory stub to return our engine mock
             var cacheHost = new CachingHost(Repository)
             {
-                CacheProgressList = new List<ICacheProgress> { cp }
+                CacheProgress = cp
             };
 
             var stopTokenSource = new CancellationTokenSource();

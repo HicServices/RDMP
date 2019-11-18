@@ -10,6 +10,9 @@ using ReusableLibraryCode.DataAccess;
 
 namespace Rdmp.Core.CommandExecution.Combining
 {
+    /// <summary>
+    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="DataAccessCredentials"/>
+    /// </summary>
     public class DataAccessCredentialsCombineable : ICombineToMakeCommand
     {
         public DataAccessCredentials DataAccessCredentials { get; private set; }

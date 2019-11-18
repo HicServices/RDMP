@@ -9,6 +9,9 @@ using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution.Combining
 {
+    /// <summary>
+    /// <see cref="ICombineToMakeCommand"/> for an object of type <see cref="IFilter"/>
+    /// </summary>
     public class FilterCombineable : ICombineToMakeCommand
     {
         public IFilter Filter { get; private set; }

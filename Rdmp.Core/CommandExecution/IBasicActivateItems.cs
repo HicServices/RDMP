@@ -26,6 +26,9 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         ICoreChildProvider CoreChildProvider { get; }
 
+        /// <summary>
+        /// Component class for discovering the default DQE, Logging servers etc configured in the current RDMP database
+        /// </summary>
         IServerDefaults ServerDefaults { get; }
 
         /// <summary>

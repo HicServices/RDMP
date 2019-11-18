@@ -70,7 +70,7 @@ namespace Rdmp.Core.Providers
         
         //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
-        private Dictionary<object, DescendancyList> _descendancyDictionary = new Dictionary<object, DescendancyList>();
+        private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new ConcurrentDictionary<object, DescendancyList>();
 
 
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
@@ -838,9 +838,8 @@ namespace Rdmp.Core.Providers
                 var ciNodeDescendancy = descendancy.Add(catalogueItemsNode);
                 AddToDictionaries(new HashSet<object>(cis), ciNodeDescendancy);
 
-                foreach (CatalogueItem ci in cis)
-                    AddChildren(ci,ciNodeDescendancy.Add(ci));
-                
+                for (var index = 0; index < cis.Length; index++)
+                    AddChildren(cis[index], ciNodeDescendancy.Add(cis[index]));
             }
 
             //do we have any foreign key fields into this lookup table
@@ -947,6 +946,8 @@ namespace Rdmp.Core.Providers
                 childObjects.Add(ei);
                 AddChildren(ei, descendancy.Add(ei));
             }
+            else
+                ci.InjectKnown((ExtractionInformation)null); // we know the CatalogueItem has no ExtractionInformation child because it's not in the dictionary
 
             if (ci.ColumnInfo_ID.HasValue)
                 childObjects.Add(new LinkedColumnInfoNode(ci, _allColumnInfos[ci.ColumnInfo_ID.Value]));
@@ -1180,7 +1181,6 @@ namespace Rdmp.Core.Providers
                 AddToDictionaries(children,descendancy);
         }
 
-        private object oAddToDictionariesLock = new object();
         protected void AddToDictionaries(HashSet<object> children, DescendancyList list)
         {
             if(list.IsEmpty)
@@ -1188,57 +1188,55 @@ namespace Rdmp.Core.Providers
          
             //document that the last parent has these as children
             var parent = list.Last();
-            lock (oAddToDictionariesLock)
+
+            _childDictionary.AddOrUpdate(parent,
+                children, (p, s) =>
+                {
+                    if (!s.SetEquals(children))
+                        throw new Exception("Ambiguous children collections for object '" + parent + "'");
+
+                    return s;
+                });
+            
+            //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
+            foreach (object o in children)
+                _descendancyDictionary.AddOrUpdate(o, list,(k,v)=> HandleDescendancyCollision(k,v,list));
+            
+
+            foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
             {
+                var key = masquerader.MasqueradingAs();
 
-                //we have already seen it before
-                if(_childDictionary.ContainsKey(parent))
-                {
-                    if (!_childDictionary[parent].SetEquals(children))
-                        throw new Exception("Ambiguous children collections for object '" + parent  +"'");
-                }
-                else
-                    _childDictionary.AddOrUpdate(parent,children,(o, set) => set);
+                if (!AllMasqueraders.ContainsKey(key))
+                    AllMasqueraders.AddOrUpdate(key, new HashSet<IMasqueradeAs>(), (o, set) => set);
 
-                //now document the entire parent order to reach each child object i.e. 'Root=>Grandparent=>Parent'  is how you get to 'Child'
-                foreach (object o in children)
-                {
-                    //if there is a collision for the object then it means we already know of another way to get to it (that's a problem, there can be only one)
-                    if(_descendancyDictionary.ContainsKey(o))
-                    {
-
-                        var collision =_descendancyDictionary[o];
-                        //the old way of getting to it was marked with BetterRouteExists so we can discard it
-                        if (collision.BetterRouteExists)
-                            _descendancyDictionary.Remove(o);
-                        //the new one is marked BetterRouteExists so just throw away the new one
-                        else if (list.BetterRouteExists)
-                            continue;
-                        //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
-                        else if (list.NewBestRoute && !collision.NewBestRoute)
-                            _descendancyDictionary.Remove(o);
-                        else
-                        {
-                            //there was a horrible problem with 
-                            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs("Could not add '" + o + "' to Ascendancy Tree with parents " + list + " because it is already listed under hierarchy " + collision,CheckResult.Fail));
-                            return;
-                        }
-                    
-                    }
-
-                    _descendancyDictionary.Add(o, list);
-                }
-
-                foreach (IMasqueradeAs masquerader in children.OfType<IMasqueradeAs>())
-                {
-                    var key = masquerader.MasqueradingAs();
-
-                    if(!AllMasqueraders.ContainsKey(key))
-                        AllMasqueraders.AddOrUpdate(key,new HashSet<IMasqueradeAs>(),(o, set) => set);
-
-                    AllMasqueraders[key].Add(masquerader);
-                }
+                AllMasqueraders[key].Add(masquerader);
             }
+            
+        }
+
+        private DescendancyList HandleDescendancyCollision(object key, DescendancyList oldRoute, DescendancyList newRoute)
+        {
+            //if the new route is the best best
+            if (newRoute.NewBestRoute && !oldRoute.NewBestRoute)
+                return newRoute;
+
+            //the new one is marked BetterRouteExists so just throw away the new one
+            if (newRoute.BetterRouteExists)
+                return oldRoute;
+            
+            //the new one is marked as the NewBestRoute so we can get rid of the old one and replace it
+            if (oldRoute.BetterRouteExists)
+                return newRoute;
+
+            
+            //there was a horrible problem with 
+            _errorsCheckNotifier.OnCheckPerformed(new CheckEventArgs(
+                "Could not add '" + key + "' to Ascendancy Tree with parents " + newRoute +
+                " because it is already listed under hierarchy " + oldRoute, CheckResult.Fail));
+            
+            return oldRoute;
+        
         }
 
         public DescendancyList GetDescendancyListIfAnyFor(object model)
@@ -1340,7 +1338,7 @@ namespace Rdmp.Core.Providers
                                 _childDictionary[o].Add(pluginChild);
                                 
                                 //add to the child collection of the parent object kvp.Key
-                                _descendancyDictionary.Add(pluginChild, newDescendancy);
+                                _descendancyDictionary.AddOrUpdate(pluginChild, newDescendancy,(s,e)=>newDescendancy);
 
                                 //we have found a new object so we must ask other plugins about it (chances are a plugin will have a whole tree of sub objects)
                                 newObjectsFound.Add(pluginChild);

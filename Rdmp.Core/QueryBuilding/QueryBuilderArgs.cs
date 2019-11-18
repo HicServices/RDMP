@@ -37,6 +37,8 @@ namespace Rdmp.Core.QueryBuilding
         /// <param name="join">The join usage relationship object (includes join direction etc)</param>
         /// <param name="joinedTo">The patient index to which the join is made to (e.g. <see cref="JoinableCohortAggregateConfiguration.AggregateConfiguration"/>)</param>
         /// <param name="joinSql">The full SQL of the join</param>
+        /// <param name="customisations"></param>
+        /// <param name="globals"></param>
         public QueryBuilderArgs(JoinableCohortAggregateConfigurationUse join,AggregateConfiguration joinedTo,CohortQueryBuilderDependencySql joinSql, QueryBuilderCustomArgs customisations, ISqlParameter[] globals):this(customisations,globals)
         {
             JoinIfAny = join;

@@ -3,6 +3,8 @@
 using System;
 using System.Globalization;
 
+#pragma warning disable 1591
+
 namespace Rdmp.Core.CommandLine.Interactive.ConsoleActions
 {
     class AutoCompleteUsingPreviousLinesAction : IConsoleAction

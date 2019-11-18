@@ -39,6 +39,11 @@ namespace Rdmp.Core.Logging
         /// If the Server was set from a persistent database reference this property will store it e.g. a logging ExternalDatabaseServer
         /// </summary>
         public IDataAccessPoint DataAccessPointIfAny { get; private set; }
+        
+        /// <summary>
+        /// Event triggered every time a new <see cref="IDataLoadInfo"/> is created.
+        /// </summary>
+        public event DataLoadInfoHandler DataLoadInfoCreated;
 
         public LogManager(DiscoveredServer server)
         {
@@ -211,7 +216,7 @@ namespace Rdmp.Core.Logging
             }
         }
 
-        public event DataLoadInfoHandler DataLoadInfoCreated;
+        
 
         public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)
         {
@@ -220,8 +225,7 @@ namespace Rdmp.Core.Logging
 
             var toReturn = new DataLoadInfo(dataLoadTaskName, packageName, description, suggestedRollbackCommand, isTest, Server);
 
-            if (DataLoadInfoCreated != null)
-                DataLoadInfoCreated(this,toReturn);
+            DataLoadInfoCreated?.Invoke(this,toReturn);
 
             return toReturn;
 

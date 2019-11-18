@@ -18,6 +18,7 @@ using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
+using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 
@@ -31,13 +32,20 @@ namespace Rdmp.Core.CommandLine.Interactive
         /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; private set; }
 
+        /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
 
+        /// <inheritdoc/>
         public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
         
-
+        /// <inheritdoc/>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
+        /// <summary>
+        /// Creates a new instance connected to the provided RDMP platform databases
+        /// </summary>
+        /// <param name="repositoryLocator">The databases to connect to</param>
+        /// <param name="globalErrorCheckNotifier">The global error provider for non fatal issues</param>
         public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             RepositoryLocator = repositoryLocator;
@@ -174,7 +182,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
         private CommandLineObjectPickerArgumentValue ReadLine(PickObjectBase picker)
         {
-            Console.WriteLine($"Format:\r\n {picker.Format} \r\n Example(s): \r\n {string.Join(Environment.NewLine,picker.Examples)} \r\n Help: \r\n {picker.Help}");
+            Console.WriteLine($"Format: {picker.Format}");
             string line = ReadLine(picker.GetAutoCompleteIfAny());
 
             return picker.Parse(line, 0);
@@ -184,7 +192,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             Console.WriteLine("Enter value in one of the following formats:");
 
             foreach (PickObjectBase p in pickers)
-                Console.WriteLine($"Format:\r\n {p.Format} \r\n Example(s): \r\n {string.Join(Environment.NewLine,p.Examples)} \r\n Help: \r\n {p.Help}");
+                Console.WriteLine($"Format: {p.Format}");
             
             string line = ReadLine(autoComplete);
             
@@ -247,6 +255,10 @@ namespace Rdmp.Core.CommandLine.Interactive
         public string GetString(string prompt, List<string> options)
         {
             Console.WriteLine(prompt +":");
+
+            //This implementation does not play nice with linux
+            if (EnvironmentInfo.IsLinux)
+                return Console.ReadLine();
             
             var cyclingAutoComplete = new CyclingAutoComplete();
             while (true)

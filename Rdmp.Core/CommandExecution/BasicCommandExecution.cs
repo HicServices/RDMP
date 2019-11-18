@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandExecution
         public const string ExecuteCommandPrefix = "ExecuteCommand";
 
         /// <summary>
-        /// True to add "..." to the end of the <see cref="GetCommandName"/>
+        /// True to add "..." to the end of the <see cref="ICommandExecution.GetCommandName"/>
         /// </summary>
         protected bool UseTripleDotSuffix { get; set; }
 

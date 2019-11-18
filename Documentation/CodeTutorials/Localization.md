@@ -10,9 +10,9 @@ Language specific strings should appear in GlobalStrings.[language].resx e.g. [G
 
 ## Icons
 
-Most icons in RDMP are 19x19 png files.  These are stored in CatalogueIcons.resx and FamFamFamIcons.resx.  These resources files support language specific overriding in the same manner as with strings (above) e.g. [CatalogueIcons.zh-Hans](../../Rdmp.UI/Icons/IconProvision/CatalogueIcons.zh-Hans.resx).
+Most icons in RDMP are 19x19 png files.  These are stored in CatalogueIcons.resx and FamFamFamIcons.resx.  These resources files support language specific overriding in the same manner as with strings (above) e.g. [CatalogueIcons.zh-Hans](../../Rdmp.Core/Icons/IconProvision/CatalogueIcons.zh-Hans.resx).
 
-Each language should store these images in it's own subdirectory e.g. [zh-Hans](../../Rdmp.UI/Icons/zh-Hans)
+Each language should store these images in it's own subdirectory e.g. [zh-Hans](../../Rdmp.Core/Icons/zh-Hans)
 
 ## Naming Conventions
 Since there are lot of strings in RDMP we will need to follow to ensure maintainability.
