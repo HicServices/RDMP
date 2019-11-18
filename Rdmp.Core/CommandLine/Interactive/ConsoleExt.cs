@@ -4,6 +4,8 @@ using System;
 using System.Collections.Generic;
 using Rdmp.Core.CommandLine.Interactive.ConsoleActions;
 
+#pragma warning disable 1591
+
 namespace Rdmp.Core.CommandLine.Interactive
 {
     static class ConsoleExt

@@ -4,8 +4,14 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using Rdmp.Core.CohortCreation.Execution;
+
 namespace Rdmp.Core.QueryBuilding
 {
+    /// <summary>
+    /// Describes the usability of a cohort query cache when building a cohort in a <see cref="CohortCompiler"/>.  This depends primarily on whether
+    /// the cache is on the same server as the other datasets being built
+    /// </summary>
     public enum CacheUsage
     {
         /// <summary>

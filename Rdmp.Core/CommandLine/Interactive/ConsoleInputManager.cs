@@ -32,13 +32,20 @@ namespace Rdmp.Core.CommandLine.Interactive
         /// <inheritdoc/>
         public ICoreChildProvider CoreChildProvider { get; private set; }
 
+        /// <inheritdoc/>
         public IServerDefaults ServerDefaults { get; }
 
+        /// <inheritdoc/>
         public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
         
-
+        /// <inheritdoc/>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
+        /// <summary>
+        /// Creates a new instance connected to the provided RDMP platform databases
+        /// </summary>
+        /// <param name="repositoryLocator">The databases to connect to</param>
+        /// <param name="globalErrorCheckNotifier">The global error provider for non fatal issues</param>
         public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             RepositoryLocator = repositoryLocator;

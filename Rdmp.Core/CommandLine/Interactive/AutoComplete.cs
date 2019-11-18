@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Linq;
 
+#pragma warning disable 1591
+
 namespace Rdmp.Core.CommandLine.Interactive
 {
     static class AutoComplete
