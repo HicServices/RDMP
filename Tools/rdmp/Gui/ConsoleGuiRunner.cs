@@ -4,7 +4,6 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using System;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
@@ -14,12 +13,16 @@ using ReusableLibraryCode.Progress;
 using Terminal.Gui;
 using System.Diagnostics;
 using System.Reflection;
+using Rdmp.Core.Providers;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
     public class ConsoleGuiRunner : IRunner
     {
+        IRDMPPlatformRepositoryServiceLocator _repositoryLocator;
+
         private readonly ConsoleGuiOptions _options;
+
 
         public ConsoleGuiRunner(ConsoleGuiOptions options)
         {
@@ -27,10 +30,11 @@ namespace Rdmp.Core.CommandLine.Gui
         }
         public int Run(IRDMPPlatformRepositoryServiceLocator repositoryLocator, IDataLoadEventListener listener, ICheckNotifier checkNotifier, GracefulCancellationToken token)
         {
+            _repositoryLocator = repositoryLocator;
 
             Application.Init ();
             var top = Application.Top;
-
+            
             // Creates the top-level window to show
             var win = new Window ("RDMP v" + 
 FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).ProductVersion) {
@@ -46,19 +50,27 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
             // Creates a menubar, the item "New" has a help menu.
             var menu = new MenuBar (new MenuBarItem [] {
                 new MenuBarItem ("_File", new MenuItem [] {
+                    new MenuItem("_Open","",Open),
                     new MenuItem ("_Quit", "", () => { top.Running = false; })
-                }),
-                new MenuBarItem ("_Edit", new MenuItem [] {
-                    new MenuItem ("_Copy", "", null),
-                    new MenuItem ("C_ut", "", null),
-                    new MenuItem ("_Paste", "", null)
                 })
             });
+
+
             top.Add (menu);
 
             Application.Run();
 
             return 0;
+        }
+
+        public void Open()
+        {
+            var dlg = new ConsoleGuiSelectOne(new DataExportChildProvider(_repositoryLocator,null,new IgnoreAllErrorsCheckNotifier()));
+            if (dlg.ShowDialog())
+            {
+                var edit = new ConsoleGuiEdit(dlg.Selected);
+                edit.ShowDialog();
+            }
         }
     }
 }
