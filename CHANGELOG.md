@@ -15,7 +15,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed Console input in CLI when running under Linux
-
+- Fixed issue where parallel checks could fail due to UI cross thread access
+- 
 ...
 
 ### Added
