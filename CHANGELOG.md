@@ -11,12 +11,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Cloning an Extraction Configuration no longer expands clone and names the new copy "Clone of [..]" (previously name was a guid)
 - Select object dialog now display a maximum of 1000 objects (prioritising your search text)
+- Logging tasks are now case insensitive
 
 ### Fixed
 
 - Fixed Console input in CLI when running under Linux
 - Fixed issue where parallel checks could fail due to UI cross thread access
-- Fixed bug in backup archive trigger (for DLE) when loading tables with dodgy column names (e.g. `[My Group by lolz]`)
+- Fixed bugs in DLE when loading tables with dodgy column names (e.g. `[My Group by lolz]`)
 - 
 ...
 
