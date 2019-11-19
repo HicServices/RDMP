@@ -17,6 +17,7 @@ using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.CommandLine.Interactive;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Aggregation;
 using Rdmp.Core.Curation.Data.Cohort;
@@ -34,7 +35,6 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -57,37 +57,31 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// Central class for RDMP main application, this class provides acceess to all the main systems in RDMP user interface such as Emphasis, the RefreshBus, Child 
     /// provision etc.  See IActivateItems for full details
     /// </summary>
-    public class ActivateItems : IActivateItems, IRefreshBusSubscriber
+    public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
     {
-        public event EmphasiseItemHandler Emphasise;
-
         private readonly DockPanel _mainDockPanel;
         private readonly WindowManager _windowManager;
 
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; set; }
         public WindowFactory WindowFactory { get; private set; }
 
         public ICoreIconProvider CoreIconProvider { get; private set; }
 
         public ITheme Theme { get; private set; }
-        public IServerDefaults ServerDefaults { get; private set; }
+
         public RefreshBus RefreshBus { get; private set; }
         public FavouritesProvider FavouritesProvider { get; private set; }
-
-        public ICoreChildProvider CoreChildProvider { get; private set; }
-
+        
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         readonly UIObjectConstructor _constructor = new UIObjectConstructor();
 
         public IArrangeWindows WindowArranger { get; private set; }
         
-        public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
-        public void Publish(DatabaseEntity databaseEntity)
+        public override void Publish(DatabaseEntity databaseEntity)
         {
             RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
         }
 
-        public void Show(string message)
+        public override void Show(string message)
         {
             WideMessageBox.Show("Message",message);
         }
@@ -98,17 +92,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public List<IProblemProvider> ProblemProviders { get; private set; }
 
-        public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier)
+        public ActivateItems(ITheme theme,RefreshBus refreshBus, DockPanel mainDockPanel, IRDMPPlatformRepositoryServiceLocator repositoryLocator, WindowFactory windowFactory, WindowManager windowManager, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
             Theme = theme;
             WindowFactory = windowFactory;
             _mainDockPanel = mainDockPanel;
             _windowManager = windowManager;
-            GlobalErrorCheckNotifier = globalErrorCheckNotifier;
-            RepositoryLocator = repositoryLocator;
-
-            ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
-
+            
             //Shouldn't ever change externally to your session so doesn't need constantly refreshed
             FavouritesProvider = new FavouritesProvider(this, repositoryLocator.CatalogueRepository);
 
@@ -209,7 +199,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
 
-        public bool DeleteWithConfirmation(IDeleteable deleteable)
+        public override bool DeleteWithConfirmation(IDeleteable deleteable)
         {
             var databaseObject = deleteable as DatabaseEntity;
                         
@@ -301,7 +291,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
         
-        public void RequestItemEmphasis(object sender, EmphasiseRequest request)
+        public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
         {
             //ensure a relevant Toolbox is available
             var descendancy = CoreChildProvider.GetDescendancyListIfAnyFor(request.ObjectToEmphasise);
@@ -319,18 +309,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
 
             //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
-            var h = Emphasise;
-            if (h != null)
-            {
-                var args = new EmphasiseEventArgs(request);
-                h(this, args);
-
-                if(args.FormRequestingActivation is DockContent content)
-                    content.Activate();
-            }
+            //Look at assignments to Sender, the invocation list can change the Sender!
+            var args = new EmphasiseEventArgs(request);
+            base.OnEmphasise(this,args);
+            
+            //might be different than sender that was passed in
+            if(args.Sender is DockContent content)
+                content.Activate();
         }
 
-        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
             var selector = new PickOneOrCancelDialog<Enum>(Enum.GetValues(enumType).Cast<Enum>().ToArray(), prompt);
             if (selector.ShowDialog() == DialogResult.OK)
@@ -372,18 +360,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
         }
-
-        /// <summary>
-        /// Returns the root tree object which hosts the supplied object.  If the supplied object has no known descendancy it is assumed
-        /// to be the root object itself so it is returned
-        /// </summary>
-        /// <param name="objectToEmphasise"></param>
-        /// <returns></returns>
-        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
-        {
-            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
-        }
-
+        
         public string GetDocumentation(Type type)
         {
             return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
@@ -561,12 +538,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         /// <inheritdoc/>
-        public bool YesNo(string text,string caption)
+        public override bool YesNo(string text,string caption)
         {
             return MessageBox.Show(text,caption,MessageBoxButtons.YesNo) == DialogResult.Yes;
         }
 
-        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
             var textTyper = new TypeTextOrCancelDialog(header, prompt, maxLength, initialText)
             {
@@ -577,7 +554,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return !string.IsNullOrWhiteSpace(text);
         }
 
-        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,false,true);
             dialog.ShowDialog();
@@ -588,7 +565,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return dialog.SelectedDatabase;
         }
 
-        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
             var dialog = new ServerDatabaseTableSelectorDialog(taskDescription,true,true);
             
@@ -600,19 +577,19 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return dialog.SelectedTable;
         }
 
-        public void ShowException(string errorText, Exception exception)
+        public override void ShowException(string errorText, Exception exception)
         {
             ExceptionViewer.Show(errorText, exception);
         }
 
-        public void Wait(string title, Task task, CancellationTokenSource cts)
+        public override void Wait(string title, Task task, CancellationTokenSource cts)
         {
             var ui = new WaitUI(title,task,cts);
             ui.ShowDialog();
         }
 
 
-        public IEnumerable<Type> GetIgnoredCommands()
+        public override IEnumerable<Type> GetIgnoredCommands()
         {
             yield return typeof(ExecuteCommandPin);
             yield return typeof(ExecuteCommandUnpin);
@@ -623,7 +600,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
 
         
-        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+        public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
             string initialSearchText = null, bool allowAutoSelect = false)
         {
             if (!availableObjects.Any())
@@ -654,7 +631,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null; //user didn't select one of the IMapsDirectlyToDatabaseTable objects shown in the dialog
         }
 
-        public DirectoryInfo SelectDirectory(string prompt)
+        public override DirectoryInfo SelectDirectory(string prompt)
         {
             var fb = new FolderBrowserDialog();
 
@@ -664,12 +641,12 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public FileInfo SelectFile(string prompt)
+        public override FileInfo SelectFile(string prompt)
         {
             return SelectFile(prompt, null, null);
         }
 
-        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+        public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
             var fb = new OpenFileDialog {CheckFileExists = false,Multiselect = false};
 
@@ -681,20 +658,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             return null;
         }
+        
 
-        public IEnumerable<T> GetAll<T>()
-        {
-            return CoreChildProvider.GetAllSearchables()
-                .Keys.OfType<T>();
-        }
-
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
-        {
-            return CoreChildProvider.GetAllSearchables()
-                .Keys.Where(t.IsInstanceOfType);
-        }
-
-        public object SelectValueType(string prompt, Type paramType)
+        public override object SelectValueType(string prompt, Type paramType)
         {
             //if it's Enum or Enum?
             if((Nullable.GetUnderlyingType(paramType) ??paramType).IsEnum)
@@ -718,7 +684,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
         {
             if (!availableObjects.Any())
@@ -746,7 +712,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return null;
         }
 
-        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        public override List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
         {
             return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
             {

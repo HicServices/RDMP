@@ -21,7 +21,6 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;

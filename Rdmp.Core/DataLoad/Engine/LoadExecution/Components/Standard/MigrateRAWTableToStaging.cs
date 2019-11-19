@@ -86,10 +86,12 @@ namespace Rdmp.Core.DataLoad.Engine.LoadExecution.Components.Standard
                 "None required, if fails then simply drop Staging database and reload dataset", "STAGING:" + destinationTableName,
                 new DataSource[] { new DataSource("RAW:" + sourceTableName, DateTime.Now) }, -1);
 
+            var syntax = sourceDatabase.Server.GetQuerySyntaxHelper();
+
             //connect to source and open a reader! note that GetReaderForRAW will at this point preserve the state of the database such that any commands e.g. deletes will not have any effect even though ExecutePipeline has not been called!
             var source = new DbDataCommandDataFlowSource(
-                "Select distinct * from "+sourceTableName,
-                "Fetch data from " + sourceTableName,
+                "Select distinct * from "+ syntax.EnsureWrapped(sourceTableName),
+                "Fetch data from " + syntax.EnsureWrapped(sourceTableName),
                 sourceDatabase.Server.Builder, 50000);
             
             //ignore those that are pre load discarded columns (unless they are dilution in which case they get passed through in a decrepid state instead of dumped entirely - these fields will still bein ANODump in pristene state btw)

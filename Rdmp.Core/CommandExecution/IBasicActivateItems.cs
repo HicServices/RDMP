@@ -22,6 +22,11 @@ namespace Rdmp.Core.CommandExecution
     public interface IBasicActivateItems
     {
         /// <summary>
+        /// Event triggered when objects should be brought to the users attention
+        /// </summary>
+        event EmphasiseItemHandler Emphasise;
+
+        /// <summary>
         /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
         /// </summary>
         ICoreChildProvider CoreChildProvider { get; }
@@ -60,12 +65,37 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
 
+        /// <summary>
+        /// Prompts user to pick one of the <paramref cref="availableObjects"/>
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="availableObjects">Objects that can be selected</param>
+        /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect"></param>
+        /// <returns></returns>
         IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
+        /// <summary>
+        /// Prompts user to select a directory on disk
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <returns></returns>
         DirectoryInfo SelectDirectory(string prompt);
 
+        /// <summary>
+        /// Prompts user to select a file on disk (that may or may not exist yet)
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <returns></returns>
         FileInfo SelectFile(string prompt);
 
+        /// <summary>
+        /// Prompts user to select a file on disk (that may or may not exist yet) with the given pattern
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
+        /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
+        /// <returns></returns>
         FileInfo SelectFile(string prompt,string patternDescription, string pattern);
         
         /// <summary>
@@ -136,8 +166,20 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
 
+        /// <summary>
+        /// Prompts the user to pick a database
+        /// </summary>
+        /// <param name="allowDatabaseCreation"></param>
+        /// <param name="taskDescription"></param>
+        /// <returns></returns>
         DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription);
 
+        /// <summary>
+        /// Prompts user to pick a table
+        /// </summary>
+        /// <param name="allowDatabaseCreation"></param>
+        /// <param name="taskDescription"></param>
+        /// <returns></returns>
         DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
         
         /// <summary>
@@ -162,6 +204,13 @@ namespace Rdmp.Core.CommandExecution
         /// Requests that the activator highlight or otherwise emphasise the supplied item.  Depending on who is subscribed to this event nothing may actually happen
         /// </summary>
         void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest);
+
+        /// <summary>
+        /// Returns the root object in the tree hierarchy or the inputted parameter (<paramref name="objectToEmphasise"/>)
+        /// </summary>
+        /// <param name="objectToEmphasise"></param>
+        /// <returns></returns>
+        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
 
         /// <summary>
         /// Requests a selection of one of the values of the <see cref="Enum"/> <paramref name="enumType"/>

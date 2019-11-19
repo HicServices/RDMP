@@ -5,18 +5,23 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution;
 
-namespace Rdmp.UI.ItemActivation.Emphasis
+namespace Rdmp.Core.CommandExecution
 {
     /// <summary>
     /// Event args for an <see cref="EmphasiseRequest"/> (when a TreeView object should be brought to the users attention).
     /// </summary>
     public class EmphasiseEventArgs:EventArgs
     {
+        /// <summary>
+        /// The object to show and how much of it's child objects to show
+        /// </summary>
         public EmphasiseRequest Request { get; set; }
-        public Form FormRequestingActivation { get; set; }
+        
+        /// <summary>
+        /// Top level control (e.g. Form) which requesting the showing of the object
+        /// </summary>
+        public object Sender{ get; set; }
 
         public EmphasiseEventArgs(EmphasiseRequest request)
         {

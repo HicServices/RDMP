@@ -198,7 +198,7 @@ SELECT SCOPE_IDENTITY();", con);
                 cmd.Parameters["@isTest"].Value = _isTest;
                 cmd.Parameters["@packageName"].Value = _packageName;
                 cmd.Parameters["@userAccount"].Value = _userAccount;
-                cmd.Parameters["@suggestedRollbackCommand"].Value = _suggestedRollbackCommand;
+                cmd.Parameters["@suggestedRollbackCommand"].Value = _suggestedRollbackCommand ?? string.Empty;
 
                 //ID can come back as a decimal or an Int32 or an Int64 so whatever, just turn it into a string and then parse it
                 _id = int.Parse(cmd.ExecuteScalar().ToString());

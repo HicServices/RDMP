@@ -6,28 +6,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.Curation.Data.Defaults;
-using Rdmp.Core.Providers;
-using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation.Arranging;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
-using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Comments;
 
 namespace Rdmp.UI.ItemActivation
@@ -104,13 +97,11 @@ namespace Rdmp.UI.ItemActivation
         /// <returns></returns>
         T Activate<T>(IPersistableObjectCollection collection) where T : Control,IObjectCollectionControl, new();
 
-
-        event EmphasiseItemHandler Emphasise;
-
+        
         bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject);
         bool HasProblem(object model);
         string DescribeProblemIfAny(object model);
-        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
+        
 
         /// <summary>
         /// Returns xml doc comments from the CommentStore for the given class (or null if it is undocumented)

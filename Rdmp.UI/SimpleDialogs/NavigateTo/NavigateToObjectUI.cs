@@ -32,7 +32,6 @@ using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.Collections.Providers.Filtering;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;
 using Rdmp.UI.Theme;
 using ReusableLibraryCode.Icons.IconProvision;

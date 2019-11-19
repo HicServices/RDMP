@@ -79,6 +79,23 @@ namespace Rdmp.Core.Tests.Curation.Integration
         }
 
         [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
+        public void Create_WithDodgyColumnNames(DatabaseType dbType)
+        {
+            _database = GetCleanedServer(dbType);
+
+            _table =_database.CreateTable("Trol lol My Table Select * from Group by fish",new DatabaseColumnRequest[]{ 
+                new DatabaseColumnRequest("My Lovely Column Select * From Lolz",new DatabaseTypeRequest(typeof(string),30)){AllowNulls = false,IsPrimaryKey = true},
+                new DatabaseColumnRequest("ANormalColumnName",new DatabaseTypeRequest(typeof(int))),
+                new DatabaseColumnRequest("Group By Meeee Colll trollolol",new DatabaseTypeRequest(typeof(int))),
+            });
+
+            GetImplementer().CreateTrigger(new ThrowImmediatelyCheckNotifier());
+
+            Assert.AreEqual(TriggerStatus.Enabled, GetImplementer().GetTriggerStatus());
+            Assert.AreEqual(true, GetImplementer().CheckUpdateTriggerIsEnabledAndHasExpectedBody());
+        }
+
+        [TestCaseSource(typeof(All),nameof(All.DatabaseTypes))]
         public void AlterTest_InvalidThenRecreateItAndItsValidAgain(DatabaseType dbType)
         {
             CreateWithPks_Valid(dbType);

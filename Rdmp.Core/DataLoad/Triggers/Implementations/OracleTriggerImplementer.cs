@@ -42,11 +42,13 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         }
         protected override string CreateTriggerBody()
         {
+            var syntax = _table.GetQuerySyntaxHelper();
+
             return string.Format(@"BEGIN
     INSERT INTO {0} ({1},hic_validTo,hic_userID,hic_status) VALUES ({2},CURRENT_DATE,USER,'U');
   END", _archiveTable.GetFullyQualifiedName(),
-                string.Join(",", _columns.Select(c => c.GetRuntimeName())),
-                string.Join(",", _columns.Select(c => ":old." + c.GetRuntimeName())));
+                string.Join(",", _columns.Select(c => syntax.EnsureWrapped(c.GetRuntimeName()))),
+                string.Join(",", _columns.Select(c => ":old." + syntax.EnsureWrapped(c.GetRuntimeName()))));
         }
 
         protected override void AssertTriggerBodiesAreEqual(string sqlThen, string sqlNow)

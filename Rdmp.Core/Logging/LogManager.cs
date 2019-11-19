@@ -220,10 +220,11 @@ namespace Rdmp.Core.Logging
 
         public IDataLoadInfo CreateDataLoadInfo(string dataLoadTaskName, string packageName, string description, string suggestedRollbackCommand, bool isTest)
         {
-            if(!ListDataTasks().Contains(dataLoadTaskName))
+            var task = ListDataTasks().FirstOrDefault(t=>t.Equals(dataLoadTaskName,StringComparison.CurrentCultureIgnoreCase));
+            if(task == null)
                 throw new KeyNotFoundException("DataLoadTask called '" + dataLoadTaskName + "' was not found in the logging database " + Server);
 
-            var toReturn = new DataLoadInfo(dataLoadTaskName, packageName, description, suggestedRollbackCommand, isTest, Server);
+            var toReturn = new DataLoadInfo(task, packageName, description, suggestedRollbackCommand, isTest, Server);
 
             DataLoadInfoCreated?.Invoke(this,toReturn);
 
@@ -282,10 +283,10 @@ namespace Rdmp.Core.Logging
 
         public void CreateNewLoggingTaskIfNotExists(string toCreate)
         {
-            if(!ListDataSets().Contains(toCreate))
+            if(!ListDataSets().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
                 CreateNewDataSet(toCreate);
 
-            if(!ListDataTasks().Contains(toCreate))
+            if(!ListDataTasks().Contains(toCreate,StringComparer.CurrentCultureIgnoreCase))
                 CreateNewLoggingTask(GetMaxTaskID()+1,toCreate);
         }
 
