@@ -74,12 +74,7 @@ namespace Rdmp.Core.CommandLine.Interactive
         {
             throw exception ?? new Exception(errorText);
         }
-
-        public override void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest)
-        {
-            //do nothing
-        }
-
+        
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
             string chosenStr = GetString(prompt, Enum.GetNames(enumType).ToList());

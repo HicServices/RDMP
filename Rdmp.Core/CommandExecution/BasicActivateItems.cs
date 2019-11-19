@@ -30,6 +30,9 @@ namespace Rdmp.Core.CommandExecution
         /// <inheritdoc/>
         public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
 
+        /// <inheritdoc/>
+        public event EmphasiseItemHandler Emphasise;
+
         public BasicActivateItems(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
         {
             RepositoryLocator = repositoryLocator;
@@ -37,7 +40,11 @@ namespace Rdmp.Core.CommandExecution
 
             ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
         }
-
+        
+        protected void OnEmphasise(object sender, EmphasiseEventArgs args)
+        {
+            Emphasise?.Invoke(sender,args);
+        }
         /// <inheritdoc/>
         public virtual IEnumerable<Type> GetIgnoredCommands()
         {
@@ -50,7 +57,10 @@ namespace Rdmp.Core.CommandExecution
             task.Wait(cts.Token);
         }
 
-        public abstract void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest);
+        public virtual void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest)
+        {
+            OnEmphasise(sender, new EmphasiseEventArgs(emphasiseRequest));
+        }
         public abstract bool SelectEnum(string prompt, Type enumType, out Enum chosen);
 
         /// <inheritdoc/>

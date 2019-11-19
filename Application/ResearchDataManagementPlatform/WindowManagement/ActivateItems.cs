@@ -35,7 +35,6 @@ using Rdmp.UI.Copying;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -60,8 +59,6 @@ namespace ResearchDataManagementPlatform.WindowManagement
     /// </summary>
     public class ActivateItems : BasicActivateItems, IActivateItems, IRefreshBusSubscriber
     {
-        public event EmphasiseItemHandler Emphasise;
-
         private readonly DockPanel _mainDockPanel;
         private readonly WindowManager _windowManager;
 
@@ -312,15 +309,13 @@ namespace ResearchDataManagementPlatform.WindowManagement
                 _windowManager.ShowCollectionWhichSupportsRootObjectType(root);
 
             //really should be a listener now btw since we just launched the relevant Toolbox if it wasn't there before
-            var h = Emphasise;
-            if (h != null)
-            {
-                var args = new EmphasiseEventArgs(request);
-                h(this, args);
-
-                if(args.FormRequestingActivation is DockContent content)
-                    content.Activate();
-            }
+            //Look at assignments to Sender, the invocation list can change the Sender!
+            var args = new EmphasiseEventArgs(request);
+            base.OnEmphasise(this,args);
+            
+            //might be different than sender that was passed in
+            if(args.Sender is DockContent content)
+                content.Activate();
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)

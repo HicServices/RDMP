@@ -16,7 +16,6 @@ using Rdmp.Core.Curation.Data.Governance;
 using Rdmp.UI.Collections;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Rules;
 using Rdmp.UI.SimpleControls;
 using Rdmp.UI.TestsAndSetup.ServicePropogation;

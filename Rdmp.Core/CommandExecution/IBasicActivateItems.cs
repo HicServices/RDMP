@@ -22,6 +22,11 @@ namespace Rdmp.Core.CommandExecution
     public interface IBasicActivateItems
     {
         /// <summary>
+        /// Event triggered when objects should be brought to the users attention
+        /// </summary>
+        event EmphasiseItemHandler Emphasise;
+
+        /// <summary>
         /// Component for recording object tree inheritance (for RDMPCollectionUI primarily but also for anyone who wants to know children of objects or all objects quickly without having to go back to the database)
         /// </summary>
         ICoreChildProvider CoreChildProvider { get; }
@@ -64,7 +69,7 @@ namespace Rdmp.Core.CommandExecution
         /// Prompts user to pick one of the <paramref cref="availableObjects"/>
         /// </summary>
         /// <param name="prompt"></param>
-        /// <param name="availableObjects"></param>
+        /// <param name="availableObjects">Objects that can be selected</param>
         /// <param name="initialSearchText"></param>
         /// <param name="allowAutoSelect"></param>
         /// <returns></returns>

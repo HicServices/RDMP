@@ -25,7 +25,6 @@ using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -126,12 +125,6 @@ namespace Rdmp.UI.Tests
             deleteable.DeleteInDatabase();
             RefreshBus.Publish(this, new RefreshObjectEventArgs((DatabaseEntity)deleteable));
             return true;
-        }
-
-        public event EmphasiseItemHandler Emphasise;
-        public override void RequestItemEmphasis(object sender, EmphasiseRequest request)
-        {
-            Emphasise?.Invoke(sender, new EmphasiseEventArgs(request));
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)

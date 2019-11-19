@@ -18,7 +18,6 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.DataLoadUIs.LoadMetadataUIs.LoadDiagram;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.LoadExecutionUIs;
 using WeifenLuo.WinFormsUI.Docking;
 

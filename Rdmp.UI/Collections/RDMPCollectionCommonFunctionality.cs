@@ -327,7 +327,7 @@ namespace Rdmp.UI.Collections
             }
         }
 
-        void _activator_Emphasise(object sender, ItemActivation.Emphasis.EmphasiseEventArgs args)
+        void _activator_Emphasise(object sender, EmphasiseEventArgs args)
         {
             var rootObject = _activator.GetRootObjectOrSelf(args.Request.ObjectToEmphasise);
 
@@ -380,7 +380,7 @@ namespace Rdmp.UI.Collections
             Tree.EnsureVisible(index);
 
             
-            args.FormRequestingActivation = Tree.FindForm();
+            args.Sender = Tree.FindForm();
         }
 
         private void Pin(IMapsDirectlyToDatabaseTable objectToPin, DescendancyList descendancy)
