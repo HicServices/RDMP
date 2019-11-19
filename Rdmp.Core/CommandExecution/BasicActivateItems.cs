@@ -61,6 +61,18 @@ namespace Rdmp.Core.CommandExecution
         {
             OnEmphasise(sender, new EmphasiseEventArgs(emphasiseRequest));
         }
+
+        /// <summary>
+        /// Returns the root tree object which hosts the supplied object.  If the supplied object has no known descendancy it is assumed
+        /// to be the root object itself so it is returned
+        /// </summary>
+        /// <param name="objectToEmphasise"></param>
+        /// <returns></returns>
+        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
+        {
+            return CoreChildProvider?.GetRootObjectOrSelf(objectToEmphasise) ?? objectToEmphasise;
+        }
+
         public abstract bool SelectEnum(string prompt, Type enumType, out Enum chosen);
 
         /// <inheritdoc/>

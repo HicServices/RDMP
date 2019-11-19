@@ -360,18 +360,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         {
             return ProblemProviders.Select(p => p.DescribeProblem(model)).FirstOrDefault(desc => desc != null);
         }
-
-        /// <summary>
-        /// Returns the root tree object which hosts the supplied object.  If the supplied object has no known descendancy it is assumed
-        /// to be the root object itself so it is returned
-        /// </summary>
-        /// <param name="objectToEmphasise"></param>
-        /// <returns></returns>
-        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
-        {
-            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
-        }
-
+        
         public string GetDocumentation(Type type)
         {
             return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
@@ -669,18 +658,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             
             return null;
         }
-
-        public override IEnumerable<T> GetAll<T>()
-        {
-            return CoreChildProvider.GetAllSearchables()
-                .Keys.OfType<T>();
-        }
-
-        public override IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
-        {
-            return CoreChildProvider.GetAllSearchables()
-                .Keys.Where(t.IsInstanceOfType);
-        }
+        
 
         public override object SelectValueType(string prompt, Type paramType)
         {

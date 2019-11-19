@@ -146,12 +146,7 @@ namespace Rdmp.UI.Tests
         {
             return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob=>prob != null);
         }
-
-        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
-        {
-            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
-        }
-
+        
         public string GetDocumentation(Type type)
         {
             return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
@@ -278,11 +273,6 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
         
-        public override IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
-        {
-            throw new NotImplementedException();
-        }
-
         public override object SelectValueType(string prompt, Type paramType)
         {
             throw new NotImplementedException();

@@ -206,6 +206,13 @@ namespace Rdmp.Core.CommandExecution
         void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest);
 
         /// <summary>
+        /// Returns the root object in the tree hierarchy or the inputted parameter (<paramref name="objectToEmphasise"/>)
+        /// </summary>
+        /// <param name="objectToEmphasise"></param>
+        /// <returns></returns>
+        object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise);
+
+        /// <summary>
         /// Requests a selection of one of the values of the <see cref="Enum"/> <paramref name="enumType"/>
         /// </summary>
         /// <param name="prompt"></param>
