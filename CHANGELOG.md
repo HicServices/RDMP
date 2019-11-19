@@ -31,7 +31,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Cohort Query Bulder will now connect to the database containing the data rather than the users default database when querying data on a single database
 - Flat file Attachers now process files in alphabetical order (case insensitive) when Pattern matches multiple files (previously order was arbitrary / OS defined)
 - Extraction source now specifies database to connect to when a dataset exists in a single database (previously connected to users default server e.g. master)
-- Updated to latest version of [FAnsiSql] (0.10.11) for Postgres support
+- Updated to latest version of [FAnsiSql] (0.10.12) for Postgres support
 - 
 ### Fixed
 

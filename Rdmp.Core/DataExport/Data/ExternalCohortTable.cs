@@ -149,14 +149,14 @@ namespace Rdmp.Core.DataExport.Data
             var syntaxHelper = GetQuerySyntaxHelper();
 
             
-            TableName = syntaxHelper.EnsureFullyQualified(Database, null, r["TableName"] as string);
-            DefinitionTableForeignKeyField = syntaxHelper.EnsureFullyQualified(Database, null, TableName, r["DefinitionTableForeignKeyField"] as string);
+            TableName = syntaxHelper.EnsureFullyQualified(Database, null, r["TableName"] as string ?? string.Empty);
+            DefinitionTableForeignKeyField = syntaxHelper.EnsureFullyQualified(Database, null, TableName, r["DefinitionTableForeignKeyField"] as string ?? string.Empty);
 
-            DefinitionTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["DefinitionTableName"] as string);
+            DefinitionTableName = syntaxHelper.EnsureFullyQualified(Database, null, r["DefinitionTableName"] as string ?? string.Empty);
             
 
-            PrivateIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["PrivateIdentifierField"] as string);
-            ReleaseIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["ReleaseIdentifierField"] as string);
+            PrivateIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["PrivateIdentifierField"] as string ?? string.Empty);
+            ReleaseIdentifierField = syntaxHelper.EnsureFullyQualified(Database,null, TableName, r["ReleaseIdentifierField"] as string ?? string.Empty);
         }
 
         /// <inheritdoc/>
