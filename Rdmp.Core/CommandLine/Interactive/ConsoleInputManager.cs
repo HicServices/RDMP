@@ -15,7 +15,6 @@ using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
-using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.Core.Startup;
@@ -27,46 +26,28 @@ namespace Rdmp.Core.CommandLine.Interactive
     /// <summary>
     /// Implementation of <see cref="IBasicActivateItems"/> that handles object selection and message notification via the console
     /// </summary>
-    public class ConsoleInputManager : IBasicActivateItems
+    public class ConsoleInputManager : BasicActivateItems
     {
-        /// <inheritdoc/>
-        public ICoreChildProvider CoreChildProvider { get; private set; }
-
-        /// <inheritdoc/>
-        public IServerDefaults ServerDefaults { get; }
-
-        /// <inheritdoc/>
-        public ICheckNotifier GlobalErrorCheckNotifier { get; set; }
-        
-        /// <inheritdoc/>
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; }
-
         /// <summary>
         /// Creates a new instance connected to the provided RDMP platform databases
         /// </summary>
         /// <param name="repositoryLocator">The databases to connect to</param>
         /// <param name="globalErrorCheckNotifier">The global error provider for non fatal issues</param>
-        public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier)
+        public ConsoleInputManager(IRDMPPlatformRepositoryServiceLocator repositoryLocator, ICheckNotifier globalErrorCheckNotifier):base(repositoryLocator,globalErrorCheckNotifier)
         {
-            RepositoryLocator = repositoryLocator;
-            GlobalErrorCheckNotifier = globalErrorCheckNotifier;
-
             RefreshChildProvider();
-
-            ServerDefaults = RepositoryLocator.CatalogueRepository.GetServerDefaults();
-
         }
-        public void Publish(DatabaseEntity databaseEntity)
+        public override void Publish(DatabaseEntity databaseEntity)
         {
             RefreshChildProvider();
         }
 
-        public void Show(string message)
+        public override void Show(string message)
         {
             Console.WriteLine(message);
         }
 
-        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
+        public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text,
             bool requireSaneHeaderText)
         {
             Console.WriteLine(header);
@@ -75,36 +56,31 @@ namespace Rdmp.Core.CommandLine.Interactive
             return !string.IsNullOrWhiteSpace(text);
         }
 
-        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
             Console.WriteLine(taskDescription);
             var value = ReadLine(new PickDatabase());
             return value.Database;
         }
 
-        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
             Console.WriteLine(taskDescription);
             var value = ReadLine(new PickTable());
             return value.Table;
         }
 
-        public void ShowException(string errorText, Exception exception)
+        public override void ShowException(string errorText, Exception exception)
         {
             throw exception ?? new Exception(errorText);
         }
 
-        public void Wait(string title, Task task, CancellationTokenSource cts)
-        {
-            task.Wait(cts.Token);
-        }
-
-        public void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest)
+        public override void RequestItemEmphasis(object sender, EmphasiseRequest emphasiseRequest)
         {
             //do nothing
         }
 
-        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
             string chosenStr = GetString(prompt, Enum.GetNames(enumType).ToList());
             chosen = (Enum)Enum.Parse(enumType, chosenStr);
@@ -121,17 +97,8 @@ namespace Rdmp.Core.CommandLine.Interactive
         }
 
 
-        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
-        {
-            return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>();
-        }
 
-        public IEnumerable<Type> GetIgnoredCommands()
-        {
-            return new Type[0];
-        }
-
-        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
         {
             Console.WriteLine(prompt);
@@ -148,7 +115,7 @@ namespace Rdmp.Core.CommandLine.Interactive
             return value.DatabaseEntities.ToArray();
         }
 
-        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+        public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
             string initialSearchText = null, bool allowAutoSelect = false)
         {
             Console.WriteLine(prompt);
@@ -200,36 +167,26 @@ namespace Rdmp.Core.CommandLine.Interactive
             return picker[0];
         }
 
-        public DirectoryInfo SelectDirectory(string prompt)
+        public override DirectoryInfo SelectDirectory(string prompt)
         {
             Console.WriteLine(prompt);
             return new DirectoryInfo(Console.ReadLine());
         }
 
-        public FileInfo SelectFile(string prompt)
+        public override FileInfo SelectFile(string prompt)
         {
             return SelectFile(prompt, null, null);
         }
 
-        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+        public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
             Console.WriteLine(prompt);
             return new FileInfo(Console.ReadLine());
         }
-        public IEnumerable<T> GetAll<T>()
-        {
-            //todo abstract base class!
-            return CoreChildProvider.GetAllSearchables()
-                .Keys.OfType<T>();
-        }
+        
+        
 
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
-        {
-            return CoreChildProvider.GetAllSearchables()
-                .Keys.Where(t.IsInstanceOfType);
-        }
-
-        public object SelectValueType(string prompt, Type paramType)
+        public override object SelectValueType(string prompt, Type paramType)
         {
             Console.WriteLine("Enter value for " + prompt +":");
 
@@ -239,14 +196,14 @@ namespace Rdmp.Core.CommandLine.Interactive
             return UsefulStuff.ChangeType(ReadLine(), paramType);
         }
 
-        public bool DeleteWithConfirmation(IDeleteable deleteable)
+        public override bool DeleteWithConfirmation(IDeleteable deleteable)
         {
             deleteable.DeleteInDatabase();
 
             return true;
         }
 
-        public bool YesNo(string text, string caption)
+        public override bool YesNo(string text, string caption)
         {
             Console.WriteLine(text + "(y/n)");
             return string.Equals(Console.ReadLine(), "y", StringComparison.CurrentCultureIgnoreCase);

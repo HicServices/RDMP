@@ -60,12 +60,37 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,IMapsDirectlyToDatabaseTable[] availableObjects,string initialSearchText = null);
 
+        /// <summary>
+        /// Prompts user to pick one of the <paramref cref="availableObjects"/>
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="availableObjects"></param>
+        /// <param name="initialSearchText"></param>
+        /// <param name="allowAutoSelect"></param>
+        /// <returns></returns>
         IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null, bool allowAutoSelect = false);
 
+        /// <summary>
+        /// Prompts user to select a directory on disk
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <returns></returns>
         DirectoryInfo SelectDirectory(string prompt);
 
+        /// <summary>
+        /// Prompts user to select a file on disk (that may or may not exist yet)
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <returns></returns>
         FileInfo SelectFile(string prompt);
 
+        /// <summary>
+        /// Prompts user to select a file on disk (that may or may not exist yet) with the given pattern
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="patternDescription">Type of file to select e.g. "Comma Separated Values"</param>
+        /// <param name="pattern">Pattern to restrict files to e.g. *.csv</param>
+        /// <returns></returns>
         FileInfo SelectFile(string prompt,string patternDescription, string pattern);
         
         /// <summary>
@@ -136,8 +161,20 @@ namespace Rdmp.Core.CommandExecution
         /// <returns></returns>
         bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText);
 
+        /// <summary>
+        /// Prompts the user to pick a database
+        /// </summary>
+        /// <param name="allowDatabaseCreation"></param>
+        /// <param name="taskDescription"></param>
+        /// <returns></returns>
         DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription);
 
+        /// <summary>
+        /// Prompts user to pick a table
+        /// </summary>
+        /// <param name="allowDatabaseCreation"></param>
+        /// <param name="taskDescription"></param>
+        /// <returns></returns>
         DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription);
         
         /// <summary>
