@@ -39,7 +39,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
         public MicrosoftSQLTriggerImplementer(DiscoveredTable table, bool createDataLoadRunIDAlso = true) : base(table, createDataLoadRunIDAlso)
         {
             _schema = string.IsNullOrWhiteSpace(_table.Schema) ? "dbo":_table.Schema;
-            _triggerName = _schema + "." + _table.GetRuntimeName() + "_OnUpdate";
+            _triggerName = _schema + "." + GetTriggerName();
         }
 
         public override void DropTrigger(out string problemsDroppingTrigger, out string thingsThatWorkedDroppingTrigger)
@@ -138,8 +138,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
                 throw new TriggerException("There must be at least 1 primary key");
 
             //this is the SQL to join on the main table to the deleted to record the hic_validFrom
-            string updateValidToWhere = " UPDATE " + _table +
-                                        " SET "+SpecialFieldNames.ValidFrom+" = GETDATE() FROM deleted where ";
+            string updateValidToWhere = " UPDATE [" + _table +"] SET "+SpecialFieldNames.ValidFrom+" = GETDATE() FROM deleted where ";
 
             //its a combo field so join on both when filling in hic_validFrom
             foreach (DiscoveredColumn key in _primaryKeys)
@@ -162,8 +161,8 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
             if(!columnNames.Contains(SpecialFieldNames.ValidFrom,StringComparer.CurrentCultureIgnoreCase))
                 columnNames.Add(SpecialFieldNames.ValidFrom);
             
-            string colList = string.Join(",",columnNames );
-            string dDotColList = string.Join(",", columnNames.Select(c => "d." + c));
+            string colList = string.Join(",",columnNames.Select(c=>"[" + c +"]") );
+            string dDotColList = string.Join(",", columnNames.Select(c => "d.[" + c +"]"));
 
             return
                 @"
@@ -178,20 +177,20 @@ declare @isPrimaryKeyChange bit = 0
 --it will be a primary key change if deleted and inserted do not agree on primary key values
 IF exists ( select 1 FROM deleted d RIGHT " + InsertedToDeletedJoin + @" WHERE d.[" + _primaryKeys.First().GetRuntimeName() + @"] is null)
 begin
-	UPDATE " + _table + @" SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM inserted where " +
+	UPDATE [" + _table + @"] SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM inserted where " +
                 equalsSqlTableToInserted + @"
 	set @isPrimaryKeyChange = 1
 end
 else
 begin
-	UPDATE " + _table + @" SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM deleted where " +
+	UPDATE [" + _table + @"] SET " + SpecialFieldNames.ValidFrom + " = GETDATE() FROM deleted where " +
                 equalsSqlTableToDeleted + @"
 	set @isPrimaryKeyChange = 0
 end
 
 " + updateValidToWhere + @"
 
-INSERT INTO " + _archiveTable.GetRuntimeName() + @" (" + colList + @",hic_validTo,hic_userID,hic_status) SELECT " + dDotColList +
+INSERT INTO [" + _archiveTable.GetRuntimeName() + @"] (" + colList + @",hic_validTo,hic_userID,hic_status) SELECT " + dDotColList +
                 ", GETDATE(), SYSTEM_USER, CASE WHEN @isPrimaryKeyChange = 1 then 'K' WHEN i.[" + _primaryKeys.First().GetRuntimeName() +
                 "] IS NULL THEN 'D' WHEN d.[" + _primaryKeys.First().GetRuntimeName() + @"] IS NULL THEN 'I' ELSE 'U' END
 FROM deleted d 
@@ -209,7 +208,7 @@ END
             string toReturn = "";
 
             foreach (DiscoveredColumn key in _primaryKeys)
-                toReturn += " " + table1 + ".[" + key.GetRuntimeName() + "] = " + table2 + ".[" + key.GetRuntimeName() + "] AND ";
+                toReturn += " [" + table1 + "].[" + key.GetRuntimeName() + "] = [" + table2 + "].[" + key.GetRuntimeName() + "] AND ";
 
             //trim off last AND
             toReturn = toReturn.Substring(0, toReturn.Length - "AND ".Length);
@@ -235,7 +234,7 @@ END
             //trim off excess crud at the end
             columnsInArchive = columnsInArchive.Trim(new[] {')', '\r', '\n'});
 
-            string sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]", _table.GetRuntimeName());
+            string sqlToRun = string.Format("CREATE FUNCTION [" + _schema + "].[{0}_Legacy]", QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()));
             sqlToRun += Environment.NewLine;
             sqlToRun += "(" + Environment.NewLine;
             sqlToRun += "\t@index DATETIME" + Environment.NewLine;
@@ -258,19 +257,19 @@ END
             sqlToRun += "BEGIN" + Environment.NewLine;
             sqlToRun += Environment.NewLine;
 
-            var liveCols = _columns.Select(c => c.GetRuntimeName()).Union(new String[] {SpecialFieldNames.DataLoadRunID, SpecialFieldNames.ValidFrom}).ToArray();
+            var liveCols = _columns.Select(c => "[" + c.GetRuntimeName() +"]").Union(new String[] {'[' + SpecialFieldNames.DataLoadRunID +']', '[' +SpecialFieldNames.ValidFrom +']'}).ToArray();
 
             string archiveCols = string.Join(",", liveCols) + ",hic_validTo,hic_userID,hic_status";
             string cDotArchiveCols = string.Join(",", liveCols.Select(s => "c." + s)); 
 
 
             sqlToRun += "\tINSERT @returntable" + Environment.NewLine;
-            sqlToRun += string.Format("\tSELECT "+archiveCols+" FROM {0} WHERE @index BETWEEN ISNULL(" + SpecialFieldNames.ValidFrom + ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
+            sqlToRun += string.Format("\tSELECT "+archiveCols+" FROM [{0}] WHERE @index BETWEEN ISNULL(" + SpecialFieldNames.ValidFrom + ", '1899/01/01') AND hic_validTo" + Environment.NewLine, _archiveTable);
             sqlToRun += Environment.NewLine;
 
             sqlToRun += "\tINSERT @returntable" + Environment.NewLine;
             sqlToRun += "\tSELECT " + cDotArchiveCols + ",NULL AS hic_validTo, NULL AS hic_userID, 'C' AS hic_status" + Environment.NewLine; //c is for current
-            sqlToRun += string.Format("\tFROM {0} c" + Environment.NewLine, _table.GetRuntimeName());
+            sqlToRun += string.Format("\tFROM [{0}] c" + Environment.NewLine, _table.GetRuntimeName());
             sqlToRun += "\tLEFT OUTER JOIN @returntable a ON " + Environment.NewLine;
 
             for (int index = 0; index < _primaryKeys.Length; index++)
@@ -282,7 +281,7 @@ END
                     sqlToRun += "\tAND" + Environment.NewLine; //add an AND because there are more coming
             }
 
-            sqlToRun += string.Format("\tWHERE a.{0} IS NULL -- where archive record doesn't exist" + Environment.NewLine, _primaryKeys.First().GetRuntimeName());
+            sqlToRun += string.Format("\tWHERE a.[{0}] IS NULL -- where archive record doesn't exist" + Environment.NewLine, _primaryKeys.First().GetRuntimeName());
             sqlToRun += "\tAND @index > ISNULL(c." + SpecialFieldNames.ValidFrom + ", '1899/01/01')" + Environment.NewLine;
 
             sqlToRun += Environment.NewLine;
@@ -295,7 +294,9 @@ END
 
         public override TriggerStatus GetTriggerStatus()
         {
-            var updateTriggerName = _table + "_OnUpdate";
+
+            var updateTriggerName = GetTriggerName();
+
             var queryTriggerIsItDisabledOrMissing = "USE [" + _table.Database.GetRuntimeName()+ @"]; 
 if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disabled  FROM sys.triggers WHERE name=@triggerName else select -1 is_disabled";
             
@@ -331,6 +332,11 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
             }
         }
 
+        private string GetTriggerName()
+        {
+            return QuerySyntaxHelper.MakeHeaderNameSensible( _table.GetRuntimeName()) + "_OnUpdate";
+        }
+
         public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
         {
             bool baseResult = base.CheckUpdateTriggerIsEnabledAndHasExpectedBody();
@@ -339,7 +345,7 @@ if exists (select 1 from sys.triggers WHERE name=@triggerName) SELECT is_disable
                 return false;
             
             //now check the definition of it! - make sure it relates to primary keys etc
-            var updateTriggerName = _table + "_OnUpdate";
+            var updateTriggerName = GetTriggerName();
             var query = "USE [" + _table.Database.GetRuntimeName()+ "];SELECT OBJECT_DEFINITION (object_id) FROM sys.triggers WHERE name='" + updateTriggerName + "' and is_disabled=0";
 
             try

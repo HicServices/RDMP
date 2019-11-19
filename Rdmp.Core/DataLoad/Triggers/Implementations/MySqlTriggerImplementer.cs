@@ -67,10 +67,12 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
 
         protected virtual string CreateTriggerBody()
         {
+            var syntax = _server.GetQuerySyntaxHelper();
+            
             return string.Format(@"BEGIN
     INSERT INTO {0} SET {1},hic_validTo=now(),hic_userID=CURRENT_USER(),hic_status='U';
   END", _archiveTable.GetFullyQualifiedName(),
-                string.Join(",", _columns.Select(c => c.GetRuntimeName() + "=OLD." + c.GetRuntimeName())));
+                string.Join(",", _columns.Select(c =>syntax.EnsureWrapped( c.GetRuntimeName()) + "=OLD." + syntax.EnsureWrapped(c.GetRuntimeName()))));
         }
         
         public override TriggerStatus GetTriggerStatus()
@@ -98,7 +100,7 @@ namespace Rdmp.Core.DataLoad.Triggers.Implementations
 
         protected virtual object GetTriggerName()
         {
-            return _table.GetRuntimeName() + "_onupdate";
+            return QuerySyntaxHelper.MakeHeaderNameSensible(_table.GetRuntimeName()) + "_onupdate";
         }
 
         public override bool CheckUpdateTriggerIsEnabledAndHasExpectedBody()
