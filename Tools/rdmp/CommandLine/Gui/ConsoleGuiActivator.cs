@@ -95,7 +95,9 @@ namespace Rdmp.Core.CommandLine.Gui
         public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText = null)
         {
-            throw new NotImplementedException();
+            //todo make this handle multi selection
+            var chosen = SelectOne(prompt, availableObjects, initialSearchText);
+            return chosen == null?null : new []{chosen};
         }
 
         public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
