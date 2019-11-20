@@ -18,6 +18,11 @@ namespace Rdmp.Core.CommandLine.Gui
         private IList<T> _publicCollection;
 
         public T Selected { get; private set; }
+        
+        /// <summary>
+        /// Determines what is rendered in the list visually
+        /// </summary>
+        public Func<T, string> AspectGetter { get; set; }
 
         /// <summary>
         /// Protected constructor for derived classes that want to do funky filtering and hot swap out lists as search
@@ -26,11 +31,14 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <param name="prompt"></param>
         /// <param name="okText"></param>
         /// <param name="addSearch"></param>
-        protected ConsoleGuiBigListBox(string prompt, string okText, bool addSearch)
+        /// <param name="displayMember"></param>
+        protected ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, Func<T, string> displayMember)
         {
             _okText = okText;
             _addSearch = addSearch;
             _prompt = prompt;
+            
+            AspectGetter = displayMember ?? (arg => arg?.ToString() ?? string.Empty);
         }
 
         /// <summary>
@@ -40,12 +48,32 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <param name="okText"></param>
         /// <param name="addSearch"></param>
         /// <param name="collection"></param>
-        public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection):this(prompt,okText,addSearch)
+        /// <param name="displayMember">What to display in the list box (defaults to <see cref="object.ToString"/></param>
+        public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,Func<T,string> displayMember):this(prompt,okText,addSearch,displayMember)
         {
             if(collection == null)
                 throw new ArgumentNullException("collection");
 
             _publicCollection = collection;
+        }
+
+        
+
+        private class ListViewObject<T2> where T2:T
+        {
+            private readonly Func<T2, string> _displayFunc;
+            public T2 Object { get; }
+
+            public ListViewObject(T2 o, Func<T2,string> displayFunc)
+            {
+                _displayFunc = displayFunc;
+                Object = o;
+            }
+
+            public override string ToString()
+            {
+                return _displayFunc(Object);
+            }
         }
 
         public bool ShowDialog()
@@ -69,7 +97,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(2)
             };
 
-            listView.SetSource( (this._collection = GetInitialSource()).ToList());
+            listView.SetSource( (this._collection = GetInitialSource()).Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList());
             
             var btnOk = new Button(_okText,true)
             {
@@ -109,7 +137,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 
                 mainInput.Changed += (s, e) =>
                 {
-                    listView.SetSource((_collection = GetListAfterSearch(mainInput.Text.ToString())).ToList());
+                    listView.SetSource((_collection = GetListAfterSearch(mainInput.Text.ToString())).Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList());
                 };
             }
             
@@ -125,7 +153,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 throw new InvalidOperationException("When using the protected constructor derived classes must override this method ");
 
             return _publicCollection.Where(o =>
-                o.ToString().Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
+                AspectGetter(o).Contains(searchString, StringComparison.CurrentCultureIgnoreCase)).ToList();
         }
 
         protected virtual IList<T> GetInitialSource()

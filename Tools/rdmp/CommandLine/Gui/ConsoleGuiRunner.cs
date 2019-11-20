@@ -32,6 +32,7 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             _activator = new ConsoleGuiActivator(repositoryLocator,checkNotifier);
 
+            
             LogManager.DisableLogging();
 
             Application.Init ();
@@ -60,8 +61,17 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
 
 
             top.Add (menu);
-
-            Application.Run();
+            
+            try
+            {
+                Application.Run();
+            }
+            catch (Exception e)
+            {
+                _activator.ShowException("Application Crashed",e);
+                top.Running = false;
+                return -1;
+            }
 
             return 0;
         }
@@ -72,9 +82,16 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
 
             var commands = commandInvoker.GetSupportedCommands();
 
-            var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList());
+            var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>t.Name);
             if (dlg.ShowDialog())
-                commandInvoker.ExecuteCommand(dlg.Selected,null);
+                try
+                {
+                    commandInvoker.ExecuteCommand(dlg.Selected,null);
+                }
+                catch (Exception exception)
+                {
+                    _activator.ShowException("Run Failed",exception);
+                }
         }
 
         public void Open()

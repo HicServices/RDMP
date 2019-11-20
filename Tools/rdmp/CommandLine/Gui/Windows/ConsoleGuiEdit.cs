@@ -4,6 +4,8 @@ using System.Linq;
 using System.Reflection;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
+using Rdmp.Core.CommandExecution.AtomicCommands;
+using Rdmp.Core.Curation.Data.ImportExport;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows
@@ -69,22 +71,25 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
                 {
                     try
                     {
-                        var p = (PropertyInListView)collection[list.SelectedItem];
-                    
-                        var newValue = _activator.SelectValueType(p.PropertyInfo.Name, p.PropertyInfo.PropertyType);
-                        p.PropertyInfo.SetValue(DatabaseObject,newValue);
-                        p.UpdateValue(newValue);
-                        ((ISaveable)DatabaseObject).SaveToDatabase();
+                        var p = collection[list.SelectedItem];
 
-                        //redraws the list and re selects the current item
-                        list.SetSource(collection = collection.ToList());
-                        list.SelectedItem = list.SelectedItem;
+                        var cmd = new ExecuteCommandSet(_activator, DatabaseObject, p.PropertyInfo);
+                        cmd.Execute();
+
+                        if (cmd.Success)
+                        {
+                            
+                            //redraws the list and re selects the current item
+
+                            p.UpdateValue(cmd.NewValue ?? string.Empty);
+                            list.SetSource(collection = collection.ToList());
+                            list.SelectedItem = list.SelectedItem;
+                        }
+                        
                     }
                     catch (Exception e)
                     {
-                        var dlg = new Dialog(e.Message, 100, 20,
-                            new Button("Ok", true){Clicked = Application.RequestStop});
-                        Application.Run(dlg);
+                        _activator.ShowException("Failed to set Property",e);
                     }
                     
                 }

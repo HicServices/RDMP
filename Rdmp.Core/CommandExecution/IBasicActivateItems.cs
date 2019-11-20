@@ -117,8 +117,9 @@ namespace Rdmp.Core.CommandExecution
         /// </summary>
         /// <param name="prompt"></param>
         /// <param name="paramType"></param>
+        /// <param name="initialValue"></param>
         /// <returns></returns>
-        object SelectValueType(string prompt, Type paramType);
+        object SelectValueType(string prompt, Type paramType, object initialValue);
 
         /// <summary>
         /// Delete the <paramref name="deleteable"/> ideally asking the user for confirmation first (if appropriate)

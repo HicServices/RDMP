@@ -27,6 +27,7 @@ using Rdmp.Core.Providers;
 using Rdmp.Core.Providers.Nodes;
 using Rdmp.Core.Providers.Nodes.LoadMetadataNodes;
 using Rdmp.Core.Providers.Nodes.PipelineNodes;
+using Rdmp.Core.Providers.Nodes.ProjectCohortNodes;
 using Rdmp.UI.Collections;
 using Rdmp.UI.Collections.Providers;
 using Rdmp.UI.Collections.Providers.Filtering;
@@ -105,20 +106,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 {RDMPCollection.None,new []{typeof(SupportingDocument),typeof(CatalogueItem)}} //Add all other Type checkboxes here so that they are recognised as Typenames
 };
 
-        private static HashSet<Type> TypesThatAreNotUsefulParents = new HashSet<Type>(
-            new []
-        {
-            typeof(CatalogueItemsNode),
-            typeof(DocumentationNode),
-            typeof(AggregatesNode),
-            typeof(LoadMetadataScheduleNode),
-            typeof(AllCataloguesUsedByLoadMetadataNode),
-            typeof(AllProcessTasksUsedByLoadMetadataNode),
-            typeof(LoadStageNode),
-            typeof(PreLoadDiscardedColumnsNode),
-            typeof(ProjectCataloguesNode)
-
-        });
 
         /// <summary>
         /// When the user types one of these they get a filter on the full Type
@@ -162,11 +149,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
         /// </summary>
         public Action<IMapsDirectlyToDatabaseTable> CompletionAction { get; set; }
 
-        public static void RecordThatTypeIsNotAUsefulParentToShow(Type t)
-        {
-            if(!TypesThatAreNotUsefulParents.Contains(t))
-                TypesThatAreNotUsefulParents.Add(t);
-        }
         public NavigateToObjectUI(IActivateItems activator, string initialSearchQuery = null,RDMPCollection focusedCollection = RDMPCollection.None):base(activator)
         {
             _coreIconProvider = activator.CoreIconProvider;
@@ -505,19 +487,9 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                     {
                         //get first parent that isn't one of the explicitly useless parent types (I'd rather know the Catalogue of an AggregateGraph than to know it's an under an AggregatesGraphNode)                
                         var descendancy = Activator.CoreChildProvider.GetDescendancyListIfAnyFor(_matches[i]);
-                
-                        object lastParent = null;
 
-                        if(descendancy != null)
-                        {
-
-                            lastParent = descendancy.Parents.LastOrDefault(parent => 
-                                !TypesThatAreNotUsefulParents.Contains(parent.GetType())
-                                &&
-                                !(parent is IContainer)
-                                );
-                        }
-
+                        object lastParent = descendancy?.GetMostDescriptiveParent();
+                        
                         float currentRowStartY = DrawMatchesStartingAtY + (RowHeight*i);
                     
                         if (lastParent != null)

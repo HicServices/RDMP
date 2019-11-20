@@ -101,7 +101,7 @@ namespace Rdmp.Core.CommandExecution
         }
 
         /// <inheritdoc/>
-        public abstract object SelectValueType(string prompt, Type paramType);
+        public abstract object SelectValueType(string prompt, Type paramType, object initialValue);
         
         /// <inheritdoc/>
         public abstract void Publish(DatabaseEntity databaseEntity);

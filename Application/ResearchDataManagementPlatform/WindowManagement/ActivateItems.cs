@@ -660,7 +660,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         
 
-        public override object SelectValueType(string prompt, Type paramType)
+        public override object SelectValueType(string prompt, Type paramType, object initialValue)
         {
             //if it's Enum or Enum?
             if((Nullable.GetUnderlyingType(paramType) ??paramType).IsEnum)
@@ -676,8 +676,9 @@ namespace ResearchDataManagementPlatform.WindowManagement
             }
 
             //whatever else it is use string
-            var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000);
-
+            var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000,
+                initialValue?.ToString());
+            
             if (typeTextDialog.ShowDialog() == DialogResult.OK)
                 return UsefulStuff.ChangeType(typeTextDialog.ResultText, paramType);
 

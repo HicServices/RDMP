@@ -273,7 +273,7 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
         
-        public override object SelectValueType(string prompt, Type paramType)
+        public override object SelectValueType(string prompt, Type paramType, object initialValue)
         {
             throw new NotImplementedException();
         }
