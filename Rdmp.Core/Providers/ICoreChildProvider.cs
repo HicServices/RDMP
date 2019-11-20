@@ -116,6 +116,24 @@ namespace Rdmp.Core.Providers
         /// </summary>
         HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get; }
 
+        
+        /// <summary>
+        /// All components within all <see cref="Pipeline"/>
+        /// </summary>
+        PipelineComponent[] AllPipelineComponents { get; }
+
+        /// <summary>
+        /// All arguments for the <see cref="AllPipelineComponents"/>
+        /// </summary>
+        PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
+
+        /// <summary>
+        /// All process
+        /// </summary>
+        ProcessTask[] AllProcessTasks { get; }
+        
+        ProcessTaskArgument[] AllProcessTasksArguments { get; }
+
         /// <summary>
         /// Returns all objects in the tree hierarchy that are assignable to the supplied <paramref name="type"/>
         /// </summary>

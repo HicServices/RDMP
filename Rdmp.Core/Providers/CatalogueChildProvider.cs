@@ -54,6 +54,8 @@ namespace Rdmp.Core.Providers
         //Load System
         public LoadMetadata[] AllLoadMetadatas { get; set; }
         public ProcessTask[] AllProcessTasks { get; set; }
+        public ProcessTaskArgument[] AllProcessTasksArguments { get; }
+
         public LoadProgress[] AllLoadProgresses { get; set; }
         public CacheProgress[] AllCacheProgresses { get; set; }
         public PermissionWindow[] AllPermissionWindows { get; set; }
@@ -71,8 +73,7 @@ namespace Rdmp.Core.Providers
         //This is the reverse of _childDictionary in some ways.  _childDictionary tells you the immediate children while
         //this tells you for a given child object what the navigation tree down to get to it is e.g. ascendancy[child] would return [root,grandParent,parent]
         private ConcurrentDictionary<object, DescendancyList> _descendancyDictionary = new ConcurrentDictionary<object, DescendancyList>();
-
-
+        
         public IEnumerable<CatalogueItem> AllCatalogueItems { get { return AllCatalogueItemsDictionary.Values; } }
         
         private From1ToM<Catalogue,CatalogueItem> _catalogueToCatalogueItems;
@@ -98,6 +99,8 @@ namespace Rdmp.Core.Providers
         public OtherPipelinesNode OtherPipelinesNode { get; private set; }
         public Pipeline[] AllPipelines { get; set; }
         public PipelineComponent[] AllPipelineComponents { get; set; }
+        
+        public PipelineComponentArgument[] AllPipelineComponentsArguments { get; }
 
         public StandardRegex[] AllStandardRegexes { get; set; }
 
@@ -187,6 +190,9 @@ namespace Rdmp.Core.Providers
         public Curation.Data.Plugin[] AllCompatiblePlugins { get; }
 
         public HashSet<StandardPipelineUseCaseNode> PipelineUseCases {get;set; } = new HashSet<StandardPipelineUseCaseNode>();
+
+        
+
         public IEnumerable<IMapsDirectlyToDatabaseTable> GetAllObjects(Type type, bool unwrapMasqueraders)
         {
             //things that are a match on Type but not IMasqueradeAs
@@ -238,6 +244,7 @@ namespace Rdmp.Core.Providers
 
             AllLoadMetadatas = GetAllObjects<LoadMetadata>(repository);
             AllProcessTasks = GetAllObjects<ProcessTask>(repository);
+            AllProcessTasksArguments = GetAllObjects<ProcessTaskArgument>(repository);
             AllLoadProgresses = GetAllObjects<LoadProgress>(repository);
             AllCacheProgresses = GetAllObjects<CacheProgress>(repository);
             
@@ -368,6 +375,7 @@ namespace Rdmp.Core.Providers
             OtherPipelinesNode = new OtherPipelinesNode();
             AllPipelines = GetAllObjects<Pipeline>(repository);
             AllPipelineComponents = GetAllObjects<PipelineComponent>(repository);
+            AllPipelineComponentsArguments = GetAllObjects<PipelineComponentArgument>(repository);
 
             foreach (Pipeline p in AllPipelines)
                 p.InjectKnown(AllPipelineComponents.Where(pc => pc.Pipeline_ID == p.ID).ToArray());
@@ -791,10 +799,21 @@ namespace Rdmp.Core.Providers
                 p => p.LoadMetadata_ID == loadStageNode.LoadMetadata.ID && p.LoadStage == loadStageNode.LoadStage)
                 .OrderBy(o=>o.Order).ToArray();
 
+            foreach (var processTask in tasks)
+                AddChildren(processTask, descendancy.Add(processTask));
+
             if(tasks.Any())
                 AddToDictionaries(new HashSet<object>(tasks),descendancy);
         }
-
+        
+        private void AddChildren(ProcessTask procesTask, DescendancyList descendancy)
+        {
+            var args = AllProcessTasksArguments.Where(
+                    a => a.ProcessTask_ID == procesTask.ID).ToArray();
+            
+            if(args.Any())
+                AddToDictionaries(new HashSet<object>(args),descendancy);
+        }
         private void AddChildren(AllCataloguesUsedByLoadMetadataNode allCataloguesUsedByLoadMetadataNode, DescendancyList descendancy)
         {
             HashSet<object> chilObjects = new HashSet<object>();
