@@ -6,6 +6,7 @@
 
 using System;
 using System.Reflection;
+using Rdmp.Core.Curation.Data;
 
 namespace Rdmp.Core.CommandExecution
 {
@@ -20,6 +21,8 @@ namespace Rdmp.Core.CommandExecution
         public bool HasDefaultValue { get;}
         public object DefaultValue { get; }
 
+        public DemandsInitializationAttribute DemandIfAny { get; private set; }
+
         public RequiredArgument(PropertyInfo propertyInfo)
         {
             Name = propertyInfo.Name;
@@ -27,6 +30,7 @@ namespace Rdmp.Core.CommandExecution
             ReflectionObject = propertyInfo;
             HasDefaultValue = false;
             DefaultValue = null;
+            DemandIfAny = propertyInfo.GetCustomAttribute<DemandsInitializationAttribute>();
         }
 
         public RequiredArgument(ParameterInfo parameterInfo)
@@ -36,6 +40,7 @@ namespace Rdmp.Core.CommandExecution
             ReflectionObject = parameterInfo;
             HasDefaultValue = parameterInfo.HasDefaultValue;
             DefaultValue = parameterInfo.DefaultValue;
+            DemandIfAny = parameterInfo.GetCustomAttribute<DemandsInitializationAttribute>();
         }
     }
 }

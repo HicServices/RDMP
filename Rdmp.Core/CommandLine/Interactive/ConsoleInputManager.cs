@@ -82,6 +82,21 @@ namespace Rdmp.Core.CommandLine.Interactive
             return true;
         }
 
+        public override Type SelectType(string prompt, Type[] available)
+        {
+            string chosenStr = GetString(prompt, available.Select(t=>t.Name).ToList());
+
+            if (string.IsNullOrWhiteSpace(chosenStr))
+                return null;
+
+            var chosen = available.SingleOrDefault(t => t.Name.Equals(chosenStr));
+
+            if(chosen == null)
+                throw new Exception($"Unknown or incompatible Type '{chosen}'");
+
+            return chosen;
+        }
+
         private void RefreshChildProvider()
         {
             //todo pass the plugin child providers

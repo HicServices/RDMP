@@ -88,7 +88,7 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
 
             var commands = commandInvoker.GetSupportedCommands();
 
-            var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>t.Name);
+            var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>BasicCommandExecution.GetCommandName(t.Name));
             if (dlg.ShowDialog())
                 try
                 {

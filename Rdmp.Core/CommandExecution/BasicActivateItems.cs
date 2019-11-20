@@ -80,6 +80,17 @@ namespace Rdmp.Core.CommandExecution
         }
 
         public abstract bool SelectEnum(string prompt, Type enumType, out Enum chosen);
+        public virtual Type SelectType(string prompt, Type baseTypeIfAny)
+        {
+            Type[] available =
+            RepositoryLocator.CatalogueRepository.MEF.GetAllTypes()
+                .Where(t => baseTypeIfAny == null || baseTypeIfAny.IsAssignableFrom(t))
+                .ToArray();
+
+            return SelectType(prompt, available);
+        }
+
+        public abstract Type SelectType(string prompt, Type[] available);
 
         /// <inheritdoc/>
         public virtual IEnumerable<T> GetAll<T>()

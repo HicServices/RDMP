@@ -11,6 +11,7 @@ using System.Linq;
 using System.Reflection;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
+using MapsDirectlyToDatabaseTable.Attributes;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
@@ -46,25 +47,22 @@ namespace Rdmp.Core.CommandExecution
             _repositoryLocator = basicActivator.RepositoryLocator;
 
             _argumentDelegates = _basicActivator.GetDelegates();
+
             
             AddDelegate(typeof(ICatalogueRepository),(p)=>_repositoryLocator.CatalogueRepository);
             AddDelegate(typeof(IDataExportRepository),(p)=>_repositoryLocator.DataExportRepository);
             AddDelegate(typeof(IBasicActivateItems),(p)=>_basicActivator);
             AddDelegate(typeof(IRDMPPlatformRepositoryServiceLocator),(p)=>_repositoryLocator);
-            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.SelectDirectory($"Enter Directory For Parameter '{p}'"));
-            AddDelegate(typeof(FileInfo), (p) => _basicActivator.SelectFile($"Enter File For Parameter '{p}'"));
+            AddDelegate(typeof(DirectoryInfo), (p) => _basicActivator.SelectDirectory($"Enter Directory for '{p.Name}'"));
+            AddDelegate(typeof(FileInfo), (p) => _basicActivator.SelectFile($"Enter File for '{p.Name}'"));
 
             AddDelegate(typeof(string), (p) =>
                 _basicActivator.TypeText("Value needed for parameter", p.Name, 1000, null, out string result, false)
                 ? result
                 : null);
 
-            AddDelegate(typeof(Type), (p) =>
-            
-                _basicActivator.TypeText("Enter Type for parameter", p.Name, 1000, null, out string result, false)
-                    ?_repositoryLocator.CatalogueRepository.MEF.GetType(result)
-                    :null
-            );
+            AddDelegate(typeof(Type), (p) =>_basicActivator.SelectType($"Type needed for {p.Name} ",p.DemandIfAny?.TypeOf));
+                
 
             AddDelegate(typeof(DiscoveredDatabase),(p)=>_basicActivator.SelectDatabase(true,"Value needed for parameter " + p.Name));
             AddDelegate(typeof(DiscoveredTable),(p)=>_basicActivator.SelectTable(true,"Value needed for parameter " + p.Name));

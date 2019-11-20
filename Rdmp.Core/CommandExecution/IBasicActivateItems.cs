@@ -221,5 +221,21 @@ namespace Rdmp.Core.CommandExecution
         /// <param name="chosen"></param>
         /// <returns></returns>
         bool SelectEnum(string prompt, Type enumType, out Enum chosen);
+
+        /// <summary>
+        /// Requests user select a <see cref="Type"/>
+        /// </summary>
+        /// <param name="prompt"></param>
+        /// <param name="baseTypeIfAny">Pass a base class or interface if the Type must be an inheritor / assignable to a specific Type otherwise pass null</param>
+        /// <returns></returns>
+        Type SelectType(string prompt, Type baseTypeIfAny);
+
+        /// <summary>
+        /// Requests user select one of the <paramref name="available"/> <see cref="Type"/>
+        /// </summary>
+        /// <param name="prompt">message to show to user</param>
+        /// <param name="available">array of Types selection should be made from</param>
+        /// <returns></returns>
+        Type SelectType(string prompt, Type[] available);
     }
 }

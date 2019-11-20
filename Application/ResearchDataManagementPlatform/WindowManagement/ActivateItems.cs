@@ -331,6 +331,16 @@ namespace ResearchDataManagementPlatform.WindowManagement
             return false;
         }
 
+        public override Type SelectType(string prompt, Type[] available)
+        {
+            var dlg =  new PickOneOrCancelDialog<Type>(available, prompt);
+
+            if (dlg.ShowDialog() == DialogResult.OK)
+                return dlg.Picked;
+
+            return null;
+        }
+
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             //if the collection an arbitrary one then it is definetly not the root collection for anyone

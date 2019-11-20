@@ -15,7 +15,10 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
     {
         private Type _type;
 
-        public ExecuteCommandNewObject(IBasicActivateItems activator,Type type):base(activator)
+        
+        public ExecuteCommandNewObject(IBasicActivateItems activator,
+            [DemandsInitialization("Type to create",TypeOf = typeof(DatabaseEntity))]
+            Type type):base(activator)
         {
             if(!typeof(DatabaseEntity).IsAssignableFrom(type))
                 SetImpossible("Type must be derived from DatabaseEntity");

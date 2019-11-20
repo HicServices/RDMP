@@ -190,6 +190,16 @@ namespace Rdmp.Core.CommandLine.Gui
             return false;
         }
 
+        public override Type SelectType(string prompt, Type[] available)
+        {
+            var dlg = new ConsoleGuiBigListBox<Type>(prompt, "Ok", true, available.ToList(), null);
+
+            if (dlg.ShowDialog())
+                return dlg.Selected;
+            
+            return null;
+        }
+
         public override void ShowException(string errorText, Exception exception)
         {
             var dlg = new Dialog("Error", 80, 20,

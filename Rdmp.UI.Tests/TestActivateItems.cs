@@ -132,6 +132,11 @@ namespace Rdmp.UI.Tests
             throw new NotImplementedException();
         }
 
+        public override Type SelectType(string prompt, Type[] available)
+        {
+            throw new NotImplementedException();
+        }
+
         public bool IsRootObjectOfCollection(RDMPCollection collection, object rootObject)
         {
             throw new NotImplementedException();
