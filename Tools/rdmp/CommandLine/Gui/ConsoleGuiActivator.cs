@@ -70,7 +70,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
-            var dlg = new ConsoleGuiServerDatabaseTableSelector(taskDescription, "Ok");
+            var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok",false);
             if (dlg.ShowDialog())
                 return dlg.GetDiscoveredDatabase();
 
@@ -79,7 +79,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
-            var dlg = new ConsoleGuiServerDatabaseTableSelector(taskDescription, "Ok");
+            var dlg = new ConsoleGuiServerDatabaseTableSelector(this, taskDescription, "Ok",true);
             if (dlg.ShowDialog())
                 return dlg.GetDiscoveredTable();
 
