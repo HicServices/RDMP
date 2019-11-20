@@ -190,14 +190,7 @@ namespace Rdmp.Core.CommandLine.Interactive
 
             return UsefulStuff.ChangeType(ReadLine(), paramType);
         }
-
-        public override bool DeleteWithConfirmation(IDeleteable deleteable)
-        {
-            deleteable.DeleteInDatabase();
-
-            return true;
-        }
-
+        
         public override bool YesNo(string text, string caption)
         {
             Console.WriteLine(text + "(y/n)");

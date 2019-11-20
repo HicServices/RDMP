@@ -93,7 +93,12 @@ namespace Rdmp.Core.CommandExecution
         public abstract void ShowException(string errorText, Exception exception);
 
         /// <inheritdoc/>
-        public abstract bool DeleteWithConfirmation(IDeleteable deleteable);
+        public virtual bool DeleteWithConfirmation(IDeleteable deleteable)
+        {
+            deleteable.DeleteInDatabase();
+
+            return true;
+        }
 
         /// <inheritdoc/>
         public abstract object SelectValueType(string prompt, Type paramType);
