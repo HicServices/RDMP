@@ -62,6 +62,12 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
 
             top.Add (menu);
             
+            top.Add(new Label("Press F9 for menu")
+            {
+                X = Pos.Center(),
+                Y = Pos.Center()
+            });
+
             try
             {
                 Application.Run();

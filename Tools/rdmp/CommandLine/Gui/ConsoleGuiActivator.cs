@@ -7,6 +7,7 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Text.RegularExpressions;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
@@ -116,7 +117,7 @@ namespace Rdmp.Core.CommandLine.Gui
             
             Application.Run(openDir);
 
-            var selected = openDir.FilePaths.FirstOrDefault();
+            var selected = openDir.DirectoryPath?.ToString();
             
             return selected == null ? null : new DirectoryInfo(selected);
 
@@ -191,10 +192,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void ShowException(string errorText, Exception exception)
         {
-            var dlg = new Dialog("Error", 100, 20,
+            var dlg = new Dialog("Error", 80, 20,
                 new Button("Ok", true){Clicked = Application.RequestStop});
 
-            dlg.Add(new TextField(errorText + Environment.NewLine + exception.Message)
+            dlg.Add(new Label(Wrap(errorText + Environment.NewLine + exception.Message,76))
             {
                 X = 0,
                 Y = 0,
@@ -203,6 +204,11 @@ namespace Rdmp.Core.CommandLine.Gui
             });
 
             Application.Run(dlg);
+        }
+
+        private string Wrap(string longString, int width)
+        {
+            return string.Join("\n",Regex.Matches( longString, ".{1,"+width+"}" ).Select( m => m.Value ).ToArray());
         }
     }
 }
