@@ -15,6 +15,7 @@ using FAnsi.Implementations.Oracle;
 using FAnsi.Implementations.PostgreSql;
 using NLog;
 using Rdmp.Core.CommandLine.DatabaseCreation;
+using Rdmp.Core.CommandLine.Gui;
 using Rdmp.Core.CommandLine.Options;
 using Rdmp.Core.CommandLine.Runners;
 using Rdmp.Core.DataFlowPipeline;
@@ -23,9 +24,8 @@ using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using YamlDotNet.RepresentationModel;
-using Rdmp.Core.CommandLine.Gui;
 
-namespace rdmp
+namespace Rdmp.Core
 {
     class Program
     {

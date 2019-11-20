@@ -89,6 +89,9 @@ namespace Rdmp.UI.Tests.DesignPatternTests
                 string subspace = GetSubspace(csFile);
                 string expectedNamespace = _expectedRootNamespace + subspace;
 
+                if (expectedNamespace.StartsWith("rdmp"))
+                    expectedNamespace = Regex.Replace(expectedNamespace, "^rdmp", "Rdmp.Core");
+
                 string actualNamespace = namespaces[0].Groups[1].Value;
 
                 if(!actualNamespace.Equals(expectedNamespace))

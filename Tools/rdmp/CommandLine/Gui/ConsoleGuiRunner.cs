@@ -20,7 +20,7 @@ using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui
 {
-    public class ConsoleGuiRunner : IRunner
+    class ConsoleGuiRunner : IRunner
     {
         private ConsoleGuiActivator _activator;
 
