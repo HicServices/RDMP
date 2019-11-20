@@ -577,7 +577,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         }
 
         
-        public void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
+        public static void SetValue(PropertyInfo prop, object value, IMapsDirectlyToDatabaseTable onObject)
         {
             //sometimes json decided to swap types on you e.g. int64 for int32
             var propertyType = prop.PropertyType;

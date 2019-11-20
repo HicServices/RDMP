@@ -23,6 +23,7 @@ using Rdmp.Core.Startup;
 using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using YamlDotNet.RepresentationModel;
+using Rdmp.Core.CommandLine.Gui;
 
 namespace rdmp
 {
@@ -80,6 +81,7 @@ namespace rdmp
                             CohortCreationOptions,
                             PackOptions,
                             ExecuteCommandOptions,
+                            ConsoleGuiOptions,
                             PlatformDatabaseCreationOptions>(args)
                         .MapResult(
                             //Add new verbs as options here and invoke relevant runner
@@ -92,6 +94,7 @@ namespace rdmp
                             (PackOptions opts) => Run(opts),
                             (PlatformDatabaseCreationOptions opts) => Run(opts),
                             (ExecuteCommandOptions opts) => Run(opts),
+                            (ConsoleGuiOptions opts) => Run(opts),
                             errs => 1);
 
                 NLog.LogManager.GetCurrentClassLogger().Info("Exiting with code " + returnCode);
@@ -145,7 +148,9 @@ namespace rdmp
             if(opts.LogStartup && opts.Command == CommandLineActivity.check)
                 checker.Worst = LogLevel.Info;
 
-            var runner = factory.CreateRunner(opts);
+            var runner = opts is ConsoleGuiOptions g ? 
+                        new ConsoleGuiRunner(g):
+                         factory.CreateRunner(opts);
 
             int runExitCode = runner.Run(opts.GetRepositoryLocator(), listener, checker, new GracefulCancellationToken());
 

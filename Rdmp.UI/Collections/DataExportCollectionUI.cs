@@ -124,8 +124,6 @@ namespace Rdmp.UI.Collections
                 tlvDataExport.AddObjects(dataExportChildProvider.AllPackages);
                 tlvDataExport.AddObjects(dataExportChildProvider.Projects);
             }
-            
-            NavigateToObjectUI.RecordThatTypeIsNotAUsefulParentToShow(typeof(ProjectCohortIdentificationConfigurationAssociationsNode));
         }
         
         public static bool IsRootObject(object root)

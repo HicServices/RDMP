@@ -184,7 +184,7 @@ namespace Rdmp.Core.CommandExecution
                 return a.DefaultValue;
 
             if (a.Type.IsValueType && !typeof(Enum).IsAssignableFrom(a.Type))
-                return _basicActivator.SelectValueType(a.Name,a.Type);
+                return _basicActivator.SelectValueType(a.Name,a.Type, null);
 
             return null;
         }

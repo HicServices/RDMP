@@ -21,7 +21,6 @@ using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.Refreshing;
 using ReusableLibraryCode.Checks;
 using ReusableLibraryCode.Icons.IconProvision;
@@ -141,6 +140,10 @@ namespace Rdmp.UI.Menus
         {           
             Add(new ExecuteCommandShow(_activator,objects,1){OverrideCommandName = title },Keys.None,GoTo);
         }
+        protected void AddGoTo(IMapsDirectlyToDatabaseTable o, string title)
+        {
+            Add(new ExecuteCommandShow(_activator,o,1){OverrideCommandName = title },Keys.None,GoTo);
+        }
         protected void AddGoTo<T>(int? foreignKey, string title = null) where T:IMapsDirectlyToDatabaseTable
         {
             if(foreignKey.HasValue)
@@ -214,7 +217,14 @@ namespace Rdmp.UI.Menus
 
             //add refresh and then finally help
             if (databaseEntity != null)
+            {
+                //if it is a masquerader add a goto the object
+                if(_args.Masquerader != null)
+                    AddGoTo(databaseEntity,databaseEntity.GetType().Name);
+
                 Add(new ExecuteCommandRefreshObject(_activator, databaseEntity), Keys.F5);
+            }
+                
 
             Add(new ExecuteCommandShowKeywordHelp(_activator, _args));}
 

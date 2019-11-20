@@ -43,7 +43,7 @@ namespace Rdmp.Core.CommandExecution.AtomicCommands
         {
             base.Execute();
 
-            var category = BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory));
+            var category = BasicActivator.SelectValueType("New Extraction Category", typeof(ExtractionCategory), ExtractionCategory.Core);
             
             if(category != null)
             {

@@ -8,7 +8,6 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,7 +17,6 @@ using NUnit.Framework;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Dashboarding;
-using Rdmp.Core.Curation.Data.Defaults;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
 using Rdmp.UI.Collections;
@@ -27,7 +25,6 @@ using Rdmp.UI.CommandExecution;
 using Rdmp.UI.Icons.IconProvision;
 using Rdmp.UI.ItemActivation;
 using Rdmp.UI.ItemActivation.Arranging;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.PluginChildProvision;
 using Rdmp.UI.Refreshing;
 using Rdmp.UI.Rules;
@@ -38,17 +35,15 @@ using ReusableLibraryCode.Comments;
 
 namespace Rdmp.UI.Tests
 {
-    public class TestActivateItems:IActivateItems, ITheme
+    public class TestActivateItems: BasicActivateItems, IActivateItems, ITheme
     {
         private readonly UITests _uiTests;
         private static CommentStore _commentStore;
         private List<IProblemProvider> _problemProviders;
 
         public ITheme Theme { get {return this;}}
-        public IServerDefaults ServerDefaults { get; private set; }
         public RefreshBus RefreshBus { get; private set; }
         public FavouritesProvider FavouritesProvider { get; private set; }
-        public ICoreChildProvider CoreChildProvider { get; private set; }
         public List<IPluginUserInterface> PluginUserInterfaces { get; private set; }
         public IArrangeWindows WindowArranger { get; private set; }
 
@@ -59,13 +54,10 @@ namespace Rdmp.UI.Tests
         /// </summary>
         public TestActivateItemsResults Results { get; private set; }
 
-        public TestActivateItems(UITests uiTests,MemoryDataExportRepository repo)
+        public TestActivateItems(UITests uiTests,MemoryDataExportRepository repo):base(new RepositoryProvider(repo),new ToMemoryCheckNotifier())
         {
             _uiTests = uiTests;
             Results = new TestActivateItemsResults();
-            GlobalErrorCheckNotifier = new ToMemoryCheckNotifier();
-
-            RepositoryLocator = new RepositoryProvider(repo);
             RefreshBus = new RefreshBus();
 
             //don't load the comment store for every single test
@@ -95,17 +87,15 @@ namespace Rdmp.UI.Tests
             _uiTests.AndLaunch(singleControlForm);
             return singleControlForm.FindForm();
         }
-
-
-        public IRDMPPlatformRepositoryServiceLocator RepositoryLocator { get; private set; }
+        
         public ICoreIconProvider CoreIconProvider { get; private set; }
-        public ICheckNotifier GlobalErrorCheckNotifier { get; private set; }
-        public void Publish(DatabaseEntity databaseEntity)
+
+        public override void Publish(DatabaseEntity databaseEntity)
         {
             RefreshBus.Publish(this,new RefreshObjectEventArgs(databaseEntity));
         }
 
-        public void Show(string message)
+        public override void Show(string message)
         {
             Assert.Fail("Did not expect a MessageBox to be shown");
         }
@@ -127,7 +117,7 @@ namespace Rdmp.UI.Tests
             return t;
         }
 
-        public bool DeleteWithConfirmation(IDeleteable deleteable)
+        public override bool DeleteWithConfirmation(IDeleteable deleteable)
         {
             if(deleteable is DatabaseEntity d && !d.Exists())
                 throw new Exception("Attempt made to delete an object which didn't exist");
@@ -137,13 +127,7 @@ namespace Rdmp.UI.Tests
             return true;
         }
 
-        public event EmphasiseItemHandler Emphasise;
-        public void RequestItemEmphasis(object sender, EmphasiseRequest request)
-        {
-            Emphasise?.Invoke(sender, new EmphasiseEventArgs(request));
-        }
-
-        public bool SelectEnum(string prompt, Type enumType, out Enum chosen)
+        public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
             throw new NotImplementedException();
         }
@@ -162,12 +146,7 @@ namespace Rdmp.UI.Tests
         {
             return _problemProviders.Select(p => p.DescribeProblem(model)).SingleOrDefault(prob=>prob != null);
         }
-
-        public object GetRootObjectOrSelf(IMapsDirectlyToDatabaseTable objectToEmphasise)
-        {
-            return CoreChildProvider.GetRootObjectOrSelf(objectToEmphasise);
-        }
-
+        
         public string GetDocumentation(Type type)
         {
             return RepositoryLocator.CatalogueRepository.CommentStore.GetTypeDocumentationIfExists(type);
@@ -219,7 +198,7 @@ namespace Rdmp.UI.Tests
         /// </summary>
         public bool? YesNoResponse { get;set;}
 
-        public bool YesNo(string text, string caption)
+        public override bool YesNo(string text, string caption)
         {
             if(YesNoResponse.HasValue)
                 return YesNoResponse.Value;
@@ -233,33 +212,33 @@ namespace Rdmp.UI.Tests
         /// </summary>
         public string TypeTextResponse { get; set; }
 
-        public bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
+        public override bool TypeText(string header, string prompt, int maxLength, string initialText, out string text, bool requireSaneHeaderText)
         {
             text = TypeTextResponse;
             return !string.IsNullOrWhiteSpace(TypeTextResponse);
         }
 
-        public DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
+        public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
             throw new NotImplementedException();
         }
 
-        public DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
+        public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
             throw new NotImplementedException();
         }
 
-        public void ShowException(string errorText, Exception exception)
+        public override void ShowException(string errorText, Exception exception)
         {
             throw exception ?? new Exception(errorText);
         }
 
-        public void Wait(string title, Task task, CancellationTokenSource cts)
+        public override void Wait(string title, Task task, CancellationTokenSource cts)
         {
             task.Wait(cts.Token);
         }
         
-        public List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
+        public override List<KeyValuePair<Type, Func<RequiredArgument, object>>> GetDelegates()
         {
             return new List<KeyValuePair<Type, Func<RequiredArgument, object>>>
             {
@@ -267,49 +246,34 @@ namespace Rdmp.UI.Tests
             };
         }
 
-        public IEnumerable<Type> GetIgnoredCommands()
-        {
-            return new List<Type>();
-        }
-
-        public IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
+        public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
             IMapsDirectlyToDatabaseTable[] availableObjects, string initialSearchText)
         {
             throw new NotImplementedException();
         }
 
-        public IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
+        public override IMapsDirectlyToDatabaseTable SelectOne(string prompt, IMapsDirectlyToDatabaseTable[] availableObjects,
             string initialSearchText = null, bool allowAutoSelect = false)
         {
             throw new NotImplementedException();
         }
 
-        public DirectoryInfo SelectDirectory(string prompt)
+        public override DirectoryInfo SelectDirectory(string prompt)
         {
             throw new NotImplementedException();
         }
 
-        public FileInfo SelectFile(string prompt)
+        public override FileInfo SelectFile(string prompt)
         {
             return SelectFile(prompt, null, null);
         }
 
-        public FileInfo SelectFile(string prompt, string patternDescription, string pattern)
+        public override FileInfo SelectFile(string prompt, string patternDescription, string pattern)
         {
             throw new NotImplementedException();
         }
-
-        public IEnumerable<T> GetAll<T>()
-        {
-            throw new NotImplementedException();
-        }
-
-        public IEnumerable<IMapsDirectlyToDatabaseTable> GetAll(Type t)
-        {
-            throw new NotImplementedException();
-        }
-
-        public object SelectValueType(string prompt, Type paramType)
+        
+        public override object SelectValueType(string prompt, Type paramType, object initialValue)
         {
             throw new NotImplementedException();
         }

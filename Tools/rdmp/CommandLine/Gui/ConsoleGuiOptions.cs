@@ -4,28 +4,17 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
-using Rdmp.Core.CommandExecution;
-using Rdmp.Core.CommandExecution.AtomicCommands;
-using Rdmp.Core.Curation.Data;
-using Rdmp.UI.ItemActivation;
+using CommandLine;
+using Rdmp.Core.CommandLine.Options;
 
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandLine.Gui
 {
-    public class ExecuteCommandUnpin : BasicUICommandExecution, IAtomicCommand
+    /// <summary>
+    /// Runs a the RDMP console gui.
+    /// </summary>
+    [Verb("gui",HelpText = "Run the RDMP console user interface")]
+    public class ConsoleGuiOptions : RDMPCommandLineOptions
     {
-        private readonly DatabaseEntity _databaseEntity;
 
-        public ExecuteCommandUnpin(IActivateItems activator, DatabaseEntity databaseEntity)
-            : base(activator)
-        {
-            _databaseEntity = databaseEntity;
-        }
-
-        public override void Execute()
-        {
-            base.Execute();
-
-            Activator.RequestItemEmphasis(this, new EmphasiseRequest(_databaseEntity, int.MaxValue) { Pin = false });
-        }
     }
 }

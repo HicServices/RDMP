@@ -171,9 +171,17 @@ namespace Rdmp.UI.ChecksUI
 
             return shouldApplyFix;
         }
-        
+
+        private object olockYesNoToAll = new object();
+
         private bool DoesUserWantToApplyFix(CheckEventArgs args)
         {
+            if (InvokeRequired)
+                lock (olockYesNoToAll)
+                {
+                    return (bool) Invoke(new Func<bool>(() => DoesUserWantToApplyFix(args)));
+                }
+
             //if there is a fix and a request handler for whether or not to apply the fix
             if (args.ProposedFix != null)
             {
@@ -182,12 +190,9 @@ namespace Rdmp.UI.ChecksUI
                                         "(dont specify a proposedFix if you are passing in CheckResult.Success)");
 
                 //there is a suggested fix, see if the user has subscribed to the fix handler (i.e. the fix handler tells the class whether the user wants to apply this specific fix, like maybe a messagebox or something gets shown and it returns true to apply the fix)
-                bool applyFix = MakeChangePopup.ShowYesNoMessageBoxToApplyFix(AllowsYesNoToAll ? yesNoYesToAllDialog : null, 
-                                                                              args.Message, args.ProposedFix);
-
-                //user wants to apply fix so don't raise any more events
-                if (applyFix)
-                    return true;
+                return MakeChangePopup.ShowYesNoMessageBoxToApplyFix(AllowsYesNoToAll ? yesNoYesToAllDialog : null, 
+                    args.Message, args.ProposedFix);
+                
             }
             
             //do not apply fix

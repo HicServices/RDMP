@@ -13,7 +13,6 @@ using Rdmp.Core.Curation.Data.Dashboarding;
 using Rdmp.UI;
 using Rdmp.UI.Collections;
 using Rdmp.UI.ItemActivation;
-using Rdmp.UI.ItemActivation.Emphasis;
 using ReusableLibraryCode.Checks;
 
 using WeifenLuo.WinFormsUI.Docking;

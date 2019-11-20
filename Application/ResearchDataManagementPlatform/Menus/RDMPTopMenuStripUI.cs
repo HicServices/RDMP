@@ -18,7 +18,6 @@ using Rdmp.UI.ChecksUI;
 using Rdmp.UI.CommandExecution.AtomicCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.CohortCreationCommands;
 using Rdmp.UI.CommandExecution.AtomicCommands.UIFactory;
-using Rdmp.UI.ItemActivation.Emphasis;
 using Rdmp.UI.LocationsMenu.Ticketing;
 using Rdmp.UI.MainFormUITabs;
 using Rdmp.UI.Menus.MenuItems;

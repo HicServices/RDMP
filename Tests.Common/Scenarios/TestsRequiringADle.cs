@@ -71,33 +71,49 @@ namespace Tests.Common.Scenarios
             //make the load load the table
             TestCatalogue.LoadMetadata_ID = TestLoadMetadata.ID;
             TestCatalogue.SaveToDatabase();
+
+            CreateFlatFileAttacher(TestLoadMetadata,"*.csv",TestCatalogue.GetTableInfoList(false).Single(),",");
             
-            var csvProcessTask  = new ProcessTask(CatalogueRepository,TestLoadMetadata,LoadStage.Mounting);
+            //Get DleRunner to run pre load checks (includes trigger creation etc)
+            var runner = new DleRunner(new DleOptions() { LoadMetadata = TestLoadMetadata.ID,Command = CommandLineActivity.check});
+            runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+        }
+
+        /// <summary>
+        /// Creates a <see cref="AnySeparatorFileAttacher"/> parcelled into a <see cref="ProcessTask"/> that reads CSV files in ForLoading
+        /// in the mounting stage of the load
+        /// </summary>
+        /// <param name="lmd">The load to create the <see cref="ProcessTask"/> in</param>
+        /// <param name="pattern">File pattern to load e.g. *.csv</param>
+        /// <param name="ti">The table to load (must be part of the <paramref name="lmd"/></param>
+        /// <param name="separator">The separator of the files e.g. ','</param>
+        /// <param name="ignoreColumns">Columns to ignore in the load</param>
+        /// <returns></returns>
+        protected ProcessTask CreateFlatFileAttacher(LoadMetadata lmd, string pattern, ITableInfo ti, string separator = ",", string ignoreColumns="hic_dataLoadRunID")
+        {
+            var csvProcessTask  = new ProcessTask(CatalogueRepository,lmd,LoadStage.Mounting);
             var args = csvProcessTask.CreateArgumentsForClassIfNotExists<AnySeparatorFileAttacher>();
             csvProcessTask.Path = typeof(AnySeparatorFileAttacher).FullName;
             csvProcessTask.ProcessTaskType = ProcessTaskType.Attacher;
             csvProcessTask.SaveToDatabase();
 
             var filePattern = args.Single(a=>a.Name == "FilePattern");
-            filePattern.SetValue("*.csv");
+            filePattern.SetValue(pattern);
             filePattern.SaveToDatabase();
 
             var tableToLoad = args.Single(a=>a.Name == "TableToLoad");
-            tableToLoad.SetValue(TestCatalogue.GetTableInfoList(false).Single());
+            tableToLoad.SetValue(ti);
             tableToLoad.SaveToDatabase();
 
-            var separator = args.Single(a=>a.Name == "Separator");
-            separator.SetValue(",");
-            separator.SaveToDatabase();
-            
+            var separatorArg = args.Single(a=>a.Name == "Separator");
+            separatorArg.SetValue(separator);
+            separatorArg.SaveToDatabase();
+
             var ignoreDataLoadRunIDCol = args.Single(a=>a.Name == "IgnoreColumns");
-            ignoreDataLoadRunIDCol.SetValue("hic_dataLoadRunID");
+            ignoreDataLoadRunIDCol.SetValue(ignoreColumns);
             ignoreDataLoadRunIDCol.SaveToDatabase();
 
-                       
-            //Get DleRunner to run pre load checks (includes trigger creation etc)
-            var runner = new DleRunner(new DleOptions() { LoadMetadata = TestLoadMetadata.ID,Command = CommandLineActivity.check});
-            runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+            return csvProcessTask;
         }
 
 
@@ -119,10 +135,41 @@ namespace Tests.Common.Scenarios
 
             return fi;
         }
+
+        /// <summary>
+        /// Creates a new file in the ForLoading directory of the <see cref="LoadDirectory"/> with the specified <paramref name="contents"/>
+        /// </summary>
+        /// <param name="filename"></param>
+        /// <param name="contents"></param>
+        /// <returns></returns>
+        protected FileInfo CreateFileInForLoading(string filename, string[] contents)
+        {
+            var fi = new FileInfo(Path.Combine(LoadDirectory.ForLoading.FullName,Path.GetFileName(filename)));
+            File.WriteAllLines(fi.FullName,contents);
+            return fi;
+        }
                
         public void RunDLE(int timeoutInMilliseconds)
         {
-            var runner = new DleRunner(new DleOptions() { LoadMetadata = TestLoadMetadata.ID,Command = CommandLineActivity.run});
+            RunDLE(TestLoadMetadata,timeoutInMilliseconds,false);
+        }
+
+        /// <summary>
+        /// Runs the data load engine for the given <paramref name="lmd"/>
+        /// </summary>
+        /// <param name="lmd"></param>
+        /// <param name="timeoutInMilliseconds"></param>
+        /// <param name="checks">True to run the pre load checks with accept all proposed fixes</param>
+        public void RunDLE(LoadMetadata lmd, int timeoutInMilliseconds, bool checks)
+        {
+            if(checks)
+            {
+                //Get DleRunner to run pre load checks (includes trigger creation etc)
+                var checker = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID,Command = CommandLineActivity.check});
+                checker.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new AcceptAllCheckNotifier(), new GracefulCancellationToken());
+            }
+
+            var runner = new DleRunner(new DleOptions() { LoadMetadata = lmd.ID,Command = CommandLineActivity.run});
             runner.Run(RepositoryLocator,new ThrowImmediatelyDataLoadEventListener(), new ThrowImmediatelyCheckNotifier(), new GracefulCancellationToken());
         }
     }
