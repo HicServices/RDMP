@@ -78,6 +78,8 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
 
         private void Run()
         {
+            _activator.SelectDatabase(true, "make dbs!");
+
             var commandInvoker = new CommandInvoker(_activator);
 
             var commands = commandInvoker.GetSupportedCommands();

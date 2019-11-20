@@ -70,12 +70,20 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override DiscoveredDatabase SelectDatabase(bool allowDatabaseCreation, string taskDescription)
         {
-            throw new NotImplementedException();
+            var dlg = new ConsoleGuiServerDatabaseTableSelector(taskDescription, "Ok");
+            if (dlg.ShowDialog())
+                return dlg.GetDiscoveredDatabase();
+
+            return null;
         }
 
         public override DiscoveredTable SelectTable(bool allowDatabaseCreation, string taskDescription)
         {
-            throw new NotImplementedException();
+            var dlg = new ConsoleGuiServerDatabaseTableSelector(taskDescription, "Ok");
+            if (dlg.ShowDialog())
+                return dlg.GetDiscoveredTable();
+
+            return null;
         }
 
         public override IMapsDirectlyToDatabaseTable[] SelectMany(string prompt, Type arrayElementType,
