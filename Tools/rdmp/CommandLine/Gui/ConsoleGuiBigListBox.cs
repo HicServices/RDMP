@@ -107,7 +107,7 @@ namespace Rdmp.Core.CommandLine.Gui
             
             var btnOk = new Button(_okText,true)
             {
-                X = Pos.Percent(100)-10,
+                X = Pos.Percent(70),
                 Y = Pos.Bottom(listView),
                 Width = 5,
                 Height = 1
@@ -119,9 +119,19 @@ namespace Rdmp.Core.CommandLine.Gui
                 Application.RequestStop();
                 Selected = _collection[listView.SelectedItem];
             };
+
+            var btnCancel = new Button("Cancel")
+            {
+                X = Pos.Percent(85),
+                Y = Pos.Bottom(listView),
+                Width = 5,
+                Height = 1,
+                Clicked = Application.RequestStop
+            };
             
             win.Add(listView);
             win.Add(btnOk);
+            win.Add(btnCancel);
 
             if (_addSearch)
             {
@@ -134,7 +144,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 var mainInput = new TextField ("") {
                     X = Pos.Right(searchLabel),
                     Y = Pos.Bottom(listView),
-                    Width = Dim.Fill() - 15,
+                    Width = Dim.Fill() - 30,
                 };
                 
                 win.Add(searchLabel);
@@ -147,7 +157,6 @@ namespace Rdmp.Core.CommandLine.Gui
                 };
             }
             
-
             Application.Run(win);
 
             return okClicked;

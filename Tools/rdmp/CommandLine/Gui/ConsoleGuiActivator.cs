@@ -45,7 +45,8 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void Publish(DatabaseEntity databaseEntity)
         {
-            
+            //refresh the child provider because there could be new objects
+            CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
         }
 
         public override void Show(string message)
