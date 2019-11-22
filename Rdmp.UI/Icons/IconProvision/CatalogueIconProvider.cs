@@ -62,6 +62,7 @@ namespace Rdmp.UI.Icons.IconProvision
             StateBasedIconProviders.Add(new CatalogueItemStateBasedIconProvider(OverlayProvider));
             StateBasedIconProviders.Add(new ReleaseabilityStateBasedIconProvider());
             StateBasedIconProviders.Add(new ExtractableCohortStateBasedIconProvider(OverlayProvider));
+            StateBasedIconProviders.Add((new PipelineComponentStateBasedIconProvider()));
 
             StateBasedIconProviders.Add(new ExtractCommandStateBasedIconProvider());
         }

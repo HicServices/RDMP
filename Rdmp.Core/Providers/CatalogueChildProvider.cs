@@ -604,7 +604,11 @@ namespace Rdmp.Core.Providers
             //find compatible pipelines useCase.Value
             foreach (Pipeline compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
             {
-                children.Add(new PipelineCompatibleWithUseCaseNode(repo,compatiblePipeline, node.UseCase));
+                var useCaseNode = new PipelineCompatibleWithUseCaseNode(repo, compatiblePipeline, node.UseCase);
+
+                AddChildren(useCaseNode, descendancy.Add(useCaseNode));
+
+                children.Add(useCaseNode);
             }
 
             //it is the first standard use case
@@ -613,6 +617,27 @@ namespace Rdmp.Core.Providers
             return children.Cast<PipelineCompatibleWithUseCaseNode>().Select(u => u.Pipeline);
         }
 
+        private void AddChildren(PipelineCompatibleWithUseCaseNode pipelineNode, DescendancyList descendancy)
+        {
+            var components = AllPipelineComponents.Where(c => c.Pipeline_ID == pipelineNode.Pipeline.ID).OrderBy(o => o.Order)
+                .ToArray();
+
+            foreach (var component in components) 
+                AddChildren(component, descendancy.Add(component));
+
+            HashSet<object> children = new HashSet<object>(components);
+
+            AddToDictionaries(children, descendancy);
+        }
+
+        private void AddChildren(PipelineComponent pipelineComponent, DescendancyList descendancy)
+        {
+            var components = AllPipelineComponentsArguments.Where(c => c.PipelineComponent_ID == pipelineComponent.ID).ToArray();
+            
+            HashSet<object> children = new HashSet<object>(components);
+
+            AddToDictionaries(children, descendancy);
+        }
 
         private void BuildServerNodes()
         {
