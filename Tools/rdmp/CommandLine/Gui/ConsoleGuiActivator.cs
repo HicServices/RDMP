@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -51,12 +52,15 @@ namespace Rdmp.Core.CommandLine.Gui
             var dlg = new Dialog("Message", 100, 20,
                 new Button("Ok", true){Clicked = Application.RequestStop});
 
-            dlg.Add(new TextField(message)
+            dlg.Add(new TextView()
             {
+                Text = message,
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
-                Height = Dim.Fill()
+                Height = Dim.Fill(),
+                ReadOnly = true
+                
             });
 
             Application.Run(dlg);
@@ -149,29 +153,10 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override bool YesNo(string text, string caption)
         {
-            bool toReturn = false;
-
-            var dlg = new Dialog(caption, 100, 20,
-                new Button("Yes", true){Clicked = () =>
-                    {
-                        toReturn = true;
-                        Application.RequestStop();
-                    }
-                },
-                new Button("No"){Clicked = Application.RequestStop}
-                );
-
-            dlg.Add(new TextField(text )
-            {
-                X = 0,
-                Y = 0,
-                Width = Dim.Fill(),
-                Height = Dim.Fill()
-            });
-
-            Application.Run(dlg);
-
-            return toReturn;
+            var dlg = new ConsoleGuiBigListBox<bool>(text, "Ok", false, new List<bool>(new []{true,false}), (b) => b ? "Yes" : "No");
+            dlg.ShowDialog();
+            
+            return dlg.Selected;
         }
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
@@ -200,22 +185,22 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void ShowException(string errorText, Exception exception)
         {
-            var dlg = new Dialog("Error", 80, 30,
-                new Button("Ok", true)
-                {
-                    Clicked = Application.RequestStop,
-                    X = Pos.Center(),
-                    Y = 29
-                });
+            var dlg = new Dialog("Error", Math.Min(Application.Top.Frame.Width, 80),
+                Math.Min(Application.Top.Frame.Height, 20),
+                new Button("Ok", true){Clicked = Application.RequestStop});
+            
+            var msg = Wrap(errorText + "\n" + exception.Message, 76);
 
-            dlg.Add(new Label(Wrap(errorText + Environment.NewLine + exception.Message,76))
+            dlg.Add(new TextView()
             {
+                Text = msg,
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
-                Height = Dim.Fill()
+                Height = Dim.Fill()-2,
+                ReadOnly = true
             });
-
+            
             Application.Run(dlg);
         }
 

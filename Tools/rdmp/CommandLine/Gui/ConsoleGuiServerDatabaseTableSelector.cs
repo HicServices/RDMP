@@ -135,9 +135,18 @@ namespace Rdmp.Core.CommandLine.Gui
             var tbDatabase = new TextField(string.Empty){
                 X = Pos.Right(lblDatabase),
                 Y = Pos.Bottom(lblServer),
-                Width = Dim.Fill()
+                Width = Dim.Fill() - 20
             };
             tbDatabase.Changed += (s, e) => Database = ((TextField)s).Text.ToString();
+
+            var btnCreateDatabase = new Button("Create Database")
+            {
+                X = Pos.Right(tbDatabase),
+                Y = Pos.Bottom(lblServer),
+                Width = 15,
+                Height = 0,
+                Clicked = CreateDatabase
+            };
             
             //////////////////////////////////////////////// Schema  //////////////////////
             
@@ -193,6 +202,7 @@ namespace Rdmp.Core.CommandLine.Gui
             win.Add(tbServer);
             win.Add(lblDatabase);
             win.Add(tbDatabase);
+            win.Add(btnCreateDatabase);
 
             if (_showTableComponents)
             {
@@ -236,12 +246,33 @@ namespace Rdmp.Core.CommandLine.Gui
             return OkClicked;
         }
 
-        
-
-
-        public DiscoveredDatabase GetDiscoveredDatabase()
+        private void CreateDatabase()
         {
-            if (!OkClicked)
+            try
+            {
+                var db = GetDiscoveredDatabase(true);
+
+                if(db == null)
+                    _activator.Show("Enter all database details before trying to create");
+                else
+                if(db.Exists())
+                    _activator.Show("Database already exists");
+                else
+                {
+                    db.Create();
+                    _activator.Show("Database Created Successfully");
+                }
+            }
+            catch (Exception e)
+            {
+                _activator.ShowException("Create Database Failed",e);
+            }
+        }
+
+
+        public DiscoveredDatabase GetDiscoveredDatabase(bool ignoreOk=false)
+        {
+            if (!OkClicked && !ignoreOk)
                 return null;
 
             if (string.IsNullOrWhiteSpace(Server))
