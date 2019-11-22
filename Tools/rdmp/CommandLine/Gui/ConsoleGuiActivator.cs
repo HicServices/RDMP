@@ -49,7 +49,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void Show(string message)
         {
-            var dlg = new Dialog("Message", 100, 20,
+            var dlg = new Dialog("Message", Math.Min(80,Application.Top.Frame.Width), Math.Min(20,Application.Top.Frame.Height),
                 new Button("Ok", true){Clicked = Application.RequestStop});
 
             dlg.Add(new TextView()
@@ -58,9 +58,8 @@ namespace Rdmp.Core.CommandLine.Gui
                 X = 0,
                 Y = 0,
                 Width = Dim.Fill(),
-                Height = Dim.Fill(),
+                Height = Dim.Fill()-1,
                 ReadOnly = true
-                
             });
 
             Application.Run(dlg);
