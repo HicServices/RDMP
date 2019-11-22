@@ -601,6 +601,10 @@ namespace Rdmp.Core.Providers
             
             MemoryRepository repo = new MemoryRepository();
 
+            //Could be an issue here if a pipeline becomes compatible with multiple use cases.
+            //Should be impossible currently but one day it could be an issue especially if we were to
+            //support plugin use cases in this hierarchy
+
             //find compatible pipelines useCase.Value
             foreach (Pipeline compatiblePipeline in AllPipelines.Where(node.UseCase.GetContext().IsAllowable))
             {
