@@ -118,8 +118,23 @@ namespace Rdmp.Core.CommandExecution
         }
 
         /// <inheritdoc/>
-        public abstract object SelectValueType(string prompt, Type paramType, object initialValue);
-        
+        public  object SelectValueType(string prompt, Type paramType, object initialValue)
+        {
+            
+            if((Nullable.GetUnderlyingType(paramType) ??paramType).IsEnum)
+                return SelectEnum(prompt, paramType, out Enum chosen) ? chosen : null;
+
+            if (paramType == typeof(bool) || paramType == typeof(bool?))
+                return YesNo(prompt, "Enter Value");
+            
+            if (paramType == typeof(string))
+                return TypeText("Enter Value",prompt,int.MaxValue,null,out string answer,false) ? answer : null;
+
+            return SelectValueTypeImpl(prompt, paramType, initialValue);
+        }
+
+        protected abstract object SelectValueTypeImpl(string prompt, Type paramType, object initialValue);
+
         /// <inheritdoc/>
         public abstract void Publish(DatabaseEntity databaseEntity);
 

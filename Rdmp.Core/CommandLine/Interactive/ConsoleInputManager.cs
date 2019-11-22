@@ -196,13 +196,10 @@ namespace Rdmp.Core.CommandLine.Interactive
         
         
 
-        public override object SelectValueType(string prompt, Type paramType, object initialValue)
+        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
         {
             Console.WriteLine("Enter value for " + prompt +":");
-
-            if (paramType == typeof(string))
-                return ReadLine();
-
+            
             return UsefulStuff.ChangeType(ReadLine(), paramType);
         }
         

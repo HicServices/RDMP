@@ -32,11 +32,8 @@ namespace Rdmp.Core.CommandLine.Gui
             return true;
         }
 
-        public override object SelectValueType(string prompt, Type paramType, object initialValue)
+        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
         {
-            if (paramType.IsEnum)
-                return SelectEnum(prompt, paramType, out Enum chosen) ? chosen : null;
-
             var dlg = new ConsoleGuiTextDialog(prompt,initialValue?.ToString());
             dlg.ShowDialog();
 
@@ -203,8 +200,13 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override void ShowException(string errorText, Exception exception)
         {
-            var dlg = new Dialog("Error", 80, 20,
-                new Button("Ok", true){Clicked = Application.RequestStop});
+            var dlg = new Dialog("Error", 80, 30,
+                new Button("Ok", true)
+                {
+                    Clicked = Application.RequestStop,
+                    X = Pos.Center(),
+                    Y = 29
+                });
 
             dlg.Add(new Label(Wrap(errorText + Environment.NewLine + exception.Message,76))
             {

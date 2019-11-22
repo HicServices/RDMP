@@ -320,13 +320,15 @@ namespace ResearchDataManagementPlatform.WindowManagement
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
-            var selector = new PickOneOrCancelDialog<Enum>(Enum.GetValues(enumType).Cast<Enum>().ToArray(), prompt);
+            var selector = new PickOneOrCancelDialog<Enum>(Enum.GetValues(enumType).Cast<Enum>().ToArray(), prompt,
+                (o) => CoreIconProvider.GetImage(o),
+                null);
             if (selector.ShowDialog() == DialogResult.OK)
             {
                 chosen = selector.Picked;
                 return true;
             }
-
+            
             chosen = default;
             return false;
         }
@@ -670,21 +672,8 @@ namespace ResearchDataManagementPlatform.WindowManagement
         }
         
 
-        public override object SelectValueType(string prompt, Type paramType, object initialValue)
+        protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
         {
-            //if it's Enum or Enum?
-            if((Nullable.GetUnderlyingType(paramType) ??paramType).IsEnum)
-            {
-                var dlg = new PickOneOrCancelDialog<Enum>(
-                    Enum.GetValues(paramType).Cast<Enum>().ToArray(),
-                    prompt,
-                    (o) => CoreIconProvider.GetImage(o),
-                    null
-                );
-
-                return dlg.ShowDialog() == DialogResult.OK ? dlg.Picked : null;
-            }
-
             //whatever else it is use string
             var typeTextDialog = new TypeTextOrCancelDialog("Enter Value", prompt + " (" + paramType.Name + ")",1000,
                 initialValue?.ToString());

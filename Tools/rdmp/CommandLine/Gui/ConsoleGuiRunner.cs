@@ -102,12 +102,20 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
 
         public void Open()
         {
-            var dlg = new ConsoleGuiSelectOne(_activator.CoreChildProvider);
-            if (dlg.ShowDialog())
+            try
             {
-                var edit = new ConsoleGuiEdit(_activator,dlg.Selected);
-                edit.ShowDialog();
+                var dlg = new ConsoleGuiSelectOne(_activator.CoreChildProvider);
+                if (dlg.ShowDialog())
+                {
+                    var edit = new ConsoleGuiEdit(_activator,dlg.Selected);
+                    edit.ShowDialog();
+                }
             }
+            catch (Exception e)
+            {
+                _activator.ShowException("Unexpected error in open/edit",e);
+            }
+ 
         }
     }
 
