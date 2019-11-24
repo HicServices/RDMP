@@ -608,7 +608,7 @@ namespace ResearchDataManagementPlatform.WindowManagement
             yield return typeof(ExecuteCommandRefreshObject);
             yield return typeof(ExecuteCommandChangeExtractability);
             yield return typeof (ExecuteCommandOpenInExplorer);
-            yield return typeof (ExecuteCommandCreateNewProcessTask);
+            yield return typeof (ExecuteCommandCreateNewFileBasedProcessTask);
         }
 
         

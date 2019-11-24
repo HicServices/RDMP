@@ -45,11 +45,11 @@ namespace Rdmp.UI.CommandExecution.Proposals
                 var f = sourceFileTaskCommand.Files.Single();
 
                 if(f.Extension == ".sql")
-                    return new ExecuteCommandCreateNewProcessTask(ItemActivator, ProcessTaskType.SQLFile,targetStage.LoadMetadata, targetStage.LoadStage,f);
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.SQLFile,targetStage.LoadMetadata, targetStage.LoadStage,f);
 
 
                 if (f.Extension == ".exe")
-                    return new ExecuteCommandCreateNewProcessTask(ItemActivator, ProcessTaskType.Executable, targetStage.LoadMetadata, targetStage.LoadStage, f);
+                    return new ExecuteCommandCreateNewFileBasedProcessTask(ItemActivator, ProcessTaskType.Executable, targetStage.LoadMetadata, targetStage.LoadStage, f);
             }
 
 

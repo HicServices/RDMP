@@ -7,31 +7,24 @@
 using System;
 using System.Drawing;
 using System.IO;
-using System.Windows.Forms;
-using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.Curation;
 using Rdmp.Core.Curation.Data.DataLoad;
 using Rdmp.Core.Icons.IconOverlays;
 using Rdmp.Core.Icons.IconProvision;
 using Rdmp.Core.Repositories;
-using Rdmp.UI.Icons.IconProvision;
-using Rdmp.UI.ItemActivation;
-using Rdmp.UI.SimpleDialogs;
 using ReusableLibraryCode.Icons.IconProvision;
 
-
-namespace Rdmp.UI.CommandExecution.AtomicCommands
+namespace Rdmp.Core.CommandExecution.AtomicCommands
 {
-    public class ExecuteCommandCreateNewProcessTask : BasicUICommandExecution, IAtomicCommand
+    public class ExecuteCommandCreateNewFileBasedProcessTask : BasicCommandExecution
     {
         private readonly ProcessTaskType _taskType;
         private readonly LoadMetadata _loadMetadata;
         private readonly LoadStage _loadStage;
-        private Bitmap _image;
         private LoadDirectory _LoadDirectory;
         private FileInfo _file;
 
-        public ExecuteCommandCreateNewProcessTask(IActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file=null) : base(activator)
+        public ExecuteCommandCreateNewFileBasedProcessTask(IBasicActivateItems activator, ProcessTaskType taskType, LoadMetadata loadMetadata, LoadStage loadStage, FileInfo file=null) : base(activator)
         {
             _taskType = taskType;
             _loadMetadata = loadMetadata;
@@ -46,15 +39,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
                 SetImpossible("Could not construct LoadDirectory");
             }
             
-            if(taskType == ProcessTaskType.SQLFile)
-            {
-                _image = activator.CoreIconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
-            }
-            else if(taskType == ProcessTaskType.Executable)
-            {
-                _image = new IconOverlayProvider().GetOverlayNoCache(CatalogueIcons.Exe, OverlayKind.Add);
-            }
-            else 
+            if(!(taskType == ProcessTaskType.SQLFile || taskType == ProcessTaskType.Executable))
                 SetImpossible("Only SQLFile and Executable task types are supported by this command");
 
             if (!ProcessTask.IsCompatibleStage(taskType, loadStage))
@@ -62,7 +47,7 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
             _file = file;
         }
-
+        
         public override void Execute()
         {
             base.Execute();
@@ -71,33 +56,32 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
             {
                 if (_taskType == ProcessTaskType.SQLFile)
                 {
-                        var dialog = new TypeTextOrCancelDialog("Enter a name for the SQL file", "File name", 100, "myscript.sql");
-                        if (dialog.ShowDialog() == DialogResult.OK && !string.IsNullOrWhiteSpace(dialog.ResultText))
-                        {
-                            var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, dialog.ResultText);
+                    if (BasicActivator.TypeText("Enter a name for the SQL file", "File name", 100, "myscript.sql",out string selected,false))
+                    {
+                        var target = Path.Combine(_LoadDirectory.ExecutablesPath.FullName, selected);
 
-                            if (!target.EndsWith(".sql"))
-                                target += ".sql";
+                        if (!target.EndsWith(".sql"))
+                            target += ".sql";
 
-                            //create it if it doesn't exist
-                            if (!File.Exists(target))
-                                File.WriteAllText(target, "/*todo Type some SQL*/");
+                        //create it if it doesn't exist
+                        if (!File.Exists(target))
+                            File.WriteAllText(target, "/*todo Type some SQL*/");
 
-                            _file = new FileInfo(target);
-                        }
-                        else
-                            return; //user cancelled
+                        _file = new FileInfo(target);
+                    }
+                    else
+                        return; //user cancelled
                 }
                 else if (_taskType == ProcessTaskType.Executable)
                 {
-                    var dialog = new OpenFileDialog();
-                    dialog.Filter = "Executables|*.exe";
-                    dialog.CheckFileExists = true;
+                    _file = BasicActivator.SelectFile("Enter executable's path", "Executables", "*.exe");
 
-                    if (dialog.ShowDialog() == DialogResult.OK)
-                        _file = new FileInfo(dialog.FileName);
-                    else
+                    // they didn't pick one
+                    if(_file == null)
                         return;
+
+                    if(!_file.Exists)
+                        throw new FileNotFoundException("File did not exist");
                 }
                 else
                     throw new ArgumentOutOfRangeException("Unexpected _taskType:" + _taskType);
@@ -133,7 +117,13 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 
         public override Image GetImage(IIconProvider iconProvider)
         {
-            return _image;
+            if(_taskType == ProcessTaskType.SQLFile)
+                return iconProvider.GetImage(RDMPConcept.SQL, OverlayKind.Add);
+
+            if(_taskType == ProcessTaskType.Executable)
+                return new IconOverlayProvider().GetOverlayNoCache(CatalogueIcons.Exe, OverlayKind.Add);
+
+            return null;
         }
     }
 }
