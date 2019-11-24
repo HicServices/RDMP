@@ -114,6 +114,9 @@ namespace Rdmp.Core.CommandExecution
         {
             deleteable.DeleteInDatabase();
 
+            if(deleteable is DatabaseEntity d)
+                Publish(d);
+
             return true;
         }
 

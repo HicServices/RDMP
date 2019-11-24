@@ -8,6 +8,7 @@ using System;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
+using MapsDirectlyToDatabaseTable;
 using NLog;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.CommandLine.Gui.Windows;
@@ -54,6 +55,7 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
             var menu = new MenuBar (new MenuBarItem [] {
                 new MenuBarItem ("_File", new MenuItem [] {
                     new MenuItem("_Open","",Open),
+                    new MenuItem("Open _Tree","",OpenTree),
                     new MenuItem("_Run","",Run),
                     new MenuItem ("_Quit", "", () => { top.Running = false; })
                 })
@@ -80,6 +82,23 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
             }
 
             return 0;
+        }
+
+        private void OpenTree()
+        {
+            try
+            {
+                var dlg = new ConsoleGuiSelectOne(_activator.CoreChildProvider);
+                if (dlg.ShowDialog())
+                {
+                    var edit = new ConsoleGuiTree(_activator,dlg.Selected);
+                    edit.ShowDialog();
+                }
+            }
+            catch (Exception e)
+            {
+                _activator.ShowException("Unexpected error in open/edit tree",e);
+            }
         }
 
         private void Run()
@@ -115,13 +134,7 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
             {
                 _activator.ShowException("Unexpected error in open/edit",e);
             }
- 
         }
     }
-
-    /*internal class ConsoleGuiSelectType:ConsoleGuiBigListBox<Type>
-    {
-
-    }*/
 }
 

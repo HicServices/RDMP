@@ -115,6 +115,9 @@ namespace Rdmp.Core.CommandLine.Gui
 
             btnOk.Clicked = () =>
             {
+                if(listView.SelectedItem >= _collection.Count)
+                    return;
+
                 okClicked = true;
                 Application.RequestStop();
                 Selected = _collection[listView.SelectedItem];

@@ -4,6 +4,7 @@
 // RDMP is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the GNU General Public License for more details.
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -15,6 +16,7 @@ namespace Rdmp.Core.CommandLine.Gui
     class ConsoleGuiSelectOne : ConsoleGuiBigListBox<IMapsDirectlyToDatabaseTable>
     {
         private readonly Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> _masterCollection;
+        private SearchablesMatchScorer _scorer;
 
         /// <summary>
         /// The maximum number of objects to show in the list box
@@ -29,22 +31,32 @@ namespace Rdmp.Core.CommandLine.Gui
         public ConsoleGuiSelectOne(ICoreChildProvider childProvider):this()
         {
             _masterCollection = childProvider.GetAllSearchables();
+            SetAspectGet(childProvider);
+        }
+
+        private void SetAspectGet(ICoreChildProvider childProvider)
+        {
             AspectGetter = (o) =>
             {
                 var parent = childProvider.GetDescendancyListIfAnyFor(o)?.GetMostDescriptiveParent();
                 
-                return parent != null ? $"{o.GetType().Name} {o} ({parent})" : $"{o.GetType().Name} {o}";
+                return parent != null ? $"{o.ID} {o.GetType().Name} {o} ({parent})" : $"{o.ID} {o.GetType().Name} {o}";
             };
+
+            _scorer = new SearchablesMatchScorer();
+            _scorer.TypeNames = new HashSet<string>(_masterCollection.Select(m => m.Key.GetType().Name).Distinct(),StringComparer.CurrentCultureIgnoreCase);
+
         }
 
         public ConsoleGuiSelectOne(ICoreChildProvider coreChildProvider, IMapsDirectlyToDatabaseTable[] availableObjects):this()
         {
             _masterCollection = coreChildProvider.GetAllSearchables().Where(k=> availableObjects.Contains(k.Key)).ToDictionary(k=>k.Key,v=>v.Value);
+            SetAspectGet(coreChildProvider);
         }
 
         protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText)
         {
-            return new SearchablesMatchScorer()
+            return _scorer
                 .ScoreMatches(_masterCollection, searchText, new CancellationToken())
                 .Where(score => score.Value > 0)
                 .OrderByDescending(score => score.Value)

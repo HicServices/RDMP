@@ -27,11 +27,6 @@ namespace Rdmp.Core.CommandLine.Gui
             CoreChildProvider = new DataExportChildProvider(RepositoryLocator,null,GlobalErrorCheckNotifier);
         }
 
-        public override bool DeleteWithConfirmation(IDeleteable deleteable)
-        {
-            deleteable.DeleteInDatabase();
-            return true;
-        }
 
         protected override object SelectValueTypeImpl(string prompt, Type paramType, object initialValue)
         {
