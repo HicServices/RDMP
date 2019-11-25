@@ -10,6 +10,7 @@ using System.Data.Common;
 using FAnsi;
 using FAnsi.Discovery.ConnectionStringDefaults;
 using MapsDirectlyToDatabaseTable;
+using Rdmp.Core.Repositories;
 using ReusableLibraryCode.Annotations;
 using ReusableLibraryCode.Checks;
 
@@ -66,7 +67,7 @@ namespace Rdmp.Core.Curation.Data
         /// <param name="databaseType"></param>
         /// <param name="keyword"></param>
         /// <param name="value"></param>
-        public ConnectionStringKeyword(IRepository repository,DatabaseType databaseType, string keyword, string value)
+        public ConnectionStringKeyword(ICatalogueRepository repository,DatabaseType databaseType, string keyword, string value)
         {
             repository.InsertAndHydrate(this, new Dictionary<string, object>()
             {
@@ -79,7 +80,7 @@ namespace Rdmp.Core.Curation.Data
                 throw new ArgumentException("Repository failed to properly hydrate this class");
         }
 
-        internal ConnectionStringKeyword(IRepository repository, DbDataReader r)
+        internal ConnectionStringKeyword(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             DatabaseType = (DatabaseType) Enum.Parse(typeof(DatabaseType),r["DatabaseType"].ToString());
