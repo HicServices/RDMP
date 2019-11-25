@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Added
+
+- Console gui supports short code searches (e.g. "c", "ti" etc)
+
 ### Changed
 
 - Updated to [FAnsiSql] 0.10.13

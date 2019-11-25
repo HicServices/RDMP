@@ -106,39 +106,6 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 {RDMPCollection.None,new []{typeof(SupportingDocument),typeof(CatalogueItem)}} //Add all other Type checkboxes here so that they are recognised as Typenames
 };
 
-
-        /// <summary>
-        /// When the user types one of these they get a filter on the full Type
-        /// </summary>
-        Dictionary<string, Type> ShortCodes =
-            new Dictionary<string, Type> (StringComparer.CurrentCultureIgnoreCase){
-
-            {"c",typeof (Catalogue)},
-            {"ci",typeof (CatalogueItem)},
-            {"sd",typeof (SupportingDocument)},
-            {"p",typeof (Project)},
-            {"ec",typeof (ExtractionConfiguration)},
-            {"co",typeof (ExtractableCohort)},
-            {"cic",typeof (CohortIdentificationConfiguration)},
-            {"t",typeof (TableInfo)},
-            {"col",typeof (ColumnInfo)},
-            {"lmd",typeof (LoadMetadata)},
-            {"pipe",typeof(Pipeline)}
-
-                };
-
-        /// <summary>
-        /// When the user types one of these Types (or a <see cref="ShortCodes"/> for one) they also get the value list for free.
-        /// This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs"/> objects as though they were the same as thier
-        /// Key Type.
-        /// </summary>
-        Dictionary<string, Type[]> AlsoIncludes =
-            new Dictionary<string, Type[]> (StringComparer.CurrentCultureIgnoreCase){
-
-            {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
-
-                };
-
         private bool _isClosed;
 
         private List<Type> showOnlyTypes = new List<Type>();
@@ -198,7 +165,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
                 b.Tag = t;
                 b.DisplayStyle = ToolStripItemDisplayStyle.Image;
 
-                string shortCode = ShortCodes.Single(kvp=>kvp.Value == t).Key;
+                string shortCode = SearchablesMatchScorer.ShortCodes.Single(kvp=>kvp.Value == t).Key;
 
                 b.Text = $"{t.Name} ({shortCode})";
                 b.CheckedChanged += CollectionCheckedChanged;
@@ -390,25 +357,7 @@ namespace Rdmp.UI.SimpleDialogs.NavigateTo
             var scorer = new SearchablesMatchScorer();
             scorer.TypeNames = _typeNames;
 
-            //do short code substitutions e.g. ti for TableInfo
-            if(!string.IsNullOrWhiteSpace(text))
-                foreach(var kvp in ShortCodes)
-                    text = Regex.Replace(text,$@"\b{kvp.Key}\b",kvp.Value.Name);
-            
-            //if user hasn't typed any explicit Type filters
-            if(string.IsNullOrWhiteSpace(text) || !_typeNames.Intersect(text.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
-                //add the buttons pressed
-                foreach (var showOnlyType in showOnlyTypes)
-                    text = text + " " + showOnlyType.Name;
-
-            //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
-            if (!string.IsNullOrWhiteSpace(text))
-                foreach(var s in text.Split(' ').ToArray())
-                    if (AlsoIncludes.ContainsKey(s))
-                        foreach(var v in AlsoIncludes[s])
-                            text += " " + v.Name;
-            
-            var scores = scorer.ScoreMatches(_searchables, text, cancellationToken);
+            var scores = scorer.ScoreMatches(_searchables, text, cancellationToken,showOnlyTypes);
 
             if (scores == null)
                 return;

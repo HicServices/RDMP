@@ -60,7 +60,7 @@ namespace Rdmp.Core.CommandLine.Gui
         protected override IList<IMapsDirectlyToDatabaseTable> GetListAfterSearch(string searchText)
         {
             return _scorer
-                .ScoreMatches(_masterCollection, searchText, new CancellationToken())
+                .ScoreMatches(_masterCollection, searchText, new CancellationToken(),null)
                 .Where(score => score.Value > 0)
                 .OrderByDescending(score => score.Value)
                 .ThenByDescending(id => id.Key.Key.ID) //favour newer objects over ties

@@ -12,6 +12,10 @@ using System.Threading;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Curation.Data.Cohort;
+using Rdmp.Core.Curation.Data.DataLoad;
+using Rdmp.Core.Curation.Data.Pipelines;
+using Rdmp.Core.DataExport.Data;
+using Rdmp.Core.Providers.Nodes.PipelineNodes;
 using ReusableLibraryCode;
 
 namespace Rdmp.Core.Providers
@@ -24,14 +28,75 @@ namespace Rdmp.Core.Providers
         private static readonly int[] Weights = new int[] { 64, 32, 16, 8, 4, 2, 1 };
 
         public HashSet<string> TypeNames { get; set; }
+        
+        /// <summary>
+        /// When the user types one of these they get a filter on the full Type
+        /// </summary>
+        public static Dictionary<string, Type> ShortCodes =
+            new Dictionary<string, Type> (StringComparer.CurrentCultureIgnoreCase){
+
+                {"c",typeof (Catalogue)},
+                {"ci",typeof (CatalogueItem)},
+                {"sd",typeof (SupportingDocument)},
+                {"p",typeof (Project)},
+                {"ec",typeof (ExtractionConfiguration)},
+                {"co",typeof (ExtractableCohort)},
+                {"cic",typeof (CohortIdentificationConfiguration)},
+                {"t",typeof (TableInfo)},
+                {"col",typeof (ColumnInfo)},
+                {"lmd",typeof (LoadMetadata)},
+                {"pipe",typeof(Pipeline)}
+
+            };
+
+        /// <summary>
+        /// When the user types one of these Types (or a <see cref="ShortCodes"/> for one) they also get the value list for free.
+        /// This lets you serve up multiple object Types e.g. <see cref="IMasqueradeAs"/> objects as though they were the same as thier
+        /// Key Type.
+        /// </summary>
+        public static Dictionary<string, Type[]> AlsoIncludes =
+            new Dictionary<string, Type[]> (StringComparer.CurrentCultureIgnoreCase){
+
+                {"Pipeline",new Type[]{ typeof(PipelineCompatibleWithUseCaseNode)}}
+
+            };
+
 
         public SearchablesMatchScorer()
         {
             TypeNames = new HashSet<string>(StringComparer.CurrentCultureIgnoreCase);
         }
 
-        public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken)
+        /// <summary>
+        /// Performs a free text search on all <paramref name="searchables"/>.  The <paramref name="searchText"/> will match on both the object
+        /// and it's parental hierarchy e.g. "chi" "biochemistry" matches column "chi" in Catalogue "biochemistry" strongly.
+        /// </summary>
+        /// <param name="searchables">All available objects that can be searched (see <see cref="ICoreChildProvider.GetAllSearchables")/></param>
+        /// <param name="searchText">Tokens to use separated by space e.g. "chi biochemistry CatalogueItem"</param>
+        /// <param name="cancellationToken">Token for cancelling match scoring.  This method will return null if cancellation is detected</param>
+        /// <param name="showOnlyTypes">Optional (can be null) list of types to return results from.  Not respected if <paramref name="searchText"/> includes type names</param>
+        /// <returns></returns>
+        public Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int> ScoreMatches(Dictionary<IMapsDirectlyToDatabaseTable, DescendancyList> searchables, string searchText, CancellationToken cancellationToken, List<Type> showOnlyTypes)
         {
+           //do short code substitutions e.g. ti for TableInfo
+            if(!string.IsNullOrWhiteSpace(searchText))
+                foreach(var kvp in ShortCodes)
+                    searchText = Regex.Replace(searchText,$@"\b{kvp.Key}\b",kvp.Value.Name);
+            
+            //if user hasn't typed any explicit Type filters
+            if(showOnlyTypes != null)
+                //add the explicit types only if the search text does not contain any explicit type names
+                if(string.IsNullOrWhiteSpace(searchText) || !TypeNames.Intersect(searchText.Split(' '),StringComparer.CurrentCultureIgnoreCase).Any())
+                    foreach (var showOnlyType in showOnlyTypes) 
+                        searchText = searchText + " " + showOnlyType.Name;
+
+            //Search the tokens for also inclusions e.g. "Pipeline" becomes "Pipeline PipelineCompatibleWithUseCaseNode"
+            if (!string.IsNullOrWhiteSpace(searchText))
+                foreach(var s in searchText.Split(' ').ToArray())
+                    if (AlsoIncludes.ContainsKey(s))
+                        foreach(var v in AlsoIncludes[s])
+                            searchText += " " + v.Name;
+ 
             //if we have nothing to search for return no results
             if(string.IsNullOrWhiteSpace(searchText))
                 return new Dictionary<KeyValuePair<IMapsDirectlyToDatabaseTable, DescendancyList>, int>();

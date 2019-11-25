@@ -587,7 +587,7 @@ namespace Rdmp.Core.Providers
             }
 
             children.Add(OtherPipelinesNode);
-
+            OtherPipelinesNode.Pipelines.AddRange(unknownPipelines.Cast<Pipeline>());
             AddToDictionaries(unknownPipelines,descendancy.Add(OtherPipelinesNode));
             
             //it is the first standard use case
@@ -612,6 +612,7 @@ namespace Rdmp.Core.Providers
 
                 AddChildren(useCaseNode, descendancy.Add(useCaseNode));
 
+                node.Pipelines.Add(compatiblePipeline);
                 children.Add(useCaseNode);
             }
 
@@ -1047,8 +1048,22 @@ namespace Rdmp.Core.Providers
         {
            
             //if we don't have a record of any children in the child dictionary for the parent model object
-            if(!_childDictionary.ContainsKey(model))
+            if (!_childDictionary.ContainsKey(model))
+            {
+                //if they want the children of a Pipeline (which we don't track) we will have to look under PipelineUseCase instead
+                if (model is Pipeline p)
+                {
+                    if (OtherPipelinesNode.Pipelines.Contains(p))
+                        return GetChildren(OtherPipelinesNode);
+
+                    var useCase = PipelineUseCases.SingleOrDefault(u => u.Pipelines.Contains(p));
+                    if (useCase != null)
+                        return GetChildren(useCase);
+                }
+                
                 return new object[0];//return none
+            }
+                
             
             return _childDictionary[model].OrderBy(o=>o.ToString()).ToArray();
         }
