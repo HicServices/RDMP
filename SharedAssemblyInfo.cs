@@ -9,4 +9,4 @@ using System.Reflection;
 // These should be replaced with correct values by the release process
 [assembly: AssemblyVersion("4.0.1")]
 [assembly: AssemblyFileVersion("4.0.1")]
-[assembly: AssemblyInformationalVersion("4.0.1-rc2")]
+[assembly: AssemblyInformationalVersion("4.0.1-rc3")]
