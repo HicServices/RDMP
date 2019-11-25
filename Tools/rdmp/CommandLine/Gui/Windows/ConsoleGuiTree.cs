@@ -1,8 +1,10 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using MapsDirectlyToDatabaseTable;
 using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
+using Rdmp.Core.Curation.Data.Cohort;
 using Terminal.Gui;
 
 namespace Rdmp.Core.CommandLine.Gui.Windows
@@ -77,7 +79,7 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
         {
             nodes.Add(new TreeNode(_activator,current,depth));
            
-            foreach (var child in _activator.CoreChildProvider.GetChildren(current)) 
+            foreach (var child in _activator.CoreChildProvider.GetChildren(current).OrderBy(o=>o is IOrderable ord ? ord.Order : int.MinValue))
                 AddRecursively(child,depth+1,nodes);
         }
 

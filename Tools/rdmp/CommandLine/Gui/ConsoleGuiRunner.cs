@@ -57,6 +57,7 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
                     new MenuItem("_Open","",Open),
                     new MenuItem("Open _Tree","",OpenTree),
                     new MenuItem("_Run","",Run),
+                    new MenuItem("Re_fresh","",Refresh),
                     new MenuItem ("_Quit", "", () => { top.Running = false; })
                 })
             });
@@ -82,6 +83,12 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
             }
 
             return 0;
+        }
+
+        private void Refresh()
+        {
+            //one day this might be a problem but not today
+            _activator.Publish(null);
         }
 
         private void OpenTree()
