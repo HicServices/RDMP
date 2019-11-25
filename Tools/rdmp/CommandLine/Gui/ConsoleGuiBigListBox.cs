@@ -5,6 +5,7 @@
 // You should have received a copy of the GNU General Public License along with RDMP. If not, see <https://www.gnu.org/licenses/>.
 
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using Terminal.Gui;
@@ -16,12 +17,14 @@ namespace Rdmp.Core.CommandLine.Gui
         private readonly string _okText;
         private readonly bool _addSearch;
         private readonly string _prompt;
-        private IList<T> _collection;
+        private IList<ListViewObject<T>> _collection;
 
         /// <summary>
         /// If the public constructor was used then this is the fixed list we were initialized with
         /// </summary>
         private IList<T> _publicCollection;
+
+        private bool _addNull;
 
         public T Selected { get; private set; }
         
@@ -55,15 +58,16 @@ namespace Rdmp.Core.CommandLine.Gui
         /// <param name="addSearch"></param>
         /// <param name="collection"></param>
         /// <param name="displayMember">What to display in the list box (defaults to <see cref="object.ToString"/></param>
-        public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,Func<T,string> displayMember):this(prompt,okText,addSearch,displayMember)
+        /// <param name="addNull">Creates a selection option "Null" that returns a null selection</param>
+        public ConsoleGuiBigListBox(string prompt, string okText, bool addSearch, IList<T> collection,
+            Func<T, string> displayMember, bool addNull):this(prompt,okText,addSearch,displayMember)
         {
             if(collection == null)
                 throw new ArgumentNullException("collection");
 
             _publicCollection = collection;
+            _addNull = addNull;
         }
-
-        
 
         private class ListViewObject<T2> where T2:T
         {
@@ -103,7 +107,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Width = Dim.Fill(2)
             };
 
-            listView.SetSource( (this._collection = GetInitialSource()).Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList());
+            listView.SetSource( (_collection = BuildList(this.GetInitialSource())).ToList());
             
             var btnOk = new Button(_okText,true)
             {
@@ -120,7 +124,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
                 okClicked = true;
                 Application.RequestStop();
-                Selected = _collection[listView.SelectedItem];
+                Selected = _collection[listView.SelectedItem].Object;
             };
 
             var btnCancel = new Button("Cancel")
@@ -156,13 +160,23 @@ namespace Rdmp.Core.CommandLine.Gui
                 
                 mainInput.Changed += (s, e) =>
                 {
-                    listView.SetSource((_collection = GetListAfterSearch(mainInput.Text.ToString())).Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList());
+                    listView.SetSource((_collection = BuildList(GetListAfterSearch(mainInput.Text.ToString()))).ToList());
                 };
             }
             
             Application.Run(win);
 
             return okClicked;
+        }
+
+        private IList<ListViewObject<T>> BuildList(IList<T> listOfT)
+        {
+            var toReturn = listOfT.Select(o=>new ListViewObject<T>(o,AspectGetter)).ToList();
+
+            if(_addNull)
+                toReturn.Add(new ListViewObject<T>((T)(object)null,(o)=>"Null"));
+
+            return toReturn;
         }
 
         protected virtual IList<T> GetListAfterSearch(string searchString)

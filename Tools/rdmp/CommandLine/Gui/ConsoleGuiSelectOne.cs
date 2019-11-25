@@ -38,6 +38,9 @@ namespace Rdmp.Core.CommandLine.Gui
         {
             AspectGetter = (o) =>
             {
+                if (o == null)
+                    return "Null";
+
                 var parent = childProvider.GetDescendancyListIfAnyFor(o)?.GetMostDescriptiveParent();
                 
                 return parent != null ? $"{o.ID} {o.GetType().Name} {o} ({parent})" : $"{o.ID} {o.GetType().Name} {o}";

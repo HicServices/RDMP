@@ -321,8 +321,16 @@ namespace Rdmp.Core.Repositories.Construction
 
                 for (int index = 0; index < constructorValues.Length; index++)
                 {
-                    if (!p[index].ParameterType.IsInstanceOfType(constructorValues[index]))
-                        isCompatible = false;
+                    //if we have been given a null value for this parameter
+                    if (constructorValues[index] == null)
+                    {
+                        //if the parameter is value type null is not ok otherwise it is
+                        if (p[index].ParameterType.IsEnum || p[index].ParameterType.IsValueType)
+                            isCompatible = false;
+                    }
+                    else
+                        if (!p[index].ParameterType.IsInstanceOfType(constructorValues[index]))
+                            isCompatible = false;
                 }
 
                 if(isCompatible)

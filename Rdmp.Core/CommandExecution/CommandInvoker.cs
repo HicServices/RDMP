@@ -12,6 +12,7 @@ using System.Reflection;
 using FAnsi.Discovery;
 using MapsDirectlyToDatabaseTable;
 using MapsDirectlyToDatabaseTable.Attributes;
+using MapsDirectlyToDatabaseTable.Versioning;
 using Rdmp.Core.CommandExecution.AtomicCommands;
 using Rdmp.Core.CommandLine.Interactive.Picking;
 using Rdmp.Core.Curation.Data;
@@ -82,6 +83,23 @@ namespace Rdmp.Core.CommandExecution
                         .Cast<IMapsDirectlyToDatabaseTable>()
                         .ToArray())
                 );
+
+            AddDelegate(typeof(IPatcher), (p) =>
+                {
+                    var patcherType = _basicActivator.SelectType("Select Patcher (if any)", typeof(IPatcher));
+                    if (patcherType == null)
+                        return null;
+                    
+                    try
+                    {
+                        return Activator.CreateInstance(patcherType);
+                    }
+                    catch (Exception e)
+                    {
+                        throw new Exception($"Failed to call/find blank constructor of IPatcher Type '{patcherType}'",e);
+                    }
+                }
+            );
         }
 
         private void AddDelegate(Type type, Func<RequiredArgument, object> func)

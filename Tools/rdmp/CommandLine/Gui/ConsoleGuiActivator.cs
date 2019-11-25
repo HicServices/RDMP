@@ -15,6 +15,7 @@ using Rdmp.Core.CommandExecution;
 using Rdmp.Core.Curation.Data;
 using Rdmp.Core.Providers;
 using Rdmp.Core.Repositories;
+using ReusableLibraryCode;
 using ReusableLibraryCode.Checks;
 using Terminal.Gui;
 
@@ -147,7 +148,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override bool YesNo(string text, string caption)
         {
-            var dlg = new ConsoleGuiBigListBox<bool>(text, "Ok", false, new List<bool>(new []{true,false}), (b) => b ? "Yes" : "No");
+            var dlg = new ConsoleGuiBigListBox<bool>(text, "Ok", false, new List<bool>(new []{true,false}), (b) => b ? "Yes" : "No",false);
             dlg.ShowDialog();
             
             return dlg.Selected;
@@ -155,7 +156,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override bool SelectEnum(string prompt, Type enumType, out Enum chosen)
         {
-            var dlg = new ConsoleGuiBigListBox<Enum>(prompt, "Ok", false, Enum.GetValues(enumType).Cast<Enum>().ToList(), null);
+            var dlg = new ConsoleGuiBigListBox<Enum>(prompt, "Ok", false, Enum.GetValues(enumType).Cast<Enum>().ToList(), null,false);
 
             if (dlg.ShowDialog())
             {
@@ -169,7 +170,7 @@ namespace Rdmp.Core.CommandLine.Gui
 
         public override Type SelectType(string prompt, Type[] available)
         {
-            var dlg = new ConsoleGuiBigListBox<Type>(prompt, "Ok", true, available.ToList(), null);
+            var dlg = new ConsoleGuiBigListBox<Type>(prompt, "Ok", true, available.ToList(), null,true);
 
             if (dlg.ShowDialog())
                 return dlg.Selected;
@@ -183,7 +184,7 @@ namespace Rdmp.Core.CommandLine.Gui
                 Math.Min(Application.Top.Frame.Height, 20),
                 new Button("Ok", true){Clicked = Application.RequestStop});
             
-            var msg = Wrap(errorText + "\n" + exception.Message, 76);
+            var msg = Wrap(errorText + "\n" + ExceptionHelper.ExceptionToListOfInnerMessages(exception), 76);
 
             dlg.Add(new TextView()
             {
