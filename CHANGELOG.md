@@ -7,6 +7,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+### Changed
+
+- Updated to [FAnsiSql] 0.10.13
+
+### Fixed
+
+- Fixed various issues with new CLI gui
+
 ## [4.0.1-rc2] - 2019-11-20
 
 ### Added

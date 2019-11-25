@@ -14,7 +14,7 @@
         <copyright>Copyright 2018-2019</copyright>
         <dependencies>
 			      <dependency id="HIC.BadMedicine" version="0.1.5" />
-            <dependency id="HIC.FAnsiSql" version="0.10.12" />
+            <dependency id="HIC.FAnsiSql" version="0.10.13" />
             <dependency id="CsvHelper" version="12.1.2" />
             <dependency id="Newtonsoft.Json" version="12.0.2"/>
             <dependency id="CommandLineParser" version="2.5.0" />
