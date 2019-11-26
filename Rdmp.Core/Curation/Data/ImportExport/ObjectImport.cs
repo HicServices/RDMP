@@ -67,7 +67,7 @@ namespace Rdmp.Core.Curation.Data.ImportExport
         }
 
         /// <inheritdoc/>
-        public ObjectImport(IRepository repository, DbDataReader r)
+        public ObjectImport(ICatalogueRepository repository, DbDataReader r)
             : base(repository, r)
         {
             SharingUID = r["SharingUID"].ToString();
