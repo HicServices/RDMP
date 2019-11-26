@@ -119,6 +119,7 @@ namespace Rdmp.UI.SubComponents
             olvAggregate.AspectGetter += ToString_AspectGetter;
             tlvConfiguration.RowFormatter += RowFormatter;
             olvIdentifierCount.AspectGetter += RowCountAspectGetter;
+            olvCachedQueryUseCount.AspectGetter = CachedQueryUseCount_AspectGetter;
             refreshThreadCountPeriodically.Start();
 
             tlvConfiguration.RowHeight = 19;
@@ -129,6 +130,14 @@ namespace Rdmp.UI.SubComponents
 
             AssociatedCollection = RDMPCollection.Cohort;
             
+        }
+
+        private object CachedQueryUseCount_AspectGetter(object rowobject)
+        {
+            if (rowobject is ICompileable c)
+                return _cic.QueryCachingServer_ID == null ? "No Cache" : c.GetCachedQueryUseCount();
+            
+            return null;
         }
 
         private object ToString_AspectGetter(object rowObject)
