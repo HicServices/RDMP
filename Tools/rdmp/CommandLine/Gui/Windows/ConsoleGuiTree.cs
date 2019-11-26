@@ -112,20 +112,22 @@ namespace Rdmp.Core.CommandLine.Gui.Windows
 
             public bool Edit()
             {
-                if (_o is DatabaseEntity de)
+                DatabaseEntity de = _o as DatabaseEntity;
+
+                if (de == null && _o is IMasqueradeAs m)
+                    de = (DatabaseEntity)m.MasqueradingAs();
+                
+                try
                 {
-                    try
-                    {
-                        var edit = new ConsoleGuiEdit(_activator, de);
-                        edit.ShowDialog();
-                    }
-                    catch (Exception e)
-                    {
-                        _activator.ShowException("Eror editing",e);
-                    }
+                    var edit = new ConsoleGuiEdit(_activator, de);
+                    edit.ShowDialog();
                     return true;
                 }
-
+                catch (Exception e)
+                {
+                    _activator.ShowException("Eror editing",e);
+                }
+                
                 return false;
             }
         }
