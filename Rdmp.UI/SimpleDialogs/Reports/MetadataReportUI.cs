@@ -42,18 +42,16 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         MetadataReport _report;
         private readonly Catalogue[] _catalogues;
 
-        public MetadataReportUI(IActivateItems activator,ICatalogue initialSelection = null):base(activator)
+        public MetadataReportUI(IActivateItems activator,ICatalogue[] initialSelection = null):base(activator)
         {
             InitializeComponent();
 
             _catalogues = Activator.CoreChildProvider.AllCatalogues;
             cbxCatalogues.Items.AddRange(_catalogues);
 
-            if (initialSelection != null)
-            {
-                rbSpecificCatalogue.Checked = true;
-                cbxCatalogues.SelectedItem = initialSelection;
-            }
+            if (initialSelection != null) 
+                SetCatalogueSelection(initialSelection);
+
             aggregateGraph1.Silent = true;
         }
 
@@ -65,10 +63,10 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
             if(rbAllCatalogues.Checked)
                 toReportOn = toReportOn.Where(c => !c.IsInternalDataset && !c.IsColdStorageDataset && !c.IsDeprecated).ToArray();
-            else if (cbxCatalogues.SelectedItem == null)
+            else if (_cataloguesToRun == null || !_catalogues.Any())
                 return;
             else
-                toReportOn = new[] {(Catalogue) cbxCatalogues.SelectedItem};
+                toReportOn = _cataloguesToRun.Cast<Catalogue>();
 
             var args = new MetadataReportArgs(toReportOn)
             {
@@ -162,18 +160,26 @@ namespace Rdmp.UI.SimpleDialogs.Reports
 
         private void rbAllCatalogues_CheckedChanged(object sender, EventArgs e)
         {
+            if(bLoading)
+                return;
+
             cbxCatalogues.Enabled = false;
             btnPick.Enabled = false;
         }
 
         private void rbSpecificCatalogue_CheckedChanged(object sender, EventArgs e)
         {
+            if(bLoading)
+                return;
+
             cbxCatalogues.Enabled = true;
             btnPick.Enabled = true;
         }
 
 
         private int _timeout = 30;
+        private ICatalogue[] _cataloguesToRun;
+
         private void tbTimeout_TextChanged(object sender, EventArgs e)
         {
             try
@@ -197,8 +203,49 @@ namespace Rdmp.UI.SimpleDialogs.Reports
         {
             var available = cbxCatalogues.Items.OfType<Catalogue>();
             var dialog = new SelectIMapsDirectlyToDatabaseTableDialog(available, false, false);
+            dialog.AllowMultiSelect = true;
+
             if (dialog.ShowDialog() == DialogResult.OK)
-                cbxCatalogues.SelectedItem = dialog.Selected;
+                SetCatalogueSelection(dialog.MultiSelected.OfType<ICatalogue>().ToArray());
+        }
+
+        private bool bLoading = false;
+        private void SetCatalogueSelection(ICatalogue[] array)
+        {
+            bLoading = true;
+            if (array.Length > 1)
+            {
+                rbSpecificCatalogue.Checked = true;
+                cbxCatalogues.SelectedItem = null;
+                cbxCatalogues.Enabled = false;
+                _cataloguesToRun = array;
+            }
+            else if(array.Length == 1)
+            {
+                rbSpecificCatalogue.Checked = true;
+                cbxCatalogues.SelectedItem = array[0];
+                cbxCatalogues.Enabled = true;
+                _cataloguesToRun = array;
+            }
+            else
+            {
+                rbAllCatalogues.Checked = true;
+                cbxCatalogues.SelectedItem = null;
+                cbxCatalogues.Enabled = true;
+                _cataloguesToRun = array;
+            }
+
+            bLoading = false;
+        }
+
+        private void cbxCatalogues_SelectedIndexChanged(object sender, EventArgs e)
+        {
+            if(bLoading)
+                return;
+
+            if (cbxCatalogues.SelectedItem != null) 
+                _cataloguesToRun = new[] {(ICatalogue) cbxCatalogues.SelectedItem};
+
         }
     }
 }

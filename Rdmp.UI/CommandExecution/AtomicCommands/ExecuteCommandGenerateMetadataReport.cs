@@ -13,18 +13,21 @@ namespace Rdmp.UI.CommandExecution.AtomicCommands
 {
     public class ExecuteCommandGenerateMetadataReport:BasicUICommandExecution,IAtomicCommand
     {
-        private readonly ICatalogue _catalogue;
+        private readonly ICatalogue[] _initialSelection;
 
-        public ExecuteCommandGenerateMetadataReport(IActivateItems activator,ICatalogue initialSelection):base(activator)
+
+        public ExecuteCommandGenerateMetadataReport(IActivateItems activator, params ICatalogue[] initialSelection) : base(activator)
         {
-            _catalogue = initialSelection;
+            _initialSelection = initialSelection;
+            if(initialSelection.Length == 0)
+                SetImpossible("No Catalogues");
         }
 
         public override void Execute()
         {
             base.Execute();
 
-            MetadataReportUI dialog = new MetadataReportUI(Activator, _catalogue);
+            MetadataReportUI dialog = new MetadataReportUI(Activator, _initialSelection);
             dialog.Show();
         }
     }
