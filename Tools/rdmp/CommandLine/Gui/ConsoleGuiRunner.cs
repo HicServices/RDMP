@@ -111,7 +111,8 @@ FileVersionInfo.GetVersionInfo(Assembly.GetExecutingAssembly().Location).Product
         private void Run()
         {
             var commandInvoker = new CommandInvoker(_activator);
-
+            commandInvoker.CommandImpossible += (o, e) => { _activator.Show("Command Impossible because:" + e.Command.ReasonCommandImpossible);};
+            
             var commands = commandInvoker.GetSupportedCommands();
 
             var dlg = new ConsoleGuiBigListBox<Type>("Choose Command","Run",true,commands.ToList(),(t)=>BasicCommandExecution.GetCommandName(t.Name),false);
