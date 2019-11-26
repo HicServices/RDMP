@@ -111,35 +111,28 @@ namespace Rdmp.Core.CommandLine.Gui
             
             var btnOk = new Button(_okText,true)
             {
-                X = Pos.Percent(70),
                 Y = Pos.Bottom(listView),
                 Width = 5,
-                Height = 1
-            };
+                Height = 1,
+                Clicked = () =>
+                {
+                    if(listView.SelectedItem >= _collection.Count)
+                        return;
 
-            btnOk.Clicked = () =>
-            {
-                if(listView.SelectedItem >= _collection.Count)
-                    return;
-
-                okClicked = true;
-                Application.RequestStop();
-                Selected = _collection[listView.SelectedItem].Object;
+                    okClicked = true;
+                    Application.RequestStop();
+                    Selected = _collection[listView.SelectedItem].Object;
+                }
             };
 
             var btnCancel = new Button("Cancel")
             {
-                X = Pos.Percent(85),
                 Y = Pos.Bottom(listView),
                 Width = 5,
                 Height = 1,
                 Clicked = Application.RequestStop
             };
             
-            win.Add(listView);
-            win.Add(btnOk);
-            win.Add(btnCancel);
-
             if (_addSearch)
             {
                 var searchLabel = new Label("Search:")
@@ -151,9 +144,12 @@ namespace Rdmp.Core.CommandLine.Gui
                 var mainInput = new TextField ("") {
                     X = Pos.Right(searchLabel),
                     Y = Pos.Bottom(listView),
-                    Width = Dim.Fill() - 30,
+                    Width = 70,
                 };
-                
+
+                btnOk.X = 75;
+                btnCancel.X = 85;
+
                 win.Add(searchLabel);
                 win.Add(mainInput);
                 win.SetFocus(mainInput);
@@ -163,6 +159,16 @@ namespace Rdmp.Core.CommandLine.Gui
                     listView.SetSource((_collection = BuildList(GetListAfterSearch(mainInput.Text.ToString()))).ToList());
                 };
             }
+            else
+            {
+                btnOk.X = Pos.Center()-5;
+                btnCancel.X = Pos.Center() + 5;
+            }
+
+            
+            win.Add(listView);
+            win.Add(btnOk);
+            win.Add(btnCancel);
             
             Application.Run(win);
 
