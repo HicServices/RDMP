@@ -356,7 +356,7 @@ If you cannot see any tables listed in the database
 
 Some columns in RDMP are set to fill the available space (in the dialog).  For example the Name column in the object selection dialog.  You can still resize other columns (e.g. CatalogueName) by using dragging the far side of the column to the right.
 
-![How to resize a column](Images/FAQ/ResizeColumnFillsSpace.png)
+[![How to resize a column](Images/FAQ/ResizeColumnFillsSpace.png)](https://youtu.be/OcbG-FDEq30)
 
 ## Anonymisation
 
