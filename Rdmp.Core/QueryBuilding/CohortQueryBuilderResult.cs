@@ -426,7 +426,10 @@ namespace Rdmp.Core.QueryBuilding
         private void LogDependencies()
         {
             foreach (var d in Dependencies)
+            {
                 _log.AppendLine($"Dependency '{d}' is {d.DescribeCachedState()}");
+                _log.AppendLine($"Dependency '{d}' IsExtractionIdentifier column is {d.ExtractionIdentifierColumn?.GetRuntimeName() ?? "NULL"}");
+            }   
         }
 
         

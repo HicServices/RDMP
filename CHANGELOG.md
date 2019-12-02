@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Ability to generate metadata reports for subset of catalogues (e.g. all catalogues in a folder).
 - Console gui supports short code searches (e.g. "c", "ti" etc)
+- Cohort Builder build log now lists the IsExtractionIdentifier column for each cohort set
 
 ### Changed
 
